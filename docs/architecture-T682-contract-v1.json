@@ -1,0 +1,174 @@
+{
+  "schema": "T682_M2_ATTRIBUTION_ROUTING_V1",
+  "date": "2026-11-19",
+  "task": "T682",
+  "role": "architect",
+  "document": "docs/architecture-T682-v1.md",
+  "evidence": "docs/analysis-T682-evidence-v1.json",
+  "verdict": {
+    "T590": "OPEN_AT_OBSERVATION_END",
+    "T590Object": {
+      "id": 2,
+      "role": "QUANTUM_FINAL_V3",
+      "shaderHandle": 3,
+      "programHandle": 4,
+      "api": 6,
+      "apiName": "glLinkProgram",
+      "majorStage": 5,
+      "sequence": "71",
+      "edge": 1,
+      "returned": -1,
+      "rawGl": -1,
+      "endNs": "0",
+      "openNs": "20567682344",
+      "attemptAgeNs": "124764355782"
+    },
+    "T591": {
+      "role": "SOURCE_V3",
+      "object": 0,
+      "programHandle": 2,
+      "openNs": "40140833750",
+      "boundary": "COMPOSITE_LINK",
+      "singleApi": "NOT_CAPTURED"
+    },
+    "sameApiRepeated": false,
+    "permanentDeadlock": "UNPROVEN",
+    "driverDefect": "UNPROVEN",
+    "loadedElf": "NOT_CAPTURED",
+    "persistentRootCause": "UNPROVEN",
+    "physicalOrRenderPass": false,
+    "completedCompositeStages": [
+      {
+        "object": 0,
+        "role": "SOURCE_V3",
+        "compileNs": "3966885313",
+        "linkNs": "73431850156",
+        "success": true,
+        "rawGl": 0
+      },
+      {
+        "object": 1,
+        "role": "QUANTUM_INTERMEDIATE",
+        "compileNs": "3118145625",
+        "linkNs": "11883291719",
+        "success": true,
+        "rawGl": 0
+      },
+      {
+        "object": 2,
+        "role": "QUANTUM_FINAL_V3",
+        "compileNs": "11779646093",
+        "success": true,
+        "rawGl": 0
+      }
+    ]
+  },
+  "identity": {
+    "tokens": [
+      "process start or same-process identity",
+      "loaded lib path/BuildId/backing SHA if readable",
+      "signed package SHA",
+      "bootSerial",
+      "epoch",
+      "window",
+      "eglContext",
+      "ownerTid",
+      "object role",
+      "source SHA/bytes",
+      "cursor sequence"
+    ],
+    "familyShaNotPerObject": true,
+    "handleCanBeReusedAcrossLifetimes": true,
+    "manifestDeclaration": "DECLARATION_MISSING",
+    "files": [
+      {
+        "object": 0,
+        "status": "MANIFEST_ONLY_EMPTY"
+      },
+      {
+        "object": 1,
+        "status": "VERIFIED_EMPTY_FILE"
+      },
+      {
+        "object": 2,
+        "status": "MANIFEST_ONLY_EMPTY"
+      }
+    ],
+    "independentSnapshots": true,
+    "serializedNowDerivedFromStageEnter": true
+  },
+  "routing": [
+    {
+      "id": "R0_ATTRIBUTION_CORRECTION",
+      "role": "architect",
+      "action": "T590 exact open API at object2; old T591 only composite LINK at object0. Keep T678 a2, M1 runtime, Windows native linker, host ANGLE dispatch separate. No common causality."
+    },
+    {
+      "id": "R1_EXISTING_RAW",
+      "role": "tester offline + effector serial device",
+      "task": "T676-A existing scope",
+      "action": "Reuse original raw snapshots, available logs, subsequent terminal and same-process loaded identity. Use real M2 page with XComponent. Retain gaps and raw errors. Standalone T590Cursor cannot create the real surface."
+    },
+    {
+      "id": "R2_CACHE_PRODUCT_INTEGRATION",
+      "role": "tester verify product path, developer only for proven gap",
+      "action": "Check actual target product route for existing T475 ProgramFactory/ProgramArtifactStore on all three roles. If actually absent from that production route, reuse shipped factory through true generation; preserve direct GLSL diagnostic baseline, old build and errors. Compare same environment cold/retained-data warm in existing hardware flow. No old driver binary reuse."
+    },
+    {
+      "id": "R3_ARCHITECTURE_COMPARISON",
+      "role": "designer candidate comparison, architect freezes only after evidence",
+      "action": "Compare 3-program baseline, allocation-only setup replacing deleted intermediate program in FullM1 route, and specialization by pass boundary. Keep independent quantum path, frozen K/Kw and ABI, fixed integer oracle/ledger/barriers/owner semantics. Measure per-role cold compile/link/reflect, actual Create/READY, warm load, steady dispatch/barrier overhead and first valid frame. No single hotspot or source length diagnosis."
+    },
+    {
+      "id": "R4_VALID_EXIT_OR_OPEN",
+      "role": "effector then architect",
+      "action": "Record same-scope EXIT if available; otherwise use distinct observed open, window/budget/capacity end or process lost with actual evidence. No inference of exact timing from skipped samples."
+    }
+  ],
+  "collector": {
+    "existingEndpoints": [
+      "m2CreateDiagnostics(serial)",
+      "m2CreateLog(serial,object)"
+    ],
+    "maximumArmWindowNs": "60000000000",
+    "maximumNativeQueriesIncludingLogs": 64,
+    "maximumRecordUtf8Bytes": 16384,
+    "maximumDirectoryBytes": 1048576,
+    "indexReserveBytes": 32768,
+    "maximumRawChunkBytes": 8192,
+    "noExtraQueriesForSlicing": true,
+    "objectLogPolicy": "on metadata change or true terminal; require matching attempt+object and query metadata",
+    "nativeTerminal": "same attempt sealed===true and nativeEndNs>0 with real code",
+    "newGlQueries": 0,
+    "newWorkers": 0
+  },
+  "boundaries": {
+    "productOrTestsRun": false,
+    "deviceUsed": false,
+    "buildRun": false,
+    "productCodeChanged": false,
+    "roles": {
+      "tester": "offline collector/fixture/signing/analysis",
+      "effector": "all device, serial",
+      "developer": "implementation and compile",
+      "architect": "first attribution"
+    },
+    "cpu": "STOPPED",
+    "goal10": "PAUSED",
+    "priorityAfter11": [
+      13,
+      14,
+      12,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "render": "All foreground and background XComponent+shader only; FAULT or explicitly STALE",
+    "newManagerGate": false,
+    "noThresholdRelaxation": true,
+    "sameNameListUpdated": false
+  },
+  "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。"
+}

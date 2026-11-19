@@ -1,0 +1,92 @@
+{
+  "schema": "T682_ORIGINAL_TASK_RECEIPT_V1",
+  "originalTask": {
+    "id": "6afeefdde4b00927f0f8c947",
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "sortOrder": 192482450660800,
+    "title": "【T682·M2单API链接开放调用与对象来源续归因】architect",
+    "content": "不使用真机，不运行测试/构建/产品。读T590-v3 c8434b96全部native/manifest/object logs、T663枚举/源码/实际签包、T591-v3旧原件、T678合同。新cursor api6/object2/handle4/sequence71/ENTER/20.6s/end0精确分域；核object2是shader还是program角色、compile状态/错误的实际返回、实际shader/layout/program identity及source输入。旧40.1s仅复合LINK无cursor，禁止反推同一个API两次复现，更不宣永久死锁/驱动缺陷或与host故障同根。按工程/设计/用例/证据不足首归因：工程先修文档到developer；若需比较shader程序结构/拆分方案给有证据GPU整体复杂度路线，避免继续盲改热点；证据不足冻结最小同scope既有出口/原串/加载身份/预算和角色交接。不重复T663接口/在途T676，不新增GL query/线程/放宽门或CanvasCPU回退。输出architecture-T682-v1.md/contract，完整完成可做分析再停。\n2026-11-19最新角色边界（优先历史分工）：不需要真机的用例、oracle、夹具/测试脚本维护、host测试、构建签名与离线分析由tester负责；需要真机的部署、执行、客观定量测试、探针、采证及主观效果统一由effector负责。客观真机测试仍按客观阈值输出test-report，不改成主观评分。developer仅开发及编译通过；失败首次归因仍交architect。混合卡离线产物交接后由effector执行，不增manager验收门；已有可用产物直接复用，不等准备卡形式关闭。\n用户2026-11-19最新目标裁定：目标1–11不变（10继续暂停）；当前19目标。目标12及以后优先级从高到低严格为13→14→12→15→16→17→18→19。13可信纯流场速度/压力/黏性；14给定沙轮廓及运动影响水并输出可信流场与边界载荷；12载荷驱动沙动员、冲刷、离床扬起、悬浮输运、再沉积及轮廓反馈；15为45°等大角度连续搬移/崩塌/重新稳定；16连续跨90°至180°失支撑/脱离/碰壁/重堆；17连续360°旋转及沿途停止/反向/重复；18上下层差速、层间剪切与差异受力，双层F仅拟研究路线，未经比较论证不冻结为方案；19真实厚度方向沙水运动与前后壁作用。优先次序不是未经设计已证明的全部技术依赖；实施放行须用真实前置。GPU驻留优先、CPU停投、XComponent+shader唯一渲染；旧湿卡继续暂缓。\n要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。局部受阻先完成其它可做项。接单原卡评论已开始，仅本人行状态改进行中；成功评论交付并改结束待验收；失败/FAIL/BLOCKED/缺关键证据在原卡评论写未完成项、复现原错、证据、已尝试办法、为何不能继续、所需前置与接手角色，并仅本人行改看评论。评论不可用留本地报告明确未同步。不允许修改 D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md（唯一例外本人行状态），不得改其它行列/队列或滴答同名清单。GPU驻留优先，CPU停止投入；仅XComponent+shader渲染，前景背景禁止Canvas或软件GL产品回退，失败FAULT或明确stale。失败先architect分流；目标10暂停，水线13→14→12。",
+    "desc": null,
+    "startDate": null,
+    "dueDate": null,
+    "timeZone": "Asia/Shanghai",
+    "isAllDay": false,
+    "priority": 5,
+    "progress": null,
+    "isFloating": false,
+    "reminders": null,
+    "repeatFlag": null,
+    "repeatFrom": null,
+    "completedTime": null,
+    "status": 0,
+    "items": null,
+    "tags": [
+      "gpu",
+      "architect"
+    ],
+    "columnId": null,
+    "parentId": null,
+    "childIds": null,
+    "columnName": null,
+    "assigneeUsername": null,
+    "etag": "c94mgk0q",
+    "kind": "TEXT",
+    "createdTime": "2026-11-19T20:47:25+0800",
+    "modifiedTime": "2026-11-19T20:47:25+0800",
+    "focusSummaries": null,
+    "projectName": "多相流麻效果"
+  },
+  "originalComments": [],
+  "startComment": {
+    "id": "6afef1e6e4b0e380f8bdd892",
+    "userId": 1010673194,
+    "title": "已开始 T682 architect。核对 c8434b96 原件、T663 单API枚举与签包、旧 T591-v3 及 T678 作用域，逐项定位链接调用、对象及已返回证据。不使用真机，不运行构建、测试或产品。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+    "modifiedTime": "2026-11-19T12:56:06+0000",
+    "createdTime": "2026-11-19T12:56:06+0000",
+    "replyCommentId": null,
+    "replyUserId": null
+  },
+  "readBasis": {
+    "T590": [
+      {
+        "id": "6afeef2ae4b00dfe2a80b94e",
+        "userId": 1010673194,
+        "title": "T590 v3 交付（effector 接卡，T676-A M2 cursor 采集——未返回 API 精确锁定 glLinkProgram）：报告 docs/test-report-T590-v3.md，证据 test/reports/t491/t590c/t468-create-1-1795092162916-*（原生诊断原件），commit c8434b96。\n包=T590-cursor2（t663-delivery=T663 e33898e cursor 包+T590Cursor 设施，签名 PASS）。\n**apiCursor 精确字段：api=6(LINK_PROGRAM)/object=2(handle 4)/edge=1(ENTER)/returned=-1/endNs=0/sequence=71，inCall 20.6s，majorStage=5(LINK)**——COMPILE 正常完成（阶段推进到 LINK）；身份链完整（bootSerial/epoch=3/context/ownerTid+layoutSha 6e01a7bd+combinedShaderSha 7e19a455 与 T591 v3/a2 boot 同源）。\n**判定：T591 v3 的 40.1s 与本件 20.6s=同一 API（glLinkProgram）两次独立开放观测——稳定复现非偶发**；回 architect：设备 glLinkProgram 行为为精确归因对象，M2 域两流收敛。本卡转看评论。",
+        "modifiedTime": "2026-11-19T12:44:26+0000",
+        "createdTime": "2026-11-19T12:44:26+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      {
+        "id": "6afeefdee4b0e380f8bdb3e1",
+        "userId": 1010673194,
+        "title": "新c8434b96 cursor api6 glLinkProgram ENTER20.6s原件登记，交T682 architect续归因；旧T59140.1s只有复合LINK，不能补写同API两次稳定复现。原完整配置/拒因/期限范围未完成，当前M2故障等精准分流。T669拒因签包已交可供后续独立域，但不以零碎准备放行整卡。",
+        "modifiedTime": "2026-11-19T12:47:26+0000",
+        "createdTime": "2026-11-19T12:47:26+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      }
+    ],
+    "T591": [
+      {
+        "id": "6afed6d6e4b08269c818c570",
+        "userId": 1010673194,
+        "title": "2026-11-19本轮真实前置更新：T663 128B每attempt真实单API cursor实际开发交付；LINK复合阶段读更多同证不能拆首未返API。本卡仍未完成，放仍阻塞并保当前报告/局部证据，前置齐原卡续全部剩余范围，不直接跳developer或designer，不增manager/设备门；不能重复同条件空证。",
+        "modifiedTime": "2026-11-19T11:00:38+0000",
+        "createdTime": "2026-11-19T11:00:38+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      {
+        "id": "6afedf6ae4b0e380f8bc8a52",
+        "userId": 1010673194,
+        "title": "T663真实单API游标已交；最新离线collector/签包修订交T676-A，消费实际新cursor接口/正确M2产物后由effector串行补同attempt首未返API/日志/终态/loaded模块。旧40s LINK不反推新游标结论。仅因真实新collector/签包缺项仍阻塞，不等T676-B或卡形式关闭。",
+        "modifiedTime": "2026-11-19T11:37:14+0000",
+        "createdTime": "2026-11-19T11:37:14+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      }
+    ],
+    "T676": []
+  }
+}

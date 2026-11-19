@@ -62,3 +62,5 @@ recovery retired=true/resources=false/CREATING_NEW/serial1/epoch3意味着该快
 旧T591 M2 LINK40.14s、a2另一boot ProgramEnter、正式M1运行期忙态、T496 Windows/host ANGLE退出是四个独立域。前两个即使实际shader同源，也仍需对象/ELF/上下文/attempt/原GL时间才能讨论关联；后两个更不能靠“缺terminal”合根因。T519/T410/T437真实非空SOURCE前置不假放行，T590/T593剩余原范围不缩减。
 
 执行prompt：不允许修改 D:\hmprojects\HelloWorld\docs\后续工作清单.md（仅本人状态有限例外），不更新滴答同名清单。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。architect不使用真机、不运行构建/产品/测试；tester离线脚本/host/构建签名，effector全部真机部署/探针/客观/效果采证且串行，developer仅开发编译。十九目标13→14→12→15→16→17→18→19，10暂停、CPU停投、旧湿卡暂缓。全部背景前景XComponent+shader，FAULT或明确STALE，无Canvas/软件GL产品回退；无新增manager/设备关闭门。
+
+2026-11-19 T682 续归因补充。新 T590-v3 的游标定位 `QUANTUM_FINAL_V3` 单次 `glLinkProgram` 在采样时开放20.568s，同档 SOURCE_V3 复合 LINK 已返、用时73.432s。旧 T591-v3 的40.141s是另一个attempt的 SOURCE_V3 复合 LINK，具体 API 未采到。现有持久化与程序结构对照、证据作用域和 T676-A 原出口交接见 [T682 工程稿](architecture-T682-v1.md)；正式 M1 仍按 B 域推进。

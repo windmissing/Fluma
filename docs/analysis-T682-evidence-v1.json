@@ -1,0 +1,1643 @@
+{
+  "schema": "T682_M2_OPEN_CALL_OBJECT_ATTRIBUTION_V1",
+  "productOrTestsRun": false,
+  "deviceUsed": false,
+  "buildRun": false,
+  "exportReceipts": [
+    {
+      "path": "test/reports/t491/t590c/t468-create-1-1795092162916-native.json",
+      "bytes": 9899,
+      "sha256": "5a149f6f83775dea35db094e10b64ef85253fc7c0d2a181ae4d9f53f59add6bd",
+      "status": "VERIFIED_BYTES"
+    },
+    {
+      "path": "test/reports/t491/t590c/t468-create-1-1795092162916-0.log",
+      "manifestBytes": 0,
+      "manifestSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "MANIFEST_ONLY"
+    },
+    {
+      "path": "test/reports/t491/t590c/t468-create-1-1795092162916-1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "VERIFIED_BYTES"
+    },
+    {
+      "path": "test/reports/t491/t590c/t468-create-1-1795092162916-2.log",
+      "manifestBytes": 0,
+      "manifestSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "MANIFEST_ONLY"
+    }
+  ],
+  "declaration": {
+    "packageSha256": "",
+    "libElfSha256": "",
+    "status": "DECLARATION_MISSING",
+    "source": "COLD_WANT_EXTERNAL_RECEIPT"
+  },
+  "newSnapshot": {
+    "revision": "T462_M2_CREATE_DIAGNOSTIC_V1",
+    "buildVariant": "T468_M2_V3_DIAGNOSTIC",
+    "bootSerial": "1",
+    "previousSerial": "0",
+    "epoch": "3",
+    "window": "387040645056",
+    "ownerTid": "43807",
+    "eglContext": "387373651584",
+    "nativeBeginNs": "286703563513283",
+    "nativeEndNs": "0",
+    "candidateRun": "1",
+    "surface": "3",
+    "contextGeneration": "3",
+    "geometry": "3",
+    "config": "1",
+    "owner": "1",
+    "layoutSha": "6e01a7bd26032beb1efd3cb58d8fb7377c4a5e4c16903572187dc11d9b87c73e",
+    "combinedShaderSha": "7e19a455a8e4b213a3823111cc0c00c802912fdc5f361b05d57f82c923654a49",
+    "K": 192,
+    "Kw": 128,
+    "feature": 7,
+    "wire": 3,
+    "policy": 1,
+    "code": 0,
+    "sealed": false,
+    "inCall": true,
+    "inCallDurationNs": "20567682969",
+    "incomplete": false,
+    "dropped": 0,
+    "firstFailure": null,
+    "current": {
+      "object": 2,
+      "stage": "LINK",
+      "enterNs": "286807760186096",
+      "exitNs": "0",
+      "handle": 4,
+      "success": false,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    "apiCursor": {
+      "revision": 1,
+      "majorStage": 5,
+      "object": 2,
+      "api": 6,
+      "edge": 1,
+      "handle": 4,
+      "returned": -1,
+      "rawGl": -1,
+      "sequence": "71",
+      "beginNs": "286807760186721",
+      "endNs": "0",
+      "ownerTid": "43807",
+      "epoch": "3",
+      "window": "387040645056",
+      "context": "387373651584",
+      "bootSerial": "1",
+      "reservedZero": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "contextClientVersion": 3,
+    "contextQueryError": 0,
+    "contextPriorGlError": 0,
+    "driver": [
+      {
+        "value": "HUAWEI",
+        "rawGl": 0
+      },
+      {
+        "value": "Maleoon 935F",
+        "rawGl": 0
+      },
+      {
+        "value": "OpenGL ES 3.2 B320.89d539c90932f442acb8859a1797b348e4060bcc",
+        "rawGl": 0
+      },
+      {
+        "value": "OpenGL ES GLSL ES 3.20",
+        "rawGl": 0
+      }
+    ],
+    "limits": [
+      {
+        "api": "glGetIntegerv",
+        "token": 33307,
+        "index": 0,
+        "value": "3",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 33308,
+        "index": 0,
+        "value": "2",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 37085,
+        "index": 0,
+        "value": "32",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 37083,
+        "index": 0,
+        "value": "16",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 37082,
+        "index": 0,
+        "value": "16",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 37087,
+        "index": 0,
+        "value": "256",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 37099,
+        "index": 0,
+        "value": "1024",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 33378,
+        "index": 0,
+        "value": "32768",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetInteger64v",
+        "token": 37086,
+        "index": 0,
+        "value": "1073741824",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegeri_v",
+        "token": 37311,
+        "index": 0,
+        "value": "1024",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegeri_v",
+        "token": 37310,
+        "index": 0,
+        "value": "65535",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegeri_v",
+        "token": 37311,
+        "index": 1,
+        "value": "1024",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegeri_v",
+        "token": 37310,
+        "index": 1,
+        "value": "65535",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegeri_v",
+        "token": 37311,
+        "index": 2,
+        "value": "1024",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegeri_v",
+        "token": 37310,
+        "index": 2,
+        "value": "65535",
+        "rawGl": 0
+      }
+    ],
+    "probe": {
+      "queried": true,
+      "code": 0,
+      "rawGl": 0,
+      "values": [
+        32,
+        16,
+        16,
+        1024,
+        1024,
+        32768,
+        256,
+        1073741824
+      ]
+    },
+    "profileAdmission": [
+      {
+        "K": 192,
+        "Kw": 64,
+        "requiredLargestSsbo": 10795008,
+        "residentPayloadBytes": 35210960,
+        "supportedNumerically": true,
+        "reason": "NUMERICAL_ONLY_NOT_COMPILE_PROOF"
+      },
+      {
+        "K": 192,
+        "Kw": 128,
+        "requiredLargestSsbo": 11843584,
+        "residentPayloadBytes": 38388176,
+        "supportedNumerically": true,
+        "reason": "NUMERICAL_ONLY_NOT_COMPILE_PROOF"
+      },
+      {
+        "K": 512,
+        "Kw": 64,
+        "requiredLargestSsbo": 26605568,
+        "residentPayloadBytes": 84019152,
+        "supportedNumerically": true,
+        "reason": "NUMERICAL_ONLY_NOT_COMPILE_PROOF"
+      },
+      {
+        "K": 512,
+        "Kw": 128,
+        "requiredLargestSsbo": 27654144,
+        "residentPayloadBytes": 87196368,
+        "supportedNumerically": true,
+        "reason": "NUMERICAL_ONLY_NOT_COMPILE_PROOF"
+      }
+    ]
+  },
+  "events": [
+    {
+      "object": 0,
+      "stage": "CREATE_SHADER",
+      "enterNs": "286703563847502",
+      "exitNs": "286703563864065",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "SOURCE_UPLOAD",
+      "enterNs": "286703563864533",
+      "exitNs": "286703563913440",
+      "handle": 1,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "COMPILE",
+      "enterNs": "286703563913752",
+      "exitNs": "286707530799065",
+      "handle": 1,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "CREATE_PROGRAM",
+      "enterNs": "286707530845783",
+      "exitNs": "286707530853596",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ATTACH",
+      "enterNs": "286707530853752",
+      "exitNs": "286707530876096",
+      "handle": 2,
+      "success": true,
+      "rawGl": 0,
+      "a": "1",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "LINK",
+      "enterNs": "286707530876252",
+      "exitNs": "286780962726408",
+      "handle": 2,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968176408",
+      "exitNs": "286780968464533",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "29696",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968465940",
+      "exitNs": "286780968493752",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "49408",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968494221",
+      "exitNs": "286780968496408",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "31744",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968496565",
+      "exitNs": "286780968499377",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "1024",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968499690",
+      "exitNs": "286780968518752",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "29696",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968519221",
+      "exitNs": "286780968520940",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "49408",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968521252",
+      "exitNs": "286780968523127",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "31744",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968523283",
+      "exitNs": "286780968534846",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "1024",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968535315",
+      "exitNs": "286780968633752",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "49408",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968634377",
+      "exitNs": "286780968636408",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "197120",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968636721",
+      "exitNs": "286780968772346",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "197120",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968772658",
+      "exitNs": "286780968869533",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "197120",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "ALLOCATE",
+      "enterNs": "286780968870783",
+      "exitNs": "286780969733908",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "1376128",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "REFLECT",
+      "enterNs": "286780969734533",
+      "exitNs": "286780969751721",
+      "handle": 2,
+      "success": true,
+      "rawGl": 0,
+      "a": "13",
+      "b": "128",
+      "c": "0"
+    },
+    {
+      "object": 0,
+      "stage": "PREPARE",
+      "enterNs": "286780970771565",
+      "exitNs": "286780970979846",
+      "handle": 2,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 1,
+      "stage": "CREATE_SHADER",
+      "enterNs": "286780975933440",
+      "exitNs": "286780975965158",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 1,
+      "stage": "SOURCE_UPLOAD",
+      "enterNs": "286780975965471",
+      "exitNs": "286780975994221",
+      "handle": 3,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 1,
+      "stage": "COMPILE",
+      "enterNs": "286780975994533",
+      "exitNs": "286784094140158",
+      "handle": 3,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 1,
+      "stage": "CREATE_PROGRAM",
+      "enterNs": "286784094158283",
+      "exitNs": "286784094164533",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 1,
+      "stage": "ATTACH",
+      "enterNs": "286784094164846",
+      "exitNs": "286784094166565",
+      "handle": 4,
+      "success": true,
+      "rawGl": 0,
+      "a": "3",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 1,
+      "stage": "LINK",
+      "enterNs": "286784094166877",
+      "exitNs": "286795977458596",
+      "handle": 4,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 1,
+      "stage": "ALLOCATE",
+      "enterNs": "286795977477658",
+      "exitNs": "286795977494065",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "29696",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 1,
+      "stage": "ALLOCATE",
+      "enterNs": "286795977494377",
+      "exitNs": "286795977730158",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "521552",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 1,
+      "stage": "ALLOCATE",
+      "enterNs": "286795977730627",
+      "exitNs": "286795979914221",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "11843584",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 1,
+      "stage": "REFLECT",
+      "enterNs": "286795980273283",
+      "exitNs": "286795980310471",
+      "handle": 4,
+      "success": true,
+      "rawGl": 0,
+      "a": "34",
+      "b": "128",
+      "c": "0"
+    },
+    {
+      "object": 2,
+      "stage": "CREATE_SHADER",
+      "enterNs": "286795980505627",
+      "exitNs": "286795980508752",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 2,
+      "stage": "SOURCE_UPLOAD",
+      "enterNs": "286795980509221",
+      "exitNs": "286795980517346",
+      "handle": 3,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 2,
+      "stage": "COMPILE",
+      "enterNs": "286795980517815",
+      "exitNs": "286807760163908",
+      "handle": 3,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 2,
+      "stage": "CREATE_PROGRAM",
+      "enterNs": "286807760178283",
+      "exitNs": "286807760183752",
+      "handle": 0,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    {
+      "object": 2,
+      "stage": "ATTACH",
+      "enterNs": "286807760184065",
+      "exitNs": "286807760185940",
+      "handle": 4,
+      "success": true,
+      "rawGl": 0,
+      "a": "3",
+      "b": "0",
+      "c": "0"
+    }
+  ],
+  "completedProgramStageDurations": [
+    {
+      "object": 0,
+      "stage": "COMPILE",
+      "enterNs": "286703563913752",
+      "exitNs": "286707530799065",
+      "handle": 1,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0",
+      "durationNs": "3966885313"
+    },
+    {
+      "object": 0,
+      "stage": "ATTACH",
+      "enterNs": "286707530853752",
+      "exitNs": "286707530876096",
+      "handle": 2,
+      "success": true,
+      "rawGl": 0,
+      "a": "1",
+      "b": "0",
+      "c": "0",
+      "durationNs": "22344"
+    },
+    {
+      "object": 0,
+      "stage": "LINK",
+      "enterNs": "286707530876252",
+      "exitNs": "286780962726408",
+      "handle": 2,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0",
+      "durationNs": "73431850156"
+    },
+    {
+      "object": 1,
+      "stage": "COMPILE",
+      "enterNs": "286780975994533",
+      "exitNs": "286784094140158",
+      "handle": 3,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0",
+      "durationNs": "3118145625"
+    },
+    {
+      "object": 1,
+      "stage": "ATTACH",
+      "enterNs": "286784094164846",
+      "exitNs": "286784094166565",
+      "handle": 4,
+      "success": true,
+      "rawGl": 0,
+      "a": "3",
+      "b": "0",
+      "c": "0",
+      "durationNs": "1719"
+    },
+    {
+      "object": 1,
+      "stage": "LINK",
+      "enterNs": "286784094166877",
+      "exitNs": "286795977458596",
+      "handle": 4,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0",
+      "durationNs": "11883291719"
+    },
+    {
+      "object": 2,
+      "stage": "COMPILE",
+      "enterNs": "286795980517815",
+      "exitNs": "286807760163908",
+      "handle": 3,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0",
+      "durationNs": "11779646093"
+    },
+    {
+      "object": 2,
+      "stage": "ATTACH",
+      "enterNs": "286807760184065",
+      "exitNs": "286807760185940",
+      "handle": 4,
+      "success": true,
+      "rawGl": 0,
+      "a": "3",
+      "b": "0",
+      "c": "0",
+      "durationNs": "1875"
+    }
+  ],
+  "derivedTiming": {
+    "derivedSerializerNowNs": "286828327869065",
+    "apiEnterToSerializerObservationNs": "20567682344",
+    "attemptBeginToObservationNs": "124764355782",
+    "currentStageEnterBeforeApiEnterNs": "625"
+  },
+  "sources": [
+    {
+      "program": {
+        "object": 0,
+        "name": "SOURCE_V3",
+        "sha256": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1",
+        "sourceBytes": 85839,
+        "rawBytes": 0,
+        "compileLog": {
+          "queried": true,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        },
+        "linkLog": {
+          "queried": true,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        }
+      },
+      "packagesContainingExactBytes": [
+        "T590-cursor2",
+        "T591-collector",
+        "T590-a2"
+      ],
+      "generatedLiteralMatchesBytes": true,
+      "storageBlockDeclarations": 4
+    },
+    {
+      "program": {
+        "object": 1,
+        "name": "QUANTUM_INTERMEDIATE",
+        "sha256": "54946590ca762cc8d9bb2e153e3fbab839b74bdf70fd474ad7b94b621f580f96",
+        "sourceBytes": 26429,
+        "rawBytes": 0,
+        "compileLog": {
+          "queried": true,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        },
+        "linkLog": {
+          "queried": true,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        }
+      },
+      "packagesContainingExactBytes": [
+        "T590-cursor2",
+        "T591-collector",
+        "T590-a2"
+      ]
+    },
+    {
+      "program": {
+        "object": 2,
+        "name": "QUANTUM_FINAL_V3",
+        "sha256": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc",
+        "sourceBytes": 54857,
+        "rawBytes": 0,
+        "compileLog": {
+          "queried": true,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        },
+        "linkLog": {
+          "queried": false,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        }
+      },
+      "packagesContainingExactBytes": [
+        "T590-cursor2",
+        "T591-collector",
+        "T590-a2"
+      ],
+      "generatedLiteralMatchesBytes": true,
+      "storageBlockDeclarations": 4
+    }
+  ],
+  "T591": {
+    "raw": {
+      "path": "test/reports/t491/t591c/collector.ndjson",
+      "bytes": 222253,
+      "sha256": "83d19d7b63d728014025b4b92fa0dc863d4d34cd3895d92a4dc8137013f9d07d"
+    },
+    "lines": 103,
+    "final": {
+      "bootSerial": "1",
+      "epoch": "2",
+      "window": "387041997984",
+      "eglContext": "387048859216",
+      "ownerTid": "4360",
+      "nativeBeginNs": "273554856423752",
+      "nativeEndNs": "0",
+      "sealed": false,
+      "inCall": true,
+      "inCallDurationNs": "40140833750",
+      "current": {
+        "object": 0,
+        "stage": "LINK",
+        "enterNs": "273559698263283",
+        "exitNs": "0",
+        "handle": 2,
+        "success": false,
+        "rawGl": 0,
+        "a": "0",
+        "b": "0",
+        "c": "0"
+      },
+      "programs": [
+        {
+          "object": 0,
+          "name": "SOURCE_V3",
+          "sha256": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1",
+          "sourceBytes": 85839,
+          "rawBytes": 0,
+          "compileLog": {
+            "queried": true,
+            "reportedLength": 0,
+            "copiedLength": 0,
+            "offset": 0,
+            "truncated": false,
+            "emptyLog": true,
+            "queryError": 0
+          },
+          "linkLog": {
+            "queried": false,
+            "reportedLength": 0,
+            "copiedLength": 0,
+            "offset": 0,
+            "truncated": false,
+            "emptyLog": true,
+            "queryError": 0
+          }
+        },
+        {
+          "object": 1,
+          "name": "QUANTUM_INTERMEDIATE",
+          "sha256": "",
+          "sourceBytes": 0,
+          "rawBytes": 0,
+          "compileLog": {
+            "queried": false,
+            "reportedLength": 0,
+            "copiedLength": 0,
+            "offset": 0,
+            "truncated": false,
+            "emptyLog": true,
+            "queryError": 0
+          },
+          "linkLog": {
+            "queried": false,
+            "reportedLength": 0,
+            "copiedLength": 0,
+            "offset": 0,
+            "truncated": false,
+            "emptyLog": true,
+            "queryError": 0
+          }
+        },
+        {
+          "object": 2,
+          "name": "QUANTUM_FINAL_V3",
+          "sha256": "",
+          "sourceBytes": 0,
+          "rawBytes": 0,
+          "compileLog": {
+            "queried": false,
+            "reportedLength": 0,
+            "copiedLength": 0,
+            "offset": 0,
+            "truncated": false,
+            "emptyLog": true,
+            "queryError": 0
+          },
+          "linkLog": {
+            "queried": false,
+            "reportedLength": 0,
+            "copiedLength": 0,
+            "offset": 0,
+            "truncated": false,
+            "emptyLog": true,
+            "queryError": 0
+          }
+        }
+      ],
+      "driver": [
+        {
+          "value": "HUAWEI",
+          "rawGl": 0
+        },
+        {
+          "value": "Maleoon 935F",
+          "rawGl": 0
+        },
+        {
+          "value": "OpenGL ES 3.2 B320.89d539c90932f442acb8859a1797b348e4060bcc",
+          "rawGl": 0
+        },
+        {
+          "value": "OpenGL ES GLSL ES 3.20",
+          "rawGl": 0
+        }
+      ]
+    },
+    "apiCursor": "NOT_PRESENT",
+    "uniqueScopeCount": 1
+  },
+  "signatures": {
+    "T590-cursor2": {
+      "receipt": {
+        "path": "test/reports/t257/T590-cursor2.json",
+        "bytes": 2295,
+        "sha256": "f50e250ae19d1db541c08e23911db5032d51fc3e0cd763c269740d03469e9970"
+      },
+      "expectedSignedSHA": "6b1faa1df776c52b356313f52a22d7d021bdea6704cbdb424fe07a613246c647",
+      "actualSignedSHA": "6b1faa1df776c52b356313f52a22d7d021bdea6704cbdb424fe07a613246c647",
+      "signedHashMatches": true,
+      "modules": [
+        {
+          "entry": "ets/modules.abc",
+          "bytes": 2839896,
+          "sha256": "397766f8695b78d74cfb06db6145a4dbae322916d8e901235649b1318a0d80ec"
+        },
+        {
+          "entry": "libs/arm64-v8a/libc++_shared.so",
+          "bytes": 1262248,
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrsm0.so",
+          "bytes": 623448,
+          "sha256": "579e24752b21639b595f30c5ed4b0e4f68e24dcdd9f92add68775864273199d6",
+          "buildId": "90366a93ea900d302880a3d1e787ae0eb21beaf9"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrsm1.so",
+          "bytes": 1180096,
+          "sha256": "7a0bcbaab37c3fabcff3a5874164bbea1767e2877db903ad867477fdb781253f",
+          "buildId": "c23e231c781476010af91f631c60d2239371205c",
+          "embeddedGLSLSources": [
+            {
+              "fileOffset": 100234,
+              "bytes": 471,
+              "sha256": "3d40e11d57d122104b1836d99ca214ecee3696d725fe0e9e66a996b1d15fe9c7"
+            },
+            {
+              "fileOffset": 100749,
+              "bytes": 54857,
+              "sha256": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc"
+            },
+            {
+              "fileOffset": 163985,
+              "bytes": 85839,
+              "sha256": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1"
+            },
+            {
+              "fileOffset": 252712,
+              "bytes": 681,
+              "sha256": "d50ea2f0b2affe94968647225ae3043e585d39b5ac721337e82122deed19d9ce"
+            },
+            {
+              "fileOffset": 254864,
+              "bytes": 713,
+              "sha256": "555874a2b5c12b211433d8bf6bced48892c5472c687609893a599252090bda1e"
+            },
+            {
+              "fileOffset": 258649,
+              "bytes": 2636,
+              "sha256": "5761edd08c8c084b13e2fb74ddbfeed29ddf14f2db0c5808c64ec3d6e0b13445"
+            },
+            {
+              "fileOffset": 263692,
+              "bytes": 26429,
+              "sha256": "54946590ca762cc8d9bb2e153e3fbab839b74bdf70fd474ad7b94b621f580f96"
+            },
+            {
+              "fileOffset": 291467,
+              "bytes": 28365,
+              "sha256": "aa0c848e6821d757ecb0a94dc550fdc5e7c871d648fa28bf40f582890f86e924"
+            },
+            {
+              "fileOffset": 324291,
+              "bytes": 97575,
+              "sha256": "fb27edff537d99fd141d451ae3cef9d3b21df50a8a9802560e274603e3d9ff14"
+            },
+            {
+              "fileOffset": 423255,
+              "bytes": 108,
+              "sha256": "0dcacef16d47a9155810f81fcf9aa0d75848b93cee587dd9d187eeb2836919ed"
+            },
+            {
+              "fileOffset": 423364,
+              "bytes": 514,
+              "sha256": "13af641559528842a55b65d07aec2a98f8607061ec32e995851a83608a4ed612"
+            }
+          ]
+        },
+        {
+          "entry": "libs/arm64-v8a/libp013hello.so",
+          "bytes": 70544,
+          "sha256": "9b168deec9c676a053b7e1eb90ccb5a50b3c803d3dd29ebe7a4475d0bad07db6",
+          "buildId": "28d65c9931e4d5f5552a33e9257d05a308505316"
+        },
+        {
+          "entry": "libs/arm64-v8a/libp013renderer.so",
+          "bytes": 498120,
+          "sha256": "90977355ff0ecbaf2a2998bfdab867b50e2f8a856f62628f5edf6343f1b0aac5",
+          "buildId": "6ea2cb406730398224d7dfa1ad913fc61db743c4"
+        },
+        {
+          "entry": "module.json",
+          "bytes": 1408,
+          "sha256": "340cf83f165d31023b438266f1dd8bf92d2eb8262fd87d1e93fc9a2c722e3e96"
+        }
+      ],
+      "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+    },
+    "T591-collector": {
+      "receipt": {
+        "path": "test/reports/t257/T591-collector.json",
+        "bytes": 2299,
+        "sha256": "7ff508a6f234b098b412bdf8834d0678b33736a9b8790f931f58397bc402cc58"
+      },
+      "expectedSignedSHA": "9550454cbec14659075802a37cc589f0a28c89eeba44ef02d1d80ca00cdb5d91",
+      "actualSignedSHA": "9550454cbec14659075802a37cc589f0a28c89eeba44ef02d1d80ca00cdb5d91",
+      "signedHashMatches": true,
+      "modules": [
+        {
+          "entry": "ets/modules.abc",
+          "bytes": 2844184,
+          "sha256": "5c6ad40897db7dc00b041534579070ea8ad82f98e3a9e3b2de2f5cfe68c27a6e"
+        },
+        {
+          "entry": "libs/arm64-v8a/libc++_shared.so",
+          "bytes": 1262248,
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrsm0.so",
+          "bytes": 623448,
+          "sha256": "1943497401c6db15af1e7edca9a22db4c25b8263c627bad72885097343dcf686",
+          "buildId": "2e676a466a596de8700af83066883e088b87df3a"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrsm1.so",
+          "bytes": 1174288,
+          "sha256": "04b98996346e2706fd54e6d3da5e91fefd028d5180c408fb231473554f3c559f",
+          "buildId": "0cf0ffde1232b06e0ee044ef519cf01c11120dd9",
+          "embeddedGLSLSources": [
+            {
+              "fileOffset": 98938,
+              "bytes": 471,
+              "sha256": "3d40e11d57d122104b1836d99ca214ecee3696d725fe0e9e66a996b1d15fe9c7"
+            },
+            {
+              "fileOffset": 99453,
+              "bytes": 54857,
+              "sha256": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc"
+            },
+            {
+              "fileOffset": 162670,
+              "bytes": 85839,
+              "sha256": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1"
+            },
+            {
+              "fileOffset": 251378,
+              "bytes": 681,
+              "sha256": "d50ea2f0b2affe94968647225ae3043e585d39b5ac721337e82122deed19d9ce"
+            },
+            {
+              "fileOffset": 253530,
+              "bytes": 713,
+              "sha256": "555874a2b5c12b211433d8bf6bced48892c5472c687609893a599252090bda1e"
+            },
+            {
+              "fileOffset": 257289,
+              "bytes": 2636,
+              "sha256": "5761edd08c8c084b13e2fb74ddbfeed29ddf14f2db0c5808c64ec3d6e0b13445"
+            },
+            {
+              "fileOffset": 262314,
+              "bytes": 26429,
+              "sha256": "54946590ca762cc8d9bb2e153e3fbab839b74bdf70fd474ad7b94b621f580f96"
+            },
+            {
+              "fileOffset": 290089,
+              "bytes": 28365,
+              "sha256": "aa0c848e6821d757ecb0a94dc550fdc5e7c871d648fa28bf40f582890f86e924"
+            },
+            {
+              "fileOffset": 322862,
+              "bytes": 97575,
+              "sha256": "fb27edff537d99fd141d451ae3cef9d3b21df50a8a9802560e274603e3d9ff14"
+            },
+            {
+              "fileOffset": 421818,
+              "bytes": 108,
+              "sha256": "0dcacef16d47a9155810f81fcf9aa0d75848b93cee587dd9d187eeb2836919ed"
+            },
+            {
+              "fileOffset": 421927,
+              "bytes": 514,
+              "sha256": "13af641559528842a55b65d07aec2a98f8607061ec32e995851a83608a4ed612"
+            }
+          ]
+        },
+        {
+          "entry": "libs/arm64-v8a/libp013hello.so",
+          "bytes": 70544,
+          "sha256": "7fd12f7534b701497b78399cd6b917947b57a5705bb85b5ccbe5e43406c3609f",
+          "buildId": "e84ebb1f87427a0ae188667f57394eac6aa67725"
+        },
+        {
+          "entry": "libs/arm64-v8a/libp013renderer.so",
+          "bytes": 498120,
+          "sha256": "60f77f48db9e9fc6717b5a3989118d5653c2e5764e140d42e015f6b02228458a",
+          "buildId": "1658b9f5adb7dabb5951863d3e7b4531016675ba"
+        },
+        {
+          "entry": "module.json",
+          "bytes": 1408,
+          "sha256": "340cf83f165d31023b438266f1dd8bf92d2eb8262fd87d1e93fc9a2c722e3e96"
+        }
+      ],
+      "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+    },
+    "T590-a2": {
+      "receipt": {
+        "path": "test/reports/t257/T590-a2.json",
+        "bytes": 2280,
+        "sha256": "44ccd90741f725e45985f6dd7646b0a6fe5de4a83a832f93aac112d4da4fabe8"
+      },
+      "expectedSignedSHA": "5dcaeda54508a24e740ccd0d84063f571c1ee56eb7d45125468eec34598f0b72",
+      "actualSignedSHA": "5dcaeda54508a24e740ccd0d84063f571c1ee56eb7d45125468eec34598f0b72",
+      "signedHashMatches": true,
+      "modules": [
+        {
+          "entry": "ets/modules.abc",
+          "bytes": 2940832,
+          "sha256": "8abc19f2bff25b0834b7f6d93a638d29b5fb247791ffabf28a21e1429e11af3f"
+        },
+        {
+          "entry": "libs/arm64-v8a/libc++_shared.so",
+          "bytes": 1262248,
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrsm0.so",
+          "bytes": 688320,
+          "sha256": "9f722924966aa5e9c683988ac13dae41da135694ba22996314a09f0c52c86bd2",
+          "buildId": "889a86305d4a3c8bc2b045780e9000ce41f1a79c"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrsm1.so",
+          "bytes": 2849936,
+          "sha256": "f5d23d510c8a47a0bad76ab054ea7e25f25513d250a4411ebc1f21123d8f51ad",
+          "buildId": "c789cf34c0b0f16212341c39010b7780e15654e1",
+          "embeddedGLSLSources": [
+            {
+              "fileOffset": 412770,
+              "bytes": 471,
+              "sha256": "3d40e11d57d122104b1836d99ca214ecee3696d725fe0e9e66a996b1d15fe9c7"
+            },
+            {
+              "fileOffset": 413307,
+              "bytes": 54857,
+              "sha256": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc"
+            },
+            {
+              "fileOffset": 470126,
+              "bytes": 151,
+              "sha256": "86cbf1b6124112ff42e817ace151a5425206b7f149e7d3ebc4b8bf3a45f2e108"
+            },
+            {
+              "fileOffset": 475911,
+              "bytes": 930,
+              "sha256": "d123f70a02f57a40a147c8f1f649d02e825c2b009779339af1f125a1e453e225"
+            },
+            {
+              "fileOffset": 481811,
+              "bytes": 85839,
+              "sha256": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1"
+            },
+            {
+              "fileOffset": 570817,
+              "bytes": 1050,
+              "sha256": "373c01cb5e02cf4ebd0f4094500f46f278037437d02a851121f8428d853eacd3"
+            },
+            {
+              "fileOffset": 574699,
+              "bytes": 681,
+              "sha256": "d50ea2f0b2affe94968647225ae3043e585d39b5ac721337e82122deed19d9ce"
+            },
+            {
+              "fileOffset": 578121,
+              "bytes": 713,
+              "sha256": "555874a2b5c12b211433d8bf6bced48892c5472c687609893a599252090bda1e"
+            },
+            {
+              "fileOffset": 584256,
+              "bytes": 2636,
+              "sha256": "5761edd08c8c084b13e2fb74ddbfeed29ddf14f2db0c5808c64ec3d6e0b13445"
+            },
+            {
+              "fileOffset": 587932,
+              "bytes": 112580,
+              "sha256": "1f09c746668bc1dce71207de79c3799d49e89d6814b6cbb756ca92f15e4a11b8"
+            },
+            {
+              "fileOffset": 701760,
+              "bytes": 2678,
+              "sha256": "d194bee0d12e0f8eef3e21e24906ac6476df88730cf4b06fb41985ff33db1415"
+            },
+            {
+              "fileOffset": 707054,
+              "bytes": 26429,
+              "sha256": "54946590ca762cc8d9bb2e153e3fbab839b74bdf70fd474ad7b94b621f580f96"
+            },
+            {
+              "fileOffset": 735966,
+              "bytes": 28365,
+              "sha256": "aa0c848e6821d757ecb0a94dc550fdc5e7c871d648fa28bf40f582890f86e924"
+            },
+            {
+              "fileOffset": 766828,
+              "bytes": 189,
+              "sha256": "21dc7a3d1ec2bda8cc1df04ffda056b7a7aa019a20588e4b3ad6054e3b556932"
+            },
+            {
+              "fileOffset": 769078,
+              "bytes": 88326,
+              "sha256": "0d9bc00066baa3f2a2f2c88d2a9df3ee4c2bc7a966046635ceb40b39fd6de082"
+            },
+            {
+              "fileOffset": 861102,
+              "bytes": 97575,
+              "sha256": "fb27edff537d99fd141d451ae3cef9d3b21df50a8a9802560e274603e3d9ff14"
+            },
+            {
+              "fileOffset": 960028,
+              "bytes": 127767,
+              "sha256": "ddb992f71a3791c47ad7593be40163364c67ca4cf0c55cc28c881a66ad4a0720"
+            },
+            {
+              "fileOffset": 1088922,
+              "bytes": 108,
+              "sha256": "0dcacef16d47a9155810f81fcf9aa0d75848b93cee587dd9d187eeb2836919ed"
+            },
+            {
+              "fileOffset": 1089031,
+              "bytes": 514,
+              "sha256": "13af641559528842a55b65d07aec2a98f8607061ec32e995851a83608a4ed612"
+            }
+          ]
+        },
+        {
+          "entry": "libs/arm64-v8a/libp013hello.so",
+          "bytes": 70544,
+          "sha256": "86fc44dd6b7b3d0387dd8a1e066c03ce1d68bfe158d29314ddaaae361742f3d0",
+          "buildId": "8a4056e83557b78aa330d3a0b2330b7cdeb7192e"
+        },
+        {
+          "entry": "libs/arm64-v8a/libp013renderer.so",
+          "bytes": 511256,
+          "sha256": "455f8e3960060693a2e664bd8f8667983494b59ae93be299847631eb02a77090",
+          "buildId": "a07cdf5527f893e89c8bf95558b7aba639aeb49d"
+        },
+        {
+          "entry": "module.json",
+          "bytes": 1408,
+          "sha256": "340cf83f165d31023b438266f1dd8bf92d2eb8262fd87d1e93fc9a2c722e3e96"
+        }
+      ],
+      "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+    }
+  },
+  "c8434b96UnsignedSha": "49c5f6b6e60ccd9127ec1f57cc8178c83921104ed81b079f9f4bae0a0231f5d8",
+  "sourceFiles": [
+    {
+      "path": "test/reports/t663/formal-contract.json",
+      "bytes": 4969,
+      "sha256": "da8f6ea65810642c29340ef755fcb22432d1d16938030c04b8a17c90aae667c1"
+    },
+    {
+      "path": "test/reports/t663/compile-receipt.json",
+      "bytes": 2396,
+      "sha256": "366f41365286b42b599f068464f6f0291d50cdda9dcaed93463be35e7b5349f2"
+    },
+    {
+      "path": "test/reports/t663/generated-sources.json",
+      "bytes": 98918,
+      "sha256": "ad3baefbeae1fb6a14844790598b8b426d54ef0f5b515ffa041b08557b244b5d"
+    },
+    {
+      "path": "test/t468/generate.cjs",
+      "bytes": 7646,
+      "sha256": "9f5f8e7883f2ea3302b3a871d383827b3e37b6b91a974a742988789cbe736756"
+    },
+    {
+      "path": "docs/test-report-T590-v3.md",
+      "bytes": 2002,
+      "sha256": "3dc9a8b2f74f6491cfd0b7a82af3f4416be4ec11f66e4304c1725b71435d1929"
+    },
+    {
+      "path": "docs/test-report-T591-v3.md",
+      "bytes": 2809,
+      "sha256": "2272917c8bef2401f90e66b5dece4faa657301f106f595c9f93194f50edc7720"
+    },
+    {
+      "path": "docs/architecture-T678-contract-v1.json",
+      "bytes": 8264,
+      "sha256": "95f9c6f795bb5f484dab7d4650998eaeba97503cdd56b32137a5ef4f5a73d0af"
+    },
+    {
+      "path": "docs/test-report-T491-scene-cache-device-v1.md",
+      "bytes": 3715,
+      "sha256": "e93e5fa0274876a74f19732b33999833260aa66be8e081028dc0a69fcbc6559b"
+    },
+    {
+      "path": "docs/architecture-T462-program-binary-persistence-v1.md",
+      "bytes": 10849,
+      "sha256": "53f58287a70e3b18c8bd1053cab4c01d333e70d4b72c949efdfa85ed40d2688f"
+    },
+    {
+      "path": "test/reports/t491/t590c/t590-boot.json",
+      "bytes": 11665,
+      "sha256": "62d09f6030bcb6a748b73d71e2ce3a97eb84d198030775b7b668dfce1366a4e7"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/ets/pages/T590Cursor.ets",
+      "bytes": 2534,
+      "sha256": "4b9cd3fa060ced7c1f898e1e391c70720ab250c6197a9017e587186a746c907a"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/ets/pages/GpuSandWaterExperience.ets",
+      "bytes": 12607,
+      "sha256": "875f0e1763e3063a87fa37df7ba8d73c761c81e2e6e7a6e3a3df4506aa14714f"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/ets/entryability/EntryAbility.ets",
+      "bytes": 26476,
+      "sha256": "fc7d5db90fe4b8e7f477d4acb282b911c37c150c02af2f51460759f90896410b"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/resources/base/profile/main_pages.json",
+      "bytes": 317,
+      "sha256": "d3213776f67f8d8f659c9a65153693760b75aff80f42a8002ea23e8f63dec089"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h",
+      "bytes": 18307,
+      "sha256": "404b26c03e0c7a4b5a8eda864d57175d85259ce86cce15d080436b67e6beb262"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/cpp/gpu_resident/m2/create_diagnostics_abi.cpp",
+      "bytes": 430,
+      "sha256": "bfd82a4d2f98c50523219a39a639f1a7e460d39bb9ba67051d276dfc32d13f14"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/cpp/gpu_resident/m2route/full_transport.cpp",
+      "bytes": 31902,
+      "sha256": "3329d7df05bbf7d644a5b62d90de33f2e90b0b0dd847a3ac79a50dab257357b1"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/cpp/gpu_resident/m2route/full_kernel.cpp",
+      "bytes": 140976,
+      "sha256": "e6ebb13f47b28cee21b08c690a24894efdae28e04037895dc5263d304016db77"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/cpp/gpu_resident/m2route/source_transport.cpp",
+      "bytes": 16455,
+      "sha256": "7af89598cc4c75c41245973ad8898820ca36838826459120d42829334f85548b"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/cpp/gpu_resident/m2route/quantum_candidate.cpp",
+      "bytes": 14439,
+      "sha256": "502f8ff275be7f2c699a2a755b5e08ab33d8d99906b2b6c5e0efc968ae207b88"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/cpp/gpu_resident/m2route/quantum_kernel.cpp",
+      "bytes": 206,
+      "sha256": "d92363654dcda4f4f044087c6cf9191140de8e6cc198dc531d05a94e3d362a58"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/cpp/gpu_resident/m2route/create_shader_identity.h",
+      "bytes": 254,
+      "sha256": "6b335b79f9926369440b8f98cc6493b46d1211361ed563c7f5706e9e6cccc871"
+    },
+    {
+      "path": ".codex/local-test/t663-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 68783,
+      "sha256": "2e603650cfd1c333dd59b005db95686d826dec99e8d3181fa74a7f16cac38c21"
+    }
+  ],
+  "uiArtifacts": [
+    {
+      "path": "test/reports/t491/t590c/cur_l1.json",
+      "bytes": 49128,
+      "sha256": "e7ce6a0fb87df4b0232cd5cded7e123fb0991d63edb00711830a78a91cd04b1d",
+      "evidenceText": [
+        "STALE · GRS_M1_PROGRESS_CLOCK_V1 / run 0:0 / epoch 2 / session 1 / sample 3249 · STATE_LOST"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t590c/cur_l2.json",
+      "bytes": 37708,
+      "sha256": "b4a0f53279526601b81dc5c669ab230ab66c549776ae7418e8f146109a515b02",
+      "evidenceText": [
+        "开启独立 GPU M2 V3 空场"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t590c/cur_l3.json",
+      "bytes": 50342,
+      "sha256": "385e8a58986cd2f39d809a29a20563942f0aebbce2e64e392722995630467507",
+      "evidenceText": [
+        "GPU M2 V3 · V1",
+        "STATE_LOST STATE_LOST / run 0:0"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t590c/cur_l4.json",
+      "bytes": 50342,
+      "sha256": "bbb7838e3a05058387267ba01f56925db584353dd3e9ce2354dfa9e1eb8d3446",
+      "evidenceText": [
+        "GPU M2 V3 · V1",
+        "STATE_LOST STATE_LOST / run 0:0"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t590c/cur_l5.json",
+      "bytes": 50342,
+      "sha256": "d6cc6d1229dda690742b1f4feeabcf634103a054dd0dd484dfa4a55764e1c817",
+      "evidenceText": [
+        "GPU M2 V3 · V1",
+        "STATE_LOST STATE_LOST / run 0:0"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t590c/cur_l6.json",
+      "bytes": 50342,
+      "sha256": "05d5b1c9ac251f77371a8b395c191bcd3c1cd362f167b6131f19785079c2045c",
+      "evidenceText": [
+        "GPU M2 V3 · V1",
+        "STATE_LOST STATE_LOST / run 0:0"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t590c/cur_l7.json",
+      "bytes": 50342,
+      "sha256": "76235d3ceb88933020192281caab9a5965c43a1929ee821e62a674d4b5e877cc",
+      "evidenceText": [
+        "GPU M2 V3 · V1",
+        "STATE_LOST STATE_LOST / run 0:0"
+      ]
+    }
+  ],
+  "loadedModule": "UNVERIFIED_MANIFEST_DECLARATION_MISSING",
+  "verdict": "T590_OPEN_AT_SAMPLE_FINAL_QUANTUM_LINK_PROGRAM; T591_SOURCE_COMPOSITE_LINK_ONLY"
+}
