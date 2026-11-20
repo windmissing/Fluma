@@ -2,6 +2,9 @@
 #include <chrono>
 #include <string>
 #include "wire.h"
+#ifdef GRS_G9_BOOT_SOURCE
+#include "source_trace.h"
+#endif
 namespace grs::g9dm {
 namespace {uint64_t Now(){return uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());}}
 bool Controller::Check(void* user,const Permit& p,uint64_t now){auto& self=*static_cast<Controller*>(user);std::lock_guard<std::recursive_mutex> lock(self.mutex_);return self.RecheckLocked(p,std::max(now,Now()));}
@@ -9,6 +12,10 @@ bool Controller::RecheckLocked(const Permit& p,uint64_t now)const{
  return configured_&&rootLive_&&p==active_&&p.identity==identity_&&p.baseCommit==commit_&&now<=p.deadline&&clock_.Fresh(now)&&clock_.ready&&clock_.baseline&&clock_.mode==PlanningMode::RUNNABLE&&run_.active&&run_.plan==p.plan&&run_.nonce==p.nonce&&clock_.jobLive&&run_.jobLive;
 }
 ControlResult Controller::RevokeLocked(ControlResult why){
+#ifdef GRS_G9_BOOT_SOURCE
+ if (auto *trace = CurrentSourceTrace(); trace && !trace->fault && !trace->committed)
+   trace->fault = uint32_t(why);
+#endif
  const auto result=clock_.RevokeLocked({why});if(coldEpoch_!=UINT64_MAX)++coldEpoch_;rootLive_=false;run_.active=run_.sourcePhase=run_.jobLive=false;run_.plan=run_.nonce=0;run_.quantumOrdinal=0;stale_=lastGood_;return result;
 }
 Result Controller::ConfigureResearch(const Config& config,const ControlIdentity& id,const SeedFileIdentity& seed){
@@ -21,6 +28,9 @@ Result Controller::ConfigureResearch(const Config& config,const ControlIdentity&
 }
 Result Controller::OfferInput128(Input128 raw,uint64_t now,uint64_t sourceIntent){
  std::lock_guard<std::recursive_mutex> lock(mutex_);if(!configured_||!clock_.open||!clock_.ready)return Result::STALE;
+#ifdef GRS_G9_BOOT_SOURCE
+ if (raw[40]!=1||!sourceIntent||raw[24]!=0||nonce_)return Result::INVALID;
+#endif
  const auto accepted=inputGate_.Offer(raw,now);if(accepted!=Result::OK)return accepted;
  if(raw[40]==0)return Result::OK;
  // A consumed identity is never a new FIFO/meaningful SOURCE intent. Native
@@ -45,6 +55,16 @@ Result Controller::BeginRoot(uint64_t now,uint64_t frame,uint64_t geometry){
  Input128 frozen;Permit permit;
  {std::lock_guard<std::recursive_mutex> lock(mutex_);now=std::max(now,Now());if(!configured_||rootLive_||transport_.Busy()||lease_||sceneFence_||coldBuilding_||!run_.workspaceRetired)return Result::WOULD_BLOCK;
   bool source=size_&&queue_[head_].input[40]==1;
+#ifdef GRS_G9_BOOT_SOURCE
+  // Check before ClaimLocked can move pending quota into a grant.
+  if (auto *trace = CurrentSourceTrace()) {
+    trace->pendingAtClaim = clock_.pending;
+    trace->queueBefore = size_;
+  }
+  if(nonce_||run_.active||clock_.pending||clock_.target!=0||!source||
+     !queue_[head_].intent||!clock_.baseline||!clock_.Fresh(now))
+    return Result::WOULD_BLOCK;
+#endif
   if(!run_.active){PlanGrantV3 grant;if(!clock_.ClaimLocked(now,source,run_,grant))return Result::WOULD_BLOCK;}
   // A source enqueued after the plan boundary waits for its own next plan.
   source=run_.sourcePhase;
@@ -65,17 +85,52 @@ Result Controller::PumpBounded(uint64_t now){
  if(!RecheckLocked(active_,now)){RevokeLocked(now>active_.deadline?ControlResult::DEADLINE:ControlResult::STALE_REJECTED);return now>active_.deadline?Result::DEADLINE:Result::STALE;}
  if(tail[6]==4){auto record=blocked;auto nextClock=clock_;auto nextRun=run_;PlanningControl nextPlanning(nextClock,nextRun);if(!record||nextPlanning.BlockPlanningControlLocked(*record,now)!=ControlResult::OK){RevokeLocked(ControlResult::INVALID_ARGUMENT);return Result::INVALID;}if(!transport_.RetireRejected(active_)){RevokeLocked(ControlResult::STALE_REJECTED);return Result::GL_FAILED;}clock_=nextClock;run_=nextRun;lastTail_=tail;rootLive_=false;run_.workspaceRetired=true;stale_=lastGood_;return Result::OK;}
  auto record=accepted;if(!record){RevokeLocked(ControlResult::INVALID_ARGUMENT);return Result::INVALID;}
+#ifdef GRS_G9_BOOT_SOURCE
+ if (auto *trace = CurrentSourceTrace()) {
+   trace->typed = true;
+   trace->expected = record->ExpectedHash();
+   trace->activeRemaining = clock_.activeRemaining;
+ }
+ if(active_.kind!=1||clock_.activeRemaining||!size_||!queue_[head_].intent||
+    clock_.intents[head_].sequence!=queue_[head_].intent||
+    clock_.intents[head_].generation!=queue_[head_].key.sourceControlGeneration||
+    !transport_.MatchesSourceCommand(queue_[head_].input)){
+   RevokeLocked(ControlResult::STALE_REJECTED);return Result::STALE;
+ }
+#endif
  // Preflight all planning changes on copies; commit rechecks the same live flight under this recursive owner lock.
  auto nextClock=clock_;auto nextRun=run_;PlanningControl nextPlanning(nextClock,nextRun);
  if(active_.kind==2){if(nextPlanning.AcceptQuantumLocked(*record,now)!=ControlResult::OK){RevokeLocked(ControlResult::STALE_REJECTED);return Result::STALE;}}
  else{nextClock.jobLive=nextRun.jobLive=false;nextClock.activeRootKind=0;nextRun.sourcePhase=false;}
  if(generation_==UINT64_MAX){RevokeLocked(ControlResult::QUOTA_OVERFLOW);return Result::INVALID;}
- if(active_.kind==1&&nextClock.activeRemaining==0){const auto retired=nextClock.RetireSourcePlanLocked(active_.plan,nextRun);if(retired!=ControlResult::OK){RevokeLocked(retired);return Result::INVALID;}}
+ if(active_.kind==1&&nextClock.activeRemaining==0){
+  // The accepted mapped flight has completed. Retire the proposed run only;
+  // publication still requires CommitAccepted's live owner/permit check.
+  nextRun.workspaceRetired=true;
+  const auto retired=nextClock.RetireSourcePlanLocked(active_.plan,nextRun);
+  if(retired!=ControlResult::OK){RevokeLocked(retired);return Result::INVALID;}
+ }
+#ifdef GRS_G9_BOOT_SOURCE
+ if (auto *trace = CurrentSourceTrace()) {
+   trace->preflight = true;
+   trace->planRetired = !nextRun.active && !nextClock.grant.id && nextRun.workspaceRetired;
+ }
+#endif
  if(!transport_.CommitAccepted(*record)){RevokeLocked(ControlResult::STALE_REJECTED);return Result::STALE;}
  clock_=nextClock;run_=nextRun;
  if(size_&&((active_.kind==1&&queue_[head_].input[40]==1)||(active_.kind==2&&queue_[head_].input[40]==2))){if(queue_[head_].input[40]==1){consumedSource_=queue_[head_].input;hasConsumedSource_=true;}else{consumedImpulse_=queue_[head_].input;hasConsumedImpulse_=true;}clock_.intents[head_]={};queue_[head_]={};head_=(head_+1)%queue_.size();--size_;}
  commit_=Pair(tail.data(),30);quanta_=Pair(tail.data(),54);if(generation_==UINT64_MAX){RevokeLocked(ControlResult::QUOTA_OVERFLOW);return Result::INVALID;}if(tail[6]!=2)++generation_;lastTail_=tail;lastGood_=true;stale_=tail[6]==2;rootLive_=false;run_.workspaceRetired=true;
  if(run_.active&&active_.kind==2)run_.quantumOrdinal=active_.ordinal;
+#ifdef GRS_G9_BOOT_SOURCE
+ if (auto *trace = CurrentSourceTrace()) {
+   trace->committed = true;
+   trace->commit = commit_;
+   trace->quanta = quanta_;
+   trace->generation = generation_;
+   trace->queueAfter = size_;
+   trace->pendingAfter = clock_.pending;
+ }
+#endif
 
  return Result::OK;
 }
@@ -88,4 +143,10 @@ bool Controller::ReleaseScene(uint64_t generation,GLsync fence){std::lock_guard<
 bool Controller::PollSceneFence(){GLsync fence;{std::lock_guard<std::recursive_mutex> lock(mutex_);fence=sceneFence_;}if(!fence)return true;const auto result=glClientWaitSync(fence,0,0);if(result==GL_WAIT_FAILED)return false;if(result==GL_TIMEOUT_EXPIRED)return true;glDeleteSync(fence);std::lock_guard<std::recursive_mutex> lock(mutex_);if(sceneFence_==fence)sceneFence_=nullptr;return true;}
 bool Controller::CanPresent(uint64_t generation,uint64_t now)const{std::lock_guard<std::recursive_mutex> lock(mutex_);return configured_&&lastGood_&&!stale_&&generation==generation_&&clock_.ready&&clock_.open&&clock_.Fresh(now)&&clock_.mode==PlanningMode::RUNNABLE&&now<=active_.deadline;}
 Completion256 Controller::LastCompletion()const{std::lock_guard<std::recursive_mutex> lock(mutex_);return lastTail_;}
+#ifdef GRS_G9_BOOT_SOURCE
+GLenum Controller::PrepareSourceCache(){
+ std::lock_guard<std::recursive_mutex> lock(mutex_);
+ return configured_&&!rootLive_&&lastGood_ ? transport_.PrepareSourceCache() : GL_INVALID_OPERATION;
+}
+#endif
 }

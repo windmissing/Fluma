@@ -76,6 +76,10 @@ public:
   uint64_t CommitObservedNs() const { return commitObservedNs_; }
   uint64_t RootBegin() const { return rootBeginNs_; }
   Digest SeedHash() const { return config_.seedSha; }
+#ifdef GRS_G9_BOOT_SOURCE
+  bool MatchesSourceCommand(const Input128 &) const;
+  GLenum PrepareSourceCache();
+#endif
   bool RetireRejected(const Permit &);
   void Release(bool contextCurrent);
   bool Busy() const { return busy_; }
@@ -101,6 +105,8 @@ const char *PipelineSource();
 const char *PipelineSourceHash();
 #ifdef GRS_G9_BOOT_ONLY
 const char *BootRoleSetSHA();
+#endif
+#if defined(GRS_G9_BOOT_ONLY) || defined(GRS_G9_BOOT_SOURCE)
 bool ConfigureBootCache(const char *filesDir);
 #endif
 } // namespace grs::g9dm

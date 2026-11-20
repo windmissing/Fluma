@@ -1,12 +1,19 @@
 #include "transport.h"
 #include "candidate_v2.h"
-#ifdef GRS_G9_BOOT_ONLY
+#ifdef GRS_G9_BOOT_SOURCE
+#include "source_shader.h"
+#include "source_trace.h"
+#elif defined(GRS_G9_BOOT_ONLY)
 #include "boot_source.h"
 #else
 #include "g9dm_kernel.h"
 #endif
 namespace grs::g9dm {
-#ifdef GRS_G9_BOOT_ONLY
+#ifdef GRS_G9_BOOT_SOURCE
+const char* PipelineSource(){return kSourcePipeline;}
+const char* PipelineSourceHash(){return kSourcePipelineSHA;}
+const char* SourceRoleSetSHA(){return kSourceRoleSetSHA;}
+#elif defined(GRS_G9_BOOT_ONLY)
 const char* PipelineSource(){return kBootPipeline;}
 const char* PipelineSourceHash(){return kBootPipelineSHA;}
 const char* BootRoleSetSHA(){return kBootRoleSetSHA;}

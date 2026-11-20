@@ -131,3 +131,42 @@ def write_boot(out, source, schema, family):
         'inline constexpr const char kBootPipelineSHA[]="'+role["sourceSHA"]+'";\n'
         'inline constexpr const char kBootRoleSetSHA[]="'+identity+'";\n'
     ).encode("utf8"))
+
+
+def write_dm_source(out, parent):
+    root = Path(__file__).resolve().parents[2]
+    raw = (root / "docs/architecture-T736-source-contract-v1.json").read_bytes()
+    contract = json.loads(raw)
+    expected = contract["families"]["DM"]["sourceRole"]
+    boot = json.loads((out / "boot_manifest.json").read_bytes())
+    digest = lambda data: hashlib.sha256(data).hexdigest()
+    _, emit = split_inputs(parent.decode("utf8"))
+    shader, _ = emit(range(12))
+    if len(shader) != expected["bytes"] or len(shader) > LIMIT or digest(shader) != expected["sha256"]:
+        raise ValueError("DM SOURCE differs from approved T736 closure or exceeds cap")
+    if expected["passSHA"] != boot["schedule"]["Source"]["passesSHA"]:
+        raise ValueError("DM SOURCE pass table differs from T736")
+    reflection = contract["reflection"]
+    manifest = {
+        "schema": "G9_BOOT_SOURCE_V1", "family": "DM", "backend": "GLES",
+        "variant": "BOOT_SOURCE", "supportsRoots": ["SOURCE"],
+        "parentShaderSHA": boot["parentShaderSHA"], "t736ContractSHA": digest(raw),
+        "boot": {"sourceSHA": boot["sourceSHA"], "sourceBytes": boot["sourceBytes"],
+                 "opcodes": boot["opcodes"], "roleSetSHA": boot["roleSetSHA"]},
+        "source": {**expected, "opcodes": list(range(12))},
+        "reflection": reflection, "passTable": contract["passTable"],
+    }
+    manifest["roleSetSHA"] = digest(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode())
+    uniforms = ",\n".join('{'+json.dumps(name)+','+desc["glType"]+'u}'
+                         for name, desc in reflection["activeUniforms"].items())
+    if len(reflection["activeUniforms"]) != 40 or any(v["size"] != 1 for v in reflection["activeUniforms"].values()):
+        raise ValueError("Invalid SOURCE reflection contract")
+    (out / "source.comp").write_bytes(shader)
+    (out / "source_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf8")
+    (out / "source_shader.h").write_bytes((
+        '#pragma once\n#include <cstdint>\n'
+        'inline constexpr char kSourcePipeline[]=R"G9SRC('+shader.decode() + ')G9SRC";\n'
+        'inline constexpr char kSourcePipelineSHA[]="'+expected["sha256"]+'";\n'
+        'inline constexpr char kSourceRoleSetSHA[]="'+manifest["roleSetSHA"]+'";\n'
+        'inline constexpr struct { const char *name; uint32_t type; } kSourceUniforms[]{\n'
+        + uniforms + '\n};\n').encode())

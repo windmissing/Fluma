@@ -40,6 +40,10 @@ public:
  const StageCapabilityV2& Caps()const{return caps_;}
  bool CanPresent(uint64_t,uint64_t now)const;
  Completion256 LastCompletion()const;
+#ifdef GRS_G9_BOOT_SOURCE
+ bool ExportSourceCold(uint64_t trace, uint64_t now, bool (*write)(void*, const uint32_t*, size_t) noexcept, void*);
+ GLenum PrepareSourceCache();
+#endif
  std::string ColdCapabilities()const;
  std::string ColdBegin(uint64_t replace,uint64_t now);std::string ColdState(uint64_t,uint64_t now);std::string ColdPage(uint64_t,uint32_t,uint64_t now);std::string ColdEnd(uint64_t,uint64_t now);void BuildCold(uint64_t now);
 };

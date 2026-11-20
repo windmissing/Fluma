@@ -1,6 +1,9 @@
 #include "controller.h"
 #include <chrono>
 #include <new>
+#ifdef GRS_G9_BOOT_SOURCE
+#include "source_trace.h"
+#endif
 #ifdef _WIN32
 #include <process.h>
 #else
@@ -58,6 +61,31 @@ void Controller::BuildCold(uint64_t now){
  uint32_t* storage=nullptr;uint64_t request=0,trace=0,created=0;
  {std::lock_guard<std::recursive_mutex> lock(mutex_);coldTrace_.Adopt(slot,std::move(allocated));auto& s=coldTrace_.slots[slot];storage=s.block.get();words=s.capacity;request=s.request;trace=s.id;created=s.created;}
  const bool copied=storage&&transport_.CaptureSpan(storage,words,full,quota.data(),request,trace,created);
+#ifdef GRS_G9_BOOT_SOURCE
+ if (auto *observed = CurrentSourceTrace()) {
+   observed->coldGl = transport_.ColdGl();
+   observed->coldEgl = transport_.ColdEgl();
+ }
+#endif
  {std::lock_guard<std::recursive_mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),Now(),copied?"OK":"G9_CAPTURE_FAILED",coldTrace_.slots[slot].requestWords-256,0,transport_.ColdGl(),transport_.ColdEgl(),copied?"":"G9_OWNER_CAPTURE");coldBuilding_=false;}
 }
+#ifdef GRS_G9_BOOT_SOURCE
+bool Controller::ExportSourceCold(uint64_t trace, uint64_t now,
+                                 bool (*write)(void *, const uint32_t *, size_t) noexcept,
+                                 void *context) {
+ if (!write)
+   return false;
+ coldtrace::TraceManager::Read read;
+ {
+   std::lock_guard<std::recursive_mutex> lock(mutex_);
+   if (std::strcmp(coldTrace_.Acquire(trace, 0, now, ColdScopeLocked(), read), "OK") != 0)
+     return false;
+ }
+ const auto bytes = Pair(read.block, 8);
+ const bool saved = bytes % 4 == 0 && bytes / 4 <= read.capacity &&
+                    write(context, read.block, size_t(bytes / 4));
+ std::lock_guard<std::recursive_mutex> lock(mutex_);
+ return std::strcmp(coldTrace_.Release(read, Now(), ColdScopeLocked()), "TRACE_READY") == 0 && saved;
+}
+#endif
 }

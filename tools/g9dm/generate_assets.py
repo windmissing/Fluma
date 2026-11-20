@@ -46,7 +46,7 @@ def capture_scope(source):
   'afterSHA256LF':sha(after.encode()),'firstLine':source[:begin].count('\n')+1,
   'bindings':['clearSlot','scanSlot','selectedSlot']}
 
-def generate(out,canonical=False,boot_only=False):
+def generate(out,canonical=False,boot_only=False,boot_source=False):
  out.mkdir(parents=True,exist_ok=True);frozen=MOD/'frozen_t647';receipt=json.loads((frozen/'receipt.json').read_text(encoding='utf8'));deps={}
  for name,expected in receipt['sha256'].items():
   raw=(frozen/name).read_bytes()
@@ -107,9 +107,12 @@ def generate(out,canonical=False,boot_only=False):
  (out/'dm_contract_generated.h').write_text(constants,encoding='utf8')
  # Keep legacy cold Scope's two exact64-character source components safe.
  schema=schema.replace('T648_T647_DM2_IMPLEMENTATION_1',identity);(out/'schema_generated.h').write_text(schema,encoding='utf8')
- if boot_only:
+ if boot_only or boot_source:
   from g9_boot import write_boot
   write_boot(out,s.encode('utf8'),schema,'DM')
+ if boot_source:
+  from g9_boot import write_dm_source
+  write_dm_source(out,s.encode('utf8'))
  assignments=json.loads((ROOT/'docs/architecture-T552-g9-seed-manifest-v2.json').read_text(encoding='utf8'))['seed']['canonicalAssignments'];seed='#pragma once\n#include "dm_contract_generated.h"\n#include <algorithm>\nnamespace grs::g9dm { inline bool FillDmTemplate(uint32_t* w,size_t n,uint32_t k){if((k!=192&&k!=512)||n!=(542720+256*k)/4)return false;std::fill(w,w+n,0u);'
  for at,value in assignments['header'].items():seed+=f'w[{at}]={value}u;'
  seed+='w[0]=844317767u;w[1]=2u;w[2]=843924551u;w[24]=k;const auto& config=k==192?kConfig192:kConfig512;for(size_t i=0;i<8;++i)w[106+i]=config[48+i];for(size_t c=0;c<128;++c){'
@@ -144,4 +147,4 @@ def generate(out,canonical=False,boot_only=False):
  if canonical:
   for name in ['identity.json','acceptance_dictionary.json']:(Path(__file__).parent/name).write_bytes((out/name).read_bytes())
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--out',type=Path,default=MOD);p.add_argument('--canonical',action='store_true');p.add_argument('--boot-only',action='store_true');a=p.parse_args();generate(a.out,a.canonical,a.boot_only)
+ p=argparse.ArgumentParser();p.add_argument('--out',type=Path,default=MOD);p.add_argument('--canonical',action='store_true');variants=p.add_mutually_exclusive_group();variants.add_argument('--boot-only',action='store_true');variants.add_argument('--boot-source',action='store_true');a=p.parse_args();generate(a.out,a.canonical,a.boot_only,a.boot_source)

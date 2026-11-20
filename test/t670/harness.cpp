@@ -39,8 +39,11 @@ struct EGLScope {
  bool Create(){display=eglGetDisplay(EGL_DEFAULT_DISPLAY);if(display==EGL_NO_DISPLAY||!eglInitialize(display,nullptr,nullptr)||!eglBindAPI(EGL_OPENGL_ES_API))return false;const EGLint attr[]={EGL_SURFACE_TYPE,EGL_PBUFFER_BIT,EGL_RENDERABLE_TYPE,EGL_OPENGL_ES3_BIT,EGL_RED_SIZE,8,EGL_GREEN_SIZE,8,EGL_BLUE_SIZE,8,EGL_NONE};EGLConfig config;EGLint n=0;if(!eglChooseConfig(display,attr,&config,1,&n)||n!=1)return false;const EGLint ca[]={EGL_CONTEXT_CLIENT_VERSION,3,EGL_NONE},sa[]={EGL_WIDTH,1,EGL_HEIGHT,1,EGL_NONE};context=eglCreateContext(display,config,EGL_NO_CONTEXT,ca);surface=eglCreatePbufferSurface(display,config,sa);return context!=EGL_NO_CONTEXT&&surface!=EGL_NO_SURFACE&&eglMakeCurrent(display,surface,surface,context);}
  ~EGLScope(){if(display!=EGL_NO_DISPLAY){eglMakeCurrent(display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);if(surface!=EGL_NO_SURFACE)eglDestroySurface(display,surface);if(context!=EGL_NO_CONTEXT)eglDestroyContext(display,context);eglTerminate(display);}}
 };
+#if defined(T670_DM) && defined(GRS_G9_BOOT_SOURCE)
+#include "dm_source_run.h"
+#endif
 int main(int argc,char** argv){
-#if defined(T670_DM) && defined(GRS_G9_BOOT_ONLY)
+#if defined(T670_DM) && (defined(GRS_G9_BOOT_ONLY) || defined(GRS_G9_BOOT_SOURCE))
  if(argc!=3&&argc!=4){std::cerr<<"usage: g9-differential INPUT_DIRECTORY NEW_OUTPUT_DIRECTORY [CACHE_BASE_DIRECTORY]\n";return 2;}
 #else
  if(argc!=3){std::cerr<<"usage: g9-differential INPUT_DIRECTORY NEW_OUTPUT_DIRECTORY\n";return 2;}
@@ -57,7 +60,9 @@ int main(int argc,char** argv){
   SeedFileIdentity seed;seed.state=read(input/"seed.u32",profile->stateBytes);if(seed.state.size()!=profile->stateBytes/4)throw std::runtime_error("SEED_EXACT_SIZE_REQUIRED");seed.sha=HashWords(seed.state.data(),seed.state.size());
   EGLScope egl;if(!egl.Create())throw std::runtime_error("REAL_EGL_CONTEXT_UNAVAILABLE_NO_FALLBACK");
   std::ofstream receipt(output/"execution.jsonl");receipt<<"{\"revision\":\"T549_GPU_EXECUTION_V1\",\"evidenceOrigin\":\"ACTUAL_GL_EXECUTION\",\"physicsVerdict\":\"TESTER_OWNED\",\"renderer\":\""<<(const char*)glGetString(GL_RENDERER)<<"\",\"k\":"<<config.k<<",\"residentPayloadBytes\":"<<resident(*profile)<<",\"fullArenaBytes\":"<<(config.fullTrialTrace?6*profile->arenaBytes:0)<<"}\n";
-#if defined(T670_DM) && defined(GRS_G9_BOOT_ONLY)
+#if defined(T670_DM) && defined(GRS_G9_BOOT_SOURCE)
+  return dmsource::Run(receipt, output, config, seed, argc==4 ? argv[3] : nullptr);
+#elif defined(T670_DM) && defined(GRS_G9_BOOT_ONLY)
   dmboot::Receipt bootReceipt(receipt, output);
   bootReceipt.Identity(identity.run, identity.owner, identity.context);
   receipt<<"{\"variant\":\"BOOT_ONLY\",\"sourceSHA\":\""<<PipelineSourceHash()

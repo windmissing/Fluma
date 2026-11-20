@@ -1,0 +1,182 @@
+{
+  "schema": "T748_DM_BOOT_SOURCE_COMPILE_V1",
+  "deviceUsed": false,
+  "signed": false,
+  "runtime": "NOT_RUN",
+  "t738Prerequisite": {
+    "identity": {
+      "schema": "DM_BOOT_ATTEMPT_V1",
+      "stage": "ATTEMPT_IDENTITY",
+      "ticket": "1",
+      "pid": 45665,
+      "processStartTick": "5515434",
+      "driverMappedBuildId": "a2f4a69e507275d5564fd8a6546c6973fb262085",
+      "driverMappedPath": "/data/local/tmp/t712/g9_dm_differential",
+      "run": "7",
+      "owner": "1",
+      "context": "11"
+    },
+    "fenceWaitRaw": 37146,
+    "dsoBuildId": "9b6cc8027c854800cca2bcb7577df91720373bf5",
+    "scope": "7",
+    "execution": {
+      "path": "test/reports/t491/t738/v5/dm20-v5-final.jsonl",
+      "bytes": 9837,
+      "sha256": "73943ab3203be6c72307334b26377f409d0a51679378b05f2bc138ca3a95d05d"
+    },
+    "workTail": {
+      "path": "test/reports/t491/t738/v5/boot-work-tail.u32",
+      "bytes": 8,
+      "sha256": "caefc5423d2e981ab1684352d43ba11b3c2d4239abad4220dc03034facd114ef"
+    }
+  },
+  "driver": {
+    "path": ".codex/local-test/t748-source/handoff/g9_dm_differential",
+    "bytes": 962704,
+    "sha256": "492e17c3177a6fc6ca4995a8e093428dcde119b0e07f40040ef4ddc9d9055f09",
+    "buildId": "0a496a947e090be7d462e3951ffe25d71ac8faf1",
+    "needed": [
+      "libgrs_dm_t647.so",
+      "libEGL.so",
+      "libGLESv3.so",
+      "libhilog_ndk.z.so",
+      "libc++_shared.so",
+      "libc.so"
+    ]
+  },
+  "linkedDso": {
+    "path": ".codex/local-test/t748-source/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_dm_t647.so",
+    "bytes": 5436792,
+    "sha256": "e0fd1ec2bfa29bce9312117cb3248ea47e214136bb95569b448d277bb6b0e582",
+    "buildId": "63b69fe3f7e825b81ab730c67fd02b08c1d42172",
+    "needed": [
+      "libEGL.so",
+      "libGLESv3.so",
+      "libhilog_ndk.z.so",
+      "libc++_shared.so",
+      "libc.so"
+    ]
+  },
+  "pairedDsoFromHap": {
+    "path": ".codex/local-test/t748-source/handoff/libgrs_dm_t647.so",
+    "bytes": 1353304,
+    "sha256": "fb8d734f12fc03e6539fe1477ead8aec90f2bdb23b4a2c07f44242aca8eab0e6",
+    "buildId": "63b69fe3f7e825b81ab730c67fd02b08c1d42172",
+    "needed": [
+      "libEGL.so",
+      "libGLESv3.so",
+      "libhilog_ndk.z.so",
+      "libc++_shared.so",
+      "libc.so"
+    ]
+  },
+  "supportLibrary": {
+    "path": ".codex/local-test/t748-source/handoff/libc++_shared.so",
+    "bytes": 1262248,
+    "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274"
+  },
+  "unsignedHap": {
+    "path": ".codex/local-test/t748-source/entry/build/default/outputs/default/entry-default-unsigned.hap",
+    "bytes": 7657074,
+    "sha256": "bcf532c72de92410de834fc18a0faa85289f0c066e5289a1c60e5f32a7a1a6a4"
+  },
+  "buildLog": {
+    "path": ".codex/local-test/t748-source.log",
+    "bytes": 16844,
+    "sha256": "cc002357d59ea65baea3283f80b38330fa784d7c3f569ac4cd8ea379b9fee0c1"
+  },
+  "sourceManifest": {
+    "path": ".codex/local-test/t748-source/handoff/source_manifest.json",
+    "bytes": 7749,
+    "sha256": "8eee2d097974a67ffd928d72ad0b0810d4812477527892a6ee57e44c4dce7bc0"
+  },
+  "roleSetSHA": "8a0efe36665c7a3b37ec583b6bf338d3ac303d37d02716dd5429d5de9aaa3ad4",
+  "implementationSHA": "7732b3713265f02c7a82eddd4d30390773c5d94c943d74e2174c7ff8f680c8e0",
+  "roles": {
+    "boot": {
+      "path": ".codex/local-test/t748-source/entry/.cxx/default/default/debug/arm64-v8a/dm_native/dm_assets/boot.comp",
+      "bytes": 22353,
+      "sha256": "486538f1921304c2f1cfee843f8624995f0ca99650fd505e7ce83a6fca5ab3a8",
+      "embeddedOnceInLinkedAndPackagedELF": true
+    },
+    "source": {
+      "path": ".codex/local-test/t748-source/entry/.cxx/default/default/debug/arm64-v8a/dm_native/dm_assets/source.comp",
+      "bytes": 41802,
+      "sha256": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+      "embeddedOnceInLinkedAndPackagedELF": true
+    }
+  },
+  "glslCompiler": {
+    "path": ".codex/local-test/g13-glslang/bin/glslang.exe",
+    "bytes": 5178368,
+    "sha256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d"
+  },
+  "sourceStaticUniforms": 40,
+  "sourceStaticBlocks": 4,
+  "defaultTypedProofAbi": [
+    1,
+    224,
+    896,
+    408,
+    416,
+    56,
+    64,
+    80,
+    1384,
+    1064,
+    1064,
+    15864,
+    392,
+    45560,
+    1384,
+    1320
+  ],
+  "fixture": {
+    "config.u32": {
+      "path": "test/reports/t491/t712b/dm20-input/config.u32",
+      "bytes": 256,
+      "sha256": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18"
+    },
+    "settings.u32": {
+      "path": "test/reports/t491/t712b/dm20-input/settings.u32",
+      "bytes": 4,
+      "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+    },
+    "identity.u32": {
+      "path": "test/reports/t491/t712b/dm20-input/identity.u32",
+      "bytes": 72,
+      "sha256": "6ff8e0f3f106865a95243fe1c175fc47af138cb5ad07631de00c938b08650cb5"
+    },
+    "seed.u32": {
+      "path": "test/reports/t491/t712b/dm20-input/seed.u32",
+      "bytes": 591872,
+      "sha256": "cd62ff4d9963146ec22c8eaeac848784fb2ad500ef684a9f82ff4ae55633c02d"
+    }
+  },
+  "compatibleBuilds": {
+    "boot": {
+      "buildLog": {
+        "path": ".codex/local-test/t748-boot.log",
+        "bytes": 16934,
+        "sha256": "e9d2ffd31af15259b1af141493e09306d5edc6ba01ab00da101f32e50e4e33c7"
+      },
+      "unsignedHap": {
+        "path": ".codex/local-test/t748-boot/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "bytes": 7605466,
+        "sha256": "8088dd6e37aa96d86e03554d31ac23160897dc8e53bf78d121849162043083ee"
+      }
+    },
+    "default": {
+      "buildLog": {
+        "path": ".codex/local-test/t748-default.log",
+        "bytes": 16892,
+        "sha256": "d0ca84ba4a876c5d976c5f8d7cebe08845d05ca833cbe6d15aadca18778e0069"
+      },
+      "unsignedHap": {
+        "path": ".codex/local-test/t748-default/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "bytes": 7647594,
+        "sha256": "e88456e2f6083ab44e67fbdf56ad7f9bc7ffa8868d0c486df731174b7d4d6c4d"
+      }
+    }
+  }
+}

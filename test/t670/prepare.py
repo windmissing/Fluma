@@ -4,8 +4,9 @@ sys.path.insert(0,str(Path(__file__).parents[1]/'offline_handoff'))
 from clone import clone,ROOT
 kind=sys.argv[1];assert kind in ('spf','dm');out=Path(sys.argv[2]).resolve()
 boot_only=sys.argv[3:]==['--boot-only']
-if sys.argv[3:] and not (boot_only and kind=='dm'):
- raise ValueError('BOOT_ONLY_REQUIRES_DM')
+boot_source=sys.argv[3:]==['--boot-source']
+if sys.argv[3:] and not ((boot_only or boot_source) and kind=='dm'):
+ raise ValueError('BOOT_VARIANT_REQUIRES_DM')
 if kind=='spf':
  clone(ROOT/'.codex/local-test/t564-stage-tree',out)
  target=out/'entry/src/main/cpp/t549_harness.cpp';shutil.copyfile(ROOT/'test/t670/harness.cpp',target)
@@ -35,5 +36,11 @@ target_link_libraries(g9_dm_differential PRIVATE grs_foundation libEGL.so libGLE
 target_link_libraries(g9_dm_differential PRIVATE libdl.so)
 target_sources(grs_foundation PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/gpu_resident/g9_dm_boot_capture.cpp")
 target_compile_definitions(grs_foundation PRIVATE GRS_G9_DM_BOOT_CAPTURE=1)
+''')
+ if boot_source:
+  for name in ['dm_boot_receipt.h','dm_source_run.h']:
+   shutil.copyfile(ROOT/'test/t670'/name,target.with_name(name))
+  with cm.open('a') as f:f.write('''target_compile_definitions(g9_dm_differential PRIVATE GRS_G9_BOOT_SOURCE=1)
+target_link_libraries(g9_dm_differential PRIVATE libdl.so)
 ''')
 print(out)
