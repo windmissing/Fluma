@@ -1,0 +1,94 @@
+{
+  "schema": "T688_ARCHITECT_CONTRACT_V1",
+  "task": "T688",
+  "report": "docs/architecture-T688-v1.md",
+  "date": "2026-11-20",
+  "role": "architect",
+  "evidence": "docs/analysis-T684-T688-evidence-v1.json",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productOrTestsRun": false,
+  "productPASS": false,
+  "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+  "roles": {
+    "developer": "implementation and compilation",
+    "tester": "offline scripts, fixtures, signing, analysis",
+    "effector": "all device work, serial",
+    "architect": "first attribution"
+  },
+  "unchanged": {
+    "goals": 19,
+    "priorityAfter11": [
+      13,
+      14,
+      12,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "pausedGoal": 10,
+    "cpu": "STOPPED",
+    "render": "XComponent+shader; FAULT or explicit STALE",
+    "newManagerGate": false
+  },
+  "classification": "T587_UI_FIXTURE_NARROW_DEVICE_EVIDENCE; FOLLOW_UP_UNEXERCISED_INDEPENDENT_MATRIX",
+  "T587": "completion registered; keep narrow UI artifact, no reopening",
+  "evidenceCoverage": {
+    "deviceConfirmed": [
+      "normal fixture FINISHED",
+      "pendingResources NONE",
+      "terminalNs precedes pollSampleNs",
+      "Poll records export and same records hash"
+    ],
+    "deviceNotRun": [
+      "full_queue_pop",
+      "full_queue_cancel",
+      "fence_cancel",
+      "deadline",
+      "barrier_cancel repeated/late/stale and terminal immutability",
+      "files complete paging and BUSY/wrong id/end controls",
+      "files_ttl pre-TTL read no extension",
+      "files_mutation same size, truncate, replace, remove",
+      "missing contention and fault injection rows as applicable"
+    ],
+    "notApplicable": [
+      "physically accepted field",
+      "GL or Swap",
+      "product deadlines",
+      "forced production BUSY",
+      "forced kernel I/O interruption"
+    ]
+  },
+  "artifacts": {
+    "capturedHap": "b1866e0372dfcba5da8d7590956486d7fcb54c705c09f9015bb3ada344f3a8b3",
+    "finalHap": "b102e1744475939a05b0aebe69dfc65a1e8e4788f854ddce28fcf654b934cad8",
+    "sameHap": false,
+    "driver": {
+      "name": "t668_driver",
+      "buildId": "7be66db1799a0a2315b8e9129d2857c4e60a636e",
+      "needs": [
+        "libc++_shared.so",
+        "libc.so"
+      ]
+    }
+  },
+  "bounds": {
+    "queue": 128,
+    "drainDeadlineSeconds": 5,
+    "ttlSeconds": 60,
+    "processNormalSeconds": 30,
+    "processTtlSeconds": 80,
+    "maxFiles": 32,
+    "maxOneFileBytes": 2097152,
+    "maxTotalFileBytes": 67108864,
+    "chunkBytes": 4096,
+    "recordBytes": 16384
+  },
+  "routing": {
+    "tester": "explicit phase and post-terminal lifecycle assertion, controller driver and exact files parser; fixture gaps first",
+    "effector": "serial device independent ELF new process and dir per case, actual stdout/stderr/exit, real phase and clock receipts",
+    "developer": "only a proven product implementation defect after architect revision"
+  }
+}

@@ -47,3 +47,7 @@ Begin部分open失败须RAII关闭本次已开fd；错exportId的End不得清除
 ## 交接
 
 developer修原lab/Store test-only helper、桥接和页面状态/FilesV2完整范围并编译；tester维护独立harness和原T587续测，保v1窄PASS、各注入域独立结论。本卡已完成工程归因，不把尚未修复/未测变产品PASS。完整执行边界见`architecture-T633-T636-execution-boundaries-v1.md`，其内容为下游prompt必读部分。
+
+## 2026-11-20 T688 回执覆盖修订
+
+T587 v4保 UI fixture 正常完成/排空与Poll记录落盘窄证。两取消时钟均为0，设备上未行使独立driver的执行中/终态后取消、128等位/fence/5s及FilesV2负控。后续按 [T688](architecture-T688-v1.md) 复用T668 ARM64 driver，保host/设备边界与已登记的原卡完成。

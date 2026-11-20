@@ -39,3 +39,7 @@ tester维护夹具，不修改产品实现。把文件collector嵌入真实 `Gpu
 原T654 tester修夹具并执行独立取证；产品实现本轮无充分缺陷证据，不派泛化developer线程工程，不借T622 M2三槽跨到G13。若同页read API确实无法返回：提交相同boot/ticket的完整前后status、调用start/end/异常、page/context/window/ownerTid、正确参数、实际加载ELF/ABC与已试worker或外部文件读的明确原错，再由architect评估有上限的冷读seam；缺的是页稳定性或能力raw值时按具体缺口补，不默认扩大模块。
 
 执行prompt：tester需要真机标签、保持设备串行；architect本卡不使用真机。不允许修改 D:\hmprojects\HelloWorld\docs\后续工作清单.md（仅本人状态有限例外），不更新滴答同名清单。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。测试脚本/签名部署/采证归tester；developer只开发编译，无新增验收门。全部背景/前景XComponent+shader，FAULT/明确STALE，无Canvas或软件GL产品回退；CPU停止、目标10暂停、水13→14→12。
+
+## 2026-11-20 T686 同页续证结论
+
+T672四页和r1-status已证真实配置216进入 CAPABILITY 后错误29。缺同步返回、前后锚与目录索引，四页非原子证明。现有出口可读失败域，修复边界已推进至非法 GL 查询参数与精度证明来源。见 [T686](architecture-T686-v1.md)。

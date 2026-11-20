@@ -46,3 +46,7 @@ T643本轮有限包身份/首失败采证已交付可登记关闭，本卡不撤
 ## 2026-11-19 T661 原件归因修订
 
 [T661](architecture-T661-v1.md) 核定T654的STATUS实际slice600，probe把g13Status调用attemptId当配置ticket；旧110/209错误29有CAPABILITY:EXIT但raw数值未取全。先原T654 tester同真实G13页保存完整status+4原页/锚；保本合同预算与Store边界，不由换页STALE推导新增产品线程或借M2三槽。新机器表见architecture-T661-contract-v1.json；无产品能力PASS。
+
+## 2026-11-20 T686 已取得失败原值，修订能力查询
+
+票据216已在实际owner/context走到 CAPABILITY:EXIT，rawGL=1280、floatPrecision=0。GLES 3.2 §7.12 禁止 precision-format API 使用 COMPUTE_SHADER。旧字典的计算阶段查询来源停用，以 [T686](architecture-T686-v1.md) 采用合法声明预筛并保持计算实证 CAP_FP32 的修订为准。

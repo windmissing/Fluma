@@ -1,0 +1,109 @@
+{
+  "schema": "T684_ARCHITECT_CONTRACT_V1",
+  "task": "T684",
+  "report": "docs/architecture-T684-v1.md",
+  "date": "2026-11-20",
+  "role": "architect",
+  "evidence": "docs/analysis-T684-T688-evidence-v1.json",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productOrTestsRun": false,
+  "productPASS": false,
+  "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+  "roles": {
+    "developer": "implementation and compilation",
+    "tester": "offline scripts, fixtures, signing, analysis",
+    "effector": "all device work, serial",
+    "architect": "first attribution"
+  },
+  "unchanged": {
+    "goals": 19,
+    "priorityAfter11": [
+      13,
+      14,
+      12,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "pausedGoal": 10,
+    "cpu": "STOPPED",
+    "render": "XComponent+shader; FAULT or explicit STALE",
+    "newManagerGate": false
+  },
+  "classification": "HOST_SCHEDULING_AND_EVIDENCE_BUDGET; HOST_TEST_ONLY_RAW_CAPTURE_SEAM_REQUIRED",
+  "measured": {
+    "actions": 46,
+    "targetActions": 52,
+    "acceptedObservations": 80,
+    "completionMaps": 78,
+    "traceRows": 102733,
+    "traceBytes": 33554177,
+    "prefixEncodingEstimateBytes": 8565137,
+    "estimateIsFullRunGuarantee": false,
+    "lastEdge": "ENTER",
+    "exit0IsPass": false
+  },
+  "keepNarrow": [
+    "C0_RESOURCE_BIND_PULSE_ALLOWED",
+    "C1_MIXED_CACHE_STARTUP",
+    "C2_WARM_CACHE_STARTUP",
+    "SHORT_D2_FROZEN"
+  ],
+  "gate": {
+    "actions": 52,
+    "realPulses": 48,
+    "realSource": 2,
+    "captureControls": 2,
+    "maxRootMs": 250,
+    "resourceWallSeconds": 240,
+    "actionWallSeconds": 120,
+    "drainWallSeconds": 30,
+    "totalWallSeconds": 420,
+    "parentRequestStopSeconds": 360,
+    "perArmBytes": 33554432,
+    "segments": {
+      "apiAndDictionary": 12582912,
+      "rootBytes": 16777216,
+      "receiptsActionsIndex": 4194304
+    }
+  },
+  "record": {
+    "byteOrder": "LE",
+    "rowBytes": 32,
+    "fields": [
+      "seq:u64",
+      "steadyNs:u64",
+      "osTid:u32",
+      "functionId:u16",
+      "edge:u8",
+      "flags:u8",
+      "detailId:u32",
+      "stampId:u32"
+    ],
+    "payload": "raw useful argument/return evidence with lossless dictionary, SHA and checked byte lengths",
+    "activePhase": "preserve existing mapped watcher",
+    "overflow": "INCOMPLETE; first missing sequence and counters; no overwrite"
+  },
+  "routing": {
+    "tester": [
+      "fixed 52-action owner checkpoint scheduling, exact attribution of remaining work",
+      "lossless sink, all original GL call evidence and no added calls in primary arms",
+      "join real accepted-root completion, ledger, token, raw errors and terminal state by exact scope",
+      "full primary arms with hash-bound receipts and matched raw evidence runs"
+    ],
+    "developer": [
+      "only host-fixture build seam after actual owner acceptance/fence and before buffer reuse",
+      "borrow safe bank/event map checks without widening production Freeze eligibility"
+    ],
+    "device": "NONE"
+  },
+  "measurement": {
+    "primary": "same PE/mode/seed/input except capture control. No additional per-root GL readback.",
+    "raw": "evidence replay OFF/ON; borrow real accepts and current owner state bytes with checked n*256, compare every root and compare replay milestones back to primary arms",
+    "qualification": "any mismatch, dropped rows or incomplete raw evidence stays NOT_MEASURED"
+  },
+  "status32Cycle": "NOT_MEASURED"
+}

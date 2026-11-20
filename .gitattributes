@@ -70,3 +70,8 @@ test/reports/t674/** -text -whitespace
 
 # T681 exact generated consumers and original compile evidence.
 test/reports/t681/** -text -whitespace
+
+# T684–T688 architecture contracts and original-byte audit.
+docs/architecture-T68[4568]-*.json -text whitespace=cr-at-eol
+docs/analysis-T684-T688-*.json -text whitespace=cr-at-eol
+docs/receipt-T684-T688-*.json -text whitespace=cr-at-eol

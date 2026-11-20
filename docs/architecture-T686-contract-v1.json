@@ -1,0 +1,96 @@
+{
+  "schema": "T686_ARCHITECT_CONTRACT_V1",
+  "task": "T686",
+  "report": "docs/architecture-T686-v1.md",
+  "date": "2026-11-20",
+  "role": "architect",
+  "evidence": "docs/analysis-T684-T688-evidence-v1.json",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productOrTestsRun": false,
+  "productPASS": false,
+  "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+  "roles": {
+    "developer": "implementation and compilation",
+    "tester": "offline scripts, fixtures, signing, analysis",
+    "effector": "all device work, serial",
+    "architect": "first attribution"
+  },
+  "unchanged": {
+    "goals": 19,
+    "priorityAfter11": [
+      13,
+      14,
+      12,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "pausedGoal": 10,
+    "cpu": "STOPPED",
+    "render": "XComponent+shader; FAULT or explicit STALE",
+    "newManagerGate": false
+  },
+  "classification": "CONFIRMED_CAPABILITY_ADMISSION_ENGINEERING_ERROR; T672_EXPORT_AUTHORITY_INCOMPLETE",
+  "scope": {
+    "boot": "287785986262658",
+    "attempt": "216",
+    "queueSerial": "3",
+    "ownerTid": "53071",
+    "window": "387041308736",
+    "context": "387369110592",
+    "firstFailure": "CONFIGURE_ERROR_29",
+    "phase": "CAPABILITY:EXIT",
+    "rawGL": 1280,
+    "rawUnknown": -1
+  },
+  "capability": {
+    "blocks": 16,
+    "bindings": 32,
+    "invocations": 1024,
+    "laneX": 1024,
+    "shared": 32768,
+    "maxBlock": "1073741824",
+    "floatPrecision": 0,
+    "actualComputePrecisionMeasured": false,
+    "programBuildReached": false
+  },
+  "invalidCall": {
+    "api": "glGetShaderPrecisionFormat",
+    "enum": "GL_COMPUTE_SHADER",
+    "spec": "https://registry.khronos.org/OpenGL/specs/es/3.2/es_spec_3.2.pdf",
+    "section": "7.12",
+    "error": "GL_INVALID_ENUM",
+    "rawGlBatchAggregate": true
+  },
+  "engineering": {
+    "source": "entry/src/main/cpp/gpu_resident/g13flow/transport.cpp::Transport::Configure",
+    "retainNumericComputeGates": true,
+    "declaredPrecision": "legal VERTEX HIGH_FLOAT raw value with provenance only; threshold 23",
+    "computeFp32": "current real GPU compute evidence per T607 before accepted field, fail-close if unknown, no fabricated constant",
+    "separate": "CAP_MATH/CAP_SCENE/PRESENT",
+    "rawEvidence": "existing status and init diagnostics, retain firstFailure/unknown",
+    "developerGate": "compiled real product artifact"
+  },
+  "collector": {
+    "beforeStatus": "UNCONFIGURED",
+    "r1Status": "CONFIG_FAILED",
+    "sameSampleSeqIsAtomic": false,
+    "pages": 4,
+    "bytesPerPage": 8192,
+    "requiredIrreplaceable": [
+      "sync configure.json",
+      "anchor-before",
+      "anchor-after",
+      "index or failure",
+      "actual loaded identity"
+    ],
+    "roundsMax": 3,
+    "statusMax": 4,
+    "maxRecordBytes": 16384,
+    "maxDirectoryBytes": 1048576,
+    "snapshot": "ANCHORS_EQUAL_NOT_ATOMIC or INCONSISTENT_SNAPSHOT"
+  }
+}

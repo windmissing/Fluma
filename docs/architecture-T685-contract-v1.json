@@ -1,0 +1,88 @@
+{
+  "schema": "T685_ARCHITECT_CONTRACT_V1",
+  "task": "T685",
+  "report": "docs/architecture-T685-v1.md",
+  "date": "2026-11-20",
+  "role": "architect",
+  "evidence": "docs/analysis-T684-T688-evidence-v1.json",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productOrTestsRun": false,
+  "productPASS": false,
+  "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+  "roles": {
+    "developer": "implementation and compilation",
+    "tester": "offline scripts, fixtures, signing, analysis",
+    "effector": "all device work, serial",
+    "architect": "first attribution"
+  },
+  "unchanged": {
+    "goals": 19,
+    "priorityAfter11": [
+      13,
+      14,
+      12,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "pausedGoal": 10,
+    "cpu": "STOPPED",
+    "render": "XComponent+shader; FAULT or explicit STALE",
+    "newManagerGate": false
+  },
+  "classification": {
+    "DM": "WRONG_APP_SHELL_ENTRY; INDEPENDENT_NOT_RUN",
+    "SPF": "WAIT_RETIRED_ON_NEW_EPOCH; PREVIOUS_CREATE_NO_RETURN_WITNESS",
+    "driverOrRecoveryDefect": "UNPROVEN"
+  },
+  "DM": {
+    "signedHap": "79769acc921d42f0ea37aebab4de88c32e064da494de9137af82588e4e2b24e1",
+    "shellError": "Cannot read property setActive of undefined",
+    "elf": "g9_dm_differential",
+    "expectedBuildId": "ee6dead096651e4b1efe70a301f115ebc5712a47",
+    "config": "config64 + settings.u32",
+    "requiredPrivateLibraries": [
+      "libgrs_dm_t647.so",
+      "libc++_shared.so"
+    ]
+  },
+  "SPF": {
+    "elf": "g9_differential",
+    "expectedBuildId": "d528305615899e445bf9d08565a72eb77769a13e",
+    "config": "config16",
+    "requiredPrivateLibraries": [
+      "libgrsm1.so",
+      "libc++_shared.so"
+    ],
+    "bootPid": 62965,
+    "ownerTid": 63189,
+    "priorEpoch": 3,
+    "priorResetSerial": 1,
+    "observedEpoch": 4,
+    "resetSerial": 2,
+    "lastOldCreatePoint": "SUBMIT_OBSERVER ProgramEnter 28",
+    "singleApi": "NOT_CAPTURED",
+    "retireApiEnterExit": "NOT_CAPTURED_FOR_SERIAL_2"
+  },
+  "run": {
+    "inputOutputSignature": "standalone executable INPUT NEW_OUTPUT",
+    "deviceSerial": true,
+    "maxSecondsPerProcess": 240,
+    "rootDeadlineMs": 250,
+    "formals": [
+      "T541 full three-state matrix",
+      "T670 DM20/22/29/31",
+      "K192/K512, 0/15/30deg, supported ROOT/FULL and 1–4-ranges, qualify actual accept/reject",
+      "capture actual loader/argv/EGL/stdout and root/cold originals"
+    ],
+    "routing": {
+      "loader": "tester T670 if actual standalone dependency problem",
+      "appShell": "wrong launch entry; no product dependency stuffing",
+      "SPF": "retain app baseline separately, collect same epoch/resetSerial CREATING and retirement resource returns by existing endpoints",
+      "formalM1": "separate BuildId and runtime scope"
+    }
+  }
+}

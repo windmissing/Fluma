@@ -1,0 +1,2166 @@
+{
+  "schema": "T684_T688_STATIC_ATTRIBUTION_V1",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productOrTestsRun": false,
+  "T684": {
+    "trace": {
+      "path": "test/reports/t496/t657v4off/gltrace-t657v4off.ndjson",
+      "bytes": 33554177,
+      "sha256": "22c0340f46334d0a4854d6ea830d834ebcd91d18138030469130321e30a29b51"
+    },
+    "businessLog": {
+      "path": "test/reports/t496/t657v4off/t496_log_t657v4off.ndjson",
+      "bytes": 117238,
+      "sha256": "97634c75ffcc89c47ef25b486ad4843c16e7547852f515997d065d390c59bbf1"
+    },
+    "blocker": {
+      "path": "test/reports/t496/t657-v4-blocker.json",
+      "bytes": 1716,
+      "sha256": "4b3e84a59a2acb54a2cce32410b52a0721bb2a2b47ec28e9646282263f546b0d"
+    },
+    "cases": {
+      "t657v4off": {
+        "raw": {
+          "path": "test/reports/t496/t657v4off/t496_log_t657v4off.ndjson",
+          "bytes": 117238,
+          "sha256": "97634c75ffcc89c47ef25b486ad4843c16e7547852f515997d065d390c59bbf1"
+        },
+        "actions": 46,
+        "acceptedObservations": 80
+      },
+      "t657milestoneoff": {
+        "raw": {
+          "path": "test/reports/t496/t657milestoneoff/t496_log_t657milestoneoff.ndjson",
+          "bytes": 36964,
+          "sha256": "fc12a9d2015a989b5d14d745731407c0a3bd40e853465c95ec4f1ff7fbcc9b52"
+        },
+        "actions": 52,
+        "acceptedObservations": 0
+      },
+      "t657milestoneon": {
+        "raw": {
+          "path": "test/reports/t496/t657milestoneon/t496_log_t657milestoneon.ndjson",
+          "bytes": 36999,
+          "sha256": "0198937aab35ca44c0d56c7047cc3d9db462dda7eaf0ecccd6c4b8d359190a7f"
+        },
+        "actions": 52,
+        "acceptedObservations": 0
+      },
+      "t657deliveryd2": {
+        "raw": {
+          "path": "test/reports/t496/t657deliveryd2/t496_log_t657deliveryd2.ndjson",
+          "bytes": 96395,
+          "sha256": "504c4d91abe8e819ede750ba2f800b693512a6d777a93fe39243f8be90d7cccd"
+        },
+        "actions": 3,
+        "acceptedObservations": 3
+      },
+      "t657deliveryc0": {
+        "raw": {
+          "path": "test/reports/t496/t657deliveryc0/t496_log_t657deliveryc0.ndjson",
+          "bytes": 2251,
+          "sha256": "fd3c402106daf25a7d26f1cf169d1252ca1a6941753a2d020427bae71a0af0e7"
+        },
+        "actions": 0,
+        "acceptedObservations": 0
+      },
+      "t657v5c1": {
+        "raw": {
+          "path": "test/reports/t496/t657v5c1/t496_log_t657v5c1.ndjson",
+          "bytes": 2183,
+          "sha256": "c966178d8400f3e400cda56ed0748de5db01ba27e0f89e73e3706747487a4948"
+        },
+        "actions": 0,
+        "acceptedObservations": 0
+      },
+      "t657deliveryc2": {
+        "raw": {
+          "path": "test/reports/t496/t657deliveryc2/t496_log_t657deliveryc2.ndjson",
+          "bytes": 5404,
+          "sha256": "bdc5ecda850b502566c58a7bd624bb2a52ce7a4fcde7cf9a3780a367030b2797"
+        },
+        "actions": 0,
+        "acceptedObservations": 0
+      }
+    },
+    "traceBytesByFunction": {
+      "2": 528,
+      "3": 534,
+      "4": 530,
+      "5": 543,
+      "6": 550,
+      "7": 529,
+      "8": 22080,
+      "15": 3985757,
+      "16": 3962778,
+      "17": 3959462,
+      "202": 31243,
+      "203": 1076,
+      "200": 13312,
+      "18": 3214,
+      "103": 3226,
+      "107": 3676,
+      "109": 10974,
+      "400": 8444,
+      "401": 198893,
+      "402": 9871,
+      "301": 61128,
+      "410": 654167,
+      "404": 354592,
+      "411": 10426020,
+      "403": 2256,
+      "113": 538,
+      "412": 5396436,
+      "413": 576864,
+      "407": 1068,
+      "408": 63330,
+      "911": 22431,
+      "415": 54138,
+      "416": 3300854,
+      "418": 234012,
+      "419": 43012,
+      "417": 51356,
+      "500": 534,
+      "501": 22048,
+      "503": 61944,
+      "10": 10229
+    },
+    "traceRowsByFunction": {
+      "2": 2,
+      "3": 2,
+      "4": 2,
+      "5": 2,
+      "6": 2,
+      "7": 2,
+      "8": 80,
+      "15": 14319,
+      "16": 14236,
+      "17": 14224,
+      "202": 116,
+      "203": 4,
+      "200": 48,
+      "18": 12,
+      "103": 12,
+      "107": 12,
+      "109": 40,
+      "400": 32,
+      "401": 722,
+      "402": 36,
+      "301": 216,
+      "410": 2430,
+      "404": 1260,
+      "411": 19596,
+      "403": 8,
+      "113": 2,
+      "412": 19788,
+      "413": 2200,
+      "407": 4,
+      "408": 234,
+      "911": 84,
+      "415": 196,
+      "416": 11878,
+      "418": 234,
+      "419": 156,
+      "417": 194,
+      "500": 2,
+      "501": 80,
+      "503": 228,
+      "10": 38
+    },
+    "last": {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t657v4off",
+      "arm": "create_D1_OFF",
+      "pid": 26144,
+      "ownerTid": 12660,
+      "createAttemptId": "t657v4off",
+      "callId": 51327,
+      "functionId": 15,
+      "event": "ENTER",
+      "wallNs": "1253259010609400",
+      "scriptNs": "1253259010609400",
+      "detail": ""
+    },
+    "maps": 78,
+    "mapEventCounts": [
+      [
+        1,
+        0,
+        1,
+        193,
+        2
+      ],
+      [
+        2,
+        0,
+        0,
+        46264,
+        46
+      ],
+      [
+        2,
+        0,
+        1,
+        46264,
+        14
+      ],
+      [
+        2,
+        1,
+        2,
+        46264,
+        14
+      ],
+      [
+        2,
+        1,
+        3,
+        46264,
+        1
+      ],
+      [
+        2,
+        3,
+        3,
+        46264,
+        1
+      ]
+    ],
+    "prefixEncodingEstimateBytes": 8565137,
+    "source": [
+      {
+        "path": "test/t496/external_source_diff.cpp",
+        "bytes": 40502,
+        "sha256": "eba1c03511943bc30ced2188633788831cb8a0c6ad351cb25f5634fe3ee2cc68"
+      },
+      {
+        "path": "test/t496/gl_sink.inc",
+        "bytes": 10844,
+        "sha256": "3495396648d806b0beb517d542544aded92a5dfd993a220d2781f00746fde458"
+      },
+      {
+        "path": "test/t496/gl_forward_sink.cpp",
+        "bytes": 39301,
+        "sha256": "78b2ea6c501e2418deaddcf51c0e6d9ebd4d637a10f506e93d95eaf283ea23d6"
+      },
+      {
+        "path": "test/t496/run_bounded.py",
+        "bytes": 5204,
+        "sha256": "4b0e1f9e6788721c62d835404db277cb0e5c87c6928ac905c42d614fd8c90989"
+      },
+      {
+        "path": "test/t496/compare_roots.py",
+        "bytes": 2600,
+        "sha256": "6a4a6e3d1d9f58e7e09a96aa9434be90addc62057f75014cc65205f3a8cbcd32"
+      },
+      {
+        "path": "test/t496/check_actions.py",
+        "bytes": 2710,
+        "sha256": "ae74f649de6b853ee6b4b60fce5455f281046c28534db8d2c44a69dabbdfdca8"
+      },
+      {
+        "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/m1/full_transport.cpp",
+        "bytes": 32096,
+        "sha256": "5c6b17903256b40f7716a0a127063c675f2a0d78e3361aa91ee2466d5306515c"
+      },
+      {
+        "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/m1/source_transport.cpp",
+        "bytes": 16166,
+        "sha256": "872818b5297118e8106caccd15a582cb75f2f139f2a7afa6faf584fd03d4830f"
+      },
+      {
+        "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/m1/run.cpp",
+        "bytes": 8314,
+        "sha256": "db0172ff21448d64db1fff53880324904364fa467e33c4f3cef0a722477ad167"
+      },
+      {
+        "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+        "bytes": 92394,
+        "sha256": "7444aab6c9ef278e904051e5979002ada7505c957b8fcd4d50274c4dc91d32f0"
+      }
+    ]
+  },
+  "T685": {
+    "raw": [
+      {
+        "path": "test/reports/t491/t541b/spf-boot.json",
+        "bytes": 12063,
+        "sha256": "216a0b3f9d80ec315676d035a5b00eecbb44b33f79fd11a8a74af35dcbeb4d43"
+      },
+      {
+        "path": "test/reports/t491/t541b/jscrash-latest.log",
+        "bytes": 33694,
+        "sha256": "378c342665d23fcaf8a6d898b7d326171005a3b944ead18c040f374a3629a7b7"
+      },
+      {
+        "path": "test/reports/t491/t541b/v2-spf-baseline.json",
+        "bytes": 1470,
+        "sha256": "832241b77e66cb6e1241844005fd6598c5019e5d783165513b9710ed9990f11e"
+      }
+    ],
+    "DM": {
+      "receipt": {
+        "path": "test/reports/t670/dm-native.json",
+        "bytes": 172852,
+        "sha256": "b03ecf3a18ff133173e83407ffd49effe74ccb58ff089472191f49500badb94f"
+      },
+      "elf": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t670-dm\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\g9_dm_differential",
+        "bytes": 743320,
+        "sha256": "db325543181051bb08b2b15a73f5227cffd4f78ce8c78b317e27410332df0e70"
+      },
+      "buildId": "ee6dead096651e4b1efe70a301f115ebc5712a47",
+      "architecture": "AArch64",
+      "needed": [
+        "libgrs_dm_t647.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libhilog_ndk.z.so",
+        "libc++_shared.so",
+        "libc.so"
+      ]
+    },
+    "SPF": {
+      "receipt": {
+        "path": "test/reports/t670/spf-native.json",
+        "bytes": 150795,
+        "sha256": "873659f4332511e033787fa20ffa83146f7baea88bad3a7c0718a3d6b9201027"
+      },
+      "elf": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t670-spf\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\g9_differential",
+        "bytes": 729880,
+        "sha256": "d9fd39b81e3a6034acd2d1580d9e60fd3b4c533f319c94cafaa061e53cbaa536"
+      },
+      "buildId": "d528305615899e445bf9d08565a72eb77769a13e",
+      "architecture": "AArch64",
+      "needed": [
+        "libgrsm1.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libace_ndk.z.so",
+        "libc++_shared.so",
+        "libc.so"
+      ]
+    },
+    "packages": {
+      "T670-dm-final": {
+        "receipt": {
+          "path": "test/reports/t257/T670-dm-final.json",
+          "bytes": 2291,
+          "sha256": "1fde105ac169eb6fef198a7a7d8deb430f8d6e6e932c8d261e04d720905c0b43"
+        },
+        "expectedSignedSHA": "79769acc921d42f0ea37aebab4de88c32e064da494de9137af82588e4e2b24e1",
+        "actualSignedSHA": "79769acc921d42f0ea37aebab4de88c32e064da494de9137af82588e4e2b24e1",
+        "signedHashMatches": true,
+        "modules": [
+          {
+            "entry": "ets/modules.abc",
+            "bytes": 2788888,
+            "sha256": "923b0d240ea9848f01682bc9ab2542c3ebd88f695d6986801479ea5c1a193b2a"
+          },
+          {
+            "entry": "libs/arm64-v8a/libc++_shared.so",
+            "bytes": 1262248,
+            "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+            "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrs_dm_t647.so",
+            "bytes": 1340392,
+            "sha256": "f63f4cc9e6f384f0516b2e80d28ff0775199135abed92d853607788d3e1b5785",
+            "buildId": "f30835f4667cf98c5030a85fc714eb2c72b694ca"
+          },
+          {
+            "entry": "module.json",
+            "bytes": 1408,
+            "sha256": "340cf83f165d31023b438266f1dd8bf92d2eb8262fd87d1e93fc9a2c722e3e96"
+          }
+        ],
+        "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+      },
+      "T670-spf-final": {
+        "receipt": {
+          "path": "test/reports/t257/T670-spf-final.json",
+          "bytes": 2297,
+          "sha256": "9c6d6c2f583b711a3a5c85e27122a201327834faf0db2b8c7f7b2d5ec7c5c38b"
+        },
+        "expectedSignedSHA": "f1994d312dabd024240ae88cf547c525b74fffbb4555708ccc7ff13f3dec25ca",
+        "actualSignedSHA": "f1994d312dabd024240ae88cf547c525b74fffbb4555708ccc7ff13f3dec25ca",
+        "signedHashMatches": true,
+        "modules": [
+          {
+            "entry": "ets/modules.abc",
+            "bytes": 2940832,
+            "sha256": "8abc19f2bff25b0834b7f6d93a638d29b5fb247791ffabf28a21e1429e11af3f"
+          },
+          {
+            "entry": "libs/arm64-v8a/libc++_shared.so",
+            "bytes": 1262248,
+            "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+            "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrsm0.so",
+            "bytes": 688320,
+            "sha256": "ac1033935e57b1b46a72052abccc87c635975a8b9c79b362a84288a674219c54",
+            "buildId": "b70907bd8e0ba0efffa7ecfbce12da0b5d64b7b6"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrsm1.so",
+            "bytes": 2849936,
+            "sha256": "82276d1bb11db7f413127c1f6673d8a2f2ce360afbdf2f2f027c36c537187c31",
+            "buildId": "29c44678dc8bd590d4b1a23d3d9bbbdb0d649df1"
+          },
+          {
+            "entry": "libs/arm64-v8a/libp013hello.so",
+            "bytes": 70544,
+            "sha256": "799bb6304eb55a49d04284a5d11abbb95a4e5649c44f627498a87891f6c3713f",
+            "buildId": "4b9ead24decdf3a7cdf7235a0a9781c346d5804e"
+          },
+          {
+            "entry": "libs/arm64-v8a/libp013renderer.so",
+            "bytes": 511256,
+            "sha256": "baffad800ed75a4c4e0a4cc8fc07eca149657e2c31fa03fa6abbb444d67b3423",
+            "buildId": "b912f7e5d20f3db8537ac302d81e1216e00b9f10"
+          },
+          {
+            "entry": "module.json",
+            "bytes": 1408,
+            "sha256": "340cf83f165d31023b438266f1dd8bf92d2eb8262fd87d1e93fc9a2c722e3e96"
+          }
+        ],
+        "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+      },
+      "T593-m1": {
+        "receipt": {
+          "path": "test/reports/t257/T593-m1.json",
+          "bytes": 2277,
+          "sha256": "58713736eef4e9b4e792ca83f86cb5b56a620d86d7937adaba0bd9acf473ecbc"
+        },
+        "expectedSignedSHA": "798747a0d616554d8375ac180c66625fd086ae730c334c507c622953e005f720",
+        "actualSignedSHA": "798747a0d616554d8375ac180c66625fd086ae730c334c507c622953e005f720",
+        "signedHashMatches": true,
+        "modules": [
+          {
+            "entry": "ets/modules.abc",
+            "bytes": 2861292,
+            "sha256": "511bc6afb97ca30c22d6393e54212b7fb3b8dda79810a89ae9378bd655ba4c64"
+          },
+          {
+            "entry": "libs/arm64-v8a/libc++_shared.so",
+            "bytes": 1262248,
+            "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+            "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrsm0.so",
+            "bytes": 665960,
+            "sha256": "5cc42ffdd8754e197560650853cc73daf7d79f54dae0b4890c9aa12bd6f4c5d7",
+            "buildId": "03c5fbd0baeb6a557b805380a0ac4ac809475170"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrsm1.so",
+            "bytes": 1950560,
+            "sha256": "527c863f36bf543f1d4c45d212ef60ec62c2401f5fe693e5a453589c7f4280bf",
+            "buildId": "dc54802f9e1a0f0f8fae93a95aa7b343bce3a59c"
+          },
+          {
+            "entry": "libs/arm64-v8a/libp013hello.so",
+            "bytes": 70544,
+            "sha256": "5ddb718eac8457afea2da11facdb6317de8c4288e344abdc2715669e7ac54689",
+            "buildId": "746be84a485f42da449c3e446eb9e31b2c878de7"
+          },
+          {
+            "entry": "libs/arm64-v8a/libp013renderer.so",
+            "bytes": 511256,
+            "sha256": "51881877fad851ff7c25849cf1d653472df7f68f8e0478aeb8ed74578846aade",
+            "buildId": "cf9437bd32655b9eeae2e2d2ed014e6b64582abc"
+          },
+          {
+            "entry": "module.json",
+            "bytes": 1408,
+            "sha256": "340cf83f165d31023b438266f1dd8bf92d2eb8262fd87d1e93fc9a2c722e3e96"
+          }
+        ],
+        "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+      }
+    },
+    "recovery": {
+      "revision": "T464_RECOVERY_V1",
+      "phase": "RESET_REQUESTED",
+      "reason": "WAIT_RETIRED",
+      "firstReason": "WINDOW_OR_PAGE_CHANGED",
+      "resetSerial": "2",
+      "epoch": "4",
+      "session": "0",
+      "runLo": 0,
+      "runHi": 0,
+      "contextLo": 0,
+      "contextHi": 0,
+      "retired": false,
+      "resources": false,
+      "incomplete": false,
+      "dropped": 0,
+      "inCall": false,
+      "callRoot": "0",
+      "callEnterNs": "0",
+      "callFrom": 0,
+      "callTo": 0,
+      "events": [
+        {
+          "kind": "CONTEXT_TOMBSTONES",
+          "ns": "327153186819690",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "1",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_RETIRED",
+          "ns": "327153186924377",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "1",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_TOMBSTONES",
+          "ns": "327153223719065",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "1",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_RETIRED",
+          "ns": "327153223750158",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "1",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_TOMBSTONES",
+          "ns": "327153232100315",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "1",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_RETIRED",
+          "ns": "327153232128752",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "1",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_TOMBSTONES",
+          "ns": "327153234675783",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_RETIRED",
+          "ns": "327153234698908",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_TOMBSTONES",
+          "ns": "327153237746565",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_RETIRED",
+          "ns": "327153237771252",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_TOMBSTONES",
+          "ns": "327153246185158",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_RETIRED",
+          "ns": "327153246232346",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "OLD_PERMIT_TOMBSTONE",
+          "ns": "327153246961096",
+          "tid": "62965",
+          "role": 1,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_TOMBSTONES",
+          "ns": "327153247110940",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_RETIRED",
+          "ns": "327153247129221",
+          "tid": "63189",
+          "role": 2,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "OLD_PERMIT_TOMBSTONE",
+          "ns": "327153252425783",
+          "tid": "62965",
+          "role": 1,
+          "serial": "0",
+          "epoch": "0",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "RESET_REQUESTED",
+          "ns": "327153252427502",
+          "tid": "62965",
+          "role": 1,
+          "serial": "1",
+          "epoch": "3",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_TOMBSTONES",
+          "ns": "327153252691096",
+          "tid": "63189",
+          "role": 2,
+          "serial": "1",
+          "epoch": "3",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "CONTEXT_RETIRED",
+          "ns": "327153252717815",
+          "tid": "63189",
+          "role": 2,
+          "serial": "1",
+          "epoch": "3",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "OLD_PERMIT_TOMBSTONE",
+          "ns": "327193511282502",
+          "tid": "62965",
+          "role": 1,
+          "serial": "1",
+          "epoch": "3",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        },
+        {
+          "kind": "RESET_REQUESTED",
+          "ns": "327193511288440",
+          "tid": "62965",
+          "role": 1,
+          "serial": "2",
+          "epoch": "4",
+          "session": "0",
+          "permissionRevision": "2",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "code": 0
+        }
+      ],
+      "oldLedgers": [
+        {
+          "epoch": "3",
+          "session": "0",
+          "generated": "0",
+          "accepted": "0",
+          "overload": "0",
+          "revoked": "0",
+          "clearedCarry": "0"
+        }
+      ],
+      "windowAvailable": true,
+      "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+      "readyEpoch": "0"
+    },
+    "attempts": [
+      {
+        "bootSerial": "1",
+        "epoch": "1",
+        "surfaceGeneration": "0",
+        "windowId": "0",
+        "candidateRun": "0",
+        "publishedRun": "0",
+        "readyEpoch": "0",
+        "session": "0",
+        "ownerTid": "63189",
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V1",
+        "K": 192,
+        "Kw": 128,
+        "width": 0,
+        "height": 0,
+        "terminal": true,
+        "complete": true,
+        "dropped": "0",
+        "shaderLog": "",
+        "firstFailure": {
+          "stage": "SURFACE_CREATED",
+          "ns": "327153246962502",
+          "tid": "62965",
+          "root": "0",
+          "a": "1",
+          "b": "2",
+          "c": "1",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "latest": {
+          "stage": "SURFACE_CREATED",
+          "ns": "327153246962502",
+          "tid": "62965",
+          "root": "0",
+          "a": "1",
+          "b": "2",
+          "c": "1",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "rows": [
+          {
+            "stage": "OWNER_ATTEMPT",
+            "ns": "327153215305471",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "WAIT_WINDOW",
+            "ns": "327153215322658",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "SURFACE_CREATED",
+            "ns": "327153246962502",
+            "tid": "62965",
+            "root": "0",
+            "a": "1",
+            "b": "2",
+            "c": "1",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          }
+        ]
+      },
+      {
+        "bootSerial": "2",
+        "epoch": "2",
+        "surfaceGeneration": "1",
+        "windowId": "1",
+        "candidateRun": "0",
+        "publishedRun": "0",
+        "readyEpoch": "0",
+        "session": "0",
+        "ownerTid": "63189",
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "K": 192,
+        "Kw": 128,
+        "width": 0,
+        "height": 0,
+        "terminal": true,
+        "complete": true,
+        "dropped": "0",
+        "shaderLog": "",
+        "firstFailure": {
+          "stage": "RESET_REQUIRED",
+          "ns": "327153247140315",
+          "tid": "63189",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "latest": {
+          "stage": "UI_RESET",
+          "ns": "327153252427815",
+          "tid": "62965",
+          "root": "0",
+          "a": "2",
+          "b": "3",
+          "c": "1",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "rows": [
+          {
+            "stage": "OWNER_ATTEMPT",
+            "ns": "327153247136096",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "RESET_REQUIRED",
+            "ns": "327153247140315",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "UI_RESET",
+            "ns": "327153252427815",
+            "tid": "62965",
+            "root": "0",
+            "a": "2",
+            "b": "3",
+            "c": "1",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          }
+        ]
+      },
+      {
+        "bootSerial": "3",
+        "epoch": "3",
+        "surfaceGeneration": "1",
+        "windowId": "1",
+        "candidateRun": "1",
+        "publishedRun": "0",
+        "readyEpoch": "0",
+        "session": "0",
+        "ownerTid": "63189",
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "K": 192,
+        "Kw": 128,
+        "width": 1256,
+        "height": 1399,
+        "terminal": true,
+        "complete": true,
+        "dropped": "0",
+        "shaderLog": "",
+        "firstFailure": {
+          "stage": "UI_RESET",
+          "ns": "327193511290158",
+          "tid": "62965",
+          "root": "0",
+          "a": "3",
+          "b": "4",
+          "c": "1",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "latest": {
+          "stage": "UI_RESET",
+          "ns": "327193511290158",
+          "tid": "62965",
+          "root": "0",
+          "a": "3",
+          "b": "4",
+          "c": "1",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "rows": [
+          {
+            "stage": "OWNER_ATTEMPT",
+            "ns": "327153252727190",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "OWNER_WINDOW_REFERENCE_ENTER",
+            "ns": "327153252731877",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "OWNER_WINDOW_REFERENCE_EXIT",
+            "ns": "327153252733440",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_GET_DISPLAY_ENTER",
+            "ns": "327153252736096",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_GET_DISPLAY_EXIT",
+            "ns": "327153252757346",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 1,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_INITIALIZE_ENTER",
+            "ns": "327153252758127",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_INITIALIZE_EXIT",
+            "ns": "327153270608440",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 1,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_VERSION",
+            "ns": "327153270612190",
+            "tid": "63189",
+            "root": "0",
+            "a": "1",
+            "b": "4",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_BIND_API_ENTER",
+            "ns": "327153270612815",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_BIND_API_EXIT",
+            "ns": "327153270616565",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 1,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_CHOOSE_CONFIG_ENTER",
+            "ns": "327153270617502",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_CHOOSE_CONFIG_EXIT",
+            "ns": "327153270681565",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 1,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_CONFIG_COUNT",
+            "ns": "327153270682190",
+            "tid": "63189",
+            "root": "0",
+            "a": "4",
+            "b": "64",
+            "c": "0",
+            "result": 1,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_CREATE_CONTEXT_ENTER",
+            "ns": "327153270682971",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_CREATE_CONTEXT_EXIT",
+            "ns": "327153277119065",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 1,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_CREATE_SURFACE_ENTER",
+            "ns": "327153277122815",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_CREATE_SURFACE_EXIT",
+            "ns": "327153277163283",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 1,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_MAKE_CURRENT_ENTER",
+            "ns": "327153277164065",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_MAKE_CURRENT_EXIT",
+            "ns": "327153277175940",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 1,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_QUERY_SURFACE_ENTER",
+            "ns": "327153277177033",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 12375,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_QUERY_SURFACE_EXIT",
+            "ns": "327153277179065",
+            "tid": "63189",
+            "root": "0",
+            "a": "12375",
+            "b": "1256",
+            "c": "0",
+            "result": 1,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_QUERY_SURFACE_ENTER",
+            "ns": "327153277179533",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 12374,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "EGL_QUERY_SURFACE_EXIT",
+            "ns": "327153277180315",
+            "tid": "63189",
+            "root": "0",
+            "a": "12374",
+            "b": "1399",
+            "c": "0",
+            "result": 1,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "TRANSPORT_CREATE_ENTER",
+            "ns": "327153277228752",
+            "tid": "63189",
+            "root": "0",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "SUBMIT_OBSERVER",
+            "ns": "327153295988596",
+            "tid": "63189",
+            "root": "0",
+            "a": "26",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "SUBMIT_OBSERVER",
+            "ns": "327157703441408",
+            "tid": "63189",
+            "root": "0",
+            "a": "27",
+            "b": "0",
+            "c": "0",
+            "result": 1,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "SUBMIT_OBSERVER",
+            "ns": "327157703508752",
+            "tid": "63189",
+            "root": "0",
+            "a": "28",
+            "b": "0",
+            "c": "0",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          },
+          {
+            "stage": "UI_RESET",
+            "ns": "327193511290158",
+            "tid": "62965",
+            "root": "0",
+            "a": "3",
+            "b": "4",
+            "c": "1",
+            "result": 0,
+            "rawEgl": 0,
+            "rawGl": 0
+          }
+        ]
+      }
+    ],
+    "lastProgramEnter": {
+      "stage": "SUBMIT_OBSERVER",
+      "ns": "327157703508752",
+      "tid": "63189",
+      "root": "0",
+      "a": "28",
+      "b": "0",
+      "c": "0",
+      "result": 0,
+      "rawEgl": 0,
+      "rawGl": 0
+    },
+    "resetMinusProgramEnterNs": "35807779688",
+    "independentDifferential": "NOT_RUN_IN_T541_V2"
+  },
+  "T686": {
+    "package": {
+      "receipt": {
+        "path": "test/reports/t257/T672.json",
+        "bytes": 2271,
+        "sha256": "9365ea3921f7131f2a7ab54af782c3a88b8e0ab8c01656f66f1e396c1776369c"
+      },
+      "expectedSignedSHA": "c9a274dbb4e0b5dd5316d16876766ba05acfbb534bafbd041906a4b9a961df8c",
+      "actualSignedSHA": "c9a274dbb4e0b5dd5316d16876766ba05acfbb534bafbd041906a4b9a961df8c",
+      "signedHashMatches": true,
+      "modules": [
+        {
+          "entry": "ets/modules.abc",
+          "bytes": 2821760,
+          "sha256": "05116a1ddba1ec8214dbfe6bce0ddba81865eb5c5a2d0599d4e426f0277a0180"
+        },
+        {
+          "entry": "libs/arm64-v8a/libc++_shared.so",
+          "bytes": 1262248,
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_cold_slots.so",
+          "bytes": 51336,
+          "sha256": "da1f719d856f39c71968caf4857adda7cfa893b65e1b89236edb1b29bb0bee62",
+          "buildId": "73860ca4ec561ff72c164c1bd8a666bf56937735"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_g13.so",
+          "bytes": 1354768,
+          "sha256": "432a2299f6ef12ba059def256029f062653f08708cedb329be44f3b23baa84c8",
+          "buildId": "693660849353acc6c3e1f678df902de944f952b9"
+        },
+        {
+          "entry": "module.json",
+          "bytes": 1414,
+          "sha256": "e1deaf3996505b0f92b258312d77781e28486a567cd4d1f507f5cbefd2aa48b5"
+        }
+      ],
+      "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+    },
+    "source": {
+      "path": ".codex/local-test/t672-build-v2/entry/src/main/cpp/gpu_resident/g13flow/transport.cpp",
+      "bytes": 21281,
+      "sha256": "3c72824cb3b751debca696161158a026e87e7bfa32fb5485729729bc39ff5407"
+    },
+    "pages": [
+      {
+        "path": "test/reports/t491/t654b/t672out/r1-page0.json",
+        "bytes": 11045,
+        "sha256": "9ec50b05cbcba20438904b1c5b62b1290c1b7cadde6dd6722e0f3d10bd5d7365",
+        "decodedSha256": "6e5aba26944e01947e379dadabbb5bf6e6773d961887a0adb37e2f33d0f5f60c",
+        "sampleSeq": "16",
+        "offset": 0
+      },
+      {
+        "path": "test/reports/t491/t654b/t672out/r1-page1.json",
+        "bytes": 11048,
+        "sha256": "46adaa386a2f08817bd306c4ca18f8596c9187ebeb2ae5f1efc00321731f1bc2",
+        "decodedSha256": "126cbee743165bbad30f5bdbfce3fa4a124b0ef34dca674c2e63078f1d2eccc8",
+        "sampleSeq": "16",
+        "offset": 8192
+      },
+      {
+        "path": "test/reports/t491/t654b/t672out/r1-page2.json",
+        "bytes": 11049,
+        "sha256": "de22781416e1218ee31d7c86f71f287e882243dfe9b87896ca78d286ba4f2cea",
+        "decodedSha256": "8b9f7ed920a12c1a860f5dacaf367222c78094116fbe3ba9377f50428d6e1ca5",
+        "sampleSeq": "16",
+        "offset": 16384
+      },
+      {
+        "path": "test/reports/t491/t654b/t672out/r1-page3.json",
+        "bytes": 11049,
+        "sha256": "cbf13391305e1c246b45452d8b20e14ef9897510514e89f6b9cd22d34c08f736",
+        "decodedSha256": "981d92cda65c8e49830f34526b6394fc31fa3ba08c989a86693662892574c94f",
+        "sampleSeq": "16",
+        "offset": 24576
+      }
+    ],
+    "statusRaw": [
+      {
+        "path": "test/reports/t491/t654b/t672out/status-before.json",
+        "bytes": 1642,
+        "sha256": "44284311554cf140ae1d8a6d37cf21464a16414d8acd9efcd8a1210e72c1e088"
+      },
+      {
+        "path": "test/reports/t491/t654b/t672out/r1-status.json",
+        "bytes": 2140,
+        "sha256": "a5e1a167778c4fcab57fc1e156ab8935474f955beffb65d1aa5281dda6502ba5"
+      }
+    ],
+    "before": {
+      "route": 13,
+      "schema": 1,
+      "native": {
+        "route": 13,
+        "schema": 1,
+        "fieldToken": "G13F1:287785986262658:0:0:0:0:0:0:0:0:0:0:0:0:0000000000000000000000000000000000000000000000000000000000000000",
+        "coldToken": "G13R1:287785986262658:0:076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560",
+        "consumedSourceSeq": "0",
+        "lastRoot": {
+          "clock": "CLOCK_MONOTONIC",
+          "nonce": "0",
+          "plan": "0",
+          "nativePollNs": "0",
+          "startedNs": "0",
+          "deadlineNs": "0",
+          "nativeError": 0,
+          "nativeOutcome": 0,
+          "gpuTailAvailable": false,
+          "domain": "PAGE_NATIVE_CONTROL"
+        },
+        "motionBits": [],
+        "state": "UNCONFIGURED",
+        "firstError": 0,
+        "commit": "0",
+        "acceptedQuantum": "0",
+        "nonce": "0",
+        "queued": 0,
+        "earned": "0",
+        "reserved": "0",
+        "consumed": "0",
+        "discarded": "0",
+        "capability": null,
+        "compile": null,
+        "physicsValidation": "NOT_MEASURED",
+        "displayPresentVerified": false,
+        "scene": {
+          "route": 13,
+          "sceneState": "WAIT_ACCEPTED_FIELD",
+          "staleAttempts": "0",
+          "fieldCommit": "0",
+          "viewGeneration": "1",
+          "fboBytes": "0",
+          "rawGL": 0,
+          "presentedMapping": null,
+          "displayPresentVerified": false
+        }
+      },
+      "cold": {},
+      "lastSourceReply": {},
+      "scope": {
+        "run": "0",
+        "owner": "13",
+        "context": "0",
+        "surface": "0",
+        "geometry": "0",
+        "config": "0",
+        "session": "1",
+        "permission": "1",
+        "inputEpoch": "1",
+        "control": "1"
+      },
+      "lastCommand": {
+        "route": 13,
+        "schema": 1,
+        "api": "g13Command",
+        "state": "WINDOW_AVAILABLE",
+        "error": 0,
+        "boot": "287785986262658",
+        "generation": "0",
+        "attempt": "0"
+      },
+      "initialization": {
+        "schema": "G13InitDiagnosticV1",
+        "rawBytes": 32768,
+        "currentLifecycle": "UNCONFIGURED",
+        "lastProgress": "",
+        "firstConfigFailure": "",
+        "firstFailureAttempt": "0",
+        "queuedTicket": "0",
+        "handledTicket": "0",
+        "dropped": 0,
+        "truncated": 0,
+        "unobservedRaw": -1
+      },
+      "diagGeneration": "0",
+      "attemptId": "214",
+      "decodeStage": "ENTER",
+      "rawNapiStatus": 0
+    },
+    "r1": {
+      "route": 13,
+      "schema": 1,
+      "native": {
+        "route": 13,
+        "schema": 1,
+        "fieldToken": "G13F1:287785986262658:0:0:0:0:0:0:0:0:0:0:0:0:0000000000000000000000000000000000000000000000000000000000000000",
+        "coldToken": "G13R1:287785986262658:0:076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560",
+        "consumedSourceSeq": "0",
+        "lastRoot": {
+          "clock": "CLOCK_MONOTONIC",
+          "nonce": "0",
+          "plan": "0",
+          "nativePollNs": "0",
+          "startedNs": "0",
+          "deadlineNs": "0",
+          "nativeError": 0,
+          "nativeOutcome": 0,
+          "gpuTailAvailable": false,
+          "domain": "PAGE_NATIVE_CONTROL"
+        },
+        "motionBits": [],
+        "state": "FAULT",
+        "firstError": 29,
+        "commit": "0",
+        "acceptedQuantum": "0",
+        "nonce": "0",
+        "queued": 0,
+        "earned": "0",
+        "reserved": "0",
+        "consumed": "0",
+        "discarded": "0",
+        "capability": {
+          "stage": "CAP_COMPUTE",
+          "blocks": 16,
+          "bindings": 32,
+          "invocations": 1024,
+          "floatPrecision": 0,
+          "driverEnvironmentSHA": "1338b161964299696eaa4a6c9c2c7b0f0bb5144bef61afded796983d1a613d72",
+          "laneX": 1024,
+          "shared": 32768,
+          "maxBlock": "1073741824",
+          "rawGL": 1280,
+          "CAP_FP32": "NOT_MEASURED",
+          "CAP_MATH": "NOT_MEASURED",
+          "CAP_SCENE": "NOT_MEASURED",
+          "vendor": "HUAWEI",
+          "renderer": "Maleoon 935F",
+          "version": "OpenGL ES 3.2 B320.89d539c90932f442acb8859a1797b348e4060bcc",
+          "language": "OpenGL ES GLSL ES 3.20"
+        },
+        "compile": null,
+        "physicsValidation": "NOT_MEASURED",
+        "displayPresentVerified": false,
+        "scene": {
+          "route": 13,
+          "sceneState": "WAIT_ACCEPTED_FIELD",
+          "staleAttempts": "0",
+          "fieldCommit": "0",
+          "viewGeneration": "1",
+          "fboBytes": "0",
+          "rawGL": 0,
+          "presentedMapping": null,
+          "displayPresentVerified": false
+        }
+      },
+      "cold": {},
+      "lastSourceReply": {},
+      "scope": {
+        "run": "0",
+        "owner": "13",
+        "context": "0",
+        "surface": "0",
+        "geometry": "0",
+        "config": "0",
+        "session": "2",
+        "permission": "2",
+        "inputEpoch": "2",
+        "control": "2"
+      },
+      "lastCommand": {
+        "route": 13,
+        "schema": 1,
+        "api": "g13Configure",
+        "state": "REJECTED",
+        "error": 29,
+        "boot": "287785986262658",
+        "generation": "0",
+        "attempt": "216"
+      },
+      "initialization": {
+        "schema": "G13InitDiagnosticV1",
+        "rawBytes": 32768,
+        "currentLifecycle": "CONFIG_FAILED",
+        "lastProgress": "CAPABILITY:EXIT",
+        "firstConfigFailure": "CONFIGURE_ERROR_29",
+        "firstFailureAttempt": "216",
+        "queuedTicket": "216",
+        "handledTicket": "0",
+        "dropped": 0,
+        "truncated": 0,
+        "unobservedRaw": -1
+      },
+      "diagGeneration": "0",
+      "attemptId": "217",
+      "decodeStage": "ENTER",
+      "rawNapiStatus": 0
+    },
+    "control11U64": [
+      "16",
+      "16",
+      "0",
+      "0",
+      "1",
+      "0",
+      "216",
+      "287785986262658",
+      "216",
+      "3",
+      "4"
+    ],
+    "controlSHA": "b70cd45b35708912532e93e857f1bcdf885307f1890b91204831a246465af1c6",
+    "stages": [
+      {
+        "seq": 1,
+        "ns": "287839705538283",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "0",
+        "queue": "0",
+        "window": "0",
+        "context": "0",
+        "tid": "52814",
+        "rawGL": -1,
+        "apiReturn": -1,
+        "phase": "DECODE_OK",
+        "edge": "EXIT"
+      },
+      {
+        "seq": 2,
+        "ns": "287839705570315",
+        "boot": "287785986262658",
+        "attempt": "0",
+        "ticket": "0",
+        "queue": "0",
+        "window": "0",
+        "context": "0",
+        "tid": "52814",
+        "rawGL": -1,
+        "apiReturn": -1,
+        "phase": "CONFIG_QUEUED",
+        "edge": "ENTER"
+      },
+      {
+        "seq": 3,
+        "ns": "287839705597658",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "0",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": -1,
+        "phase": "EGL_GET_DISPLAY",
+        "edge": "ENTER"
+      },
+      {
+        "seq": 4,
+        "ns": "287839720746096",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "0",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": 1,
+        "phase": "EGL_GET_DISPLAY",
+        "edge": "EXIT"
+      },
+      {
+        "seq": 5,
+        "ns": "287839720748908",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "0",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": -1,
+        "phase": "EGL_INITIALIZE",
+        "edge": "ENTER"
+      },
+      {
+        "seq": 6,
+        "ns": "287839728239377",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "0",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": 1,
+        "phase": "EGL_INITIALIZE",
+        "edge": "EXIT"
+      },
+      {
+        "seq": 7,
+        "ns": "287839728243440",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "0",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": -1,
+        "phase": "EGL_CHOOSE_CONFIG",
+        "edge": "ENTER"
+      },
+      {
+        "seq": 8,
+        "ns": "287839728274065",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "0",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": 1,
+        "phase": "EGL_CHOOSE_CONFIG",
+        "edge": "EXIT"
+      },
+      {
+        "seq": 9,
+        "ns": "287839728275627",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "0",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": -1,
+        "phase": "EGL_CREATE_CONTEXT",
+        "edge": "ENTER"
+      },
+      {
+        "seq": 10,
+        "ns": "287839730119221",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "0",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": 1,
+        "phase": "EGL_CREATE_CONTEXT",
+        "edge": "EXIT"
+      },
+      {
+        "seq": 11,
+        "ns": "287839730122502",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "387369110592",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": -1,
+        "phase": "EGL_CREATE_SURFACE",
+        "edge": "ENTER"
+      },
+      {
+        "seq": 12,
+        "ns": "287839730255471",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "387369110592",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": 1,
+        "phase": "EGL_CREATE_SURFACE",
+        "edge": "EXIT"
+      },
+      {
+        "seq": 13,
+        "ns": "287839730257190",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "387369110592",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": -1,
+        "phase": "EGL_MAKE_CURRENT",
+        "edge": "ENTER"
+      },
+      {
+        "seq": 14,
+        "ns": "287839730320315",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "387369110592",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": 1,
+        "phase": "EGL_MAKE_CURRENT",
+        "edge": "EXIT"
+      },
+      {
+        "seq": 15,
+        "ns": "287839730730315",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "387369110592",
+        "tid": "53071",
+        "rawGL": -1,
+        "apiReturn": -1,
+        "phase": "CAPABILITY",
+        "edge": "ENTER"
+      },
+      {
+        "seq": 16,
+        "ns": "287839731093127",
+        "boot": "287785986262658",
+        "attempt": "216",
+        "ticket": "216",
+        "queue": "3",
+        "window": "387041308736",
+        "context": "387369110592",
+        "tid": "53071",
+        "rawGL": 1280,
+        "apiReturn": -1,
+        "phase": "CAPABILITY",
+        "edge": "EXIT"
+      }
+    ],
+    "decodeFirst4U64": [
+      "216",
+      "512",
+      "128",
+      "512"
+    ],
+    "missing": [
+      "configure.json",
+      "r1-anchor-before.json",
+      "r1-anchor-after.json",
+      "r1-index.json",
+      "r1-failure.json"
+    ],
+    "syncConfigureReply": "NOT_CAPTURED",
+    "atomicity": "NOT_ESTABLISHED"
+  },
+  "T688": {
+    "raw": {
+      "path": "test/reports/t491/t587b/lab-export.json",
+      "bytes": 4005,
+      "sha256": "4e7338f3f839564a39da22fdfb7367454248b55c3a8e4c832f75de95af7d11da"
+    },
+    "recordCount": 30,
+    "recordsShaMatchesRawConcat": true,
+    "head": {
+      "revision": "T531_RESOURCE_LAB_RECORD_V3",
+      "evidenceOrigin": "FIXTURE_SYNTHETIC",
+      "physicsValidated": false,
+      "currentGranted": false,
+      "deviceGLMeasured": false,
+      "jobId": "1",
+      "generation": "1",
+      "pollSampleNs": "327427769007502",
+      "terminalNs": "327416765099377",
+      "cancelRequestedNs": "0",
+      "cancelObservedNs": "0",
+      "state": "FINISHED",
+      "pendingResources": "NONE",
+      "outcome": "COMPLETED_FIXTURE",
+      "firstFailure": "",
+      "recordsSHA256": "8e19f2d2bf66495aaa8ec24bdc6cd5a106315c25ace51ad31da6fa5800efa515",
+      "fixedNewMetadataBytes": 329,
+      "scope": {
+        "pid": "65246",
+        "route": "m2",
+        "source": "T531_RESOURCE_LAB_V1_FIXTURE_SYNTHETIC",
+        "control": {
+          "epoch": "1",
+          "run": "1",
+          "context": "1",
+          "surface": "1",
+          "session": "1",
+          "resetSerial": "0",
+          "permissionRevision": "0"
+        }
+      },
+      "sessionDirectory": "/data/storage/el2/base/haps/entry/files/t531-resource-lab/65246-327416391155315-1",
+      "knownHostPayloadLimit": 58993832,
+      "excluded": "helper fixed objects; cache pins 128MiB; worker stacks; allocator",
+      "dropped": 0
+    },
+    "files": [
+      {
+        "path": "test/reports/t491/t587b/files.txt",
+        "bytes": 54,
+        "sha256": "483c70b917d1124f15c69d3b89604a9052da065c088343b1fdfb49673d48a877"
+      },
+      {
+        "path": "test/reports/t491/t587b/files2.txt",
+        "bytes": 89,
+        "sha256": "ff50004212f0279f5a6b2d44b8468940e66291e5045c2b1f1bc48ae9cb38fc0d"
+      },
+      {
+        "path": "test/reports/t491/t587b/lab-record-cancel.json",
+        "bytes": 3713,
+        "sha256": "f101baeeab7ead4d620eaf00d70aef3df771c0ef4269d29aa9ad16c61b3e3a7a"
+      },
+      {
+        "path": "test/reports/t491/t587b/lab-record-5scancel.json",
+        "bytes": 3713,
+        "sha256": "0b8a7f1dee7b83de2d9309df635baabc2bab7d33fc04947e277df0cb375f5811"
+      },
+      {
+        "path": "test/reports/t491/t587b/v3-lab.json",
+        "bytes": 1253,
+        "sha256": "d1ff7af617e8c5820c32425efdeafe42236f2906eb0ef995b8190be1ecc8e84a"
+      }
+    ],
+    "packages": {
+      "T668": {
+        "receipt": {
+          "path": "test/reports/t257/T668.json",
+          "bytes": 2266,
+          "sha256": "d95f13857fcd129804e6144be4682f83c128dd48796961cc71a7d07fba665056"
+        },
+        "expectedSignedSHA": "b1866e0372dfcba5da8d7590956486d7fcb54c705c09f9015bb3ada344f3a8b3",
+        "actualSignedSHA": "b1866e0372dfcba5da8d7590956486d7fcb54c705c09f9015bb3ada344f3a8b3",
+        "signedHashMatches": true,
+        "modules": [
+          {
+            "entry": "ets/modules.abc",
+            "bytes": 2864328,
+            "sha256": "132beb8106e5715b7b92cbdb88ec27324ca2e4809d29f01013c5a11f09632ec1"
+          },
+          {
+            "entry": "libs/arm64-v8a/libc++_shared.so",
+            "bytes": 1262248,
+            "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+            "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrs_cold_slots.so",
+            "bytes": 51336,
+            "sha256": "3f6de2d42bcd84f8841842bc9fecc768778dc9cfaaded962f04ecd3fb2359e2f",
+            "buildId": "d9baf464f5b8f9072a49afc1787b96890caa0e94"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrs_resource_lab.so",
+            "bytes": 707512,
+            "sha256": "ea7e05b0234c910e0f816d3dad3e1933b30ccdc8d840b369a041316449c43932",
+            "buildId": "f8e3a238bfc60395cf57f7951328bf0a643ab65c"
+          },
+          {
+            "entry": "libs/arm64-v8a/libp013hello.so",
+            "bytes": 70544,
+            "sha256": "d996dda2810220f065ff3bbd64f6cca73af47e07bd8a64a3e1da49d2588d196c",
+            "buildId": "6a6f89c5ad76149a14c035988ae6c4acb101ee98"
+          },
+          {
+            "entry": "libs/arm64-v8a/libp013renderer.so",
+            "bytes": 511416,
+            "sha256": "3a578d45d7dcf530c013b0e338eda6ce31fd7b5ba77d5995f84054a6fc4b6da3",
+            "buildId": "2e116a1add837ba26637692941f80e888a2291c7"
+          },
+          {
+            "entry": "module.json",
+            "bytes": 1410,
+            "sha256": "534505d100baf751f174ac013526482486f835677b64d5e1fce281becaea50ce"
+          }
+        ],
+        "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+      },
+      "T668-final": {
+        "receipt": {
+          "path": "test/reports/t257/T668-final.json",
+          "bytes": 2289,
+          "sha256": "08645fdf03d09868e64859a58142d1739f21086bdacc15aa24f5a91e91ff1b27"
+        },
+        "expectedSignedSHA": "b102e1744475939a05b0aebe69dfc65a1e8e4788f854ddce28fcf654b934cad8",
+        "actualSignedSHA": "b102e1744475939a05b0aebe69dfc65a1e8e4788f854ddce28fcf654b934cad8",
+        "signedHashMatches": true,
+        "modules": [
+          {
+            "entry": "ets/modules.abc",
+            "bytes": 2864328,
+            "sha256": "132beb8106e5715b7b92cbdb88ec27324ca2e4809d29f01013c5a11f09632ec1"
+          },
+          {
+            "entry": "libs/arm64-v8a/libc++_shared.so",
+            "bytes": 1262248,
+            "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+            "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrs_resource_lab.so",
+            "bytes": 707512,
+            "sha256": "47908e2e52c674f3a3faa24a6f0c747cb70cdcfba7f6e0993a9ed22fd13f5687",
+            "buildId": "a7ba8f1899c46dda584db91e64f316811187770e"
+          },
+          {
+            "entry": "module.json",
+            "bytes": 1410,
+            "sha256": "534505d100baf751f174ac013526482486f835677b64d5e1fce281becaea50ce"
+          }
+        ],
+        "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+      }
+    },
+    "driver": {
+      "receipt": {
+        "path": "test/reports/t668/native.json",
+        "bytes": 7140,
+        "sha256": "9f67767c539ffa7bc3174c12a4c2093095ec1ff6bd589aaf2fa07919dce436ab"
+      },
+      "elf": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t668-ndk\\t668_driver",
+        "bytes": 1346288,
+        "sha256": "6243cb7800354db7fe282e39cec58309f5573ccd426109a2401a9a22a6a923ef"
+      },
+      "buildId": "7be66db1799a0a2315b8e9129d2857c4e60a636e",
+      "architecture": "AArch64",
+      "needed": [
+        "libc++_shared.so",
+        "libc.so"
+      ]
+    },
+    "source": [
+      {
+        "path": "test/t668/driver.cpp",
+        "bytes": 6360,
+        "sha256": "f22fec91d3a82335dfd96a8a47aaed15e4cd6a5d8826e9aaf203c76ec85404c7"
+      },
+      {
+        "path": "test/t668/files.py",
+        "bytes": 2925,
+        "sha256": "857f403270854baf8dac38640b0e72e5d4621ea8f1e4b3655a4eaf7ade3a86c6"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/resource_lab/lab.h",
+        "bytes": 45982,
+        "sha256": "0f139dc733d6d5a25fdcbf03f1116d48901493b8e45842317e3f16faf0c84f67"
+      }
+    ]
+  }
+}
