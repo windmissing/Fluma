@@ -1,0 +1,9 @@
+driver.cpp
+{"stage":"WAIT_SPACE","deadlineNs":"1295551915555500","entryNs":"1295546915718300","insertNs":"0"}
+{"mode":"full_queue_cancel","result":"EXPECTED","queuedAtEntry":128,"fenceSequence":0,"enterNs":"1295546915718300","insertNs":"0","popNs":"0","returnNs":"1295546915733900","elapsedMs":0,"retired":true,"origin":"FIXTURE_NOT_PHYSICS"}
+{"stage":"WAIT_FENCE","deadlineNs":"1295551927498300","entryNs":"1295546927609600","insertNs":"1295546927610100"}
+{"mode":"fence_cancel","result":"EXPECTED","queuedAtEntry":0,"fenceSequence":1,"enterNs":"1295546927609600","insertNs":"1295546927610100","popNs":"0","returnNs":"1295546927649000","elapsedMs":0,"retired":true,"origin":"FIXTURE_NOT_PHYSICS"}
+{"stage":"WAIT_SPACE","deadlineNs":"1295551939363700","entryNs":"1295546939467000","insertNs":"0"}
+{"mode":"deadline","result":"EXPECTED","queuedAtEntry":128,"fenceSequence":0,"enterNs":"1295546939467000","insertNs":"0","popNs":"0","returnNs":"1295551946929400","elapsedMs":5007,"retired":true,"origin":"FIXTURE_NOT_PHYSICS"}
+{"stage":"WAIT_SPACE","deadlineNs":"1295557038994900","entryNs":"1295552039102800","insertNs":"0"}
+{"mode":"full_queue_pop","result":"EXPECTED","queuedAtEntry":128,"fenceSequence":1,"enterNs":"1295552039102800","insertNs":"1295552039122600","popNs":"1295552039165400","returnNs":"1295552039172300","elapsedMs":0,"retired":true,"origin":"FIXTURE_NOT_PHYSICS"}

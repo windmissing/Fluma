@@ -583,11 +583,13 @@ public:
     std::lock_guard<std::mutex> lock(mutex_); cancel.store(true); spaceCv_.notify_all();
   }
   DrainResult DrainForTest(std::chrono::steady_clock::time_point deadline,
-                           const std::atomic<bool> &cancel, DrainObservation* observation=nullptr) {
+                           const std::atomic<bool> &cancel, DrainObservation* observation=nullptr,
+                           const std::function<void(const char*, const DrainObservation&)>& stage = {}) {
     auto done=std::make_shared<DrainCompletion>();
     std::unique_lock<std::mutex> lock(mutex_);
     DrainObservation sample;sample.enterNs=DrainNow();sample.queuedAtEntry=jobs_.size();
     auto finish=[&](DrainResult result){sample.popNs=done->popNs;sample.returnNs=DrainNow();if(observation)*observation=sample;return result;};
+    if(stage && jobs_.size()>=128) stage("WAIT_SPACE", sample);
     spaceCv_.wait_until(lock,deadline,[&]{return quit_||jobs_.size()<128||cancel.load();});
     if(cancel.load()) return finish(DrainResult::CANCELLED);
     if(quit_) return finish(DrainResult::STOPPED);
@@ -595,6 +597,7 @@ public:
     sample.fenceSequence=++drainSequence_;sample.insertNs=DrainNow();
     jobs_.push_back([this,done]{std::lock_guard<std::mutex> lock(mutex_);done->popNs=DrainNow();done->done=true;spaceCv_.notify_all();});
     wake_.notify_one();
+    if(stage) stage("WAIT_FENCE", sample);
     spaceCv_.wait_until(lock,deadline,[&]{return done->done||cancel.load()||quit_;});
     if(cancel.load())return finish(DrainResult::CANCELLED);
     if(quit_)return finish(DrainResult::STOPPED);
