@@ -1,0 +1,27 @@
+{
+  "schema": "T741_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-20",
+  "commit": "8a2ff02363ef31874e435f947377924d8a00309c",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b0025b1e4b0ef7c684b88aa",
+    "started": {
+      "id": "6b002f10e4b071ac016d77c6",
+      "createdTime": "2026-11-20T11:29:20+0000"
+    },
+    "delivered": {
+      "id": "6b002ffae4b071ac016d873a",
+      "createdTime": "2026-11-20T11:33:14+0000",
+      "title": "T741 离线架构交付（8a2ff023，docs/architecture-T741-v1.md / architecture-T741-evidence-v1.json）。核到 195/250/196/180 四个不同 boot 的同源原始回读。op65 +53 应为 0x00000001（2^-149）却全部为零，+59 才是正常数半 ULP tie 且通过；op66 两轮 idx2/3 清零、掩码各 12。T739 180 的实际 PID/start、program、CTRL 输入原字和映射 ELF 均闭合。保原次正规/RTE 资格，不采用替换探针或放宽门。由 T739 签包真源生成 6 个 Vulkan 1.1 SPIR-V，三种显式 FP32 执行模式和校验均过，BOOT GLSL 24128B，最大 49053B≤49152B。下一步同机先查 DenormPreserve/RTE/SignedZeroInfNanPreserve 属性，只建 BOOT pipeline 跑原 64/65/66，自实际 fence 取原位；过后再做逐角色、原 oracle 和同 token XComponent Present。若资格失败保原缺项；未选产品后端，未使用真机。"
+    }
+  },
+  "statusRow": {
+    "before": "| T741 | 【T741·目标20 G13次正规精度与后端资格方案】architect | architect | P5 | 进行中 | 6b0025b1e4b0ef7c684b88aa |",
+    "after": "| T741 | 【T741·目标20 G13次正规精度与后端资格方案】architect | architect | P5 | 结束待验收 | 6b0025b1e4b0ef7c684b88aa |"
+  },
+  "beforeSha256": "db7c567afb9e0a13dbccea17e48629ca758fdc692dd19de6b3c0264f7325ac18",
+  "afterSha256": "5496919ec7c4bc9c62b37725e26e8945d3a68b92b21081db3c1a78e9fe1cf929",
+  "evidenceSha256": "9da4d8b9703db7ff71669674e6f0782933662f1d324fc0c836e1a1adf0cccc69"
+}
