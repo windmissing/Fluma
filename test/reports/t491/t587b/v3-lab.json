@@ -1,0 +1,38 @@
+{
+ "revision": "T587_V3_LAB_DEVICE_V1",
+ "date": "2026-11-20",
+ "package": {
+  "task": "T668-signed (lab+FilesV2 offline fixture)",
+  "signedSha": "b1866e0372dfcba5da8d7590956486d7fcb54c705c09f9015bb3ada344f3a8b3"
+ },
+ "sequence": [
+  "\u542f\u52a8",
+  "\u67e5\u8be2",
+  "\u91ca\u653e\u5c4f\u969c(\u6392\u7a7a)",
+  "\u5bfc\u51fa"
+ ],
+ "labRecord": {
+  "revision": "T531_RESOURCE_LAB_RECORD_V3",
+  "jobId": 1,
+  "generation": 1,
+  "state": "FINISHED",
+  "pendingResources": "NONE",
+  "outcome": "COMPLETED_FIXTURE",
+  "terminalNs": 327416765099377,
+  "pollSampleNs": 327427769007502,
+  "recordsSHA256": "8e19f2d2bf66495aaa8ec24bdc6cd5a106315c25ace51ad31da6fa5800efa515",
+  "fixedNewMetadataBytes": 329,
+  "scope": {
+   "pid": 65246,
+   "route": "m2",
+   "source": "T531_RESOURCE_LAB_V1_FIXTURE_SYNTHETIC"
+  }
+ },
+ "checks": {
+  "drainToEmpty": "PASS (pendingResources=NONE after barrier)",
+  "terminalBeforePoll": "PASS (terminalNs < pollSampleNs)",
+  "physicsValidatedFlag": "false as designed (FIXTURE_SYNTHETIC, no physics claim)",
+  "filesV2Export": "PASS (resource-lab-1-*.json in files/)"
+ },
+ "NOT_claimed": "no XComponent/physics owner/SOURCE/Swap \u2014 fixture-only lab, no physics PASS per page contract"
+}
