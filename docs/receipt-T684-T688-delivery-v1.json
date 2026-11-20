@@ -1,0 +1,127 @@
+{
+  "schema": "T684_T688_DELIVERY_RECEIPTS_V1",
+  "date": "2026-11-20",
+  "commit": "e2a4bf10",
+  "status": [
+    {
+      "task": "T684",
+      "before": "| T684 | 【T684·host双臂完整动作与有界证据预算续归因】architect | architect | P5 | 进行中 | 6aff91f8e4b0491d3161c69f |",
+      "after": "| T684 | 【T684·host双臂完整动作与有界证据预算续归因】architect | architect | P5 | 结束待验收 | 6aff91f8e4b0491d3161c69f |"
+    },
+    {
+      "task": "T688",
+      "before": "| T688 | 【T688·lab全量矩阵与fixture完成回执覆盖分流】architect | architect | P5 | 进行中 | 6aff91f8e4b0a82e3641241c |",
+      "after": "| T688 | 【T688·lab全量矩阵与fixture完成回执覆盖分流】architect | architect | P5 | 结束待验收 | 6aff91f8e4b0a82e3641241c |"
+    },
+    {
+      "task": "T685",
+      "before": "| T685 | 【T685·三态差分DM加载失败与SPF退休基线首次归因】architect | architect | P4 | 进行中 | 6aff91f8e4b09abb1343e1db |",
+      "after": "| T685 | 【T685·三态差分DM加载失败与SPF退休基线首次归因】architect | architect | P4 | 结束待验收 | 6aff91f8e4b09abb1343e1db |"
+    },
+    {
+      "task": "T686",
+      "before": "| T686 | 【T686·G13初始化前四页与配置未消费首次归因】architect | architect | P4 | 进行中 | 6aff91f8e4b0ed5bb82bc7ca |",
+      "after": "| T686 | 【T686·G13初始化前四页与配置未消费首次归因】architect | architect | P4 | 结束待验收 | 6aff91f8e4b0ed5bb82bc7ca |"
+    }
+  ],
+  "beforeSHA": "c977aabb56c1347cb517a64b642812aa85be503b642f86db99a7f34ccb38ecfe",
+  "afterSHA": "f582e6b3e61f85c4f7c8557334b482574b4e2c89cf84f9e11c06c64a7d0218af",
+  "ownStatusOnly": true,
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "delivery": [
+    {
+      "path": "docs/architecture-T684-v1.md",
+      "sha256": "acfb1a29500b3a3a083600b984dee1725061267c5636657f83bd4fe57d0c1950"
+    },
+    {
+      "path": "docs/architecture-T684-contract-v1.json",
+      "sha256": "9a104208184159ed85db6d989269a09fe1a2afbf44d8844b540615f9220b452f"
+    },
+    {
+      "path": "docs/architecture-T688-v1.md",
+      "sha256": "f72a2c47c8bf67d0b57689611636efaf88c335a767692fee41566380bcec136b"
+    },
+    {
+      "path": "docs/architecture-T688-contract-v1.json",
+      "sha256": "a92ccb47bc116ed3366c100fb86774692d728275d91ec2246eba2546ea6b065a"
+    },
+    {
+      "path": "docs/architecture-T685-v1.md",
+      "sha256": "2bb52cdeefdb4661b4b1d9c5bbdfeabd541ee1400823e1cee32fc883a07d0e96"
+    },
+    {
+      "path": "docs/architecture-T685-contract-v1.json",
+      "sha256": "360551d708e7374335e7cb41f2f7988a0034de53c90563757bf05fac7bb1b6e8"
+    },
+    {
+      "path": "docs/architecture-T686-v1.md",
+      "sha256": "8f457051446ef1bc502e73b36bb7217caee92159b220ee470dd4cd6ce3fc394c"
+    },
+    {
+      "path": "docs/architecture-T686-contract-v1.json",
+      "sha256": "9c9fd4e71a6f131485eb5d78ee8152c0ec44f916f5a08a0ff1cf8dc3d487088f"
+    }
+  ],
+  "originalCommentsReadBack": [
+    {
+      "task": "T684",
+      "comment": {
+        "id": "6aff9563e4b0491d31620a76",
+        "userId": 1010673194,
+        "title": "T684 architect 交付 e2a4bf10，docs/architecture-T684-v1.md/contract。V4 OFF 原件46/52动作、80接受观察/78完成体、trace 33,554,177B、末调用只有ENTER，退出0不补证。实因落在host脚本调度/重复记录信用，未证driver。52固定输入、真实忙态SOURCE、120s业务/30s排空/420s外层及32MiB不变。tester接无损32B行+原参数字典/完成体和锁外交接，保全GL调用及scope。T492 frozen Capture 要求idle/frozen，App页是账本/展示，证实缺逐根live原字节可用出口。仅host编译的accepted-owner/fence后只读接缝交developer编译；主OFF/ON无新增读回，与另行OFF/ON字节重放按每根身份/原证据核对应，任一不合保NOT_MEASURED。C0/C1/C2、短D2窄证保留，完整D1/32cycle未测。不使用真机。",
+        "modifiedTime": "2026-11-20T00:33:39+0000",
+        "createdTime": "2026-11-20T00:33:39+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      }
+    },
+    {
+      "task": "T688",
+      "comment": {
+        "id": "6aff9563e4b09abb13445e78",
+        "userId": 1010673194,
+        "title": "T688 architect 交付 e2a4bf10，docs/architecture-T688-v1.md/contract。v4 job1/generation1原30条records SHA核实，正常UI合成完成、已排空与Poll JSON落盘成立；两取消时钟为0，无真实屏障/取消记录，FilesV2分页及BUSY/TTL/突变未证。设备实际回执标b1866e03旧T668包，最终签包为b102e174，不替最终件背书。保T587已完成与既有窄证，不重开。后续effector串行复用实际6243cb78 ARM64 driver，独立满128、pop/fence、等位/插入后取消、5s deadline、BARRIER_ENTER后取消与终态后不可变、完整分页/各负控；单次普通30s/TTL80s。tester补driver的真实阶段交接、终态前后复核及TTL/文件变体，host/注入与设备结果分开。不从合成域推出产品PASS。",
+        "modifiedTime": "2026-11-20T00:33:39+0000",
+        "createdTime": "2026-11-20T00:33:39+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      }
+    },
+    {
+      "task": "T685",
+      "comment": {
+        "id": "6aff9563e4b02114b550a57f",
+        "userId": 1010673194,
+        "title": "T685 architect 交付 e2a4bf10，docs/architecture-T685-v1.md/contract。DM真正失败是通用EntryAbility onForeground动态加载grsm0/1失败后setActive TypeError，独立g9_dm_differential未运行；实际ELF所需DM专用so+libc++及系统库，DM不需补grsm0/1。SPF原件epoch3 TRANSPORT_CREATE及ProgramEnter28无返回证据，旧serial1/epoch3已有退休；UI reset封口后epoch4/serial2 WAIT_RETIRED，当前退休API无ENTER/EXIT，无法归定EGL退休卡死。SPF BuildId与正式T597不同。T541/T670复用已交实际NDK ELF/DT_NEEDED、config16对64+settings及真实原件，effector串行240s/原250ms，按COMPUTE/SCENE/PRESENT和完整差分各报。若真独立loader拒绝交tester真实原错；当前不派产品补库或删生命周期门。",
+        "modifiedTime": "2026-11-20T00:33:39+0000",
+        "createdTime": "2026-11-20T00:33:39+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      }
+    },
+    {
+      "task": "T686",
+      "comment": {
+        "id": "6aff9563e4b0491d31620a79",
+        "userId": 1010673194,
+        "title": "T686 architect 交付 e2a4bf10，docs/architecture-T686-v1.md/contract并修T649/T661。status-before才是attempt0 UNCONFIGURED；r1-status与四页control/stage是同boot票据216 CONFIG_FAILED/CAPABILITY:EXIT/error29，真实window/context/owner已到，rawGL1280、precision0，无PROGRAM_BUILD。源码 glGetShaderPrecisionFormat(COMPUTE_SHADER,HIGH_FLOAT) 使用GLES规范非法枚举，足以解释拒因。交developer修查询和来源、保数值阈值与raw门：合法顶点声明仅预筛，compute CAP_FP32仍需真实产物数值证据，各资格独立。configure同步回包/前后锚/index未在归档，sampleSeq16不证原子；tester先查同目录缺件，effector新包复用同页一次Configure/现有原status/锚/四页，非另建seam。尚无可信场PASS，不需要重复相同错误才派修。",
+        "modifiedTime": "2026-11-20T00:33:39+0000",
+        "createdTime": "2026-11-20T00:33:39+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      }
+    }
+  ],
+  "checks": [
+    "historical saved bytes and completion identity",
+    "three standalone AArch64 ELF fingerprints and dynamic dependencies",
+    "HAP SHA and module BuildIds",
+    "G13 exact base64 page SHA and ticket/control agreement",
+    "lab SHA over literal record objects",
+    "contract consistency and whitespace"
+  ],
+  "deviceUsed": false,
+  "buildRun": false,
+  "productOrTestsRun": false
+}
