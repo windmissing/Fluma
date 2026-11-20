@@ -40,6 +40,9 @@ struct Command {
   ConfigTicket ticket{};
   bool ticketPrepared = false;
 };
+bool IsConfigure(Kind kind) {
+  return kind == Kind::Configure || kind == Kind::Diagnostic;
+}
 class App {
   std::mutex mutex_;
   std::condition_variable wake_;
@@ -47,6 +50,7 @@ class App {
   size_t head_ = 0, count_ = 0;
   std::thread thread_;
   bool quit_ = false;
+  bool configureCallInFlight_ = false;
   std::atomic<uint64_t> revoked_{0}, armed_{UINT64_MAX};
   uint64_t serial_ = 0, handled_ = 0;
   struct ReturnSlot {
@@ -67,7 +71,7 @@ class App {
   bool configured_ = false, sceneReady_ = false, rebindPending_ = false,
        configurePending_ = false;
   Command deferredConfigure_{};
-  uint64_t lastDraw_ = 0, contextGeneration_ = 0, surfaceGeneration_ = 0,
+  uint64_t lastDraw_ = 0, firstSwapRun_ = 0, contextGeneration_ = 0, surfaceGeneration_ = 0,
            geometryGeneration_ = 0;
   bool initializing_ = false;
   ConfigTicket pendingTicket_{};
@@ -226,8 +230,18 @@ class App {
       if (!session.Valid())
         return Result("g13BeginSession", "BAD_JSON", 5);
       auto files = session.Text("filesDir");
-      if (!files.empty())
-        programcache::Store().Configure(files);
+      if (!files.empty()) {
+        bool loaded = false;
+        try {
+          loaded = programcache::Store().Configure(files);
+        } catch (const std::exception &) {
+          // The optional cache falling back is not a session failure.
+        }
+        OH_LOG_Print(LOG_APP, LOG_INFO, 0xE720, "G13Init",
+                     "boot=%{public}llu cachePreload=%{public}s",
+                     static_cast<unsigned long long>(kBoot),
+                     loaded ? "READY" : "FAILED");
+      }
       ++id_.session;
       ++id_.permission;
       ++id_.inputEpoch;
@@ -405,6 +419,19 @@ class App {
       return cold_.End(cmd.a);
     return Result(api, "BAD_COMMAND", 5);
   }
+  std::string RunCommand(Command &command) {
+    try {
+      return Execute(command);
+    } catch (const std::exception &) {
+      if (IsConfigure(command.kind)) {
+        InitObservation().State("CONFIG_FAILED");
+        InitObservation().Failure("OWNER_EXCEPTION", command.attempt);
+        InitStageEvent("OWNER_EXCEPTION", "EXIT");
+      }
+      return Result(command.api.empty() ? "g13Lifecycle" : command.api.c_str(),
+                    "OWNER_EXCEPTION", 30, command.attempt);
+    }
+  }
   void ServiceLifecycle() {
     if (controller_.Configured())
       controller_.PumpBounded(Now());
@@ -439,9 +466,19 @@ class App {
         InitObservation().State("UNCONFIGURED");
         InitStageEvent("CONFIG_CANCELLED", "EXIT");
       } else if (window_) {
+        // A synchronous caller already in the FIFO must finish before a
+        // deferred configure can enter an unbounded driver call.
+        {
+          std::lock_guard<std::mutex> lock(mutex_);
+          if (count_)
+            return;
+          configureCallInFlight_ = true;
+        }
         auto pending = deferredConfigure_;
         configurePending_ = false;
-        Publish(Execute(pending));
+        Publish(RunCommand(pending));
+        std::lock_guard<std::mutex> lock(mutex_);
+        configureCallInFlight_ = false;
       }
     }
   }
@@ -464,21 +501,16 @@ class App {
           queue_[head_] = {};
           head_ = (head_ + 1) % queue_.size();
           --count_;
+          configureCallInFlight_ = IsConfigure(command.kind);
           have = true;
         }
       }
       if (have) {
-        std::string reply;
-        try {
-          reply = Execute(command);
-        } catch (const std::exception &) {
-          reply =
-              Result(command.api.empty() ? "g13Lifecycle" : command.api.c_str(),
-                     "OWNER_EXCEPTION", 30, command.attempt);
-        }
+        const auto reply = RunCommand(command);
         Publish(reply);
         {
           std::lock_guard<std::mutex> lock(mutex_);
+          configureCallInFlight_ = false;
           handled_ = command.queueSerial;
           if (command.replySlot >= 0) {
             auto &slot = returns_[size_t(command.replySlot)];
@@ -514,8 +546,13 @@ class App {
           lastDraw_ = now;
           if (scene_.Draw(controller_, width, height, [&]() {
                 return eglSwapBuffers(display_, surface_) == EGL_TRUE;
-              }))
+              })) {
             lastDraw_ = now;
+            if (firstSwapRun_ != id_.run) {
+              firstSwapRun_ = id_.run;
+              InitStageEvent("FIRST_VALID_SWAP", "EXIT");
+            }
+          }
         }
         Publish();
       } else
@@ -542,10 +579,10 @@ public:
     thread_.join();
   }
   std::string Submit(Command command, bool synchronous = false) {
-    if (command.kind == Kind::Stop || command.kind == Kind::Session ||
-        command.kind == Kind::Configure || command.kind == Kind::Diagnostic ||
-        command.kind == Kind::Destroy || command.kind == Kind::Resize ||
-        (command.kind == Kind::Active && !command.a))
+    const bool stop = command.kind == Kind::Stop ||
+                      (command.kind == Kind::Active && !command.a);
+    if (stop || IsConfigure(command.kind) || command.kind == Kind::Destroy ||
+        command.kind == Kind::Resize)
       revoked_.fetch_add(1);
     uint64_t queueId = 0;
     int slotIndex = -1;
@@ -553,6 +590,18 @@ public:
     const uint64_t apiAttempt = command.attempt;
     {
       std::lock_guard<std::mutex> lock(mutex_);
+      if (synchronous) {
+        bool configureAhead = configureCallInFlight_;
+        for (size_t i = 0; !configureAhead && i < count_; ++i)
+          configureAhead = IsConfigure(queue_[(head_ + i) % queue_.size()].kind);
+        if (configureAhead) {
+          if (!stop)
+            return Result(api.c_str(), "CONFIGURE_IN_PROGRESS", 34, apiAttempt);
+          // Authority was revoked above. Owner-side cleanup follows when the
+          // driver returns, with the same scope checks as a synchronous stop.
+          synchronous = false;
+        }
+      }
       if (count_ == queue_.size()) {
         if (command.kind == Kind::Window && command.window)
           OH_NativeWindow_NativeObjectUnreference(command.window);
@@ -569,6 +618,8 @@ public:
           return Result(api.c_str(), "REPLY_SLOTS_FULL", 30, apiAttempt);
       }
       queueId = command.queueSerial = ++serial_;
+      if (command.kind == Kind::Session)
+        revoked_.fetch_add(1);
       if (command.kind == Kind::Configure || command.kind == Kind::Diagnostic) {
         command.ticket.boot = kBoot;
         command.ticket.attempt = command.attempt;
@@ -763,7 +814,7 @@ napi_value Api(napi_env e, napi_callback_info info) {
     decode.attempt = ++decodeSerial;
   }
   if (api == "g13Stop" || api == "g13Configure" ||
-      api == "g13DiagnosticBegin" || api == "g13BeginSession")
+      api == "g13DiagnosticBegin")
     Product().Revoke();
   if (api == "g13InitDiagnostics") {
     std::string attempt;

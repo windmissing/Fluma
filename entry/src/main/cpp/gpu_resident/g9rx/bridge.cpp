@@ -1,4 +1,5 @@
 #include "../napi_words_contract.h"
+#include "../program_cache/artifact_store.h"
 #include "cold.h"
 #include "controller.h"
 #include "flat_json.h"
@@ -19,6 +20,7 @@ class App {
   struct ConfigureReceipt {
     uint64_t ticket = 0, enqueueNs = 0, ownerNs = 0, applyNs = 0, finishNs = 0;
     uint64_t run = 0, context = 0;
+    uint64_t firstSwapNs = 0;
     const char *phase = "OFF";
     const char *failure = "";
     char mappedBuildId[129]{};
@@ -34,6 +36,7 @@ class App {
   bool windowPending_ = false, configurePending_ = false;
   bool ownerSeen_ = false, applying_ = false, cancelApplying_ = false;
   Config pendingConfig_{};
+  std::string pendingCacheDirectory_;
   ConfigureReceipt receipt_{};
   uint32_t width_ = 0, height_ = 0;
   uint64_t contextGeneration_ = 0, geometryGeneration_ = 1, frame_ = 0,
@@ -131,17 +134,20 @@ class App {
   }
   // Called with the App mutex held. Keep the original stage and raw code
   // together so a later scene/status update cannot erase the first failure.
-  void ConfigureStage(const char *phase) {
-    receipt_.phase = phase;
+  void LogConfigureStage(const char *phase, uint64_t ns) {
     OH_LOG_Print(LOG_APP, LOG_INFO, 0xE719, "G9RxConfigure",
-                 "ticket=%{public}llu ns=%{public}llu phase=%{public}s run=%{public}llu context=%{public}llu result=%{public}d failure=%{public}s egl=%{public}d gl=%{public}u shader=%{public}d link=%{public}d mappedBuildId=%{public}s",
+                 "ticket=%{public}llu ns=%{public}llu phase=%{public}s run=%{public}llu context=%{public}llu result=%{public}d failure=%{public}s egl=%{public}d gl=%{public}u shader=%{public}d link=%{public}d mappedBuildId=%{public}s sourceSHA=%{public}s",
                  static_cast<unsigned long long>(receipt_.ticket),
-                 static_cast<unsigned long long>(CheckedClockRead().ns),
+                 static_cast<unsigned long long>(ns),
                  phase, static_cast<unsigned long long>(receipt_.run),
                  static_cast<unsigned long long>(receipt_.context),
                  receipt_.result, receipt_.failure, receipt_.firstEgl,
                  receipt_.firstGl, receipt_.shaderStatus, receipt_.linkStatus,
-                 receipt_.mappedBuildId);
+                 receipt_.mappedBuildId, PipelineSourceHash());
+  }
+  void ConfigureStage(const char *phase) {
+    receipt_.phase = phase;
+    LogConfigureStage(phase, CheckedClockRead().ns);
   }
   static void ObserveProgram(void *user, SubmitStage stage, uint64_t,
                              uint32_t code, uint32_t, uint64_t) {
@@ -209,7 +215,7 @@ public:
       ++geometryGeneration_;
     wake_.notify_all();
   }
-  std::string Configure(const Config &config) {
+  std::string Configure(const Config &config, std::string cacheDirectory) {
     if (cold_.HasLive(CheckedClockRead()))
       return "{\"state\":\"COLD_SWITCH_WOULD_BLOCK\"}";
     std::lock_guard<std::mutex> lock(mutex_);
@@ -222,11 +228,10 @@ public:
     receipt_ = {};
     receipt_.ticket = ticket;
     receipt_.enqueueNs = CheckedClockRead().ns;
-    Dl_info module{};
-    if (!dladdr(reinterpret_cast<const void *>(&ObserveProgram), &module) ||
-        !MappedBuildId(module.dli_fbase, receipt_.mappedBuildId))
-      receipt_.mappedBuildId[0] = '\0';
+    BuildIdForAddress(reinterpret_cast<const void *>(&ObserveProgram),
+                      receipt_.mappedBuildId);
     pendingConfig_ = config;
+    pendingCacheDirectory_ = std::move(cacheDirectory);
     configurePending_ = true;
     ownerSeen_ = false;
     ConfigureStage("ENQUEUED");
@@ -242,6 +247,7 @@ public:
       cancelApplying_ = true;
     } else {
       configurePending_ = false;
+      pendingCacheDirectory_.clear();
       receipt_.finishNs = CheckedClockRead().ns;
       ConfigureStage("CANCELLED");
     }
@@ -263,6 +269,7 @@ public:
               << receipt_.mappedBuildId << "\",\"enqueueNs\":\"" << receipt_.enqueueNs
               << "\",\"ownerNs\":\"" << receipt_.ownerNs << "\",\"applyNs\":\""
               << receipt_.applyNs << "\",\"finishNs\":\"" << receipt_.finishNs
+              << "\",\"firstSwapNs\":\"" << receipt_.firstSwapNs
               << "\",\"run\":\"" << receipt_.run << "\",\"context\":\""
               << receipt_.context << "\",\"result\":" << receipt_.result
               << ",\"firstEgl\":" << receipt_.firstEgl
@@ -289,6 +296,7 @@ void App::Loop() {
     void *window = nullptr;
     bool replace = false, configure = false;
     Config config{};
+    std::string cacheDirectory;
     uint32_t width = 0, height = 0;
     uint64_t geometry = 0;
     {
@@ -345,17 +353,41 @@ void App::Loop() {
             ConfigureStage("FAILED");
           } else {
             config = pendingConfig_;
+            cacheDirectory = std::move(pendingCacheDirectory_);
             configurePending_ = false;
             configure = applying_ = true;
             receipt_.run = ++runSerial_;
             receipt_.context = contextGeneration_;
-            receipt_.applyNs = CheckedClockRead().ns;
-            ConfigureStage("APPLY_ENTER");
           }
         }
       }
     }
     if (configure) {
+      if (!cacheDirectory.empty()) {
+        {
+          std::lock_guard<std::mutex> lock(mutex_);
+          ConfigureStage("CACHE_PRELOAD_ENTER");
+        }
+        bool loaded = false;
+        try {
+          loaded = programcache::Store().Configure(cacheDirectory);
+        } catch (const std::exception &) {
+          // Persistent cache is optional. Run the existing source path.
+        }
+        std::lock_guard<std::mutex> lock(mutex_);
+        ConfigureStage(loaded ? "CACHE_PRELOAD_READY" : "CACHE_PRELOAD_FAILED");
+      }
+      {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (cancelApplying_ || windowPending_) {
+          applying_ = cancelApplying_ = false;
+          receipt_.finishNs = CheckedClockRead().ns;
+          ConfigureStage("CANCELLED");
+          continue;
+        }
+        receipt_.applyNs = CheckedClockRead().ns;
+        ConfigureStage("APPLY_ENTER");
+      }
       controller_.Release(true);
       ControlIdentity id{
           runSerial_,         contextGeneration_, contextGeneration_,
@@ -366,6 +398,13 @@ void App::Loop() {
       auto result = controller_.ConfigureResearch(
           config, id, reinterpret_cast<const void *>(&Product),
           {this, ObserveProgram}, &firstGl, &firstEgl);
+      {
+        std::lock_guard<std::mutex> lock(mutex_);
+        receipt_.result = int32_t(result);
+        receipt_.firstGl = firstGl;
+        receipt_.firstEgl = firstEgl;
+        ConfigureStage("CONFIGURE_RESEARCH_EXIT");
+      }
       const char *failedAt = result == Result::OK ? "" : "CONFIGURE_RESEARCH";
       if (result == Result::OK) {
         SceneCapabilityV2 cap{};
@@ -431,6 +470,15 @@ void App::Loop() {
       std::string token;
       if (scene_.Draw(controller_, width, height, Swap, this, token)) {
         auto presented = CheckedClockRead();
+        {
+          std::lock_guard<std::mutex> lock(mutex_);
+          if (presented.ok && !configurePending_ && !windowPending_ &&
+              receipt_.run == runSerial_ && !receipt_.firstSwapNs &&
+              std::strcmp(receipt_.phase, "APPLIED") == 0) {
+            receipt_.firstSwapNs = presented.ns;
+            LogConfigureStage("FIRST_VALID_SWAP", presented.ns);
+          }
+        }
         float density = 0;
         NativeDisplayManager_Rotation rotation{};
         int32_t densityCode =
@@ -574,8 +622,8 @@ napi_value Touch(napi_env env, napi_callback_info info) {
 }
 napi_value Api(napi_env env, napi_callback_info info) {
   auto receipt = CheckedClockRead();
-  size_t argc = 2;
-  napi_value argv[2]{};
+  size_t argc = 4;
+  napi_value argv[4]{};
   void *tag = nullptr;
   if (napi_get_cb_info(env, info, &argc, argv, nullptr, &tag) != napi_ok)
     return Text(env, "{\"state\":\"CB_INFO_FAILED\"}");
@@ -611,7 +659,7 @@ napi_value Api(napi_env env, napi_callback_info info) {
     return Text(env, out + "]}");
   }
   if (api == "g9RxConfigure") {
-    if (argc != 2)
+    if (argc != 2 && argc != 3)
       return Text(env, "{\"state\":\"BAD_ARGUMENTS\"}");
     auto words = grs::words::ReadTypedValue<64>(env, argv[0]);
     std::string mode;
@@ -620,8 +668,12 @@ napi_value Api(napi_env env, napi_callback_info info) {
         (mode != "RESEARCH_ONLY" && mode != "RESEARCH_ONLY_FULL") ||
         !DecodeConfig(words.words, config))
       return Text(env, "{\"state\":\"CONFIG_REJECTED\"}");
+    std::string cacheDirectory;
+    if (argc == 3 && (!String(env, argv[2], cacheDirectory) ||
+                      cacheDirectory.empty() || cacheDirectory.front() != '/'))
+      return Text(env, "{\"state\":\"BAD_CACHE_DIRECTORY\"}");
     config.fullTrialTrace = mode == "RESEARCH_ONLY_FULL";
-    return Text(env, app.Configure(config));
+    return Text(env, app.Configure(config, std::move(cacheDirectory)));
   }
   if (api == "g9RxPulse") {
     if (argc != 1)

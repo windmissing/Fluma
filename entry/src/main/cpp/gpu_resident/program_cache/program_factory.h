@@ -168,6 +168,11 @@ struct RetrievableApi : create468::GlApi {
     if(record.role=="G13_COMPUTE")Observe13("SHADER_COMPILE","EXIT",s,-1,record.shader.c_str());
     record.compileEnd = Stamp();
   }
+  void Shaderiv(GLuint shader, GLenum name, GLint *value) {
+    create468::GlApi::Shaderiv(shader, name, value);
+    if (name == GL_COMPILE_STATUS && record.role == "G13_COMPUTE")
+      Observe13("SHADER_COMPILE_STATUS", "RETURN", shader, *value, record.shader.c_str());
+  }
   void Link(GLuint p) {
     record.linkBegin = Stamp();
     Receipt(record, "LINK_ENTER");
@@ -179,6 +184,11 @@ struct RetrievableApi : create468::GlApi {
     create468::GlApi::Link(p);
     if(record.role=="G13_COMPUTE")Observe13("PROGRAM_LINK","EXIT",p,-1,record.shader.c_str());
     record.linkEnd = Stamp();
+  }
+  void Programiv(GLuint program, GLenum name, GLint *value) {
+    create468::GlApi::Programiv(program, name, value);
+    if (name == GL_LINK_STATUS && record.role == "G13_COMPUTE")
+      Observe13("PROGRAM_LINK_STATUS", "RETURN", program, *value, record.shader.c_str());
   }
   void DeleteShader(GLuint shader) {
     record.shaderLog = Log(shader, record.shaderReported, true);
@@ -251,6 +261,8 @@ inline bool Build(uint32_t object, const char *source,
           p.formats.end()) {
         p.loadBegin = Stamp();
         Receipt(p, "BINARY_LOAD_ENTER", a);
+        if (object == 13)
+          Observe13("CACHE_BINARY_LOAD", "ENTER", object, -1, p.shader.c_str());
         program = glCreateProgram();
         p.program = program;
         glProgramBinary(program, a->format, a->bytes.data(),
@@ -263,6 +275,9 @@ inline bool Build(uint32_t object, const char *source,
         if (!p.cacheError)
           p.cacheError = logError;
         p.loadEnd = Stamp();
+        if (object == 13)
+          Observe13("CACHE_BINARY_LOAD", "EXIT", object, good && !p.cacheError,
+                    p.shader.c_str());
         p.cacheLog = p.log;
         Receipt(p, "LOAD_CHECKED", a);
         if (good && !p.cacheError) {

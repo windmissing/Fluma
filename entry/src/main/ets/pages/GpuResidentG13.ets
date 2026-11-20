@@ -7,6 +7,7 @@ import { common } from '@kit.AbilityKit';
 interface G13Scope { session: string; }
 interface G13Status { scope: G13Scope; native: G13Native; initialization: G13Initialization; }
 interface G13Initialization { currentLifecycle: string; firstConfigFailure: string; queuedTicket: string; }
+interface G13SessionReply { state: string; }
 interface G13Native { commit: string; fieldToken: string; coldToken: string; }
 class G13Frame extends FrameCallback {
   owner: GpuResidentG13 | null = null;
@@ -43,6 +44,7 @@ struct GpuResidentG13 {
     this.ready = false;
     const context = getContext(this) as common.UIAbilityContext;
     this.message = native.g13BeginSession(JSON.stringify({ filesDir: context.filesDir }));
+    if ((JSON.parse(this.message) as G13SessionReply).state !== 'SESSION') return;
     this.message = native.g13Configure(G13ResearchConfig.words(), G13ResearchConfig.seed());
     // Configuration is asynchronous. A later explicit activation takes the
     // actual native scope rather than guessing future run/context IDs.

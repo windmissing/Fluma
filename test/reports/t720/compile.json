@@ -1,0 +1,264 @@
+{
+  "schema": "T720_DEVELOPER_COMPILE_V1",
+  "deviceUsed": false,
+  "testsRun": false,
+  "productExecuted": false,
+  "signed": false,
+  "deployed": false,
+  "priorAttribution": {
+    "rx": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T719-rx\\T719-rx-signed.hap",
+      "sha256": "e6a34091397d596206a2569c9bae3891f781b70eaa9023a1712ca45d44b19adf",
+      "abcSHA256": "feb905a730bb5ef81922fbdf0a189df0afa8d8004e5dfe391aec5dd866554395",
+      "elf": {
+        "name": "libgrs_g9rx.so",
+        "bytes": 1411576,
+        "sha256": "dcdafcca12534ea8c8ee1f456d9829729c2e99f36f8b01c7e6b6e44bb77dbc9f",
+        "buildId": "0f591129d680fb2bb398e731913b354c0197786a"
+      },
+      "shader": {
+        "bytes": 146301,
+        "sha256": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+        "lines": 2147
+      },
+      "inputSHA": "f6495df76bee443e25cbb06651deda92ed932cab488fc57253a6337278f51ccf",
+      "runtime": {
+        "events": [
+          {
+            "pid": 23170,
+            "tid": 23170,
+            "ticket": 1,
+            "ns": "344305870724377",
+            "phase": "ENQUEUED",
+            "run": 0,
+            "context": 0,
+            "mappedBuildId": "0f591129d680fb2bb398e731913b354c0197786a"
+          },
+          {
+            "pid": 23170,
+            "tid": 23607,
+            "ticket": 1,
+            "ns": "344305870958908",
+            "phase": "OWNER_SEEN",
+            "run": 0,
+            "context": 0,
+            "mappedBuildId": "0f591129d680fb2bb398e731913b354c0197786a"
+          },
+          {
+            "pid": 23170,
+            "tid": 23607,
+            "ticket": 1,
+            "ns": "344305870975940",
+            "phase": "APPLY_ENTER",
+            "run": 1,
+            "context": 1,
+            "mappedBuildId": "0f591129d680fb2bb398e731913b354c0197786a"
+          },
+          {
+            "pid": 23170,
+            "tid": 23607,
+            "ticket": 1,
+            "ns": "344305980751721",
+            "phase": "SHADER_COMPILE_ENTER",
+            "run": 1,
+            "context": 1,
+            "mappedBuildId": "0f591129d680fb2bb398e731913b354c0197786a"
+          }
+        ],
+        "enqueueToCompileNs": 110027344,
+        "layouts": [
+          {
+            "path": "test\\reports\\t491\\t594d\\l1.json",
+            "sha256": "03366a0df33bfa312665eb0926df7b65aa3354b1ebfe3e12baa97d392a6e9025",
+            "sampledPhases": []
+          },
+          {
+            "path": "test\\reports\\t491\\t594d\\l2.json",
+            "sha256": "191c786de21e2c9516c122ada73a85c88fbc095c31538a26211ba2522fd032ee",
+            "sampledPhases": [
+              "RX #1 SHADER_COMPILE_ENTER"
+            ]
+          },
+          {
+            "path": "test\\reports\\t491\\t594d\\l3.json",
+            "sha256": "c470277b31e5da4c9a60d913a5fa14287f8817281790fd3fb8ac3bd2592b85ad",
+            "sampledPhases": [
+              "RX #1 SHADER_COMPILE_ENTER"
+            ]
+          },
+          {
+            "path": "test\\reports\\t491\\t594d\\l4.json",
+            "sha256": "c7351c05a494e70b1c408b9ff8ad71f1e19d40c33fd4399f26c392743da40c3d",
+            "sampledPhases": [
+              "RX #1 SHADER_COMPILE_ENTER"
+            ]
+          },
+          {
+            "path": "test\\reports\\t491\\t594d\\l5.json",
+            "sha256": "ee7a64d7248afda08149d601849913f5db6004a24e9539f7664265cd15815824",
+            "sampledPhases": [
+              "RX #1 SHADER_COMPILE_ENTER"
+            ]
+          }
+        ],
+        "hilog": [
+          {
+            "path": "test\\reports\\t491\\t594d\\h719.txt",
+            "sha256": "53a957c3d7febddd145c3f77aa5d55f552a157c191cb701e6f5cec6cb3259162"
+          },
+          {
+            "path": "test\\reports\\t491\\t594d\\h719b.txt",
+            "sha256": "3051ae9f843c611d8773c3dee7372503f6c11e65d80ac8d728c8b8119cd57c75"
+          }
+        ],
+        "reportLowerBoundSeconds": 240,
+        "matchingPidStillListedAt": "12:48:40.178 (FaultLeakDetectorUtil process list; thread not sampled)",
+        "compileReturn": "UNOBSERVED",
+        "firstValidSwap": "UNOBSERVED"
+      }
+    },
+    "g13": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T654-g13c\\T654-g13c-signed.hap",
+      "sha256": "d92ee0fbdb9d3e0a0b6b81d21ca42cb5f47ea785237e2f5e168a24ad8696d255",
+      "abcSHA256": "c5caf83525fb6d397a2c1ed7f4be07161380e4eddda50823e4e38d51caf37bfa",
+      "elf": {
+        "name": "libgrs_g13.so",
+        "bytes": 1362336,
+        "sha256": "676c515cb221a987c4bde28948869dfd49c9497dc9c9482093a8559c99eefb00",
+        "buildId": "1af61bbf379c3bd6620117df0fa49669981936ad"
+      },
+      "shader": {
+        "bytes": 259025,
+        "sha256": "7563c61459861cec1eb5cea8f0e1a89387d0f2874daaf9f7e29e47d972f9f2d2",
+        "lines": 4312
+      },
+      "inputSHA": "8ee6e75cf258a4f8d4d45b7324f8e24c1bae0f278fe27f7da01e8aded5c3cde7",
+      "runtime": {
+        "queue": {
+          "boot": "342780307497971",
+          "attempt": "172",
+          "state": "QUEUED",
+          "providerProfileId": "T629:342823129332190:1"
+        },
+        "summary": {
+          "schema": "G13InitDiagnosticV1",
+          "rawBytes": 32768,
+          "currentLifecycle": "PROGRAM_BUILD",
+          "lastProgress": "SHADER_COMPILE:ENTER",
+          "firstConfigFailure": "",
+          "firstFailureAttempt": "0",
+          "queuedTicket": "172",
+          "handledTicket": "0",
+          "dropped": 0,
+          "truncated": 0,
+          "unobservedRaw": -1
+        },
+        "summaryFile": {
+          "path": "test\\reports\\t491\\t654c2\\g13-diag-0.json",
+          "sha256": "0ec815c1d0ca882a45428d7063eb3616cbf041db08995e067ceb7e651b60599c"
+        },
+        "queueFile": {
+          "path": "test\\reports\\t491\\t654c2\\g13-diag-1.json",
+          "sha256": "38195164dd8daec55c1b8adbf6073ef727e3ff2acb0bbff808db0f9c46cd71d9"
+        },
+        "reportLowerBoundSeconds": 90,
+        "processExit": "REPORTED_APP_EXIT_AND_REENTRY_UNCONFIGURED",
+        "nativeProcessTerminationEvidence": "UNOBSERVED",
+        "compileReturn": "UNOBSERVED",
+        "mappedBuildId": "UNOBSERVED",
+        "fourPagesWithSameSampleSeq": "UNOBSERVED",
+        "firstValidSwap": "UNOBSERVED"
+      }
+    }
+  },
+  "builds": {
+    "rx": {
+      "hvigorExit": 0,
+      "log": {
+        "path": ".codex\\local-test\\t720-rx.log",
+        "sha256": "0922b430e04bb54fd9efc533129619ea2107eeb10c1d24aabbf2d98c1f98e264"
+      },
+      "unsignedHap": {
+        "path": ".codex\\local-test\\t720-rx\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+        "sha256": "c24d08cca0168259adf5d8103a57af6a802541aa54d7c87d8d7a5a84996a909b",
+        "abcSHA256": "ba0a0ca3718d97b299c8e5d3b74a203dc6f47f6746ca181a5823afe830f4275a",
+        "elf": {
+          "name": "libgrs_g9rx.so",
+          "bytes": 1473912,
+          "sha256": "4b08d7635d7501ff0e23aa65ca60195ff5104e741394140bd376010706b72935",
+          "buildId": "27c55879e0bf46db946611ef87f4551b53e4c683"
+        },
+        "shader": {
+          "bytes": 146301,
+          "sha256": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+          "lines": 2147
+        }
+      },
+      "linkedElf": {
+        "path": ".codex\\local-test\\t720-rx\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrs_g9rx.so",
+        "sha256": "a2866538694ca216357dc7a654ca41bdf280fceaf8a46baefa7930b0e52fbbe2"
+      },
+      "staticGlsl": {
+        "exit": 0,
+        "tool": {
+          "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+          "sha256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d"
+        },
+        "command": [
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+          "-S",
+          "comp",
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t720-evidence\\rx-current.comp"
+        ]
+      },
+      "compileCommands": {
+        "path": ".codex\\local-test\\t720-rx\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\compile_commands.json",
+        "sha256": "8fd7e45748672a26f8959548c7bdaf617e1f7f4922066d619c27a450bcdfb502"
+      }
+    },
+    "g13": {
+      "hvigorExit": 0,
+      "log": {
+        "path": ".codex\\local-test\\t720-g13.log",
+        "sha256": "005ec8efdd0e82cf7ce7006b41007abd9abd1728eabf6f9f56325dd02edf5043"
+      },
+      "unsignedHap": {
+        "path": ".codex\\local-test\\t720-g13\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+        "sha256": "fadf926a95308f4fd037b63a37949442e4002683935de7177dbff0b470aa96dc",
+        "abcSHA256": "886861e30664d252c7a44ed0932967827ec1c3fb8b295d7b220e16497c9146f0",
+        "elf": {
+          "name": "libgrs_g13.so",
+          "bytes": 1369880,
+          "sha256": "d72f3d6139eed20e6f0b9e385ad1b9e418a7df354b1aba6887538f4cb2e97a2b",
+          "buildId": "428dea61036dfa0fb9297eabe258aeabe3d63495"
+        },
+        "shader": {
+          "bytes": 259025,
+          "sha256": "7563c61459861cec1eb5cea8f0e1a89387d0f2874daaf9f7e29e47d972f9f2d2",
+          "lines": 4312
+        }
+      },
+      "linkedElf": {
+        "path": ".codex\\local-test\\t720-g13\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrs_g13.so",
+        "sha256": "590d1ef7fb44bb796bcabcb1a68f91df22ad0f984b359791380d4959eb902206"
+      },
+      "staticGlsl": {
+        "exit": 0,
+        "tool": {
+          "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+          "sha256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d"
+        },
+        "command": [
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+          "-S",
+          "comp",
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t720-evidence\\g13-current.comp"
+        ]
+      },
+      "compileCommands": {
+        "path": ".codex\\local-test\\t720-g13\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\compile_commands.json",
+        "sha256": "0326f26786741ea509d3c30cbd270c1fc2311916fcf8dfaec6aad0d73ff2f7f2"
+      }
+    }
+  }
+}

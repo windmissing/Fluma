@@ -12,7 +12,7 @@ target_compile_options(grs_g13_core PRIVATE -fno-fast-math -ffp-contract=off)
 target_include_directories(grs_g13_core BEFORE PUBLIC "${G13_ASSET_DIR}" "${CMAKE_CURRENT_LIST_DIR}")
 target_link_libraries(grs_g13_core PUBLIC grs_cold_slots libEGL.so libGLESv3.so libhilog_ndk.z.so)
 add_library(grs_g13 SHARED bridge.cpp)
-target_link_libraries(grs_g13 PUBLIC grs_g13_core libace_napi.z.so libace_ndk.z.so libnative_window.so)
+target_link_libraries(grs_g13 PUBLIC grs_g13_core libace_napi.z.so libace_ndk.z.so libnative_window.so libdl.so)
 
 include("${CMAKE_CURRENT_LIST_DIR}/../napi_provider_profile.cmake")
 grs_bind_napi_provider_sdk(grs_g13_core)

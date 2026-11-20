@@ -1,9 +1,12 @@
 #pragma once
+#include "../program_cache/mapped_build_id.h"
 #include "../program_cache/program_observer.h"
 #include "wire.h"
 #include <cstdio>
 #include <cstring>
+#include <hilog/log.h>
 #include <mutex>
+#include <string_view>
 #include <sys/syscall.h>
 #include <unistd.h>
 namespace grs::g13 {
@@ -55,6 +58,33 @@ struct InitPayload {
   std::array<uint8_t, 4096 - sizeof(InitControl)> pad{};
 };
 static_assert(sizeof(InitPayload) == 32768);
+inline void LogFirstFrameStage(const InitStage &row, const ConfigTicket &ticket) {
+  const std::string_view phase(row.phase);
+  if (phase != "PROGRAM_BUILD" && phase != "SHADER_COMPILE" &&
+      phase != "SHADER_COMPILE_STATUS" && phase != "PROGRAM_LINK" &&
+      phase != "PROGRAM_LINK_STATUS" && phase != "REFLECT" &&
+      phase != "CACHE_BINARY_LOAD" && phase != "COMPUTE_READY" &&
+      phase != "FIRST_VALID_SWAP" && phase != "OWNER_EXCEPTION" &&
+      phase != "CONFIG_CANCELLED")
+    return;
+  static const struct Module {
+    char buildId[129]{};
+    Module() {
+      BuildIdForAddress(reinterpret_cast<const void *>(&LogFirstFrameStage), buildId);
+    }
+  } module;
+  OH_LOG_Print(LOG_APP, LOG_INFO, 0xE720, "G13Init",
+               "boot=%{public}llu attempt=%{public}llu queue=%{public}llu run=%{public}llu context=%{public}llu surface=%{public}llu ns=%{public}llu phase=%{public}s edge=%{public}s raw=%{public}lld apiReturn=%{public}d sourceSHA=%{public}s mappedBuildId=%{public}s",
+               static_cast<unsigned long long>(row.boot),
+               static_cast<unsigned long long>(row.attempt),
+               static_cast<unsigned long long>(row.queue),
+               static_cast<unsigned long long>(ticket.proposed.run),
+               static_cast<unsigned long long>(ticket.proposed.context),
+               static_cast<unsigned long long>(ticket.proposed.surface),
+               static_cast<unsigned long long>(row.ns), row.phase, row.edge,
+               static_cast<long long>(row.rawGL), row.apiReturn, row.sourceSHA,
+               module.buildId);
+}
 class InitDiagnostic {
   mutable std::mutex mutex_;
   InitPayload payload_{};
@@ -134,6 +164,7 @@ public:
     if (source)
       std::snprintf(row.sourceSHA, 65, "%s", source);
     std::snprintf(c.lastProgress, 64, "%s:%s", phase, edge);
+    LogFirstFrameStage(row, c.ticket);
   }
   void Log(uint32_t index, const char *bytes, size_t length, int64_t reported) {
     std::lock_guard<std::mutex> lock(mutex_);

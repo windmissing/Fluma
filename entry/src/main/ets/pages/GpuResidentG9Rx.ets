@@ -40,7 +40,8 @@ struct GpuResidentG9Rx {
   private configure(): void {
     if (this.configureTicket.length > 0 && this.session.length === 0) return;
     const config = JSON.parse(native.g9RxResearchConfig(192)) as RxConfig;
-    const raw: string = native.g9RxConfigure(new Uint32Array(config.words), 'RESEARCH_ONLY');
+    const context = getContext(this) as common.UIAbilityContext;
+    const raw: string = native.g9RxConfigure(new Uint32Array(config.words), 'RESEARCH_ONLY', context.filesDir);
     const ack = JSON.parse(raw) as RxConfigureReply;
     this.message = raw;
     if (ack.state !== 'CONFIG_QUEUED' || ack.ticket === undefined) return;

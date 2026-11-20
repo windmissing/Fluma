@@ -1,5 +1,5 @@
 export const g9RxResearchConfig: (k: number) => string;
-export const g9RxConfigure: (config: Uint32Array, mode: string) => string;
+export const g9RxConfigure: (config: Uint32Array, mode: string, filesDir?: string) => string;
 export const g9RxSession: () => string;
 export const g9RxSetActive: (active: boolean, scope: string) => string;
 export const g9RxPulse: (pulse: Uint32Array) => string;
