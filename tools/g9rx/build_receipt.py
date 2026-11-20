@@ -51,7 +51,7 @@ def receipt(build,log,out,validator=None):
  data['linkedCanonicalSource']=extract(lib.read_bytes())
  with zipfile.ZipFile(hap) as z:
   packaged=z.read('libs/arm64-v8a/libgrs_g9rx.so');data['packagedELF']={'bytes':len(packaged),'sha256':hashlib.sha256(packaged).hexdigest(),'canonicalSource':extract(packaged)}
- data['schema']='T674_DEVELOPER_COMPILE_RECEIPT_V1';data['task']='T674'
+ data['schema']='T699_DEVELOPER_COMPILE_RECEIPT_V1';data['task']='T699'
  data['captureLineMap']=json.loads((assets/'capture_line_map.json').read_text(encoding='utf8'))
  for name in ['pipeline_identity.json','capture_line_map.json','rx_dependencies.cmake']:
   data['generated'][name]={'bytes':(assets/name).stat().st_size,'sha256':sha(assets/name)}
@@ -68,7 +68,7 @@ def receipt(build,log,out,validator=None):
  for relative,digest in json.loads((assets/'inputs.json').read_text(encoding='utf8')).items():
   path=ROOT/relative if relative.startswith(('entry/','docs/','tools/')) else ROOT/'entry/src/main/cpp/gpu_resident/g9rx'/relative
   actual=build/path.relative_to(ROOT);assert actual.read_bytes()==path.read_bytes(),str(path)
- hooks=build/'t674-hooks-assets';subprocess.run([sys.executable,str(ROOT/'tools/g9rx/generate_assets.py'),'--out',str(hooks),'--test-hooks'],check=True)
+ hooks=build/'rx-hooks-assets';subprocess.run([sys.executable,str(ROOT/'tools/g9rx/generate_assets.py'),'--out',str(hooks),'--test-hooks'],check=True)
  hooks_identity=verify(hooks);assert hooks_identity['variant']=='HARNESS_NOT_PRODUCT' and hooks_identity['shaderSHA']!=identity['shaderSHA']
  (evidence/'harness-pipeline-identity.json').write_bytes((hooks/'pipeline_identity.json').read_bytes())
  (evidence/'production-harness.diff').write_text(''.join(difflib.unified_diff(raw.decode().splitlines(True),(hooks/'pipeline.comp').read_text(encoding='utf8').splitlines(True),fromfile='PRODUCTION',tofile='FRESH_HARNESS_NOT_PRODUCT')),encoding='utf8',newline='\n')

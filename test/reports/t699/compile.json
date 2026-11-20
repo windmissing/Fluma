@@ -1,0 +1,376 @@
+{
+  "schema": "T699_DEVELOPER_COMPILE_RECEIPT_V1",
+  "task": "T699",
+  "deviceUsed": false,
+  "testsRun": false,
+  "productExecuted": false,
+  "signed": false,
+  "deployed": false,
+  "result": "COMPILE_PASS_NOT_PRODUCT_PASS",
+  "elf": {
+    "path": ".codex\\local-test\\t699\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrs_g9rx.so",
+    "bytes": 5547672,
+    "sha256": "f2d714472584f9aa8593f04dd4582d48f5d6e0d1d4d6f6266397816bc2777cc7",
+    "machine": "AARCH64",
+    "buildId": "624ba44500d160259727e2b25a8422ebe5ee1884",
+    "abiWords": [
+      1,
+      40960,
+      64,
+      96,
+      8,
+      61632,
+      15832,
+      96,
+      520,
+      0,
+      20480,
+      21504,
+      22528,
+      23552,
+      24576,
+      34304
+    ],
+    "nativeAppStaticBytes": 91392,
+    "nativeAppExcludingProtocolPayloadBytes": 50432
+  },
+  "unsignedHap": {
+    "path": ".codex\\local-test\\t699\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "bytes": 7757779,
+    "sha256": "cce353bc9984c0b151e271b2cbabc2a41c258759abcb31e990c0dd969879c5a1"
+  },
+  "buildLogSHA": "5cca558cd57e8af30c63d2fdba7855377911b81804a832d2869c38255817f482",
+  "compileCommandsSHA": "c07aefb0f30e83e1a9c416a9ab4c70d04f5eb2bd33f6c5d46c60dd64e7977258",
+  "pipelineIdentity": {
+    "schema": "GNR1_PIPELINE_IDENTITY_V2",
+    "shaderSHA": "5d9cd082f30983806537c52cf2fb1aa96ca870eb50b7b0d59a84e77fbcf2881c",
+    "canonicalBytes": 145492,
+    "canonicalLines": 2144,
+    "hygieneRevision": "RX_CAPTURE_SCOPE_HYGIENE_V1",
+    "scopeTransform": {
+      "revision": "RX_CAPTURE_SCOPE_HYGIENE_V1",
+      "transforms": 1,
+      "beforeSHA256LF": "d373b9c51027882f5a32b9d5a8c4c2cfaca21840d299dfdda8e210e36f510655",
+      "afterSHA256LF": "24936c8e49c6d6e765ac865624bca6e31acc48ecbf0dd2f92e158c863693dbd0",
+      "bindingsOriginalFunctionOffsets": [
+        {
+          "name": "clearSlot",
+          "begin": 99,
+          "end": 160
+        },
+        {
+          "name": "scanSlot",
+          "begin": 220,
+          "end": 386
+        },
+        {
+          "name": "selectedSlot",
+          "begin": 407,
+          "end": 2992
+        }
+      ],
+      "bindingsCanonicalFunctionOffsets": [
+        {
+          "name": "clearSlot",
+          "begin": 99,
+          "end": 180
+        },
+        {
+          "name": "scanSlot",
+          "begin": 240,
+          "end": 440
+        },
+        {
+          "name": "selectedSlot",
+          "begin": 461,
+          "end": 3182
+        }
+      ],
+      "originalFunctionStart": 106857,
+      "originalFunctionEnd": 109865,
+      "firstLine": 1723,
+      "lastLine": 1750,
+      "sourceBytesUnchangedOutsideFunction": true
+    },
+    "coherentRevision": "RX_COHERENT_VALUE_V1",
+    "coherentTransforms": [
+      {
+        "function": "g9MapAdd",
+        "line": 1063,
+        "before": "if(merge){uint at=g9MapAddress(flow,c,rank),next;if(!g9AddMass(C[at+3u],q,next))return false;C[at+3u]=next;return true;}",
+        "after": "if(merge){uint at=g9MapAddress(flow,c,rank),next;uint prior=C[at+3u];if(!g9AddMass(prior,q,next))return false;C[at+3u]=next;return true;}"
+      },
+      {
+        "function": "g9ProvisionalAdd",
+        "line": 1522,
+        "before": "if(merge){uint at=g9Provisional(c,rank),next;if(!g9AddMass(W[at+3u],mass,next))return false;W[at+3u]=next;return true;}",
+        "after": "if(merge){uint at=g9Provisional(c,rank),next;uint prior=W[at+3u];if(!g9AddMass(prior,mass,next))return false;W[at+3u]=next;return true;}"
+      }
+    ],
+    "variant": "PRODUCTION",
+    "sceneSHA": "618b7d2c44c1bc7d14053a5b5197383d059eee2c9bf633d6844154af98aa667a",
+    "sourceManifestSHA": "e5bd5831265c7043e4e7b896b0d210eca670c4c1b30147ddd2ac0ceba3637abb",
+    "staticContractSHA": "7d786425590c689fb22eac7fb5b8141020d7259393a0a829645b74cee1a1ded6",
+    "pipelineSHA": "5d9cd082f30983806537c52cf2fb1aa96ca870eb50b7b0d59a84e77fbcf2881c",
+    "generatedFiles": {
+      "capture_line_map.json": "ab75b751ff279dc79b7e5c289b4e56bc173492e659250b5d2c282a9044aeffaf",
+      "cold_generated.h": "9a182e18458a6ec19aa4b95f92dec9c3d5709439dcf3b60e3287bb73f23093c5",
+      "contract_generated.h": "937825662a882253303f88d2c5179d8f95ffa5d80e63133472aba288c2f36c56",
+      "implementation_generated.h": "ad9390ec87b92f374bbf7bae2397ff594155cdf86c873b184c50f7835f9fab2d",
+      "inputs.json": "a4fd15143dad18235991d724628194af50fd9c7cf0525e808d137d3884b8d8f4",
+      "pipeline.comp": "5d9cd082f30983806537c52cf2fb1aa96ca870eb50b7b0d59a84e77fbcf2881c",
+      "pipeline_source.h": "af5e288ee89b5b1ebcc7647af0adc95de4918848f5e5ed7bb023ec710b9a00c2",
+      "reader_schema.json": "6b0cc16b7ef8e3a138ceb63bb1956ff0daf45ec898821929dc00c7274b5823c8",
+      "rx_dependencies.cmake": "9d7e67dc76475d1cdb8784e3c436f8864fa6a60d5028dbf88e1885a4a815ab05",
+      "scene_generated.h": "618b7d2c44c1bc7d14053a5b5197383d059eee2c9bf633d6844154af98aa667a",
+      "schema_generated.h": "28257b37f79b31df6f46992bd06928a26ac0d42c866875fa0572693edddf788c",
+      "seed_constructor_receipt.json": "3ee3b6d27534142ac863bea48a4eeba186390271592d3f3863ce9016499cd552",
+      "seed_generated.h": "181c18f7c50ec949cc412db3d4f1cc13e0a057a4d3fc3bc15ff22c7bd04d6aac"
+    },
+    "bundleSHA": "08031989dba621a2d5a8b1dc34ad43e0eab1bed56ca60e67a385d7c33ed94f46"
+  },
+  "seedConstructor": [
+    {
+      "K": 192,
+      "bytes": 591872,
+      "actualTemplateSHA": "38625623e360557b2a62f92beab32260885b4016a17eaa506f6a73845eab1ab7"
+    },
+    {
+      "K": 512,
+      "bytes": 673792,
+      "actualTemplateSHA": "efe106e7063905a832541bbb8123fae2f3462af8cf51d9e160b9929d9ed457b9"
+    }
+  ],
+  "generated": {
+    "schema_generated.h": {
+      "bytes": 77783,
+      "sha256": "28257b37f79b31df6f46992bd06928a26ac0d42c866875fa0572693edddf788c"
+    },
+    "contract_generated.h": {
+      "bytes": 2047,
+      "sha256": "937825662a882253303f88d2c5179d8f95ffa5d80e63133472aba288c2f36c56"
+    },
+    "implementation_generated.h": {
+      "bytes": 109,
+      "sha256": "ad9390ec87b92f374bbf7bae2397ff594155cdf86c873b184c50f7835f9fab2d"
+    },
+    "pipeline_source.h": {
+      "bytes": 145833,
+      "sha256": "af5e288ee89b5b1ebcc7647af0adc95de4918848f5e5ed7bb023ec710b9a00c2"
+    },
+    "pipeline.comp": {
+      "bytes": 145492,
+      "sha256": "5d9cd082f30983806537c52cf2fb1aa96ca870eb50b7b0d59a84e77fbcf2881c"
+    },
+    "reader_schema.json": {
+      "bytes": 198785,
+      "sha256": "6b0cc16b7ef8e3a138ceb63bb1956ff0daf45ec898821929dc00c7274b5823c8"
+    },
+    "inputs.json": {
+      "bytes": 11119,
+      "sha256": "a4fd15143dad18235991d724628194af50fd9c7cf0525e808d137d3884b8d8f4"
+    },
+    "seed_generated.h": {
+      "bytes": 1219,
+      "sha256": "181c18f7c50ec949cc412db3d4f1cc13e0a057a4d3fc3bc15ff22c7bd04d6aac"
+    },
+    "scene_generated.h": {
+      "bytes": 2714,
+      "sha256": "618b7d2c44c1bc7d14053a5b5197383d059eee2c9bf633d6844154af98aa667a"
+    },
+    "cold_generated.h": {
+      "bytes": 869,
+      "sha256": "9a182e18458a6ec19aa4b95f92dec9c3d5709439dcf3b60e3287bb73f23093c5"
+    },
+    "pipeline_identity.json": {
+      "bytes": 3807,
+      "sha256": "7c0af52f8e5be3b923006192d536f9ae5b497ad8ffe86e5ee25e88bf0a46998c"
+    },
+    "capture_line_map.json": {
+      "bytes": 951,
+      "sha256": "ab75b751ff279dc79b7e5c289b4e56bc173492e659250b5d2c282a9044aeffaf"
+    },
+    "rx_dependencies.cmake": {
+      "bytes": 9611,
+      "sha256": "9d7e67dc76475d1cdb8784e3c436f8864fa6a60d5028dbf88e1885a4a815ab05"
+    }
+  },
+  "sources": {
+    "entry/src/main/cpp/gpu_resident/g9rx/abi.cpp": "102794bfa1cffa0aa35f76c361e4c543ffdefa8c209d00f830f1cacd40d68f2b",
+    "entry/src/main/cpp/gpu_resident/g9rx/bridge.cpp": "f97ec57b9a6309d8d0c8579ceb98ffe1ca87aebf6a5b844816b86852e607b2f7",
+    "entry/src/main/cpp/gpu_resident/g9rx/CMakeLists.txt": "eaf89c8a6833589af8ed8c1b8ef29e792d62ac217cf5e412b2f45afbf7022527",
+    "entry/src/main/cpp/gpu_resident/g9rx/cold.cpp": "fe5e82822144080cdc7ebb7b69fc49bbe4c99ec0fa5f08e305c76959b51cca9f",
+    "entry/src/main/cpp/gpu_resident/g9rx/cold.h": "2d76e2c1ade8bd533f7a00ac5ad2c62acc6fd123f04d834b34524bf6c66cf5d9",
+    "entry/src/main/cpp/gpu_resident/g9rx/cold_capture.cpp": "a40d4432f4458229e50a7668bd5ea1face86f0a2a8698321c89aa89a13299b00",
+    "entry/src/main/cpp/gpu_resident/g9rx/completion_gate.cpp": "1bbf436bb8c77b24e09aa632c7713871619a016a4565cf41c22675b700693ee0",
+    "entry/src/main/cpp/gpu_resident/g9rx/completion_gate.h": "11cffd63c39c0bc29774b0db2afe2034bc7a6e949603c55665e5e89cdf0a42c4",
+    "entry/src/main/cpp/gpu_resident/g9rx/control_types.h": "9428965e8d4aa376889e653ac3caa3170cf0664da9de65b28c0cbf69d8a34df0",
+    "entry/src/main/cpp/gpu_resident/g9rx/controller.cpp": "f5a727514c93abbc0d4e509b1e3cdf878be5ebd5f9d68e9c7b693a64f941a290",
+    "entry/src/main/cpp/gpu_resident/g9rx/controller.h": "43dee8cd918677d83dc6af143cb4c0ef01786dddb98c0f2dec5444b3b0fc1607",
+    "entry/src/main/cpp/gpu_resident/g9rx/controller_cold.cpp": "26fad2af44905c6d867404420a6653870f264175c81d451cbe48def976c41e40",
+    "entry/src/main/cpp/gpu_resident/g9rx/flat_json.h": "4e0ccc4bb129a8fa115b6e690c3f81ab6ca1d90c1e689428233698dd6e910cea",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/completion_gate.cpp": "906bc64597d7b3b227be9f85fe31e8850a960f4c494137013eacac958febb6ba",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/completion_gate.h": "84b0971c414307d02a75de244d6325db44deacb6a6ca09d7a7396e99b798d5d8",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/control_types.h": "cd156f8a0c896fe19b270e27a9d7abee92253b308b311b0459065e8cfd962b97",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/flick_numeric.h": "b058394f8e61bc646bc5627dcbe305aa1272b6614ac7a7dc1c47d90e78d99f03",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/packet.frag": "21dc7a3d1ec2bda8cc1df04ffda056b7a7aa019a20588e4b3ad6054e3b556932",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/packet.vert": "373c01cb5e02cf4ebd0f4094500f46f278037437d02a851121f8428d853eacd3",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/pipeline.comp": "972edb7f6b4b7a387f57bb1578b8c3bb66cdad7e226be8f943857a49de06063b",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/planning_control.cpp": "d0b33068a28af6005159ec4dc8bb413fece706522155c4f768b590a71d2c3c15",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/planning_control.h": "d1bee8c6482a9bf2496249200b69ed839753835302452a274bb637570baae082",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/progress_clock_v3.cpp": "72d2251d8b295fb5391f982241f9ff82686b92e2b0c0f180c92d965030b7dd60",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/progress_clock_v3.h": "864741167f1ab2fb4ba525dd99c8461603d043d9a6b30aefb3600e446badf2e7",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/quota_fields_generated.h": "ed7b66cb30b79b5756cf8beecd8922458f957f67fe5a8131b6013f66131452b5",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/research_config.h": "6a76c1be507d4081d83479fb02b55c060f3d1d1fc49f4b2f71b4992768e31798",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/scene.cpp": "2bf37bd7d0dc59f598e5b43c6e831e82f9e4934c42c33b4899bf4fcdbe6fb0dc",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/scene.frag": "d123f70a02f57a40a147c8f1f649d02e825c2b009779339af1f125a1e453e225",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/scene.h": "9f8a67167fe2f6de6edf575eee5231611d56bea7f890ed0e2a2ef8826e1fecc9",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/scene.vert": "86cbf1b6124112ff42e817ace151a5425206b7f149e7d3ebc4b8bf3a45f2e108",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/schema_generated.h": "879507b9586f8eb3b3d5cf7a1e2c1db79d27572495b3dac718b7248fefc11207",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/source_receipt.json": "7224da1aac21e39730594aad4d2eaace87f0e4d4912723cd873fda78b6aa2905",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/stage_capability.cpp": "4ea81268d27dcf1ba49a909fe81604851b0b0f28b15e3d2bc55813230d0ed206",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/stage_capability.h": "de7f998c4cd8489693cffa9209606f80aceaca7300a701e387da48d355eaa293",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/transport.cpp": "5b9ff7aa2aa0804eb1c5f54a0e63383494af3370042ee96f4a3b36d3adff5460",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/transport.h": "3b32bb2df662cc644f4f257678824b65f790052045543f344a32f6e51979f289",
+    "entry/src/main/cpp/gpu_resident/g9rx/kernel_assets.cpp": "c3f8450002b5e7558e8a5b1cadba8aa811c5967a69c8e41381bc40cbfd3323c8",
+    "entry/src/main/cpp/gpu_resident/g9rx/loaded_identity.h": "52b3705603fd208e7e9394341a4b4918388543e9175e327d53441293f6d9a351",
+    "entry/src/main/cpp/gpu_resident/g9rx/physical_audit.glsl": "fb3e4a9d76a90a5f2d2723fa04961879f65c4ba31bf1d0f995843cb7720598c0",
+    "entry/src/main/cpp/gpu_resident/g9rx/physical_dm.glsl": "fe4df925120ab70c9afca31c7665a59b47d3fb6b7ecf1f9797699c6d9a96ae90",
+    "entry/src/main/cpp/gpu_resident/g9rx/planning_control.cpp": "9c84e688213baaa00fce5ed599f51b2835bf825b4a33dd7fe555c25353a4c17d",
+    "entry/src/main/cpp/gpu_resident/g9rx/planning_control.h": "802dca626a60d480c56242a067838c00d4fec4284002e5564fd030ac3f129708",
+    "entry/src/main/cpp/gpu_resident/g9rx/progress_clock_v3.cpp": "d9410e45c997973851f575071a35817f67e0fb1f7a2b14bc2b05a3fea664722e",
+    "entry/src/main/cpp/gpu_resident/g9rx/progress_clock_v3.h": "666190058499bb3ffdf42a1b48d4150dfd21ba329550dfa64b696a0b0f76db75",
+    "entry/src/main/cpp/gpu_resident/g9rx/quota_fields_generated.h": "4006688b715a10d59cfdaa9c52689a7f51a8ba735750b4034903f0a8d1aaf29b",
+    "entry/src/main/cpp/gpu_resident/g9rx/quota_snapshot_v3.cpp": "cf0811093be3dc099bfc0edbc85f2fc4cfb62e645d6af767ed21b3d3cc928f5e",
+    "entry/src/main/cpp/gpu_resident/g9rx/receipt_clock.h": "69847b0bbebe8c441dc1ae8d029286721a003fc6b213a5cf3a59bc1fc48e7e0e",
+    "entry/src/main/cpp/gpu_resident/g9rx/receipt_recipe.h": "8c70271f0b3d42de3dca10ca61f5985405a29b8ba93754c0a869e172706d49bd",
+    "entry/src/main/cpp/gpu_resident/g9rx/research_config.h": "fba9742d26bca1e7d342ff3f107732c8801dcd519a6b289ab9d496911653203c",
+    "entry/src/main/cpp/gpu_resident/g9rx/rx_protocol.h": "9fc23b64f7cb9616be3af6f55954b70169004fd921be4f38042cbee7c046f612",
+    "entry/src/main/cpp/gpu_resident/g9rx/rx_storage.h": "5d51a0ddb0bf447ea769dfe36008d566418c626b03b749c696dfe184cceecd62",
+    "entry/src/main/cpp/gpu_resident/g9rx/scene.cpp": "6820209ef5243705b76959c8a33410a667767580dc370e6f02ae07da980c7dcf",
+    "entry/src/main/cpp/gpu_resident/g9rx/scene.h": "c3f9cbd39bf24a2a632a6cf6b4e533d109be82ea512f1aeca903952fe16c7700",
+    "entry/src/main/cpp/gpu_resident/g9rx/stage_capability.cpp": "4226c8b06a64e9074eac04eaa55d97c2b2c161569f74a5a505d4a14aefc39a9e",
+    "entry/src/main/cpp/gpu_resident/g9rx/stage_capability.h": "5e1697614a2dd52d81f7cec14f19429f6b443cc180c48e9a53c9cc0ae583b3e5",
+    "entry/src/main/cpp/gpu_resident/g9rx/test_seams.h": "830f5b51336660ba6af07d4330f407948617ccb2d79b482cbee62205ab675b06",
+    "entry/src/main/cpp/gpu_resident/g9rx/transport.cpp": "a20868a49b55feb4cb3acb1e095f4bd77f208c5018aca1c439c81c3307a8e534",
+    "entry/src/main/cpp/gpu_resident/g9rx/transport.h": "af443a7efd8eea43b1b3dc35d261dc8d551c6375debee3309e52668a3a30b371",
+    "entry/src/main/cpp/gpu_resident/g9rx/wire.h": "a0ec318daee9957c55c2eb7106b30e96ef9d254cac0c86481df16397ed71a5c1",
+    "tools/g9rx/build_receipt.py": "2e883faa9558f49f1cc13b38f88bc8f1b1c7a27fbad00933f8a03989827de476",
+    "tools/g9rx/capture_scope.py": "1439c91802746eda2a6b35242335bada37498f52f9da20971e44741e9bff7873",
+    "tools/g9rx/generate_assets.py": "4919910e395390cce07b6fc1e364dd2ea221f364b74b27001ae7bce6ce70a7b7",
+    "tools/g9rx/prepare_build.cjs": "d2f888b3f97357779feca88bd8400403dbf44977a8d162c3ac5a6e68dd8eb19f",
+    "tools/g9rx/read_cold.py": "27fb1caf7d18dd64827b3cc6fade7aab67088ae91dddd6880e5f6554b2797562",
+    "tools/g9rx/verify_assets.py": "7db1ac11706059b996a4c1dc12d04bb08d7e704fe2b3045b0b1ce07c4ac30a59",
+    "entry/src/main/cpp/types/libgrs_g9rx/index.d.ts": "674ec0a27e41e51ed1c9d05c4c5dbd74832a91a8113a40238de4122f2c7e64f9",
+    "entry/src/main/cpp/types/libgrs_g9rx/oh-package.json5": "414ffd45e77e3ff70f3767582ab2cc1e08410aa76d52df4f97bb4b13fa6f8423",
+    "entry/src/main/ets/entryability/G9RxResearchAbility.ets": "923a1e676fbe96d3109dd3280599f9f6958b0e21ab799ef9ac5a1a2bc3f85b5e",
+    "entry/src/main/ets/pages/GpuResidentG9Rx.ets": "4709f111504f5755dd3b854181eb38f6fab7088d55cb2cf006c574c31d65f20c",
+    "entry/src/main/ets/physics/G9RxColdArchiveCore.ets": "596770551540ad69efb1f634ec4596d7e3b46dbd8b7fd4d8bc6a6f90b9a84e48",
+    "entry/src/main/ets/physics/GpuG9RxCold.ets": "e50d1adc80b6b2e10056e862dc85a465f16fba50f1d76714828ae39a40e6e519",
+    "entry/src/main/ets/workers/G9RxColdWorker.ets": "b029ea53a353abd077be08fb80ab819831eb09f1bd0ffb85e0c4e14efe76e676"
+  },
+  "linkedCanonicalSource": {
+    "offsets": [
+      281616
+    ],
+    "bytes": 145492,
+    "sha256": "5d9cd082f30983806537c52cf2fb1aa96ca870eb50b7b0d59a84e77fbcf2881c",
+    "lines": 2144
+  },
+  "packagedELF": {
+    "bytes": 1404664,
+    "sha256": "4728e21826d72891aca6716f1e3f3046b3d7f42203b84ff6c02deb74d3e97fe6",
+    "canonicalSource": {
+      "offsets": [
+        281616
+      ],
+      "bytes": 145492,
+      "sha256": "5d9cd082f30983806537c52cf2fb1aa96ca870eb50b7b0d59a84e77fbcf2881c",
+      "lines": 2144
+    }
+  },
+  "captureLineMap": {
+    "revision": "RX_CAPTURE_SCOPE_HYGIENE_V1",
+    "transforms": 1,
+    "beforeSHA256LF": "d373b9c51027882f5a32b9d5a8c4c2cfaca21840d299dfdda8e210e36f510655",
+    "afterSHA256LF": "24936c8e49c6d6e765ac865624bca6e31acc48ecbf0dd2f92e158c863693dbd0",
+    "bindingsOriginalFunctionOffsets": [
+      {
+        "name": "clearSlot",
+        "begin": 99,
+        "end": 160
+      },
+      {
+        "name": "scanSlot",
+        "begin": 220,
+        "end": 386
+      },
+      {
+        "name": "selectedSlot",
+        "begin": 407,
+        "end": 2992
+      }
+    ],
+    "bindingsCanonicalFunctionOffsets": [
+      {
+        "name": "clearSlot",
+        "begin": 99,
+        "end": 180
+      },
+      {
+        "name": "scanSlot",
+        "begin": 240,
+        "end": 440
+      },
+      {
+        "name": "selectedSlot",
+        "begin": 461,
+        "end": 3182
+      }
+    ],
+    "originalFunctionStart": 106857,
+    "originalFunctionEnd": 109865,
+    "firstLine": 1723,
+    "lastLine": 1750,
+    "sourceBytesUnchangedOutsideFunction": true
+  },
+  "compile_commands.json": {
+    "sha256": "c07aefb0f30e83e1a9c416a9ab4c70d04f5eb2bd33f6c5d46c60dd64e7977258",
+    "bytes": 21744
+  },
+  "build.ninja": {
+    "sha256": "de0b22a2a1d9e716d1cc43a0e92d0d803b3849d885a9ced5a2974468edcb514f",
+    "bytes": 82221
+  },
+  "rules.ninja": {
+    "sha256": "77d712ad5e2be66400a1bc8aca2d0ee923573caa418b9d78ff6d94de47236ff4",
+    "bytes": 5861
+  },
+  "staticCompiler": {
+    "tool": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+    "toolSHA256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+    "versionCommand": [
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+      "--version"
+    ],
+    "versionExit": 0,
+    "versionStdout": "Glslang Version: 11:16.6.0\r\nESSL Version: OpenGL ES GLSL 3.20 glslang Khronos. 16.6.0\r\nGLSL Version: 4.60 glslang Khronos. 16.6.0\r\nSPIR-V Version 0x00010600, Revision 1\r\nGLSL.std.450 Version 100, Revision 1\r\nKhronos Tool ID 8\r\nSPIR-V Generator Version 11\r\nGL_KHR_vulkan_glsl version 100\r\nARB_GL_gl_spirv version 100\r\n",
+    "versionStderr": "",
+    "command": [
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+      "-S",
+      "comp",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t699\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g9rx\\rx_assets\\pipeline.comp"
+    ],
+    "macros": [],
+    "target": "GLSL ES 3.10 from #version 310 es; syntax validation; no SPIR-V target",
+    "exit": 0,
+    "sourceSHA256": "5d9cd082f30983806537c52cf2fb1aa96ca870eb50b7b0d59a84e77fbcf2881c"
+  },
+  "harnessDifference": {
+    "productionSHA": "5d9cd082f30983806537c52cf2fb1aa96ca870eb50b7b0d59a84e77fbcf2881c",
+    "harnessSHA": "572476e6e481adc01733f89324b7b446fb5a6a15a67358032699d02d2416f4e9",
+    "diffSHA": "e9a1c8b6bcb42d7131e754dc184aac06fcf7e5b625e3d114e66d7cce1be0c32a",
+    "harnessExecuted": false
+  }
+}

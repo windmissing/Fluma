@@ -71,6 +71,18 @@ def generate(out,test_hooks=False):
  s=one(s,'uint flow=g9Column(c,1u),mode=g9Column(c,4u),oldRest=', 'uint flow=g9Column(c,1u),mode=dmWord(c,33u),oldRest=')
  s=s.replace('row[23]=65535u;', 'row[23]=dmScopeAudit();').replace('g9Set(17u,65535u);','g9Set(17u,dmRootAudit());')
  s,hygiene=convert(s,contract)
+ coherent=[]
+ for function, buffer, amount, address in [('g9MapAdd','C','q','g9MapAddress(flow,c,rank)'),('g9ProvisionalAdd','W','mass','g9Provisional(c,rank)')]:
+  signature='bool '+function+'('
+  if s.count(signature)!=1:raise ValueError('T691_FUNCTION_COUNT '+function)
+  start=s.index(signature);end=s.index('\n}',start)
+  slot=buffer+'[at+3u]'
+  old=f'if(merge){{uint at={address},next;if(!g9AddMass({slot},{amount},next))return false;{slot}=next;return true;}}'
+  new=f'if(merge){{uint at={address},next;uint prior={slot};if(!g9AddMass(prior,{amount},next))return false;{slot}=next;return true;}}'
+  if s.count(old)!=1 or s[start:end].count(old)!=1 or new in s:raise ValueError('T691_MERGE_ANCHOR '+function)
+  coherent.append({'function':function,'line':s[:s.index(old)].count('\n')+1,'before':old,'after':new})
+  s=one(s,old,new)
+
  if test_hooks:s+='\n// GNR1_NATIVE_HARNESS_NOT_PRODUCT\n'
  canonical=s.encode('utf8')
  if b'\r' in canonical or b'\0' in canonical or canonical.startswith(b'\xef\xbb\xbf') or '#line' in s:raise ValueError('RX_NON_CANONICAL_SOURCE')
@@ -129,7 +141,7 @@ def generate(out,test_hooks=False):
  for directory in [MOD, ROOT/'tools/g9rx', ROOT/'entry/src/main/cpp/gpu_resident/program_cache']:
   for file in sorted(directory.glob('*')):
    if file.is_file():deps[file.relative_to(ROOT).as_posix()]=sha(file.read_bytes())
- for relative in ['docs/architecture-T665-contract-v1.json','docs/architecture-T665-v1.md','entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h','entry/src/main/cpp/gpu_resident/uniform_locations.h','entry/src/main/cpp/gpu_resident/g9rx/frozen/source_receipt.json']:
+ for relative in ['docs/architecture-T665-contract-v1.json','docs/architecture-T665-v1.md','docs/architecture-T691-v1.md','entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h','entry/src/main/cpp/gpu_resident/uniform_locations.h','entry/src/main/cpp/gpu_resident/g9rx/frozen/source_receipt.json']:
   deps[relative]=sha((ROOT/relative).read_bytes())
  deps={name.replace("\\","/"):value for name,value in deps.items()}
  implementation=hashlib.sha256();implementation.update(b'HARNESS' if test_hooks else b'PRODUCTION');implementation.update(Path(__file__).read_bytes());implementation.update(json.dumps(deps,sort_keys=True).encode())
@@ -138,11 +150,11 @@ def generate(out,test_hooks=False):
  schema=schema.replace('t555-g9dm-v2-initial-construction','t644-gnr1-t641-t647-v1:'+implementation.hexdigest()).replace('kContainerRevision=2u','kContainerRevision=1u')
  (out/'schema_generated.h').write_text(schema,encoding='utf8')
  (out/'implementation_generated.h').write_text('#pragma once\n#define kRxImplementationSHA "'+implementation.hexdigest()+'"\n',encoding='utf8')
- identity={'schema':'GNR1_PIPELINE_IDENTITY_V2','shaderSHA':sha(canonical),'canonicalBytes':len(canonical),'canonicalLines':s.count('\n'),'hygieneRevision':REVISION,'scopeTransform':hygiene,'variant':'HARNESS_NOT_PRODUCT' if test_hooks else 'PRODUCTION','sceneSHA':sha(scene.encode()),'sourceManifestSHA':implementation.hexdigest(),'staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json']}
+ identity={'schema':'GNR1_PIPELINE_IDENTITY_V2','shaderSHA':sha(canonical),'canonicalBytes':len(canonical),'canonicalLines':s.count('\n'),'hygieneRevision':REVISION,'scopeTransform':hygiene,'coherentRevision':'RX_COHERENT_VALUE_V1','coherentTransforms':coherent,'variant':'HARNESS_NOT_PRODUCT' if test_hooks else 'PRODUCTION','sceneSHA':sha(scene.encode()),'sourceManifestSHA':implementation.hexdigest(),'staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json']}
  pipeline=sha(canonical)
  with (out/'contract_generated.h').open('a',encoding='utf8',newline='\n') as f:f.write('namespace grs::g9rx { inline constexpr const char* kPipelineSHA="'+pipeline+'"; }\n')
  identity['pipelineSHA']=pipeline
- reader=dict(tables);reader['sourceIdentity']={key:identity[key] for key in ['schema','shaderSHA','canonicalBytes','hygieneRevision','sourceManifestSHA','variant']}
+ reader=dict(tables);reader['sourceIdentity']={key:identity[key] for key in ['schema','shaderSHA','canonicalBytes','hygieneRevision','coherentRevision','coherentTransforms','sourceManifestSHA','variant']}
  (out/'reader_schema.json').write_bytes((json.dumps(reader,ensure_ascii=False,indent=2)+'\n').encode('utf8'))
  (out/'capture_line_map.json').write_bytes((json.dumps(hygiene,indent=2)+'\n').encode())
  (out/'inputs.json').write_bytes((json.dumps(deps,indent=2)+'\n').encode('utf8'))
