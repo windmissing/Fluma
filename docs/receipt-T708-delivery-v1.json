@@ -1,0 +1,27 @@
+{
+  "schema": "T708_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-20",
+  "commit": "c0ee8f46992e06b62e4399c3b44fcb56ae72f05c",
+  "statusRow": {
+    "before": "| T708 | 【T708·G11 Worker 打包与停帧归因】architect | architect | P5 | 进行中 | 6affa4cee4b0a82e36432506 |",
+    "after": "| T708 | 【T708·G11 Worker 打包与停帧归因】architect | architect | P5 | 结束待验收 | 6affa4cee4b0a82e36432506 |"
+  },
+  "beforeSha256": "bb23b7008c838d65e829cfb5b9807fc70c225aa0ee039a8b674a9583dae479e4",
+  "afterSha256": "c52ff113b9e3634169a40a5ca61ea448c9c8690f70ddd8d3a7950ca63033b49a",
+  "archEvidenceSha256": "0d0605b05e792df5e746907c3547a559d715bbfe70fdbb93640be1fba48350bf",
+  "sameNameDidaListUpdated": false,
+  "queueStaged": false,
+  "comments": {
+    "taskId": "6affa4cee4b0a82e36432506",
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "started": {
+      "id": "6affa56fe4b0a82e364335da",
+      "createdTime": "2026-11-20T01:42:07+0000"
+    },
+    "delivered": {
+      "id": "6affa6d8e4b09abb13489d6a",
+      "createdTime": "2026-11-20T01:48:08+0000",
+      "title": "T708 架构分流完成（c0ee8f46，docs/architecture-T708-v1.md；T639 工程文档已修订）。核实际 T639 unsigned/T687-g11 signed 与签前后同一 modules.abc：SDK 反汇编确认 G11ColdWorker 可执行入口及 BEGIN/CANCEL，loader 已登记 esmodule。真机 pid48183/tid49307 有独立 ABC 路径读取失败及 EAWorkers attach 诊断，缺同次 Worker 入口和归档回执，不能判整包缺 Worker。Configure/owner/EGL/Bootstrap/封存/激活与 Worker 无依赖；250ms 页刷新覆盖配置回包，owner 后续命令可覆盖 lastReply，Configure 失败清理本身可变 STOPPED。首帧首阻断仍需同 scope 证据。developer 保配置首错/原返回与单独 Worker 入口握手；tester 对实际模式核包和签名，仅证到 resolver 拒绝再定包装更改；effector 优先用原包/已有出口一次 R1 K192 V2048 ROOT，先不点归档取完整 g11Status 和真实启动链，再独立取 Worker 原件。物理和像素 NOT_RUN。"
+    }
+  }
+}
