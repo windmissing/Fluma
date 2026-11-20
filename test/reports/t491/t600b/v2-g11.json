@@ -1,0 +1,22 @@
+{
+ "revision": "T600_V2_G11_DEVICE_V1",
+ "date": "2026-11-20",
+ "package": {
+  "task": "T687-g11-signed (T639-delivery-v2 base)",
+  "signedSha": "e237f6b6"
+ },
+ "entryRoute": "\u9996\u9875 G11\u00b7\u63a5\u53d7\u901a\u91cf\u7ec4\u5408\u7814\u7a76\u76f4\u8fbe\uff08R1/K192/V2048/ROOT \u6863\u4f4d+\u914d\u7f6e/\u5c01\u5b58 seed/\u6d4b\u8bd5\u6e90/\u503e\u659c/seed\u539f\u4ef6/\u51b7\u6863\u6309\u94ae\u5168\u5728\uff09",
+ "sequence": [
+  "\u914d\u7f6e(R1/K192/ROOT)",
+  "\u7b49 40s"
+ ],
+ "observed": {
+  "state": "STOPPED",
+  "detail": "\u7b49\u5f85\u6709\u6548\u65b0\u7ba1\u7ebf\u5e27",
+  "filesExport": "\u51b7\u6863\u6309\u94ae\u65e0\u4ea7\u7269\uff08files \u7a7a\uff09"
+ },
+ "blocker": "hilog zip_file.cpp IsEntryDataConsistent: GetEntry failed for ets/workers/G11ColdWorker.abc \u2014 Worker asset MISSING from signed HAP (zip entry inconsistent/not present); G11 cold worker cannot load, creation arm stalls before new-pipeline frame",
+ "verification": "zipfile listing confirms no ets/workers/* entries in signed HAP",
+ "route": "T687-g11 build defect (workers asset not packaged in t639-delivery-v2 base) \u2014 back to tester/developer build configuration; T600 G11 arms blocked until worker asset ships",
+ "NOT_claimed": "no physics/pixel/visual PASS"
+}
