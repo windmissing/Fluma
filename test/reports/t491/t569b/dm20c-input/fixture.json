@@ -1,0 +1,39 @@
+{
+  "schema": "T670_EXISTING_FORMAL_SEED_V1",
+  "family": "dm",
+  "K": 192,
+  "angleIndex": 7680,
+  "full": false,
+  "roots": 1,
+  "foreignPolicy": false,
+  "parentCredit": false,
+  "files": {
+    "config.u32": {
+      "sha256": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+      "bytes": 256
+    },
+    "identity.u32": {
+      "sha256": "6ff8e0f3f106865a95243fe1c175fc47af138cb5ad07631de00c938b08650cb5",
+      "bytes": 72
+    },
+    "seed.u32": {
+      "sha256": "cd62ff4d9963146ec22c8eaeac848784fb2ad500ef684a9f82ff4ae55633c02d",
+      "bytes": 591872
+    },
+    "commands.u32": {
+      "sha256": "97f9994087f834e6e9fb45cbdc214778ba08e44d775767952bf17c67acde07b8",
+      "bytes": 768
+    },
+    "quota.u32": {
+      "sha256": "26f2820b663e97a1eaaecbc45289cd639e591453f3445748bb3853516d5584c0",
+      "bytes": 1024
+    },
+    "settings.u32": {
+      "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+      "bytes": 4
+    }
+  },
+  "seedOrigin": "T552 canonical corrected S40; DM header per T554",
+  "expected": "Independent GPU capture required; no generated output/physics PASS",
+  "quotaOrigin": "caller-declared raw fixture only, NOT production clock authorization"
+}

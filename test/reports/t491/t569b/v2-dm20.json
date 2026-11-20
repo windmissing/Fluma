@@ -1,0 +1,24 @@
+{
+ "revision": "T569_V2_DM20_DEVICE_FIRST_V1",
+ "date": "2026-11-20",
+ "package": {
+  "task": "T569-dmfix + g9_dm_differential (host-compiled aarch64, db325543 ELF/BuildId ee6dead0, libgrs_dm_t647 5202800B) per T670 handoff: deploy standalone ELF+DT_NEEDED, fixtures.py dm 192 7680 --roots 1 + cold-credit.u32(8B)"
+ },
+ "execution": {
+  "revision": "T549_GPU_EXECUTION_V1",
+  "evidenceOrigin": "ACTUAL_GL_EXECUTION",
+  "renderer": "Maleoon 935F",
+  "k": 192,
+  "residentPayloadBytes": 55339648,
+  "stages": [
+   {
+    "stage": "CREATE",
+    "result": 8
+   }
+  ]
+ },
+ "blocker": "CREATE result=8 on device with ACTUAL_GL_EXECUTION origin; concurrent hilog shows 0:1728: S0022 Symbol slot redeclared (same as T645/T644 defect signature, now hit through the differential harness too)",
+ "interpretation": "DM20 strong-start blocked at CREATE with the same g9dm shader defect family \u2014 the defect is not g9rx-specific: the shared g9dm shader generation carries it; device execution REACHED real GL on Maleoon 935F (fixture chain works, budget contract held)",
+ "route": "architect/developer: shader generation defect is in g9dm family (T674 fix was RX-scoped only); all DM arms will hit the same wall until fixed",
+ "facilityNotes": "hdc file send creates nested dirs when target exists; harness INPUT_LENGTH debug throw added (config.u32 bytes=3440 was a directory); seed.u32=591872B per kProfiles K192 (stateBytes field order confirmed by debug run)"
+}
