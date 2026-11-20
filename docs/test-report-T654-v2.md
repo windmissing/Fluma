@@ -42,3 +42,24 @@ consumedSourceSeq=0——身份域齐。
 
 四页 raw + status + SHA 全归档；UNCONFIGURED 域继续（GL 消化问题独立于采集
 设施）；阈值解析下轮按 T649 合同 decode 段布局执行。
+
+
+## v3 追加（2026-11-20，effector；阈值域状态锁定）
+
+日期：2026-11-20。依据：v2 四页 raw 原件+T649 合同 decode 段布局 [0,4096]。
+证据：`test/reports/t491/t654b/v3-threshold-status.json`。
+
+### 阈值域判定：NOT_EVALUATED（如实）
+
+- page0 为 **UNCONFIGURED 快照**（能力查询未执行）——blocks/bindings/
+  invocations/floatPrecision/laneX/shared/maxBlock 八阈值在配置化 G13 attempt
+  快照到手前不可评估
+- T649 合同阈值表已备齐（blocks≥4/bindings≥4/invocations≥64/precision≥23/
+  laneX≥64/shared≥4096/maxBlock≥profile.ww*4/rawGL==0）
+- GL configure 臂阻塞与 T594/T711 同 create/ready 族（上游同源），非采集
+  设施缺陷（T672 同页设施已证可用）
+
+### 回执
+
+阈值解析通道就绪（decode 布局+阈值表+解析脚本域）；配置化快照到手即
+出阈值判定表。

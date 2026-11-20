@@ -1,0 +1,23 @@
+{
+ "revision": "T654_V3_THRESHOLD_DOMAIN_STATUS_V1",
+ "date": "2026-11-20",
+ "basis": "T654 v2 four-page raw originals (t672out/r1-page0..3) + T649 contract decode layout [0,4096]",
+ "thresholdDomain": {
+  "status": "NOT_EVALUATED",
+  "reason": "page0 captured at UNCONFIGURED (capability queries not yet executed) \u2014 pre-query snapshot per v2; blocks/bindings/invocations/floatPrecision/laneX/shared/maxBlock thresholds remain unevaluable until a configured G13 attempt snapshot is captured",
+  "contract": "T649 capabilityThresholds: blocks>=4/bindings>=4/invocations>=64/floatPrecision>=23/laneX>=64/shared>=4096/maxBlock>=profile.ww*4/rawGL==0"
+ },
+ "observedPage0Int32": {
+  "offset0": 216,
+  "offset2": 512,
+  "offset4": 128,
+  "offset6": 512,
+  "offset11": 6,
+  "offset12": -1,
+  "offset18": 31,
+  "offset19": 2,
+  "offset20": 128
+ },
+ "configureBlocker": "GL configure consumption did not occur (UNCONFIGURED persistent, same as v2) \u2014 GL configure arm blocked upstream (same create/ready-path family as T594/T711); NOT a capture-facility defect",
+ "route": "architect: G13 configure arm blocked in same create/ready family; capture facility complete (T672 same-page path proven), threshold evaluation pending configured snapshot"
+}
