@@ -1,0 +1,27 @@
+{
+  "schema": "T750_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "ccf8abbd77d8f9dfe645677d6b510825f5567232",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b00daede4b07c27619b88b0",
+    "started": {
+      "id": "6b00db61e4b0c0fef849acb9",
+      "createdTime": "2026-11-20T23:44:33+0000"
+    },
+    "delivered": {
+      "id": "6b00dd46e4b0bdebdc78791f",
+      "createdTime": "2026-11-20T23:52:38+0000",
+      "title": "T750 离线架构已交（ccf8abbd，docs/architecture-T750-v1.md 与 architecture-T750-evidence-v1.json）。用实际 T739 签包字节重构，独立 OP48 GLES/Vulkan 源 15931/16225 B，余角 43307/43601 B，静态编译/反射/校验通过。保 820/16 原表，角色切换位置不增。已冻结五原字及逐算术序、原 wall/ghost、16 迭代槽/33 次全组同步、原字负控和同资格原生/U32 GPU 成本对照。发现静态接线错位：QUANTUM 表 ACTUAL=1、REPLAY=2，当前 host 都绑定 REPLAY bank，签包 shader 都写 trace word10240，OP48 两计数落785/786。完整根对照前修显式映射并证实两份独立 bank/trace，可先做隔离块。WORK/CTRL 无 coherent 属可见性保证缺口，两个算术臂统一 qualified control，实测跨 lane。935F 仍必需且启用备选后先做 T747 真机位证，再测单块及完整根 250 ms/有效30FPS。本卡未用真机，未接产品或改数值门。G20 4/12≈33%。"
+    }
+  },
+  "statusRow": {
+    "before": "| T750 | 【T750·目标20 G13黏性位精确切片工程与成本预案】architect | architect | P5 | 进行中 | 6b00daede4b07c27619b88b0 |",
+    "after": "| T750 | 【T750·目标20 G13黏性位精确切片工程与成本预案】architect | architect | P5 | 结束待验收 | 6b00daede4b07c27619b88b0 |"
+  },
+  "beforeSha256": "2a4517c108af2663f47bcd3b915f78409439619ee990a0f126d9d98d117a21fa",
+  "afterSha256": "1e905ee243956063eb6e572a8f23b3206e3a9ae2fff098937011faa7c73b762a",
+  "evidenceSha256": "7fd637c1cb3cf74e64d8b482df07ea2bdd2c048919d95d563e10b34e035d0cf4"
+}
