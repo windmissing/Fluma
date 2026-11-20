@@ -7,6 +7,10 @@
 #ifdef T670_DM
 #include "gpu_resident/g9dm/transport.h"
 #include "gpu_resident/g9dm/cold_contract.h"
+#ifdef GRS_G9_BOOT_ONLY
+#include "gpu_resident/g9_dm_boot_capture.h"
+#include "dm_boot_receipt.h"
+#endif
 using namespace grs::g9dm;
 #else
 #include "gpu_resident/g9spf/transport.h"
@@ -54,6 +58,8 @@ int main(int argc,char** argv){
   EGLScope egl;if(!egl.Create())throw std::runtime_error("REAL_EGL_CONTEXT_UNAVAILABLE_NO_FALLBACK");
   std::ofstream receipt(output/"execution.jsonl");receipt<<"{\"revision\":\"T549_GPU_EXECUTION_V1\",\"evidenceOrigin\":\"ACTUAL_GL_EXECUTION\",\"physicsVerdict\":\"TESTER_OWNED\",\"renderer\":\""<<(const char*)glGetString(GL_RENDERER)<<"\",\"k\":"<<config.k<<",\"residentPayloadBytes\":"<<resident(*profile)<<",\"fullArenaBytes\":"<<(config.fullTrialTrace?6*profile->arenaBytes:0)<<"}\n";
 #if defined(T670_DM) && defined(GRS_G9_BOOT_ONLY)
+  dmboot::Receipt bootReceipt(receipt, output);
+  bootReceipt.Identity(identity.run, identity.owner, identity.context);
   receipt<<"{\"variant\":\"BOOT_ONLY\",\"sourceSHA\":\""<<PipelineSourceHash()
          <<"\",\"roleSetSHA\":\""<<BootRoleSetSHA()<<"\"}\n";
   if(argc==4){
@@ -61,17 +67,20 @@ int main(int argc,char** argv){
    receipt<<"{\"stage\":\"CACHE_PRELOAD_EXIT\",\"ready\":"
           <<(ConfigureBootCache(argv[3])?"true":"false")<<"}\n";
   }
-  receipt<<"{\"stage\":\"CREATE_ENTER\"}\n";receipt.flush();
-  if(!receipt)throw std::runtime_error("RECEIPT_IO_FAILED");
+  receipt<<"{\"stage\":\"CREATE_ENTER\",\"ticket\":\""<<dmboot::Receipt::kTicket<<"\"}\n";receipt.flush();
+  if(!bootReceipt.Good())throw std::runtime_error("RECEIPT_IO_FAILED");
   Transport bootTransport;
-  const auto bootResult=bootTransport.Create(config,identity,seed);
+  const auto capture=bootReceipt.Capture();
+  const auto bootResult=grs::g9boot::CreateDmBootCaptured(bootTransport,config,identity,seed,capture);
   bootTransport.Release(true);
   const bool bootAudited=bootResult==Result::BOOT_AUDIT_OK;
   receipt<<"{\"stage\":\"CREATE_EXIT\",\"result\":"<<uint32_t(bootResult)
          <<",\"state\":\""<<(bootAudited?"BOOT_AUDIT_OK":"BOOT_FAILED")
-         <<"\",\"rootsAuthorized\":false}\n";
+         <<"\",\"ticket\":\""<<dmboot::Receipt::kTicket<<"\",\"rootsAuthorized\":false";
+  if(bootReceipt.TailWritten())receipt<<",\"workTailFile\":\"boot-work-tail.u32\"";
+  receipt<<"}\n";
   receipt.flush();
-  if(!receipt)throw std::runtime_error("RECEIPT_IO_FAILED");
+  if(!bootReceipt.Good()||(bootAudited&&!bootReceipt.TailWritten()))throw std::runtime_error("RECEIPT_IO_FAILED");
   return bootAudited?0:3;
 #else
   Transport transport;auto result=transport.Create(config,identity,seed);seed.state.clear();seed.state.shrink_to_fit();receipt<<"{\"stage\":\"CREATE\",\"result\":"<<uint32_t(result)<<"}\n";if(result!=Result::OK){transport.Release(true);return 3;}

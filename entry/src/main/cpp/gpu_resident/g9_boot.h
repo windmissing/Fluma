@@ -1,4 +1,5 @@
 #pragma once
+#include "g9_boot_capture.h"
 #include "program_cache/mapped_build_id.h"
 #include "program_cache/program_factory.h"
 #include "uniform_locations.h"
@@ -19,33 +20,46 @@ struct Trace {
   uint64_t run, owner, context;
   char buildId[129]{};
   SubmitObserver downstream{};
+  const Capture *capture = nullptr;
 
   Trace(const char *family, const char *source, const char *roles, uint64_t run,
-        uint64_t owner, uint64_t context, const void *mapped)
+        uint64_t owner, uint64_t context, const void *mapped,
+        const Capture *capture = nullptr)
       : family(family), sourceSHA(source), roleSetSHA(roles), run(run),
-        owner(owner), context(context) {
+        owner(owner), context(context), capture(capture) {
+#ifdef GRS_G9_DM_BOOT_CAPTURE
+    if (!this->capture && std::strcmp(family, "DM") == 0)
+      this->capture = CurrentCapture();
+#endif
     BuildIdForAddress(mapped, buildId);
   }
 
   void Record(const char *stage, int64_t raw = -1, int64_t gl = -1,
               int64_t egl = -1, int64_t error = -1,
-              int64_t seal = -1) const {
+              int64_t seal = -1, const char *audit = "",
+              const uint32_t *workTail = nullptr) const {
     timespec time{};
     clock_gettime(CLOCK_MONOTONIC, &time);
-    char row[840]{};
-    std::snprintf(row, sizeof(row),
+    char ticket[64]{};
+    if (capture)
+      std::snprintf(ticket, sizeof(ticket), ",\"ticket\":\"%llu\"",
+                    static_cast<unsigned long long>(capture->ticket));
+    char row[1100]{};
+    const int length = std::snprintf(row, sizeof(row),
         "{\"schema\":\"G9BootV1\",\"family\":\"%s\",\"role\":\"BOOT\",\"stage\":\"%s\","
         "\"pid\":%d,\"tid\":%ld,\"run\":\"%llu\",\"owner\":\"%llu\","
         "\"context\":\"%llu\",\"ns\":\"%llu\",\"sourceSHA\":\"%s\","
         "\"roleSetSHA\":\"%s\",\"mappedBuildId\":\"%s\","
-        "\"raw\":%lld,\"gl\":%lld,\"egl\":%lld,\"error\":%lld,\"seal\":%lld}",
+        "\"raw\":%lld,\"gl\":%lld,\"egl\":%lld,\"error\":%lld,\"seal\":%lld%s%s}",
         family, stage, int(getpid()), syscall(SYS_gettid),
         static_cast<unsigned long long>(run), static_cast<unsigned long long>(owner),
         static_cast<unsigned long long>(context),
         static_cast<unsigned long long>(uint64_t(time.tv_sec) * 1000000000 + time.tv_nsec),
         sourceSHA, roleSetSHA, buildId, static_cast<long long>(raw),
         static_cast<long long>(gl), static_cast<long long>(egl),
-        static_cast<long long>(error), static_cast<long long>(seal));
+        static_cast<long long>(error), static_cast<long long>(seal), ticket, audit);
+    if (capture && capture->record && length > 0 && size_t(length) < sizeof(row))
+      capture->record(capture->context, row, size_t(length), workTail);
     OH_LOG_Print(LOG_APP, LOG_INFO, 0xE734, "G9Boot", "%{public}s", row);
     if (std::strcmp(family, "DM") == 0) {
       std::fprintf(stderr, "%s\n", row);
@@ -162,13 +176,15 @@ template <class Time, class ReadTime>
 Audit RunAudit(const Trace &trace, GLuint program, GLint opcodeLocation,
                GLuint work, size_t tailByteOffset, ReadTime readTime,
                uint32_t &firstGl, uint32_t &firstEgl) {
+  GLenum sampledGl = GL_NO_ERROR;
+  EGLint sampledEgl = EGL_SUCCESS;
   auto errors = [&] {
-    const auto gl = glGetError();
-    const auto egl = eglGetError();
-    if (gl && !firstGl)
-      firstGl = gl;
-    if (egl != EGL_SUCCESS && !firstEgl)
-      firstEgl = egl;
+    sampledGl = glGetError();
+    sampledEgl = eglGetError();
+    if (sampledGl && !firstGl)
+      firstGl = sampledGl;
+    if (sampledEgl != EGL_SUCCESS && !firstEgl)
+      firstEgl = sampledEgl;
     return !firstGl && !firstEgl;
   };
   auto rawEgl = [&] { return firstEgl ? EGLint(firstEgl) : EGL_SUCCESS; };
@@ -185,14 +201,24 @@ Audit RunAudit(const Trace &trace, GLuint program, GLint opcodeLocation,
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
   trace.Record("WARM_EXIT");
   const auto fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-  trace.Record("FINISH_ENTER", fence != nullptr);
+  const bool fenceCreated = fence != nullptr;
+  trace.Record("FINISH_ENTER", fenceCreated);
   glFinish();
   const auto status = fence ? glClientWaitSync(fence, 0, 0) : GL_WAIT_FAILED;
   if (fence)
     glDeleteSync(fence);
   const bool waitOk = status == GL_ALREADY_SIGNALED || status == GL_CONDITION_SATISFIED;
   const bool sameApi = errors();
-  trace.Record("FINISH_EXIT", status, firstGl, rawEgl());
+  char detail[300]{};
+  if (trace.capture) {
+    char wait[24] = "null";
+    if (fenceCreated)
+      std::snprintf(wait, sizeof(wait), "%u", unsigned(status));
+    std::snprintf(detail, sizeof(detail),
+        ",\"fenceWaitRaw\":%s,\"fenceCompleted\":%s,\"glSample\":%u,\"eglSample\":%d",
+        wait, waitOk ? "true" : "false", unsigned(sampledGl), int(sampledEgl));
+  }
+  trace.Record("FINISH_EXIT", status, firstGl, rawEgl(), -1, -1, detail);
   if (!waitOk || !sameApi)
     return Audit::Gl;
   if (!readTime(end))
@@ -202,13 +228,24 @@ Audit RunAudit(const Trace &trace, GLuint program, GLint opcodeLocation,
   const auto *tail = static_cast<const uint32_t *>(glMapBufferRange(
       GL_COPY_READ_BUFFER, GLintptr(tailByteOffset), 2 * sizeof(uint32_t), GL_MAP_READ_BIT));
   errors();
-  trace.Record("MAP_EXIT", tail != nullptr, firstGl, rawEgl());
+  if (trace.capture)
+    std::snprintf(detail, sizeof(detail),
+        ",\"workObject\":%u,\"workByteOffset\":%zu,\"workRequestedBytes\":8,\"glSample\":%u,\"eglSample\":%d",
+        work, tailByteOffset, unsigned(sampledGl), int(sampledEgl));
+  trace.Record("MAP_EXIT", tail != nullptr, firstGl, rawEgl(), -1, -1, detail);
   if (!tail)
     return Audit::Gl;
-  const auto error = tail[0], seal = tail[1];
+  const uint32_t rawTail[]{tail[0], tail[1]};
+  const auto error = rawTail[0], seal = rawTail[1];
   const auto unmapped = glUnmapBuffer(GL_COPY_READ_BUFFER);
   const bool readOk = errors();
-  trace.Record("UNMAP_EXIT", unmapped, firstGl, rawEgl(), error, seal);
+  const bool validTail = unmapped == GL_TRUE && readOk;
+  if (trace.capture)
+    std::snprintf(detail, sizeof(detail),
+        ",\"workObject\":%u,\"workByteOffset\":%zu,\"workTailBytes\":%u,\"glSample\":%u,\"eglSample\":%d",
+        work, tailByteOffset, validTail ? 8u : 0u, unsigned(sampledGl), int(sampledEgl));
+  trace.Record("UNMAP_EXIT", unmapped, firstGl, rawEgl(), error, seal, detail,
+               validTail ? rawTail : nullptr);
   if (unmapped != GL_TRUE || !readOk)
     return Audit::Gl;
   if (error || seal != kSeal) {

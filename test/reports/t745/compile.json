@@ -1,0 +1,108 @@
+{
+  "schema": "T745_DM_BOOT_EXPORT_COMPILE_V1",
+  "signed": false,
+  "deviceUsed": false,
+  "runtime": "NOT_RUN",
+  "driver": {
+    "path": ".codex/local-test/t745-dm/handoff/g9_dm_differential",
+    "bytes": 713344,
+    "sha256": "e8c14c142806c65d57d09ecf04f60ac1fc7fb2152e51bc8da0460c47b06e5688",
+    "buildId": "a2f4a69e507275d5564fd8a6546c6973fb262085",
+    "needed": [
+      "libgrs_dm_t647.so",
+      "libEGL.so",
+      "libGLESv3.so",
+      "libhilog_ndk.z.so",
+      "libc++_shared.so",
+      "libc.so"
+    ]
+  },
+  "pairedDsoFromHap": {
+    "path": ".codex/local-test/t745-dm/handoff/libgrs_dm_t647.so",
+    "bytes": 1301712,
+    "sha256": "6cbe82a295ef6d2b3f2520cfd49ed12602d086789183e30dd140db591d1bf2d5",
+    "buildId": "9b6cc8027c854800cca2bcb7577df91720373bf5",
+    "needed": [
+      "libEGL.so",
+      "libGLESv3.so",
+      "libhilog_ndk.z.so",
+      "libc++_shared.so",
+      "libc.so"
+    ]
+  },
+  "linkedDso": {
+    "path": ".codex/local-test/t745-dm/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_dm_t647.so",
+    "bytes": 5441272,
+    "sha256": "c950356d7512ac3bf414a9defc09ad3654f90bef7d814ff4dd4b6b702d3d795f",
+    "buildId": "9b6cc8027c854800cca2bcb7577df91720373bf5",
+    "needed": [
+      "libEGL.so",
+      "libGLESv3.so",
+      "libhilog_ndk.z.so",
+      "libc++_shared.so",
+      "libc.so"
+    ]
+  },
+  "pairedLibStdCpp": {
+    "path": ".codex/local-test/t745-dm/handoff/libc++_shared.so",
+    "bytes": 1262248,
+    "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274"
+  },
+  "unsignedHap": {
+    "path": ".codex/local-test/t745-dm/entry/build/default/outputs/default/entry-default-unsigned.hap",
+    "bytes": 7605482,
+    "sha256": "227c3d6ed6e7b3fc41b1bbf7e87967a853283399e3759a739af1e65f9be51b49"
+  },
+  "hvigorLog": {
+    "path": ".codex/local-test/t745-dm.log",
+    "bytes": 16840,
+    "sha256": "eba3db0a0ab21edcf0ae3c8f768cbd27e54ebecd6225e029527e6b89792aff94"
+  },
+  "shader": {
+    "family": "DM",
+    "variant": "BOOT_ONLY",
+    "role": "BOOT",
+    "opcodes": [
+      12,
+      2147483392
+    ],
+    "sourceBytes": 22353,
+    "sourceSHA": "486538f1921304c2f1cfee843f8624995f0ca99650fd505e7ce83a6fca5ab3a8",
+    "parentShaderSHA": "c10b15ee3d7ba93bde10d393b5d8ebf0cbcec02df4ae6615f90b196007d5b0c4",
+    "roleSetSHA": "f0f968d78de0742ccbc25fcd7934d430679d695516f61ffa4b4e8a0805ac0a9c",
+    "generatedPath": ".codex/local-test/t745-dm/entry/.cxx/default/default/debug/arm64-v8a/dm_native/dm_assets/boot.comp"
+  },
+  "implementationSHA": "8d6f437362313382334f2f4fafb5bd4231991a6d4dc018d7fe4b91b918afff11",
+  "t734ShaderRoleAndImplementationIdentityPreserved": true,
+  "proofAbi": [
+    1,
+    224,
+    896,
+    408,
+    416,
+    56,
+    64,
+    80,
+    1384,
+    1064,
+    1064,
+    15864,
+    392,
+    45560,
+    1384,
+    1320
+  ],
+  "linkage": "driver imports DSO CreateDmBootCaptured; DSO exports original Transport::Create",
+  "rxBootOnlyCompatibilityCompile": {
+    "hvigorLog": {
+      "path": ".codex/local-test/t745-rx.log",
+      "bytes": 22998,
+      "sha256": "3a9e6944e549a474280f862741073849f0c00b5145d08f4e878a6eae2cda900a"
+    },
+    "unsignedHap": {
+      "path": ".codex/local-test/t745-rx/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "bytes": 7716729,
+      "sha256": "53a6587997a3acc1fb89eb6ba5185936b40f6a5d9fb22164b32cc1fe5d70eb8b"
+    }
+  }
+}

@@ -30,5 +30,10 @@ target_compile_options(g9_dm_differential PRIVATE -fno-fast-math -ffp-contract=o
 target_link_libraries(g9_dm_differential PRIVATE grs_foundation libEGL.so libGLESv3.so)
 ''')
  if boot_only:
-  with cm.open('a') as f:f.write('target_compile_definitions(g9_dm_differential PRIVATE GRS_G9_BOOT_ONLY=1)\n')
+  shutil.copyfile(ROOT/'test/t670/dm_boot_receipt.h',target.with_name('dm_boot_receipt.h'))
+  with cm.open('a') as f:f.write('''target_compile_definitions(g9_dm_differential PRIVATE GRS_G9_BOOT_ONLY=1)
+target_link_libraries(g9_dm_differential PRIVATE libdl.so)
+target_sources(grs_foundation PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/gpu_resident/g9_dm_boot_capture.cpp")
+target_compile_definitions(grs_foundation PRIVATE GRS_G9_DM_BOOT_CAPTURE=1)
+''')
 print(out)
