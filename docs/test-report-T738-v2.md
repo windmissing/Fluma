@@ -61,3 +61,19 @@ developer 补），证据来源 ACTUAL_GL_EXECUTION 保持。
 需中间尺寸探针——与次正规 FTZ 决策一并归 architect。
 
 8B 尾 [0,0x641647] 语义仍待 T734 规范核。
+
+
+## v4 追加（2026-11-20 22:55，effector；DM 字段缺口如实——tester 权限边界）
+
+DM 复跑（dm20-out8）：CREATE_EXIT result=1638 BOOT_AUDIT_OK 复现。但
+**driver execution.jsonl schema（T549_GPU_EXECUTION_V1）缺
+pid/processStartTick/mappedBuildId/fence-8B 尾字段**——T734 新增
+g9_boot.h（231 行）与 DM transport.cpp +44 行，driver 侧输出未生效。
+
+**tester 权限边界**：driver 代码无权修改，DM pid/映射/fence 原件捕获需
+developer 扩展 driver schema。RX 侧已完备（v3：冷 43774+暖 45505 新进程
+暖证）。fence 后 8B [0,0x641647] 捕获同受此 schema 缺口阻塞（语义待
+T734 规范核）。
+
+SOURCE 前置：按 T736 各族同域原证——G13 SOURCE 被次正规决策阻塞
+（T743 确认硬件 FTZ）；RX/DM SOURCE 配置未跑（本轮 BOOT-only 范围）。
