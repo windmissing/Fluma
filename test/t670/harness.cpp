@@ -36,7 +36,11 @@ struct EGLScope {
  ~EGLScope(){if(display!=EGL_NO_DISPLAY){eglMakeCurrent(display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);if(surface!=EGL_NO_SURFACE)eglDestroySurface(display,surface);if(context!=EGL_NO_CONTEXT)eglDestroyContext(display,context);eglTerminate(display);}}
 };
 int main(int argc,char** argv){
+#if defined(T670_DM) && defined(GRS_G9_BOOT_ONLY)
+ if(argc!=3&&argc!=4){std::cerr<<"usage: g9-differential INPUT_DIRECTORY NEW_OUTPUT_DIRECTORY [CACHE_BASE_DIRECTORY]\n";return 2;}
+#else
  if(argc!=3){std::cerr<<"usage: g9-differential INPUT_DIRECTORY NEW_OUTPUT_DIRECTORY\n";return 2;}
+#endif
  try{
   const std::filesystem::path input=argv[1],output=argv[2];if(std::filesystem::exists(output))throw std::runtime_error("FRESH_OUTPUT_REQUIRED");std::filesystem::create_directories(output);
 #ifdef T670_DM
@@ -49,6 +53,27 @@ int main(int argc,char** argv){
   SeedFileIdentity seed;seed.state=read(input/"seed.u32",profile->stateBytes);if(seed.state.size()!=profile->stateBytes/4)throw std::runtime_error("SEED_EXACT_SIZE_REQUIRED");seed.sha=HashWords(seed.state.data(),seed.state.size());
   EGLScope egl;if(!egl.Create())throw std::runtime_error("REAL_EGL_CONTEXT_UNAVAILABLE_NO_FALLBACK");
   std::ofstream receipt(output/"execution.jsonl");receipt<<"{\"revision\":\"T549_GPU_EXECUTION_V1\",\"evidenceOrigin\":\"ACTUAL_GL_EXECUTION\",\"physicsVerdict\":\"TESTER_OWNED\",\"renderer\":\""<<(const char*)glGetString(GL_RENDERER)<<"\",\"k\":"<<config.k<<",\"residentPayloadBytes\":"<<resident(*profile)<<",\"fullArenaBytes\":"<<(config.fullTrialTrace?6*profile->arenaBytes:0)<<"}\n";
+#if defined(T670_DM) && defined(GRS_G9_BOOT_ONLY)
+  receipt<<"{\"variant\":\"BOOT_ONLY\",\"sourceSHA\":\""<<PipelineSourceHash()
+         <<"\",\"roleSetSHA\":\""<<BootRoleSetSHA()<<"\"}\n";
+  if(argc==4){
+   receipt<<"{\"stage\":\"CACHE_PRELOAD_ENTER\"}\n";receipt.flush();
+   receipt<<"{\"stage\":\"CACHE_PRELOAD_EXIT\",\"ready\":"
+          <<(ConfigureBootCache(argv[3])?"true":"false")<<"}\n";
+  }
+  receipt<<"{\"stage\":\"CREATE_ENTER\"}\n";receipt.flush();
+  if(!receipt)throw std::runtime_error("RECEIPT_IO_FAILED");
+  Transport bootTransport;
+  const auto bootResult=bootTransport.Create(config,identity,seed);
+  bootTransport.Release(true);
+  const bool bootAudited=bootResult==Result::BOOT_AUDIT_OK;
+  receipt<<"{\"stage\":\"CREATE_EXIT\",\"result\":"<<uint32_t(bootResult)
+         <<",\"state\":\""<<(bootAudited?"BOOT_AUDIT_OK":"BOOT_FAILED")
+         <<"\",\"rootsAuthorized\":false}\n";
+  receipt.flush();
+  if(!receipt)throw std::runtime_error("RECEIPT_IO_FAILED");
+  return bootAudited?0:3;
+#else
   Transport transport;auto result=transport.Create(config,identity,seed);seed.state.clear();seed.state.shrink_to_fit();receipt<<"{\"stage\":\"CREATE\",\"result\":"<<uint32_t(result)<<"}\n";if(result!=Result::OK){transport.Release(true);return 3;}
   auto commands=read(input/"commands.u32",4096*192*4);if(commands.size()%192)throw std::runtime_error("COMMAND_ROWS_192_WORDS_REQUIRED");uint64_t commit=0,quanta=0;
   for(size_t row=0;row<commands.size()/192;row++){
@@ -79,5 +104,6 @@ throw std::runtime_error("COMMIT_FAILED");commit=Pair(tail.data(),30);quanta=Pai
    receipt.flush();if(!receipt)throw std::runtime_error("RECEIPT_IO_FAILED");if(result!=Result::OK){transport.Release(true);return 6;}
   }
   transport.Release(true);return 0;
+#endif
  }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 4;}
 }

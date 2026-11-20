@@ -99,4 +99,7 @@ public:
 };
 const char *PipelineSource();
 const char *PipelineSourceHash();
+#ifdef GRS_G9_BOOT_ONLY
+const char *BootRoleSetSHA();
+#endif
 } // namespace grs::g9rx

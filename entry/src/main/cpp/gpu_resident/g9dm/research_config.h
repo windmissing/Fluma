@@ -33,5 +33,5 @@ struct Permit {
  std::array<uint32_t,8> parameterSha{},layoutSha{},shaderSha{},inputSha{};
  bool operator==(const Permit& b)const{return identity==b.identity&&nonce==b.nonce&&plan==b.plan&&frame==b.frame&&control==b.control&&geometry==b.geometry&&deadline==b.deadline&&baseCommit==b.baseCommit&&quanta==b.quanta&&arenaGeneration==b.arenaGeneration&&rootBeginNs==b.rootBeginNs&&kind==b.kind&&ordinal==b.ordinal&&baseBank==b.baseBank&&candidateBank==b.candidateBank&&arena==b.arena&&parameterSha==b.parameterSha&&layoutSha==b.layoutSha&&shaderSha==b.shaderSha&&inputSha==b.inputSha;}
 };
-enum class Result {OK,IN_PROGRESS,WOULD_BLOCK,INVALID,UNSUPPORTED,STALE,DEADLINE,GL_FAILED,SHADER_FAILED,CONTEXT_LOST,INPUT_CLOCK_UNVERIFIED,CALIBRATION_CONFIG_REQUIRED};
+enum class Result {OK,IN_PROGRESS,WOULD_BLOCK,INVALID,UNSUPPORTED,STALE,DEADLINE,GL_FAILED,SHADER_FAILED,CONTEXT_LOST,INPUT_CLOCK_UNVERIFIED,CALIBRATION_CONFIG_REQUIRED,BOOT_AUDIT_OK=0x666};
 }

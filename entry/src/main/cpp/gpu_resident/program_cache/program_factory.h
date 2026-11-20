@@ -202,7 +202,8 @@ struct RetrievableApi : create468::GlApi {
 inline bool Build(uint32_t object, const char *source,
                   const char *suppliedShaderSha, const char *layout,
                   GLuint &program, GLenum &originalError,
-                  SubmitObserver observer = {}, uint64_t generation = 0) {
+                  SubmitObserver observer = {}, uint64_t generation = 0,
+                  const char *roleOverride = nullptr) {
   if (create468::active) {
     create468::active->object = object;
     create468::active->store.Change(
@@ -217,7 +218,8 @@ inline bool Build(uint32_t object, const char *source,
   p.begin = Stamp();
   p.context = eglGetCurrentContext();
   p.owner = std::this_thread::get_id();
-  p.role = object == 13  ? "G13_COMPUTE"
+  p.role = roleOverride  ? roleOverride
+           : object == 13 ? "G13_COMPUTE"
            : object == 0 ? "SOURCE"
            : object == 1 ? "INTERMEDIATE_QUANTUM"
                          : "FINAL_QUANTUM";

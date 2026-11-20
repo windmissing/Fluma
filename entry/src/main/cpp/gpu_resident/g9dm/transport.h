@@ -99,4 +99,8 @@ public:
 };
 const char *PipelineSource();
 const char *PipelineSourceHash();
+#ifdef GRS_G9_BOOT_ONLY
+const char *BootRoleSetSHA();
+bool ConfigureBootCache(const char *filesDir);
+#endif
 } // namespace grs::g9dm

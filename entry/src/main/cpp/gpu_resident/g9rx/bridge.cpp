@@ -405,7 +405,8 @@ void App::Loop() {
         receipt_.firstEgl = firstEgl;
         ConfigureStage("CONFIGURE_RESEARCH_EXIT");
       }
-      const char *failedAt = result == Result::OK ? "" : "CONFIGURE_RESEARCH";
+      const bool boot = result == Result::BOOT_AUDIT_OK;
+      const char *failedAt = result == Result::OK || boot ? "" : "CONFIGURE_RESEARCH";
       if (result == Result::OK) {
         SceneCapabilityV2 cap{};
         result = scene_.PrepareAttributeScene(controller_.Caps(), &cap);
@@ -415,7 +416,7 @@ void App::Loop() {
       }
       std::lock_guard<std::mutex> lock(mutex_);
       const bool cancelled = cancelApplying_ || windowPending_;
-      if (result != Result::OK || cancelled)
+      if ((result != Result::OK && !boot) || cancelled)
         controller_.Stop();
       applying_ = cancelApplying_ = false;
       receipt_.result = int32_t(result);
@@ -424,7 +425,7 @@ void App::Loop() {
       receipt_.failure = receipt_.shaderStatus == 0 ? "SHADER_COMPILE" :
                          receipt_.linkStatus == 0 ? "PROGRAM_LINK" : failedAt;
       receipt_.finishNs = CheckedClockRead().ns;
-      if (result != Result::OK) {
+      if (result != Result::OK && !boot) {
         stage_ = result == Result::SOURCE_IDENTITY_MISMATCH
                      ? "SOURCE_IDENTITY_MISMATCH"
                      : "CONFIGURE_FAILED_" + std::to_string(uint32_t(result));
@@ -432,6 +433,9 @@ void App::Loop() {
       } else if (cancelled) {
         stage_ = "OFF";
         ConfigureStage("CANCELLED");
+      } else if (boot) {
+        stage_ = "BOOT_AUDIT_OK";
+        ConfigureStage("BOOT_AUDIT_OK");
       } else {
         stage_ = "CONFIGURED";
         ConfigureStage("APPLIED");

@@ -59,6 +59,11 @@ struct GpuResidentG9Rx {
       if (attempt.ticket !== this.configureTicket) throw new Error('STALE_CONFIGURE_TICKET');
       if (attempt.phase !== 'APPLIED') {
         const stage: string = 'RX #' + attempt.ticket + ' ' + attempt.phase;
+        if (attempt.phase === 'BOOT_AUDIT_OK') {
+          this.stop();
+          this.message = stage;
+          return;
+        }
         if (attempt.phase === 'FAILED' || attempt.phase === 'CANCELLED') {
           this.stop();
           this.message = stage + ' ' + attempt.failure + ' result=' + attempt.result +

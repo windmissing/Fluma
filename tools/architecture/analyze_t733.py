@@ -1,5 +1,4 @@
 """Measure and statically compile G9 dependency candidates without loading the product."""
-from collections import defaultdict
 import json
 from pathlib import Path
 import re
@@ -10,12 +9,8 @@ from zipfile import ZipFile
 
 from analyze_t660_t662 import ROOT, build_id, record, sha, write
 
-sys.path.insert(0, str(ROOT / "tools/g13"))
-from split_shader import CALL, IDENT, TOKEN, matching, source_units, specialize
-
-
-LIMIT = 48 * 1024
-WARM = 0x7FFFFF00
+sys.path.insert(0, str(ROOT / "tools/glsl"))
+from g9_boot import LIMIT, WARM, split_inputs
 GROUPS = {
     "BOOT": (12, WARM),
     "SOURCE": tuple(range(12)),
@@ -45,71 +40,6 @@ FAMILIES = {
         "c10b15ee3d7ba93bde10d393b5d8ebf0cbcec02df4ae6615f90b196007d5b0c4",
     ),
 }
-
-
-def constant_names(text):
-    tokens = TOKEN.findall(text)
-    if tokens[:1] != ["const"]:
-        return []
-    matched = matching(tokens)
-    boundaries = [2]
-    at = 2
-    while at < len(tokens) - 1:
-        if tokens[at] == ",":
-            boundaries.append(at + 1)
-        at = matched.get(at, at) + 1
-    names = []
-    for lo, hi in zip(boundaries, boundaries[1:] + [len(tokens)], strict=True):
-        if not IDENT.fullmatch(tokens[lo]) or "=" not in tokens[lo:hi]:
-            raise ValueError("Unexpected global constant declaration: " + text)
-        names.append(tokens[lo])
-    return names
-
-
-def split_inputs(source):
-    definitions, units = source_units(source, False)
-    if definitions:
-        raise ValueError("New preprocessor definitions require dependency review")
-    functions, constants = defaultdict(list), {}
-    retained_globals = set()
-    for index, (name, text) in enumerate(units):
-        if name:
-            functions[name].append(index)
-            continue
-        names = constant_names(text)
-        if not names:
-            retained_globals.add(index)
-        for symbol in names:
-            if symbol in constants:
-                raise ValueError("Duplicate declared constant: " + symbol)
-            constants[symbol] = index
-    run, = functions.pop("g9Run")
-    main, = functions.pop("main")
-    assert re.sub(r"\s+", "", units[main][1]) == "voidmain(){g9Run();}"
-    ops = {name: int(value) for name, value in
-           re.findall(r"const uint (G9_OP_\w+)\s*=\s*(\d+)u;", source)}
-    assert sorted(ops.values()) == list(range(44))
-    entry = units[run][1].replace("void g9Run(", "void main(", 1)
-    literals = dict(ops, **{"0x7fffff00u": WARM})
-    bodies = {op: specialize(entry, op, literals) for op in (*range(44), WARM)}
-
-    def build(opcodes):
-        body = "\n".join(f"if(uOp=={op}u){{\n{bodies[op]}\nreturn;\n}}" for op in opcodes)
-        needed = retained_globals | {-1}
-        pending = list(needed)
-        while pending:
-            index = pending.pop()
-            text = units[index][1] if index >= 0 else body
-            dependencies = {constants[symbol] for symbol in IDENT.findall(text) if symbol in constants}
-            for call in CALL.findall(text):
-                dependencies.update(functions.get(call, []))
-            pending.extend(dependencies - needed)
-            needed.update(dependencies)
-        chunks = [text for i, (_, text) in enumerate(units) if i in needed]
-        output = "\n".join(["#version 310 es", *chunks, "void main(){", body, "}", ""]).encode()
-        return output, sorted({name for i, (name, _) in enumerate(units) if i in needed and name})
-
-    return ops, build
 
 
 def actual_source(name, library, source_sha):

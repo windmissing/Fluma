@@ -1,0 +1,519 @@
+{
+  "schema": "T734_DEVELOPER_COMPILE_V1",
+  "deviceUsed": false,
+  "testsRun": false,
+  "signed": false,
+  "runtime": "NOT_RUN",
+  "shaderLimitBytes": 49152,
+  "families": {
+    "RX": {
+      "parent": {
+        "signedReceipt": {
+          "path": "test/reports/t257/T720-rx.json",
+          "bytes": 2274,
+          "sha256": "73f8ee4069296e79e5ec41acb586a5fd1b6a97abaca5f8f7efdbe1dd05c0154f"
+        },
+        "signedSHA": "3c6af26b32cd76e6d15f18447416ad5359dc4c1f1c1c37bc93875244f74fb051",
+        "librarySHA": "4b08d7635d7501ff0e23aa65ca60195ff5104e741394140bd376010706b72935",
+        "buildId": "27c55879e0bf46db946611ef87f4551b53e4c683",
+        "shaderSHA": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+        "shaderBytes": 146301
+      },
+      "role": {
+        "schema": "G9_BOOT_ONLY_V1",
+        "family": "RX",
+        "variant": "BOOT_ONLY",
+        "backend": "GLES",
+        "parentShaderSHA": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+        "role": "BOOT",
+        "opcodes": [
+          12,
+          2147483392
+        ],
+        "sourceBytes": 22318,
+        "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+        "functions": [
+          "dmBeginScope",
+          "dmMicroOp",
+          "dmParam",
+          "dmPut",
+          "dmScopeAudit",
+          "dmScopeId",
+          "dmSealScope",
+          "dmStageEnter",
+          "dmWord",
+          "g9AddBits",
+          "g9AddMass",
+          "g9AuditMaps",
+          "g9AuditMassGeometry",
+          "g9AuditMomentum",
+          "g9AuditStream",
+          "g9Column",
+          "g9ConfigValid",
+          "g9Ctl",
+          "g9DecodeBinary64",
+          "g9EventMask",
+          "g9Fault",
+          "g9FlickVelocity",
+          "g9FlickVerify",
+          "g9FromMagnitude",
+          "g9HeaderWide",
+          "g9Input",
+          "g9InputBodyWord",
+          "g9InputPair",
+          "g9Key",
+          "g9KeyCompare",
+          "g9KeyValid",
+          "g9Magnitude",
+          "g9MapAddress",
+          "g9MapCount",
+          "g9Material",
+          "g9Momentum",
+          "g9MomentumTotal",
+          "g9NegBits",
+          "g9Negative",
+          "g9Occupied",
+          "g9Packet",
+          "g9S32",
+          "g9S64",
+          "g9SAdd",
+          "g9SDiv",
+          "g9SMul",
+          "g9SSub",
+          "g9Set",
+          "g9SumOrigin",
+          "g9U32",
+          "g9U64",
+          "g9UAdd",
+          "g9UCmp",
+          "g9UDiv",
+          "g9UMul",
+          "g9UShift",
+          "g9USub",
+          "g9ValidateInput",
+          "g9Zero"
+        ],
+        "executableRoots": [],
+        "schedule": {
+          "Source": {
+            "dispatches": 12,
+            "roles": [
+              "SOURCE"
+            ],
+            "contiguousRoleTransitions": 0,
+            "passesSHA": "290ed82f9b220cc20ba44ce4d1160b05d6f3955e24eed7c74849f5c9680c3a9c"
+          },
+          "Quantum": {
+            "dispatches": 2404,
+            "roles": [
+              "BOOT",
+              "CAPTURE_AUDIT",
+              "DM_TRANSFER",
+              "FACE_FLOW",
+              "FLIGHT_FOLD",
+              "ROOT_FINAL",
+              "ROOT_SETUP",
+              "TOUCH"
+            ],
+            "contiguousRoleTransitions": 802,
+            "passesSHA": "14199217db69c582d3cb84e55394a6d24c9c01768137548c92f9e2b241bd48ec"
+          }
+        },
+        "layoutSHA": "5c230ef2a381de39eefb0bf54e5cf61353505536dedb9fb7c5378d10a0aec86f",
+        "localSize": [
+          64,
+          1,
+          1
+        ],
+        "bindings": {
+          "ReadState": {
+            "binding": 0,
+            "access": "readonly",
+            "required": true
+          },
+          "WriteState": {
+            "binding": 1,
+            "access": "read_write",
+            "required": true
+          },
+          "Workspace": {
+            "binding": 2,
+            "access": "read_write",
+            "required": true
+          },
+          "EventPath": {
+            "binding": 3,
+            "access": "read_write",
+            "required": false
+          }
+        },
+        "workTail": {
+          "range": 7,
+          "offsetUnit": "bytes",
+          "words": 2,
+          "seal": 6559303
+        },
+        "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766"
+      },
+      "generatedBootPath": ".codex/local-test/t734-rx/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g9rx/rx_assets/boot.comp",
+      "linkedElf": {
+        "path": ".codex/local-test/t734-rx/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_g9rx.so",
+        "bytes": 5954304,
+        "sha256": "f8d28a0a8af7ea32911ebe12816b7cc719e0054c811fea602f2d75eae2683ec3",
+        "buildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+        "needed": [
+          "libace_napi.z.so",
+          "libace_ndk.z.so",
+          "libnative_window.so",
+          "libnative_display_manager.so",
+          "libgrs_cold_slots.so",
+          "libEGL.so",
+          "libGLESv3.so",
+          "libhilog_ndk.z.so",
+          "libc++_shared.so",
+          "libc.so"
+        ]
+      },
+      "unsignedHap": {
+        "path": ".codex/local-test/t734-rx/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "sha256": "b9b64ff911b49c851faf292a387239b6428c8343e673840157a60e56d065fcb6",
+        "bytes": 7715049,
+        "packagedElfSHA256": "675ad1a7defb4c1c08a6d02ad53de0b6b1a4e5bb4b1a2baa8c3733e17b105c6c"
+      },
+      "reflectedStaticUniforms": {
+        "uControls": {
+          "type": "1405",
+          "count": 1
+        },
+        "uColumn": {
+          "type": "1405",
+          "count": 1
+        },
+        "uPacket": {
+          "type": "1405",
+          "count": 1
+        },
+        "uFlow": {
+          "type": "1405",
+          "count": 1
+        },
+        "uBed": {
+          "type": "1405",
+          "count": 1
+        },
+        "uSources": {
+          "type": "1405",
+          "count": 1
+        },
+        "uConfig": {
+          "type": "1405",
+          "count": 1
+        },
+        "uOriginAudit": {
+          "type": "1405",
+          "count": 1
+        },
+        "uRun": {
+          "type": "8dc6",
+          "count": 1
+        },
+        "uOwner": {
+          "type": "8dc6",
+          "count": 1
+        },
+        "uContext": {
+          "type": "8dc6",
+          "count": 1
+        },
+        "uK": {
+          "type": "1405",
+          "count": 1
+        },
+        "uBaseCommit": {
+          "type": "8dc6",
+          "count": 1
+        },
+        "uOp": {
+          "type": "1405",
+          "count": 1
+        },
+        "uSummary": {
+          "type": "1405",
+          "count": 1
+        },
+        "uInputGeneration": {
+          "type": "8dc6",
+          "count": 1
+        }
+      },
+      "hvigorLogSHA256": "55874aedb1b07d13d7000c2a64ac2a772706958d2c87b604a7a40308d647b910",
+      "glslCompilerSHA256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+      "defaultMonolithCompile": {
+        "hvigorExit": 0,
+        "shaderBytes": 146301,
+        "shaderSHA": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+        "unsignedSHA256": "a27d5b0b0d1d5092bc902da7f7d4b388f58d0c1f56d9a2ed4e2e9fac63c8f5b2",
+        "logSHA256": "be238a4f5a0e1ade89a01d45162f518fc0656712e964258317927d215211487e"
+      }
+    },
+    "DM": {
+      "parent": {
+        "signedReceipt": {
+          "path": "test/reports/t257/T718-dm.json",
+          "bytes": 2270,
+          "sha256": "da10e63f9307c2e86e38ea79f0f80c66ff37ed2faeb2f4300ee136ac435a029c"
+        },
+        "signedSHA": "cb63655348ca7d303a1fec35b79ee9edf8a2a3a35364c2bf17ecea3cb445bf96",
+        "librarySHA": "f3cd773ca1845d78e4d2039cb9d1e49a36d0a7a2b18c6ac357b697d8f68106e5",
+        "buildId": "9954e008b4d8b08907f30c44849f2cd2564ddf4d",
+        "shaderSHA": "c10b15ee3d7ba93bde10d393b5d8ebf0cbcec02df4ae6615f90b196007d5b0c4",
+        "shaderBytes": 146316
+      },
+      "role": {
+        "schema": "G9_BOOT_ONLY_V1",
+        "family": "DM",
+        "variant": "BOOT_ONLY",
+        "backend": "GLES",
+        "parentShaderSHA": "c10b15ee3d7ba93bde10d393b5d8ebf0cbcec02df4ae6615f90b196007d5b0c4",
+        "role": "BOOT",
+        "opcodes": [
+          12,
+          2147483392
+        ],
+        "sourceBytes": 22353,
+        "sourceSHA": "486538f1921304c2f1cfee843f8624995f0ca99650fd505e7ce83a6fca5ab3a8",
+        "functions": [
+          "dmBeginScope",
+          "dmMicroOp",
+          "dmParam",
+          "dmPut",
+          "dmScopeAudit",
+          "dmScopeId",
+          "dmSealScope",
+          "dmStageEnter",
+          "dmWord",
+          "g9AddBits",
+          "g9AddMass",
+          "g9AuditMaps",
+          "g9AuditMassGeometry",
+          "g9AuditMomentum",
+          "g9AuditStream",
+          "g9Column",
+          "g9ConfigValid",
+          "g9Ctl",
+          "g9DecodeBinary64",
+          "g9EventMask",
+          "g9Fault",
+          "g9FlickVelocity",
+          "g9FlickVerify",
+          "g9FromMagnitude",
+          "g9HeaderWide",
+          "g9Input",
+          "g9InputBodyWord",
+          "g9InputPair",
+          "g9Key",
+          "g9KeyCompare",
+          "g9KeyValid",
+          "g9Magnitude",
+          "g9MapAddress",
+          "g9MapCount",
+          "g9Material",
+          "g9Momentum",
+          "g9MomentumTotal",
+          "g9NegBits",
+          "g9Negative",
+          "g9Occupied",
+          "g9Packet",
+          "g9S32",
+          "g9S64",
+          "g9SAdd",
+          "g9SDiv",
+          "g9SMul",
+          "g9SSub",
+          "g9Set",
+          "g9SumOrigin",
+          "g9U32",
+          "g9U64",
+          "g9UAdd",
+          "g9UCmp",
+          "g9UDiv",
+          "g9UMul",
+          "g9UShift",
+          "g9USub",
+          "g9ValidateInput",
+          "g9Zero"
+        ],
+        "executableRoots": [],
+        "schedule": {
+          "Source": {
+            "dispatches": 12,
+            "roles": [
+              "SOURCE"
+            ],
+            "contiguousRoleTransitions": 0,
+            "passesSHA": "290ed82f9b220cc20ba44ce4d1160b05d6f3955e24eed7c74849f5c9680c3a9c"
+          },
+          "Quantum": {
+            "dispatches": 2404,
+            "roles": [
+              "BOOT",
+              "CAPTURE_AUDIT",
+              "DM_TRANSFER",
+              "FACE_FLOW",
+              "FLIGHT_FOLD",
+              "ROOT_FINAL",
+              "ROOT_SETUP",
+              "TOUCH"
+            ],
+            "contiguousRoleTransitions": 802,
+            "passesSHA": "14199217db69c582d3cb84e55394a6d24c9c01768137548c92f9e2b241bd48ec"
+          }
+        },
+        "layoutSHA": "93f4f3e369df7802d83ca3d7eacccf97d3dcf2e70519bdc53796e2830008f583",
+        "localSize": [
+          64,
+          1,
+          1
+        ],
+        "bindings": {
+          "ReadState": {
+            "binding": 0,
+            "access": "readonly",
+            "required": true
+          },
+          "WriteState": {
+            "binding": 1,
+            "access": "read_write",
+            "required": true
+          },
+          "Workspace": {
+            "binding": 2,
+            "access": "read_write",
+            "required": true
+          },
+          "EventPath": {
+            "binding": 3,
+            "access": "read_write",
+            "required": false
+          }
+        },
+        "workTail": {
+          "range": 7,
+          "offsetUnit": "bytes",
+          "words": 2,
+          "seal": 6559303
+        },
+        "roleSetSHA": "f0f968d78de0742ccbc25fcd7934d430679d695516f61ffa4b4e8a0805ac0a9c"
+      },
+      "generatedBootPath": ".codex/local-test/t734-dm/entry/.cxx/default/default/debug/arm64-v8a/dm_native/dm_assets/boot.comp",
+      "linkedElf": {
+        "path": ".codex/local-test/t734-dm/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_dm_t647.so",
+        "bytes": 5358632,
+        "sha256": "97f86a5afd5397cc5a26ef45381bd9831ae13519ff2c44d77eb6ffd04bcf5e20",
+        "buildId": "a64de80e799cca4b715fd432110b0921055225ad",
+        "needed": [
+          "libEGL.so",
+          "libGLESv3.so",
+          "libhilog_ndk.z.so",
+          "libc++_shared.so",
+          "libc.so"
+        ]
+      },
+      "unsignedHap": {
+        "path": ".codex/local-test/t734-dm/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "sha256": "c88c371122be183a8662f5fc818ed3020a28de3abfa82b49fe0fd9af8413193b",
+        "bytes": 7602178,
+        "packagedElfSHA256": "be62c31feaafd25437e04aa75231c5b4d24ca87bdca1fd7fc0a4edbb6f987834"
+      },
+      "reflectedStaticUniforms": {
+        "uControls": {
+          "type": "1405",
+          "count": 1
+        },
+        "uColumn": {
+          "type": "1405",
+          "count": 1
+        },
+        "uPacket": {
+          "type": "1405",
+          "count": 1
+        },
+        "uFlow": {
+          "type": "1405",
+          "count": 1
+        },
+        "uBed": {
+          "type": "1405",
+          "count": 1
+        },
+        "uSources": {
+          "type": "1405",
+          "count": 1
+        },
+        "uConfig": {
+          "type": "1405",
+          "count": 1
+        },
+        "uOriginAudit": {
+          "type": "1405",
+          "count": 1
+        },
+        "uRun": {
+          "type": "8dc6",
+          "count": 1
+        },
+        "uOwner": {
+          "type": "8dc6",
+          "count": 1
+        },
+        "uContext": {
+          "type": "8dc6",
+          "count": 1
+        },
+        "uK": {
+          "type": "1405",
+          "count": 1
+        },
+        "uBaseCommit": {
+          "type": "8dc6",
+          "count": 1
+        },
+        "uOp": {
+          "type": "1405",
+          "count": 1
+        },
+        "uSummary": {
+          "type": "1405",
+          "count": 1
+        },
+        "uInputGeneration": {
+          "type": "8dc6",
+          "count": 1
+        }
+      },
+      "hvigorLogSHA256": "0d08b5f8c5edb229a06cbf1a81ce92d3920cdc60fc73333b89100a92718e73d8",
+      "glslCompilerSHA256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+      "standalone": {
+        "path": ".codex/local-test/t734-dm/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/g9_dm_differential",
+        "bytes": 637128,
+        "sha256": "d1f4100e3b748d631a940d1ad1cc137967139cf1b923db4e85ab15a71043e53e",
+        "buildId": "869acf4dd824344fed699bbfb46ada1f4564c71d",
+        "needed": [
+          "libgrs_dm_t647.so",
+          "libEGL.so",
+          "libGLESv3.so",
+          "libhilog_ndk.z.so",
+          "libc++_shared.so",
+          "libc.so"
+        ]
+      },
+      "defaultMonolithCompile": {
+        "hvigorExit": 0,
+        "shaderBytes": 146316,
+        "shaderSHA": "c10b15ee3d7ba93bde10d393b5d8ebf0cbcec02df4ae6615f90b196007d5b0c4",
+        "unsignedSHA256": "a247675effd9d1a795f1e84c1ea6550b1ebd69d6afa7e5678c2f07560b0af3a7",
+        "logSHA256": "c633631eea43b6e3e4b268326b14a680bc9db7de89f14bbf2fa173283afc9011"
+      }
+    }
+  }
+}

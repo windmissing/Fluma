@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # T644 isolated GNR1 compiler inputs. No runtime or test execution.
 from pathlib import Path
-import json,hashlib,argparse,struct
+import json,hashlib,argparse,struct,sys
 from capture_scope import convert, REVISION
 from coherent_values import convert_values, REVISION as COHERENT_REVISION
 from readonly_values import (convert_readonly_values, QUALIFIED_VALUES,
@@ -11,7 +11,9 @@ def sha(b):return hashlib.sha256(b).hexdigest()
 def one(s,a,b):
  if s.count(a)!=1:raise ValueError('RX_ANCHOR '+a[:100])
  return s.replace(a,b)
-def generate(out,test_hooks=False):
+def generate(out,test_hooks=False,boot_only=False):
+ if boot_only and test_hooks:
+  raise ValueError('BOOT_ONLY does not include test hooks')
  out.mkdir(parents=True,exist_ok=True);contract=json.loads((ROOT/'docs/architecture-T665-contract-v1.json').read_text(encoding='utf8'));receipt=json.loads((MOD/'frozen/source_receipt.json').read_text(encoding='utf8'));deps={}
  for n,h in receipt['sha256'].items():
   b=(MOD/'frozen'/n).read_bytes()
@@ -170,6 +172,11 @@ def generate(out,test_hooks=False):
  pipeline=sha(canonical)
  with (out/'contract_generated.h').open('a',encoding='utf8',newline='\n') as f:f.write('namespace grs::g9rx { inline constexpr const char* kPipelineSHA="'+pipeline+'"; }\n')
  identity['pipelineSHA']=pipeline
+ if boot_only:
+  sys.path.insert(0,str(ROOT/'tools/glsl'))
+  from g9_boot import write_boot
+  write_boot(out,canonical,schema,'RX')
+  identity['selectedVariant']='BOOT_ONLY'
  reader=dict(tables);reader['sourceIdentity']={key:identity[key] for key in ['schema','shaderSHA','canonicalBytes','hygieneRevision','coherentRevision','coherentTransforms','coherentArgumentInputSHA','coherentArgumentTransforms','readonlyRevision','readonlyArgumentInputSHA','readonlyArgumentTransforms','sourceManifestSHA','variant']}
  (out/'reader_schema.json').write_bytes((json.dumps(reader,ensure_ascii=False,indent=2)+'\n').encode('utf8'))
  (out/'capture_line_map.json').write_bytes((json.dumps(hygiene,indent=2)+'\n').encode())
@@ -183,5 +190,5 @@ def generate(out,test_hooks=False):
  (out/'pipeline_identity.json').write_bytes((json.dumps(identity,indent=2)+'\n').encode())
  return s
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--out',type=Path,default=MOD/'generated');p.add_argument('--test-hooks',action='store_true');a=p.parse_args();generate(a.out,a.test_hooks)
+ p=argparse.ArgumentParser();p.add_argument('--out',type=Path,default=MOD/'generated');p.add_argument('--test-hooks',action='store_true');p.add_argument('--boot-only',action='store_true');a=p.parse_args();generate(a.out,a.test_hooks,a.boot_only)
 

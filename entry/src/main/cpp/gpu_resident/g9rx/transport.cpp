@@ -1,4 +1,7 @@
 #include "transport.h"
+#ifdef GRS_G9_BOOT_ONLY
+#include "../g9_boot.h"
+#endif
 #include "../angles_generated.h"
 #include "../program_cache/program_factory.h"
 #include "implementation_generated.h"
@@ -195,6 +198,15 @@ Result Transport::Create(const Config &config, const ControlIdentity &id,
       uint64_t(maximum) <
           std::max(p->arenaBytes, std::max(p->stateBytes, p->workBytes)))
     return Result::UNSUPPORTED;
+#ifdef GRS_G9_BOOT_ONLY
+  g9boot::Trace boot{"RX", PipelineSourceHash(), BootRoleSetSHA(), id.run,
+                    id.owner, id.context, reinterpret_cast<const void *>(&PipelineSource)};
+  if (!g9boot::Build(boot, PipelineSource(), "GNR1|" kRxCoherentRevision "|" kRxImplementationSHA,
+                     program_.id, program_.uniforms, firstGl_, firstEgl_, observer)) {
+    Release(true);
+    return Result::SHADER_FAILED;
+  }
+#else
   const char* actualSource=PipelineSource();const size_t actualBytes=std::strlen(actualSource);
   if(actualBytes!=kRxCanonicalShaderBytes||programcache::Hash(actualSource,actualBytes)!=PipelineSourceHash()||std::strcmp(PipelineSourceHash(),kPipelineSHA)!=0||std::strcmp(kRxCaptureHygiene,"RX_CAPTURE_SCOPE_HYGIENE_V1")!=0)
     return Result::SOURCE_IDENTITY_MISMATCH;
@@ -208,6 +220,7 @@ Result Transport::Create(const Config &config, const ControlIdentity &id,
     Release(true);
     return Result::SHADER_FAILED;
   }
+#endif
   profile_ = p;
   config_ = config;
   identity_ = id;
@@ -296,6 +309,20 @@ Result Transport::Create(const Config &config, const ControlIdentity &id,
   Bind(kQuantumPasses[0]);
   U("uOp", uint32_t(Op::ROOT_INIT));
   U("uPass", 0);
+#ifdef GRS_G9_BOOT_ONLY
+  const auto audit = g9boot::RunAudit<CheckedTime>(
+      boot, program_.id, program_.uniforms.Find("uOp"), buffers_[5],
+      profile_->work[7].begin, [this](CheckedTime &time) { return ReadNow(time); },
+      firstGl_, firstEgl_);
+  Release(true);
+  switch (audit) {
+  case g9boot::Audit::Ok: return Result::BOOT_AUDIT_OK;
+  case g9boot::Audit::Clock: return Result::INPUT_CLOCK_UNVERIFIED;
+  case g9boot::Audit::Gl: return Result::GL_FAILED;
+  case g9boot::Audit::Rejected: return Result::INVALID;
+  }
+  return Result::INVALID;
+#else
   CheckedTime begin;
   if (!ReadNow(begin)) {
     Release(true);
@@ -337,6 +364,7 @@ Result Transport::Create(const Config &config, const ControlIdentity &id,
   current_ = 0;
   ready_ = true;
   return Result::OK;
+#endif
 }
 bool Transport::Copy(GLuint from, size_t fromWord, GLuint to, size_t toWord,
                      size_t words) {
@@ -711,6 +739,8 @@ bool Transport::CaptureBuffer(uint32_t *dst, size_t words, uint32_t kind,
 }
 void Transport::Release(bool current) {
   current = current && Current();
+  if (program_.id)
+    programcache::Forget(program_.id);
   if (current) {
     if (fence_)
       glDeleteSync(fence_);
@@ -723,8 +753,6 @@ void Transport::Release(bool current) {
     fullGpuCredit_.ReleaseAfterFenceDelete();
   else
     fullGpuCredit_.ContextLost();
-  if (program_.id)
-    programcache::Forget(program_.id);
   buffers_ = {};
   full_ = {};
   program_ = {};
