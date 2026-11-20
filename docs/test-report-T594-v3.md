@@ -89,3 +89,32 @@ v5-t716.json）。
 - 下一门=**队列消费/apply 路径**（T710 worker 握手族或主线程 apply）
 - 回 architect：查队列消费路径；Create/READY/Swap 如实 NOT_REACHED
   （卡 CONFIG_QUEUED）
+
+
+## v6 追加（2026-11-20 12:41，effector；T719 EGL 就绪保留包验证——**队列消费修复确认**）
+
+日期：2026-11-20，真机。被测：T719-rx-signed（adec5e7d 修复，inputSha
+f6495df7→signed e6a34091，sign=PASS；libgrs_g9rx.so cf9fdd68/BuildId
+0f591129）。证据：`test/reports/t491/t594d/`（l1–l5 布局、h719.txt 配置
+阶段原文、v6-t719.json）。
+
+### 执行链
+
+启用研究 → hilog G9RxConfigure 阶段链：
+**ENQUEUED → OWNER_SEEN → APPLY_ENTER → SHADER_COMPILE_ENTER**
+（四阶段原件；UI 状态行 `RX #1 SHADER_COMPILE_ENTER`，pid 稳定）
+
+### 判定
+
+- **CONFIG_QUEUED 排队不消费已修复**（T719 保留配置至 EGL 就绪生效）——
+  apply 启动并到达 shader 编译
+- **新门=RX shader 编译墙时**：SHADER_COMPILE_ENTER 持续 >240s
+  （260KB 族，与 G13 PROGRAM_BUILD 同族墙时问题）；UI 存活（与 G13 退出
+  行为不同）
+- 修复链全景：编译门三层（slot/coherent@1097/readonly@1987）全清 →
+  队列消费已通 → **仅剩编译时长**（worker/分段编译容忍，回
+  architect/developer）
+
+### 回执
+
+Create/READY/首 Swap 如实 NOT_REACHED（卡编译进行中）；阶段链原件齐。
