@@ -1,0 +1,226 @@
+{
+  "schema": "T744_G13_QUALIFICATION_ROUTE_V1",
+  "deviceUsedForThisAudit": false,
+  "vulkan": {
+    "original": {
+      "path": "test/reports/t491/t743/vk-diag-1.json",
+      "bytes": 1558,
+      "sha256": "1c996a406eb4c36e27f3698e3e0a1a2e9b787300b269cf7943d6f6d59054a967"
+    },
+    "compileReceipt": {
+      "path": "test/reports/t742/compile.json",
+      "bytes": 2507,
+      "sha256": "445b154041673e5b9dff4c265da9846753665145614029a858360bb8a2aca030"
+    },
+    "signReceipt": {
+      "path": "test/reports/t257/T743-vk.json",
+      "bytes": 2270,
+      "sha256": "126471274f00a0f4445622bfcd84801fe4cb245f689bf34dfce180738630be7d"
+    },
+    "signedSHA": "bdc2a7bc6005aafda06a056e4ac64bf78ce7cb7b998685a241dda22743b26cc0",
+    "diagnostic": {
+      "schema": "G13VulkanBootV1",
+      "role": "BOOT",
+      "state": "FAILED",
+      "stage": "PHYSICAL_DEVICE_QUALIFICATION",
+      "detail": "NO_ELIGIBLE_PHYSICAL_DEVICE",
+      "ticket": "1",
+      "surface": "1",
+      "geometry": "1",
+      "pid": 49047,
+      "processStartTick": "2380458",
+      "ownerTid": 49291,
+      "mappedBuildId": "e7b5586ed04aca406aaefbb31fa6b5299f0cb216",
+      "mappedElf": "/data/storage/el1/bundle/libs/arm64/libgrs_g13vk_boot.so",
+      "moduleSHA": "cb82cd06c6c3b7b140c66eb16c21478b94e232a9a61b169c10d3eccb218f2f2a",
+      "sourceSHA": "8b688c5b091dcb54e39c43303f904c8dfaf8aa8d1417466d606963270d1d2dda",
+      "parentSourceSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+      "configSHA": "35241d9f2d2baac8deaa84493787903c5ce7e064e5955971d16f7c5039255513",
+      "seedSHA": "62dfc01eb4a04ab8f89914202edbbea04622d61fb34c887b6e82c24ffa2e6638",
+      "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+      "mathSHA": "1629bffe555eae801007af8ae7bc74e1a677b0b7a519853ff484a1f535d8a968",
+      "loaderPath": "/system/lib64/libvulkan.so",
+      "loaderBuildId": "b56a00ca0abbac5dd2fdf956eb761d9f",
+      "loaderApi": 4206901,
+      "instanceApi": 4202496,
+      "instanceExtensions": [
+        "VK_KHR_surface",
+        "VK_OHOS_surface"
+      ],
+      "surfaceCreated": true,
+      "devices": [
+        {
+          "vendorId": 6629,
+          "deviceId": 537137152,
+          "driverVersion": 240715635,
+          "deviceName": "Maleoon 935F",
+          "deviceApi": 4206901,
+          "cacheUUIDBytes": [
+            94,
+            26,
+            36,
+            62,
+            161,
+            84,
+            109,
+            117,
+            180,
+            224,
+            75,
+            86,
+            165,
+            54,
+            249,
+            130
+          ],
+          "effectiveApi": 4202496,
+          "shaderDenormPreserveFloat32": 0,
+          "shaderRoundingModeRTEFloat32": 1,
+          "shaderSignedZeroInfNanPreserveFloat32": 1,
+          "denormIndependence": 1,
+          "roundingIndependence": 1,
+          "qualification": "FP32_PROPERTIES_MISSING"
+        }
+      ]
+    },
+    "loaderVersion": [
+      1,
+      3,
+      309
+    ],
+    "effectiveVersion": [
+      1,
+      2,
+      0
+    ],
+    "actualModuleExecutionModes": {
+      "17": [
+        64,
+        1,
+        1
+      ],
+      "4459": [
+        32
+      ],
+      "4461": [
+        32
+      ],
+      "4462": [
+        32
+      ]
+    },
+    "pipeline": "NOT_REACHED",
+    "fp32Output": "NOT_REACHED",
+    "flushToZeroCapabilityReported": false,
+    "hardwareInternalReason": "UNDETERMINED"
+  },
+  "gles": {
+    "t741": {
+      "path": "docs/architecture-T741-evidence-v1.json",
+      "bytes": 13247,
+      "sha256": "9da4d8b9703db7ff71669674e6f0782933662f1d324fc0c836e1a1adf0cccc69"
+    },
+    "rawTickets": [
+      "195",
+      "250",
+      "196",
+      "180"
+    ],
+    "observed": "SUBNORMAL_INPUT_AND_RESULT_FLUSH_TO_ZERO",
+    "bootSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+    "configSHA": "35241d9f2d2baac8deaa84493787903c5ce7e064e5955971d16f7c5039255513",
+    "seedSHA": "62dfc01eb4a04ab8f89914202edbbea04622d61fb34c887b6e82c24ffa2e6638"
+  },
+  "numericCounterexamples": {
+    "contract": {
+      "path": "docs/architecture-T628-math-domain-v1.json",
+      "bytes": 3088,
+      "sha256": "ae4d425101b155e16ea7389dbe9b91b4df6ac2857fc546e8cb7043198f8b5afa"
+    },
+    "scope": "MATH_DOMAIN_COUNTEREXAMPLE_NOT_PRODUCT_EXECUTION",
+    "reference": "decimal(exp, precision=100), RNE to integer units of 2^-149",
+    "samples": [
+      {
+        "x": -88,
+        "roundedFP32": "0x0041edc4",
+        "relativeErrorOfRounding": "6.775098367396E-8",
+        "roundingWithinT628Bound": true,
+        "zeroRelativeError": 1
+      },
+      {
+        "x": -90,
+        "roundedFP32": "0x0008ec28",
+        "relativeErrorOfRounding": "4.798331644725E-7",
+        "roundingWithinT628Bound": true,
+        "zeroRelativeError": 1
+      },
+      {
+        "x": -103,
+        "roundedFP32": "0x00000001",
+        "relativeErrorOfRounding": "2.434070640754E-1",
+        "roundingWithinT628Bound": false,
+        "zeroRelativeError": 1
+      }
+    ],
+    "normalInputsThatProduceSubnormal": [
+      {
+        "op": "mul",
+        "inputBits": [
+          "0x00800000",
+          "0x3f000000"
+        ],
+        "rneBits": "0x00400000"
+      },
+      {
+        "op": "sub",
+        "inputBits": [
+          "0x00800001",
+          "0x00800000"
+        ],
+        "rneBits": "0x00000001"
+      }
+    ]
+  },
+  "g20": {
+    "metrics": [
+      "coldCompile",
+      "link",
+      "warmCache",
+      "firstValidSwap"
+    ],
+    "scores": {
+      "G13": [
+        0.5,
+        0.5,
+        0.5,
+        0
+      ],
+      "RX": [
+        0.5,
+        0.5,
+        0.5,
+        0
+      ],
+      "DM": [
+        0.5,
+        0.5,
+        0,
+        0
+      ]
+    },
+    "earned": 4.0,
+    "total": 12,
+    "rxOriginal": {
+      "path": "test/reports/t491/t738/v3/h-warm.txt",
+      "bytes": 1278014,
+      "sha256": "cf3452619d5b565b76320686e589f1ea900db10684d4ca066644126d3b499494"
+    },
+    "dmOriginal": {
+      "path": "test/reports/t491/t738/v3/dm20-v3-final.jsonl",
+      "bytes": 491,
+      "sha256": "d08a24af6b7e1a5f945bfe983a088005079e92a14bd852139b3120b0e7f14b0a"
+    },
+    "rxColdBootNs": 637260938,
+    "rxNewProcessBootNs": 186281094
+  }
+}
