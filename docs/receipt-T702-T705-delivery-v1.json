@@ -1,0 +1,69 @@
+{
+  "schema": "T702_T705_DELIVERY_RECEIPTS_V1",
+  "date": "2026-11-20",
+  "commit": "6ce10a1947063a72c5a9e4cb89179120d76a3f67",
+  "statusRows": [
+    {
+      "task": "T702",
+      "before": "| T702 | 【T702·DM CREATE与V5 NOT_READY设备失败分流】architect | architect | P5 | 进行中 | 6aff9ff6e4b0ed5bb82d2aef |",
+      "after": "| T702 | 【T702·DM CREATE与V5 NOT_READY设备失败分流】architect | architect | P5 | 结束待验收 | 6aff9ff6e4b0ed5bb82d2aef |"
+    },
+    {
+      "task": "T703",
+      "before": "| T703 | 【T703·host双臂剩余映射与三时域证据分流】architect | architect | P5 | 进行中 | 6aff9ff6e4b02114b551cb45 |",
+      "after": "| T703 | 【T703·host双臂剩余映射与三时域证据分流】architect | architect | P5 | 结束待验收 | 6aff9ff6e4b02114b551cb45 |"
+    },
+    {
+      "task": "T705",
+      "before": "| T705 | 【T705·M2链接截尾新增证据分流】architect | architect | P5 | 进行中 | 6aff9ff6e4b0ed5bb82d2afc |",
+      "after": "| T705 | 【T705·M2链接截尾新增证据分流】architect | architect | P5 | 结束待验收 | 6aff9ff6e4b0ed5bb82d2afc |"
+    }
+  ],
+  "beforeSha256": "2854d6895f66e973b9e9b161c3750ba2c4c7c99167d4720688fc6833fa0a3d1e",
+  "afterSha256": "1051b03ad40d983bf559f6b4eb48b7199f55b94b183c618d2e744f17a9a877fc",
+  "queueStaged": false,
+  "evidenceSha256": "7975826af558db0bdc418b60882415fc6b40d47f3a289eb300d8d55b6a433fcf",
+  "sameNameDidaListUpdated": false,
+  "projectId": "6ac8a7e3e9adb60000000419",
+  "comments": [
+    {
+      "task": "T702",
+      "taskId": "6aff9ff6e4b0ed5bb82d2aef",
+      "started": {
+        "id": "6affa1aae4b02114b551f8cb",
+        "createdTime": "2026-11-20T01:26:02+0000"
+      },
+      "delivered": {
+        "id": "6affa416e4b02114b5525da8",
+        "createdTime": "2026-11-20T01:36:22+0000",
+        "title": "架构分流完成（6ce10a19，docs/architecture-T702-v1.md）。DM20 正确独立 ELF 实际到达 GL，CREATE result=8/SHADER_FAILED；归档报告记 S0022 slot，两个签包内 DM ELF 均含同 1728 行源码。原始设备日志与 loaded ELF 映射缺；工作区 standalone SHA 7c8284b9 与旧收据 db325543 不同。developer 仅修 DM g9Capture 生成变换并编译，原参考、比较/平手、ABI 和物理语义保留；tester 重出实际部署 ELF/依赖/fixture 收据，effector 先取 DM20 原 shader log/loaded identity，再实际覆盖其余臂。V5 ROOT Configure attempt2 收 ticket1，同 boot/gen 的能力查询 attempt3/4/5 才是 M5_NOT_READY，首个初始化阻断未知。effector 优先恢复原 m5-init-1-*，缺件则沿 T653 原页 m5Session/8 页 m5InitDiagnostics 一次同 ticket 采证，保自然 fault/timeout/cancel；仅实缺导出才请 tester 接现有出口。两域独立，T702 交付完成。"
+      }
+    },
+    {
+      "task": "T703",
+      "taskId": "6aff9ff6e4b02114b551cb45",
+      "started": {
+        "id": "6affa1aae4b0a82e3642b029",
+        "createdTime": "2026-11-20T01:26:02+0000"
+      },
+      "delivered": {
+        "id": "6affa417e4b02114b5525dac",
+        "createdTime": "2026-11-20T01:36:23+0000",
+        "title": "架构分流完成（6ce10a19，docs/architecture-T703-v1.md）。离线原件复核主 OFF/ON 各 52 动作、92 根（2 SOURCE+90 Q），两独立重放各 92 根原 completion 配回原 map 与账本/token。T684 完整证据 INCOMPLETE，32cycle NOT_MEASURED。tester 在冻结 wrapper 对每次调用只分配一次 callId，把 map 原 target/signed offset/length/access、context/share-group/对象+存储+绑定代、map token 与实际 GL_TRUE unmap 绑定到原生产 completion 和同根 AcceptedRoot；单独标重放读回。32B 行 stampId/flags 关联声明脚本、进程 steady/守护、实际 root permit/stamp 三角色；hostNow 可能数值相同，保各自权威锚。沿 T692 与原 32MiB 分区/420s 预算补新主双臂及独立重放，无新增产品 GL 操作。T703 交付完成。"
+      }
+    },
+    {
+      "task": "T705",
+      "taskId": "6aff9ff6e4b0ed5bb82d2afc",
+      "started": {
+        "id": "6affa1aae4b0491d3163581e",
+        "createdTime": "2026-11-20T01:26:02+0000"
+      },
+      "delivered": {
+        "id": "6affa417e4b0a82e364311bb",
+        "createdTime": "2026-11-20T01:36:23+0000",
+        "title": "架构分流完成（6ce10a19，docs/architecture-T705-v1.md）。T591-v4 obj0 SOURCE glLinkProgram(2) 开放下界 32.233489688s；T590-v3 obj2 FINAL_Q glLinkProgram(4) 开放下界 20.567682344s；旧 T591 obj0 是 40.140833750s 复合 LINK，同一 T590 尝试的 SOURCE 则在 73.431850156s 后成功退出复合 LINK。两角色精确开放观测，未证同角色 API 重复、终态或永久死锁。v4 native 和 3 个 0B log 均按 manifest 核；compile 日志实际查询为空，link 尚未查询。优先找同进程 loaded ELF/pre-arm/连续终态原件；缺则 effector 直接复用已签 T676-original-a（原 T663 五份 ELF、新 ArkTS）在真实 M2 页一次 pre-arm/mount，沿 T694 原预算采序与真实终态，T696 产品对照另记。T705 交付完成。"
+      }
+    }
+  ]
+}
