@@ -66,3 +66,26 @@ grsm1 直达 RX 研究页 → 启用研究：
 - **T654 G13 域**：G13 页在当前 RX 包不可达（无路由）——NOT_EVALUATED 维持，需 G13 包取配置化快照
 
 无状态漂移；阻塞臂与上轮一致（等限定符变换交付）。
+
+
+## v5 追加（2026-11-20 11:32，effector；T716 readonly 修复包验证——**编译门首次通过**）
+
+日期：2026-11-20，真机。被测：T716-rx-signed（readonly 修复，inputSha
+d07b9eda→signed b4b4e7a3，sign=PASS；T716 compile receipt BuildId
+317645e3）。证据：`test/reports/t491/t594c/`（r1–r4 布局、h716.txt、
+v5-t716.json）。
+
+### 里程碑
+
+- 启用研究后状态 **`CONFIG_QUEUED`（不再是 CONFIGURE_FAILED_8）**——
+  **shader 编译门首次通过**：hilog 零 S0001/S0022
+- 限定符链设备闭环：S0022（slot）→ coherent@1097 → readonly@1987
+  **三层全部清除**
+- CONFIG_QUEUED 持续 55s+（重复点击无跃迁）——队列未消费
+
+### 判定
+
+- 编译门通过=T594 系列首个 configure 阶段非编译失败状态
+- 下一门=**队列消费/apply 路径**（T710 worker 握手族或主线程 apply）
+- 回 architect：查队列消费路径；Create/READY/Swap 如实 NOT_REACHED
+  （卡 CONFIG_QUEUED）
