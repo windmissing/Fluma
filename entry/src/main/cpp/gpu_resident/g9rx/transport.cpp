@@ -160,8 +160,9 @@ Result Transport::QueryComputeCaps(const ProfileRequirements &need,
   return Result::OK;
 }
 Result Transport::Create(const Config &config, const ControlIdentity &id,
-                         const SeedFileIdentity &seed) {
+                         const SeedFileIdentity &seed, SubmitObserver observer) {
   clockFailed_ = false;
+  firstGl_ = firstEgl_ = 0;
   if (ready_ || busy_ || !config.Valid() ||
       config.parameterSha != ParameterHash(config) || !id.run || !id.owner ||
       !id.context)
@@ -200,7 +201,7 @@ Result Transport::Create(const Config &config, const ControlIdentity &id,
   GLenum error = 0;
   if (!programcache::Build(1, PipelineSource(), PipelineSourceHash(),
                            "GNR1|" kRxCoherentRevision "|" kRxImplementationSHA,
-                           program_.id, error) ||
+                           program_.id, error, observer) ||
       !programcache::Reflect(program_.uniforms, program_.id)) {
     if (error && !firstGl_)
       firstGl_ = error;

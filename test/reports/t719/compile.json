@@ -1,0 +1,153 @@
+{
+  "schema": "T719_DEVELOPER_COMPILE_RECEIPT_V1",
+  "task": "T719",
+  "result": "COMPILE_PASS_NOT_PRODUCT_PASS",
+  "elf": {
+    "path": ".codex\\local-test\\t719\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrs_g9rx.so",
+    "bytes": 5567096,
+    "sha256": "cf9fdd680aabfafac1440fe473bed994b6b051faa0afa77ed1e7b2422fa49e4e",
+    "machine": "AARCH64",
+    "buildId": "0f591129d680fb2bb398e731913b354c0197786a",
+    "abiWords": [
+      1,
+      40960,
+      64,
+      96,
+      8,
+      61632,
+      15832,
+      96,
+      520,
+      0,
+      20480,
+      21504,
+      22528,
+      23552,
+      24576,
+      34304
+    ],
+    "nativeAppStaticBytes": 91648,
+    "nativeAppExcludingProtocolPayloadBytes": 50688
+  },
+  "unsignedHap": {
+    "path": ".codex\\local-test\\t719\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "bytes": 7767770,
+    "sha256": "f6495df76bee443e25cbb06651deda92ed932cab488fc57253a6337278f51ccf"
+  },
+  "packagedELF": {
+    "bytes": 1411576,
+    "sha256": "dcdafcca12534ea8c8ee1f456d9829729c2e99f36f8b01c7e6b6e44bb77dbc9f",
+    "canonicalSource": {
+      "offsets": [
+        272893
+      ],
+      "bytes": 146301,
+      "sha256": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+      "lines": 2147
+    }
+  },
+  "linkedCanonicalSource": {
+    "offsets": [
+      272893
+    ],
+    "bytes": 146301,
+    "sha256": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+    "lines": 2147
+  },
+  "staticCompiler": {
+    "tool": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+    "toolSHA256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+    "versionCommand": [
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+      "--version"
+    ],
+    "versionExit": 0,
+    "versionStdout": "Glslang Version: 11:16.6.0\r\nESSL Version: OpenGL ES GLSL 3.20 glslang Khronos. 16.6.0\r\nGLSL Version: 4.60 glslang Khronos. 16.6.0\r\nSPIR-V Version 0x00010600, Revision 1\r\nGLSL.std.450 Version 100, Revision 1\r\nKhronos Tool ID 8\r\nSPIR-V Generator Version 11\r\nGL_KHR_vulkan_glsl version 100\r\nARB_GL_gl_spirv version 100\r\n",
+    "versionStderr": "",
+    "command": [
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+      "-S",
+      "comp",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t719\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g9rx\\rx_assets\\pipeline.comp"
+    ],
+    "macros": [],
+    "target": "GLSL ES 3.10 from #version 310 es; syntax validation; no SPIR-V target",
+    "exit": 0,
+    "sourceSHA256": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e"
+  },
+  "buildLogSHA": "b42991d7e26b4682518555a45159594a0c1c79d1cdbc1f73ad69c4ab0c6d9cf1",
+  "compileCommandsSHA": "b5d9eae61ce28ee960209be120b9c712685b8dec2cbeb6f86af58bb5b67074f7",
+  "deviceUsed": false,
+  "testsRun": false,
+  "productExecuted": false,
+  "signed": false,
+  "deployed": false,
+  "priorAttribution": {
+    "reportedRun": "T594-v5/T716-rx",
+    "inputSHA": "d07b9eda97734aea8f6fa00521a78bc707d1d722a2940a3f7d6725f6ea5a179a",
+    "signedSHA": "b4b4e7a376fc96a808a2a596170cafbc22f5867dea4d73e492b4962fde5d51ab",
+    "packagedElfSHA": "f47a6c7474f61ebf1f255197395274784a909952d87e37ea00d4dc158398bccf",
+    "packagedBuildId": "317645e31a3cd07e11e125f28b91b34601a0c820",
+    "linkedShaderSHA": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+    "layouts": [
+      {
+        "path": "test\\reports\\t491\\t594c\\r1.json",
+        "sha256": "6a2eb40cd67b14c568c6ec4cb095b41b9b72d9407f324bf740ec5d086a669c92",
+        "pageAcknowledgement": {
+          "state": "CONFIG_QUEUED"
+        }
+      },
+      {
+        "path": "test\\reports\\t491\\t594c\\r2.json",
+        "sha256": "4e78dd8f7a179708853daaf48f845f61d5433fd09f3c6a7d9b95c35479b3b34e",
+        "pageAcknowledgement": {
+          "state": "CONFIG_QUEUED"
+        }
+      },
+      {
+        "path": "test\\reports\\t491\\t594c\\r3.json",
+        "sha256": "b38a80d7593a2b2e262d27c297c3fbab21aead3a66dc40e4cff64b1cda0ea2f7",
+        "pageAcknowledgement": {
+          "state": "CONFIG_QUEUED"
+        }
+      },
+      {
+        "path": "test\\reports\\t491\\t594c\\r4.json",
+        "sha256": "703544183048d41241d57b999867b31bcc68a95675fb75e8db58b3218d03b1de",
+        "pageAcknowledgement": {
+          "state": "CONFIG_QUEUED"
+        }
+      }
+    ],
+    "reportedStopSecondsLowerBound": 55,
+    "sameTicketPersistenceProven": false,
+    "hilog": {
+      "path": "test\\reports\\t491\\t594c\\h716.txt",
+      "sha256": "3077116661fa6d5580e771b5f0cccefe96f1d7b57be45e2ef0af9d1eab213c4a",
+      "lines": 7768,
+      "s0001": 0,
+      "s0022": 0
+    },
+    "loadedProcessIdentityCaptured": false,
+    "ownerConsumptionCaptured": false,
+    "firstRuntimeError": "UNOBSERVED_IN_T594_V5",
+    "shaderGate": "UNOBSERVED_IN_T594_V5",
+    "archivedWorkerUsedInConfigure": false,
+    "localPathsNow": {
+      "unsignedSHA": "d52d997cde31b7e59e0fcb4fa75043aff66b646d6c928d1fc873b859682d7653",
+      "unstrippedElfSHA": "0775b0b6c00b619817bd8d213110da9b88ffa32d83c5c57c079ffe3c325530a6"
+    }
+  },
+  "abcSHA256": "feb905a730bb5ef81922fbdf0a189df0afa8d8004e5dfe391aec5dd866554395",
+  "sourceHashes": {
+    "entry/src/main/cpp/gpu_resident/g9rx/bridge.cpp": "b43d12732da0f406022cf01511061a4ef29b4bfb93465e5eb88b8fd8e727394f",
+    "entry/src/main/cpp/gpu_resident/g9rx/controller.cpp": "2def222469d41cb8c7d8f3722901ffa55f64ba70f859f5daea23119c9d931271",
+    "entry/src/main/cpp/gpu_resident/g9rx/controller.h": "38fbe99fc882448eada69acc031da3be4f786aec2d04772eb6de613818e2685f",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/transport.cpp": "5b9ff7aa2aa0804eb1c5f54a0e63383494af3370042ee96f4a3b36d3adff5460",
+    "entry/src/main/cpp/gpu_resident/g9rx/frozen/transport.h": "3b32bb2df662cc644f4f257678824b65f790052045543f344a32f6e51979f289",
+    "entry/src/main/cpp/gpu_resident/g9rx/transport.cpp": "42c7fd0ef1da8084c26f84c168133dc6cdd2966fef78da642cda3f16b071a69e",
+    "entry/src/main/cpp/gpu_resident/g9rx/transport.h": "776a8b3a782c469b4fdfefe7eba3d7e5cce351cfb28380de1b5a8d0b80aa825d",
+    "entry/src/main/cpp/types/libgrs_g9rx/index.d.ts": "a5ed103734f7f713846ac1957a4220c08e8bb3728035af76552b66ed395d778d",
+    "entry/src/main/ets/pages/GpuResidentG9Rx.ets": "837e308f5f297be5f91a925c4f7bfc53b77196574051b56812bb951e555fb804"
+  }
+}

@@ -5,6 +5,7 @@
 #include "scene.h"
 #include <ace/xcomponent/native_interface_xcomponent.h>
 #include <condition_variable>
+#include <hilog/log.h>
 #include <napi/native_api.h>
 #include <native_window/external_window.h>
 #include <sstream>
@@ -15,13 +16,25 @@ extern "C" const uint32_t GrsG9RxAbi[16];
 namespace {
 thread_local bool uiIngressChannel = false;
 class App {
+  struct ConfigureReceipt {
+    uint64_t ticket = 0, enqueueNs = 0, ownerNs = 0, applyNs = 0, finishNs = 0;
+    uint64_t run = 0, context = 0;
+    const char *phase = "OFF";
+    const char *failure = "";
+    char mappedBuildId[129]{};
+    int32_t result = -1, shaderStatus = -1, linkStatus = -1;
+    EGLint firstEgl = EGL_SUCCESS;
+    GLenum firstGl = GL_NO_ERROR;
+  };
   std::mutex mutex_;
   std::condition_variable wake_;
   std::thread owner_;
   bool quit_ = false;
   void *pendingWindow_ = nullptr;
   bool windowPending_ = false, configurePending_ = false;
+  bool ownerSeen_ = false, applying_ = false, cancelApplying_ = false;
   Config pendingConfig_{};
+  ConfigureReceipt receipt_{};
   uint32_t width_ = 0, height_ = 0;
   uint64_t contextGeneration_ = 0, geometryGeneration_ = 1, frame_ = 0,
            runSerial_ = 0;
@@ -29,6 +42,9 @@ class App {
   EGLContext context_ = EGL_NO_CONTEXT;
   EGLSurface surface_ = EGL_NO_SURFACE;
   void *window_ = nullptr;
+  bool windowReady_ = false;
+  const char *windowFailure_ = "";
+  EGLint windowError_ = EGL_SUCCESS;
   Controller controller_;
   Scene scene_;
   Cold cold_;
@@ -39,18 +55,18 @@ class App {
     return eglSwapBuffers(app.display_, app.surface_) == EGL_TRUE;
   }
   void Retire() {
+    windowReady_ = false;
     controller_.Stop();
     if (context_ != EGL_NO_CONTEXT) {
-      eglMakeCurrent(display_, surface_, surface_, context_);
       controller_.Release(false);
       scene_.Reset(false);
       cold_.Reset();
       eglMakeCurrent(display_, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-      if (surface_ != EGL_NO_SURFACE)
-        eglDestroySurface(display_, surface_);
       if (eglDestroyContext(display_, context_))
         GrsFullGpuContextRetired(reinterpret_cast<uint64_t>(context_));
     }
+    if (surface_ != EGL_NO_SURFACE)
+      eglDestroySurface(display_, surface_);
     if (display_ != EGL_NO_DISPLAY)
       eglTerminate(display_);
     context_ = EGL_NO_CONTEXT;
@@ -62,9 +78,17 @@ class App {
   }
   bool Window(void *window) {
     Retire();
+    windowFailure_ = "";
+    windowError_ = EGL_SUCCESS;
     window_ = window;
     if (!window)
       return false;
+    const auto fail = [this](const char *call) {
+      windowFailure_ = call;
+      windowError_ = eglGetError();
+      Retire();
+      return false;
+    };
     display_ = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     EGLint major = 0, minor = 0, count = 0;
     EGLConfig config = nullptr;
@@ -82,18 +106,65 @@ class App {
                                  8,
                                  EGL_NONE};
     const EGLint ctx[] = {EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
-    if (display_ == EGL_NO_DISPLAY ||
-        !eglInitialize(display_, &major, &minor) ||
-        !eglChooseConfig(display_, attributes, &config, 1, &count) ||
-        count != 1)
-      return false;
+    if (display_ == EGL_NO_DISPLAY)
+      return fail("eglGetDisplay");
+    if (!eglInitialize(display_, &major, &minor))
+      return fail("eglInitialize");
+    if (!eglChooseConfig(display_, attributes, &config, 1, &count))
+      return fail("eglChooseConfig");
+    if (count != 1)
+      return fail("EGL_CONFIG_COUNT");
     context_ = eglCreateContext(display_, config, EGL_NO_CONTEXT, ctx);
+    if (context_ == EGL_NO_CONTEXT)
+      return fail("eglCreateContext");
     surface_ = eglCreateWindowSurface(
         display_, config, reinterpret_cast<EGLNativeWindowType>(window),
         nullptr);
-    return context_ != EGL_NO_CONTEXT && surface_ != EGL_NO_SURFACE &&
-           eglMakeCurrent(display_, surface_, surface_, context_) &&
-           contextGeneration_ != UINT64_MAX && ++contextGeneration_;
+    if (surface_ == EGL_NO_SURFACE)
+      return fail("eglCreateWindowSurface");
+    if (!eglMakeCurrent(display_, surface_, surface_, context_))
+      return fail("eglMakeCurrent");
+    if (contextGeneration_ == UINT64_MAX)
+      return fail("CONTEXT_IDENTITY_EXHAUSTED");
+    ++contextGeneration_;
+    return windowReady_ = true;
+  }
+  // Called with the App mutex held. Keep the original stage and raw code
+  // together so a later scene/status update cannot erase the first failure.
+  void ConfigureStage(const char *phase) {
+    receipt_.phase = phase;
+    OH_LOG_Print(LOG_APP, LOG_INFO, 0xE719, "G9RxConfigure",
+                 "ticket=%{public}llu ns=%{public}llu phase=%{public}s run=%{public}llu context=%{public}llu result=%{public}d failure=%{public}s egl=%{public}d gl=%{public}u shader=%{public}d link=%{public}d mappedBuildId=%{public}s",
+                 static_cast<unsigned long long>(receipt_.ticket),
+                 static_cast<unsigned long long>(CheckedClockRead().ns),
+                 phase, static_cast<unsigned long long>(receipt_.run),
+                 static_cast<unsigned long long>(receipt_.context),
+                 receipt_.result, receipt_.failure, receipt_.firstEgl,
+                 receipt_.firstGl, receipt_.shaderStatus, receipt_.linkStatus,
+                 receipt_.mappedBuildId);
+  }
+  static void ObserveProgram(void *user, SubmitStage stage, uint64_t,
+                             uint32_t code, uint32_t, uint64_t) {
+    auto &app = *static_cast<App *>(user);
+    std::lock_guard<std::mutex> lock(app.mutex_);
+    switch (stage) {
+    case SubmitStage::ShaderEnter:
+      app.ConfigureStage("SHADER_COMPILE_ENTER");
+      break;
+    case SubmitStage::ShaderExit:
+      app.receipt_.shaderStatus = code;
+      app.ConfigureStage("SHADER_COMPILE_EXIT");
+      break;
+    case SubmitStage::ProgramEnter:
+      app.ConfigureStage("PROGRAM_LINK_ENTER");
+      break;
+    case SubmitStage::ProgramExit:
+      app.receipt_.linkStatus = code;
+      app.ConfigureStage("PROGRAM_LINK_EXIT");
+      break;
+    default:
+      break;
+    }
   }
   void SetStage(const std::string &value) {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -141,14 +212,40 @@ public:
   std::string Configure(const Config &config) {
     if (cold_.HasLive(CheckedClockRead()))
       return "{\"state\":\"COLD_SWITCH_WOULD_BLOCK\"}";
-    controller_.Stop();
     std::lock_guard<std::mutex> lock(mutex_);
-    if (configurePending_)
+    if (configurePending_ || applying_)
       return "{\"state\":\"BUSY\"}";
+    if (receipt_.ticket == UINT64_MAX)
+      return "{\"state\":\"IDENTITY_EXHAUSTED\"}";
+    controller_.Stop();
+    const auto ticket = receipt_.ticket + 1;
+    receipt_ = {};
+    receipt_.ticket = ticket;
+    receipt_.enqueueNs = CheckedClockRead().ns;
+    Dl_info module{};
+    if (!dladdr(reinterpret_cast<const void *>(&ObserveProgram), &module) ||
+        !MappedBuildId(module.dli_fbase, receipt_.mappedBuildId))
+      receipt_.mappedBuildId[0] = '\0';
     pendingConfig_ = config;
     configurePending_ = true;
+    ownerSeen_ = false;
+    ConfigureStage("ENQUEUED");
     wake_.notify_all();
-    return "{\"state\":\"CONFIG_QUEUED\"}";
+    return "{\"state\":\"CONFIG_QUEUED\",\"ticket\":\"" +
+           std::to_string(ticket) + "\"}";
+  }
+  bool CancelConfigure(uint64_t ticket) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!ticket || ticket != receipt_.ticket || (!configurePending_ && !applying_))
+      return false;
+    if (applying_) {
+      cancelApplying_ = true;
+    } else {
+      configurePending_ = false;
+      receipt_.finishNs = CheckedClockRead().ns;
+      ConfigureStage("CANCELLED");
+    }
+    return true;
   }
   std::string Status() {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -159,6 +256,20 @@ public:
             ",\"sceneFirstEgl\":" + std::to_string(scene_.FirstEgl()) +
             ",\"densityApiStatus\":" + std::to_string(densityStatus_.load()) +
             ",\"rotationApiStatus\":" + std::to_string(rotationStatus_.load());
+    std::ostringstream configure;
+    configure << ",\"configure\":{\"ticket\":\"" << receipt_.ticket
+              << "\",\"phase\":\"" << receipt_.phase << "\",\"failure\":\""
+              << receipt_.failure << "\",\"mappedBuildId\":\""
+              << receipt_.mappedBuildId << "\",\"enqueueNs\":\"" << receipt_.enqueueNs
+              << "\",\"ownerNs\":\"" << receipt_.ownerNs << "\",\"applyNs\":\""
+              << receipt_.applyNs << "\",\"finishNs\":\"" << receipt_.finishNs
+              << "\",\"run\":\"" << receipt_.run << "\",\"context\":\""
+              << receipt_.context << "\",\"result\":" << receipt_.result
+              << ",\"firstEgl\":" << receipt_.firstEgl
+              << ",\"firstGl\":" << receipt_.firstGl
+              << ",\"shaderStatus\":" << receipt_.shaderStatus
+              << ",\"linkStatus\":" << receipt_.linkStatus << '}';
+    text += configure.str();
     text += ",\"abi\":[";
     for (size_t i = 0; i < 16; ++i) {
       if (i)
@@ -182,67 +293,112 @@ void App::Loop() {
     uint64_t geometry = 0;
     {
       std::unique_lock<std::mutex> lock(mutex_);
-      wake_.wait_for(lock, std::chrono::milliseconds(2));
+      wake_.wait_for(lock, std::chrono::milliseconds(2),
+                     [this] {
+                       return quit_ || windowPending_ ||
+                              (configurePending_ && !ownerSeen_);
+                     });
       if (quit_)
         break;
+      if (configurePending_ && !ownerSeen_) {
+        ownerSeen_ = true;
+        receipt_.ownerNs = CheckedClockRead().ns;
+        ConfigureStage("OWNER_SEEN");
+      }
       replace = windowPending_;
       if (replace) {
         window = pendingWindow_;
         pendingWindow_ = nullptr;
         windowPending_ = false;
-      }
-      configure = configurePending_;
-      if (configure) {
-        config = pendingConfig_;
-        configurePending_ = false;
+        if (configurePending_ && window)
+          ConfigureStage("EGL_ENTER");
       }
       width = width_;
       height = height_;
       geometry = geometryGeneration_;
     }
     if (replace) {
-      if (!Window(window))
-        SetStage("WINDOW_FAILED");
-      else
-        SetStage("WINDOW_READY");
+      const bool ready = Window(window);
+      SetStage(ready ? "WINDOW_READY" :
+                        (*windowFailure_ ? "WINDOW_FAILED" : "WAIT_NATIVE_WINDOW"));
     }
-    if (configure && !controller_.ReadyToReconfigure()) {
-      controller_.Drain();
-      controller_.PollSceneFence();
+    {
       std::lock_guard<std::mutex> lock(mutex_);
-      pendingConfig_ = config;
-      configurePending_ = true;
-      configure = false;
-    }
-    if (configure) {
-      if (context_ == EGL_NO_CONTEXT) {
-        SetStage("WAIT_NATIVE_WINDOW");
-      } else {
-        controller_.Release(true);
-        auto now = CheckedClockRead();
-        if (runSerial_ == UINT64_MAX) {
-          SetStage("IDENTITY_EXHAUSTED");
-          continue;
+      if (configurePending_) {
+        if (!windowPending_) {
+          if (*windowFailure_) {
+            receipt_.failure = windowFailure_;
+            receipt_.firstEgl = windowError_;
+            receipt_.finishNs = CheckedClockRead().ns;
+            configurePending_ = false;
+            ConfigureStage("FAILED");
+          } else if (!windowReady_) {
+            if (std::strcmp(receipt_.phase, "WAIT_NATIVE_WINDOW") != 0)
+              ConfigureStage("WAIT_NATIVE_WINDOW");
+          } else if (!controller_.ReadyToReconfigure()) {
+            if (std::strcmp(receipt_.phase, "WAIT_RETIREMENT") != 0)
+              ConfigureStage("WAIT_RETIREMENT");
+          } else if (runSerial_ == UINT64_MAX) {
+            receipt_.failure = "RUN_IDENTITY_EXHAUSTED";
+            receipt_.finishNs = CheckedClockRead().ns;
+            configurePending_ = false;
+            ConfigureStage("FAILED");
+          } else {
+            config = pendingConfig_;
+            configurePending_ = false;
+            configure = applying_ = true;
+            receipt_.run = ++runSerial_;
+            receipt_.context = contextGeneration_;
+            receipt_.applyNs = CheckedClockRead().ns;
+            ConfigureStage("APPLY_ENTER");
+          }
         }
-        ++runSerial_;
-        ControlIdentity id{
-            runSerial_,         contextGeneration_, contextGeneration_,
-            runSerial_,         runSerial_,         1,
-            contextGeneration_, runSerial_,         contextGeneration_};
-        auto result = controller_.ConfigureResearch(
-            config, id, reinterpret_cast<const void *>(&Product));
-        if (result == Result::OK) {
-          SceneCapabilityV2 cap{};
-          result = scene_.PrepareAttributeScene(controller_.Caps(), &cap);
-        }
-        if (result != Result::OK)
-          controller_.Stop();
-        SetStage(result == Result::OK
-                     ? "CONFIGURED"
-                     : result==Result::SOURCE_IDENTITY_MISMATCH?"SOURCE_IDENTITY_MISMATCH":"CONFIGURE_FAILED_" + std::to_string(uint32_t(result)));
       }
     }
-    if (context_ == EGL_NO_CONTEXT)
+    if (configure) {
+      controller_.Release(true);
+      ControlIdentity id{
+          runSerial_,         contextGeneration_, contextGeneration_,
+          runSerial_,         runSerial_,         1,
+          contextGeneration_, runSerial_,         contextGeneration_};
+      GLenum firstGl = GL_NO_ERROR;
+      EGLint firstEgl = EGL_SUCCESS;
+      auto result = controller_.ConfigureResearch(
+          config, id, reinterpret_cast<const void *>(&Product),
+          {this, ObserveProgram}, &firstGl, &firstEgl);
+      const char *failedAt = result == Result::OK ? "" : "CONFIGURE_RESEARCH";
+      if (result == Result::OK) {
+        SceneCapabilityV2 cap{};
+        result = scene_.PrepareAttributeScene(controller_.Caps(), &cap);
+        if (result != Result::OK) {
+          failedAt = cap.failure;
+        }
+      }
+      std::lock_guard<std::mutex> lock(mutex_);
+      const bool cancelled = cancelApplying_ || windowPending_;
+      if (result != Result::OK || cancelled)
+        controller_.Stop();
+      applying_ = cancelApplying_ = false;
+      receipt_.result = int32_t(result);
+      receipt_.firstGl = firstGl;
+      receipt_.firstEgl = firstEgl;
+      receipt_.failure = receipt_.shaderStatus == 0 ? "SHADER_COMPILE" :
+                         receipt_.linkStatus == 0 ? "PROGRAM_LINK" : failedAt;
+      receipt_.finishNs = CheckedClockRead().ns;
+      if (result != Result::OK) {
+        stage_ = result == Result::SOURCE_IDENTITY_MISMATCH
+                     ? "SOURCE_IDENTITY_MISMATCH"
+                     : "CONFIGURE_FAILED_" + std::to_string(uint32_t(result));
+        ConfigureStage("FAILED");
+      } else if (cancelled) {
+        stage_ = "OFF";
+        ConfigureStage("CANCELLED");
+      } else {
+        stage_ = "CONFIGURED";
+        ConfigureStage("APPLIED");
+      }
+    }
+    if (!windowReady_)
       continue;
     auto now = CheckedClockRead();
     if (!now.ok) {
@@ -428,6 +584,14 @@ napi_value Api(napi_env env, napi_callback_info info) {
   auto &core = app.Core();
   if (api == "g9RxStatus")
     return Text(env, app.Status());
+  if (api == "g9RxCancelConfigure") {
+    std::string expected;
+    uint64_t ticket = 0;
+    return Text(env, argc == 1 && String(env, argv[0], expected) &&
+                         Decimal(expected, ticket) && app.CancelConfigure(ticket)
+                         ? "{\"state\":\"CANCEL_REQUESTED\"}"
+                         : "{\"state\":\"STALE_CONFIGURE_TICKET\"}");
+  }
   if (api == "g9RxSession")
     return Text(env, core.Session());
   if (api == "g9RxLoadedIdentity")
@@ -585,7 +749,7 @@ napi_value Init(napi_env env, napi_value exports) {
       "g9RxResearchConfig", "g9RxConfigure", "g9RxSession",   "g9RxSetActive",
       "g9RxPulse",          "g9RxTarget",    "g9RxStatus",    "g9RxStop",
       "g9RxLoadedIdentity", "g9RxSource",    "g9RxColdBegin", "g9RxColdState",
-      "g9RxColdPage",       "g9RxColdEnd"};
+      "g9RxColdPage",       "g9RxColdEnd", "g9RxCancelConfigure"};
   for (auto name : names) {
     napi_property_descriptor p{
         name,    nullptr, Api,          nullptr,

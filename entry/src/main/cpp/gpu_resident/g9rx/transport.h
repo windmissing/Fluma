@@ -1,5 +1,6 @@
 #pragma once
 #include "../cold_slot_broker.h"
+#include "../submit_observer.h"
 #include "../uniform_locations.h"
 #include "completion_gate.h"
 #include "receipt_clock.h"
@@ -57,7 +58,9 @@ class Transport {
 
 public:
   Result Create(const Config &, const ControlIdentity &,
-                const SeedFileIdentity &);
+                const SeedFileIdentity &, SubmitObserver observer = {});
+  GLenum FirstGl() const { return firstGl_; }
+  EGLint FirstEgl() const { return firstEgl_ ? EGLint(firstEgl_) : EGL_SUCCESS; }
   // T564 (problem T560 搂2): COMPUTE_ONLY eligibility, queried once on the
   // current owner context; vertex/fragment shader-storage blocks are recorded
   // but no longer gate compute.

@@ -73,7 +73,9 @@ bool Controller::Check(void *user, const Permit &p, uint64_t now) {
 
 Result Controller::ConfigureResearch(const Config &config,
                                      const ControlIdentity &id,
-                                     const void *loadedFunction) {
+                                     const void *loadedFunction,
+                                     SubmitObserver observer, GLenum *firstGl,
+                                     EGLint *firstEgl) {
   if (configured_ || !config.Valid() || !CompleteScope(id))
     return Result::INVALID;
   auto clockRead = CheckedClockRead();
@@ -95,7 +97,11 @@ Result Controller::ConfigureResearch(const Config &config,
              nextLifecycleGeneration))
       return Result::INVALID;
   }
-  auto result = transport_.Create(config, id, {});
+  auto result = transport_.Create(config, id, {}, observer);
+  if (firstGl)
+    *firstGl = transport_.FirstGl();
+  if (firstEgl)
+    *firstEgl = transport_.FirstEgl();
   if (result != Result::OK) {
     if(result==Result::SOURCE_IDENTITY_MISMATCH){std::lock_guard<std::mutex> lock(protocol_.sync.protocol);if(!protocol_.payload.control[RxProtocol::FIRST_ERROR])protocol_.payload.control[RxProtocol::FIRST_ERROR]=uint32_t(result);}
     return result;

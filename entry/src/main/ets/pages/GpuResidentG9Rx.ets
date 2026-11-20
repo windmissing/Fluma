@@ -3,8 +3,10 @@ import { GpuG9RxCold } from '../physics/GpuG9RxCold';
 import { common } from '@kit.AbilityKit';
 import { FrameCallback } from '@ohos.arkui.UIContext';
 interface RxConfig { words: number[]; }
+interface RxConfigureReply { state: string; ticket?: string; }
+interface RxConfigureStatus { ticket: string; phase: string; failure: string; result: number; firstEgl: number; firstGl: number; }
 interface RxSession { scope: string[]; }
-interface RxStatus { configured: boolean; active: boolean; initialization: string; sceneStale: boolean; capability: number[]; mapping: number[]; commit: string; }
+interface RxStatus { configured: boolean; active: boolean; initialization: string; sceneStale: boolean; capability: number[]; mapping: number[]; commit: string; configure: RxConfigureStatus; }
 class RxFrame extends FrameCallback {
   owner: GpuResidentG9Rx | null = null;
   onFrame(ns: number): void { this.owner?.tick(this, ns); }
@@ -17,6 +19,7 @@ struct GpuResidentG9Rx {
   private archive(): void { const context = getContext(this) as common.UIAbilityContext; this.cold.collect('ROOT', context.filesDir).then((path: string): void => { this.message = path; }).catch((error: Error): void => { this.message = error.message; }); }
   private frame: RxFrame | null = null;
   private session: string = '';
+  private configureTicket: string = '';
   private sequence: number = 0;
   private researchActive: boolean = false;
   private sourceIntent: number = 0;
@@ -35,9 +38,15 @@ struct GpuResidentG9Rx {
     words[at] = lo; words[at + 1] = hi;
   }
   private configure(): void {
+    if (this.configureTicket.length > 0 && this.session.length === 0) return;
     const config = JSON.parse(native.g9RxResearchConfig(192)) as RxConfig;
-    this.message = native.g9RxConfigure(new Uint32Array(config.words), 'RESEARCH_ONLY');
+    const raw: string = native.g9RxConfigure(new Uint32Array(config.words), 'RESEARCH_ONLY');
+    const ack = JSON.parse(raw) as RxConfigureReply;
+    this.message = raw;
+    if (ack.state !== 'CONFIG_QUEUED' || ack.ticket === undefined) return;
+    this.configureTicket = ack.ticket;
     this.researchActive = true; this.session = ''; this.sequence = 0;
+    this.cap = []; this.mapping = [];
     if (this.frame === null) { const frame = new RxFrame(); frame.owner = this; this.frame = frame; this.getUIContext().postFrameCallback(frame); }
   }
   tick(frame: RxFrame, ns: number): void {
@@ -45,7 +54,22 @@ struct GpuResidentG9Rx {
     try {
       if (!Number.isSafeInteger(ns) || ns < 0) throw new Error('UI_CLOCK_UNQUALIFIED');
       const status = JSON.parse(native.g9RxStatus()) as RxStatus;
-      if (status.configured) {
+      const attempt: RxConfigureStatus = status.configure;
+      if (attempt.ticket !== this.configureTicket) throw new Error('STALE_CONFIGURE_TICKET');
+      if (attempt.phase !== 'APPLIED') {
+        const stage: string = 'RX #' + attempt.ticket + ' ' + attempt.phase;
+        if (attempt.phase === 'FAILED' || attempt.phase === 'CANCELLED') {
+          this.stop();
+          this.message = stage + ' ' + attempt.failure + ' result=' + attempt.result +
+            ' EGL=' + attempt.firstEgl + ' GL=' + attempt.firstGl;
+          return;
+        }
+        this.message = stage;
+      } else if (status.initialization.indexOf('FAILED') >= 0) {
+        this.stop();
+        this.message = status.initialization;
+        return;
+      } else if (status.configured) {
         const latestSession: string = native.g9RxSession();
         if (this.session.length === 0 || latestSession !== this.session || !status.active) {
           this.session = latestSession; const scope = JSON.parse(this.session) as RxSession;
@@ -61,7 +85,6 @@ struct GpuResidentG9Rx {
         if (status.sceneStale) this.message = 'STALE：' + status.initialization;
         else if (this.sequence % 30 === 0) this.message = 'GNR1 commit=' + status.commit + '；设备效果未验证';
       }
-      if (status.initialization.indexOf('FAILED') >= 0) { this.stop(); this.message = status.initialization + ' ' + native.g9RxLoadedIdentity(); return; }
       this.getUIContext().postFrameCallback(frame);
     } catch (error) { this.stop(); this.message = 'FAULT: ' + String(error); }
   }
@@ -93,7 +116,12 @@ struct GpuResidentG9Rx {
   private source(): void { this.message = native.g9RxSource('{"intent":"' + String(++this.sourceIntent) + '","sourceId":"2","mass":"0.2","x":"64","y":"200","vx":"0","vy":"0"}'); }
   private stop(): void {
     this.researchActive = false;
+    if (this.configureTicket.length > 0 && this.session.length === 0) {
+      this.message = native.g9RxCancelConfigure(this.configureTicket);
+    }
+    this.configureTicket = '';
     if (this.session.length > 0) { try { this.message = native.g9RxStop(this.session); } catch (error) { this.message = String(error); } }
+    this.session = '';
     if (this.frame !== null) this.frame.owner = null; this.frame = null;
   }
   aboutToDisappear(): void { this.stop(); }

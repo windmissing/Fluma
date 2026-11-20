@@ -32,7 +32,9 @@ public:
   Controller();
   RxProtocol &Protocol() { return protocol_; }
   Result ConfigureResearch(const Config &, const ControlIdentity &,
-                           const void *loadedFunction);
+                           const void *loadedFunction,
+                           SubmitObserver observer = {}, GLenum *firstGl = nullptr,
+                           EGLint *firstEgl = nullptr);
   std::string Session() const;
   std::string LoadedReceipt() const;
   void InvalidateGeometry();
