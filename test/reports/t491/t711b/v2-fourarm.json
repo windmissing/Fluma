@@ -1,0 +1,44 @@
+{
+ "revision": "T711_V2_FOURARM_DEVICE_V1",
+ "date": "2026-11-20",
+ "packages": {
+  "signed": "8 arms T711-M1/M2 \u00d7 THREE_OFF/TWO_OFF/THREE_ON/TWO_ON all sign PASS (inputSha cb379e18/a8ac611d/da9f33fd/5b64a3d7/b873156d/7f73ec8c/24adbfe3/d09e82e8)"
+ },
+ "device": "011124264R000337",
+ "arms": {
+  "M1-THREE_OFF": {
+   "clock": "GRS_M1_PROGRESS_CLOCK_V1",
+   "state": "STALE/STATE_LOST run0:0 epoch2 session1",
+   "physics": "0:0",
+   "note": "THREE off degraded variant, expected"
+  },
+  "M1-TWO_ON": {
+   "clock": "GRS_M1_PROGRESS_CLOCK_V1",
+   "state": "STALE/STATE_LOST run0:0 epoch2 session1 persistent 25s+",
+   "physics": "0:0",
+   "note": "T701 tree lacks 250ms root deadline fix (T597-fixed CLOCK_V2 family) \u2014 M1 arms all STATE_LOST on this tree"
+  },
+  "M2-TWO_ON": {
+   "entry": "no-arg start landed NEWPIPE_FAULT_UNSUPPORTED_SCENE (no route flag) \u2014 needs Index M2V3 entry; NOT_RUN this round"
+  },
+  "M2-THREE_OFF": {
+   "page": "M2V3 reached, STATE_LOST",
+   "apiCursor": {
+    "api": 6,
+    "apiName": "glLinkProgram",
+    "object": 0,
+    "edge": 1,
+    "sequence": 15
+   },
+   "inCall": true,
+   "openNs": "65411456875 (65.4s)",
+   "bootSerial": 1,
+   "note": "glLinkProgram open-call 4th independent observation (65.4s obj0) \u2014 T591/T590 triple-convergence extended to 4th sample, same 1728-line shader family"
+  }
+ },
+ "firstFrame": {
+  "M1 arms": "no valid new-pipeline frame (STATE_LOST persistent) \u2014 first-frame comparison RED baseline on T701 tree",
+  "M2 arms": "create arm blocked at glLinkProgram"
+ },
+ "route": "T701 tree M1 arms need T597-fixed root-deadline family to pass READY (architect aware); M2 arms blocked at glLinkProgram 4th observation; comparison baseline recorded"
+}
