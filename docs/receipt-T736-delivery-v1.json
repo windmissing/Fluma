@@ -1,0 +1,27 @@
+{
+  "schema": "T736_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-20",
+  "commit": "25caba37fb27dd600716a624cb34c4e70546b42c",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b001501e4b06f392485e39d",
+    "started": {
+      "id": "6b001566e4b056b393d96648",
+      "createdTime": "2026-11-20T09:39:50+0000"
+    },
+    "delivered": {
+      "id": "6b00177fe4b056b393d99cd5",
+      "createdTime": "2026-11-20T09:48:47+0000",
+      "title": "T736 离线架构已交（25caba37，docs/architecture-T736-v1.md / architecture-T736-source-contract-v1.json）。冻结两族 K192 非零 SOURCE（209,715 Q20）与真实输入入口、完整 12-pass/三次 copy/4 SSBO、同 owner fence 读回、typed commit 与逐根身份。签包源复核后，SOURCE 为 RX 41,767 B / DM 41,802 B，静态链接反射均为 40 个 uniform。T718 历史 DM 夹具实际为 QUANTUM；保原种子并由 tester 补真实 SOURCE 行。静态确认 DM Controller 零配额 SOURCE 会在 workspaceRetired 设 true 前预检退役而撤权，后续实现按 RX 顺序仅修局部提交提案；Transport 差分不能覆盖该控制器路径。各族需先拿到 T734 对应真实映射、同 ticket 和完成等待后的 8 B 原尾[0,0x641647]、无 GL/EGL 错，才可实施本族 SOURCE。未使用真机，未实施 SOURCE。"
+    }
+  },
+  "statusRow": {
+    "before": "| T736 | 【T736·目标20 RX与DM BOOT加SOURCE接续架构】architect | architect | P5 | 进行中 | 6b001501e4b06f392485e39d |",
+    "after": "| T736 | 【T736·目标20 RX与DM BOOT加SOURCE接续架构】architect | architect | P5 | 结束待验收 | 6b001501e4b06f392485e39d |"
+  },
+  "beforeSha256": "de0dc92cc3c6074168d0e96d4a4e3954b85528f7f169fec1baad2ff22a80a2ba",
+  "afterSha256": "12477ad0ba346776d8e22006b0bfb9b5bf221e95bc3a75ffbbced174f943a248",
+  "sourceContractSha256": "3f3a9da3f23933e3a0098fc151e0b3667bf451c8b903ab40b5473f0d7a218974"
+}
