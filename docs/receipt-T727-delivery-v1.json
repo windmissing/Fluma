@@ -1,0 +1,27 @@
+{
+  "schema": "T727_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-20",
+  "commit": "7e85449ae68e8d3f5fad8cdcd180a5b5ef42a18c",
+  "statusRow": {
+    "before": "| T727 | 【T727·目标20 Shader编译优化架构与对照方案】architect | architect | P5 | 进行中 | 6afff62fe4b0f7101c29a07e |",
+    "after": "| T727 | 【T727·目标20 Shader编译优化架构与对照方案】architect | architect | P5 | 结束待验收 | 6afff62fe4b0f7101c29a07e |"
+  },
+  "beforeSha256": "68666fcfa6ed189cc1c92b70e5ca5b2a97777bd05ade6d654ea0da72aaed672a",
+  "afterSha256": "37102325ef54e42e21f0e3ced053f3a9208c996221d0488974c5236eb3c8bfe4",
+  "measurementSha256": "077d5cb4686f54b285f38dccf12d8042ac671b13e1f3c35451900970a40b37e7",
+  "sameNameDidaListUpdated": false,
+  "queueStaged": false,
+  "comments": {
+    "taskId": "6afff62fe4b0f7101c29a07e",
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "started": {
+      "id": "6afff6a0e4b0a82e364b49ca",
+      "createdTime": "2026-11-20T07:28:32+0000"
+    },
+    "delivered": {
+      "id": "6afffaa1e4b0a82e364bb478",
+      "createdTime": "2026-11-20T07:45:37+0000",
+      "title": "T727 架构交付完成（7e85449a）。docs/architecture-T727-v1.md 和 architecture-T727-measurement-v1.json 已冻结。核签包实际 GLSL：RX 146301B、DM 146316B、G13 259025B；阶段相近但停点、源码与终态分别登记。M1 T717 同会话归因独立；M2 TWO_ON 已证 SOURCE LINK 返回和 FINAL_Q compile 截尾，删临时 Q 继续沿 T696。首批定 G13 同父单程序/实际依赖拆分冷对照，先交 Boot 64/65/66 真 READY，再交非零流场完整时间步、原 oracle 与首个同 token 有效 Swap，最后测连续 30 FPS 及 PERSISTED 后暖命中。保原算法、ABI/反射、调度、同步、退役及资格。GLES 与 Vulkan 共用算法合同，保安全退役后换后端，Vulkan 走同 XComponent 同机最小对照。目标20 P5 后续 developer 实施、tester 离线/签包、effector 串行采证；复用 T720/T717/T701，不等历史长编译结束作为实施前置。Schema 已做冷暖/拒绝结构验证，本卡未用真机，性能收益待测。"
+    }
+  }
+}
