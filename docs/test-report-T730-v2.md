@@ -55,3 +55,23 @@ attempt 209）——编译门全过，编译后初始化尾部失败（新门，
 **INIT_ERROR_27 在暖路径同样出现**——init tail 门与编译无关：二进制
 加载成功但初始化尾部失败。READY/Swap 仍被此门挡住（编译域测量已全，
 初始化域归 architect/developer）。
+
+
+## v5 追加（2026-11-20 17:50，effector；T732 FP32 修复复测——失败面推进，拒绝持续）
+
+被测：T732-split（barrier+FP32 word-offset 修复，签名 PASS c18addcf）。
+证据：`test/reports/t491/t730b/v5/`（l1/l2 布局、t732-diag.json、
+v5-t732-retest.json）。
+
+### 结果
+
+- Boot/compile/link 全过（PROGRAM_BUILD→PROGRAM_LINK:ENTER 阶段链）
+- 失败点 **INIT_FP32_RESULT:EXIT**（T732 插桩生效——从 INIT_TAIL_VALID
+  推进到 op 66 FP32 拒绝点）——**但 FP32 拒绝本身持续**（attempt 250）
+- sign_pair 反馈：T732 compile.json 的 scene.vert sha（478d2e92）与树内
+  文件（bf7b11aa）不一致——回执缺陷，反馈 developer
+
+### T727 表更新
+
+冷编译 ✅（boot+compute+link）｜暖 load 0.01s ✅｜READY/Swap
+NOT_REACHED（op 66 FP32 拒绝=唯一剩余门，数值/精度域）

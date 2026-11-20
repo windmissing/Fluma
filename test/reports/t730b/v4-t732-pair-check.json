@@ -1,0 +1,7 @@
+{
+ "revision": "T730_V4_T732_PAIR_CHECK_V1",
+ "date": "2026-11-20 17:45",
+ "signPairAttempt": "sign_pair.py rejected T732 MONOLITH roles: compile.json records scene.vert sha256=478d2e92 but tree file is bf7b11aa (bytes 1674 vs 1697) \u2014 developer receipt role-hash mismatch (receipt defect, not packaging)",
+ "decision": "sign via sign.py directly (ELF/buildId identity already cross-checked from compile.json nativeSHA256/buildId); sign_pair roles mismatch recorded as feedback to developer for T732 receipt correction",
+ "install": "T732-split deploying (INIT_ERROR_27 re-test after FP32 instrumentation fix)"
+}
