@@ -1,0 +1,74 @@
+{
+ "revision": "T591_V3_T682_R1_DEVICE_V1",
+ "date": "2026-11-20",
+ "package": {
+  "task": "T590-cursor2 re-deploy (t663-delivery M2 page)",
+  "signedSha": "6b1faa1df776c52b356313f52a22d7d021bdea6704cbdb424fe07a613246c647"
+ },
+ "sequence": [
+  "Index -> \u5f00\u542f\u72ec\u7acb GPU M2 V3 \u7a7a\u573a -> M2V3 page (25s create window) -> \u5bfc\u51fa M2 \u521b\u5efa\u539f\u59cb\u8bca\u65ad"
+ ],
+ "attemptOriginal": {
+  "bootSerial": 1,
+  "producerTid": 37305,
+  "apiCursor": {
+   "api": 6,
+   "apiName": "glLinkProgram",
+   "object": 0,
+   "edge": 1,
+   "returned": -1,
+   "endNs": 0,
+   "sequence": 15
+  },
+  "inCall": true,
+  "inCallDurationNs": "32233490469 (32.2s)",
+  "sealed": false,
+  "current": {
+   "object": 0,
+   "stage": "LINK",
+   "handle": 2,
+   "success": false,
+   "exitNs": 0
+  },
+  "programs": [
+   {
+    "object": 0,
+    "role": "SOURCE_V3",
+    "sha256": "b7d0a027",
+    "sourceBytes": 85839,
+    "compileLog": {
+     "queried": true,
+     "emptyLog": true
+    }
+   },
+   {
+    "object": 1,
+    "role": "QUANTUM_INTERMEDIATE",
+    "compileLog": {
+     "queried": false
+    }
+   },
+   {
+    "object": 2,
+    "role": "QUANTUM_FINAL_V3",
+    "compileLog": {
+     "queried": false
+    }
+   }
+  ]
+ },
+ "threeLogs": {
+  "-0.log": 0,
+  "-1.log": 0,
+  "-2.log": 0,
+  "manifest": 719,
+  "native": 5118
+ },
+ "T682_mapping": {
+  "thisAttempt": "SOURCE_V3(object0,handle2) open at glLinkProgram 32.2s",
+  "crossAttempt": "glLinkProgram open-call now observed 3x across independent attempts: 40.1s obj0 (T591 original), 20.6s obj2 (T590), 32.2s obj0 (this) \u2014 same API, different program objects, same 1728-line shader family defect"
+ },
+ "emptyLogs": "all three object logs empty \u2014 honest NOT_CAPTURED per T682 R1 (no fabrication)",
+ "identity": "bootSerial=1 epoch=3 ownerTid=37305 layoutSha/combinedShaderSha in native.json",
+ "route": "architect: stable device-level LINK_PROGRAM non-return confirmed 3x"
+}

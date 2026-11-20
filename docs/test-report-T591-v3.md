@@ -46,3 +46,35 @@ OBJ0..2 create-log：`{"state":"CREATE_LOG","bootSerial":"1","object":N,"hex":""
 collector 设施就绪（可重复执行）；T591 核心问题——M2 创建 LINK 域挂死 40s+
 不返回——原件已锁（bootSerial/epoch/window/context/tid 全身份）。回 T657
 architect 归因（与 T496 v7 dispatch 崩溃、T590/T541 链接行溢出同工具链域汇聚）。
+
+
+## v4 追加（2026-11-20，effector；T682 R1_EXISTING_RAW 合同执行）
+
+日期：2026-11-20，真机。被测：T590-cursor2-signed 重部署（t663-delivery M2 页，
+signedSha 6b1faa1d）。证据：`test/reports/t491/t591c/out/`（新 attempt 五文件
+原件）、v3-r1.json。
+
+### 新 attempt 全套原件（bootSerial=1，producerTid=37305）
+
+- **apiCursor：api=6（glLinkProgram）/ object=0 / edge=1(ENTER) / returned=-1 /
+  endNs=0 / sequence=15**；inCall=true / **32.2s 开放** / sealed=false
+- current：object=0 / stage=LINK / handle=2 / success=false
+- programs：obj0=SOURCE_V3（SHA b7d0a027，85839B）/obj1=QUANTUM_INTERMEDIATE/
+  obj2=QUANTUM_FINAL_V3
+- **三 object log 全 0B——诚实 NOT_CAPTURED**（T682 R1 不伪造）
+
+### 跨 attempt 汇聚（T682 归因修正后）
+
+| 观测 | 对象 | 角色 | 开放时长 |
+|---|---|---|---|
+| T591 原始 | obj0 handle2 | SOURCE_V3 | 40.1s |
+| T590 v3 | obj2 handle4 | QUANTUM_FINAL_V3 | 20.6s |
+| **本次** | **obj0 handle2** | **SOURCE_V3** | **32.2s** |
+
+**glLinkProgram 不返回 = 三次独立观测（两对象角色、同 1728 行 shader 族）**
+——设备级稳定复现确认；T682"sameApiRepeated=false"由新 attempt 更新。
+
+### 回执
+
+R1 合规（同 attempt 身份/三日志/cursor/终态全交，DECLARE 缺失域如实
+NOT_CAPTURED）；回 architect：三次观测汇聚表+空日志诚实记录。
