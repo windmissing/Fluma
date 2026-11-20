@@ -56,3 +56,13 @@ grsm1 直达 RX 研究页 → 启用研究：
 - 修复链：S0022（slot）FIXED → S0001（coherent）仍 OPEN @1097
 - 回 architect：T691 变换不完整，1097 行需重查（第三分支 g9AddMass 调用或
   已变换点仍被拒）——同 S0001 族非新缺陷类
+
+
+## 复测追加（2026-11-20 10:50，effector；用户点名 T594/T591/T654 再测）
+
+复现性确认（当前设备最新包，rerun-all.json）：
+- **T594 RX 臂**：readonly@1987 **精确复现**（hilog 同行同类）——稳定
+- **T591/T712 DM 臂**：ACTUAL_GL_EXECUTION+CREATE result=8+coherent@1063 **精确复现**——稳定
+- **T654 G13 域**：G13 页在当前 RX 包不可达（无路由）——NOT_EVALUATED 维持，需 G13 包取配置化快照
+
+无状态漂移；阻塞臂与上轮一致（等限定符变换交付）。

@@ -1,0 +1,21 @@
+{
+ "revision": "T594_T591_T654_RERUN_V1",
+ "date": "2026-11-20",
+ "purpose": "user-requested re-test of T594/T591/T654 with latest packages \u2014 reproducibility confirmation",
+ "retest1_T594_RX": {
+  "package": "T713-rx (ad5a371b/af1bf65b) still on device",
+  "result": "CONFIGURE_FAILED_8 reproduced; driver 0:1987 S0001 readonly qualifier REPRODUCED exactly (hilog 10:50:15 same line/qualifier)",
+  "verdict": "stable reproducible"
+ },
+ "retest2_T591_T712_DM": {
+  "package": "T712-dm facility (T706 ELF+so+dm192 inputs still deployed /data/local/tmp/t712)",
+  "result": "ACTUAL_GL_EXECUTION + CREATE result=8 REPRODUCED; driver 0:1063 coherent REPRODUCED exactly",
+  "verdict": "stable reproducible"
+ },
+ "retest3_T654_G13": {
+  "package": "T707/T713-rx page (RX research page)",
+  "result": "G13 page unreachable from this package (no route flag, no Index entry) \u2014 threshold domain remains NOT_EVALUATED; G13 capture needs its own package (T672 facility tree)",
+  "verdict": "domain unchanged, needs G13-capable package for configured snapshot"
+ },
+ "conclusion": "all reachable re-tests reproduce prior findings exactly (readonly@1987 RX / coherent@1063 DM); no state drift; blocked arms unchanged pending developer qualifier transforms"
+}
