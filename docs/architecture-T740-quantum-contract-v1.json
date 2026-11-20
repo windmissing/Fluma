@@ -1,0 +1,1075 @@
+{
+  "schema": "T740_RX_DM_QUANTUM_CONTINUATION_V1",
+  "deviceUsedForThisAudit": false,
+  "quantumExecution": "NOT_RUN",
+  "firstQuantumSwap": "NOT_RUN",
+  "sourceContinuationMeasured": false,
+  "schedule": {
+    "formal": {
+      "path": "docs/architecture-T554-g9-dm-dispatch-v2.json",
+      "bytes": 242873,
+      "sha256": "976ff2f73bf3190113689a73431c5aa63261330d1409be332a6b8c5efec26a44"
+    },
+    "passSHA": "14199217db69c582d3cb84e55394a6d24c9c01768137548c92f9e2b241bd48ec",
+    "schemas": {
+      "RX": {
+        "schema": {
+          "path": ".codex/local-test/t734-rx/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g9rx/rx_assets/schema_generated.h",
+          "bytes": 77783,
+          "sha256": "5c230ef2a381de39eefb0bf54e5cf61353505536dedb9fb7c5378d10a0aec86f"
+        },
+        "bootRoleSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef"
+      },
+      "DM": {
+        "schema": {
+          "path": ".codex/local-test/t734-dm/entry/.cxx/default/default/debug/arm64-v8a/dm_native/dm_assets/schema_generated.h",
+          "bytes": 81083,
+          "sha256": "211950987eb3adf72a2ca9ebf43d7a340690e36a566d0d80b415de22544493b2"
+        },
+        "bootRoleSHA": "486538f1921304c2f1cfee843f8624995f0ca99650fd505e7ce83a6fca5ab3a8"
+      }
+    },
+    "families": {
+      "RX": {
+        "nine": [
+          {
+            "role": "BOOT",
+            "bytes": 22318,
+            "sha": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+            "opcodes": [
+              12,
+              2147483392
+            ]
+          },
+          {
+            "role": "SOURCE",
+            "bytes": 41767,
+            "sha": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+            "opcodes": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          {
+            "role": "ROOT_SETUP",
+            "bytes": 33544,
+            "sha": "489d265dff4b45f9dd14c8b93596231609ad98fccfaf78e2f438e55f2a2ffb49",
+            "opcodes": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
+            ]
+          },
+          {
+            "role": "TOUCH",
+            "bytes": 43797,
+            "sha": "105be27665c8a27f57e77e80cda25eba4e6adc26daacec240ab017da502fd654",
+            "opcodes": [
+              19,
+              20
+            ]
+          },
+          {
+            "role": "DM_TRANSFER",
+            "bytes": 40188,
+            "sha": "7c559c731aff61a665c7604d78ebddec31a0fc921e6de652564c0f235e7a83bf",
+            "opcodes": [
+              21,
+              22
+            ]
+          },
+          {
+            "role": "FLIGHT_FOLD",
+            "bytes": 38221,
+            "sha": "6776b74b7119be0143c1a6eb576e28fb449f5c9eb6d58391c09cc9f1efee6a74",
+            "opcodes": [
+              23,
+              24
+            ]
+          },
+          {
+            "role": "FACE_FLOW",
+            "bytes": 47206,
+            "sha": "1307017b7d14841a4a982f3a32ebcbac6fc2cc24869f26122d7b20860e7400ae",
+            "opcodes": [
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ]
+          },
+          {
+            "role": "CAPTURE_AUDIT",
+            "bytes": 37588,
+            "sha": "cbb88e2a611b7f6c10364933db5bc2c6874829497749a0e9acf690a5adf6d136",
+            "opcodes": [
+              31,
+              32
+            ]
+          },
+          {
+            "role": "ROOT_FINAL",
+            "bytes": 36117,
+            "sha": "0419b720b71b06db2b6d814b3eb34c66c2c52e21bb6d5066b814082be5e3e1d4",
+            "opcodes": [
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ]
+          }
+        ],
+        "eight": [
+          {
+            "role": "BOOT",
+            "bytes": 22318,
+            "sha": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+            "opcodes": [
+              12,
+              2147483392
+            ]
+          },
+          {
+            "role": "SOURCE",
+            "bytes": 41767,
+            "sha": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+            "opcodes": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          {
+            "role": "ROOT_SETUP",
+            "bytes": 33544,
+            "sha": "489d265dff4b45f9dd14c8b93596231609ad98fccfaf78e2f438e55f2a2ffb49",
+            "opcodes": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
+            ]
+          },
+          {
+            "role": "TOUCH",
+            "bytes": 43797,
+            "sha": "105be27665c8a27f57e77e80cda25eba4e6adc26daacec240ab017da502fd654",
+            "opcodes": [
+              19,
+              20
+            ]
+          },
+          {
+            "role": "DM_TRANSFER",
+            "bytes": 40188,
+            "sha": "7c559c731aff61a665c7604d78ebddec31a0fc921e6de652564c0f235e7a83bf",
+            "opcodes": [
+              21,
+              22
+            ]
+          },
+          {
+            "role": "FLIGHT_FACE_HEAD",
+            "bytes": 48021,
+            "sha": "a8d7ed7896b84959876c56914152f69187afef2db5051277c102d36b86ab31da",
+            "opcodes": [
+              23,
+              24,
+              25,
+              26,
+              27
+            ]
+          },
+          {
+            "role": "FACE_TAIL_CAPTURE_AUDIT",
+            "bytes": 48918,
+            "sha": "480e33f1940eccf0a8510110eaca5bfa9c91b959d1768ad5f8c91a56aa095dff",
+            "opcodes": [
+              28,
+              29,
+              30,
+              31,
+              32
+            ]
+          },
+          {
+            "role": "ROOT_FINAL",
+            "bytes": 36117,
+            "sha": "0419b720b71b06db2b6d814b3eb34c66c2c52e21bb6d5066b814082be5e3e1d4",
+            "opcodes": [
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ]
+          }
+        ]
+      },
+      "DM": {
+        "nine": [
+          {
+            "role": "BOOT",
+            "bytes": 22353,
+            "sha": "486538f1921304c2f1cfee843f8624995f0ca99650fd505e7ce83a6fca5ab3a8",
+            "opcodes": [
+              12,
+              2147483392
+            ]
+          },
+          {
+            "role": "SOURCE",
+            "bytes": 41802,
+            "sha": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+            "opcodes": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          {
+            "role": "ROOT_SETUP",
+            "bytes": 33579,
+            "sha": "0d5d1e7dc543577ff0e5bf23cd1da762028674351c54d674ac099349f1ce1616",
+            "opcodes": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
+            ]
+          },
+          {
+            "role": "TOUCH",
+            "bytes": 43833,
+            "sha": "a97494934ed432844e833cf37474500d11694d28e5d0d8546f7830a67506851a",
+            "opcodes": [
+              19,
+              20
+            ]
+          },
+          {
+            "role": "DM_TRANSFER",
+            "bytes": 40224,
+            "sha": "db15e111ae22d4ce708c71ad50797fc1240f92b11e06d12a4c1f7d1760006141",
+            "opcodes": [
+              21,
+              22
+            ]
+          },
+          {
+            "role": "FLIGHT_FOLD",
+            "bytes": 38256,
+            "sha": "5007dff937cd6c7fd42d834bebe86d157e9133ddd4853329a039a061664f6e82",
+            "opcodes": [
+              23,
+              24
+            ]
+          },
+          {
+            "role": "FACE_FLOW",
+            "bytes": 47238,
+            "sha": "19e1bed896e82b61650b773a82213e81752067b0b5dee447f67ead6f4d11b4af",
+            "opcodes": [
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ]
+          },
+          {
+            "role": "CAPTURE_AUDIT",
+            "bytes": 37624,
+            "sha": "08c29a2f9d0ed24940904e4ffbb08f54f1bb0b2dc0dcbb4e1c6928378cb32f47",
+            "opcodes": [
+              31,
+              32
+            ]
+          },
+          {
+            "role": "ROOT_FINAL",
+            "bytes": 36152,
+            "sha": "93e3f9fb55d86476940deeeab153b57c091a2299acb0ab99ce47a1d26ab27ab3",
+            "opcodes": [
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ]
+          }
+        ],
+        "eight": [
+          {
+            "role": "BOOT",
+            "bytes": 22353,
+            "sha": "486538f1921304c2f1cfee843f8624995f0ca99650fd505e7ce83a6fca5ab3a8",
+            "opcodes": [
+              12,
+              2147483392
+            ]
+          },
+          {
+            "role": "SOURCE",
+            "bytes": 41802,
+            "sha": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+            "opcodes": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          {
+            "role": "ROOT_SETUP",
+            "bytes": 33579,
+            "sha": "0d5d1e7dc543577ff0e5bf23cd1da762028674351c54d674ac099349f1ce1616",
+            "opcodes": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
+            ]
+          },
+          {
+            "role": "TOUCH",
+            "bytes": 43833,
+            "sha": "a97494934ed432844e833cf37474500d11694d28e5d0d8546f7830a67506851a",
+            "opcodes": [
+              19,
+              20
+            ]
+          },
+          {
+            "role": "DM_TRANSFER",
+            "bytes": 40224,
+            "sha": "db15e111ae22d4ce708c71ad50797fc1240f92b11e06d12a4c1f7d1760006141",
+            "opcodes": [
+              21,
+              22
+            ]
+          },
+          {
+            "role": "FLIGHT_FACE_HEAD",
+            "bytes": 48056,
+            "sha": "8e454fdaca8647dee17051e15d219d0bdeaaf002ae8a31192ab94f1122fcea23",
+            "opcodes": [
+              23,
+              24,
+              25,
+              26,
+              27
+            ]
+          },
+          {
+            "role": "FACE_TAIL_CAPTURE_AUDIT",
+            "bytes": 48950,
+            "sha": "1ced35192cea67ea25aacd723f9764cf7f663a9e5634e398d765e07681d450f7",
+            "opcodes": [
+              28,
+              29,
+              30,
+              31,
+              32
+            ]
+          },
+          {
+            "role": "ROOT_FINAL",
+            "bytes": 36152,
+            "sha": "93e3f9fb55d86476940deeeab153b57c091a2299acb0ab99ce47a1d26ab27ab3",
+            "opcodes": [
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ]
+          }
+        ]
+      }
+    },
+    "scopes": {
+      "ROOT": 12,
+      "DISCOVERY": 804,
+      "AUTHORITATIVE": 392,
+      "REJECTED_PREFIX_CHECK": 804,
+      "REPLAY": 392
+    },
+    "nineRoleCost": {
+      "dispatchesByProgram": {
+        "BOOT": 1,
+        "ROOT_SETUP": 45,
+        "TOUCH": 28,
+        "DM_TRANSFER": 380,
+        "FLIGHT_FOLD": 380,
+        "FACE_FLOW": 1140,
+        "CAPTURE_AUDIT": 380,
+        "ROOT_FINAL": 50
+      },
+      "switches": 802,
+      "switchesByEdge": {
+        "BOOT>ROOT_SETUP": 1,
+        "CAPTURE_AUDIT>DM_TRANSFER": 176,
+        "CAPTURE_AUDIT>ROOT_FINAL": 14,
+        "DM_TRANSFER>FLIGHT_FOLD": 190,
+        "FACE_FLOW>CAPTURE_AUDIT": 190,
+        "FLIGHT_FOLD>FACE_FLOW": 190,
+        "ROOT_FINAL>ROOT_SETUP": 13,
+        "ROOT_SETUP>TOUCH": 14,
+        "TOUCH>DM_TRANSFER": 14
+      },
+      "firstRole": "BOOT",
+      "lastRole": "ROOT_FINAL"
+    },
+    "eightRoleCost": {
+      "dispatchesByProgram": {
+        "BOOT": 1,
+        "ROOT_SETUP": 45,
+        "TOUCH": 28,
+        "DM_TRANSFER": 380,
+        "FLIGHT_FACE_HEAD": 950,
+        "FACE_TAIL_CAPTURE_AUDIT": 950,
+        "ROOT_FINAL": 50
+      },
+      "switches": 612,
+      "switchesByEdge": {
+        "BOOT>ROOT_SETUP": 1,
+        "DM_TRANSFER>FLIGHT_FACE_HEAD": 190,
+        "FACE_TAIL_CAPTURE_AUDIT>DM_TRANSFER": 176,
+        "FACE_TAIL_CAPTURE_AUDIT>ROOT_FINAL": 14,
+        "FLIGHT_FACE_HEAD>FACE_TAIL_CAPTURE_AUDIT": 190,
+        "ROOT_FINAL>ROOT_SETUP": 13,
+        "ROOT_SETUP>TOUCH": 14,
+        "TOUCH>DM_TRANSFER": 14
+      },
+      "firstRole": "BOOT",
+      "lastRole": "ROOT_FINAL"
+    },
+    "bindings": {
+      "exceptions": [
+        {
+          "first": 1,
+          "lastInclusive": 1,
+          "slots": [
+            "CURRENT",
+            "BASE",
+            "WORK",
+            "ACTIVE_EVENTS"
+          ]
+        },
+        {
+          "first": 1200,
+          "lastInclusive": 1200,
+          "slots": [
+            "SELECTED_EVENTS",
+            "ACTIVE_EVENTS",
+            "WORK",
+            "BASE"
+          ]
+        },
+        {
+          "first": 1203,
+          "lastInclusive": 2006,
+          "slots": [
+            "BASE",
+            "REPLAY",
+            "WORK",
+            "ACTIVE_EVENTS"
+          ]
+        },
+        {
+          "first": 2008,
+          "lastInclusive": 2397,
+          "slots": [
+            "BASE",
+            "REPLAY",
+            "WORK",
+            "ACTIVE_EVENTS"
+          ]
+        },
+        {
+          "first": 2398,
+          "lastInclusive": 2398,
+          "slots": [
+            "SELECTED_EVENTS",
+            "ACTIVE_EVENTS",
+            "WORK",
+            "BASE"
+          ]
+        },
+        {
+          "first": 2399,
+          "lastInclusive": 2399,
+          "slots": [
+            "CANDIDATE",
+            "REPLAY",
+            "WORK",
+            "ACTIVE_EVENTS"
+          ]
+        },
+        {
+          "first": 2400,
+          "lastInclusive": 2400,
+          "slots": [
+            "SELECTED",
+            "CANDIDATE",
+            "WORK",
+            "ACTIVE_EVENTS"
+          ]
+        }
+      ],
+      "copiesAt": {
+        "selectionBefore": [
+          808
+        ],
+        "authorityAfter": [
+          1200
+        ],
+        "fullTrialAfter": [
+          23,
+          55,
+          111,
+          215,
+          415,
+          807
+        ]
+      },
+      "staticBaseCallsOriginal": 9616,
+      "adjacentLogicalBindingChanges": [
+        8,
+        10,
+        0,
+        4
+      ],
+      "minInstallCallsWithinUninterruptedRoot": 26
+    },
+    "profiles": {
+      "192": {
+        "completionMapOffsetBytes": 1171072,
+        "completionMapBytes": 1024,
+        "rootCopyBytes": 26126336,
+        "fullCopyBytes": 102729728
+      },
+      "512": {
+        "completionMapOffsetBytes": 1173632,
+        "completionMapBytes": 1024,
+        "rootCopyBytes": 47343616,
+        "fullCopyBytes": 187353088
+      }
+    },
+    "cadence": {
+      "minPumpBatches": 241,
+      "rootDeadlineNs": 250000000,
+      "rxIdleWaitNs": 2000000,
+      "betweenBatchesAtIdleWaitNs": 480000000,
+      "bridge": {
+        "path": "entry/src/main/cpp/gpu_resident/g9rx/bridge.cpp",
+        "bytes": 33601,
+        "sha256": "91e3d3560c61ec0e5b531dcdd00e9f083d6a94f304c5d5058722afc773a3e1da"
+      }
+    }
+  },
+  "historicalBoot": {
+    "RX": {
+      "receipt": {
+        "path": "test/reports/t257/T738-rx.json",
+        "bytes": 2274,
+        "sha256": "a26dfc7fa5732c71f4d7ce28511c70342346cbbe4a1c1d3b54635f40b7df2557"
+      },
+      "signedSHA": "73027d13edfffb7ac295c15097d37a10eb08bda21edcbd49b113cb6fe720f2d3",
+      "packagedDsoSHA": "675ad1a7defb4c1c08a6d02ad53de0b6b1a4e5bb4b1a2baa8c3733e17b105c6c",
+      "dsoBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+      "runtimeOriginal": {
+        "path": "test/reports/t491/t738/h738rx2.txt",
+        "bytes": 1261924,
+        "sha256": "50adeeb400b88f8e1524dea8bdc5a335ea4522617ebf051bac613c01cba73f67"
+      },
+      "stages": {
+        "BUILD_ENTER": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "BUILD_ENTER",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7268918190312",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": 22318,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "SHADER_COMPILE_ENTER": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "SHADER_COMPILE_ENTER",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7268921920625",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": -1,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "SHADER_COMPILE_EXIT": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "SHADER_COMPILE_EXIT",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269126737812",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": 1,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "PROGRAM_LINK_ENTER": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "PROGRAM_LINK_ENTER",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269126779531",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": -1,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "PROGRAM_LINK_EXIT": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "PROGRAM_LINK_EXIT",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269434829375",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": 1,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "BUILD_EXIT": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "BUILD_EXIT",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269435467656",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": 1,
+          "gl": 0,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "REFLECT_ENTER": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "REFLECT_ENTER",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269435489687",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": -1,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "REFLECT_EXIT": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "REFLECT_EXIT",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269435776719",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": 1,
+          "gl": 0,
+          "egl": 12288,
+          "error": -1,
+          "seal": -1
+        },
+        "ROOT_INIT_ENTER": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "ROOT_INIT_ENTER",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269483301094",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": -1,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "ROOT_INIT_EXIT": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "ROOT_INIT_EXIT",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269483917812",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": -1,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "WARM_ENTER": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "WARM_ENTER",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269483943437",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": -1,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "WARM_EXIT": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "WARM_EXIT",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269483965156",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": -1,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "FINISH_ENTER": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "FINISH_ENTER",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269486791719",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": 1,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "FINISH_EXIT": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "FINISH_EXIT",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269528410781",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": 37146,
+          "gl": 0,
+          "egl": 12288,
+          "error": -1,
+          "seal": -1
+        },
+        "MAP_ENTER": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "MAP_ENTER",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269528502969",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": 1166976,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        "MAP_EXIT": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "MAP_EXIT",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269528523906",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": 1,
+          "gl": 0,
+          "egl": 12288,
+          "error": -1,
+          "seal": -1
+        },
+        "UNMAP_EXIT": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "UNMAP_EXIT",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269528533906",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": 1,
+          "gl": 0,
+          "egl": 12288,
+          "error": 0,
+          "seal": 6559303
+        },
+        "PREPARE_EXIT": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "PREPARE_EXIT",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269529614687",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": 1,
+          "gl": 0,
+          "egl": 12288,
+          "error": 0,
+          "seal": 6559303
+        },
+        "BOOT_AUDIT_OK": {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "BOOT_AUDIT_OK",
+          "pid": 1256,
+          "tid": 1942,
+          "run": "1",
+          "owner": "1",
+          "context": "1",
+          "ns": "7269529737969",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766",
+          "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+          "raw": 1,
+          "gl": 0,
+          "egl": 12288,
+          "error": 0,
+          "seal": 6559303
+        }
+      },
+      "observedRawTail": [
+        0,
+        6559303
+      ],
+      "processStart": "UNOBSERVED",
+      "freshProcessCacheHit": "UNOBSERVED"
+    },
+    "DM": {
+      "receipt": {
+        "path": "test/reports/t257/T738-dm.json",
+        "bytes": 2273,
+        "sha256": "41985043be3a7bf749d211c7d167541e13ff4ba9be632f59c498808701f8fc74"
+      },
+      "signedSHA": "d6c4b2ca3d691a41a170c9cab780e23780455a29ee4393a5a4fdeff9beff3e26",
+      "packagedDsoSHA": "be62c31feaafd25437e04aa75231c5b4d24ca87bdca1fd7fc0a4edbb6f987834",
+      "dsoBuildId": "a64de80e799cca4b715fd432110b0921055225ad",
+      "runtimeOriginal": {
+        "path": "test/reports/t491/t738/dm20-boot.jsonl",
+        "bytes": 491,
+        "sha256": "d08a24af6b7e1a5f945bfe983a088005079e92a14bd852139b3120b0e7f14b0a"
+      },
+      "status": {
+        "stage": "CREATE_EXIT",
+        "result": 1638,
+        "state": "BOOT_AUDIT_OK",
+        "rootsAuthorized": false
+      },
+      "standaloneExpectedBuildId": "869acf4dd824344fed699bbfb46ada1f4564c71d",
+      "observedRawTail": "UNOBSERVED",
+      "loadedDso": "UNOBSERVED_IN_ATTEMPT",
+      "processStart": "UNOBSERVED"
+    }
+  }
+}
