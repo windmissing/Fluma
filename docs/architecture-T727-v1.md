@@ -18,6 +18,8 @@ T475 已有程序持久化与负控。T491 在 Maleoon 910 上实际记录 M1/M2
 
 ## 首批方案与代价
 
+**新增 shader 体积门。** 每个新增或重构生成的 shader 单元上限 **48 KiB（49,152 字节）**，各 compute/graphics 阶段、后端与实际构建变体逐个核。以最终送入编译器的完整 UTF-8 源码字节为准，共享代码、生成常量和展开的 include 一并计量。GLES 和 Vulkan 编译源采用同一上限，SPIR-V 大小独立记录。直接生成 SPIR-V 时，实际模块字节采用同一上限。交付登记角色、编译入口、字节数、SHA-256，生成或构建拒绝超过上限的新增单元。原大 shader 原字节可保留作基线。48 KiB 低于已观察到长尾的 M2 FINAL_Q 的 54,857 字节，属于项目工程门。设备首帧依旧按本方案实测。 [Architect 工作规范](../.codex/agents/architect.toml)
+
 1. **依赖拆分是冷启主方案。** 现有 G13 `tools/g13/generate_assets.py` 汇入 layout、math 与共享 GLSL，写出单份 assembled source，`g13flow/transport.cpp` 用 programcache::Build(13, …) 后才反射与初始化。生成链应从受审查的函数/入口清单输出真实角色闭包与 opcode→program 映射。先发只含 64/65/66 的 Boot。保 66 原来直接执行 FP32 探针的路径，也保 64/65 前的 lane、控制字与同步 prologue、原双轮资格和 init fence。每份生成源保自身实际 bytes/SHA、源闭包、必要/可优化 uniform 表及 SSBO 读写边。沿原 T607 dispatch 表为首个完整时间步引入资源/根推进及必要的 PACK/AUDIT，Boot 以外先保完整原算法程序作为对照。若完整推进仍主导首帧，再只按真实调用闭包拆源事务或根阶段。推进里只有测到的关键依赖才进一步拆 advection、viscosity、pressure/projection。阶段间仍用原 buffer 和真实顺序。代价是程序切换、反射、cache 入盘、程序与驱动内存峰值，全部计入总成本。单纯删几个 `uOp` 条件或把整个源码分成多个入口名，无法证明编译输入已缩小。
 2. **删临时 Q 在 M1/M2 沿 T696。** T701/T714 提供三/两程序臂，后者实际省掉中间 Q 的构建。只在同一 M1 或 M2 父版比较，固定 SOURCE/FINAL 字节与缓存策略。保资源分配、角表、原反射、warmup 与独立 Q 自用 shader，记录节约是否反映在首帧。现有 M2 已实际遇到 SOURCE 链接和 FINAL_Q 编译，删中间 Q 无法移除这两个调用。T717 M1 的会话与恢复结果独立登记，无需重建一份旧 T701。
 3. **T475 持久化是暖启主方案。** 复用实际工厂及 filesDir，按角色、精确生成源、layout/绑定 ABI、link 配置、GL/EGL 环境和格式绑定。角色名或源文件路径单独不足以命中。复用现有写盘线程、首轮 PERSISTED 收据、反射/准备成功后的资格以及一次同 GLSL 回落；区分预载完成、查到字节、真实驱动加载合格、提取完成和实际持久化。部分命中报每个角色。现有限制 32MiB/条、128MiB payload、32 条仍生效，拆分后独立核临时载入、提取、写盘和驱逐开销。
