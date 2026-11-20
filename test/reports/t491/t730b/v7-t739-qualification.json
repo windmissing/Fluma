@@ -1,0 +1,53 @@
+{
+ "revision": "T730_V7_T739_QUALIFICATION_V1",
+ "date": "2026-11-20 18:45",
+ "packages": {
+  "sign_pair": "PASSED first-run for T739 receipts (receipts complete: variant/project/buildId/roles all correct)",
+  "T729-monolith-ce84ac77dff3": "signed 63e89f36 (libgrs_g13 buildId 23209a13)",
+  "T729-split-3ff632a03a1d": "signed 9e35e801 (libgrs_g13 buildId 16704862)"
+ },
+ "deployed": "T729-split (T739 build) \u2014 G13 page direct, \u914d\u7f6e REST, 150s",
+ "result": {
+  "lifecycle": "CONFIG_FAILED INIT_ERROR_27, lastProgress BOOT_EFFECTIVE_TERMINAL:EXIT, attempt 180, bootReadyNs=0",
+  "effectiveRejectStage": "OP65 (T739 G13BootQualificationV2 instrumented, boot 9857392197187/attempt 180/queue 3/run 1/context 1)"
+ },
+ "op65RawWords": {
+  "work35_41_47_53_59": [
+   0,
+   1065353216,
+   1065353216,
+   0,
+   1065353216
+  ],
+  "decoded": {
+   "plus35": 0.0,
+   "plus41": 1.0,
+   "plus47": 1.0,
+   "plus53": 0.0,
+   "plus59": 1.0
+  },
+  "gate": {
+   "plus35": 0.0,
+   "plus41": 1.0,
+   "plus47": 1.0,
+   "plus53": 1.0,
+   "plus59": 1.0
+  },
+  "verdict": "+53 denormal-half-ULP-tie FLUSHED to 0 (denormal result 0x00000001 input +0 -> 0) = FTZ confirmed at exact gate position; +59 passes; +35/+41/+47 sentinels all pass",
+  "ctrl255": "0xc0de1301",
+  "ctrl7": 27,
+  "input744To747_decoded": [
+   1.401298464324817e-45,
+   5.960464477539063e-08,
+   1.0,
+   0.0
+  ]
+ },
+ "op66RawWords": {
+  "ctrl200To215": "two rounds: [1065353217(1+1ulp),1065353216(1),0,0,7,0,0,1179661106(0x464f3332 FP32 sig)] x2 \u2014 index2/3 rejected (expected 0x00000001 min-subnormal & 0x00400000 got 0,0) \u2014 mismatchMasks [12,12]",
+  "verdict": "denormal preservation and denormal generation both flushed to 0; seals present both rounds"
+ },
+ "STABLE_FINDING": "THIRD independent run (180) with T739-instrumented build confirms op65 FTZ at +53 and op66 denormal probes \u2014 three consecutive attempts (250/196/180) all denormal-FTZ; deterministic driver behavior, not transient",
+ "T739FixVerdict": "instrumentation works perfectly (effectiveRejectStage=OP65, raw words at gate positions, op66 seals/masks exposed); but no code change can make the driver preserve subnormals \u2014 this is a hardware/driver FP32 precision decision",
+ "route": "architect decision required: (A) FTZ-safe gates (change +53 tie vector and op66 probes to non-denormal equivalents), (B) precise-mode shader compile pragma, (C) gate relaxation (MUST-PASS semantics review). Tester: evidence complete and stable, no tester-side variant possible"
+}

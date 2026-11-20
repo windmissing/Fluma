@@ -1,0 +1,27 @@
+{
+ "revision": "T730_V5_T732_FP32_RETEST_V1",
+ "date": "2026-11-20 17:50",
+ "package": {
+  "task": "T732-split re-test (buffer barrier + FP32 word-offset fix)",
+  "signedSha": "c18addcf",
+  "sign": "PASS (from earlier run, artifact reused)"
+ },
+ "sequence": [
+  "EntryAbility",
+  "G13 page",
+  "\u914d\u7f6e REST",
+  "wait 120s"
+ ],
+ "observed": {
+  "bootCompileLink": "PASSED (boot+compute+link OK per PROGRAM_BUILD phase chain)",
+  "failurePoint": "INIT_FP32_RESULT:EXIT, INIT_ERROR_27, attempt 250 \u2014 SAME op as pre-fix T732 attempt 195"
+ },
+ "interpretation": "T732 FP32 instrumentation fix ACTIVE (failure now surfaces at INIT_FP32_RESULT with evidence fields, was INIT_TAIL_VALID before) \u2014 but the FP32 rejection itself PERSISTS: op 66 FP32 readback still rejects; the barrier/word-offset fixes changed the failure surface but not the outcome; gate moved from packaging to numeric/precision domain (op 66 values reject on this device)",
+ "note": "sign_pair.py roles hash mismatch recorded (developer receipt defect: compile.json scene.vert sha 478d2e92 vs tree bf7b11aa) \u2014 feedback item",
+ "T727Table": {
+  "coldCompile": "PASSED (boot 116s + compute+link per PROGRAM_LINK:ENTER)",
+  "warmLoad": "0.01s (T730 v3)",
+  "READY/Swap": "NOT_REACHED (INIT_ERROR_27 @ INIT_FP32_RESULT)"
+ },
+ "route": "architect/developer: op 66 FP32 rejection root-cause \u2014 this is now the ONLY gate to READY/Swap; numeric precision domain"
+}

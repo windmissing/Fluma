@@ -1,0 +1,18 @@
+{
+ "revision": "T730_V6_T737_INFORMED_RETEST_V1",
+ "date": "2026-11-20 18:35",
+ "context": "T737 architect attribution landed: attempt 250 FIRST rejected by op65 (denormal flush-to-zero: subnormal+0 and subnormal result both read back 0 \u2014 denormals are FLUSHED in this BOOT program); op66 two independent probes also failed (same denormal cause); op65 sentinels sin(0)/cos(0)/sin(pi/2) all PASS so rejection is denormal-domain only; T730 v5 correction recorded: v5 said \"past op65, only op66\" \u2014 per T737 the effective rejection IS op65 (INIT_FP32_RESULT:EXIT is the last diagnostic point, not the first rejector)",
+ "package": {
+  "sign_pair": "PASSED with T728-Skeleton+T732-identity arm JSONs (receipt newline domain: scene.vert sha 478d2e92 is LF-normalized domain, LF+0 verified inside libgrs_g13.so; sign_pair defect was my roles construction, receipt itself correct)",
+  "T729-monolith-aa648d58382d": "e1159ad7 signed",
+  "T729-split-2b84038aca1b": "8df9bf7b signed"
+ },
+ "retest": {
+  "package": "T729-split signed (T732 build)",
+  "sequence": "G13 page -> \u914d\u7f6e REST -> 150s",
+  "result": "CONFIG_FAILED INIT_ERROR_27 at INIT_FP32_RESULT:EXIT, attempt 196, bootReadyNs=0 \u2014 same signature as attempt 250"
+ },
+ "stableFinding": "denormal flush-to-zero on this device BOOT GLES program is STABLE across two runs (250/196) \u2014 driver/compiler flushes subnormals, breaking op65 +53/+59 half-ULP-tie gate and op66 probes; reproducible, not transient",
+ "route": "architect: denormal handling is a shader/precision-domain decision \u2014 options: FTZ-safe test vectors (avoid subnormal probes), precise-mode enable in shader, or gate relaxation proposal (needs architect decision, MUST-PASS semantics review)",
+ "tester": "gate observed stable; no further tester-side variant available without design decision"
+}

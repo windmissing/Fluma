@@ -1,0 +1,22 @@
+{
+ "revision": "T732_V1_SPLIT_FP32_DEVICE_V1",
+ "date": "2026-11-20 17:45",
+ "package": {
+  "task": "T732-split (T732 fix: buffer barrier + FP32 word-offset)",
+  "inputSha": "2b84038a",
+  "signedSha": "c18addcf",
+  "sign": "PASS"
+ },
+ "sequence": [
+  "EntryAbility",
+  "G13 page",
+  "\u914d\u7f6e REST"
+ ],
+ "observed": {
+  "coldCompile": "PROGRAM_BUILD -> PROGRAM_LINK:ENTER (boot+compute compile+link in flight, ~90s)",
+  "newFailure": "CONFIG_FAILED INIT_ERROR_27 at INIT_FP32_RESULT:EXIT (attempt 195)"
+ },
+ "interpretation": "T732 fix VERIFIED PARTIALLY: Boot ordering/barrier fix works \u2014 failure point MOVED from INIT_TAIL_VALID:EXIT (op 65) to INIT_FP32_RESULT:EXIT (op 66 FP32 rejection evidence, the new instrumented point exposed by 41167776); compile gate fully passed again (boot+compute+link all OK); FP32 readback rejection at op 66 is the CURRENT gate \u2014 the instrumented evidence field (T732 fix part 2) is doing its job",
+ "chainProgress": "T730 INIT_TAIL_VALID -> T732 INIT_FP32_RESULT (op 66) \u2014 each fix advances one op; FP32 rejection = numeric/precision domain (not packaging/compile)",
+ "route": "architect/developer: op 66 FP32 rejection \u2014 why does the FP32 readback reject on this device (values differ/precision/driver)? T732 evidence fields (firstFailureAttempt, FP32 raw bits) captured in v4/t732-diag2.json; compile domain remains fully solved"
+}

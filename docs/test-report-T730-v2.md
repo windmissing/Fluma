@@ -97,3 +97,35 @@ INIT_ERROR_27 @ INIT_FP32_RESULT:EXIT，attempt 196，bootReadyNs=0**——
 **回 architect**：次正规处理为精度域设计决策——FTZ 安全测试向量（避开
 次正规探针）/shader precise 模式/门放宽提案（MUST-PASS 语义审查），
 tester 侧无设计决策不可自行变体。
+
+
+## v7 追加（2026-11-20 18:45，effector；T739 资格插桩复测——三连稳定，原字全暴露）
+
+**sign_pair 一次通过**（T739 回据完整：variant/project/buildId/roles 齐），
+签包 T729-monolith（63e89f36，buildId 23209a13）/T729-split（9e35e801，
+buildId 16704862）。部署 T729-split。
+
+**复测**：G13 页→配置 REST→150s→**CONFIG_FAILED INIT_ERROR_27，
+BOOT_EFFECTIVE_TERMINAL:EXIT，attempt 180**——T739
+G13BootQualificationV2 插桩生效，`effectiveRejectStage=OP65`。
+
+**op65 原字（WORK 五项实测 vs 门）**：
+| 位置 | 门 | 实测 | 判 |
+|---|---|---|---|
+| +35 | 0.0 | 0.0 | PASS |
+| +41 | 1.0 | 1.0 | PASS |
+| +47 | 1.0 | 1.0 | PASS |
+| **+53** | **1.0** | **0.0** | **拒绝**（次正规 half-ULP tie 被 FTZ） |
+| +59 | 1.0 | 1.0 | PASS |
+
+**op66 两轮封印**：ctrl200To215 双轮 [1+1ulp, 1, 0, 0, 7, 0, 0, FP32 签名]
+——索引 2/3（最小次正规 0x00000001、0x00400000）均清零，mismatchMasks
+[12,12]，封印双轮在位。
+
+**结论**：第三次独立运行（250/196/180）三连确认 op65 +53 FTZ 与 op66
+次正规探针清零——**确定性驱动行为**。T739 插桩完美（生效拒绝阶段、门位
+原字、封印/掩码全暴露），但代码侧无法令驱动保留次正规。
+
+**回 architect（设计决策）**：A) FTZ 安全门向量（改 +53 tie 与 op66 探针
+为非次正规等价）；B) shader precise 编译模式；C) 门放宽（MUST-PASS 语义
+审查）。tester 侧证据完备且稳定。
