@@ -1,20 +1,10 @@
 #include "transport.h"
+#include "boot_contract.h"
 #include "../program_cache/program_factory.h"
 #include "../resource_gl.h"
 #include "init_diagnostics.h"
 #include <fstream>
 namespace grs::g13 {
-namespace {
-constexpr size_t kColdTailWordOffset = 18432;
-constexpr size_t kProbeWordOffset = kColdTailWordOffset + 200;
-constexpr std::array<uint32_t, 8> kExpectedFp32{
-    0x3f800001u, 0x3f800000u, 1u, 0x00400000u, 7u, 0u, 0u, 0x46503332u};
-
-bool QualifiedProbe(const uint32_t *words) {
-  return std::equal(kExpectedFp32.begin(), kExpectedFp32.end(), words) &&
-         std::equal(kExpectedFp32.begin(), kExpectedFp32.end(), words + 8);
-}
-} // namespace
 
 bool Transport::Locations::Prepare(GLuint program) {
   static constexpr const char *names[]{
@@ -233,44 +223,9 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
     return e;
   if (auto e = Allocate(ctrl_, 18688))
     return e;
-  layout_[0] = profile_->nx;
-  layout_[1] = profile_->ny;
-  layout_[2] = profile_->nc;
-  layout_[3] = profile_->nf;
-  layout_[4] = profile_->sw;
-  layout_[5] = profile_->ww;
-  layout_[6] = profile_->pw;
-  layout_[7] = profile_->mgCount;
-  layout_[8] = profile_->groups;
-  layout_[9] = profile_->state[2].offset;
-  layout_[10] = profile_->state[3].offset;
-  layout_[11] = profile_->state[4].offset;
-  layout_[12] = 0;
-  for (uint32_t i = 0; i < profile_->mgCount; i++) {
-    for (uint32_t j = 0; j < 3; j++)
-      layout_[40 + 3 * i + j] = profile_->mg[i][j];
-    layout_[12] += profile_->mg[i][0] * profile_->mg[i][1];
-  }
-  for (uint32_t i = 0; i < 20; i++)
-    layout_[16 + i] = profile_->work[i].offset;
-  std::array<uint32_t, 18688> control{};
-  std::copy(config.begin(), config.end(), control.begin());
-  auto mathHash = FromHex(kHash_mathSHA), programHash = FromHex(PipelineRoles()[0].sha),
-       deviceHash = FromHex(programcache::Environment());
-  std::copy(mathHash.begin(), mathHash.end(), control.begin() + 704);
-  std::copy(programHash.begin(), programHash.end(), control.begin() + 720);
-  std::copy(deviceHash.begin(), deviceHash.end(), control.begin() + 728);
-  control[744] = 1u;
-  control[745] = 0x33800000u;
-  control[746] = 0x3f800000u;
-  control[747] = 0u;
-  control[18648] = 0x34000000u; // one ULP at 1
-  control[18649] = 0x00800000u; // smallest normal
-  control[18650] = 0x3f000000u; // factor of one half
-  control[18651] = 0x7f800000u; // +infinity
-  control[18652] = 0x7fc00000u; // quiet NaN
-  control[748] = 0x54442d18u;
-  control[749] = 0x3ff921fbu;
+  layout_ = BootLayout(*profile_);
+  const auto control = BootControl(config, PipelineRoles()[0].sha,
+                                   programcache::Environment());
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, ctrl_);
   glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(control), control.data());
   const auto &boot = programs_[0].uniforms.at;
@@ -280,36 +235,7 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
     return 29;
   // The initial state is generated and audited by the cold GPU opcode. Native
   // writes only its identity header. One-time audited fixture uploads are raw.
-  std::array<uint32_t, 256> header{};
-  header[0] = kMagic_state;
-  header[1] = 1;
-  header[2] = kMagic_profile;
-  header[3] = profile_->sw;
-  header[4] = profile_->nx;
-  header[5] = profile_->ny;
-  header[6] = config[6];
-  Put(header.data() + 8, identity.run);
-  Put(header.data() + 10, identity.context);
-  Put(header.data() + 12, identity.surface);
-  Put(header.data() + 14, identity.geometry);
-  header[26] = config[23];
-  header[27] = config[21];
-  header[28] = config[22];
-  header[29] = config[26];
-  header[30] = config[20];
-  header[206] = config[20];
-  header[7] = 1;
-  header[202] = config[24];
-  header[203] = config[25];
-  header[204] = config[27];
-  header[205] = config[26];
-  if (config[27] != 0) {
-    header[200] = 0xffffffffu;
-    header[201] = 0xffffffffu;
-  }
-  for (auto pair : std::array<std::pair<size_t, size_t>, 5>{
-           {{32, 76}, {40, 36}, {48, 44}, {56, 52}, {64, 60}}})
-    std::copy_n(config.data() + pair.second, 8, header.data() + pair.first);
+  auto header = BootHeader(*profile_, config, identity);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, banks_[0]);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, work_);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ctrl_);

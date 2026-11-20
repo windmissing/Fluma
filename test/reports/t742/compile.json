@@ -1,0 +1,65 @@
+{
+  "schema": "T742_G13_VULKAN_BOOT_COMPILE_V1",
+  "project": "D:/hmprojects/HelloWorld/.codex/local-test/t742",
+  "unsignedHap": "entry/build/default/outputs/default/entry-default-unsigned.hap",
+  "unsignedHapSHA256": "96ac13bf7eb2d438e099f6eb2ff3a54aec17aa7b52563e28ac23d2db622b174d",
+  "nativePath": "libs/arm64-v8a/libgrs_g13vk_boot.so",
+  "nativeSHA256": "689e4901d9b8f8484a20c7c257f7d6e5683df32aa9e604404461271fb2527ea9",
+  "linkedSHA256": "65e4dd508673df70758d5462829e51badf0e479e7cb64ddf975c08d73e7d136d",
+  "buildId": "e7b5586ed04aca406aaefbb31fa6b5299f0cb216",
+  "abi": "arm64-v8a",
+  "dtNeeded": [
+    "libace_napi.z.so",
+    "libace_ndk.z.so",
+    "libnative_window.so",
+    "libhilog_ndk.z.so",
+    "libc++_shared.so",
+    "libc.so"
+  ],
+  "abilitySource": "./ets/entryability/G13VulkanBootAbility.ets",
+  "abcSHA256": "62c1612cc5b214192a4b400128d83088445b057c2ce9c1730c74bcbb906e7429",
+  "hvigorLogSHA256": "7f93301fbdf238e7d86e9f8ccc3058bf82515640b2c148044e393350d68a3415",
+  "spirvEmbeddedOnceInLinkedAndPackagedELF": true,
+  "module": {
+    "role": "BOOT",
+    "opcodes": [
+      64,
+      65,
+      66
+    ],
+    "parentShaderSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+    "parentShaderBytes": 23834,
+    "t741VulkanSourceSHA": "fd2df25c9cde6355c0e32ea29224e7edda1c8d561e3cd36d61f5ffbbedd7cada",
+    "sourceSHA": "8b688c5b091dcb54e39c43303f904c8dfaf8aa8d1417466d606963270d1d2dda",
+    "sourceBytes": 24160,
+    "moduleSHA": "cb82cd06c6c3b7b140c66eb16c21478b94e232a9a61b169c10d3eccb218f2f2a",
+    "moduleBytes": 116688,
+    "compiler": "Glslang Version: 11:16.6.0",
+    "compilerSHA": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+    "flags": [
+      "-V",
+      "--target-env",
+      "vulkan1.1",
+      "--spirv-val",
+      "--spirv-dis"
+    ],
+    "compilerAndValidatorExit": 0,
+    "floatModes32": [
+      "DenormPreserve",
+      "SignedZeroInfNanPreserve",
+      "RoundingModeRTE"
+    ],
+    "sourceLimitBytes": 49152,
+    "noContractionDecorations": 8,
+    "configSHA": "35241d9f2d2baac8deaa84493787903c5ce7e064e5955971d16f7c5039255513",
+    "configSelfSHA": "37a4e2a06c4511d86e6d94037612adbae86e76315eed90bf44c7a6431c625250",
+    "seedReceipt": {
+      "mode": "REST"
+    },
+    "seedReceiptSHA": "62dfc01eb4a04ab8f89914202edbbea04622d61fb34c887b6e82c24ffa2e6638",
+    "seedConfigSHA": "62dfc01eb4a04ab8f89914202edbbea04622d61fb34c887b6e82c24ffa2e6638"
+  },
+  "deviceUsed": false,
+  "signed": false,
+  "runtime": "NOT_MEASURED"
+}
