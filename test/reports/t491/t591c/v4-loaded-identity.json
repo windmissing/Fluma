@@ -1,0 +1,25 @@
+{
+ "revision": "T590_V4_LOADED_IDENTITY_SUPPLEMENT_V1",
+ "date": "2026-11-20",
+ "package": "T687-g11 (current device process pid 48183, G11 page)",
+ "mapsObserved": [
+  "/data/storage/el1/bundle/libs/arm64/libgrs_g11.so (r-xp 00145000 segment present)",
+  "/data/storage/el1/bundle/libs/arm64/libgrs_cold_slots.so (r-xp 00004000 segment present)"
+ ],
+ "packageIdentity": {
+  "libgrs_g11.so": {
+   "bytes": 2018024,
+   "sha256": "36b72b1e"
+  },
+  "libgrs_cold_slots.so": {
+   "bytes": 51336,
+   "sha256": "af7d65d0"
+  },
+  "libc++_shared.so": {
+   "bytes": 1262248,
+   "sha256": "bff501a1"
+  }
+ },
+ "interpretation": "loaded-identity domain for the CURRENT G11 process captured via /proc maps (R1 compliant \u2014 same-process); note this supplements the CURRENT process only, historical T590/T591 attempts remain per-attempt originals; grsm1/grs_dm NOT in this process (G11 page uses g11 family)",
+ "route": "T590 domain (M3/G9 attribution) remains closed per v3 triple-convergence; loaded-identity recorded for current-generation attribution continuity"
+}
