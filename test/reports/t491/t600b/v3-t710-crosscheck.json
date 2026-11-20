@@ -1,0 +1,15 @@
+{
+ "revision": "T600_V3_T710_FACILITY_CROSSCHECK_V1",
+ "date": "2026-11-20",
+ "t710Tree": {
+  "build": "BUILD SUCCESSFUL 101s (rebuilt)",
+  "workersConfig": "build-profile.json5 buildOption.sourceOption.workers lists G11ColdWorker.ets + P011NaturalObservationWorker.ets",
+  "modulesAbc": {
+   "containsG11ColdWorker": true
+  },
+  "standaloneWorkerAbc": "NOT GENERATED (no ets/workers/G11ColdWorker.abc entry in HAP)"
+ },
+ "interpretation": "worker source compiled into modules.abc but worker.ThreadWorker(\"entry/ets/workers/G11ColdWorker.ets\") expects a STANDALONE abc file \u2014 hvigor not emitting per-worker abc despite build-profile workers config; T710 developer domain (worker packaging/build chain)",
+ "G11ArmStatus": "still blocked on device (same zip_file.cpp GetEntry failure expected); T600 G11 arms wait T710 fix",
+ "route": "T710 developer: worker abc emission missing \u2014 check hvigor worker task vs runtime path expectation"
+}
