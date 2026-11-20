@@ -1,0 +1,27 @@
+{
+  "schema": "T733_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-20",
+  "commit": "a838a2fc86833823f87dbf19b6fd94a87143a8c6",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "taskId": "6b000fa4e4b06f39248549f7",
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "started": {
+      "id": "6b001044e4b056b393d8ac13",
+      "createdTime": "2026-11-20T09:17:56+0000"
+    },
+    "delivered": {
+      "id": "6b001486e4b06f392485d4cd",
+      "createdTime": "2026-11-20T09:36:06+0000",
+      "title": "T733 离线架构交付完成（a838a2fc，docs/architecture-T733-v1.md）。从 RX T720、DM T718 签包核对实际内嵌源 146,301/146,316 B。九角色主案最大 47,238 B，八角色成本对照最大 48,950 B，34 个候选 glslang 通过。原 SOURCE/QUANTUM 12/2,404 dispatch 调度保持一致，完整量子相邻切换 802→612 为静态成本对照。建议依次交 BOOT-only 真 Create 并核 fence 后 8 B init tail、BOOT+SOURCE 非零整根、完整九角色和首个有效 XComponent Swap。工程稿规定角色反射/布局与原屏障、实际 SEAL 和角色集身份、T475 冷暖与根/帧总成本。已纳入 T730/T732 的初始化、偏移和真实暖进程风险，Vulkan 保留独立同机对照。未使用真机；驱动耗时、原数值与帧率待后续实证。"
+    }
+  },
+  "statusRow": {
+    "before": "| T733 | 【T733·目标20 RX与DM Shader依赖拆分实施准备】architect | architect | P5 | 进行中 | 6b000fa4e4b06f39248549f7 |",
+    "after": "| T733 | 【T733·目标20 RX与DM Shader依赖拆分实施准备】architect | architect | P5 | 结束待验收 | 6b000fa4e4b06f39248549f7 |"
+  },
+  "beforeSha256": "0223fe6d3943834ba7e8f7672a2a1a10a5750c0972c13d38d1fa9aba50386abb",
+  "afterSha256": "bfc2ee6308ec2d7172ae9cbf7b91267fde26aa6d7b0e3dadd7004b90b2fac7fa",
+  "closureSha256": "4f6ff6f1a3a56d1543fd1b2f832bffd44b84fc5d1f596cf060343592b170144e"
+}
