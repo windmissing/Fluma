@@ -7,7 +7,7 @@
 #include <cstdint>
 namespace grs::g9dm {
 // T555: engineering SHA of this DM construction (schema+pipeline as delivered).
-inline constexpr const char* kEngineeringSha="79c58d83feea110905dd43df0041d8de2f16a631f2bd553ade6523ad86cf69b3";
+inline constexpr const char* kEngineeringSha="f3a525d5649b15d32ce5ef4d09c5f906f172e863efed28b919c63e73b137334c";
 inline constexpr uint32_t kProfileCode=843924551u,kSeal=3235776802u;
 inline constexpr uint32_t kStateMagic=844317767u;
 inline constexpr uint32_t kEventMagic=843400263u;

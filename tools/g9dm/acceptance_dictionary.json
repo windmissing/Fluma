@@ -1,6 +1,21 @@
 {
   "schema": "T648_READER_DICTIONARY_V1",
   "staticContractSHA": "7d786425590c689fb22eac7fb5b8141020d7259393a0a829645b74cee1a1ded6",
+  "sourceIdentity": {
+    "shaderSHA": "37a32a95ecc7569e8bd904b170f5c9ece16e1ecb76719961eadd44954183c5ca",
+    "implementationSHA": "f3a525d5649b15d32ce5ef4d09c5f906f172e863efed28b919c63e73b137334c",
+    "captureTransform": {
+      "revision": "T706_DM_CAPTURE_SCOPE_V1",
+      "beforeSHA256LF": "5e1b5b3b3f22dc8b2d379a97f73451355a0b2cf82e892826bdfedbe994e651f1",
+      "afterSHA256LF": "4e9aefb176dddce24986c9e39768eefff603875988b6a5f23bbb063e3713c4e1",
+      "firstLine": 1723,
+      "bindings": [
+        "clearSlot",
+        "scanSlot",
+        "selectedSlot"
+      ]
+    }
+  },
   "expectedWords": 224,
   "expectedBytes": 896,
   "encoding": "u32 little endian",

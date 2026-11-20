@@ -1,10 +1,38 @@
 #!/usr/bin/env python3
 # T648 default DM2 construction from frozen correct integer physics + T647.
 from pathlib import Path
-import argparse,hashlib,json,struct
+import argparse,hashlib,json,re,struct
 ROOT=Path(__file__).resolve().parents[2];MOD=ROOT/'entry/src/main/cpp/gpu_resident/g9dm'
 def sha(b):return hashlib.sha256(b).hexdigest()
 def source_bytes(p):return p.read_bytes().replace(b"\r\n",b"\n")
+
+def capture_scope(source):
+ start='bool g9Capture(){'
+ end='\n}\n\nbool g9TouchWeights(){'
+ if source.count(start)!=1 or source.count(end)!=1:raise ValueError('DM_CAPTURE_FUNCTION_DRIFT')
+ begin=source.index(start)
+ finish=source.index(end,begin)+2
+ before=source[begin:finish]
+ clear='for(uint slot=0u;slot<uK;++slot)W[uContacts+slot*16u+15u]=0u;'
+ scan='for(uint slot=0u;slot<uK;++slot)if(g9Packet(slot,0u)!=0u&&W[uContacts+slot*16u+9u]==4u&&W[uContacts+slot*16u+15u]==0u&&(best==uK||g9CaptureLess(slot,best)))best=slot;'
+ selected='uint slot=best,'
+ if any(before.count(anchor)!=1 for anchor in (clear,scan,selected)):
+  raise ValueError('DM_CAPTURE_BINDING_DRIFT')
+ clear_at,scan_at,selected_at=map(before.index,(clear,scan,selected))
+ if not clear_at<scan_at<selected_at:raise ValueError('DM_CAPTURE_BINDING_ORDER')
+ tail='\n }\n return true;\n}'
+ if not before.endswith(tail):raise ValueError('DM_CAPTURE_SELECTED_SCOPE_DRIFT')
+ rename=lambda text,name:re.sub(r'\bslot\b',name,text)
+ scan_body=rename(scan,'scanSlot').replace(')if(','){if(',1)+'}'
+ after=before[:selected_at]+rename(before[selected_at:-len(tail)],'selectedSlot')+tail
+ after=after.replace(scan,scan_body).replace(clear,rename(clear,'clearSlot'))
+ if re.search(r'\bslot\b',re.sub(r'//[^\n]*','',after)):
+  raise ValueError('DM_CAPTURE_LEGACY_BINDING_REMAINS')
+ return source[:begin]+after+source[finish:],{
+  'revision':'T706_DM_CAPTURE_SCOPE_V1','beforeSHA256LF':sha(before.encode()),
+  'afterSHA256LF':sha(after.encode()),'firstLine':source[:begin].count('\n')+1,
+  'bindings':['clearSlot','scanSlot','selectedSlot']}
+
 def generate(out,canonical=False):
  out.mkdir(parents=True,exist_ok=True);frozen=MOD/'frozen_t647';receipt=json.loads((frozen/'receipt.json').read_text(encoding='utf8'));deps={}
  for name,expected in receipt['sha256'].items():
@@ -19,6 +47,7 @@ def generate(out,canonical=False):
  a=s.index('bool g9FlickVerify(){');b=s.index('bool g9FlowTerms(',a);oa=old.index('bool g9FlickVerify(){');ob=old.index('bool g9FlowTerms(',oa);s=s[:a]+old[oa:ob]+s[b:]
  s=s.replace('g9Input(1u)!=3u','g9Input(1u)!=2u').replace('g9Input(1u)==3u','g9Input(1u)==2u')
  s=s.replace('// T644/T647: genuine DM48 implementation, private to the GNR1 variant.','// T648/T647: default DM2 genuine DM48 implementation.')
+ s,capture=capture_scope(s)
  (out/'pipeline.comp').write_text(s,encoding='utf8')
  schema=(frozen/'schema_parent.h').read_text(encoding='utf8');schema=schema.replace('t555-g9dm-v2-initial-construction','T648_T647_DM2_IMPLEMENTATION_1')
  # Exact formal table rows remain default-DM, never the composite counts.
@@ -79,8 +108,8 @@ def generate(out,canonical=False):
  if canonical:
   for name in ['pipeline.comp','schema_generated.h','dm_contract_generated.h','dm_seed_generated.h']:
    if (out/name).resolve()!=(MOD/name).resolve():(MOD/name).write_bytes((out/name).read_bytes())
- (out/'acceptance_dictionary.json').write_text(json.dumps({'schema':'T648_READER_DICTIONARY_V1','staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json'],'expectedWords':224,'expectedBytes':896,'encoding':'u32 little endian','rows':acceptance['rows'],'FrozenExpected224':acceptance['FrozenExpected224'],'DMControlWords':acceptance['DMControlWords'],'scopeBits':acceptance['scopeBits'],'DMWork':acceptance['DMWork']},indent=2)+'\n',encoding='utf8')
- (out/'identity.json').write_text(json.dumps({'schema':'T648_DM2_IDENTITY_V1','implementationSHA':identity,'shaderSHA':sha(s.encode()),'staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json'],'inputs':deps},indent=2)+'\n',encoding='utf8')
+ (out/'acceptance_dictionary.json').write_text(json.dumps({'schema':'T648_READER_DICTIONARY_V1','staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json'],'sourceIdentity':{'shaderSHA':sha(s.encode()),'implementationSHA':identity,'captureTransform':capture},'expectedWords':224,'expectedBytes':896,'encoding':'u32 little endian','rows':acceptance['rows'],'FrozenExpected224':acceptance['FrozenExpected224'],'DMControlWords':acceptance['DMControlWords'],'scopeBits':acceptance['scopeBits'],'DMWork':acceptance['DMWork']},indent=2)+'\n',encoding='utf8')
+ (out/'identity.json').write_text(json.dumps({'schema':'T648_DM2_IDENTITY_V1','implementationSHA':identity,'shaderSHA':sha(s.encode()),'staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json'],'captureTransform':capture,'inputs':deps},indent=2)+'\n',encoding='utf8')
  if canonical:
   for name in ['identity.json','acceptance_dictionary.json']:(Path(__file__).parent/name).write_bytes((out/name).read_bytes())
 if __name__=='__main__':
