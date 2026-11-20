@@ -1,0 +1,133 @@
+{
+  "schema": "T691_T696_DELIVERY_RECEIPTS_V1",
+  "date": "2026-11-20",
+  "commit": "7f0cb6a4",
+  "statusRows": [
+    {
+      "task": "T691",
+      "before": "| T691 | 【T691·新RX coherent限定符失败与V5工件身份归因】architect | architect | P5 | 进行中 | 6aff980ae4b09abb1344d25c |",
+      "after": "| T691 | 【T691·新RX coherent限定符失败与V5工件身份归因】architect | architect | P5 | 结束待验收 | 6aff980ae4b09abb1344d25c |"
+    },
+    {
+      "task": "T694",
+      "before": "| T694 | 【T694·M2和M1同页采集产物身份分流】architect | architect | P5 | 进行中 | 6aff980ae4b02114b550e596 |",
+      "after": "| T694 | 【T694·M2和M1同页采集产物身份分流】architect | architect | P5 | 结束待验收 | 6aff980ae4b02114b550e596 |"
+    },
+    {
+      "task": "T696",
+      "before": "| T696 | 【T696·GPU两程序与持久化对照工程合同】architect | architect | P5 | 进行中 | 6aff980ae4b02114b550e59e |",
+      "after": "| T696 | 【T696·GPU两程序与持久化对照工程合同】architect | architect | P5 | 结束待验收 | 6aff980ae4b02114b550e59e |"
+    },
+    {
+      "task": "T695",
+      "before": "| T695 | 【T695·构建wrapper回执历史日志混入归因】architect | architect | P4 | 进行中 | 6aff980ae4b09abb1344d261 |",
+      "after": "| T695 | 【T695·构建wrapper回执历史日志混入归因】architect | architect | P4 | 结束待验收 | 6aff980ae4b09abb1344d261 |"
+    }
+  ],
+  "beforeSha256": "adc9d9ba3fd90e4cd7d0a6a16bbd4252fc6ad0aa0fd03d32f2c62c61fabf25aa",
+  "afterSha256": "dbbdb21d7680b1c5ffe2f9b79abd111558b3f1f485d32a87f2d7df37da12e69c",
+  "queueStaged": false,
+  "evidenceSha256": "0b5fdc0076b954d93698a0379268053d458a0ad8c700d9e970a1cc26ef392502",
+  "sameNameDidaListUpdated": false,
+  "comments": [
+    {
+      "task": "T691",
+      "completion": {
+        "id": "6aff9af5e4b0ed5bb82c8c00",
+        "userId": 1010673194,
+        "title": "T691 architect 交付 7f0cb6a4。实际T594-rx/T687-rx同ELF e989ed10+SHA72d3b721，l2 loaded file及memory BuildId原件匹配。原S0001锁canonical第1063行 coherent C元素→g9AddMass by-value；1522为同形W实参。工程稿只做原读点转局部值，保coherent/barrier/绑定/拒绝与T665作用域，重封源/canonical/ABI→developer；T645待实际修订RX包。原T594走T669-v5 ce9ba9af/libgrsm1 7f31c1de，真实GpuResidentM5 ROOT/FULL四档，独立于RX，不将错包拒绝当V5 RED。原报告列v2-red.json未入目录，保驱动日志和布局原件。",
+        "modifiedTime": "2026-11-20T00:57:25+0000",
+        "createdTime": "2026-11-20T00:57:25+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "start": {
+        "id": "6aff9874e4b0491d316250c6",
+        "userId": 1010673194,
+        "title": "已开始 T691 architect。按原卡核对真实工件、原件与生成路径，完成可执行分流和工程合同。不使用真机。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+        "modifiedTime": "2026-11-20T00:46:44+0000",
+        "createdTime": "2026-11-20T00:46:44+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "taskId": "6aff980ae4b09abb1344d25c"
+    },
+    {
+      "task": "T694",
+      "completion": {
+        "id": "6aff9af5e4b0491d31628a66",
+        "userId": 1010673194,
+        "title": "T694 architect 交付 7f0cb6a4。实签包核A c23e231c→b31cf133，B dc54802f→59e6c47e，两同页补充版native另域。tester优先用原ELF全字节+仅ArkTS同页正常staging签包或原包现有出口，核所有native/ABC/同进程身份。A在真实XComponent挂载前arm并保原基线、锁新serial，依旧cursor/日志/终态出口；现有按钮无pre-arm。B v5 CURRENT sample5981+POST_TOUCH READY窄证成立，v4 PID38336与v5 PID13252不可拼，busy/#0未证明Down拒绝或同序Claim。沿真实handler/allowed/typed offer/同seq/Draw/Swap，executionDiagnosticsV1用coldCapabilities原scope JSON、>=16KiB总信用，8KiB只作切片；原60s/64次/1MiB。两域离线设施与effector串行分别推进，不增产品seam。",
+        "modifiedTime": "2026-11-20T00:57:25+0000",
+        "createdTime": "2026-11-20T00:57:25+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "start": {
+        "id": "6aff9874e4b0ed5bb82c51b9",
+        "userId": 1010673194,
+        "title": "已开始 T694 architect。按原卡核对真实工件、原件与生成路径，完成可执行分流和工程合同。不使用真机。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+        "modifiedTime": "2026-11-20T00:46:44+0000",
+        "createdTime": "2026-11-20T00:46:44+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "taskId": "6aff980ae4b02114b550e596"
+    },
+    {
+      "task": "T696",
+      "completion": {
+        "id": "6aff9af5e4b0a82e3641e364",
+        "userId": 1010673194,
+        "title": "T696 architect 交付 7f0cb6a4。冻结真实M1与T663生成M2各自THREE/TWO×cache OFF/ON四臂，B仅Full路径不创建临时Q，独立Q及接口保原program。已核4档组件账、M2 workspace+8192words、最终反射/T341、eventArena别名唯一释放与owner代际退役。复用T475 key/store，关臂保源码游标，开臂核实际冷/部分/全持久/保数据暖，最终Q真实warmup后才导出，删program/失代清factory记录。给developer实际生成链/编译，tester离线，effector串行用同设备同源采Create/首root/首有效Swap/稳态30fps；原10op/8ms/250ms与GPU合同保持。性能收益未测。",
+        "modifiedTime": "2026-11-20T00:57:25+0000",
+        "createdTime": "2026-11-20T00:57:25+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "start": {
+        "id": "6aff9874e4b0a82e3641a785",
+        "userId": 1010673194,
+        "title": "已开始 T696 architect。按原卡核对真实工件、原件与生成路径，完成可执行分流和工程合同。不使用真机。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+        "modifiedTime": "2026-11-20T00:46:44+0000",
+        "createdTime": "2026-11-20T00:46:44+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "taskId": "6aff980ae4b02114b550e59e"
+    },
+    {
+      "task": "T695",
+      "completion": {
+        "id": "6aff9af5e4b09abb13456246",
+        "userId": 1010673194,
+        "title": "T695 architect 交付 7f0cb6a4。原receipt-replay exit0但两日志SHA均等T666旧文件，build_receipt.py硬复制并硬编码no-work，已证仓库工具缺陷。T677实际ABI/独立rsp重链保留；新Ninja原件只编译anchor与foundation archive，不能填broker/consumer重链。文档冻结显式 --invocation-manifest 入参、canonical buildRoot/target/argv/cwd/阶段退出、stdout/stderr原字节SHA、同阶段link/输出闭包，错来源/无原件/旧ELF非0时具名拒绝。developer改仓库回执工具；tester原含空格独立目录续初建/no-work/rsp relink与来源负控。不改SDK/FP/ordered argv及旧日志。",
+        "modifiedTime": "2026-11-20T00:57:25+0000",
+        "createdTime": "2026-11-20T00:57:25+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "start": {
+        "id": "6aff9874e4b09abb1344e63e",
+        "userId": 1010673194,
+        "title": "已开始 T695 architect。按原卡核对真实工件、原件与生成路径，完成可执行分流和工程合同。不使用真机。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+        "modifiedTime": "2026-11-20T00:46:44+0000",
+        "createdTime": "2026-11-20T00:46:44+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "taskId": "6aff980ae4b09abb1344d261"
+    }
+  ],
+  "readbackVerified": true,
+  "checks": [
+    "signed HAPs and exact module/BuildId/ABC",
+    "RX loaded identity and canonical shader lines",
+    "T593 UI and distinct process scope",
+    "Ninja origin/closure and historical SHA",
+    "T696 resource arithmetic and machine contract"
+  ],
+  "deviceUsed": false,
+  "productRun": false,
+  "buildRun": false
+}
