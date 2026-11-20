@@ -1,0 +1,449 @@
+{
+  "schema": "T741_G13_NUMERIC_BACKEND_EVIDENCE_V1",
+  "historicalGles": {
+    "samples": [
+      {
+        "original": {
+          "path": "test/reports/t491/t730b/v4/l3.json",
+          "bytes": 53008,
+          "sha256": "ec8fc77761e93f812ab14d10c93b0d81dd9df49333a8350ad484a41c5e0da501"
+        },
+        "readback": {
+          "schema": "G13BootReadbackV1",
+          "boot": "5220043448437",
+          "attempt": "195",
+          "queue": "3",
+          "run": "1",
+          "context": "1",
+          "ns": "5386457613594",
+          "sourceSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+          "fence": 37146,
+          "firstGl": 0,
+          "ctrl255": 3235779329,
+          "ctrl7": 27,
+          "mathReadGl": 0,
+          "ctrl200To215": [
+            1065353217,
+            1065353216,
+            0,
+            0,
+            7,
+            0,
+            0,
+            1179661106,
+            1065353217,
+            1065353216,
+            0,
+            0,
+            7,
+            0,
+            0,
+            1179661106
+          ],
+          "work65_35_41_47_53_59": [
+            0,
+            1065353216,
+            1065353216,
+            0,
+            1065353216
+          ]
+        }
+      },
+      {
+        "original": {
+          "path": "test/reports/t491/t730b/v5/l2.json",
+          "bytes": 53008,
+          "sha256": "6c9f50b40fc1d189b82a0dcd136b0f080c7b0e94bfb7d86063426705fd2fa472"
+        },
+        "readback": {
+          "schema": "G13BootReadbackV1",
+          "boot": "5754112216094",
+          "attempt": "250",
+          "queue": "3",
+          "run": "1",
+          "context": "1",
+          "ns": "5934744782656",
+          "sourceSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+          "fence": 37146,
+          "firstGl": 0,
+          "ctrl255": 3235779329,
+          "ctrl7": 27,
+          "mathReadGl": 0,
+          "ctrl200To215": [
+            1065353217,
+            1065353216,
+            0,
+            0,
+            7,
+            0,
+            0,
+            1179661106,
+            1065353217,
+            1065353216,
+            0,
+            0,
+            7,
+            0,
+            0,
+            1179661106
+          ],
+          "work65_35_41_47_53_59": [
+            0,
+            1065353216,
+            1065353216,
+            0,
+            1065353216
+          ]
+        }
+      },
+      {
+        "original": {
+          "path": "test/reports/t491/t730b/v6/l2.json",
+          "bytes": 53008,
+          "sha256": "62d4da4822406e2adf4513971ace39b2cbe325b41238d74467b686b370dcff3c"
+        },
+        "readback": {
+          "schema": "G13BootReadbackV1",
+          "boot": "8229151142344",
+          "attempt": "196",
+          "queue": "3",
+          "run": "1",
+          "context": "1",
+          "ns": "8396087900937",
+          "sourceSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+          "fence": 37146,
+          "firstGl": 0,
+          "ctrl255": 3235779329,
+          "ctrl7": 27,
+          "mathReadGl": 0,
+          "ctrl200To215": [
+            1065353217,
+            1065353216,
+            0,
+            0,
+            7,
+            0,
+            0,
+            1179661106,
+            1065353217,
+            1065353216,
+            0,
+            0,
+            7,
+            0,
+            0,
+            1179661106
+          ],
+          "work65_35_41_47_53_59": [
+            0,
+            1065353216,
+            1065353216,
+            0,
+            1065353216
+          ]
+        }
+      },
+      {
+        "original": {
+          "path": "test/reports/t491/t730b/v7/t739-diag-full-0.json",
+          "bytes": 2805,
+          "sha256": "17821d5c7ed961dfbcf300f91be19adbba34ca6d9e112f9eb0b7280228e627d0"
+        },
+        "readback": {
+          "schema": "G13BootReadbackV1",
+          "boot": "9857392197187",
+          "attempt": "180",
+          "queue": "3",
+          "run": "1",
+          "context": "1",
+          "ns": "10019743184062",
+          "sourceSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+          "fence": 37146,
+          "firstGl": 0,
+          "ctrl255": 3235779329,
+          "ctrl7": 27,
+          "mathReadGl": 0,
+          "ctrl200To215": [
+            1065353217,
+            1065353216,
+            0,
+            0,
+            7,
+            0,
+            0,
+            1179661106,
+            1065353217,
+            1065353216,
+            0,
+            0,
+            7,
+            0,
+            0,
+            1179661106
+          ],
+          "work65_35_41_47_53_59": [
+            0,
+            1065353216,
+            1065353216,
+            0,
+            1065353216
+          ]
+        }
+      }
+    ],
+    "attempt180Qualification": {
+      "schema": "G13BootQualificationV2",
+      "effectiveRejectStage": "OP65",
+      "result": 27,
+      "scope": {
+        "boot": "9857392197187",
+        "attempt": "180",
+        "queue": "3",
+        "ns": "10019743184062",
+        "run": "1",
+        "context": "1",
+        "surface": "1",
+        "eglContext": "390017424816",
+        "pid": 24462,
+        "ownerTid": 24674,
+        "processStartTicks": "985718",
+        "mappedBuildId": "16704862c820e6188d5b399a68ef39c186bcbcc5",
+        "program": 2,
+        "ctrl": 7,
+        "work": 6,
+        "fenceHandle": "1",
+        "fence": 37146,
+        "firstGl": 0,
+        "rawEgl": 12288,
+        "configRawSHA": "35241d9f2d2baac8deaa84493787903c5ce7e064e5955971d16f7c5039255513",
+        "seedReceiptSHA": "62dfc01eb4a04ab8f89914202edbbea04622d61fb34c887b6e82c24ffa2e6638",
+        "effectiveRejectStage": "OP65",
+        "result": 27
+      },
+      "program": {
+        "boot": "9857392197187",
+        "attempt": "180",
+        "queue": "3",
+        "ns": "10019743184062",
+        "sourceSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+        "route": "SOURCE_COMPILE",
+        "cacheKey": "856a2416fda31847ac5247d80d2b8e6043006b3e83d2f171a10fb3c2e2b580f6",
+        "binarySHA": "",
+        "environmentSHA": "1338b161964299696eaa4a6c9c2c7b0f0bb5144bef61afded796983d1a613d72",
+        "loadedModule": {
+          "state": "LOADED_FILE_OBSERVED",
+          "sha256": "1a7784f4eb4dd9a6d0406511c2d16cc43d184988608740ade33894b17adb18d7",
+          "bytes": "1357136",
+          "device": "66695",
+          "inode": "55054",
+          "BuildId": "16704862c820e6188d5b399a68ef39c186bcbcc5",
+          "memoryBuildIdMatched": true,
+          "path": "/data/storage/el1/bundle/libs/arm64/libgrs_g13.so"
+        }
+      },
+      "op65": {
+        "boot": "9857392197187",
+        "attempt": "180",
+        "queue": "3",
+        "ns": "10019743184062",
+        "state": "REJECTED",
+        "ctrl255": 3235779329,
+        "ctrl7": 27,
+        "ctrlTailByteOffset": 73728,
+        "workByteOffset": 583296,
+        "mathReadGl": 0,
+        "inputReadGl": 0,
+        "work35_41_47_53_59": [
+          0,
+          1065353216,
+          1065353216,
+          0,
+          1065353216
+        ],
+        "input744To747": [
+          1,
+          864026624,
+          1065353216,
+          0
+        ]
+      },
+      "op66": {
+        "boot": "9857392197187",
+        "attempt": "180",
+        "queue": "3",
+        "ns": "10019743184062",
+        "state": "REJECTED",
+        "qualified": false,
+        "presence": [
+          true,
+          true
+        ],
+        "inputReadGl": 0,
+        "mismatchMasks": [
+          12,
+          12
+        ],
+        "ctrl200To215": [
+          1065353217,
+          1065353216,
+          0,
+          0,
+          7,
+          0,
+          0,
+          1179661106,
+          1065353217,
+          1065353216,
+          0,
+          0,
+          7,
+          0,
+          0,
+          1179661106
+        ],
+        "input18648To18652": [
+          872415232,
+          8388608,
+          1056964608,
+          2139095040,
+          2143289344
+        ]
+      }
+    },
+    "ready": "NOT_REACHED",
+    "firstSwap": "NOT_REACHED"
+  },
+  "vulkanStatic": {
+    "signedReceipt": {
+      "path": "test/reports/t257/T729-split-3ff632a03a1d.json",
+      "bytes": 2325,
+      "sha256": "9e8e5403cefa870c5db9d7a00652c0c11660016069de154ac2b8bc4fce35e313"
+    },
+    "compileReceipt": {
+      "path": "test/reports/t739/SPLIT.json",
+      "bytes": 17727,
+      "sha256": "0bdac0974781b2349dee65869b932ee1eb137b4617d861f310eb7fcb5f957996"
+    },
+    "signedSHA": "9e35e801b0a855f37423a2e01e74c88064786fc3301bd1ab3cfd2343e12864f0",
+    "nativeSHA": "1a7784f4eb4dd9a6d0406511c2d16cc43d184988608740ade33894b17adb18d7",
+    "buildId": "16704862c820e6188d5b399a68ef39c186bcbcc5",
+    "compilerSHA": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+    "flags": [
+      "-V",
+      "--target-env",
+      "vulkan1.1",
+      "--spirv-val",
+      "--spirv-dis"
+    ],
+    "sizeLimitBytes": 49152,
+    "maxRole": "OP_00",
+    "maxVulkanSourceBytes": 49053,
+    "roles": [
+      {
+        "role": "BOOT",
+        "parentShaderBytes": 23834,
+        "parentShaderSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+        "vulkanSourceBytes": 24128,
+        "vulkanSourceSHA": "fd2df25c9cde6355c0e32ea29224e7edda1c8d561e3cd36d61f5ffbbedd7cada",
+        "spirvBytes": 116592,
+        "spirvSHA": "8c213b7b2da0c1b819c79ee5e3ae20cadcdb5f659453101e39f279436f88a918",
+        "compileAndBundledValidationExit": 0,
+        "floatModes32": [
+          "DenormPreserve",
+          "SignedZeroInfNanPreserve",
+          "RoundingModeRTE"
+        ],
+        "relaxedPrecisionDecorations": 0,
+        "noContractionDecorationsObserved": 0
+      },
+      {
+        "role": "OP_00",
+        "parentShaderBytes": 48759,
+        "parentShaderSHA": "617adf29a80f7fb7e8e3c8ca18df9f0604f7081ff1d319701ad73cb099cda7ea",
+        "vulkanSourceBytes": 49053,
+        "vulkanSourceSHA": "3c5e43504bfa0028c489abdd39bc7ce4ffcaf860070ddebda8725b8d4286138f",
+        "spirvBytes": 261440,
+        "spirvSHA": "6c93e9775df2a1ed83be1fb62598ef1098cfe52b81e59f8d60668af142c831c2",
+        "compileAndBundledValidationExit": 0,
+        "floatModes32": [
+          "DenormPreserve",
+          "SignedZeroInfNanPreserve",
+          "RoundingModeRTE"
+        ],
+        "relaxedPrecisionDecorations": 0,
+        "noContractionDecorationsObserved": 0
+      },
+      {
+        "role": "OP_18",
+        "parentShaderBytes": 48612,
+        "parentShaderSHA": "e9ff05a22fca32361ce24312f824d4c811e13ed08611c35d6ffa7b98d8e2e5eb",
+        "vulkanSourceBytes": 48906,
+        "vulkanSourceSHA": "34f6a9c6402da051a2c738ce72f1550ad63e65fbbb3691e3e9bbfbb3d2041ea5",
+        "spirvBytes": 263108,
+        "spirvSHA": "4bdc921bcbac161e5fa55c2a763ef1a186170e546e5d9103743975512bd11b33",
+        "compileAndBundledValidationExit": 0,
+        "floatModes32": [
+          "DenormPreserve",
+          "SignedZeroInfNanPreserve",
+          "RoundingModeRTE"
+        ],
+        "relaxedPrecisionDecorations": 0,
+        "noContractionDecorationsObserved": 0
+      },
+      {
+        "role": "OP_37",
+        "parentShaderBytes": 48445,
+        "parentShaderSHA": "fb0ff4fce8e3ad0ddc10fedb5f220088a1d480610dc8d7880d3e8f470e3ef516",
+        "vulkanSourceBytes": 48739,
+        "vulkanSourceSHA": "86f0b0b8cdc275513f5b2898966bb46cd3a0765acdb2afaa96d349b100b44158",
+        "spirvBytes": 261960,
+        "spirvSHA": "971f284d52f8dd6ed252c6ef962d904519097419eb616f8a465cc9d90dc8a4ea",
+        "compileAndBundledValidationExit": 0,
+        "floatModes32": [
+          "DenormPreserve",
+          "SignedZeroInfNanPreserve",
+          "RoundingModeRTE"
+        ],
+        "relaxedPrecisionDecorations": 0,
+        "noContractionDecorationsObserved": 0
+      },
+      {
+        "role": "OP_48",
+        "parentShaderBytes": 48577,
+        "parentShaderSHA": "840391626a47625a537dfad19d32887c78db88f2f6afd522f2c34f522791c974",
+        "vulkanSourceBytes": 48871,
+        "vulkanSourceSHA": "3bb9b949c1ceb1c66fcc47909e0943653bc3e4e5c3bfb04e73c9d485fda7a83d",
+        "spirvBytes": 255888,
+        "spirvSHA": "3a8914b3f7ca293a68a52d3d182ba8a31bbb0c15541571b5adb454b9d866caad",
+        "compileAndBundledValidationExit": 0,
+        "floatModes32": [
+          "DenormPreserve",
+          "SignedZeroInfNanPreserve",
+          "RoundingModeRTE"
+        ],
+        "relaxedPrecisionDecorations": 0,
+        "noContractionDecorationsObserved": 0
+      },
+      {
+        "role": "OP_62",
+        "parentShaderBytes": 11458,
+        "parentShaderSHA": "0d4a77c880ec1fe2f140683032c2683aa56ae2ee266c43ff95dfce6e8b0bb340",
+        "vulkanSourceBytes": 11752,
+        "vulkanSourceSHA": "784bf80287e323126762eb119c46df2675505842d2e5f13a52ee68551fc5b27b",
+        "spirvBytes": 49688,
+        "spirvSHA": "d98b1483b44a1cc743fae088d001c8ede1ad1fd9f907d9d8db1bfc256d88727a",
+        "compileAndBundledValidationExit": 0,
+        "floatModes32": [
+          "DenormPreserve",
+          "SignedZeroInfNanPreserve",
+          "RoundingModeRTE"
+        ],
+        "relaxedPrecisionDecorations": 0,
+        "noContractionDecorationsObserved": 0
+      }
+    ]
+  },
+  "deviceUsedForThisAudit": false,
+  "vulkanDeviceFloatControls": "NOT_MEASURED",
+  "backendSelected": false
+}
