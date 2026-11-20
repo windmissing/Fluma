@@ -1,0 +1,530 @@
+{
+  "schema": "T709_DEVELOPER_COMPILE_RECEIPT_V1",
+  "result": "COMPILE_PASS_NOT_PRODUCT_PASS",
+  "buildLogSHA": "c639ef46a0aed91d917bc95cd96f75612db86e055f1d6447a53293b29655710c",
+  "elf": {
+    "path": ".codex\\local-test\\t709\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrs_g9rx.so",
+    "bytes": 5550368,
+    "sha256": "653da09687a77402a33efd23a87a06762cd0a0c9ab4fee30fd76c17608f5bc75",
+    "machine": "AARCH64",
+    "buildId": "af1bf65bbcd096d5c47b6c0c7ce27e62e3c7e001",
+    "abiWords": [
+      1,
+      40960,
+      64,
+      96,
+      8,
+      61632,
+      15832,
+      96,
+      520,
+      0,
+      20480,
+      21504,
+      22528,
+      23552,
+      24576,
+      34304
+    ],
+    "nativeAppStaticBytes": 91392,
+    "nativeAppExcludingProtocolPayloadBytes": 50432
+  },
+  "unsignedHap": {
+    "path": ".codex\\local-test\\t709\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "bytes": 7759595,
+    "sha256": "828bc4e848ace11c2d789cc750a97dc0598bd033b74d42ba341a7155e7bb61d6"
+  },
+  "packagedELF": {
+    "bytes": 1406480,
+    "sha256": "ad5a371b83bc6de95d3c582dd61d4dba6b930a2be7ce23bd6f8666a04826e8a9",
+    "canonicalSource": {
+      "offsets": [
+        274114
+      ],
+      "bytes": 146244,
+      "sha256": "8d5c5f746a0175dcfe83281854f9018bf2cc62102382de8b6ebf02a62374bddd",
+      "lines": 2146
+    }
+  },
+  "pipelineIdentity": {
+    "schema": "GNR1_PIPELINE_IDENTITY_V2",
+    "shaderSHA": "8d5c5f746a0175dcfe83281854f9018bf2cc62102382de8b6ebf02a62374bddd",
+    "canonicalBytes": 146244,
+    "canonicalLines": 2146,
+    "hygieneRevision": "RX_CAPTURE_SCOPE_HYGIENE_V1",
+    "scopeTransform": {
+      "revision": "RX_CAPTURE_SCOPE_HYGIENE_V1",
+      "transforms": 1,
+      "beforeSHA256LF": "d373b9c51027882f5a32b9d5a8c4c2cfaca21840d299dfdda8e210e36f510655",
+      "afterSHA256LF": "24936c8e49c6d6e765ac865624bca6e31acc48ecbf0dd2f92e158c863693dbd0",
+      "bindingsOriginalFunctionOffsets": [
+        {
+          "name": "clearSlot",
+          "begin": 99,
+          "end": 160
+        },
+        {
+          "name": "scanSlot",
+          "begin": 220,
+          "end": 386
+        },
+        {
+          "name": "selectedSlot",
+          "begin": 407,
+          "end": 2992
+        }
+      ],
+      "bindingsCanonicalFunctionOffsets": [
+        {
+          "name": "clearSlot",
+          "begin": 99,
+          "end": 180
+        },
+        {
+          "name": "scanSlot",
+          "begin": 240,
+          "end": 440
+        },
+        {
+          "name": "selectedSlot",
+          "begin": 461,
+          "end": 3182
+        }
+      ],
+      "originalFunctionStart": 106857,
+      "originalFunctionEnd": 109865,
+      "firstLine": 1725,
+      "lastLine": 1752,
+      "sourceBytesUnchangedOutsideFunction": true
+    },
+    "coherentRevision": "RX_COHERENT_VALUE_V2",
+    "coherentTransforms": [
+      {
+        "function": "g9MapAdd",
+        "line": 1063,
+        "before": "if(merge){uint at=g9MapAddress(flow,c,rank),next;if(!g9AddMass(C[at+3u],q,next))return false;C[at+3u]=next;return true;}",
+        "after": "if(merge){uint at=g9MapAddress(flow,c,rank),next;uint prior=C[at+3u];if(!g9AddMass(prior,q,next))return false;C[at+3u]=next;return true;}"
+      },
+      {
+        "function": "g9ProvisionalAdd",
+        "line": 1522,
+        "before": "if(merge){uint at=g9Provisional(c,rank),next;if(!g9AddMass(W[at+3u],mass,next))return false;W[at+3u]=next;return true;}",
+        "after": "if(merge){uint at=g9Provisional(c,rank),next;uint prior=W[at+3u];if(!g9AddMass(prior,mass,next))return false;W[at+3u]=next;return true;}"
+      }
+    ],
+    "coherentArgumentInputSHA": "5d9cd082f30983806537c52cf2fb1aa96ca870eb50b7b0d59a84e77fbcf2881c",
+    "coherentArgumentTransforms": [
+      {
+        "callee": "g9MapAdd",
+        "argument": 4,
+        "buffer": "C",
+        "line": 1097,
+        "before": "C[at+3u]",
+        "after": "rxReadCandidateWord(at+3u)",
+        "canonicalLine": 1099
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1104,
+        "before": "C[at+3u]",
+        "after": "rxReadCandidateWord(at+3u)",
+        "canonicalLine": 1106
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1116,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1118
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1124,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1126
+      },
+      {
+        "callee": "g9ColumnPotential",
+        "argument": 2,
+        "buffer": "W",
+        "line": 1164,
+        "before": "W[at]",
+        "after": "rxReadWorkWord(at)",
+        "canonicalLine": 1166
+      },
+      {
+        "callee": "g9ColumnPotential",
+        "argument": 3,
+        "buffer": "W",
+        "line": 1164,
+        "before": "W[at+1u]",
+        "after": "rxReadWorkWord(at+1u)",
+        "canonicalLine": 1166
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1180,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1182
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1223,
+        "before": "W[uConfig+4u]",
+        "after": "rxReadWorkWord(uConfig+4u)",
+        "canonicalLine": 1225
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1223,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1225
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1223,
+        "before": "W[uConfig]",
+        "after": "rxReadWorkWord(uConfig)",
+        "canonicalLine": 1225
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1235,
+        "before": "W[uConfig]",
+        "after": "rxReadWorkWord(uConfig)",
+        "canonicalLine": 1237
+      },
+      {
+        "callee": "dmPut",
+        "argument": 3,
+        "buffer": "C",
+        "line": 1251,
+        "before": "C[22u]",
+        "after": "rxReadCandidateWord(22u)",
+        "canonicalLine": 1253
+      },
+      {
+        "callee": "dmPut",
+        "argument": 3,
+        "buffer": "C",
+        "line": 1251,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1253
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1279,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1281
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1279,
+        "before": "W[uConfig]",
+        "after": "rxReadWorkWord(uConfig)",
+        "canonicalLine": 1281
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1279,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1281
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1279,
+        "before": "W[uConfig+1u]",
+        "after": "rxReadWorkWord(uConfig+1u)",
+        "canonicalLine": 1281
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1293,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1295
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1307,
+        "before": "W[uConfig]",
+        "after": "rxReadWorkWord(uConfig)",
+        "canonicalLine": 1309
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1307,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1309
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1312,
+        "before": "W[uConfig+3u]",
+        "after": "rxReadWorkWord(uConfig+3u)",
+        "canonicalLine": 1314
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1334,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1336
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1334,
+        "before": "W[uConfig]",
+        "after": "rxReadWorkWord(uConfig)",
+        "canonicalLine": 1336
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1334,
+        "before": "W[uConfig+1u]",
+        "after": "rxReadWorkWord(uConfig+1u)",
+        "canonicalLine": 1336
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1484,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1486
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1487,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1489
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1496,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1498
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1496,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1498
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1509,
+        "before": "W[uConfig]",
+        "after": "rxReadWorkWord(uConfig)",
+        "canonicalLine": 1511
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1509,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1511
+      },
+      {
+        "callee": "dmPut",
+        "argument": 3,
+        "buffer": "W",
+        "line": 1510,
+        "before": "W[stage+14u]",
+        "after": "rxReadWorkWord(stage+14u)",
+        "canonicalLine": 1512
+      },
+      {
+        "callee": "g9ProvisionalAdd",
+        "argument": 3,
+        "buffer": "W",
+        "line": 1548,
+        "before": "W[at+3u]",
+        "after": "rxReadWorkWord(at+3u)",
+        "canonicalLine": 1550
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1758,
+        "before": "W[uHamilton+c*2048u+1600u]",
+        "after": "rxReadWorkWord(uHamilton+c*2048u+1600u)",
+        "canonicalLine": 1760
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1763,
+        "before": "W[uHamilton+c*2048u+1600u]",
+        "after": "rxReadWorkWord(uHamilton+c*2048u+1600u)",
+        "canonicalLine": 1765
+      },
+      {
+        "callee": "g9PutColumn",
+        "argument": 3,
+        "buffer": "W",
+        "line": 1776,
+        "before": "W[base+1664u+i]",
+        "after": "rxReadWorkWord(base+1664u+i)",
+        "canonicalLine": 1778
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1806,
+        "before": "W[uConfig]",
+        "after": "rxReadWorkWord(uConfig)",
+        "canonicalLine": 1808
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1806,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1808
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1808,
+        "before": "W[uConfig+3u]",
+        "after": "rxReadWorkWord(uConfig+3u)",
+        "canonicalLine": 1810
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "C",
+        "line": 1881,
+        "before": "C[23u]",
+        "after": "rxReadCandidateWord(23u)",
+        "canonicalLine": 1883
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1928,
+        "before": "W[uConfig+7u]",
+        "after": "rxReadWorkWord(uConfig+7u)",
+        "canonicalLine": 1930
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 1928,
+        "before": "W[uConfig+7u]",
+        "after": "rxReadWorkWord(uConfig+7u)",
+        "canonicalLine": 1930
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 2104,
+        "before": "W[uConfig+7u]",
+        "after": "rxReadWorkWord(uConfig+7u)",
+        "canonicalLine": 2106
+      },
+      {
+        "callee": "g9U32",
+        "argument": 1,
+        "buffer": "W",
+        "line": 2104,
+        "before": "W[uConfig+7u]",
+        "after": "rxReadWorkWord(uConfig+7u)",
+        "canonicalLine": 2106
+      }
+    ],
+    "variant": "PRODUCTION",
+    "sceneSHA": "618b7d2c44c1bc7d14053a5b5197383d059eee2c9bf633d6844154af98aa667a",
+    "sourceManifestSHA": "97c96c3f5cac0ff1e96f75a69a06159213fec6f03a5d540a88ec70e6775084b9",
+    "staticContractSHA": "7d786425590c689fb22eac7fb5b8141020d7259393a0a829645b74cee1a1ded6",
+    "pipelineSHA": "8d5c5f746a0175dcfe83281854f9018bf2cc62102382de8b6ebf02a62374bddd",
+    "generatedFiles": {
+      "capture_line_map.json": "2908c4ac1f765b670b2fff69ce2adc0786017ff005c2808ccb95c52cea513e7e",
+      "cold_generated.h": "9a182e18458a6ec19aa4b95f92dec9c3d5709439dcf3b60e3287bb73f23093c5",
+      "contract_generated.h": "d7c49e7339264c66b0692b9a74c6e7223140b1e8602c56416c169537f204ce57",
+      "implementation_generated.h": "11754dfc69d5670cbd5dbea1281e05071c093dfdbc8bdd8cdb00a035dbf09155",
+      "inputs.json": "08aee1c079861ea66375e784c52b8b45c20c5f4189148ad98f5c0d1d544a0e93",
+      "pipeline.comp": "8d5c5f746a0175dcfe83281854f9018bf2cc62102382de8b6ebf02a62374bddd",
+      "pipeline_source.h": "ce0bb596ac7e5f512dae0f009403990add4027229d95f3c3364a8cde457eb68c",
+      "reader_schema.json": "4ad9d59c25b645bb1b8ec10621539060ad08a3c93ea275568ec97ba9f1042af7",
+      "rx_dependencies.cmake": "036874923998f25afb91f510dfb729894f8b745522e71bfe905e0de286967a61",
+      "scene_generated.h": "618b7d2c44c1bc7d14053a5b5197383d059eee2c9bf633d6844154af98aa667a",
+      "schema_generated.h": "2387d0fc340b1946df3e574d39791283f8bd19cb6d20e324de44460f58995225",
+      "seed_constructor_receipt.json": "3ee3b6d27534142ac863bea48a4eeba186390271592d3f3863ce9016499cd552",
+      "seed_generated.h": "181c18f7c50ec949cc412db3d4f1cc13e0a057a4d3fc3bc15ff22c7bd04d6aac"
+    },
+    "bundleSHA": "542f4c2abd8804c15eee47abb1356b4af6da240e720602020818e3a18a315aaf"
+  },
+  "staticCompilerExit": 0,
+  "deviceUsed": false,
+  "productExecuted": false
+}

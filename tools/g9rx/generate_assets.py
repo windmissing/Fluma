@@ -3,6 +3,7 @@
 from pathlib import Path
 import json,hashlib,argparse,struct
 from capture_scope import convert, REVISION
+from coherent_values import convert_values, REVISION as COHERENT_REVISION
 ROOT=Path(__file__).resolve().parents[2];MOD=ROOT/'entry/src/main/cpp/gpu_resident/g9rx'
 def sha(b):return hashlib.sha256(b).hexdigest()
 def one(s,a,b):
@@ -83,6 +84,11 @@ def generate(out,test_hooks=False):
   coherent.append({'function':function,'line':s[:s.index(old)].count('\n')+1,'before':old,'after':new})
   s=one(s,old,new)
 
+ coherent_input_sha=sha(s.encode('utf8'))
+ s,coherent_arguments=convert_values(s)
+ added_lines=s[:s.index('bool g9Capture(){')].count('\n')+1-hygiene['firstLine']
+ hygiene['firstLine']+=added_lines
+ hygiene['lastLine']+=added_lines
  if test_hooks:s+='\n// GNR1_NATIVE_HARNESS_NOT_PRODUCT\n'
  canonical=s.encode('utf8')
  if b'\r' in canonical or b'\0' in canonical or canonical.startswith(b'\xef\xbb\xbf') or '#line' in s:raise ValueError('RX_NON_CANONICAL_SOURCE')
@@ -149,12 +155,12 @@ def generate(out,test_hooks=False):
   if path.is_file():implementation.update(path.name.encode()+b'\0'+path.read_bytes())
  schema=schema.replace('t555-g9dm-v2-initial-construction','t644-gnr1-t641-t647-v1:'+implementation.hexdigest()).replace('kContainerRevision=2u','kContainerRevision=1u')
  (out/'schema_generated.h').write_text(schema,encoding='utf8')
- (out/'implementation_generated.h').write_text('#pragma once\n#define kRxImplementationSHA "'+implementation.hexdigest()+'"\n',encoding='utf8')
- identity={'schema':'GNR1_PIPELINE_IDENTITY_V2','shaderSHA':sha(canonical),'canonicalBytes':len(canonical),'canonicalLines':s.count('\n'),'hygieneRevision':REVISION,'scopeTransform':hygiene,'coherentRevision':'RX_COHERENT_VALUE_V1','coherentTransforms':coherent,'variant':'HARNESS_NOT_PRODUCT' if test_hooks else 'PRODUCTION','sceneSHA':sha(scene.encode()),'sourceManifestSHA':implementation.hexdigest(),'staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json']}
+ (out/'implementation_generated.h').write_text('#pragma once\n#define kRxImplementationSHA "'+implementation.hexdigest()+'"\n#define kRxCoherentRevision "'+COHERENT_REVISION+'"\n',encoding='utf8')
+ identity={'schema':'GNR1_PIPELINE_IDENTITY_V2','shaderSHA':sha(canonical),'canonicalBytes':len(canonical),'canonicalLines':s.count('\n'),'hygieneRevision':REVISION,'scopeTransform':hygiene,'coherentRevision':COHERENT_REVISION,'coherentTransforms':coherent,'coherentArgumentInputSHA':coherent_input_sha,'coherentArgumentTransforms':coherent_arguments,'variant':'HARNESS_NOT_PRODUCT' if test_hooks else 'PRODUCTION','sceneSHA':sha(scene.encode()),'sourceManifestSHA':implementation.hexdigest(),'staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json']}
  pipeline=sha(canonical)
  with (out/'contract_generated.h').open('a',encoding='utf8',newline='\n') as f:f.write('namespace grs::g9rx { inline constexpr const char* kPipelineSHA="'+pipeline+'"; }\n')
  identity['pipelineSHA']=pipeline
- reader=dict(tables);reader['sourceIdentity']={key:identity[key] for key in ['schema','shaderSHA','canonicalBytes','hygieneRevision','coherentRevision','coherentTransforms','sourceManifestSHA','variant']}
+ reader=dict(tables);reader['sourceIdentity']={key:identity[key] for key in ['schema','shaderSHA','canonicalBytes','hygieneRevision','coherentRevision','coherentTransforms','coherentArgumentInputSHA','coherentArgumentTransforms','sourceManifestSHA','variant']}
  (out/'reader_schema.json').write_bytes((json.dumps(reader,ensure_ascii=False,indent=2)+'\n').encode('utf8'))
  (out/'capture_line_map.json').write_bytes((json.dumps(hygiene,indent=2)+'\n').encode())
  (out/'inputs.json').write_bytes((json.dumps(deps,indent=2)+'\n').encode('utf8'))

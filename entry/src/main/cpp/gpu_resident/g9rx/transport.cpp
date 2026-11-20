@@ -199,7 +199,7 @@ Result Transport::Create(const Config &config, const ControlIdentity &id,
     return Result::SOURCE_IDENTITY_MISMATCH;
   GLenum error = 0;
   if (!programcache::Build(1, PipelineSource(), PipelineSourceHash(),
-                           "GNR1_T691_COHERENT_VALUE_V1|" kRxImplementationSHA,
+                           "GNR1|" kRxCoherentRevision "|" kRxImplementationSHA,
                            program_.id, error) ||
       !programcache::Reflect(program_.uniforms, program_.id)) {
     if (error && !firstGl_)

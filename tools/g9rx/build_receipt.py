@@ -29,7 +29,7 @@ def elf(path):
    if kind==3 and name==b'GNU\0':build_id=data.hex()
  assert abi and abi[1:3]==[40960,64] and abi[3]<=256 and abi[4]==8 and abi[9:]==[0,20480,21504,22528,23552,24576,34304] and build_id and app
  return {'machine':'AARCH64','buildId':build_id,'abiWords':abi,'nativeAppStaticBytes':app,'nativeAppExcludingProtocolPayloadBytes':app-40960}
-def receipt(build,log,out,validator=None):
+def receipt(build,log,out,validator=None,task='T699'):
  assert 'BUILD SUCCESSFUL' in log.read_text(encoding='utf-8-sig',errors='replace')
  lib=build/'entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_g9rx.so';hap=build/'entry/build/default/outputs/default/entry-default-unsigned.hap';assets=build/'entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g9rx/rx_assets';compile_commands=build/'entry/.cxx/default/default/debug/arm64-v8a/compile_commands.json'
  data={'schema':'T644_DEVELOPER_COMPILE_RECEIPT_V1','task':'T644','deviceUsed':False,'testsRun':False,'productExecuted':False,'signed':False,'deployed':False,'result':'COMPILE_PASS_NOT_PRODUCT_PASS','elf':{'path':str(lib.relative_to(ROOT)),'bytes':lib.stat().st_size,'sha256':sha(lib),**elf(lib)},'unsignedHap':{'path':str(hap.relative_to(ROOT)),'bytes':hap.stat().st_size,'sha256':sha(hap)},'buildLogSHA':sha(log),'compileCommandsSHA':sha(compile_commands),'pipelineIdentity':json.loads((assets/'pipeline_identity.json').read_text()),'seedConstructor':json.loads((assets/'seed_constructor_receipt.json').read_text()),'generated':{},'sources':{}}
@@ -51,7 +51,7 @@ def receipt(build,log,out,validator=None):
  data['linkedCanonicalSource']=extract(lib.read_bytes())
  with zipfile.ZipFile(hap) as z:
   packaged=z.read('libs/arm64-v8a/libgrs_g9rx.so');data['packagedELF']={'bytes':len(packaged),'sha256':hashlib.sha256(packaged).hexdigest(),'canonicalSource':extract(packaged)}
- data['schema']='T699_DEVELOPER_COMPILE_RECEIPT_V1';data['task']='T699'
+ data['schema']=task+'_DEVELOPER_COMPILE_RECEIPT_V1';data['task']=task
  data['captureLineMap']=json.loads((assets/'capture_line_map.json').read_text(encoding='utf8'))
  for name in ['pipeline_identity.json','capture_line_map.json','rx_dependencies.cmake']:
   data['generated'][name]={'bytes':(assets/name).stat().st_size,'sha256':sha(assets/name)}
@@ -76,4 +76,4 @@ def receipt(build,log,out,validator=None):
 
  out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf8');return data
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('build',type=Path);p.add_argument('log',type=Path);p.add_argument('out',type=Path);p.add_argument('--validator',type=Path,required=True);a=p.parse_args();r=receipt(a.build.resolve(),a.log.resolve(),a.out,a.validator);print(json.dumps({'result':r['result'],'elf':r['elf'],'unsignedHap':r['unsignedHap']},indent=2))
+ p=argparse.ArgumentParser();p.add_argument('build',type=Path);p.add_argument('log',type=Path);p.add_argument('out',type=Path);p.add_argument('--validator',type=Path,required=True);p.add_argument('--task',choices=['T699','T709'],default='T699');a=p.parse_args();r=receipt(a.build.resolve(),a.log.resolve(),a.out,a.validator,a.task);print(json.dumps({'result':r['result'],'elf':r['elf'],'unsignedHap':r['unsignedHap']},indent=2))
