@@ -1,0 +1,951 @@
+{
+  "schema": "T746_RX_BOOT_SOURCE_PRECONDITION_V1",
+  "deviceUsed": false,
+  "qualification": "BOOT_TAIL_PASS_TWICE",
+  "sourceDispatchPrecondition": "PENDING_SAME_ATTEMPT_PROCESS_START_TICK_PER_T736",
+  "package": {
+    "signReceipt": {
+      "path": "test/reports/t257/T738-rx.json",
+      "bytes": 2274,
+      "sha256": "a26dfc7fa5732c71f4d7ce28511c70342346cbbe4a1c1d3b54635f40b7df2557"
+    },
+    "compileReceipt": {
+      "path": "test/reports/t734/compile.json",
+      "bytes": 14941,
+      "sha256": "3408891062150f9cb8322546ee500d4ebe98bc1d3e11c946464b8f3a9a463bb2"
+    },
+    "packages": {
+      "input": {
+        "path": ".codex/local-test/t734-rx/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "bytes": 7715049,
+        "sha256": "b9b64ff911b49c851faf292a387239b6428c8343e673840157a60e56d065fcb6"
+      },
+      "signed": {
+        "path": ".codex/local-test/t257-sign/T738-rx/T738-rx-signed.hap",
+        "bytes": 7810948,
+        "sha256": "73027d13edfffb7ac295c15097d37a10eb08bda21edcbd49b113cb6fe720f2d3"
+      }
+    },
+    "elfEntry": "libs/arm64-v8a/libgrs_g9rx.so",
+    "elfSHA": "675ad1a7defb4c1c08a6d02ad53de0b6b1a4e5bb4b1a2baa8c3733e17b105c6c",
+    "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+    "boot": {
+      "path": ".codex/local-test/t734-rx/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g9rx/rx_assets/boot.comp",
+      "bytes": 22318,
+      "sha256": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef"
+    },
+    "roleSetSHA": "6237d61287411b082cf53b8ce4473d47e169e07321f54b86e00befeb996ae766"
+  },
+  "capturedLogs": [
+    {
+      "path": "test/reports/t491/t738/v3/h-cold.txt",
+      "bytes": 1257866,
+      "sha256": "a9f5568f9d4230a81f706f0657ec49e30ef8bb6bcec3ef0ec91c5fb744841e77"
+    },
+    {
+      "path": "test/reports/t491/t738/v3/h-cold2.txt",
+      "bytes": 1234156,
+      "sha256": "170c1ce74ea50ca51c029321a48731e4991337da9af0654f20d5d6ee287b882d"
+    },
+    {
+      "path": "test/reports/t491/t738/v3/h-warm.txt",
+      "bytes": 1278014,
+      "sha256": "cf3452619d5b565b76320686e589f1ea900db10684d4ca066644126d3b499494"
+    }
+  ],
+  "cold": {
+    "pid": 43774,
+    "tid": 44158,
+    "processStartTick": null,
+    "run": 1,
+    "owner": 1,
+    "context": 1,
+    "ticket": 1,
+    "bootResult": "PASS",
+    "duration": {
+      "configureNs": 637260938,
+      "buildNs": 463019688,
+      "SHADER_COMPILE_ns": 176140625,
+      "PROGRAM_LINK_ns": 281435156
+    },
+    "configure": {
+      "ENQUEUED": {
+        "line": 837,
+        "ns": "12689604520937",
+        "result": "-1"
+      },
+      "APPLY_ENTER": {
+        "line": 841,
+        "ns": "12689605807344",
+        "result": "-1"
+      },
+      "BOOT_AUDIT_OK": {
+        "line": 869,
+        "ns": "12690241781875",
+        "result": "1638"
+      }
+    },
+    "stages": {
+      "BUILD_ENTER": {
+        "line": 842,
+        "ns": "12689686350156",
+        "raw": 22318,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "SHADER_COMPILE_ENTER": {
+        "line": 843,
+        "ns": "12689691126094",
+        "raw": -1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "SHADER_COMPILE_EXIT": {
+        "line": 845,
+        "ns": "12689867266719",
+        "raw": 1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "PROGRAM_LINK_ENTER": {
+        "line": 847,
+        "ns": "12689867308281",
+        "raw": -1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "PROGRAM_LINK_EXIT": {
+        "line": 852,
+        "ns": "12690148743437",
+        "raw": 1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "BUILD_EXIT": {
+        "line": 854,
+        "ns": "12690149369844",
+        "raw": 1,
+        "gl": 0,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "REFLECT_ENTER": {
+        "line": 855,
+        "ns": "12690149391094",
+        "raw": -1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "REFLECT_EXIT": {
+        "line": 856,
+        "ns": "12690149702812",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": -1,
+        "seal": -1
+      },
+      "ROOT_INIT_ENTER": {
+        "line": 857,
+        "ns": "12690194169375",
+        "raw": -1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "ROOT_INIT_EXIT": {
+        "line": 858,
+        "ns": "12690194812187",
+        "raw": -1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "WARM_ENTER": {
+        "line": 859,
+        "ns": "12690194841875",
+        "raw": -1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "WARM_EXIT": {
+        "line": 860,
+        "ns": "12690194861562",
+        "raw": -1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "FINISH_ENTER": {
+        "line": 861,
+        "ns": "12690197768437",
+        "raw": 1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "FINISH_EXIT": {
+        "line": 862,
+        "ns": "12690237912969",
+        "raw": 37146,
+        "gl": 0,
+        "egl": 12288,
+        "error": -1,
+        "seal": -1
+      },
+      "MAP_ENTER": {
+        "line": 863,
+        "ns": "12690237998125",
+        "raw": 1166976,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "MAP_EXIT": {
+        "line": 864,
+        "ns": "12690238013750",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": -1,
+        "seal": -1
+      },
+      "UNMAP_EXIT": {
+        "line": 865,
+        "ns": "12690238021250",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": 0,
+        "seal": 6559303
+      },
+      "PREPARE_EXIT": {
+        "line": 866,
+        "ns": "12690239096250",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": 0,
+        "seal": 6559303
+      },
+      "BOOT_AUDIT_OK": {
+        "line": 867,
+        "ns": "12690239219062",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": 0,
+        "seal": 6559303
+      }
+    }
+  },
+  "warm": {
+    "pid": 45505,
+    "tid": 45618,
+    "processStartTick": null,
+    "run": 1,
+    "owner": 1,
+    "context": 1,
+    "ticket": 1,
+    "bootResult": "PASS",
+    "duration": {
+      "configureNs": 186281094,
+      "buildNs": 15362656
+    },
+    "configure": {
+      "ENQUEUED": {
+        "line": 5716,
+        "ns": "12797788685937",
+        "result": "-1"
+      },
+      "APPLY_ENTER": {
+        "line": 5737,
+        "ns": "12797797417344",
+        "result": "-1"
+      },
+      "BOOT_AUDIT_OK": {
+        "line": 5759,
+        "ns": "12797974967031",
+        "result": "1638"
+      }
+    },
+    "stages": {
+      "BUILD_ENTER": {
+        "line": 5740,
+        "ns": "12797863264219",
+        "raw": 22318,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "BUILD_EXIT": {
+        "line": 5744,
+        "ns": "12797878626875",
+        "raw": 1,
+        "gl": 0,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "REFLECT_ENTER": {
+        "line": 5745,
+        "ns": "12797878642187",
+        "raw": -1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "REFLECT_EXIT": {
+        "line": 5746,
+        "ns": "12797878773750",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": -1,
+        "seal": -1
+      },
+      "ROOT_INIT_ENTER": {
+        "line": 5747,
+        "ns": "12797934037656",
+        "raw": -1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "ROOT_INIT_EXIT": {
+        "line": 5748,
+        "ns": "12797934375625",
+        "raw": -1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "WARM_ENTER": {
+        "line": 5749,
+        "ns": "12797934389844",
+        "raw": -1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "WARM_EXIT": {
+        "line": 5750,
+        "ns": "12797934401094",
+        "raw": -1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "FINISH_ENTER": {
+        "line": 5751,
+        "ns": "12797935453906",
+        "raw": 1,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "FINISH_EXIT": {
+        "line": 5752,
+        "ns": "12797972188594",
+        "raw": 37146,
+        "gl": 0,
+        "egl": 12288,
+        "error": -1,
+        "seal": -1
+      },
+      "MAP_ENTER": {
+        "line": 5753,
+        "ns": "12797972248125",
+        "raw": 1166976,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      "MAP_EXIT": {
+        "line": 5754,
+        "ns": "12797972265000",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": -1,
+        "seal": -1
+      },
+      "UNMAP_EXIT": {
+        "line": 5755,
+        "ns": "12797972274062",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": 0,
+        "seal": 6559303
+      },
+      "PREPARE_EXIT": {
+        "line": 5756,
+        "ns": "12797972475312",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": 0,
+        "seal": 6559303
+      },
+      "BOOT_AUDIT_OK": {
+        "line": 5757,
+        "ns": "12797972596094",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": 0,
+        "seal": 6559303
+      }
+    }
+  },
+  "coldProcessDeathLine": 1668,
+  "tail": {
+    "range": 7,
+    "byteOffset": 1166976,
+    "byteLength": 8,
+    "words": [
+      0,
+      6559303
+    ],
+    "wordsEncodedLE": "0000000047166400"
+  },
+  "cache": {
+    "earlierPersisted": {
+      "receipt": {
+        "path": "test/reports/t491/t738/rx-cache/97ef.jsonl",
+        "bytes": 10585,
+        "sha256": "ad3498a174b647f1a0e12e9b24b1598c93fb241a9f7d6d14459ebe3d9b831adb"
+      },
+      "wrappedBinary": {
+        "path": "test/reports/t491/t738/rx-cache/97ef.bin",
+        "bytes": 38109,
+        "sha256": "a25225b77da5919888326995e87c51b030582f08d4209e3441bd528fe8bc1c88"
+      },
+      "beginNs": 7268918322187,
+      "packageSource": "UNDECLARED",
+      "key": "97efd53b4ea1744fdc562e3c7f27de7765b94d0c752f519d57c372a31fe66bf9",
+      "binaryBytes": 37965,
+      "binarySHA": "6c916488e67bf46b5e431ef4354d35672aa85eb1f8330fdc5021b434dcf5bd60"
+    },
+    "warmBranch": "BINARY_LOAD_INFERRED_FROM_PROGRAM_FACTORY_AND_OBSERVED_STAGES",
+    "warmDirectReceipt": null,
+    "warmVendorWarningLines": [
+      5742,
+      5743
+    ],
+    "implementation": [
+      {
+        "path": "entry/src/main/cpp/gpu_resident/program_cache/program_factory.h",
+        "bytes": 19317,
+        "sha256": "e54021c8aa17764e3e87fe147f62a50c5b6c88b0f954a1895d5dfb007870f90e"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9_boot.h",
+        "bytes": 9345,
+        "sha256": "3e71d2f15c5c7fdd59407f1d4dbefe1c2e62ceaf690243747d830c2bf8474f14"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h",
+        "bytes": 18307,
+        "sha256": "404b26c03e0c7a4b5a8eda864d57175d85259ce86cce15d080436b67e6beb262"
+      }
+    ]
+  },
+  "source": {
+    "parent": {
+      "signedReceipt": {
+        "path": "test/reports/t257/T720-rx.json",
+        "bytes": 2274,
+        "sha256": "73f8ee4069296e79e5ec41acb586a5fd1b6a97abaca5f8f7efdbe1dd05c0154f"
+      },
+      "signedSHA": "3c6af26b32cd76e6d15f18447416ad5359dc4c1f1c1c37bc93875244f74fb051",
+      "librarySHA": "4b08d7635d7501ff0e23aa65ca60195ff5104e741394140bd376010706b72935",
+      "buildId": "27c55879e0bf46db946611ef87f4551b53e4c683",
+      "shaderSHA": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+      "shaderBytes": 146301
+    },
+    "role": {
+      "bytes": 41767,
+      "sha256": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+      "passSHA": "290ed82f9b220cc20ba44ce4d1160b05d6f3955e24eed7c74849f5c9680c3a9c"
+    },
+    "compilerSHA": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+    "reflection": {
+      "activeUniforms": {
+        "uAcceptedAngle": {
+          "glType": "0x1404",
+          "size": 1
+        },
+        "uArena": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uArenaGeneration": {
+          "glType": "0x8DC6",
+          "size": 1
+        },
+        "uBaseBank": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uBaseCommit": {
+          "glType": "0x8DC6",
+          "size": 1
+        },
+        "uBed": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uCandidateBank": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uColumn": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uCompletion": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uConfig": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uConfigId": {
+          "glType": "0x8DC6",
+          "size": 1
+        },
+        "uContext": {
+          "glType": "0x8DC6",
+          "size": 1
+        },
+        "uControls": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uDmBase": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uEventCapacity": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uFlow": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uGeometry": {
+          "glType": "0x8DC6",
+          "size": 1
+        },
+        "uInput": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uInputGeneration": {
+          "glType": "0x8DC6",
+          "size": 1
+        },
+        "uJslot": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uK": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uMicro": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uNonce": {
+          "glType": "0x8DC6",
+          "size": 1
+        },
+        "uOp": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uOriginAudit": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uOwner": {
+          "glType": "0x8DC6",
+          "size": 1
+        },
+        "uPacket": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uPass": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uPathCapacity": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uPathWord": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uPlan": {
+          "glType": "0x8DC6",
+          "size": 1
+        },
+        "uRequiredPasses": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uRole": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uRootKind": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uRun": {
+          "glType": "0x8DC6",
+          "size": 1
+        },
+        "uSession": {
+          "glType": "0x8DC6",
+          "size": 1
+        },
+        "uSources": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uStateWords": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uSummary": {
+          "glType": "0x1405",
+          "size": 1
+        },
+        "uSurface": {
+          "glType": "0x8DC6",
+          "size": 1
+        }
+      },
+      "blocks": {
+        "ReadState": 0,
+        "WriteState": 1,
+        "Workspace": 2,
+        "EventPath": 3
+      },
+      "localSize": [
+        64,
+        1,
+        1
+      ],
+      "groupsPerPass": [
+        1,
+        1,
+        1
+      ]
+    },
+    "originalNapiPage": {
+      "path": "entry/src/main/ets/pages/GpuResidentG9Rx.ets",
+      "bytes": 8818,
+      "sha256": "41ed19e22292e59339ea3123926ea1b816f51911f7a8551235d3fed6074bd999"
+    },
+    "input": {
+      "sourceId": "2",
+      "mass": "0.2",
+      "x": "64",
+      "y": "200",
+      "vx": "0",
+      "vy": "0"
+    },
+    "originalNativeIngress": {
+      "path": "entry/src/main/cpp/gpu_resident/g9rx/bridge.cpp",
+      "bytes": 33601,
+      "sha256": "91e3d3560c61ec0e5b531dcdd00e9f083d6a94f304c5d5058722afc773a3e1da"
+    },
+    "seedAndConfig": {
+      "path": "docs/architecture-T641-seed-config-v1.json",
+      "bytes": 4431,
+      "sha256": "a06cca6b3b8db27791e3866e8985981342d27f9ee743f7418f05bcde268caac2"
+    },
+    "seedTemplateSHA": "38625623e360557b2a62f92beab32260885b4016a17eaa506f6a73845eab1ab7",
+    "parameterSHA": "f7c133d23a49587c9905c6e5ac2e1d4739fe1271421446c9fd12a7791e62a858",
+    "inputMagic": 1481788999,
+    "inputRevision": 3,
+    "profileCode": 827477575,
+    "bodyWords64To76": [
+      2576980378,
+      1070176665,
+      0,
+      1078984704,
+      0,
+      1080623104,
+      0,
+      0,
+      0,
+      0,
+      2,
+      1,
+      63701
+    ],
+    "passes": [
+      {
+        "ordinal": 0,
+        "op": "SOURCE_INIT_BASE",
+        "programRole": "SOURCE",
+        "uRole": 0,
+        "uJslot": 0,
+        "uMicro": -1,
+        "bufferIndices": [
+          1,
+          2,
+          5,
+          6
+        ],
+        "beforeCopies": [
+          [
+            0,
+            1,
+            "stateBytes"
+          ]
+        ]
+      },
+      {
+        "ordinal": 1,
+        "op": "SOURCE_VALIDATE_INPUT",
+        "programRole": "SOURCE",
+        "uRole": 0,
+        "uJslot": 0,
+        "uMicro": -1,
+        "bufferIndices": [
+          0,
+          2,
+          5,
+          6
+        ]
+      },
+      {
+        "ordinal": 2,
+        "op": "SOURCE_DEDUP",
+        "programRole": "SOURCE",
+        "uRole": 0,
+        "uJslot": 0,
+        "uMicro": -1,
+        "bufferIndices": [
+          1,
+          2,
+          5,
+          6
+        ]
+      },
+      {
+        "ordinal": 3,
+        "op": "SOURCE_DECODE",
+        "programRole": "SOURCE",
+        "uRole": 0,
+        "uJslot": 0,
+        "uMicro": -1,
+        "bufferIndices": [
+          1,
+          2,
+          5,
+          6
+        ]
+      },
+      {
+        "ordinal": 4,
+        "op": "SOURCE_CREDIT",
+        "programRole": "SOURCE",
+        "uRole": 0,
+        "uJslot": 0,
+        "uMicro": -1,
+        "bufferIndices": [
+          1,
+          2,
+          5,
+          6
+        ]
+      },
+      {
+        "ordinal": 5,
+        "op": "SOURCE_PRIVATE_BIRTH",
+        "programRole": "SOURCE",
+        "uRole": 0,
+        "uJslot": 0,
+        "uMicro": -1,
+        "bufferIndices": [
+          1,
+          2,
+          5,
+          6
+        ]
+      },
+      {
+        "ordinal": 6,
+        "op": "SOURCE_ORIGIN_CERTIFICATE",
+        "programRole": "SOURCE",
+        "uRole": 0,
+        "uJslot": 0,
+        "uMicro": -1,
+        "bufferIndices": [
+          1,
+          2,
+          5,
+          6
+        ]
+      },
+      {
+        "ordinal": 7,
+        "op": "SOURCE_LEDGER",
+        "programRole": "SOURCE",
+        "uRole": 0,
+        "uJslot": 0,
+        "uMicro": -1,
+        "bufferIndices": [
+          1,
+          2,
+          5,
+          6
+        ]
+      },
+      {
+        "ordinal": 8,
+        "op": "SOURCE_AUDIT_REPLAY",
+        "programRole": "SOURCE",
+        "uRole": 0,
+        "uJslot": 0,
+        "uMicro": -1,
+        "bufferIndices": [
+          0,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "ordinal": 9,
+        "op": "SOURCE_COMPARE",
+        "programRole": "SOURCE",
+        "uRole": 0,
+        "uJslot": 0,
+        "uMicro": -1,
+        "bufferIndices": [
+          2,
+          4,
+          5,
+          6
+        ],
+        "afterCopies": [
+          [
+            6,
+            7,
+            "arenaBytes"
+          ],
+          [
+            6,
+            8,
+            "arenaBytes"
+          ]
+        ]
+      },
+      {
+        "ordinal": 10,
+        "op": "SOURCE_PACK_SCENE",
+        "programRole": "SOURCE",
+        "uRole": 0,
+        "uJslot": 0,
+        "uMicro": -1,
+        "bufferIndices": [
+          1,
+          2,
+          5,
+          6
+        ]
+      },
+      {
+        "ordinal": 11,
+        "op": "SOURCE_SEAL",
+        "programRole": "SOURCE",
+        "uRole": 0,
+        "uJslot": 0,
+        "uMicro": -1,
+        "bufferIndices": [
+          1,
+          2,
+          5,
+          6
+        ]
+      }
+    ],
+    "expected": {
+      "kind": 1,
+      "ordinal": 0,
+      "angleIndex": 0,
+      "positiveBodyValues": [
+        0.2,
+        64.0,
+        200.0,
+        0.0,
+        0.0
+      ],
+      "baseMassQ": 5368709120,
+      "admittedQ": 209715,
+      "finalMassQ": 5368918835,
+      "packetSlot": 0,
+      "packetId": 1,
+      "packetGeneration": 1,
+      "origin": 2,
+      "xQ20": 67108864,
+      "y2Q21": 419430400,
+      "column": 64,
+      "eventKinds": [
+        1,
+        3,
+        14
+      ],
+      "pathCount": 0,
+      "audits": 65535,
+      "outcome": 1,
+      "commitDelta": 1,
+      "quantaDelta": 0,
+      "gpuDispatches": 12,
+      "nativeDispatchBarriers": 12,
+      "hostCopyBarriersSeparate": 3
+    },
+    "runtimeResult": "NOT_RUN"
+  }
+}
