@@ -1,0 +1,386 @@
+{
+  "schema": "T731_G13_VULKAN_SAME_DEVICE_CHECKLIST_V1",
+  "date": "2026-11-20",
+  "document": "docs/architecture-T731-v1.md",
+  "role": "architect",
+  "deviceUsed": false,
+  "backendSelected": false,
+  "sdk": {
+    "version": "26.0.0.38",
+    "apiLevel": 26,
+    "vulkanHeaderRevision": 309,
+    "path": "C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native",
+    "auditedSdkFiles": {
+      "oh-uni-package.json": "ba7cc22a9a1953f63f98ee5547b5a6ffd4aa4559c6b5a082b6b71f04b07f77be",
+      "sysroot/usr/include/vulkan/vulkan.h": "007bc01393374df45208b4049c92ce4893c1f1d532ba382ad727b09bac401c0b",
+      "sysroot/usr/include/vulkan/vulkan_ohos.h": "d9bbe5e9400109964e11af3ddea944d19f9f8b9fcb360356780a9ccf6c2ed874",
+      "sysroot/usr/include/vulkan/vulkan_core.h": "431293dbe0f3760c8f190bab10b91334151f27e216b23e6a80194e0233afe494",
+      "sysroot/usr/lib/aarch64-linux-ohos/libvulkan.so": "eb8a8b57af948f3784ebfd1f7d284aa9d1783a01d2590e9ed05803dbfdb00691",
+      "sysroot/usr/include/ace/xcomponent/native_interface_xcomponent.h": "addb20eaa42b6b7b107d05a759415920555020d31c5458264cc6d0e7377e653d"
+    },
+    "arm64LinkProbe": {
+      "target": "aarch64-linux-ohos",
+      "exit": 0,
+      "configureMacro": "VK_USE_PLATFORM_OHOS",
+      "tested": [
+        "vkGetInstanceProcAddr",
+        "vkCreateSurfaceOHOS"
+      ],
+      "dtNeeded": [
+        "libvulkan.so",
+        "libc.so"
+      ],
+      "executed": false
+    },
+    "targetDeviceRuntimeSupport": "UNKNOWN_REQUIRES_PROBE"
+  },
+  "baseline": {
+    "t728ParentReceipt": "test/reports/t728/parent.json",
+    "glesDeploymentReceipt": "test/reports/t729/deployment.json",
+    "frozenMeasurementContract": "docs/architecture-T727-measurement-v1.json",
+    "glesT730": {
+      "monolith": {
+        "signedSha": "89be7cc551acd3f1daf2e6ecd6cf1a46f69d453d5ede3092b2bbbcde72251f35",
+        "expectedBuildId": "7c64adb33546ba1a24e8aca89e078b671830996a",
+        "original": "test/reports/t491/t730b/v1-mono-arm.json",
+        "ticket": "177",
+        "state": "REPORTED_EXIT_WITHOUT_COMPILE_RETURN_CAUSE_UNKNOWN"
+      },
+      "split": {
+        "signedSha": "707a751ba458693b394a71fa14ad80890768e18b67ead016c0a8a78416bbe8be",
+        "expectedBuildId": "a9363c84680c230ac8ecfe92d594d7c8e5889146",
+        "original": "test/reports/t491/t730b/split-diag-0.json",
+        "ticket": "209",
+        "observedElapsedNs": "45706762188",
+        "state": "SHADER_COMPILE_ENTER_AT_SNAPSHOT_ROLE_UNOBSERVED"
+      },
+      "v2NarrowCacheEvidence": {
+        "cacheOriginal": "test/reports/t491/t730b/split-cache/856a-warm.jsonl",
+        "cacheOriginalSha256": "3d0a08f6c22a5f032c1ce2c8b3dcf5d91af45573d9261ab59f1899f9d5bd1cd9",
+        "actualShaderSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+        "genericRole": "G13_COMPUTE",
+        "packageSource": "UNDECLARED",
+        "cacheShaderRole": "BOOT",
+        "coldCompilePhaseNs": "49849941875",
+        "coldLinkPhaseNs": "66635296562",
+        "coldBuildPhaseNs": "116490666094",
+        "warmLoadPhaseNs": "5645000",
+        "warmBuildPhaseNs": "10259063",
+        "persistedBinaryBytes": 301961,
+        "sameBinarySHA": "0aea76cdefc7d408736d66c005d2f3dbbd609d0ec493dea6faae1a12f186f769",
+        "sameBinaryProvenByReceipts": true,
+        "coldTicket": "209",
+        "warmQueueSnapshotTicket": "1843",
+        "latestConfigState": "CONFIG_FAILED_INIT_ERROR_27",
+        "bootReadyProven": false,
+        "allSixRolesSucceeded": false,
+        "firstValidSwap": "NOT_REACHED",
+        "formalColdWarmScope": "NEEDS_LOADED_PID_AND_ORIGINAL_CACHE_INIT_TICKET_JOIN"
+      },
+      "actualDeviceMappingProvenInTheseOriginals": false
+    }
+  },
+  "generatedShaderAudit": {
+    "type": "TEMPORARY_INTERFACE_COMPILE_ONLY",
+    "compilerSha": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+    "compilerArgs": [
+      "-V",
+      "--target-env",
+      "vulkan1.1",
+      "-S",
+      "<stage>",
+      "-o",
+      "<output>",
+      "<input>"
+    ],
+    "untouchedGlesBootExit": 2,
+    "variant": {
+      "testHooks": false,
+      "explicitBindingManifestRequired": true
+    },
+    "sourceByteLimit": 49152,
+    "derivedSpirvBytesReportedSeparately": true,
+    "directSpirvByteLimit": 49152,
+    "roleConditions": {
+      "firstBoot": [
+        64,
+        65,
+        66
+      ],
+      "perRoleFP32PrivateOpcode": 66,
+      "sourcePasses": 16,
+      "quantumPasses": 820,
+      "computeDescriptorSet0": [
+        "0:Base-readonly",
+        "1:Candidate",
+        "2:Work",
+        "3:Control",
+        "4:Layout-UBO-std140-u32[80]-stride16"
+      ],
+      "computeDispatchPushWords": [
+        "uOp",
+        "uScope",
+        "uJ",
+        "uMicro",
+        "uBlock",
+        "uIndex"
+      ]
+    },
+    "roles": [
+      {
+        "role": "BOOT",
+        "stage": "comp",
+        "glesBytes": 23834,
+        "vulkanSourceBytes": 23930,
+        "vulkanSourceSHA": "f57ed2211096041da2c166752b84dde9bb372225c8c636839332c27258385648",
+        "exit": 0,
+        "spirvBytes": 116460,
+        "spirvSHA": "0ff48ae40ed3dfea1cd271f5c03e4eee34de002ed43899ec8f4a82f39648251d",
+        "glesSourceSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+        "opcodes": [
+          64,
+          65,
+          66
+        ]
+      },
+      {
+        "role": "OP_00",
+        "stage": "comp",
+        "glesBytes": 48759,
+        "vulkanSourceBytes": 48855,
+        "vulkanSourceSHA": "5e370fa9e2dbaba0b40d0b12ef964614b10a30091c088e92780c8ecf4c2d8f6d",
+        "exit": 0,
+        "spirvBytes": 261308,
+        "spirvSHA": "b695c80a12119cf913c68d798b75ba7d9b08b85db96d4a1af5986420b012a0e8",
+        "glesSourceSHA": "617adf29a80f7fb7e8e3c8ca18df9f0604f7081ff1d319701ad73cb099cda7ea",
+        "opcodes": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          50
+        ]
+      },
+      {
+        "role": "OP_18",
+        "stage": "comp",
+        "glesBytes": 48612,
+        "vulkanSourceBytes": 48708,
+        "vulkanSourceSHA": "e1677443e349f7ddda33fae1d05eff9cecf4145d022c86a5e97f5fdd80885e21",
+        "exit": 0,
+        "spirvBytes": 262976,
+        "spirvSHA": "358011bec50b65ba18c14137f9c9264bbcfe571106cb726b23686c9275683872",
+        "glesSourceSHA": "e9ff05a22fca32361ce24312f824d4c811e13ed08611c35d6ffa7b98d8e2e5eb",
+        "opcodes": [
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36
+        ]
+      },
+      {
+        "role": "OP_37",
+        "stage": "comp",
+        "glesBytes": 48445,
+        "vulkanSourceBytes": 48541,
+        "vulkanSourceSHA": "231cab1661762d9e9a897c8a2644784981bd1a7fb8be1d440e0e53c1403760e5",
+        "exit": 0,
+        "spirvBytes": 261828,
+        "spirvSHA": "e807763016098872ca23a5bb002aa9bc8ebe55f358afad4f2405f06bc807586d",
+        "glesSourceSHA": "fb0ff4fce8e3ad0ddc10fedb5f220088a1d480610dc8d7880d3e8f470e3ef516",
+        "opcodes": [
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          51,
+          52,
+          53
+        ]
+      },
+      {
+        "role": "OP_48",
+        "stage": "comp",
+        "glesBytes": 48577,
+        "vulkanSourceBytes": 48673,
+        "vulkanSourceSHA": "21e3efca5e5a5f5b7f8724afb5578119ee68f658b589bf641e8ff37aa1b4fc14",
+        "exit": 0,
+        "spirvBytes": 255756,
+        "spirvSHA": "38a1dba3e71384b22627d0b13afe4795b9cc5ca5d9e0746bb07e3f1d05d349a1",
+        "glesSourceSHA": "840391626a47625a537dfad19d32887c78db88f2f6afd522f2c34f522791c974",
+        "opcodes": [
+          48,
+          49,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61
+        ]
+      },
+      {
+        "role": "OP_62",
+        "stage": "comp",
+        "glesBytes": 11458,
+        "vulkanSourceBytes": 11554,
+        "vulkanSourceSHA": "8a6d5757943303bff280be267326e3a85156ec9ff8127159ea3839738da15997",
+        "exit": 0,
+        "spirvBytes": 49556,
+        "spirvSHA": "6daa6a042b58cc63a136c9c1c0e3cd00392a16e95da0642627f87948b2bb9bd4",
+        "glesSourceSHA": "0d4a77c880ec1fe2f140683032c2683aa56ae2ee266c43ff95dfce6e8b0bb340",
+        "opcodes": [
+          62,
+          63
+        ]
+      },
+      {
+        "role": "scene.vert",
+        "stage": "vert",
+        "glesBytes": 1674,
+        "vulkanSourceBytes": 1707,
+        "vulkanSourceSHA": "258b692b68b2ce1b2127f7e9fffc03cffebcaf9523302cca786a6c7f2ee703fc",
+        "exit": 0,
+        "spirvBytes": 8888,
+        "spirvSHA": "7ac25d348c5691170d1b1cfd362889adad805fc9467cc60426f015a8e6d068d2",
+        "glesSourceSHA": "478d2e92204468435279f83adefccbe9ea30cbe9fea6f712d85a6b3dde43b44b",
+        "opcodes": []
+      },
+      {
+        "role": "scene.frag",
+        "stage": "frag",
+        "glesBytes": 1517,
+        "vulkanSourceBytes": 1659,
+        "vulkanSourceSHA": "6b44accf958af41a71b3f7120def81ffc31f7040d978c969ce5d7febada77f67",
+        "exit": 0,
+        "spirvBytes": 8604,
+        "spirvSHA": "613b2c89c9752e39a4a21f3f9e5425cb0b323edc77d913124a220ffb5c621b37",
+        "glesSourceSHA": "c9cdc98f3f6d10643b808484cab4b9410e3ebadbb383062e218383acf9e31da9",
+        "opcodes": []
+      }
+    ],
+    "independentSpirvValidation": "REQUIRED_ON_IMPLEMENTATION",
+    "numericalResult": "NOT_RUN",
+    "devicePipelineCreation": "NOT_RUN"
+  },
+  "deviceProbe": [
+    {
+      "id": "P0",
+      "purpose": "Loader, enabled features and target surface support",
+      "evidence": [
+        "mapped loader identity and instance/device raw results",
+        "API/driver/physical ID and cache UUID",
+        "required enabled surface and swapchain extensions",
+        "compute+graphics+surface-present queue family",
+        "actual limits, memory, formats and FP32 capabilities"
+      ]
+    },
+    {
+      "id": "P1",
+      "purpose": "Real XComponent surface and present diagnosis",
+      "evidence": [
+        "window ref and generation",
+        "actual surface/format/extent/transform",
+        "acquire/submit/actual present result and screenshot",
+        "diagnostic frame distinct from accepted-root frame"
+      ]
+    },
+    {
+      "id": "P2",
+      "purpose": "BOOT and first complete nonzero root",
+      "evidence": [
+        "same REST initial bytes and both FP32 rounds",
+        "same nonzero config/seed/input and original publish/audit",
+        "actual pipeline create and first dispatch stages",
+        "T721/T631 raw oracle and associated archive",
+        "first successful same-token PRESENT and actual image"
+      ]
+    },
+    {
+      "id": "P3",
+      "purpose": "Retirement and stale/negative cases",
+      "evidence": [
+        "resize, background, stop, surface/device loss and stale completion",
+        "separate GPU and WSI retirement proofs",
+        "one present wait semaphore per swapchain image",
+        "independent timestamps, timing end and original process termination cause if known"
+      ]
+    }
+  ],
+  "comparison": {
+    "arms": [
+      "G13_GLES_SPLIT_APP_COLD",
+      "G13_GLES_SPLIT_WARM_NEW_PROCESS_IF_PERSISTED",
+      "G13_VULKAN_APP_COLD",
+      "G13_VULKAN_WARM_NEW_PROCESS_IF_PERSISTED"
+    ],
+    "match": [
+      "same physical device and OS",
+      "same input bytes",
+      "same source/layout/role identity",
+      "same XComponent experiment conditions",
+      "approved observation budgets"
+    ],
+    "vkCacheUse": [
+      "vkGetPipelineCacheData actual save",
+      "vendorID, deviceID, pipelineCacheUUID, driver and pipeline identity",
+      "valid APPLICATION_PIPELINE_CACHE_HIT feedback or UNKNOWN",
+      "rejected cache empty retry once"
+    ],
+    "presentSuccessRawVkResult": 0,
+    "glReader": "test/t729/measure.py",
+    "vulkanReaderNeeded": true,
+    "appearance": "screenshot or recording plus accepted token and real present trace",
+    "expandOnlyAfter": [
+      "original oracle",
+      "improved cold start with failures included",
+      "same-token valid actual presentation",
+      "steady 30 valid FPS"
+    ]
+  },
+  "handoff": {
+    "developer": "Isolated fixed G13 roles, selected backend, real Vulkan pipelines and native compilation",
+    "tester": "Offline SPIR-V validation/reflection, warmed cache/present negative controls, independent reader & signing",
+    "effector": "Device serial execution and true first-frame/retirement originals",
+    "architect": "Use T730 and same-scope originals to choose next branch"
+  },
+  "state": "ARCHITECTURE_READY_DEVICE_AND_IMPLEMENTATION_NOT_RUN"
+}
