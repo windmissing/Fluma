@@ -100,3 +100,30 @@ ACTUAL_GL_EXECUTION（Maleoon 935F/k192）→ CREATE result=8，driver
   DM 族 T715 尚未含 readonly 变换——**developer 将 T716 RX 同型变换套到
   g9dm 族即对齐**
 - 设施全就绪（ELF/so/输入/预算），每轮即测
+
+
+## v6 追加（2026-11-20 12:59，effector；T718 DM readonly 归一化包验证——编译进行中如实）
+
+日期：2026-11-20，真机。被测：T718-dm-signed（db5fb893 readonly 归一化，
+inputSha 19e75d78→signed cb636553，sign=PASS）+T718 ELF/so 刷新设备。
+证据：`test/reports/t491/t712b/`（dm20-t718.jsonl 0B 原件、v4-t718.json、
+utime 采样）。
+
+### 执行链
+
+g9_dm_differential（T718 构建）+libgrs_dm_t647（5204264B）→ driver 存活
+R(running) 状态，utime 持续推进（185k/155k/125k ticks/200s）——**编译进行
+中**，execution.jsonl 0B（未出 CREATE），无崩溃无退出。
+
+### 判定
+
+- T718 readonly 归一化输入被编译器**接受至今**（无新 S0001 浮出，编译
+  持续）——结果待编译完成
+- **260KB 族编译墙时成为 RX/DM/G13 三族共同最后门**：RX UI 存活 >240s、
+  DM driver CPU 活跃 >900s、G13 UI 退出 >90s
+- Create/READY 如实 NOT_REACHED（编译进行中非失败）
+
+### 回执
+
+worker/分段编译容忍已在 architect/developer 域；下一扫采样
+execution.jsonl 于编译完成后出 CREATE result。
