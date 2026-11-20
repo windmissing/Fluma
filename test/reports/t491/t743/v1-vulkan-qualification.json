@@ -1,0 +1,43 @@
+{
+ "revision": "T743_V1_VULKAN_BOOT_QUALIFICATION_V1",
+ "date": "2026-11-20 22:50",
+ "package": {
+  "task": "T743-vk (T742 Vulkan BOOT probe, 2294c5c8)",
+  "inputSha": "96ac13bf (rebuilt, receipt-identical)",
+  "signedSha": "bdc2a7bc",
+  "sign": "PASS",
+  "buildId": "e7b5586e (mapped verified)",
+  "native": "libgrs_g13vk_boot.so 394248B"
+ },
+ "device": {
+  "name": "Maleoon 935F",
+  "vendorId": 6629,
+  "deviceId": 537137152,
+  "loaderApi": 4206901,
+  "instanceApi": 4202496,
+  "effectiveApi": 4202496
+ },
+ "T741_ThreeFP32Properties": {
+  "shaderDenormPreserveFloat32": 0,
+  "shaderRoundingModeRTEFloat32": 1,
+  "shaderSignedZeroInfNanPreserveFloat32": 1,
+  "denormIndependence": 1,
+  "roundingIndependence": 1,
+  "interpretation": "Vulkan side CONFIRMS denormals NOT preserved (FTZ=0) but rounding RTE and signed-zero/Inf/NaN preservation ARE supported \u2014 same precision domain as GLES op65/op66 rejections; FTZ is a hardware/compiler property, not a GLES-specific driver bug"
+ },
+ "result": {
+  "state": "FAILED",
+  "stage": "PHYSICAL_DEVICE_QUALIFICATION",
+  "detail": "NO_ELIGIBLE_PHYSICAL_DEVICE",
+  "ticket": "1",
+  "surfaceCreated": true,
+  "instanceExtensions": [
+   "VK_KHR_surface",
+   "VK_OHOS_surface"
+  ],
+  "devicesEnumerated": "1 (Maleoon 935F)"
+ },
+ "noEligibleAnalysis": "device enumerated but probe pipeline not eligible \u2014 pipeline creation/fence/op65-66 readback NOT reached (device failed eligibility pre-checks); per card contract \"if not qualified keep original rejection\" = GLES rejection STANDS, no product backend switch",
+ "evidence": "vk-diag-1.json full original (pid 49047/processStartTick 2380458/ownerTid 49291/mappedBuildId e7b5586e/moduleSHA cb82cd06/sourceSHA 8b688c5b parentSourceSHA a93aecf8=BOOT source); GLSL 24160B and derived SPIR-V 116688B registered in original",
+ "conclusion": "Same-device Vulkan probe answers T741: denormal FTZ confirmed at hardware/compiler level (shaderDenormPreserveFloat32=0) \u2014 GLES op65 +53 flush consistent cross-API; G13 BOOT gate MUST-PASS cannot be met on this device without design decision (FTZ-safe vectors or gate relaxation)"
+}
