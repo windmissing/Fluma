@@ -1,0 +1,37 @@
+{
+  "records": 0,
+  "findings": [
+    {
+      "line": 1,
+      "sha256": "52db36999e9c56dc6e03eb2e3f64eae1a59eed00e57318d7ce88873a433a899a",
+      "issue": "INVALID_RECORD_JSON",
+      "error": "Expecting ',' delimiter: line 1 column 27 (char 26)"
+    },
+    {
+      "line": 2,
+      "sha256": "ba86d1b66e41f331542901cedbe74bb1a8213c2ef4283caee25de05822cc6110",
+      "issue": "INVALID_RECORD_JSON",
+      "error": "Expecting ',' delimiter: line 1 column 28 (char 27)"
+    },
+    {
+      "line": 3,
+      "sha256": "d361914a6b2370333a46ffed78fa86cdbe9c51aba8bc98991780dd7b70bd7bc8",
+      "issue": "INVALID_RECORD_JSON",
+      "error": "Expecting ',' delimiter: line 1 column 28 (char 27)"
+    },
+    {
+      "line": 4,
+      "sha256": "2df9dbf204c7d6ce3f827e19d084d73ddf2f809ef25c144b1c1016739da806c6",
+      "issue": "INVALID_RECORD_JSON",
+      "error": "Expecting ',' delimiter: line 1 column 28 (char 27)"
+    },
+    {
+      "line": 5,
+      "sha256": "37b657948200e5ce812cb583c51f09b19ab026648cbdacb33bf146a34fb61130",
+      "issue": "INVALID_RECORD_JSON",
+      "error": "Expecting ',' delimiter: line 1 column 29 (char 28)"
+    }
+  ],
+  "scope": "LEGACY_PROBE",
+  "productPASS": false
+}
