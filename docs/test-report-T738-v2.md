@@ -40,3 +40,24 @@ RX PERSISTED bin（38109B）footer="spirv-binary"+pad；0x641647 于偏移
 
 BOOT-only **不宣称产品 READY/首根/有效帧**（卡面明示）；PERSISTED 后
 新进程暖载入与资源退役已具备条件（RX T475 已落盘）。
+
+
+## v3 追加（2026-11-20 19:45，effector；接续项完成——PID/映射/新进程暖证）
+
+**RX 冷轮**（pid 43774，实际映射 BuildId f23b8bd6 hilog 验证）：19 阶段
+全链（BUILD→COMPILE→LINK→REFLECT→ROOT_INIT→MAP→WARM→BOOT_AUDIT_OK→
+FINISH），总时长 637.3ms。
+
+**RX 新进程暖证**（pid 45505，force-stop 后全新进程）：阶段链
+ENQUEUED→OWNER_SEEN→CACHE_PRELOAD→APPLY→BOOT_AUDIT_OK——**无
+SHADER_COMPILE/LINK（缓存命中）**，总时长 **186.3ms**（暖比冷快 3.4x），
+同映射 BuildId——**新进程暖命中确认**。
+
+**DM 复跑**（dm20-out7）：CREATE_EXIT result=1638 BOOT_AUDIT_OK 复现；
+driver execution.jsonl 尚无 pid/start/映射 BuildId 字段（插桩待
+developer 补），证据来源 ACTUAL_GL_EXECUTION 保持。
+
+**口径修正（接受）**：260KB 死/49KB 过为两点观测，单变量"大小唯一根因"
+需中间尺寸探针——与次正规 FTZ 决策一并归 architect。
+
+8B 尾 [0,0x641647] 语义仍待 T734 规范核。
