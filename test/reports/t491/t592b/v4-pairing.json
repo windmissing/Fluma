@@ -1,0 +1,48 @@
+{
+ "revision": "T592_V4_PAIRING_EVIDENCE_DEVICE_V1",
+ "date": "2026-11-20",
+ "package": {
+  "task": "T592-pairing (T681 closed 08:19, t681-source-release fresh tree)",
+  "inputSha": "176461c3",
+  "signedSha": "9fb4c621"
+ },
+ "t681_delivery": "T680_PREPARE_PAIRING_EVIDENCE_V1 live on device",
+ "observed": {
+  "status": "INCOMPLETE",
+  "gate": {
+   "session": "s1795137619208-1",
+   "pageGeneration": 1,
+   "prepareId": 1,
+   "observationSerial": 21,
+   "state": "PREPARING",
+   "reason": "WAIT_OBSERVATIONS"
+  },
+  "raster": {
+   "geometry": 9,
+   "generation": 7,
+   "native": {
+    "geometry": 7,
+    "packetWidth": 1154,
+    "packetHeight": 1644
+   }
+  },
+  "keyboard": {
+   "configuration": "TESTER_CONFIRMED_FIXED_SYSTEM_KEYBOARD",
+   "height": 1099,
+   "areaSeen": true
+  },
+  "missingFields": [
+   "raster.frameAnchorNs"
+  ],
+  "truncatedFields": [],
+  "sources": {
+   "gate": "SAME_CALL_SUPER_REPORT",
+   "owner": "SAME_CALL_OWNER_COPY",
+   "geometry": "ARKTS_PACKET",
+   "viewport": "NATIVE_GET_STATE",
+   "branch": "UNKNOWN_NO_OWNER"
+  }
+ },
+ "exactMismatchPair": "raster.geometry=9 vs raster.native.geometry=7 confirmed inside T681 DTO",
+ "interpretation": "T681 pairing-evidence DTO verified on device; T671 parser can consume; HOLD prerequisites complete"
+}

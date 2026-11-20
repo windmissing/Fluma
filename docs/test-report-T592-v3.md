@@ -51,3 +51,26 @@ PREPARE_TIMEOUT:KEYBOARD_VISIBILITY_UNKNOWN——另一次运行的拒因，键�
 回 architect：native 侧 geometry ack 路径（9→7 滞后）为精确工程域；按 T664
 警示不盲目改 publishRaster 推进策略（geometry-only 反馈回避），由
 architect→developer 精确分流。
+
+
+## v4 追加（2026-11-20，effector；T681 pairingEvidence 设备验证）
+
+日期：2026-11-20，真机。被测：T592-pairing-signed（T681 t681-source-release
+全新树，inputSha 176461c3→signed 9fb4c621，sign=PASS）。证据：
+`test/reports/t491/t592b/`（t681-PREPARING-21.json、v4-pairing.json）。
+
+### T681 配对证据 DTO 设备验证成立
+
+同 attempt 冷导出现在携带结构化有界摘要 `T680_PREPARE_PAIRING_EVIDENCE_V1`：
+- **精确失配对在 DTO 内重现**：raster.geometry=9 vs raster.native.geometry=7
+  （T680 字段锁定被 T681 结构化证据复现）
+- sources 策略显式：geometry=**ARKTS_PACKET**（非 native ack，T680/T691 归因
+  一致）、gate=SAME_CALL_SUPER_REPORT、owner=SAME_CALL_OWNER_COPY
+- missingFields=['raster.frameAnchorNs']、truncatedFields=[]、INCOMPLETE 诚实
+  （lastFrame NOT_EVALUATED）
+- 键盘域：TESTER_CONFIRMED_FIXED_SYSTEM_KEYBOARD/height=1099/areaSeen=true
+
+### 判定
+
+T681 修复设备验证成立（有界配对证据摘要按 T680 §4 全域实现）；T671 离线
+解析器可消费结构化 pairingEvidence；HOLD 链前置齐备。
