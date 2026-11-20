@@ -12,7 +12,7 @@ Create an explicit JSON policy; all three user baseline strings are required (em
 python tools/build/owned_build.py configure <policy.json> <fresh-build>
 python tools/build/owned_build.py prepare-link <policy.json> <build> grs_cold_slots
 <explicit-ninja.exe> -C <build> grsT666Consumer
-python tools/build/build_receipt.py <build> <receipt-directory>
+python tools/build/build_receipt.py <build> <receipt-directory> --static-artifact-only
 ```
 
 For the actual App source tree, `source` can name its native CMake directory and Ninja can build the actual App target after the same target-limited patch. `broker_compile` provides a compile/link-only consumer of all eight real repository broker ABI symbols; it is never loaded.
@@ -24,3 +24,17 @@ The first configure requires a fresh directory. A later configure requires the s
 The complete driver flags/objects/search paths/libraries remain in order in UTF8-no-BOM LF rsp. Known path operands are canonicalized separately from rsp quoting. The launcher verifies compiler/rsp identity, records `clang -### @rsp` diagnostics, then links with `shell=False` and one `@absolute-path` argument. It does not expand the full command back into cmd. Stable manifests are not rewritten, preserving incremental no-work behavior. Configure/prepare/build must be serialized for one build directory; independent sessions use distinct directories.
 
 Receipts contain original and effective argv, original command, cwd, flag provenance, toolchain/compiler/linker hashes, complete rsp SHA, source/object hashes, ELF/SONAME/BuildId and consumer DT_NEEDED. Historical polluted caches stay intact. No change to FP/physical gates; relaxing fast-math/contract definitions is rejected.
+
+For a receipt that attributes results to the current invocation, start with a
+fresh directory. The recorder runs the broker consumer build and prints the
+sealed manifest path. Use `--incremental` to also observe configure replay,
+Ninja no-work, a response-file-only relink, and a second no-work invocation.
+
+```text
+python tools/build/build_invocation.py <policy.json> <fresh-build> --incremental
+python tools/build/build_receipt.py <build> <receipt-directory> --invocation-manifest <printed-manifest>
+```
+
+Keep the build directory and invocation history together. The receipt checks
+the recorded child commands, original streams, and current artifact closure.
+Static mode inspects artifacts without claiming compile or incremental results.

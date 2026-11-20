@@ -3,6 +3,7 @@ No SDK mutation, shell invocation, product execution, or generic token deduplica
 """
 from pathlib import Path
 import ctypes,hashlib,json,os,subprocess,sys,re
+from build_invocation import native_call
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def write(p,s):
@@ -51,7 +52,7 @@ set(GRS_EXPECTED_{kind} "${{_grs_result_{kind}}}" CACHE INTERNAL "T666 one evalu
  defs=p.get('definitions',[])
  if any(not isinstance(x,str) or not x.startswith('-D') or x.startswith(('-DCMAKE_TOOLCHAIN_FILE=','-DCMAKE_SHARED_LINKER_FLAGS=','-DCMAKE_MODULE_LINKER_FLAGS=','-DCMAKE_EXE_LINKER_FLAGS=')) for x in defs):raise ValueError('UNKNOWN_OR_DUPLICATE_POLICY_DEFINITION')
  argv=[p['cmake'],'-S',str(Path(p['source']).resolve()),'-B',str(build),'-G','Ninja','-DCMAKE_TOOLCHAIN_FILE='+wrapper.as_posix(),'-DCMAKE_MAKE_PROGRAM='+p['ninja'],'-DCMAKE_EXPORT_COMPILE_COMMANDS=ON',*defs]
- result=subprocess.run(argv,cwd=p['source'],capture_output=True,shell=False)
+ result=native_call(argv,p['source'])
  write(build/'grs-configure.stdout',result.stdout.decode('utf8',errors='replace'));write(build/'grs-configure.stderr',result.stderr.decode('utf8',errors='replace'))
  record['configureArgv']=argv;record['cwd']=p['source'];record['configureReturnCode']=result.returncode;write(marker,json.dumps(record,indent=2)+'\n')
  if result.returncode:raise RuntimeError('CMAKE_CONFIGURE_FAILED '+str(build/'grs-configure.stderr'))
@@ -90,7 +91,9 @@ def prepare_target(policy,build,target):
   return existing
 
  # CMake/Ninja itself expands response content in compdb (-x); do not guess objects.
- compdb=json.loads(subprocess.check_output([p['ninja'],'-t','compdb','-x'],cwd=build))
+ compdb_result=native_call([p['ninja'],'-t','compdb','-x'],build)
+ compdb_result.check_returncode()
+ compdb=json.loads(compdb_result.stdout)
  selected=[x for x in compdb if Path(x.get('output','').replace(chr(92),'/')).name=='libgrs_cold_slots.so' and re.search(r'-shared\s',x.get('command',''))]
  if len(selected)!=1:raise ValueError('LINK_PRODUCER_NOT_UNIQUE')
  entry=selected[0];argv=native_driver(entry['command']);original=list(argv)

@@ -1,0 +1,32 @@
+{
+  "schema": "T700_OWNED_NATIVE_RECEIPT_V1",
+  "mode": "INVOCATION_BOUND",
+  "invocation": "aa0c3974be514908b2dcc458b3a5df35",
+  "manifestSHA256": "f89d6e54390682ab9ee52532b86f49ef4d46b8cde9c81f7860afe661212911eb",
+  "observedSteps": {
+    "configure": "OBSERVED",
+    "prepare-link": "OBSERVED",
+    "initial": [
+      "COMPILE_OBSERVED",
+      "LINK_OBSERVED"
+    ],
+    "reconfigure": "OBSERVED",
+    "reprepare-link": "OBSERVED",
+    "no-work": "INCREMENTAL_NO_WORK",
+    "rsp-relink": "EXPECTED_RSP_RELINK",
+    "repeat": "INCREMENTAL_NO_WORK"
+  },
+  "elf": "ea65b651983b32470752480268e28ee8c83aeed6cc9860a51c16487afc8e8b9a",
+  "buildId": "653f5cb3e9470547254579fdb0fbf73d9d32d7d9",
+  "consumer": {
+    "sha256": "9ce2dd9de0e02b57e86240ba42d294945dec828df6d44058ec434bcc5bf24c2b",
+    "needed": [
+      "libgrs_cold_slots.so",
+      "libc++_shared.so",
+      "libc.so"
+    ]
+  },
+  "testsRun": false,
+  "deviceUsed": false,
+  "productExecuted": false
+}
