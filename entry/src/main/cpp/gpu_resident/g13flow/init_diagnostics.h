@@ -2,6 +2,7 @@
 #include "../program_cache/mapped_build_id.h"
 #include "../program_cache/program_observer.h"
 #include "wire.h"
+#include <GLES3/gl31.h>
 #include <cstdio>
 #include <cstring>
 #include <hilog/log.h>
@@ -58,6 +59,15 @@ struct InitPayload {
   std::array<uint8_t, 4096 - sizeof(InitControl)> pad{};
 };
 static_assert(sizeof(InitPayload) == 32768);
+struct BootReadback {
+  bool controlRead = false, mathRead = false;
+  uint32_t seal = 0, tailError = 0;
+  GLenum fence = 0, firstGl = 0;
+  int64_t mathReadGl = -1;
+  const char *sourceSHA = "";
+  std::array<uint32_t, 16> fp32{};
+  std::array<uint32_t, 5> math{};
+};
 inline void LogFirstFrameStage(const InitStage &row, const ConfigTicket &ticket) {
   const std::string_view phase(row.phase);
   if (phase != "PROGRAM_BUILD" && phase != "SHADER_COMPILE" &&
@@ -66,7 +76,9 @@ inline void LogFirstFrameStage(const InitStage &row, const ConfigTicket &ticket)
       phase != "CACHE_BINARY_LOAD" && phase != "COMPUTE_READY" &&
       phase != "FIRST_VALID_SWAP" && phase != "OWNER_EXCEPTION" &&
       phase != "CONFIG_CANCELLED" && phase != "BOOT_READY" &&
-      phase != "ROLE_FP32" && phase != "CONFIG_RECEIVED")
+      phase != "ROLE_FP32" && phase != "CONFIG_RECEIVED" &&
+      phase != "INIT_TAIL_VALID" && phase != "INIT_FP32_RESULT" &&
+      !(phase == "INIT_FENCE_POLL" && row.fence != GL_TIMEOUT_EXPIRED))
     return;
   static const struct Module {
     char buildId[129]{};
@@ -75,7 +87,7 @@ inline void LogFirstFrameStage(const InitStage &row, const ConfigTicket &ticket)
     }
   } module;
   OH_LOG_Print(LOG_APP, LOG_INFO, 0xE720, "G13Init",
-               "boot=%{public}llu attempt=%{public}llu queue=%{public}llu run=%{public}llu context=%{public}llu surface=%{public}llu ns=%{public}llu phase=%{public}s edge=%{public}s op=%{public}u raw=%{public}lld apiReturn=%{public}d sourceSHA=%{public}s mappedBuildId=%{public}s",
+               "boot=%{public}llu attempt=%{public}llu queue=%{public}llu run=%{public}llu context=%{public}llu surface=%{public}llu ns=%{public}llu phase=%{public}s edge=%{public}s op=%{public}u raw=%{public}lld apiReturn=%{public}d fence=%{public}lld ctrl255=%{public}lld ctrl7=%{public}lld sourceSHA=%{public}s mappedBuildId=%{public}s",
                static_cast<unsigned long long>(row.boot),
                static_cast<unsigned long long>(row.attempt),
                static_cast<unsigned long long>(row.queue),
@@ -83,13 +95,16 @@ inline void LogFirstFrameStage(const InitStage &row, const ConfigTicket &ticket)
                static_cast<unsigned long long>(ticket.proposed.context),
                static_cast<unsigned long long>(ticket.proposed.surface),
                static_cast<unsigned long long>(row.ns), row.phase, row.edge, row.op,
-               static_cast<long long>(row.rawGL), row.apiReturn, row.sourceSHA,
+               static_cast<long long>(row.rawGL), row.apiReturn,
+               static_cast<long long>(row.fence), static_cast<long long>(row.ctrl255),
+               static_cast<long long>(row.ctrl7), row.sourceSHA,
                module.buildId);
 }
 class InitDiagnostic {
   mutable std::mutex mutex_;
   InitPayload payload_{};
   uint64_t requestedNs_ = 0, bootReadyNs_ = 0, finishedNs_ = 0;
+  std::string bootReadback_ = "null";
 
 public:
   void Queued(const ConfigTicket &ticket, uint64_t received) {
@@ -108,6 +123,8 @@ public:
   }
   void Ticket(const ConfigTicket &t) {
     std::lock_guard<std::mutex> lock(mutex_);
+    if (payload_.control.ticket.attempt != t.attempt)
+      bootReadback_ = "null";
     payload_.control.ticket = t;
   }
   void Environment(void *w, void *c) {
@@ -128,6 +145,36 @@ public:
       if (reason.size() >= 512)
         ++c.truncated;
     }
+  }
+  void RecordBootReadback(const BootReadback &sample) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    const auto &ticket = payload_.control.ticket;
+    std::ostringstream out;
+    out << "{\"schema\":\"G13BootReadbackV1\",\"boot\":\"" << ticket.boot
+        << "\",\"attempt\":\"" << ticket.attempt << "\",\"queue\":\""
+        << ticket.queueSerial << "\",\"run\":\"" << ticket.proposed.run
+        << "\",\"context\":\"" << ticket.proposed.context << "\",\"ns\":\""
+        << Now() << "\",\"sourceSHA\":" << Quote(sample.sourceSHA)
+        << ",\"fence\":" << sample.fence << ",\"firstGl\":" << sample.firstGl
+        << ",\"ctrl255\":" << (sample.controlRead ? int64_t(sample.seal) : -1)
+        << ",\"ctrl7\":" << (sample.controlRead ? int64_t(sample.tailError) : -1)
+        << ",\"mathReadGl\":" << sample.mathReadGl;
+    const auto words = [&out](const char *name, const auto &raw, bool available) {
+      out << ",\"" << name << "\":[";
+      if (available)
+        for (size_t i = 0; i < raw.size(); ++i) {
+          if (i)
+            out << ',';
+          out << raw[i];
+        }
+      out << ']';
+    };
+    words("ctrl200To215", sample.fp32, sample.controlRead);
+    words("work65_35_41_47_53_59", sample.math, sample.mathRead);
+    out << '}';
+    bootReadback_ = out.str();
+    OH_LOG_Print(LOG_APP, LOG_INFO, 0xE720, "G13Boot", "%{public}s",
+                 bootReadback_.c_str());
   }
   void Decode(const InitDecode &record, bool valid) {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -215,6 +262,7 @@ public:
            "\"" +
            ",\"dropped\":" + std::to_string(c.dropped) +
            ",\"truncated\":" + std::to_string(c.truncated) +
+           ",\"bootReadback\":" + bootReadback_ +
            ",\"unobservedRaw\":-1}";
   }
   std::string Page(uint64_t attempt, uint32_t page) const {

@@ -53,7 +53,8 @@ class Transport {
   bool BuildRole(size_t);
   bool UploadRoleUniforms(size_t);
   bool Owner() const;
-  bool CopyBuffer(GLuint, uint32_t *, size_t, size_t = 0);
+  bool CopyBuffer(GLuint, uint32_t *, size_t, size_t = 0,
+                  GLenum *diagnosticGl = nullptr);
   uint32_t Allocate(GLuint &, size_t);
 
 public:

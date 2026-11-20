@@ -5,7 +5,8 @@
 #include <fstream>
 namespace grs::g13 {
 namespace {
-constexpr size_t kProbeOffset = 18632;
+constexpr size_t kColdTailWordOffset = 18432;
+constexpr size_t kProbeWordOffset = kColdTailWordOffset + 200;
 constexpr std::array<uint32_t, 8> kExpectedFp32{
     0x3f800001u, 0x3f800000u, 1u, 0x00400000u, 7u, 0u, 0u, 0x46503332u};
 
@@ -328,6 +329,9 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
     glDispatchCompute(1, 1, 1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
   }
+  // Op 64 writes the banks as SSBOs. The following API update overlaps
+  // bank 0 and requires buffer-update visibility before writing the header.
+  glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, banks_[0]);
   glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(header), header.data());
   if (config[7] != 0) {
@@ -428,7 +432,7 @@ uint32_t Transport::PrepareSteady(bool cancelled) {
       return 11;
     std::array<uint32_t, 16> probe{};
     const bool qualified = status != GL_WAIT_FAILED && !steadyProbeError_ &&
-        CopyBuffer(ctrl_, probe.data(), probe.size(), kProbeOffset * sizeof(uint32_t)) &&
+        CopyBuffer(ctrl_, probe.data(), probe.size(), kProbeWordOffset) &&
         QualifiedProbe(probe.data());
     InitObservation().Stage("ROLE_FP32", "EXIT", index, firstGl_, role.sha,
                             -1, status, -1, -1, 0, qualified ? 1 : 0);
@@ -446,7 +450,7 @@ uint32_t Transport::PrepareSteady(bool cancelled) {
   InitStageEvent("ROLE_FP32", "ENTER", index, -1, role.sha);
   const std::array<uint32_t, 16> clear{};
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, ctrl_);
-  glBufferSubData(GL_SHADER_STORAGE_BUFFER, kProbeOffset * sizeof(uint32_t),
+  glBufferSubData(GL_SHADER_STORAGE_BUFFER, kProbeWordOffset * sizeof(uint32_t),
                   sizeof(clear), clear.data());
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ctrl_);
   glUniform1ui(program.uniforms.at[Op], 66);
@@ -606,22 +610,26 @@ uint32_t Transport::PumpBounded(uint64_t now) {
   return 0;
 }
 bool Transport::CopyBuffer(GLuint b, uint32_t *dest, size_t words,
-                           size_t offset) {
+                           size_t wordOffset, GLenum *diagnosticGl) {
+  const auto observe = [&](GLenum raw) {
+    if (diagnosticGl)
+      *diagnosticGl = raw;
+    else if (raw && !firstGl_)
+      firstGl_ = raw;
+  };
   glBindBuffer(GL_COPY_READ_BUFFER, b);
-  void *p = glMapBufferRange(GL_COPY_READ_BUFFER, GLintptr(offset * 4),
-                             GLsizeiptr(words * 4), GL_MAP_READ_BIT);
+  void *p = glMapBufferRange(GL_COPY_READ_BUFFER,
+                             GLintptr(wordOffset * sizeof(uint32_t)),
+                             GLsizeiptr(words * sizeof(uint32_t)), GL_MAP_READ_BIT);
   if (!p) {
     copyStage_ = "MAP_FAILED";
-    auto raw = glGetError();
-    if (raw && !firstGl_)
-      firstGl_ = raw;
+    observe(glGetError());
     return false;
   }
-  std::memcpy(dest, p, words * 4);
+  std::memcpy(dest, p, words * sizeof(uint32_t));
   bool ok = glUnmapBuffer(GL_COPY_READ_BUFFER) == GL_TRUE;
   auto e = glGetError();
-  if (e && !firstGl_)
-    firstGl_ = e;
+  observe(e);
   if (!ok)
     copyStage_ = "UNMAP_FAILED";
   else if (e)
@@ -654,19 +662,47 @@ uint32_t Transport::Poll(Completion &out) {
   }
   if (pass_ == SIZE_MAX) {
     Completion cold{};
-    if (!CopyBuffer(ctrl_, cold.data(), 256, 18432))
+    BootReadback sample;
+    sample.sourceSHA = PipelineRoles()[0].sha;
+    sample.fence = s;
+    if (!CopyBuffer(ctrl_, cold.data(), cold.size(), kColdTailWordOffset)) {
+      sample.firstGl = firstGl_;
+      InitObservation().RecordBootReadback(sample);
       return 10;
+    }
     pass_ = 0;
-    InitStageEvent("INIT_TAIL_VALID", "EXIT", 65, -1, nullptr, -1, s, cold[255],
-                   cold[7]);
-    if (cold[255] != kSeal || cold[7])
-      return cold[7] ? cold[7] : 28;
+    sample.controlRead = true;
+    sample.seal = cold[255];
+    sample.tailError = cold[7];
+    sample.firstGl = firstGl_;
+    std::copy_n(cold.data() + 200, sample.fp32.size(), sample.fp32.data());
+    InitStageEvent("INIT_TAIL_VALID", "EXIT", 65, firstGl_, sample.sourceSHA,
+                   -1, s, sample.seal, sample.tailError);
     // Cold-only words, observed after the existing init fence. Both independent
     // runs use the same linked compute program and the same uploaded operands.
     const bool observed =
         cold[207] == kExpectedFp32.back() && cold[215] == kExpectedFp32.back();
     const bool qualified =
         observed && !firstGl_ && QualifiedProbe(cold.data() + 200);
+    const bool auditFailed = sample.seal != kSeal || sample.tailError != 0;
+    if ((auditFailed || !qualified) && sample.seal == kSeal &&
+        profile_->work[19].words >= 512 + 60) {
+      std::array<uint32_t, 60> math{};
+      GLenum diagnosticGl = GL_NO_ERROR;
+      const size_t mathOffset = size_t(profile_->work[19].offset) + 512;
+      sample.mathRead = CopyBuffer(work_, math.data(), math.size(), mathOffset,
+                                   &diagnosticGl);
+      sample.mathReadGl = diagnosticGl;
+      if (sample.mathRead)
+        for (size_t i = 0; i < sample.math.size(); ++i)
+          sample.math[i] = math[35 + i * 6];
+    }
+    InitObservation().RecordBootReadback(sample);
+    InitObservation().Stage("INIT_FP32_RESULT", "EXIT", 66, firstGl_,
+                            sample.sourceSHA, -1, s, cold[255], cold[7], 0,
+                            observed ? int32_t(qualified) : -1);
+    if (auditFailed)
+      return cold[7] ? cold[7] : 28;
     std::ostringstream proof;
     proof << ",\"fp32Source\":\"SAME_PROGRAM_COLD_COMPUTE\",\"fp32Words\":[";
     for (size_t i = 200; i < 216; ++i) {
@@ -687,14 +723,13 @@ uint32_t Transport::Poll(Completion &out) {
     if (capability.size() > 1984)
       return 30;
     capabilities_ = std::move(capability);
-    InitStageEvent("INIT_FP32_RESULT", "EXIT", 66, firstGl_);
     if (!qualified)
       return firstGl_ ? 29 : 27;
     InitObservation().State("INIT_TAIL_VALID");
     ready_ = true;
     return 0;
   }
-  if (!CopyBuffer(ctrl_, out.data(), 256, 18432))
+  if (!CopyBuffer(ctrl_, out.data(), out.size(), kColdTailWordOffset))
     return 10;
   return 0;
 }

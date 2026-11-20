@@ -1,0 +1,269 @@
+{
+  "schema": "T732_DEVELOPER_COMPILE_V1",
+  "deviceUsed": false,
+  "signed": false,
+  "testsRun": false,
+  "prior": {
+    "signedHapSHA": "707a751ba458693b394a71fa14ad80890768e18b67ead016c0a8a78416bbe8be",
+    "packagedBuildId": "a9363c84680c230ac8ecfe92d594d7c8e5889146",
+    "bootBytes": 23834,
+    "bootSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+    "cold": {
+      "path": "test/reports/t491/t730b/s4.json",
+      "sha256": "d1b2784aeb81e228f72a94160ec9a22297d0a83a0a3875fbdefaec91cca61ba4",
+      "initialization": {
+        "schema": "G13InitDiagnosticV1",
+        "rawBytes": 32768,
+        "currentLifecycle": "CONFIG_FAILED",
+        "lastProgress": "INIT_TAIL_VALID:EXIT",
+        "firstConfigFailure": "INIT_ERROR_27",
+        "firstFailureAttempt": "209",
+        "queuedTicket": "209",
+        "handledTicket": "0",
+        "bootReadyNs": "0",
+        "elapsedNs": "350614446719",
+        "dropped": 0,
+        "truncated": 0,
+        "unobservedRaw": -1
+      }
+    },
+    "warm": {
+      "path": "test/reports/t491/t730b/s5.json",
+      "sha256": "08d886eaf41c1ee051689b993c98f89241b17fb415cf6d516ede8dcde89e3482",
+      "initialization": {
+        "schema": "G13InitDiagnosticV1",
+        "rawBytes": 32768,
+        "currentLifecycle": "CONFIG_FAILED",
+        "lastProgress": "INIT_TAIL_VALID:EXIT",
+        "firstConfigFailure": "INIT_ERROR_27",
+        "firstFailureAttempt": "209",
+        "queuedTicket": "1843",
+        "handledTicket": "0",
+        "bootReadyNs": "0",
+        "elapsedNs": "26114819844",
+        "dropped": 7,
+        "truncated": 0,
+        "unobservedRaw": -1
+      }
+    },
+    "cache": {
+      "path": "test/reports/t491/t730b/split-cache/856a-warm.jsonl",
+      "sha256": "3d0a08f6c22a5f032c1ce2c8b3dcf5d91af45573d9261ab59f1899f9d5bd1cd9",
+      "bootShaderSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+      "binarySHA": "0aea76cdefc7d408736d66c005d2f3dbbd609d0ec493dea6faae1a12f186f769",
+      "cacheKey": "856a2416fda31847ac5247d80d2b8e6043006b3e83d2f171a10fb3c2e2b580f6",
+      "coldBuildNs": "116490666094",
+      "warmBuildNs": "10259063",
+      "warmBinaryLoadNs": "5645000",
+      "runtimeBinding": "ROLE_ONLY_NO_CONFIG_TICKET_OR_LOADED_PROCESS"
+    },
+    "originalTailRawWords": "UNOBSERVED"
+  },
+  "builds": {
+    "SPLIT": {
+      "project": "D:/hmprojects/HelloWorld/.codex/local-test/t732-split",
+      "unsigned": "entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "unsignedSHA256": "2b84038aca1b1ace3543b259c4cd1e77d8f708f8d028a68c983fb5f4064ba6cc",
+      "nativeSHA256": "3c4d4a20f367d18cf4a739de3c4bd0524b8067ba2fc35f9641a596a4a96c9e19",
+      "linkedSHA256": "e03a17dca46d5eee1fb7a78b40120afe554e4634d94304acd6dfca88fa8a312a",
+      "buildId": "7154816ed3d2d13781d66670a1a8e4acb8fa0eb0",
+      "pipelineSHA": "721507c4694097eb7980e67b41a709bfe50037f0b2c8830d8981844c0faf0fd9",
+      "hvigorLogSHA256": "58781f18d675b02b288a18730082c6915889efb0727f6594f93d7446582c54f9",
+      "abcSHA256": "886861e30664d252c7a44ed0932967827ec1c3fb8b295d7b220e16497c9146f0",
+      "compileCommandsSHA256": "4c51ceef95afdf155623ad0445b8b3f3831d87af7eb337169bc206e2464831d0",
+      "roles": {
+        "BOOT": {
+          "sha256": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+          "bytes": 23834,
+          "path": "entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g13flow/g13_assets/role_BOOT.comp",
+          "staticUniforms": [
+            "c",
+            "uOp",
+            "uScope",
+            "uJ",
+            "uMicro",
+            "uL",
+            "outState",
+            "baseState",
+            "w",
+            "uIndex"
+          ]
+        },
+        "OP_00": {
+          "sha256": "617adf29a80f7fb7e8e3c8ca18df9f0604f7081ff1d319701ad73cb099cda7ea",
+          "bytes": 48759,
+          "path": "entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g13flow/g13_assets/role_OP_00.comp",
+          "staticUniforms": [
+            "c",
+            "uOp",
+            "uScope",
+            "uJ",
+            "uMicro",
+            "uL",
+            "outState",
+            "baseState",
+            "w",
+            "uIndex",
+            "uBlock"
+          ]
+        },
+        "OP_18": {
+          "sha256": "e9ff05a22fca32361ce24312f824d4c811e13ed08611c35d6ffa7b98d8e2e5eb",
+          "bytes": 48612,
+          "path": "entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g13flow/g13_assets/role_OP_18.comp",
+          "staticUniforms": [
+            "c",
+            "uOp",
+            "uScope",
+            "uJ",
+            "uMicro",
+            "uL",
+            "outState",
+            "baseState",
+            "w",
+            "uIndex",
+            "uBlock"
+          ]
+        },
+        "OP_37": {
+          "sha256": "fb0ff4fce8e3ad0ddc10fedb5f220088a1d480610dc8d7880d3e8f470e3ef516",
+          "bytes": 48445,
+          "path": "entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g13flow/g13_assets/role_OP_37.comp",
+          "staticUniforms": [
+            "c",
+            "uOp",
+            "uScope",
+            "uJ",
+            "uMicro",
+            "uL",
+            "outState",
+            "baseState",
+            "w",
+            "uIndex",
+            "uBlock"
+          ]
+        },
+        "OP_48": {
+          "sha256": "840391626a47625a537dfad19d32887c78db88f2f6afd522f2c34f522791c974",
+          "bytes": 48577,
+          "path": "entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g13flow/g13_assets/role_OP_48.comp",
+          "staticUniforms": [
+            "c",
+            "uOp",
+            "uScope",
+            "uJ",
+            "uMicro",
+            "uL",
+            "outState",
+            "baseState",
+            "w",
+            "uBlock",
+            "uIndex"
+          ]
+        },
+        "OP_62": {
+          "sha256": "0d4a77c880ec1fe2f140683032c2683aa56ae2ee266c43ff95dfce6e8b0bb340",
+          "bytes": 11458,
+          "path": "entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g13flow/g13_assets/role_OP_62.comp",
+          "staticUniforms": [
+            "c",
+            "uOp",
+            "uScope",
+            "uJ",
+            "uMicro",
+            "uL",
+            "outState",
+            "uIndex",
+            "baseState"
+          ]
+        },
+        "scene.vert": {
+          "sha256": "478d2e92204468435279f83adefccbe9ea30cbe9fea6f712d85a6b3dde43b44b",
+          "bytes": 1674,
+          "path": "entry/src/main/cpp/gpu_resident/g13flow/scene.vert",
+          "staticUniforms": [
+            "uMode",
+            "uRange",
+            "uDraw",
+            "uBoxSize",
+            "uGrid",
+            "uPose",
+            "uBox"
+          ]
+        },
+        "scene.frag": {
+          "sha256": "c9cdc98f3f6d10643b808484cab4b9410e3ebadbb383062e218383acf9e31da9",
+          "bytes": 1517,
+          "path": "entry/src/main/cpp/gpu_resident/g13flow/scene.frag",
+          "staticUniforms": [
+            "uDraw",
+            "uRange",
+            "uFrame"
+          ]
+        }
+      },
+      "shaderBytesIdenticalToT728": true,
+      "hvigorExit": 0,
+      "staticGlslExit": 0
+    },
+    "MONOLITH": {
+      "project": "D:/hmprojects/HelloWorld/.codex/local-test/t732-single",
+      "unsigned": "entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "unsignedSHA256": "aa648d58382d7375f28605f8c2c168425aa2d3095f2ede33a011a5f7d8bec3cd",
+      "nativeSHA256": "582b16fd5a573f03621ab9f56687b95d1065de6777ed98a640dd42896ab45154",
+      "linkedSHA256": "3b967490ac52ae258b3bfacafa3206204bf896de337b05f874ef018076612914",
+      "buildId": "d03acdb620b9006690eece8cfe502fb00645ecc8",
+      "pipelineSHA": "7563c61459861cec1eb5cea8f0e1a89387d0f2874daaf9f7e29e47d972f9f2d2",
+      "hvigorLogSHA256": "f2763e4995e1ebf3ed94136894c4676044154649c4cb8ad424da857eddefe697",
+      "abcSHA256": "886861e30664d252c7a44ed0932967827ec1c3fb8b295d7b220e16497c9146f0",
+      "compileCommandsSHA256": "ffd5793f89d0d3381f2871f3d60b41284814efdd43b6378399a0bc4c87c404a0",
+      "roles": {
+        "FULL": {
+          "sha256": "7563c61459861cec1eb5cea8f0e1a89387d0f2874daaf9f7e29e47d972f9f2d2",
+          "bytes": 259025,
+          "path": "entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g13flow/g13_assets/pipeline_assembled.comp",
+          "staticUniforms": [
+            "c",
+            "uOp",
+            "uScope",
+            "uJ",
+            "uMicro",
+            "uL",
+            "outState",
+            "baseState",
+            "w",
+            "uBlock",
+            "uIndex"
+          ]
+        },
+        "scene.vert": {
+          "sha256": "478d2e92204468435279f83adefccbe9ea30cbe9fea6f712d85a6b3dde43b44b",
+          "bytes": 1674,
+          "path": "entry/src/main/cpp/gpu_resident/g13flow/scene.vert",
+          "staticUniforms": [
+            "uMode",
+            "uRange",
+            "uDraw",
+            "uBoxSize",
+            "uGrid",
+            "uPose",
+            "uBox"
+          ]
+        },
+        "scene.frag": {
+          "sha256": "c9cdc98f3f6d10643b808484cab4b9410e3ebadbb383062e218383acf9e31da9",
+          "bytes": 1517,
+          "path": "entry/src/main/cpp/gpu_resident/g13flow/scene.frag",
+          "staticUniforms": [
+            "uDraw",
+            "uRange",
+            "uFrame"
+          ]
+        }
+      },
+      "shaderBytesIdenticalToT728": true,
+      "hvigorExit": 0,
+      "staticGlslExit": 0
+    }
+  }
+}
