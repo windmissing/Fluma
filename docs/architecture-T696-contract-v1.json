@@ -1,0 +1,111 @@
+{
+  "schema": "T696_ARCHITECT_CONTRACT_V1",
+  "task": "T696",
+  "date": "2026-11-20",
+  "role": "architect",
+  "evidence": "docs/analysis-T691-T696-evidence-v1.json",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productExecuted": false,
+  "managerGateAdded": false,
+  "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+  "route": "APP_ACTUAL_FOUR_ARM_TWO_PROGRAM_CACHE_COMPARISON",
+  "variant": {
+    "THREE_OFF": [
+      0,
+      1,
+      2
+    ],
+    "TWO_OFF": [
+      0,
+      2
+    ],
+    "THREE_ON": [
+      0,
+      1,
+      2
+    ],
+    "TWO_ON": [
+      0,
+      2
+    ],
+    "role1Absent": "NOT_USED_BY_VARIANT"
+  },
+  "build": {
+    "M1": "frozen product AppTransport m1::FullM1Transport",
+    "M2": "tools/m2/prepare_cursor_build.cjs -> test/t468/generate.cjs -> T452/m2route",
+    "cache": "use existing T475 program_cache factory/store, no old generator recovery rollback",
+    "identity": "real CMake/object/source/role GLSL + HAP/ELF/ABC/loaded identity",
+    "fixed": [
+      "same route parent for all arms",
+      "independent Q still builds its own role 1",
+      "no C split or graphics cache variation",
+      "no gate/protocol or shader math shift"
+    ]
+  },
+  "resources": {
+    "profiles": [
+      [
+        192,
+        64
+      ],
+      [
+        192,
+        128
+      ],
+      [
+        512,
+        64
+      ],
+      [
+        512,
+        128
+      ]
+    ],
+    "fullM1QWorkspaceBytes": [
+      547408,
+      552272,
+      570192,
+      575056
+    ],
+    "fullT663M2QWorkspaceBytes": [
+      580176,
+      585040,
+      602960,
+      607824
+    ],
+    "oneQArenaBytes": [
+      10795008,
+      11843584,
+      26605568,
+      27654144
+    ],
+    "owner": "private plan, allocate without intermediate reflect in B, reflect FINAL_Q, preserve real prepare and warmup",
+    "cleanup": "per-context-generation ownership, unique alias retirement, late revocation no READY, cache Forget on delete/loss",
+    "finalQExport": "only after real prepare/warmup and current owner",
+    "cacheBounds": {
+      "entryBytes": 33554432,
+      "totalPayloadBytes": 134217728,
+      "entries": 32,
+      "perKeyHistoryBytes": 131072,
+      "queue": 128
+    }
+  },
+  "measurement": {
+    "routesIndependent": true,
+    "preferredAttemptsPerArm": 5,
+    "compare": [
+      "clean cold, partial and full seed on same driver",
+      "warm new process and new context",
+      "root and first actual frame",
+      "rollback, conservation and full device qualification"
+    ],
+    "d1OpLimit": 10,
+    "d1BatchMs": 8,
+    "rootMs": 250,
+    "effectiveFps": 30,
+    "cursorWindowSeconds": 60,
+    "cursorQueries": 64,
+    "actualGain": "NOT_MEASURED"
+  }
+}

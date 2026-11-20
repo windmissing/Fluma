@@ -33,3 +33,7 @@ rsp是driver参数格式：UTF8无BOM/LF、路径canonical forward slash；空�
 原T590 probe按实际正确目标包/解码前置续测；T541按独立标本完成尚未做的链接/原精确验证。历史挂起只有新出现且有同attempt进程等待/栈证据才再分流，不延长旧空等。不得放宽-fno-fast-math/-ffp-contract=off/FP门、物理/GAP/容量或扩大CPU路线。
 
 共同执行约束见`architecture-T655-T658-boundaries-v1.md`。本卡归因/合同已完成；现有构建失败和未测产品指标均未记PASS。
+
+## 2026-11-20 T695 回执来源修订
+
+T677的 argv/rsp、ABI与独立重链原件保留。正式回执工具复制历史T666日志属仓库工具缺陷，按 [T695](architecture-T695-v1.md) 通过显式当轮 invocation manifest 绑定实际子进程、日志与输出。

@@ -75,3 +75,8 @@ test/reports/t681/** -text -whitespace
 docs/architecture-T68[4568]-*.json -text whitespace=cr-at-eol
 docs/analysis-T684-T688-*.json -text whitespace=cr-at-eol
 docs/receipt-T684-T688-*.json -text whitespace=cr-at-eol
+
+# T691–T696 static attribution and contracts bind exact UTF-8 bytes.
+docs/architecture-T69[1456]-*.json -text whitespace=cr-at-eol
+docs/analysis-T691-T696-*.json -text whitespace=cr-at-eol
+docs/receipt-T691-T696-*.json -text whitespace=cr-at-eol

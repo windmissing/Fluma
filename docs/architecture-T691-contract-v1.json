@@ -1,0 +1,56 @@
+{
+  "schema": "T691_ARCHITECT_CONTRACT_V1",
+  "task": "T691",
+  "date": "2026-11-20",
+  "role": "architect",
+  "evidence": "docs/analysis-T691-T696-evidence-v1.json",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productExecuted": false,
+  "managerGateAdded": false,
+  "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+  "route": "RX_SHADER_DEVICE_COMPATIBILITY",
+  "original": "CONFIGURE_FAILED_8 / 0:1063 S0001 coherent qualifier",
+  "source": "4faf48aa0ebeafe575349f30a36ec686ac9a63ed6fece05e2002d4032706f526",
+  "line": 1063,
+  "confirmedActual": "g9AddMass(C[at+3u],q,next)",
+  "adjacentExactSameShape": 1522,
+  "otherDirectCallsObservedOnly": [
+    1548,
+    "g9U32(C/W[...])"
+  ],
+  "revision": {
+    "owner": "developer",
+    "file": "tools/g9rx/generate_assets.py",
+    "transform": "read same coherent slot into local uint at each original merge branch; pass value, preserve checked add and original writeback",
+    "regenerate": [
+      "pipeline.comp",
+      "pipeline_source.h",
+      "cache ABI",
+      "reader/implementation",
+      "source manifest",
+      "independent hook"
+    ],
+    "noChange": [
+      "coherent storage qualifier",
+      "GLSL and native barriers",
+      "bindings",
+      "ordering, atomics and arithmetic",
+      "frozen parent",
+      "T665 capture fix",
+      "default DM/SPF/G11"
+    ]
+  },
+  "routing": {
+    "T645": "wait actual repaired RX package; same-process loaded bytes and config result; continue whole device matrix",
+    "T594": {
+      "status": "USE_EXISTING_CORRECT_V5_ARTIFACT",
+      "package": "T669-v5",
+      "signedSha": "ce9ba9af289e766a18b8c31956a512ed7ae5b0b15e4a486f304ea92548b3e10a",
+      "buildId": "7f31c1de559a8e10a3ee7ba7dcc8837fb732a51b",
+      "entry": "GpuSandWaterExperience -> GpuResidentM5",
+      "reader": "tools/v5/read_archive.py",
+      "dependsOnRX": false
+    }
+  }
+}

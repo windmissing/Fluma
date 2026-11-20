@@ -1,0 +1,544 @@
+{
+  "schema": "T691_T696_ORIGINAL_EVIDENCE_V1",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productRun": false,
+  "T691": {
+    "packages": {
+      "T594-rx": {
+        "signedSha": "4efb9d63210b2cc03708e5b4f6d1ab9638e829da14e33b2d487fe2590bc3f482",
+        "receipt": {
+          "path": "test/reports/t257/T594-rx.json",
+          "bytes": 2283,
+          "sha256": "6a05939c4ac53c3c043d0c7fc67984e22538fcd17acf98469c6cbf44710781f4"
+        },
+        "modules": [
+          {
+            "entry": "ets/modules.abc",
+            "bytes": 2791584,
+            "sha256": "708434fd1a6573dda28c91f9e9f5b055032a3133a7f9b7ddadee4a3ace9d990a"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrs_g9rx.so",
+            "bytes": 1404632,
+            "sha256": "72d3b7214d7fbf64e5f5aaf3d3a2828f34e8c0625648670aaddf126c6f91f69c",
+            "buildId": "e989ed1053e9a6e207065806bb15c42d8469e939"
+          }
+        ]
+      },
+      "T687-rx": {
+        "signedSha": "1ef5a57f25072c650b1b2e09e37ce376541b0db8f27a55ae35f681c3ede835c1",
+        "receipt": {
+          "path": "test/reports/t257/T687-rx.json",
+          "bytes": 2283,
+          "sha256": "58589033c944e3e4d8174d47f216e24ee70ccdd818c610a481838d8a72f9b9e1"
+        },
+        "modules": [
+          {
+            "entry": "ets/modules.abc",
+            "bytes": 2791584,
+            "sha256": "708434fd1a6573dda28c91f9e9f5b055032a3133a7f9b7ddadee4a3ace9d990a"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrs_g9rx.so",
+            "bytes": 1404632,
+            "sha256": "72d3b7214d7fbf64e5f5aaf3d3a2828f34e8c0625648670aaddf126c6f91f69c",
+            "buildId": "e989ed1053e9a6e207065806bb15c42d8469e939"
+          }
+        ]
+      },
+      "T669-v5": {
+        "signedSha": "ce9ba9af289e766a18b8c31956a512ed7ae5b0b15e4a486f304ea92548b3e10a",
+        "receipt": {
+          "path": "test/reports/t257/T669-v5.json",
+          "bytes": 2284,
+          "sha256": "3de50287184ed9aa9ec6a163397ce55ca8f7a0fa363c1e96d897a6cf148fddcd"
+        },
+        "modules": [
+          {
+            "entry": "ets/modules.abc",
+            "bytes": 2990464,
+            "sha256": "4595e19217df3a18c269ca6f4dbdf3e8a5259e5aa6faf5b4164798bb628d37f6"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrsm1.so",
+            "bytes": 3201504,
+            "sha256": "35ac238c0eb000010736eaf5d5e70917e8e28a7884d460d5832016429669b7f0",
+            "buildId": "7f31c1de559a8e10a3ee7ba7dcc8837fb732a51b"
+          }
+        ]
+      }
+    },
+    "source": {
+      "path": ".codex/local-test/t674-delivery-v2/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g9rx/rx_assets/pipeline.comp",
+      "bytes": 145458,
+      "sha256": "4faf48aa0ebeafe575349f30a36ec686ac9a63ed6fece05e2002d4032706f526"
+    },
+    "sourceLines": {
+      "978": "layout(std430,binding=1)coherent buffer WriteState{uint C[];};",
+      "979": "layout(std430,binding=2)coherent buffer Workspace{uint W[];};",
+      "980": "layout(std430,binding=3)coherent buffer EventPath{uint E[];};",
+      "1019": "bool g9AddMass(uint a,uint b,out uint result){result=0u;if(a>268435456u||b>268435456u-a)return false;result=a+b;return true;}",
+      "1063": " if(merge){uint at=g9MapAddress(flow,c,rank),next;if(!g9AddMass(C[at+3u],q,next))return false;C[at+3u]=next;return true;}",
+      "1522": " if(merge){uint at=g9Provisional(c,rank),next;if(!g9AddMass(W[at+3u],mass,next))return false;W[at+3u]=next;return true;}",
+      "1548": "  for(uint i=0u;i<count;++i){uint at=base+1024u+i*4u;if(!g9ProvisionalAdd(donor,uvec3(W[at],W[at+1u],W[at+2u]),W[at+3u])){g9Reject(11u,donor,i);return false;}}"
+    },
+    "driverLog": {
+      "path": "test/reports/t491/t594b/h594.txt",
+      "bytes": 1234360,
+      "sha256": "1a36a28e24b5456ec3281dd75cc6eff75f73af7a0304c8e68f208848ce2bd02b"
+    },
+    "driverErrorLines": [
+      5570
+    ],
+    "deviceLoadedModule": {
+      "state": "LOADED_FILE_OBSERVED",
+      "sha256": "72d3b7214d7fbf64e5f5aaf3d3a2828f34e8c0625648670aaddf126c6f91f69c",
+      "bytes": "1404632",
+      "device": "66695",
+      "inode": "58576",
+      "BuildId": "e989ed1053e9a6e207065806bb15c42d8469e939",
+      "memoryBuildIdMatched": true,
+      "path": "/data/storage/el1/bundle/libs/arm64/libgrs_g9rx.so"
+    },
+    "layout": [
+      {
+        "path": "test/reports/t491/t594b/l1.json",
+        "bytes": 43038,
+        "sha256": "ca39764f4f3306118c365bd68e885578302e6887ace7d0e0b1de312a4b7ea0e9"
+      },
+      {
+        "path": "test/reports/t491/t594b/l2.json",
+        "bytes": 43672,
+        "sha256": "a6b1e8bbc3ae02b22d3c59fc5927d152cb15983d9482fb3f28e5470045c211dd"
+      }
+    ]
+  },
+  "T694": {
+    "baselines": {
+      "T590-cursor2": {
+        "signedSha": "6b1faa1df776c52b356313f52a22d7d021bdea6704cbdb424fe07a613246c647",
+        "receipt": {
+          "path": "test/reports/t257/T590-cursor2.json",
+          "bytes": 2295,
+          "sha256": "f50e250ae19d1db541c08e23911db5032d51fc3e0cd763c269740d03469e9970"
+        },
+        "modules": [
+          {
+            "entry": "ets/modules.abc",
+            "bytes": 2839896,
+            "sha256": "397766f8695b78d74cfb06db6145a4dbae322916d8e901235649b1318a0d80ec"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrsm1.so",
+            "bytes": 1180096,
+            "sha256": "7a0bcbaab37c3fabcff3a5874164bbea1767e2877db903ad867477fdb781253f",
+            "buildId": "c23e231c781476010af91f631c60d2239371205c"
+          }
+        ]
+      },
+      "T597-fixed": {
+        "signedSha": "20bad4993786c3edf5e6d478767b0f28d49f54084b6c892ab290f788dcf87550",
+        "receipt": {
+          "path": "test/reports/t257/T597-fixed.json",
+          "bytes": 2286,
+          "sha256": "0ce6f78d1b668709c77e63c3b642a3846dfaccd5b321573f38540c2da4b13111"
+        },
+        "modules": [
+          {
+            "entry": "ets/modules.abc",
+            "bytes": 2861292,
+            "sha256": "511bc6afb97ca30c22d6393e54212b7fb3b8dda79810a89ae9378bd655ba4c64"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrsm1.so",
+            "bytes": 1950560,
+            "sha256": "527c863f36bf543f1d4c45d212ef60ec62c2401f5fe693e5a453589c7f4280bf",
+            "buildId": "dc54802f9e1a0f0f8fae93a95aa7b343bce3a59c"
+          }
+        ]
+      },
+      "T593-probe": {
+        "signedSha": "133f1257f3898a96d49861daf4a97d7fe3a76e7db28d164093ae836577442ce4",
+        "receipt": {
+          "path": "test/reports/t257/T593-probe.json",
+          "bytes": 2286,
+          "sha256": "ebd3c662db2614b2d4af9e1f028cf55530eaca5c0ad4642538c5e14cc0ab8a62"
+        },
+        "modules": [
+          {
+            "entry": "ets/modules.abc",
+            "bytes": 2874048,
+            "sha256": "fee60633b5d6f4deb46e0a1638f7b44dfe776f84f77500b29912333113646e23"
+          },
+          {
+            "entry": "libs/arm64-v8a/libgrsm1.so",
+            "bytes": 1950560,
+            "sha256": "527c863f36bf543f1d4c45d212ef60ec62c2401f5fe693e5a453589c7f4280bf",
+            "buildId": "dc54802f9e1a0f0f8fae93a95aa7b343bce3a59c"
+          }
+        ]
+      }
+    },
+    "supplemental": {
+      "a": {
+        "receipt": {
+          "path": "test/reports/t676-same-a/handoff.json",
+          "bytes": 459466,
+          "sha256": "f65408b915bf34d7d68f5042c69c82f6180069dc5e6fc65e5ea40f4721834479"
+        },
+        "signedSha": "87a6703bdec4364fa0592a3f7cc5b538c9a77bf7fa9730f77610c9b1456e2aa4",
+        "entries": {
+          "ets/modules.abc": {
+            "bytes": 2850440,
+            "sha256": "c63d944862f527cdb0c034f242fd2ad3812c82726e3723f35f0c0cb74f129751"
+          },
+          "libs/arm64-v8a/libc++_shared.so": {
+            "bytes": 1262248,
+            "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+            "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+          },
+          "libs/arm64-v8a/libgrsm0.so": {
+            "bytes": 623448,
+            "sha256": "066c40bad338bd462bb59d23fdcb0b601fb601aca216d4e892748bdb544ad8f8",
+            "buildId": "0ceab1886b1cc39e48c6614e283ced9a4d9c4b40"
+          },
+          "libs/arm64-v8a/libgrsm1.so": {
+            "bytes": 1180096,
+            "sha256": "f25e37a9560c16e8309d0639b25ec40f189ca9f14f5a3614ae21c52edcccdfb2",
+            "buildId": "b31cf133a26e6c45daeb631fd4574000015e0e6a"
+          },
+          "libs/arm64-v8a/libp013hello.so": {
+            "bytes": 70544,
+            "sha256": "974faa6d016d813917603afbd0fb6a11e85e3cebc48a1e806ca97c67315f8ac2",
+            "buildId": "cde96b958c49aa59c3337613201f73f6dd368b21"
+          },
+          "libs/arm64-v8a/libp013renderer.so": {
+            "bytes": 498120,
+            "sha256": "7ea647cd4afdaa8a930f3e30827e723ad0947794b139426822f85d94134cd2aa",
+            "buildId": "b1dcd51008141e83dc1a9ee8b4cef269baaff853"
+          },
+          "module.json": {
+            "bytes": 1408,
+            "sha256": "340cf83f165d31023b438266f1dd8bf92d2eb8262fd87d1e93fc9a2c722e3e96"
+          }
+        }
+      },
+      "b": {
+        "receipt": {
+          "path": "test/reports/t676-same-b/handoff.json",
+          "bytes": 375186,
+          "sha256": "bc8b54a8641f5aa265fead3f7d3db7a4d96bdb90775f7211d0f58076a3bc60c8"
+        },
+        "signedSha": "af1bad160ed7cae37dec4f174c4f655c78bc4355d6fd8ba3fa5889944ed14ee4",
+        "entries": {
+          "ets/modules.abc": {
+            "bytes": 2885508,
+            "sha256": "aab03e819c8d982b9dd45c2437bf26e989feb05ad9d07d5fe2665607c9cec243"
+          },
+          "libs/arm64-v8a/libc++_shared.so": {
+            "bytes": 1262248,
+            "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+            "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+          },
+          "libs/arm64-v8a/libgrsm0.so": {
+            "bytes": 665960,
+            "sha256": "30ea9beb468ce5d7e6716a5ff11b1fcee3f71746554ab721da8ce73087509bfb",
+            "buildId": "dfaf723952e2120bb8cb10947bfc19640c4151b5"
+          },
+          "libs/arm64-v8a/libgrsm1.so": {
+            "bytes": 1950560,
+            "sha256": "f57e450b577988c0b67b1ff312c1d048d7b3bd57eff64f6914281c5487600fd5",
+            "buildId": "59e6c47ef365763f6123050866695c8b4928cced"
+          },
+          "libs/arm64-v8a/libp013hello.so": {
+            "bytes": 70544,
+            "sha256": "89c216c74d91fb936d4b209eee1481056a0f48b9dc2ad6cd56e3a12f257f8f5e",
+            "buildId": "03900505bf1d54ffcda285d5c2b45b4f8f4ac32b"
+          },
+          "libs/arm64-v8a/libp013renderer.so": {
+            "bytes": 511256,
+            "sha256": "825d37d20d2a97cacea87fd66ca719059129f6a15e1e6527222e8feb4450fa23",
+            "buildId": "5015f16d81025894ebe63c9a8b6d243016d5b665"
+          },
+          "module.json": {
+            "bytes": 1408,
+            "sha256": "340cf83f165d31023b438266f1dd8bf92d2eb8262fd87d1e93fc9a2c722e3e96"
+          }
+        }
+      }
+    },
+    "v4Pid": "38336",
+    "v5Pid": "13252",
+    "v5Recovery": {
+      "phase": "READY",
+      "epoch": "4",
+      "session": "2",
+      "resources": true
+    },
+    "sameAttemptV4V5": false,
+    "scopeEvidence": [
+      {
+        "path": "test/reports/t491/t593c/l1.json",
+        "bytes": 53140,
+        "sha256": "76448db1d669285d56a95edae019873a6a223e68b5034a1aae328a8e492855a7"
+      },
+      {
+        "path": "test/reports/t491/t593c/l2.json",
+        "bytes": 53138,
+        "sha256": "c4bc212965314674cfac176b542f72d1d91e12ecfb478053164138edd825d9dc"
+      },
+      {
+        "path": "test/reports/t491/t593c/l3.json",
+        "bytes": 53140,
+        "sha256": "59f39b0438b43ae8d4e4dea794b65362d12ad19590ac1bdb1cb2c015fca45c5e"
+      },
+      {
+        "path": "test/reports/t491/t593c/l4.json",
+        "bytes": 53140,
+        "sha256": "62ad9569a7556a0342d898d587aafce055aeb6b98e989143f9d77eee0fa7bc13"
+      },
+      {
+        "path": "test/reports/t491/t593c/l5.json",
+        "bytes": 53134,
+        "sha256": "4a5a0df5b24c39562a8fad4a5add13a84c8dc67b3380b6adb4216fd0f3a4757a"
+      },
+      {
+        "path": "test/reports/t491/t593c/l6.json",
+        "bytes": 53146,
+        "sha256": "6972f08b9d13123107b553f3e1ca3330c189db6f9b8c3f3b91a3abf74bbc451f"
+      },
+      {
+        "path": "test/reports/t491/t593c/p1.json",
+        "bytes": 42172,
+        "sha256": "db9f20501106ea83311bf263145da7e84f8a533fd425e204deaad2ab04e19c08"
+      },
+      {
+        "path": "test/reports/t491/t593c/p2.json",
+        "bytes": 43600,
+        "sha256": "351a56435211f0df6ddddbb61e2100ddd1edd82d5db0393f0a9cc4514825fe85"
+      },
+      {
+        "path": "test/reports/t491/t593c/p3.json",
+        "bytes": 53140,
+        "sha256": "1803943c1006d347a3a954aa23a1ee6609e0819bde47ff0ebf712fb8419ec980"
+      },
+      {
+        "path": "test/reports/t491/t593c/p4.json",
+        "bytes": 55272,
+        "sha256": "bd55170b769ae0b05dff3dfc560af948a652a9f281286db691c2b49c70fd4b2b"
+      },
+      {
+        "path": "test/reports/t491/t593c/p5.json",
+        "bytes": 55272,
+        "sha256": "1315620084501c70b096fff12ec68869a9b097ffb84b7da73ff4f4007d950322"
+      },
+      {
+        "path": "test/reports/t491/t593c/p6.json",
+        "bytes": 55236,
+        "sha256": "086fc4d3e23fbaf5ce13262914e207633ec732aebcfa5a2a17f04ebf4c9e84ea"
+      },
+      {
+        "path": "test/reports/t491/t593c/p7.json",
+        "bytes": 55264,
+        "sha256": "f8727ac16ade2941b81972b534d53faacdc350fb31fb50bc5a918a1d48196cf3"
+      },
+      {
+        "path": "test/reports/t491/t593c/t1.json",
+        "bytes": 55274,
+        "sha256": "b66ba1c0212229818c211bc878bf12b9987b5d2470bba8c627868457979f75fe"
+      },
+      {
+        "path": "test/reports/t491/t593c/t2.json",
+        "bytes": 55274,
+        "sha256": "3b2bdb789aea9bf4f4421e11849add36825c5384653b01ecc20ca6ba2235f7a2"
+      },
+      {
+        "path": "test/reports/t491/t593c/t3.json",
+        "bytes": 55274,
+        "sha256": "dd2ceeab7188bb9817c02bd2ad6e2f95ec5453b233b8419da4d4a235cb783764"
+      },
+      {
+        "path": "test/reports/t491/t593c/t4.json",
+        "bytes": 55266,
+        "sha256": "166cbae77a3c096318a15cdc0fb12ef06cca1c4e203d95a4c88f7ebe1d6044d3"
+      },
+      {
+        "path": "test/reports/t491/t593c/t5.json",
+        "bytes": 55274,
+        "sha256": "f6abee73911077784de60ab9acb76bd62058cd44bec17560809ebbc2150c5ad8"
+      },
+      {
+        "path": "test/reports/t491/t593c/t6.json",
+        "bytes": 55274,
+        "sha256": "23a00d0894d5380afd188ae227903a587c5ac099bc0ca746c233d71a745f3157"
+      },
+      {
+        "path": "test/reports/t491/t593c/t676b-boot2.json",
+        "bytes": 178257,
+        "sha256": "78159f9ea42cff83c1f358b9f09a18c3dda406cd06926fa15d1d1c3f166b1941"
+      },
+      {
+        "path": "test/reports/t491/t593c/t676b-boot3.json",
+        "bytes": 178342,
+        "sha256": "d3d12e6e3579f95a43a79c24e5c72d1d2a9c2a09563c80655c667d52952e1056"
+      },
+      {
+        "path": "test/reports/t491/t593c/v5-current-window.json",
+        "bytes": 1792,
+        "sha256": "22ac379bda4b6c5baede4627a48fd5aa4e7e160ce1c36f9746813bd30fd184f3"
+      }
+    ],
+    "currentUI": [
+      "CURRENT · GRS_M1_PROGRESS_CLOCK_V2 / run 0:2 / epoch 4 / session 2 / sample 5981 · NONE",
+      "账 GRS_M1_PROGRESS_CLOCK_V2 / run 0:2 / epoch 4 / session 2 / sample 5981 · 最近源收据#0 0.0000 · 物理 0:649"
+    ],
+    "collector": [
+      {
+        "path": "test/t676/prepare.py",
+        "bytes": 3484,
+        "sha256": "edfa4c13611d23e35e2e6b2ceba38adf24da43ac09c02be5effd484d13dadbb5"
+      },
+      {
+        "path": "test/t676/T676Collector.ets",
+        "bytes": 3607,
+        "sha256": "c3d9ca1627ea82327230ff214483c7650658378a6211a959bb31611034d2011f"
+      },
+      {
+        "path": "test/t676/audit_capture.py",
+        "bytes": 2967,
+        "sha256": "044a81daefe2c654c26d5eb92598681c99931d8a55a5f030a6354a1af86dce73"
+      }
+    ]
+  },
+  "T695": {
+    "replay": {
+      "path": "test/reports/t677/receipt-replay.json",
+      "bytes": 856,
+      "sha256": "29a7c047cf09b8cbb35930875aeea64cabe6bb4cd25bf4ecdbbe8cbe59066768"
+    },
+    "comparison": {
+      "native-build.log": {
+        "receiptSHA": "aa5e20a631902cf2b12d5b42395c577848c63d41f0fca88861b7f2d65cb73b79",
+        "historicalSHA": "aa5e20a631902cf2b12d5b42395c577848c63d41f0fca88861b7f2d65cb73b79"
+      },
+      "incremental.log": {
+        "receiptSHA": "ebfb0d754513ca5f9799ebcb15e4eca74bd818ab5f0287a3ad15e43855fac8d9",
+        "historicalSHA": "ebfb0d754513ca5f9799ebcb15e4eca74bd818ab5f0287a3ad15e43855fac8d9"
+      }
+    },
+    "actualNinja": {
+      "path": "test/reports/t677/independent-current-ninja.json",
+      "bytes": 1774,
+      "sha256": "7977e82ee3b892ccff974dd18331236db3c5f268c2701558f34a98f8db326d66"
+    },
+    "independentLog": {
+      "path": "test/reports/t677/independent.log",
+      "bytes": 4259,
+      "sha256": "04e3ea341ce40646b195f7e5f8aa23d2f5f60e7e325ab38244fbad00cb948154"
+    },
+    "linkReceipt": {
+      "path": "test/reports/t677/grs_cold_slots.link-receipt.json",
+      "bytes": 3531,
+      "sha256": "641b3fc14d1dbe573f463ebe7c4888c860645fb2c1d6113cd0a8dc60a2213d46"
+    },
+    "baselineElfSHA": "8accfab15b837bc6f8b1696b6196b41fcac26a13930e169753a760b2b7753be4",
+    "buildIds": [
+      "38d4c72d36aa7c6ecc9ab63dffb2ec5c2ef105ee",
+      "2e93cc981228a3c9441ad5d90871afbaeeb16f95"
+    ],
+    "script": {
+      "path": "tools/build/build_receipt.py",
+      "bytes": 4506,
+      "sha256": "4068eebe0a3be3ab25c9eaca0bd88e05284e340e5b6ba04d020e9ce6238e0624"
+    }
+  },
+  "T696": {
+    "inputs": [
+      {
+        "path": "docs/algorithm-T689-gpu-create-program-reuse-v1.md",
+        "bytes": 15717,
+        "sha256": "d819f169844a2414cdbda74860cd904e535fc41ea56720c3e5ae519f3a34a8bc"
+      },
+      {
+        "path": "docs/design-T689-static-evidence-v1.json",
+        "bytes": 4477,
+        "sha256": "642831f12d2eaad2352c1d84c0c38245c667b61c66a9a8d4a903f2f9e21352d7"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/m1/quantum_candidate.cpp",
+        "bytes": 15851,
+        "sha256": "4453993a11b119fc790cdf58f29ee5507044ac19b4eba666db9c4d134d6229b8"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/m1/full_transport.cpp",
+        "bytes": 34443,
+        "sha256": "507a3283a312b0e927e3377be4aa4a67ddcda3b0299cf4970b4a85e1d33f3ce1"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/m1/source_transport.cpp",
+        "bytes": 16034,
+        "sha256": "dcebbd84f3748480b35e774f6588d371135cbb5376e47877ea5e6cf0b6105b3a"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/program_cache/program_factory.h",
+        "bytes": 16764,
+        "sha256": "79cdeee17b131bf850514b6f2793bd87628880950ddbbac2c2bceaec10bdd9a3"
+      },
+      {
+        "path": "tools/m2/prepare_cursor_build.cjs",
+        "bytes": 1221,
+        "sha256": "6f63ba7a71f2134dcf04ab94967063254803622da0bae7b5d0c63817948487fe"
+      },
+      {
+        "path": "test/t468/generate.cjs",
+        "bytes": 7646,
+        "sha256": "9f5f8e7883f2ea3302b3a871d383827b3e37b6b91a974a742988789cbe736756"
+      },
+      {
+        "path": "test/t475/generate.cjs",
+        "bytes": 8169,
+        "sha256": "4cc5285489bebcc554090f626e675af6813e8c33d5406095ad08472f56a4956a"
+      }
+    ],
+    "resourceArithmetic": [
+      {
+        "K": 192,
+        "Kw": 64,
+        "QCandidateB": 25600,
+        "baseWorkspaceB": 520784,
+        "fullM1WorkspaceB": 547408,
+        "T663M2WorkspaceB": 580176,
+        "singleQArenaB": 10795008
+      },
+      {
+        "K": 192,
+        "Kw": 128,
+        "QCandidateB": 29696,
+        "baseWorkspaceB": 521552,
+        "fullM1WorkspaceB": 552272,
+        "T663M2WorkspaceB": 585040,
+        "singleQArenaB": 11843584
+      },
+      {
+        "K": 512,
+        "Kw": 64,
+        "QCandidateB": 46080,
+        "baseWorkspaceB": 523088,
+        "fullM1WorkspaceB": 570192,
+        "T663M2WorkspaceB": 602960,
+        "singleQArenaB": 26605568
+      },
+      {
+        "K": 512,
+        "Kw": 128,
+        "QCandidateB": 50176,
+        "baseWorkspaceB": 523856,
+        "fullM1WorkspaceB": 575056,
+        "T663M2WorkspaceB": 607824,
+        "singleQArenaB": 27654144
+      }
+    ],
+    "measuredDeviceBenefits": false
+  }
+}

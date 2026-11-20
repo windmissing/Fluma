@@ -1,0 +1,62 @@
+{
+  "schema": "T694_ARCHITECT_CONTRACT_V1",
+  "task": "T694",
+  "date": "2026-11-20",
+  "role": "architect",
+  "evidence": "docs/analysis-T691-T696-evidence-v1.json",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productExecuted": false,
+  "managerGateAdded": false,
+  "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+  "route": "A_AND_B_SEPARATE_PRODUCTION_ELF_ANCHORS",
+  "originals": {
+    "A": "c23e231c781476010af91f631c60d2239371205c",
+    "B": "dc54802f9e1a0f0f8fae93a95aa7b343bce3a59c"
+  },
+  "supplemental": {
+    "A": "b31cf133a26e6c45daeb631fd4574000015e0e6a",
+    "B": "59e6c47ef365763f6123050866695c8b4928cced",
+    "sameAsOriginal": false
+  },
+  "packagePolicy": "normal staging/signing with original native bytes for a page-only overlay; all native entries and dependency closure exact; record distinct ABC/HAP. Existing original package endpoints remain usable. New native build is separate evidence.",
+  "M2": {
+    "page": "GpuSandWaterExperience",
+    "preArm": "original diagnostics baseline before actual XComponent mount; preserve pre-bind as such",
+    "discover": "new serial distinguishable from baseline; bind full window/context/epoch/owner/serial",
+    "cursor": "separate stage/API; no synthetic exit",
+    "terminal": "sealed===true && nativeEndNs>0 in same scope",
+    "logs": "metadata change or terminal; same serial and actual program identity; cold pre/post anchors"
+  },
+  "M1": {
+    "page": "GpuResidentM1",
+    "v4PID": "38336",
+    "v5PID": "13252",
+    "sameAttempt": false,
+    "currentSample": 5981,
+    "readyProven": true,
+    "handlerDownEnqueueClaim": "NOT_CAPTURED_V5",
+    "cuts": [
+      "PAGE_HANDLER actual raw event",
+      "Down allowed/reason/native record",
+      "typed upload/offer reply",
+      "same sequence claim",
+      "SOURCE terminal",
+      "draw and swap matching token"
+    ],
+    "query": {
+      "api": "executionDiagnosticsV1",
+      "arg1": "real coldCapabilities scope encoded as JSON string",
+      "minimumCredit": 16384,
+      "statusObserveSideEffect": true
+    }
+  },
+  "budget": {
+    "windowSeconds": 60,
+    "queries": 64,
+    "maxPersistedRecordBytes": 16384,
+    "rawChunkBytes": 8192,
+    "indexReserveBytes": 32768,
+    "maxDirectoryBytes": 1048576
+  }
+}

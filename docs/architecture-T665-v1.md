@@ -54,3 +54,7 @@ READY、pulse/触摸、T642 N01–N11、FIFO/真实DM数学/审核/replay、CURR
 主树cache64次重复flags去重后的ninja rc0仅保为那次构建结果；幂等修复独立在途T666，不是本shader归因新前置，也不从此宣所有卡/全工具链永久已过。
 
 执行prompt：developer不使用真机；tester/effector维护测试脚本、签名部署与真机串行采证。不允许修改 D:\hmprojects\HelloWorld\docs\后续工作清单.md（仅本人状态有限例外），不得更新滴答同名清单。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。GPU优先、CPU停止、10暂停、水13→14→12、旧湿M1暂停；背景前景仅XComponent+shader，FAULT或明确STALE，无Canvas/软件GL产品回退。无manager新增验收门；本卡工程归因完成不冒产品PASS。
+
+## 2026-11-20 T691 续归因
+
+T674 实际 canonical 通过原静态编译，真机新拒绝定位到第1063行 coherent C元素直接传 g9AddMass 的标量实参。新增有限的值复制兼容变换计划，保 coherent、屏障和作用域修复。T594 RX实测与V5入口须分开，详见 [T691](architecture-T691-v1.md)。

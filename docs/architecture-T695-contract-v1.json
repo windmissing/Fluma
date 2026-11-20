@@ -1,0 +1,51 @@
+{
+  "schema": "GRS_BUILD_INVOCATION_V1",
+  "task": "T695",
+  "date": "2026-11-20",
+  "role": "architect",
+  "evidence": "docs/analysis-T691-T696-evidence-v1.json",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productExecuted": false,
+  "managerGateAdded": false,
+  "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+  "route": "BUILD_RECEIPT_PROVENANCE_ENGINEERING_DEFECT",
+  "repro": "receipt-replay exit0 copies T666 native-build.log + incremental.log; new Ninja anchor-only is not relink evidence",
+  "owner": "developer for repository-owned wrapper, tester for independent offline integration",
+  "cli": "build_receipt.py BUILD OUTPUT --invocation-manifest FILE",
+  "required": [
+    "fresh invocation and parent id",
+    "canonical buildRoot, cwd and target",
+    "native argv and actual tool digest",
+    "begin/end/exit",
+    "stdout/stderr actual paths/bytes/SHA",
+    "per-stage input and current output closure",
+    "link child receipt binding or explicit same verified reused output"
+  ],
+  "failure": [
+    "missing current receipt",
+    "historical path",
+    "wrong invocation/root/target",
+    "changed bytes/SHA",
+    "nonzero with old ELF",
+    "partial coverage"
+  ],
+  "statuses": [
+    "STATIC_ARTIFACT_ONLY",
+    "ARTIFACT_VERIFIED",
+    "COMPILE_OBSERVED",
+    "LINK_OBSERVED",
+    "INCREMENTAL_NO_WORK",
+    "EXPECTED_RSP_RELINK",
+    "SOURCE_BINDING_INCOMPLETE",
+    "FAILED"
+  ],
+  "preserve": [
+    "T666 archived historical bytes",
+    "SDK read-only",
+    "target-limited Ninja rule",
+    "full rsp and ordered argv",
+    "FP guards",
+    "actual independent ABI and relink narrow evidence"
+  ]
+}
