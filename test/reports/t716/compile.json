@@ -1,0 +1,105 @@
+{
+  "schema": "T716_DEVELOPER_COMPILE_RECEIPT_V1",
+  "result": "COMPILE_PASS_NOT_PRODUCT_PASS",
+  "buildLogSHA": "72c2f8cd388e53230b9a3df58f5bd1da3ced18e647164522c8fe6c70d8148ca6",
+  "elf": {
+    "path": ".codex\\local-test\\t716\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrs_g9rx.so",
+    "bytes": 5550432,
+    "sha256": "cb41a69478876d8390a9f4eba78e70a4565481ef7a80cb77b850a2d4879ffb76",
+    "machine": "AARCH64",
+    "buildId": "317645e31a3cd07e11e125f28b91b34601a0c820",
+    "abiWords": [
+      1,
+      40960,
+      64,
+      96,
+      8,
+      61632,
+      15832,
+      96,
+      520,
+      0,
+      20480,
+      21504,
+      22528,
+      23552,
+      24576,
+      34304
+    ],
+    "nativeAppStaticBytes": 91392,
+    "nativeAppExcludingProtocolPayloadBytes": 50432
+  },
+  "unsignedHap": {
+    "path": ".codex\\local-test\\t716\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "bytes": 7759659,
+    "sha256": "d07b9eda97734aea8f6fa00521a78bc707d1d722a2940a3f7d6725f6ea5a179a"
+  },
+  "packagedELF": {
+    "bytes": 1406544,
+    "sha256": "f47a6c7474f61ebf1f255197395274784a909952d87e37ea00d4dc158398bccf",
+    "canonicalSource": {
+      "offsets": [
+        272529
+      ],
+      "bytes": 146301,
+      "sha256": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+      "lines": 2147
+    }
+  },
+  "staticCompilerExit": 0,
+  "readonlyRevision": "RX_READONLY_VALUE_V1",
+  "implementationSHA": "4d5452bf6b2a44ca15e904334c0a2d123ca71151136b9a43a2274960d84a311a",
+  "coherentValueBoundariesRetained": 43,
+  "attribution": {
+    "schema": "T716_RX_READONLY_ATTRIBUTION_V1",
+    "signed": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T713-rx\\T713-rx-signed.hap",
+      "sha256": "3c271cace41ef779a93d528c6798c0fc2d1d4a84a0ac3479921cd93da5f4509d",
+      "bytes": 7862941
+    },
+    "loaded": {
+      "state": "LOADED_FILE_OBSERVED",
+      "sha256": "ad5a371b83bc6de95d3c582dd61d4dba6b930a2be7ce23bd6f8666a04826e8a9",
+      "bytes": "1406480",
+      "device": "66695",
+      "inode": "59199",
+      "BuildId": "af1bf65bbcd096d5c47b6c0c7ce27e62e3c7e001",
+      "memoryBuildIdMatched": true,
+      "path": "/data/storage/el1/bundle/libs/arm64/libgrs_g9rx.so"
+    },
+    "actualDriverOriginals": [
+      {
+        "file": "test\\reports\\t491\\t713b\\h713.txt",
+        "fileSHA": "cfe824a8e7851c537e4d6e2023f654bdbc925f79c187b252011ea3f739484be6",
+        "rawLines": [
+          "11-20 10:43:39.859 23526 24125 W C01490/com.example.helloworld/VK: [nodict]<HM_GPU> #  0:1987: S0001: Function call discards 'readonly' access qualifier."
+        ]
+      },
+      {
+        "file": "test\\reports\\t491\\t713b\\h713r.txt",
+        "fileSHA": "c85f31051eee018e8e95055a2d9b20279c88f39e49791c2755a2cd1203f9b3f5",
+        "rawLines": [
+          "11-20 10:50:15.995 23526 24125 W C01490/com.example.helloworld/VK: [nodict]<HM_GPU> #  0:1987: S0001: Function call discards 'readonly' access qualifier."
+        ]
+      }
+    ],
+    "priorCanonicalSourceSHA": "8d5c5f746a0175dcfe83281854f9018bf2cc62102382de8b6ebf02a62374bddd",
+    "line": 1987,
+    "sourceText": "for(uint row=0u;row<events;++row){uint at=row*64u;uvec2 mask=g9EventMask(B[at+2u]);",
+    "changes": [
+      {
+        "callee": "g9EventMask",
+        "argument": 1,
+        "buffer": "B",
+        "line": 1987,
+        "canonicalLine": 1988,
+        "before": "B[at+2u]",
+        "after": "rxReadBaseWord(at+2u)"
+      }
+    ],
+    "canonicalSHA": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+    "onlyReadonlyBoundaryAndAccessorChanged": true
+  },
+  "deviceUsed": false,
+  "productExecuted": false
+}

@@ -76,4 +76,4 @@ def receipt(build,log,out,validator=None,task='T699'):
 
  out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf8');return data
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('build',type=Path);p.add_argument('log',type=Path);p.add_argument('out',type=Path);p.add_argument('--validator',type=Path,required=True);p.add_argument('--task',choices=['T699','T709'],default='T699');a=p.parse_args();r=receipt(a.build.resolve(),a.log.resolve(),a.out,a.validator,a.task);print(json.dumps({'result':r['result'],'elf':r['elf'],'unsignedHap':r['unsignedHap']},indent=2))
+ p=argparse.ArgumentParser();p.add_argument('build',type=Path);p.add_argument('log',type=Path);p.add_argument('out',type=Path);p.add_argument('--validator',type=Path,required=True);p.add_argument('--task',choices=['T699','T709','T716'],default='T699');a=p.parse_args();r=receipt(a.build.resolve(),a.log.resolve(),a.out,a.validator,a.task);print(json.dumps({'result':r['result'],'elf':r['elf'],'unsignedHap':r['unsignedHap']},indent=2))
