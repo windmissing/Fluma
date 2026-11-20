@@ -1,0 +1,696 @@
+{
+  "schema": "T750_G13_VISC_SLICE_ARCHITECTURE_V1",
+  "deviceUsed": false,
+  "backendSelected": false,
+  "compilerSHA": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+  "closure": {
+    "parent": {
+      "signedReceipt": {
+        "path": "test/reports/t257/T729-split-3ff632a03a1d.json",
+        "bytes": 2325,
+        "sha256": "9e8e5403cefa870c5db9d7a00652c0c11660016069de154ac2b8bc4fce35e313"
+      },
+      "manifest": {
+        "path": "test/reports/t739/SPLIT.json",
+        "bytes": 17727,
+        "sha256": "0bdac0974781b2349dee65869b932ee1eb137b4617d861f310eb7fcb5f957996"
+      },
+      "signedSHA": "9e35e801b0a855f37423a2e01e74c88064786fc3301bd1ab3cfd2343e12864f0",
+      "buildId": "16704862c820e6188d5b399a68ef39c186bcbcc5",
+      "nativeSHA": "1a7784f4eb4dd9a6d0406511c2d16cc43d184988608740ade33894b17adb18d7",
+      "sourceBytes": 48577,
+      "sourceSHA": "840391626a47625a537dfad19d32887c78db88f2f6afd522f2c34f522791c974"
+    },
+    "sourceLimitBytes": 49152,
+    "compiledVariants": [
+      {
+        "role": "VISC_48_NATIVE_CONTROL",
+        "opcodes": [
+          48
+        ],
+        "privateProbeOpcode": 66,
+        "gles": {
+          "uniforms": [
+            "uBlock",
+            "uIndex",
+            "uJ",
+            "uL",
+            "uMicro",
+            "uOp",
+            "uScope"
+          ],
+          "ssboBindings": {
+            "Control": 3,
+            "Candidate": 1,
+            "Base": 0,
+            "Work": 2
+          },
+          "localSize": [
+            64,
+            1,
+            1
+          ]
+        },
+        "sizeAndIdentity": {
+          "role": "VISC_48_NATIVE_CONTROL",
+          "parentShaderBytes": 15931,
+          "parentShaderSHA": "e626954530ffb668d31ac99e895e4031cf49f6fbb0fd7563b6e58775aea987c6",
+          "vulkanSourceBytes": 16225,
+          "vulkanSourceSHA": "47787a6069e63b6c14360ba4de987e926336c5a8daefcd21a129f1c0b03e4cca",
+          "spirvBytes": 71172,
+          "spirvSHA": "44fca541e64e911e5b89e84811bc1dd012d8f3596f2a671160de497cadc6ac89",
+          "compileAndBundledValidationExit": 0,
+          "floatModes32": [
+            "DenormPreserve",
+            "SignedZeroInfNanPreserve",
+            "RoundingModeRTE"
+          ],
+          "relaxedPrecisionDecorations": 0,
+          "noContractionDecorationsObserved": 0
+        },
+        "dependencies": [
+          "activeFace",
+          "checkVelocity",
+          "coldFP32Probe",
+          "dt",
+          "faceIndex",
+          "fail",
+          "failDetail",
+          "fieldRead",
+          "floatFixed",
+          "h",
+          "microBase",
+          "nc",
+          "nf",
+          "nuFaces",
+          "nx",
+          "ny",
+          "periodicX",
+          "periodicY",
+          "reducePair",
+          "sabs",
+          "smulsmall",
+          "sneg",
+          "syncAll",
+          "traceBase",
+          "traceStage",
+          "traceVisc",
+          "viscApply",
+          "viscBlock",
+          "viscResult",
+          "viscSpectralUpper",
+          "wadd",
+          "wbit",
+          "wdiv",
+          "wlow",
+          "wlt",
+          "wmul",
+          "wneg",
+          "work",
+          "wrapIndex",
+          "wrne",
+          "wshl",
+          "wshr",
+          "wsub",
+          "wtop",
+          "wzero"
+        ],
+        "screeningHeadroomAfterAddingT747CoreOnly": {
+          "gles": 30023,
+          "vulkan": 29729
+        }
+      },
+      {
+        "role": "VISC_48_COHERENT_CONTROL",
+        "opcodes": [
+          48
+        ],
+        "privateProbeOpcode": 66,
+        "gles": {
+          "uniforms": [
+            "uBlock",
+            "uIndex",
+            "uJ",
+            "uL",
+            "uMicro",
+            "uOp",
+            "uScope"
+          ],
+          "ssboBindings": {
+            "Control": 3,
+            "Candidate": 1,
+            "Base": 0,
+            "Work": 2
+          },
+          "localSize": [
+            64,
+            1,
+            1
+          ]
+        },
+        "sizeAndIdentity": {
+          "role": "VISC_48_COHERENT_CONTROL",
+          "parentShaderBytes": 15949,
+          "parentShaderSHA": "176038ada8c1e068797663feffca7f09139b946546f9589550610c6735c03034",
+          "vulkanSourceBytes": 16243,
+          "vulkanSourceSHA": "19ae3b81e17cb24370a37166f510be76cc83f2864ec27fa8a147e5b35ff01d75",
+          "spirvBytes": 71228,
+          "spirvSHA": "bceb60762224304ca0f8f0667c77030897040bdb3dbfd998da52a5f4448997af",
+          "compileAndBundledValidationExit": 0,
+          "floatModes32": [
+            "DenormPreserve",
+            "SignedZeroInfNanPreserve",
+            "RoundingModeRTE"
+          ],
+          "relaxedPrecisionDecorations": 0,
+          "noContractionDecorationsObserved": 0
+        },
+        "dependencies": [
+          "activeFace",
+          "checkVelocity",
+          "coldFP32Probe",
+          "dt",
+          "faceIndex",
+          "fail",
+          "failDetail",
+          "fieldRead",
+          "floatFixed",
+          "h",
+          "microBase",
+          "nc",
+          "nf",
+          "nuFaces",
+          "nx",
+          "ny",
+          "periodicX",
+          "periodicY",
+          "reducePair",
+          "sabs",
+          "smulsmall",
+          "sneg",
+          "syncAll",
+          "traceBase",
+          "traceStage",
+          "traceVisc",
+          "viscApply",
+          "viscBlock",
+          "viscResult",
+          "viscSpectralUpper",
+          "wadd",
+          "wbit",
+          "wdiv",
+          "wlow",
+          "wlt",
+          "wmul",
+          "wneg",
+          "work",
+          "wrapIndex",
+          "wrne",
+          "wshl",
+          "wshr",
+          "wsub",
+          "wtop",
+          "wzero"
+        ],
+        "screeningHeadroomAfterAddingT747CoreOnly": {
+          "gles": 30005,
+          "vulkan": 29711
+        }
+      },
+      {
+        "role": "OP_48_REMAINDER",
+        "opcodes": [
+          49,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61
+        ],
+        "privateProbeOpcode": 66,
+        "gles": {
+          "uniforms": [
+            "uBlock",
+            "uIndex",
+            "uJ",
+            "uL",
+            "uMicro",
+            "uOp",
+            "uScope"
+          ],
+          "ssboBindings": {
+            "Control": 3,
+            "Candidate": 1,
+            "Base": 0,
+            "Work": 2
+          },
+          "localSize": [
+            64,
+            1,
+            1
+          ]
+        },
+        "sizeAndIdentity": {
+          "role": "OP_48_REMAINDER",
+          "parentShaderBytes": 43307,
+          "parentShaderSHA": "46538844d0e96a5f7f8e096a72674d6304d7c586218d4bfd63a4dd15823bbef6",
+          "vulkanSourceBytes": 43601,
+          "vulkanSourceSHA": "68dba6b3f202c3daeec4f152ac72f6184b0e22dbfe7e8880a4edafc5ec421c3a",
+          "spirvBytes": 227312,
+          "spirvSHA": "407f34fe63b3b0560748fa33cf9c53026d2de8edf704e87d9d9d847f6e3ef9cd",
+          "compileAndBundledValidationExit": 0,
+          "floatModes32": [
+            "DenormPreserve",
+            "SignedZeroInfNanPreserve",
+            "RoundingModeRTE"
+          ],
+          "relaxedPrecisionDecorations": 0,
+          "noContractionDecorationsObserved": 0
+        },
+        "dependencies": [
+          "acceptedTime",
+          "activeFace",
+          "audit",
+          "checkVelocity",
+          "coldFP32Probe",
+          "copyBase",
+          "drive",
+          "dt",
+          "faceIndex",
+          "fail",
+          "failDetail",
+          "failMath",
+          "fieldAudit",
+          "fieldRead",
+          "h",
+          "integerReduce",
+          "jacobi",
+          "loadQ",
+          "mathDomain",
+          "mathRaw",
+          "meanRemove",
+          "microBase",
+          "nc",
+          "nf",
+          "nuFaces",
+          "nx",
+          "ny",
+          "pairAdd",
+          "pairSub",
+          "periodicX",
+          "periodicY",
+          "poisson",
+          "pressureAt",
+          "pressureCell",
+          "pressureCycle",
+          "prolong",
+          "reducePair",
+          "restrictResidual",
+          "s64",
+          "sabs",
+          "sdivrne",
+          "sdivtz",
+          "sfits64",
+          "sfloat",
+          "si",
+          "smulsmall",
+          "sneg",
+          "softAdd",
+          "softCos",
+          "softDiv",
+          "softExp",
+          "softF32",
+          "softFloat",
+          "softHalf",
+          "softInt",
+          "softMul",
+          "softNeg",
+          "softNormalize",
+          "softPack",
+          "softPolynomial",
+          "softReduce",
+          "softSin",
+          "softU64",
+          "softUnpack",
+          "softZero",
+          "sourceInstall",
+          "storeQ",
+          "syncAll",
+          "timePrepare",
+          "traceBase",
+          "tracePressure",
+          "traceStage",
+          "wadd",
+          "wallLedger",
+          "wbit",
+          "wdiv",
+          "wisqrt",
+          "wlow",
+          "wlt",
+          "wmul",
+          "wneg",
+          "work",
+          "wrapIndex",
+          "wrne",
+          "wshl",
+          "wshr",
+          "wsub",
+          "wtop",
+          "wzero"
+        ],
+        "screeningHeadroomAfterAddingT747CoreOnly": {
+          "gles": 2647,
+          "vulkan": 2353
+        }
+      }
+    ],
+    "scope": "STATIC_NATIVE_CONTROL_AND_VISIBILITY_CONTROL_ONLY_NO_U32_BLOCK_OR_DEVICE"
+  },
+  "dispatch": {
+    "dispatch": {
+      "path": "docs/architecture-T607-g13-dispatch-v1.json",
+      "bytes": 143062,
+      "sha256": "6d0cf08bf17389f3915cfb0bd5406327ab6cdd030aa1541db5e4e3dffa90f0af"
+    },
+    "generatedHeader": {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/contract_generated.h",
+      "bytes": 218271,
+      "sha256": "31a31232bd97156a79e7be7a4910410d2486039f994fb1e231ba073b06e1b76e"
+    },
+    "frozenTransport": {
+      "path": ".codex/local-test/t739-split/entry/src/main/cpp/gpu_resident/g13flow/transport.cpp",
+      "bytes": 33422,
+      "sha256": "5a0dc47d595ba4abe6f9bd7bc6ffa6a7d71671e1f524859040bb51954a8a74b7"
+    },
+    "totals": {
+      "quantum": 820,
+      "source": 16,
+      "viscBlocksSubmitted": 112,
+      "microBudget": {
+        "1": 7,
+        "2": 7
+      },
+      "maxIterationSlotsPerRoot": 1792
+    },
+    "blockRanges": [
+      {
+        "scope": 1,
+        "trialJ": 1,
+        "micro": 0,
+        "firstIndex": 27,
+        "lastIndex": 34
+      },
+      {
+        "scope": 1,
+        "trialJ": 2,
+        "micro": 0,
+        "firstIndex": 87,
+        "lastIndex": 94
+      },
+      {
+        "scope": 1,
+        "trialJ": 2,
+        "micro": 1,
+        "firstIndex": 143,
+        "lastIndex": 150
+      },
+      {
+        "scope": 1,
+        "trialJ": 4,
+        "micro": 0,
+        "firstIndex": 203,
+        "lastIndex": 210
+      },
+      {
+        "scope": 1,
+        "trialJ": 4,
+        "micro": 1,
+        "firstIndex": 259,
+        "lastIndex": 266
+      },
+      {
+        "scope": 1,
+        "trialJ": 4,
+        "micro": 2,
+        "firstIndex": 315,
+        "lastIndex": 322
+      },
+      {
+        "scope": 1,
+        "trialJ": 4,
+        "micro": 3,
+        "firstIndex": 371,
+        "lastIndex": 378
+      },
+      {
+        "scope": 2,
+        "trialJ": 1,
+        "micro": 0,
+        "firstIndex": 432,
+        "lastIndex": 439
+      },
+      {
+        "scope": 2,
+        "trialJ": 2,
+        "micro": 0,
+        "firstIndex": 492,
+        "lastIndex": 499
+      },
+      {
+        "scope": 2,
+        "trialJ": 2,
+        "micro": 1,
+        "firstIndex": 548,
+        "lastIndex": 555
+      },
+      {
+        "scope": 2,
+        "trialJ": 4,
+        "micro": 0,
+        "firstIndex": 608,
+        "lastIndex": 615
+      },
+      {
+        "scope": 2,
+        "trialJ": 4,
+        "micro": 1,
+        "firstIndex": 664,
+        "lastIndex": 671
+      },
+      {
+        "scope": 2,
+        "trialJ": 4,
+        "micro": 2,
+        "firstIndex": 720,
+        "lastIndex": 727
+      },
+      {
+        "scope": 2,
+        "trialJ": 4,
+        "micro": 3,
+        "firstIndex": 776,
+        "lastIndex": 783
+      }
+    ],
+    "scopeCollision": [
+      {
+        "tableScope": 1,
+        "nativeBank": "REPLAY",
+        "shaderScope": 1,
+        "traceBaseWords": 10240,
+        "viscCounterWord": 785,
+        "expectedBank": "CANDIDATE",
+        "expectedShaderIndex": 0,
+        "expectedTraceBaseWords": 2048
+      },
+      {
+        "tableScope": 2,
+        "nativeBank": "REPLAY",
+        "shaderScope": 2,
+        "traceBaseWords": 10240,
+        "viscCounterWord": 786,
+        "expectedBank": "REPLAY",
+        "expectedShaderIndex": 1,
+        "expectedTraceBaseWords": 10240
+      }
+    ],
+    "programUsesOldThenSplit": {
+      "QUANTUM": {
+        "singleContinuousSequence": [
+          99,
+          99
+        ],
+        "fixedBatchesOfTen": [
+          170,
+          170
+        ],
+        "sameAdjacentRoleBoundariesForAnyEqualPumpPartition": true
+      },
+      "SOURCE": {
+        "singleContinuousSequence": [
+          6,
+          6
+        ],
+        "fixedBatchesOfTen": [
+          7,
+          7
+        ],
+        "sameAdjacentRoleBoundariesForAnyEqualPumpPartition": true
+      }
+    },
+    "activeBlockSyncAllCount": 33
+  },
+  "oracle": {
+    "operatorVectors": [
+      {
+        "case": "reassociation negative control",
+        "qLeftRightBottomTop": [
+          "00000000",
+          "3f800000",
+          "33800000",
+          "bf800000",
+          "00000000"
+        ],
+        "addAddAddMulSub": [
+          "3f800000",
+          "00000000",
+          "00000000",
+          "00000000",
+          "00000000"
+        ],
+        "wall": null,
+        "afterHomogenize": "00000000"
+      },
+      {
+        "case": "normal cancellation at the lower edge",
+        "qLeftRightBottomTop": [
+          "00000000",
+          "00800001",
+          "80800000",
+          "00000000",
+          "00000000"
+        ],
+        "addAddAddMulSub": [
+          "00000001",
+          "00000001",
+          "00000001",
+          "00000000",
+          "00000001"
+        ],
+        "wall": null,
+        "afterHomogenize": "00000001"
+      },
+      {
+        "case": "subnormal center produces negative subnormal",
+        "qLeftRightBottomTop": [
+          "00000001",
+          "00000000",
+          "00000000",
+          "00000000",
+          "00000000"
+        ],
+        "addAddAddMulSub": [
+          "00000000",
+          "00000000",
+          "00000000",
+          "00000004",
+          "80000004"
+        ],
+        "wall": null,
+        "afterHomogenize": "80000004"
+      },
+      {
+        "case": "subnormal carry into normal",
+        "qLeftRightBottomTop": [
+          "00000000",
+          "007fffff",
+          "00000001",
+          "00000000",
+          "00000000"
+        ],
+        "addAddAddMulSub": [
+          "00800000",
+          "00800000",
+          "00800000",
+          "00000000",
+          "00800000"
+        ],
+        "wall": null,
+        "afterHomogenize": "00800000"
+      },
+      {
+        "case": "lower channel ghost and homogenization",
+        "qLeftRightBottomTop": [
+          "3e000000",
+          "3e000000",
+          "3e000000",
+          "3ec00000",
+          "3e000000"
+        ],
+        "addAddAddMulSub": [
+          "3e800000",
+          "3f200000",
+          "3f400000",
+          "3f000000",
+          "3e800000"
+        ],
+        "wall": "3e800000",
+        "afterHomogenize": "be800000"
+      },
+      {
+        "case": "upper channel ghost and homogenization",
+        "qLeftRightBottomTop": [
+          "3e000000",
+          "3e000000",
+          "3e000000",
+          "3e000000",
+          "bf200000"
+        ],
+        "addAddAddMulSub": [
+          "3e800000",
+          "3ec00000",
+          "be800000",
+          "3f000000",
+          "bf400000"
+        ],
+        "wall": "be800000",
+        "afterHomogenize": "be800000"
+      }
+    ],
+    "reassociatedWrongWord": "33800000",
+    "profile64": {
+      "faces": 8320,
+      "loopSlotsPerActiveBlock": 133120,
+      "activeFaceCounts": {
+        "closed": 8064,
+        "periodicXY": 8192,
+        "periodicXChannel": 8128
+      }
+    },
+    "sources": [
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g13flow/viscosity.glsl",
+        "bytes": 3556,
+        "sha256": "8637821ebfb9dca88110ccfce407b6ba79246bd798adb158da96ed0f0a0dd3ba"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g13flow/mac_access.glsl",
+        "bytes": 2943,
+        "sha256": "892b41eb0cf8d042f48872ad5319b91a9dc02c460fa4074a257c396a8b3d22bb"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g13flow/trace.glsl",
+        "bytes": 3962,
+        "sha256": "4f1e54796f7b4b5784cc082a5c18545bd28ef74a7951f458bb6649221b20db1f"
+      },
+      {
+        "path": "tools/architecture/t747_u32_probe.comp",
+        "bytes": 4078,
+        "sha256": "b1601135d8b53be1a391fda26937a1baa8d6aee774ab22589b4067cce2fff056"
+      }
+    ]
+  }
+}
