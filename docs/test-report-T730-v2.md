@@ -75,3 +75,25 @@ v5-t732-retest.json）。
 
 冷编译 ✅（boot+compute+link）｜暖 load 0.01s ✅｜READY/Swap
 NOT_REACHED（op 66 FP32 拒绝=唯一剩余门，数值/精度域）
+
+
+## v6 追加（2026-11-20 18:35，effector；T737 归因后复测——次正规数清零稳定复现）
+
+**T737 归因吸收**：attempt 250 实际首拒=op65（次正规数清零——次正规输入
+加零与次正规结果生成均回读 0，本设备 BOOT GLES 程序 FTZ）；op66 两轮
+独立探针同因失败；op65 sin(0)/cos(0)/sin(π/2) 哨兵全过=拒绝仅在次正规
+域。**T730 v5 修订**：v5 记"已越过 op65 只剩 op66"——按 T737 原字，生效
+拒绝仍是 op65（INIT_FP32_RESULT:EXIT 是最后诊断时点非首拒者）。
+
+**sign_pair 通过**（T728 骨架+T732 身份值）：此前失败系我构造 roles 的
+域错误——回执 scene.vert sha 478d2e92 为 LF 规范化域（LF 版+\0 实证在
+libgrs_g13.so 内），回执本身无误。签包 T729-monolith（e1159ad7）/
+T729-split（8df9bf7b）。
+
+**复测**（T729-split 正签包）：G13 页→配置 REST→150s→**CONFIG_FAILED
+INIT_ERROR_27 @ INIT_FP32_RESULT:EXIT，attempt 196，bootReadyNs=0**——
+与 attempt 250 同签名。**次正规 FTZ 两轮稳定复现**（250/196），非瞬态。
+
+**回 architect**：次正规处理为精度域设计决策——FTZ 安全测试向量（避开
+次正规探针）/shader precise 模式/门放宽提案（MUST-PASS 语义审查），
+tester 侧无设计决策不可自行变体。
