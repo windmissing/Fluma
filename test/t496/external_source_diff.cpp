@@ -66,6 +66,10 @@ extern "C" __eglMustCastToProperFunctionPointerType GL_APIENTRY t496GetProcAddre
 static std::string g_runId, g_arm;
 static std::mutex g_emitMutex;
 static App* g_cutApp=nullptr;static std::mutex g_cutMu;static std::condition_variable g_cutCv;static bool g_cutEntered=false,g_cutReleased=false,g_cutStop=false,g_d2Mode=false;static std::atomic<bool> g_d2Frozen{false};static std::atomic<bool> g_cutArmed{false};
+#ifdef GRS_T692_HOST_READBACK
+#include "../t693/replay_sink.h"
+static t693::Replay* g_replay = nullptr;
+#endif
 static std::string g_peSha;static uint64_t g_scriptBase=0;
 static std::ofstream g_log;
 static std::map<std::string, bool> g_asserted;
@@ -428,7 +432,14 @@ static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
             pending=a.jobLive||a.runQueue||a.count||a.progress.activeRemaining||a.progress.pending;
             if(pending&&heldCheckpoints++==0)Emit("MILESTONE","HOLD_FIXED_STAMP",g_hostNowNs.load(),"jobLive="+std::to_string(a.jobLive)+" runQueue="+std::to_string(a.runQueue)+" mailbox="+std::to_string(a.count));
         }
-        if(pending){
+        const auto kind=script[cursor].kind;
+        const bool busyCut=t496sink::BinaryTrace()&&!g_d2Mode&&
+            (kind==Ak::SOURCE||kind==Ak::RESERVE||kind==Ak::END);
+        if(busyCut){
+            Emit("MILESTONE","CONTROL_CHECKPOINT",g_hostNowNs.load(),
+                "cursor="+std::to_string(cursor)+" ownerPending="+std::to_string(pending));
+        }
+        if(pending&&!busyCut){
             {std::lock_guard<std::mutex> lk(g_schedMu);g_permit=true;g_schedCv.notify_all();}
             std::this_thread::sleep_for(std::chrono::milliseconds(1));continue;
         }
@@ -450,9 +461,10 @@ static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
             if (!g_schedCv.wait_for(lk, std::chrono::seconds(1),
                     [&]{return g_ownerCheckpoint;})) break;
             g_ownerCheckpoint=false; ++drains;
+            lk.unlock();
             {std::lock_guard<std::mutex> lock(a.mutex);
              if (!a.jobLive && a.runQueue==0 && a.count==0 && !a.progress.pending && !a.progress.activeRemaining) break;}
-            g_permit=true; g_schedCv.notify_all();
+            lk.lock();g_permit=true; g_schedCv.notify_all();
             lk.unlock();std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
@@ -613,16 +625,28 @@ static int RunCreateOnlyDispatch(const std::string& arm, const std::string& atte
       if(!g_d2Mode)Assert("EXTERNAL_SOURCE_NONEMPTY",source,"source="+std::to_string(result.snap.sourceCommit));Assert("QUANTUM_NONEMPTY",quantum,"physics="+std::to_string(result.snap.physicsCommit));rc=g_d2Mode?(g_d2Frozen?0:9):(source&&quantum&&result.delivered?0:8);
     }else rc=RunCreateOnly(arm);
     std::cout << "T496 CREATE_ONLY " << arm << ": rc=" << rc << std::endl;
+#ifdef GRS_T692_HOST_READBACK
+    if(g_replay&&!g_replay->store(".codex/local-test/t496/t693-replay-"+attemptId))rc=11;
+#endif
+    t496sink::CloseBinaryTrace();
     return t496sink::BudgetExceeded().load()?10:rc;
 }
 
 extern "C" void t496_shadow_role(const char*,const char*);
 int main(int argc, char** argv) {
-    {std::ifstream exe(".codex/local-test/t496/t496.exe",std::ios::binary);std::string bytes((std::istreambuf_iterator<char>(exe)),{});g_peSha=grs::programcache::Hash(bytes);}
+    {std::ifstream exe(argv[0],std::ios::binary);std::string bytes((std::istreambuf_iterator<char>(exe)),{});g_peSha=grs::programcache::Hash(bytes);}
     t496_shadow_role(grs::m1::FullSourceKernel(),"SOURCE");
     t496_shadow_role(grs::m1::QuantumKernel(),"INTERMEDIATE_QUANTUM");
     t496_shadow_role(grs::m1::QuantumCommitKernel(),"FINAL_QUANTUM");
     for(const auto& item:CanonicalSources())if(item.second.size()==128)t496_shadow_hash_role(item.second.c_str(),item.first.c_str());
+#ifdef GRS_T692_HOST_READBACK
+    std::unique_ptr<t693::Replay> replay;
+    if(std::getenv("T693_REPLAY")){
+        replay=std::make_unique<t693::Replay>();
+        if(!replay->install())return 11;
+        g_replay=replay.get();
+    }
+#endif
     if (argc == 3) {
         const std::string arm = argv[1];
         if (arm == "C0" || arm == "C1" || arm == "C2" || arm=="D1_OFF" || arm=="D1_ON" || arm=="D2") return RunCreateOnlyDispatch(arm, argc > 2 ? argv[2] : "");

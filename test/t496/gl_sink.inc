@@ -1,5 +1,5 @@
-// T561 (problem T547 §3 + manifest): full-process Create sink, single instance,
-// ENTER/原样调用/EXIT for every listed GL/EGL call plus the 14 high-level
+// T561 (problem T547 搂3 + manifest): full-process Create sink, single instance,
+// ENTER/鍘熸牱璋冪敤/EXIT for every listed GL/EGL call plus the 14 high-level
 // cold observer seams. Records carry schema/runId/arm/pid/ownerTid/createAttempt
 // Id/callId/functionId/event/wallNs/scriptNs and the watcher-facing ActiveCall
 // phases (ENTER_EMIT/IN_API/RETURNED/EXIT_EMIT). Per-record <=4096B,
@@ -27,7 +27,10 @@
 #endif
 
 #include "exit_diagnostics.h"
+#include "../t693/trace.h"
 namespace t496sink {
+inline std::unique_ptr<t693::Trace>& BinaryTrace(){static std::unique_ptr<t693::Trace> trace;return trace;}
+inline void CloseBinaryTrace(){if(BinaryTrace())BinaryTrace()->close();}
 // ---- one instance per process; main initializes before the owner starts ----
 inline std::string& RunId(){static std::string s;return s;}
 inline std::string& Arm(){static std::string s;return s;}
@@ -88,6 +91,12 @@ enum FunctionId:uint32_t{
 
 inline bool EmitRecord(uint32_t functionId,const char* event,uint64_t callId,const std::string& detail){
  if(!Initialized().load()||BudgetExceeded().load())return false;
+ if (BinaryTrace()) {
+  const uint8_t edge = std::strcmp(event,"ENTER")==0 ? 1 : std::strcmp(event,"EXIT")==0 ? 2 :
+     std::strcmp(event,"CPU_MAP_RETURN_BYTES")==0 ? 3 : 0;
+  if(edge && BinaryTrace()->append(callId,WallNs(),uint32_t(OwnerTid()),functionId,edge,detail,{}))return true;
+  BudgetExceeded().store(true);t496diag::EvidenceBudget();return false;
+ }
  char record[kRecordUtf8Max];
  const std::string safe=JEsc(detail.substr(0,3000));
  const auto wrote=std::snprintf(record,sizeof(record),
@@ -165,7 +174,7 @@ inline bool SeamExit(uint64_t seq,uint32_t functionId,const std::string& result)
 } // namespace t496sink
 
 // C ABI: the main TU initializes the single process sink before the owner
-// thread starts (T547 §3 cross-TU single instance). Reusing an attempt file
+// thread starts (T547 搂3 cross-TU single instance). Reusing an attempt file
 // is rejected (create-new rule).
 extern "C" inline bool t496_sink_initialize(const char* runId,const char* arm,const char* attemptId){
  bool expect=false;
@@ -173,6 +182,13 @@ extern "C" inline bool t496_sink_initialize(const char* runId,const char* arm,co
  t496sink::RunId()=runId?runId:"";t496sink::Arm()=arm?arm:"";t496sink::AttemptId()=attemptId?attemptId:"";
  t496sink::TracePath()=std::string(".codex/local-test/t496/gltrace-")+t496sink::AttemptId()+".ndjson";
  if(std::filesystem::exists(std::filesystem::path(t496sink::TracePath()))){t496sink::Initialized().store(false);return false;}
+ if(std::getenv("T693_BINARY_TRACE")){
+  auto trace=std::make_unique<t693::Trace>();
+  const std::string identity=t496sink::RunId()+" "+t496sink::Arm()+" "+t496sink::AttemptId()+" "+std::to_string(T561_GETPID());
+  if(!trace->open(t496sink::TracePath()+".t693",identity))return false;
+  t496sink::BinaryTrace()=std::move(trace);
+  return t496diag::Begin(std::string(".codex/local-test/t496/")+t496sink::AttemptId());
+ }
  if(t496sink::TraceHandleRef())return false;
  t496sink::TraceHandleRef()=std::fopen(t496sink::TracePath().c_str(),"wb");
  if(!t496sink::TraceHandleRef()){t496sink::Initialized().store(false);return false;}

@@ -8,10 +8,18 @@ def fingerprint(p):
 def run(arm,attempt):
  assert arm in ('C0','C1','C2','D1_OFF','D1_ON','D2') and attempt and all(c.isalnum() or c in '-_' for c in attempt)
  out=ROOT/'test/reports/t496'/attempt;out.mkdir(parents=True,exist_ok=False)
- exe=ROOT/'.codex/local-test/t496/t496.exe';base=ROOT/'.codex/local-test/t496'
+ exe=Path(os.environ.get('T693_REPLAY_EXE',ROOT/'.codex/local-test/t496/t496.exe')).resolve();base=ROOT/'.codex/local-test/t496'
  from source_manifest import collect
  (out/'source-closure.json').write_text(json.dumps(collect(),indent=2))
+ if os.environ.get('T693_REPLAY'):
+  generated=exe.parent/'inputs.json'
+  overlay=json.loads(generated.read_bytes())
+  for name,digest in overlay['generated'].items():
+   assert fingerprint(exe.parent/name)['sha256']==digest,'REPLAY_GENERATED_INPUT_MISMATCH'
+  (out/'replay-inputs.json').write_bytes(generated.read_bytes())
+
  env=os.environ.copy();env['PATH']='C:/Users/admin/AppData/Local/Programs/CokePLUS;'+env['PATH']
+ binary=bool(env.get('T693_BINARY_TRACE'))
  start=time.monotonic();deadline=start+360 # leave 60s of total420 for cleanup
  parent=psutil.Process();launch={'arm':arm,'attempt':attempt,'scriptRevision':'T496_SCRIPT_V4_MILESTONE_COMPLETE','scriptWallBudgetSeconds':120,'drainWallBudgetSeconds':30,'runId':'t496-'+attempt,'argv':[str(exe),arm,attempt],'cwd':str(ROOT),'parentPid':os.getpid(),'parentStart':parent.create_time(),'PE':fingerprint(exe),'clock':'PYTHON_MONOTONIC_SECONDS','launch':start,'killDeadline':deadline,'totalDeadline':start+420,'path':env['PATH']}
  with (out/'stdout.bin').open('xb') as stdout,(out/'stderr.bin').open('xb') as stderr:
@@ -21,12 +29,17 @@ def run(arm,attempt):
   while p.poll() is None and time.monotonic()<deadline:
    elapsed=time.monotonic()-start
    sink=base/('gltrace-'+attempt+'.ndjson');active=base/(attempt+'.active')
+   if binary:sink=Path(str(sink)+'.t693.meta')
    if elapsed>5 and (not sink.exists() or not active.exists()):reason='MISSING_SAME_ATTEMPT_SINK_OR_ACTIVE';break
    if sink.exists() and sink.stat().st_size:
-    with sink.open('rb') as trace:first=trace.readline(4096)
-    try:identity=json.loads(first)
-    except Exception:identity={}
-    if identity.get('pid')!=p.pid or identity.get('createAttemptId')!=attempt or not identity.get('ownerTid'):reason='SINK_IDENTITY_MISSING_OR_MISMATCH';break
+    if binary:
+     expected=f"T693_LE32_V1\nt496-{attempt} create_{arm} {attempt} {p.pid}\n"
+     if sink.read_text()!=expected:reason='SINK_IDENTITY_MISSING_OR_MISMATCH';break
+    else:
+     with sink.open('rb') as trace:first=trace.readline(4096)
+     try:identity=json.loads(first)
+     except Exception:identity={}
+     if identity.get('pid')!=p.pid or identity.get('createAttemptId')!=attempt or not identity.get('ownerTid'):reason='SINK_IDENTITY_MISSING_OR_MISMATCH';break
    if int(elapsed*10)%10==0:
     try:
      paths={m.path for m in child.memory_maps() if any(k in m.path.lower() for k in ('angle','egl','gles','d3d','vulkan'))}
@@ -51,6 +64,23 @@ def run(arm,attempt):
   if source.exists():
    limit=67108864 if name.endswith('.dmp') else 33554432
    assert source.stat().st_size<=limit;data=source.read_bytes();(out/name).write_bytes(data)
+ if binary:
+  traces=list(base.glob('gltrace-'+attempt+'.ndjson.t693.*'))
+  assert sum(f.stat().st_size for f in traces)<=12*1024*1024
+  for f in traces:(out/f.name).write_bytes(f.read_bytes())
+  footer=base/('gltrace-'+attempt+'.ndjson.t693.end')
+  if not footer.exists() or not footer.read_text().startswith('SEALED '):evidenceBudget=True
+  business=sum((out/name).stat().st_size for name in
+      ['t496_log_'+attempt+'.ndjson','t496-stages_'+attempt+'.ndjson'] if (out/name).is_file())
+  result['partitionBytes']={'api':sum(f.stat().st_size for f in traces),'businessRaw':business}
+  if business>4*1024*1024:evidenceBudget=True
+  result['binaryTraceSealed']=not evidenceBudget
+  result['evidenceBudgetExceeded']=evidenceBudget
+ if env.get('T693_REPLAY'):
+  replay=list(base.glob('t693-replay-'+attempt+'.*'))
+  assert sum(f.stat().st_size for f in replay)<=16*1024*1024
+  result.setdefault('partitionBytes',{})['root']=sum(f.stat().st_size for f in replay)
+  for f in replay:(out/f.name).write_bytes(f.read_bytes())
  result['artifacts']=[fingerprint(x) for x in out.iterdir() if x.is_file()]
  (out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps({k:v for k,v in result.items() if k not in ('samples','artifacts','modules')}));return 0 if code==0 and not evidenceBudget else 1
 if __name__=='__main__':

@@ -4,7 +4,7 @@ import hashlib,json
 ROOT=Path(__file__).resolve().parents[2]
 def collect():
  paths=[]
- for name in ['test/t496','test/t488','test/t485','test/t324','.codex/local-test/t55-gpu/sdk','.codex/local-test/t492-m1-delivery/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident','.codex/local-test/t492-m1-delivery/entry/src/main/cpp','test/t295','.codex/local-test/t281','.codex/local-test/t236-source-host','.codex/local-test/t280','.codex/local-test/t279','.codex/local-test/t240-source']:
+ for name in ['test/t496','test/t693','test/t692','test/t488','test/t485','test/t324','.codex/local-test/t55-gpu/sdk','.codex/local-test/t492-m1-delivery/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident','.codex/local-test/t492-m1-delivery/entry/src/main/cpp','test/t295','.codex/local-test/t281','.codex/local-test/t236-source-host','.codex/local-test/t280','.codex/local-test/t279','.codex/local-test/t240-source']:
   root=ROOT/name
   paths.extend(p for p in root.rglob('*') if p.is_file() and p.suffix.lower() in ('.h','.inc','.cpp','.c','.py','.cmd','.lib'))
  rows=[{'path':str(p.relative_to(ROOT)),'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(set(paths))]

@@ -1,0 +1,114 @@
+{
+  "arms": {
+    "off": {
+      "rows": 86854,
+      "mapCount": 92,
+      "rawBytes": 9911001,
+      "drain": [
+        ",\"progressClockRevision\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"gpuDeadlineNs\":\"250000000\",\"pageSession\":\"2\",\"pageSequence\":\"49\",\"pageCallbackNs\":\"1296247233502100\",\"pageReceivedNs\":\"1296247233502100\",\"pageNativeGapMaxNs\":\"17000000\",\"pageUiGapMaxNs\":\"17000000\",\"generatedQuanta\":\"90\",\"acceptedQuantumCount\":\"90\",\"pendingQuanta\":0,\"activePlanRemaining\":0,\"overloadDroppedQuanta\":\"0\",\"revokedDroppedQuanta\":\"0\",\"quotaCarry\":\"240000000\",\"clearedCarry\":\"0\",\"planId\":\"47\",\"quotaBalanced\":true,\"pageFault\":\"WAIT_PAGE_PULSE\",\"supervisorLateNs\":\"0\",\"expiredSources\":\"0\"",
+        "accepted=92 sourceCommit=2 mailbox=0 runQueue=0 phase=READY firstFailure=NONE permission=READY"
+      ],
+      "controls": [
+        {
+          "runId": "t496-t693-second-off",
+          "arm": "create_D1_OFF",
+          "actionId": "7",
+          "phase": "SOURCE_SAND",
+          "clockDomain": "steady_real",
+          "wallNs": "1296253675319800",
+          "declaredScriptNs": "113000000",
+          "detail": "srcSeq=1 fnv=98fc6e43 reply=ENQUEUED_NOT_ACK mailbox=1 enqueuedNs=1296246577502100 payloadSHA=ebee4f2148bff11e7954bd5636a6b3062d94f6621360a5ec9e03583c082996e8 words=1129534023,2,0,0,1,0,1,0,1,0,3,0,1,0,1,1,0,1078992896,0,0,0,1069547520,0,0,1,0,0,1,1,0,0,0,"
+        },
+        {
+          "runId": "t496-t693-second-off",
+          "arm": "create_D1_OFF",
+          "actionId": "19",
+          "phase": "RESERVE_OFF_NOOP",
+          "clockDomain": "steady_real",
+          "wallNs": "1296277301311000",
+          "declaredScriptNs": "289000000",
+          "detail": ""
+        },
+        {
+          "runId": "t496-t693-second-off",
+          "arm": "create_D1_OFF",
+          "actionId": "29",
+          "phase": "SOURCE_WATER",
+          "clockDomain": "steady_real",
+          "wallNs": "1296298934687200",
+          "declaredScriptNs": "433000000",
+          "detail": "srcSeq=2 fnv=b2d8e62d reply=ENQUEUED_NOT_ACK mailbox=1 enqueuedNs=1296246897502100 payloadSHA=fd0744e7fb1a4e83882d89c5eccae1422e5bd0619d7cc26ac89dc2a632549f74 words=1129534023,2,1,0,1,0,2,0,1,0,4,0,1,0,2,2,0,1078992896,0,1080033280,0,1069547520,0,0,2,0,0,1,1,0,0,0,"
+        },
+        {
+          "runId": "t496-t693-second-off",
+          "arm": "create_D1_OFF",
+          "actionId": "43",
+          "phase": "END_SKIP",
+          "clockDomain": "steady_real",
+          "wallNs": "1296326209416800",
+          "declaredScriptNs": "641000000",
+          "detail": "not armed/off"
+        }
+      ],
+      "rootCount": 92
+    },
+    "on": {
+      "rows": 86296,
+      "mapCount": 92,
+      "rawBytes": 9893138,
+      "drain": [
+        ",\"progressClockRevision\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"gpuDeadlineNs\":\"250000000\",\"pageSession\":\"2\",\"pageSequence\":\"49\",\"pageCallbackNs\":\"1296388489547400\",\"pageReceivedNs\":\"1296388489547400\",\"pageNativeGapMaxNs\":\"17000000\",\"pageUiGapMaxNs\":\"17000000\",\"generatedQuanta\":\"90\",\"acceptedQuantumCount\":\"90\",\"pendingQuanta\":0,\"activePlanRemaining\":0,\"overloadDroppedQuanta\":\"0\",\"revokedDroppedQuanta\":\"0\",\"quotaCarry\":\"240000000\",\"clearedCarry\":\"0\",\"planId\":\"47\",\"quotaBalanced\":true,\"pageFault\":\"WAIT_PAGE_PULSE\",\"supervisorLateNs\":\"0\",\"expiredSources\":\"0\"",
+        "accepted=92 sourceCommit=2 mailbox=0 runQueue=0 phase=READY firstFailure=NONE permission=READY"
+      ],
+      "controls": [
+        {
+          "runId": "t496-t693-second-on",
+          "arm": "create_D1_ON",
+          "actionId": "7",
+          "phase": "SOURCE_SAND",
+          "clockDomain": "steady_real",
+          "wallNs": "1296394156623400",
+          "declaredScriptNs": "113000000",
+          "detail": "srcSeq=1 fnv=98fc6e43 reply=ENQUEUED_NOT_ACK mailbox=1 enqueuedNs=1296387833547400 payloadSHA=ebee4f2148bff11e7954bd5636a6b3062d94f6621360a5ec9e03583c082996e8 words=1129534023,2,0,0,1,0,1,0,1,0,3,0,1,0,1,1,0,1078992896,0,0,0,1069547520,0,0,1,0,0,1,1,0,0,0,"
+        },
+        {
+          "runId": "t496-t693-second-on",
+          "arm": "create_D1_ON",
+          "actionId": "19",
+          "phase": "RESERVE",
+          "clockDomain": "steady_real",
+          "wallNs": "1296416751835500",
+          "declaredScriptNs": "289000000",
+          "detail": "{\"revision\":\"T417_CAPTURE_REQUEST_V1\",\"state\":\"RESERVED\",\"reason\":\"\",\"requestId\":\"1\",\"requestNs\":\"1296388009547400\",\"armByNs\":\"1296389009547400\",\"detectedNs\":\"0"
+        },
+        {
+          "runId": "t496-t693-second-on",
+          "arm": "create_D1_ON",
+          "actionId": "29",
+          "phase": "SOURCE_WATER",
+          "clockDomain": "steady_real",
+          "wallNs": "1296433021885600",
+          "declaredScriptNs": "433000000",
+          "detail": "srcSeq=2 fnv=b2d8e62d reply=ENQUEUED_NOT_ACK mailbox=1 enqueuedNs=1296388153547400 payloadSHA=fd0744e7fb1a4e83882d89c5eccae1422e5bd0619d7cc26ac89dc2a632549f74 words=1129534023,2,1,0,1,0,2,0,1,0,4,0,1,0,2,2,0,1078992896,0,1080033280,0,1069547520,0,0,2,0,0,1,1,0,0,0,"
+        },
+        {
+          "runId": "t496-t693-second-on",
+          "arm": "create_D1_ON",
+          "actionId": "43",
+          "phase": "END",
+          "clockDomain": "steady_real",
+          "wallNs": "1296458707567100",
+          "declaredScriptNs": "641000000",
+          "detail": "{\"revision\":\"T409_EVIDENCE_CAPTURE_V1\",\"state\":\"FROZEN\",\"reason\":\"EXPLICIT_END\",\"captureId\":\"1\",\"activeRevision\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"packageSha256\":\"b40"
+        }
+      ],
+      "rootCount": 92
+    }
+  },
+  "actionInputsMatch": true,
+  "acceptedObservationDetailsMatch": true,
+  "terminalTextMatch": false,
+  "device": "NOT_RUN",
+  "productPASS": false,
+  "drainMatchesIgnoringPerProcessAbsoluteStamps": true
+}

@@ -1,7 +1,7 @@
 #pragma once
 #include <array>
 #include <sstream>
-#include "../../entry/src/main/cpp/gpu_resident/program_cache/sha256.h"
+#include "program_cache/sha256.h"
 namespace t496shadow {
 // CPU-observed arguments/returns only; no additional GL reads. Fixed tables.
 struct Object {uint32_t name=0;uint64_t generation=0;uint64_t bytes=0;std::string source;std::array<uint32_t,8> attached{};};

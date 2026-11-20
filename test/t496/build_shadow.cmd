@@ -10,6 +10,6 @@ cd /d D:/hmprojects/HelloWorld
 if not exist .codex\local-test\t496 mkdir .codex\local-test\t496
 
 
-cl /nologo /utf-8 /std:c++17 /EHsc /O2 test/t496/shadow_units.cpp /Fe.codex/local-test/t496/shadow_units.exe /Fo.codex/local-test/t496/shadow_units.obj
+cl /nologo /utf-8 /std:c++17 /Ientry/src/main/cpp/gpu_resident /EHsc /O2 test/t496/shadow_units.cpp /Fe.codex/local-test/t496/shadow_units.exe /Fo.codex/local-test/t496/shadow_units.obj
 if errorlevel 1 exit /b 1
 ".codex/local-test/t496/shadow_units.exe"
