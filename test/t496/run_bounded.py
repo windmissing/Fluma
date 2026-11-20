@@ -11,12 +11,12 @@ def run(arm,attempt):
  exe=Path(os.environ.get('T693_REPLAY_EXE',ROOT/'.codex/local-test/t496/t496.exe')).resolve();base=ROOT/'.codex/local-test/t496'
  from source_manifest import collect
  (out/'source-closure.json').write_text(json.dumps(collect(),indent=2))
- if os.environ.get('T693_REPLAY'):
+ if os.environ.get('T693_REPLAY') or os.environ.get('T703_BUILD_WITNESS'):
   generated=exe.parent/'inputs.json'
   overlay=json.loads(generated.read_bytes())
   for name,digest in overlay['generated'].items():
    assert fingerprint(exe.parent/name)['sha256']==digest,'REPLAY_GENERATED_INPUT_MISMATCH'
-  (out/'replay-inputs.json').write_bytes(generated.read_bytes())
+  (out/('replay-inputs.json' if os.environ.get('T693_REPLAY') else 'primary-inputs.json')).write_bytes(generated.read_bytes())
 
  env=os.environ.copy();env['PATH']='C:/Users/admin/AppData/Local/Programs/CokePLUS;'+env['PATH']
  binary=bool(env.get('T693_BINARY_TRACE'))

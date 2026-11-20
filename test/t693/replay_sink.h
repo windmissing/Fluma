@@ -47,7 +47,8 @@ class Replay {
       const auto& r = e.root;
       const auto& w = r.accepted.completion;
       index << "{\"sequence\":" << r.sequence << ",\"result\":" << int(r.result)
-            << ",\"elapsedNs\":" << r.elapsedNs << ",\"offset\":" << e.offset
+            << ",\"startedSteadyNs\":" << r.startedNs << ",\"elapsedNs\":" << r.elapsedNs
+            << ",\"offset\":" << e.offset
             << ",\"kind\":" << r.request.kind << ",\"nonceLo\":" << r.request.nonce.lo
             << ",\"nonceHi\":" << r.request.nonce.hi
             << ",\"frameLo\":" << r.request.frame.lo << ",\"frameHi\":" << r.request.frame.hi
@@ -56,6 +57,11 @@ class Replay {
             << ",\"bank\":" << r.accepted.bank << ",\"publication\":" << r.accepted.publication
             << ",\"eventArena\":" << w[51] << ",\"eventStart\":" << w[52] << ",\"eventEnd\":" << w[53]
             << ",\"bankBytes\":" << r.bank.bytes << ",\"eventBytes\":" << r.events.bytes
+            << ",\"bankName\":" << r.bank.buffer << ",\"eventName\":" << r.events.buffer
+            << ",\"bankTarget\":" << r.bank.target << ",\"eventTarget\":" << r.events.target
+            << ",\"bankOffset\":" << r.bank.offset << ",\"eventOffset\":" << r.events.offset
+            << ",\"bankAccess\":" << r.bank.access << ",\"eventAccess\":" << r.events.access
+            << ",\"bankMapped\":" << r.bank.mapped << ",\"eventsMapped\":" << r.events.mapped
             << ",\"bankUnmapped\":" << r.bank.unmapped << ",\"eventsUnmapped\":" << r.events.unmapped
             << ",\"bankRaw\":" << r.bank.raw << ",\"eventRaw\":" << r.events.raw << "}\n";
     }

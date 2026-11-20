@@ -204,6 +204,10 @@ static OwnerSnapshot g_snap;
 static std::mutex g_schedMu;
 static std::condition_variable g_schedCv;
 static bool g_ownerCheckpoint=false, g_permit=false, g_scriptDone=false;
+#ifdef GRS_T703_HOST_WITNESS
+static uint64_t g_checkpoint=0;
+static t693w::Action g_delivered;
+#endif
 static uint64_t g_observedAccepted=0;
 
 // owner hook：PumpBegin 发布 checkpoint 并等 permit（锁外）
@@ -244,11 +248,20 @@ static void D1OwnerHook(App& a, BridgeStage stage) {
     {   // 锁外交接
         std::unique_lock<std::mutex> lk(g_schedMu);
         g_ownerCheckpoint = true; g_permit = false;
+#ifdef GRS_T703_HOST_WITNESS
+        ++g_checkpoint;
+#endif
         g_schedCv.notify_all();
         // T620 step4: non-blocking observer - checkpoint published, owner never
         // waits on the coordinator (old barrier only released at exit and could
         // wedge the owner). Coordinator acks asynchronously.
         g_schedCv.wait_for(lk,std::chrono::seconds(5),[&]{return g_permit||g_scriptDone;});
+#ifdef GRS_T703_HOST_WITNESS
+        if(g_permit&&g_delivered.first&&g_delivered.checkpoint==g_checkpoint){
+            t693w::action=g_delivered;
+            t693w::action.consumed=t496sink::WallNs();
+        }
+#endif
     }
 }
 
@@ -260,6 +273,14 @@ static void DispatchActions(App& a, const std::vector<Act>& acts,
         const auto& act = acts[cursor];
         std::lock_guard<std::mutex> lock(a.mutex);
         const uint64_t received=t496sink::WallNs();g_hostNowNs.store(g_scriptBase+stamp); // Declared T494 fixed replay clock; wall/root deadlines remain separately observed.
+#ifdef GRS_T703_HOST_WITNESS
+        {
+            std::lock_guard<std::mutex> checkpointLock(g_schedMu);
+            t693w::action={uint64_t(act.id),uint64_t(act.id),g_scriptBase+stamp,received,g_checkpoint,0};
+            if(g_delivered.checkpoint!=g_checkpoint)g_delivered=t693w::action;
+            else g_delivered.last=act.id;
+        }
+#endif
         if (act.kind == Ak::PULSE || act.kind == Ak::TAIL_PULSE) {
             const char* code;{t561seams::Guard seam(t496sink::FN_SEAM_FIRST_PAGE_PULSE,std::string("session=")+std::to_string(a.progress.session)+" seq="+std::to_string(act.pulseSeq));code = a.PagePulseLocked(a.progress.session, act.pulseSeq+1, g_scriptBase+stamp);}
             Emit(std::to_string(act.id), "PULSE", stamp,
@@ -306,6 +327,9 @@ static void DispatchActions(App& a, const std::vector<Act>& acts,
         }
         ++cursor;
     }
+#ifdef GRS_T703_HOST_WITNESS
+    t693w::action={};
+#endif
 }
 
 extern "C" void t496_before_original_flush(){

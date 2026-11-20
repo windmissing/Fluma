@@ -1,0 +1,291 @@
+{
+  "schema": "T693_T703_FOUR_ARM_WITNESS_V1",
+  "arms": [
+    {
+      "arm": "D1_OFF",
+      "actions": 52,
+      "acceptedRoots": 92,
+      "partitionBytes": {
+        "api": 10238001,
+        "businessRaw": 183651
+      },
+      "completeArm": true,
+      "exitCode": 0,
+      "watchdogMatchedCalls": 813,
+      "declaredClockBase": 1300927194304400,
+      "replayReadMapsMatched": 0,
+      "busyCuts": [
+        "cursor=6 ownerPending=1",
+        "cursor=18 ownerPending=1",
+        "cursor=28 ownerPending=1",
+        "cursor=42 ownerPending=1"
+      ],
+      "frozenPages": 0,
+      "tailObserverSteadyExamples": {
+        "ColdFixture": {
+          "startNs": 1300866754071600,
+          "endNs": 1300866754071600,
+          "rootNonce": 0
+        },
+        "BatchFlushEnter": {
+          "startNs": 1300927226304600,
+          "endNs": 0,
+          "rootNonce": 1
+        },
+        "BatchFlushExit": {
+          "startNs": 1300927226304600,
+          "endNs": 1300927226351500,
+          "rootNonce": 1
+        },
+        "Flush": {
+          "startNs": 1300927226304600,
+          "endNs": 1300927226351500,
+          "rootNonce": 1
+        },
+        "BatchCall": {
+          "startNs": 1300927225958300,
+          "endNs": 1300927226352900,
+          "rootNonce": 1
+        },
+        "RealPoll": {
+          "startNs": 1300927321215800,
+          "endNs": 1300927321291800,
+          "rootNonce": 1
+        }
+      },
+      "clockRows": {
+        "script_NA": 668,
+        "transport_NA": 17650,
+        "wall_PROCESS_STEADY": 84340,
+        "script_DELIVERY": 96,
+        "script_OWNER": 83576,
+        "transport_AUTHORIZE": 49244,
+        "transport_PERMIT": 17446
+      },
+      "firstTransportUnknown": null,
+      "device": "NOT_RUN",
+      "attempt": "t693-t703-compact-primary-off",
+      "elapsedSeconds": 147.06200000015087,
+      "totalArchiveBytes": 10818879
+    },
+    {
+      "arm": "D1_ON",
+      "actions": 52,
+      "acceptedRoots": 92,
+      "partitionBytes": {
+        "api": 10281633,
+        "businessRaw": 475930
+      },
+      "completeArm": true,
+      "exitCode": 0,
+      "watchdogMatchedCalls": 861,
+      "declaredClockBase": 1301054131255000,
+      "replayReadMapsMatched": 0,
+      "busyCuts": [
+        "cursor=6 ownerPending=1",
+        "cursor=18 ownerPending=1",
+        "cursor=28 ownerPending=1",
+        "cursor=42 ownerPending=1"
+      ],
+      "frozenPages": 55,
+      "tailObserverSteadyExamples": {
+        "ColdFixture": {
+          "startNs": 1301013884064000,
+          "endNs": 1301013884064000,
+          "rootNonce": 0
+        },
+        "BatchFlushEnter": {
+          "startNs": 1301054163622200,
+          "endNs": 0,
+          "rootNonce": 1
+        },
+        "BatchFlushExit": {
+          "startNs": 1301054163622200,
+          "endNs": 1301054163647100,
+          "rootNonce": 1
+        },
+        "Flush": {
+          "startNs": 1301054163622200,
+          "endNs": 1301054163647100,
+          "rootNonce": 1
+        },
+        "BatchCall": {
+          "startNs": 1301054163213500,
+          "endNs": 1301054163648800,
+          "rootNonce": 1
+        },
+        "RealPoll": {
+          "startNs": 1301054225797300,
+          "endNs": 1301054225854400,
+          "rootNonce": 1
+        }
+      },
+      "clockRows": {
+        "script_NA": 668,
+        "transport_NA": 18648,
+        "wall_PROCESS_STEADY": 85684,
+        "script_DELIVERY": 96,
+        "script_OWNER": 84920,
+        "transport_AUTHORIZE": 49248,
+        "transport_PERMIT": 17788
+      },
+      "firstTransportUnknown": null,
+      "device": "NOT_RUN",
+      "attempt": "t693-t703-compact-primary-on",
+      "elapsedSeconds": 132.23399999993853,
+      "totalArchiveBytes": 11121296
+    },
+    {
+      "arm": "D1_OFF",
+      "actions": 52,
+      "acceptedRoots": 92,
+      "partitionBytes": {
+        "api": 10747816,
+        "businessRaw": 183660,
+        "root": 2894728
+      },
+      "completeArm": true,
+      "exitCode": 0,
+      "watchdogMatchedCalls": 1124,
+      "declaredClockBase": 1301200034493500,
+      "replayReadMapsMatched": 138,
+      "busyCuts": [
+        "cursor=6 ownerPending=1",
+        "cursor=18 ownerPending=1",
+        "cursor=28 ownerPending=1",
+        "cursor=42 ownerPending=1"
+      ],
+      "frozenPages": 0,
+      "tailObserverSteadyExamples": {
+        "ColdFixture": {
+          "startNs": 1301146570929000,
+          "endNs": 1301146570929000,
+          "rootNonce": 0
+        },
+        "BatchFlushEnter": {
+          "startNs": 1301200065588500,
+          "endNs": 0,
+          "rootNonce": 1
+        },
+        "BatchFlushExit": {
+          "startNs": 1301200065588500,
+          "endNs": 1301200065607800,
+          "rootNonce": 1
+        },
+        "Flush": {
+          "startNs": 1301200065588500,
+          "endNs": 1301200065607800,
+          "rootNonce": 1
+        },
+        "BatchCall": {
+          "startNs": 1301200065229800,
+          "endNs": 1301200065609200,
+          "rootNonce": 1
+        },
+        "RealPoll": {
+          "startNs": 1301200158519800,
+          "endNs": 1301200158582100,
+          "rootNonce": 1
+        }
+      },
+      "clockRows": {
+        "script_NA": 668,
+        "transport_NA": 23850,
+        "wall_PROCESS_STEADY": 97028,
+        "script_DELIVERY": 96,
+        "script_OWNER": 96264,
+        "transport_AUTHORIZE": 53664,
+        "transport_PERMIT": 19514,
+        "replay_map": 138,
+        "replay_unmap": 138
+      },
+      "firstTransportUnknown": null,
+      "device": "NOT_RUN",
+      "attempt": "t693-t703-compact-replay-off",
+      "elapsedSeconds": 173.09400000004098,
+      "totalArchiveBytes": 14279125
+    },
+    {
+      "arm": "D1_ON",
+      "actions": 52,
+      "acceptedRoots": 92,
+      "partitionBytes": {
+        "api": 10598854,
+        "businessRaw": 475623,
+        "root": 2894739
+      },
+      "completeArm": true,
+      "exitCode": 0,
+      "watchdogMatchedCalls": 952,
+      "declaredClockBase": 1301363906855800,
+      "replayReadMapsMatched": 138,
+      "busyCuts": [
+        "cursor=6 ownerPending=1",
+        "cursor=18 ownerPending=1",
+        "cursor=28 ownerPending=1",
+        "cursor=42 ownerPending=1"
+      ],
+      "frozenPages": 55,
+      "tailObserverSteadyExamples": {
+        "ColdFixture": {
+          "startNs": 1301320017898300,
+          "endNs": 1301320017898300,
+          "rootNonce": 0
+        },
+        "BatchFlushEnter": {
+          "startNs": 1301363939684600,
+          "endNs": 0,
+          "rootNonce": 1
+        },
+        "BatchFlushExit": {
+          "startNs": 1301363939684600,
+          "endNs": 1301363939707000,
+          "rootNonce": 1
+        },
+        "Flush": {
+          "startNs": 1301363939684600,
+          "endNs": 1301363939707000,
+          "rootNonce": 1
+        },
+        "BatchCall": {
+          "startNs": 1301363939293700,
+          "endNs": 1301363939708400,
+          "rootNonce": 1
+        },
+        "RealPoll": {
+          "startNs": 1301364032854900,
+          "endNs": 1301364032904000,
+          "rootNonce": 1
+        }
+      },
+      "clockRows": {
+        "script_NA": 668,
+        "transport_NA": 20376,
+        "wall_PROCESS_STEADY": 92414,
+        "script_DELIVERY": 96,
+        "script_OWNER": 91650,
+        "transport_AUTHORIZE": 53666,
+        "transport_PERMIT": 18372,
+        "replay_map": 138,
+        "replay_unmap": 138
+      },
+      "firstTransportUnknown": null,
+      "device": "NOT_RUN",
+      "attempt": "t693-t703-compact-replay-on",
+      "elapsedSeconds": 145.51600000006147,
+      "totalArchiveBytes": 14363681
+    }
+  ],
+  "matchedReplayRoots": [
+    92,
+    92
+  ],
+  "historicalReplayRoots": [
+    92,
+    92
+  ],
+  "matchedBankEventAndCompletionBytes": true,
+  "cycle32": "NOT_MEASURED",
+  "device": "NOT_RUN",
+  "productPASS": false
+}

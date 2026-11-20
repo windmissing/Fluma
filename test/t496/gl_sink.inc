@@ -18,6 +18,9 @@
 #include <string>
 #include <thread>
 #include <type_traits>
+#ifdef GRS_T703_HOST_WITNESS
+#include "../t693/witness.h"
+#endif
 #ifdef _WIN32
 #include <process.h>
 #define T561_GETPID _getpid
@@ -93,8 +96,14 @@ inline bool EmitRecord(uint32_t functionId,const char* event,uint64_t callId,con
  if(!Initialized().load()||BudgetExceeded().load())return false;
  if (BinaryTrace()) {
   const uint8_t edge = std::strcmp(event,"ENTER")==0 ? 1 : std::strcmp(event,"EXIT")==0 ? 2 :
-     std::strcmp(event,"CPU_MAP_RETURN_BYTES")==0 ? 3 : 0;
-  if(edge && BinaryTrace()->append(callId,WallNs(),uint32_t(OwnerTid()),functionId,edge,detail,{}))return true;
+     std::strcmp(event,"CPU_MAP_RETURN_BYTES")==0 ? 3 : std::strcmp(event,"RETURNED")==0 ? 4 :
+     std::strcmp(event,"ACCEPTED_ROOT")==0 ? 5 : 0;
+  std::string_view stamp;
+#ifdef GRS_T703_HOST_WITNESS
+  std::array<char,512> stampBytes{};
+  stamp=t693w::anchor(stampBytes);
+#endif
+  if(edge && BinaryTrace()->append(callId,WallNs(),uint32_t(OwnerTid()),functionId,edge,detail,stamp))return true;
   BudgetExceeded().store(true);t496diag::EvidenceBudget();return false;
  }
  char record[kRecordUtf8Max];
@@ -127,8 +136,9 @@ inline void Emit(const char* event,const char* call,uint64_t seq,uint64_t wallNs
 }
 
 // ENTER persisted -> IN_API -> original call -> RETURNED -> EXIT persisted.
-template<typename Call>
-auto ScopedCall(uint32_t functionId,const char* name,const std::string& enterDetail,Call&& call)->decltype(call()){
+template<typename Call, typename Observe>
+auto ScopedObservedCall(uint32_t functionId,const char* name,const std::string& enterDetail,
+                        Call&& call, Observe&& observe)->decltype(call()){
  const auto seq=CallSeq().fetch_add(1);
  ActiveFunction().store(functionId);ActiveCallId().store(seq);
  ActivePhase().store(ENTER_EMIT);t496diag::Sample(ENTER_EMIT,ActiveFunction(),ActiveCallId(),WallNs());
@@ -136,10 +146,15 @@ auto ScopedCall(uint32_t functionId,const char* name,const std::string& enterDet
  ActivePhase().store(IN_API);t496diag::Sample(IN_API,ActiveFunction(),ActiveCallId(),WallNs());
  auto value=call();
  ActivePhase().store(RETURNED);t496diag::Sample(RETURNED,ActiveFunction(),ActiveCallId(),WallNs());
+ observe(seq,value);
  ActivePhase().store(EXIT_EMIT);t496diag::Sample(EXIT_EMIT,ActiveFunction(),ActiveCallId(),WallNs());
  EmitRecord(functionId,"EXIT",seq,std::string("name=")+name+" return="+std::to_string((uintptr_t)value));
  ActivePhase().store(PHASE_IDLE);
  return value;
+}
+template<typename Call>
+auto ScopedCall(uint32_t functionId,const char* name,const std::string& enterDetail,Call&& call)->decltype(call()){
+ return ScopedObservedCall(functionId,name,enterDetail,call,[](uint64_t,const auto&){});
 }
 template<typename Call>
 void ScopedCallVoid(uint32_t functionId,const char* name,const std::string& enterDetail,Call&& call){

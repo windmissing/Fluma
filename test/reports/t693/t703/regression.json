@@ -1,0 +1,21 @@
+{
+  "dictionaryBudget": {
+    "5000": {
+      "state": "SEALED",
+      "rows": 5000,
+      "bytes": 8680487,
+      "firstRejected": null
+    },
+    "5800": {
+      "state": "INCOMPLETE",
+      "rows": 5280,
+      "bytes": 9166555,
+      "firstRejected": 5281
+    }
+  },
+  "historicalExactRows": 102733,
+  "corruptBlockRejected": true,
+  "legacyRowCapacityRejectedAt": 160001,
+  "mapShadowAssertions": "PASS",
+  "device": "NOT_RUN"
+}

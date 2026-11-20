@@ -70,10 +70,12 @@ def correlate(main, replay):
         calls={}
         mapped_by_thread={}
         clean_unmap=set()
-        for seq,_,_,tid,fn,edge,detail in read(str(directory/f'gltrace-{attempt}.ndjson.t693')):
+        rows=list(read(str(directory/f'gltrace-{attempt}.ndjson.t693')))
+        for seq,_,_,tid,fn,edge,detail in rows:
             if fn==418 and edge in (1,2):
                 record=calls.setdefault((tid,seq),{})
                 record[edge]=detail
+        for seq,_,_,tid,fn,edge,detail in rows:
             if fn==419 and edge==2 and tid in mapped_by_thread:
                 key=mapped_by_thread.pop(tid)
                 assert detail.endswith(b' return=1'),'ORIGINAL_UNMAP_FAILED'
@@ -84,7 +86,7 @@ def correlate(main, replay):
             assert b'length=1024' in call.get(1,b'') and b'return=' in call.get(2,b'')
             assert not call[2].endswith(b'return=0'),'ORIGINAL_MAP_NULL'
 
-            match=re.search(rb'sha256=([0-9a-f]{64}) hex=([0-9a-f]{2048})$',detail)
+            match=re.search(rb'sha256=([0-9a-f]{64}) hex=([0-9a-f]{2048})(?: |$)',detail)
             assert match,'MAP_PAYLOAD'
             raw=bytes.fromhex(match[2].decode())
             assert hashlib.sha256(raw).hexdigest().encode()==match[1]

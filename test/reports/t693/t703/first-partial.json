@@ -1,0 +1,39 @@
+[
+  {
+    "arm": "D1_OFF",
+    "actions": 39,
+    "acceptedRoots": 69,
+    "partitionBytes": {
+      "api": 8046929,
+      "businessRaw": 148359
+    },
+    "completeArm": false,
+    "exitCode": 8,
+    "watchdogMatchedCalls": 1054,
+    "declaredClockBase": 1299818261624800,
+    "replayReadMapsMatched": 0,
+    "busyCuts": [
+      "cursor=6 ownerPending=1",
+      "cursor=18 ownerPending=1",
+      "cursor=28 ownerPending=1"
+    ],
+    "frozenPages": 0,
+    "clockRows": {
+      "script_NA": 668,
+      "transport_NA": 21604,
+      "wall_PROCESS_STEADY": 75752,
+      "script_DELIVERY": 72,
+      "script_OWNER": 75012,
+      "transport_UNKNOWN": 36670,
+      "transport_PERMIT": 17478
+    },
+    "firstTransportUnknown": {
+      "seq": 339,
+      "function": 15,
+      "edge": 1,
+      "nonce": 1,
+      "cut": 1
+    },
+    "device": "NOT_RUN"
+  }
+]

@@ -6,7 +6,7 @@ import struct
 import subprocess
 import sys
 
-EDGES = {'ENTER': 1, 'EXIT': 2, 'CPU_MAP_RETURN_BYTES': 3}
+EDGES = {'ENTER': 1, 'EXIT': 2, 'CPU_MAP_RETURN_BYTES': 3, 'RETURNED': 4, 'ACCEPTED_ROOT': 5}
 ROW = struct.Struct('<QQIHBBII')
 
 def read(stem):
@@ -67,9 +67,10 @@ if __name__ == '__main__':
         run, arm, attempt, pid = identity.split()
         names = {value:key for key,value in EDGES.items()}
         for seq, wall, stamp, tid, fn, edge, detail in read(stem):
+            clock = {'clockAnchor': stamp.decode()} if stamp.startswith(b'T703_V1 ') else {'scriptNs': stamp.decode()}
             print(json.dumps({'schema': schema, 'runId': run, 'arm': arm,
                               'createAttemptId': attempt, 'pid': int(pid),
-                              'callId': seq, 'wallNs': str(wall), 'scriptNs': stamp.decode(),
+                              'callId': seq, 'wallNs': str(wall), **clock,
                               'ownerTid': tid, 'functionId': fn, 'event': names[edge],
                               'detail': detail.decode('utf8')}))
     else:

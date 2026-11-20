@@ -7,6 +7,7 @@
 // eglGetError stay PLAIN (error consumption forward-only — never an extra read).
 #include "gl_sink.inc"
 #include "argument_shadow.h"
+#include "map_shadow.h"
 #include <cstdint>
 #include <string>
 #include <EGL/egl.h>
@@ -22,11 +23,11 @@ extern "C" EGLBoolean GL_APIENTRY eglBindAPI(EGLenum api){ static auto fn=reinte
 
 extern "C" EGLBoolean GL_APIENTRY eglChooseConfig(EGLDisplay dpy, const EGLint* attrib_list, EGLConfig* configs, EGLint config_size, EGLint* num_config){ static auto fn=reinterpret_cast<decltype(&eglChooseConfig)>(eglGetProcAddress("eglChooseConfig"));assert(fn);return ScopedCall(4,"eglChooseConfig",std::string(),[&]{return fn(dpy, attrib_list, configs, config_size, num_config);});}
 
-extern "C" EGLContext GL_APIENTRY eglCreateContext(EGLDisplay dpy, EGLConfig config, EGLContext share_context, const EGLint* attrib_list){ static auto fn=reinterpret_cast<decltype(&eglCreateContext)>(eglGetProcAddress("eglCreateContext"));assert(fn);return ScopedCall(5,"eglCreateContext",std::string(),[&]{return fn(dpy, config, share_context, attrib_list);});}
+extern "C" EGLContext GL_APIENTRY eglCreateContext(EGLDisplay dpy, EGLConfig config, EGLContext share_context, const EGLint* attrib_list){ static auto fn=reinterpret_cast<decltype(&eglCreateContext)>(eglGetProcAddress("eglCreateContext"));assert(fn);return ScopedCall(5,"eglCreateContext",std::string(),[&]{auto value=fn(dpy,config,share_context,attrib_list);t496map::created(uintptr_t(dpy),uintptr_t(value),uintptr_t(share_context));return value;});}
 
 extern "C" EGLSurface GL_APIENTRY eglCreatePbufferSurface(EGLDisplay dpy, EGLConfig config, const EGLint* attrib_list){ static auto fn=reinterpret_cast<decltype(&eglCreatePbufferSurface)>(eglGetProcAddress("eglCreatePbufferSurface"));assert(fn);return ScopedCall(6,"eglCreatePbufferSurface",std::string(),[&]{return fn(dpy, config, attrib_list);});}
 
-extern "C" EGLBoolean GL_APIENTRY eglMakeCurrent(EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx){ static auto fn=reinterpret_cast<decltype(&eglMakeCurrent)>(eglGetProcAddress("eglMakeCurrent"));assert(fn);return ScopedCall(7,"eglMakeCurrent",std::string(),[&]{auto value=fn(dpy, draw, read, ctx);if(value)t496shadow::context=reinterpret_cast<uintptr_t>(ctx);return value;});}
+extern "C" EGLBoolean GL_APIENTRY eglMakeCurrent(EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx){ static auto fn=reinterpret_cast<decltype(&eglMakeCurrent)>(eglGetProcAddress("eglMakeCurrent"));assert(fn);return ScopedCall(7,"eglMakeCurrent",std::string(),[&]{auto value=fn(dpy, draw, read, ctx);if(value){t496shadow::context=uintptr_t(ctx);t496map::madeCurrent(uintptr_t(dpy),uintptr_t(ctx));}return value;});}
 
 extern "C" EGLBoolean GL_APIENTRY eglQuerySurface(EGLDisplay dpy, EGLSurface surface, EGLint attribute, EGLint* value){ static auto fn=reinterpret_cast<decltype(&eglQuerySurface)>(eglGetProcAddress("eglQuerySurface"));assert(fn);return ScopedCall(8,"eglQuerySurface",std::string("attribute=")+std::to_string(attribute),[&]{return fn(dpy, surface, attribute, value);});}
 
@@ -35,9 +36,9 @@ extern "C" EGLBoolean GL_APIENTRY eglSwapBuffers(EGLDisplay dpy, EGLSurface surf
 
 extern "C" EGLBoolean GL_APIENTRY eglDestroySurface(EGLDisplay dpy, EGLSurface surface){ static auto fn=reinterpret_cast<decltype(&eglDestroySurface)>(eglGetProcAddress("eglDestroySurface"));assert(fn);return ScopedCall(11,"eglDestroySurface",std::string(),[&]{return fn(dpy, surface);});}
 
-extern "C" EGLBoolean GL_APIENTRY eglDestroyContext(EGLDisplay dpy, EGLContext ctx){ static auto fn=reinterpret_cast<decltype(&eglDestroyContext)>(eglGetProcAddress("eglDestroyContext"));assert(fn);return ScopedCall(12,"eglDestroyContext",std::string(),[&]{return fn(dpy, ctx);});}
+extern "C" EGLBoolean GL_APIENTRY eglDestroyContext(EGLDisplay dpy, EGLContext ctx){ static auto fn=reinterpret_cast<decltype(&eglDestroyContext)>(eglGetProcAddress("eglDestroyContext"));assert(fn);return ScopedCall(12,"eglDestroyContext",std::string(),[&]{auto value=fn(dpy,ctx);if(value)t496map::retired(uintptr_t(dpy),uintptr_t(ctx));return value;});}
 
-extern "C" EGLBoolean GL_APIENTRY eglTerminate(EGLDisplay dpy){ static auto fn=reinterpret_cast<decltype(&eglTerminate)>(eglGetProcAddress("eglTerminate"));assert(fn);return ScopedCall(13,"eglTerminate",std::string(),[&]{return fn(dpy);});}
+extern "C" EGLBoolean GL_APIENTRY eglTerminate(EGLDisplay dpy){ static auto fn=reinterpret_cast<decltype(&eglTerminate)>(eglGetProcAddress("eglTerminate"));assert(fn);return ScopedCall(13,"eglTerminate",std::string(),[&]{auto value=fn(dpy);if(value)t496map::retired(uintptr_t(dpy),0,true);return value;});}
 
 
 extern "C" EGLContext GL_APIENTRY eglGetCurrentContext(void){ static auto fn=reinterpret_cast<decltype(&eglGetCurrentContext)>(eglGetProcAddress("eglGetCurrentContext"));assert(fn);return ScopedCall(15,"eglGetCurrentContext",std::string(),[&]{return fn();});}
@@ -92,18 +93,27 @@ extern "C" GLint GL_APIENTRY glGetUniformLocation(GLuint program, const GLchar* 
 
 extern "C" void GL_APIENTRY glProgramUniform1ui(GLuint program, GLint location, GLuint v0){ static auto fn=reinterpret_cast<decltype(&glProgramUniform1ui)>(eglGetProcAddress("glProgramUniform1ui"));assert(fn);ScopedCallVoid(309,"glProgramUniform1ui",std::string(),[&]{fn(program, location, v0);});}
 
-extern "C" void GL_APIENTRY glGenBuffers(GLsizei n, GLuint* buffers){ static auto fn=reinterpret_cast<decltype(&glGenBuffers)>(eglGetProcAddress("glGenBuffers"));assert(fn);ScopedCallVoid(400,"glGenBuffers",std::string("n=")+std::to_string(n),[&]{fn(n, buffers);for(int i=0;i<n;++i)t496shadow::find(t496shadow::buffers,buffers[i],true);});}
+extern "C" void GL_APIENTRY glGenBuffers(GLsizei n, GLuint* buffers){ static auto fn=reinterpret_cast<decltype(&glGenBuffers)>(eglGetProcAddress("glGenBuffers"));assert(fn);ScopedCallVoid(400,"glGenBuffers",std::string("n=")+std::to_string(n),[&]{fn(n, buffers);for(int i=0;buffers&&i<n;++i){t496shadow::find(t496shadow::buffers,buffers[i],true);t496map::generated(buffers[i]);}});}
 
-extern "C" void GL_APIENTRY glBindBuffer(GLenum target, GLuint buffer){ static auto fn=reinterpret_cast<decltype(&glBindBuffer)>(eglGetProcAddress("glBindBuffer"));assert(fn);ScopedCallVoid(401,"glBindBuffer",std::string("target=")+std::to_string(target) + " buffer=" + std::to_string(buffer),[&]{t496shadow::bind(target,buffer);fn(target, buffer);});}
+extern "C" void GL_APIENTRY glBindBuffer(GLenum target, GLuint buffer){ static auto fn=reinterpret_cast<decltype(&glBindBuffer)>(eglGetProcAddress("glBindBuffer"));assert(fn);ScopedCallVoid(401,"glBindBuffer",std::string("target=")+std::to_string(target) + " buffer=" + std::to_string(buffer),[&]{fn(target, buffer);t496shadow::bind(target,buffer);t496map::bound(target,buffer);});}
 
-extern "C" void GL_APIENTRY glBufferData(GLenum target, GLsizeiptr size, const void* data, GLenum usage){ static auto fn=reinterpret_cast<decltype(&glBufferData)>(eglGetProcAddress("glBufferData"));assert(fn);ScopedCallVoid(402,"glBufferData",std::string("target=")+std::to_string(target) + " size=" + std::to_string(size),[&]{t496shadow::allocate(target,size);fn(target, size, data, usage);});}
+extern "C" void GL_APIENTRY glBufferData(GLenum target, GLsizeiptr size, const void* data, GLenum usage){ static auto fn=reinterpret_cast<decltype(&glBufferData)>(eglGetProcAddress("glBufferData"));assert(fn);ScopedCallVoid(402,"glBufferData",std::string("target=")+std::to_string(target) + " size=" + std::to_string(size),[&]{fn(target, size, data, usage);t496shadow::allocate(target,size);t496map::allocated(target,size);});}
 
 extern "C" void GL_APIENTRY glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void* data){ static auto fn=reinterpret_cast<decltype(&glBufferSubData)>(eglGetProcAddress("glBufferSubData"));assert(fn);ScopedCallVoid(403,"glBufferSubData",std::string("target=")+std::to_string(target) + " offset=" + std::to_string(offset) + " size=" + std::to_string(size),[&]{fn(target, offset, size, data);});}
 
-extern "C" void GL_APIENTRY glBindBufferBase(GLenum target, GLuint index, GLuint buffer){ static auto fn=reinterpret_cast<decltype(&glBindBufferBase)>(eglGetProcAddress("glBindBufferBase"));assert(fn);ScopedCallVoid(404,"glBindBufferBase",std::string("target=")+std::to_string(target) + " index=" + std::to_string(index) + " buffer=" + std::to_string(buffer),[&]{if(index<4)t496shadow::bindings[index]=buffer;fn(target, index, buffer);});}
+extern "C" void GL_APIENTRY glBindBufferBase(GLenum target, GLuint index, GLuint buffer){ static auto fn=reinterpret_cast<decltype(&glBindBufferBase)>(eglGetProcAddress("glBindBufferBase"));assert(fn);ScopedCallVoid(404,"glBindBufferBase",std::string("target=")+std::to_string(target) + " index=" + std::to_string(index) + " buffer=" + std::to_string(buffer),[&]{fn(target, index, buffer);if(index<4)t496shadow::bindings[index]=buffer;t496map::bound(target,buffer,&index);});}
+
+extern "C" void GL_APIENTRY glBindBufferRange(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size) {
+ static auto fn=reinterpret_cast<decltype(&glBindBufferRange)>(eglGetProcAddress("glBindBufferRange"));assert(fn);
+ ScopedCallVoid(435,"glBindBufferRange","target="+std::to_string(target)+" index="+std::to_string(index)+
+  " buffer="+std::to_string(buffer)+" offset="+std::to_string(offset)+" size="+std::to_string(size),[&]{
+   fn(target,index,buffer,offset,size);
+   t496map::bound(target,buffer,&index,offset,size);
+  });
+}
 
 
-extern "C" void GL_APIENTRY glDeleteBuffers(GLsizei n, const GLuint* buffers){ static auto fn=reinterpret_cast<decltype(&glDeleteBuffers)>(eglGetProcAddress("glDeleteBuffers"));assert(fn);ScopedCallVoid(406,"glDeleteBuffers",std::string("n=")+std::to_string(n),[&]{fn(n, buffers);for(int i=0;i<n;++i)if(auto* b=t496shadow::find(t496shadow::buffers,buffers[i]))*b={};});}
+extern "C" void GL_APIENTRY glDeleteBuffers(GLsizei n, const GLuint* buffers){ static auto fn=reinterpret_cast<decltype(&glDeleteBuffers)>(eglGetProcAddress("glDeleteBuffers"));assert(fn);ScopedCallVoid(406,"glDeleteBuffers",std::string("n=")+std::to_string(n),[&]{fn(n, buffers);for(int i=0;buffers&&i<n;++i){if(auto* b=t496shadow::find(t496shadow::buffers,buffers[i]))*b={};t496map::deleted(buffers[i]);}});}
 
 extern "C" void GL_APIENTRY glGenVertexArrays(GLsizei n, GLuint* arrays){ static auto fn=reinterpret_cast<decltype(&glGenVertexArrays)>(eglGetProcAddress("glGenVertexArrays"));assert(fn);ScopedCallVoid(407,"glGenVertexArrays",std::string("n=")+std::to_string(n),[&]{fn(n, arrays);});}
 
@@ -127,14 +137,32 @@ extern "C" GLenum GL_APIENTRY glClientWaitSync(GLsync sync, GLbitfield flags, GL
 
 extern "C" void GL_APIENTRY glDeleteSync(GLsync sync){ static auto fn=reinterpret_cast<decltype(&glDeleteSync)>(eglGetProcAddress("glDeleteSync"));assert(fn);ScopedCallVoid(417,"glDeleteSync",std::string(),[&]{fn(sync);});}
 
-extern "C" void* GL_APIENTRY glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access){ static auto fn=reinterpret_cast<decltype(&glMapBufferRange)>(eglGetProcAddress("glMapBufferRange"));assert(fn);const auto seq=t496sink::CallSeq().load();auto* value=ScopedCall(418,"glMapBufferRange",std::string("target=")+std::to_string(target) + " length=" + std::to_string(length),[&]{return fn(target, offset, length, access);});
+extern "C" void* GL_APIENTRY glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access){
+ static auto fn=reinterpret_cast<decltype(&glMapBufferRange)>(eglGetProcAddress("glMapBufferRange"));assert(fn);
+ auto identity=t496map::observe(target);
+ const auto detail=std::string("target=")+std::to_string(target)+" length="+std::to_string(length)
+                 +" offset="+std::to_string(offset)+" access="+std::to_string(access)+t496map::describe(identity);
+ return t496sink::ScopedObservedCall(418,"glMapBufferRange",detail,[&]{return fn(target,offset,length,access);},
+ [&](uint64_t seq,void* value){
+ if(value)identity.token=t496map::mapped(identity,offset,length);
+ t496sink::EmitRecord(418,"RETURNED",seq,std::string("nonNull=")+(value?"1":"0")+t496map::describe(identity));
  if(value&&offset==0&&length==1024&&(access&GL_MAP_READ_BIT)){
   const auto* bytes=static_cast<const unsigned char*>(value);static const char* digits="0123456789abcdef";std::string hex;hex.reserve(2048);for(size_t i=0;i<1024;++i){hex+=digits[bytes[i]>>4];hex+=digits[bytes[i]&15];}
-  t496sink::EmitRecord(418,"CPU_MAP_RETURN_BYTES",seq,"observedOnly=1 bytes=1024 sha256="+t496shadow::hash(static_cast<const char*>(value),1024)+" hex="+hex);
+  t496sink::EmitRecord(418,"CPU_MAP_RETURN_BYTES",seq,"observedOnly=1 bytes=1024 sha256="+t496shadow::hash(static_cast<const char*>(value),1024)+" hex="+hex+t496map::describe(identity));
  }
- return value;}
+ });
+}
 
-extern "C" GLboolean GL_APIENTRY glUnmapBuffer(GLenum target){ static auto fn=reinterpret_cast<decltype(&glUnmapBuffer)>(eglGetProcAddress("glUnmapBuffer"));assert(fn);return ScopedCall(419,"glUnmapBuffer",std::string("target=")+std::to_string(target),[&]{return fn(target);});}
+extern "C" GLboolean GL_APIENTRY glUnmapBuffer(GLenum target){
+ static auto fn=reinterpret_cast<decltype(&glUnmapBuffer)>(eglGetProcAddress("glUnmapBuffer"));assert(fn);
+ const auto identity=t496map::observe(target);
+ return t496sink::ScopedObservedCall(419,"glUnmapBuffer","target="+std::to_string(target)+t496map::describe(identity),
+  [&]{return fn(target);},[&](uint64_t seq,GLboolean value){
+   const bool matched=t496map::unmapped(identity);
+   t496sink::EmitRecord(419,"RETURNED",seq,"success="+std::to_string(value)+
+      " matched="+std::to_string(matched)+t496map::describe(identity));
+  });
+}
 
 extern "C" GLint GL_APIENTRY glGetProgramResourceLocation(GLuint program, GLenum programInterface, const GLchar* name){ static auto fn=reinterpret_cast<decltype(&glGetProgramResourceLocation)>(eglGetProcAddress("glGetProgramResourceLocation"));assert(fn);return ScopedCall(420,"glGetProgramResourceLocation",std::string(),[&]{return fn(program, programInterface, name);});}
 
@@ -250,6 +278,7 @@ extern "C" __eglMustCastToProperFunctionPointerType GL_APIENTRY t496GetProcAddre
  if(std::strcmp(name,"glBufferData")==0)return reinterpret_cast<__eglMustCastToProperFunctionPointerType>(&glBufferData);
  if(std::strcmp(name,"glBufferSubData")==0)return reinterpret_cast<__eglMustCastToProperFunctionPointerType>(&glBufferSubData);
  if(std::strcmp(name,"glBindBufferBase")==0)return reinterpret_cast<__eglMustCastToProperFunctionPointerType>(&glBindBufferBase);
+ if(std::strcmp(name,"glBindBufferRange")==0)return reinterpret_cast<__eglMustCastToProperFunctionPointerType>(&glBindBufferRange);
  if(std::strcmp(name,"glDeleteBuffers")==0)return reinterpret_cast<__eglMustCastToProperFunctionPointerType>(&glDeleteBuffers);
  if(std::strcmp(name,"glGenVertexArrays")==0)return reinterpret_cast<__eglMustCastToProperFunctionPointerType>(&glGenVertexArrays);
  if(std::strcmp(name,"glBindVertexArray")==0)return reinterpret_cast<__eglMustCastToProperFunctionPointerType>(&glBindVertexArray);

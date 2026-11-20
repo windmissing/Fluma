@@ -24,7 +24,12 @@ struct Row {
 };
 static_assert(sizeof(Row) == 32);
 constexpr size_t credit = 12 * 1024 * 1024;
+#ifdef GRS_T703_HOST_WITNESS
+// Reserve more of the same 12 MiB for exact completion bytes and stamp keys.
+constexpr size_t rowCapacity = 110000;
+#else
 constexpr size_t rowCapacity = 160000;
+#endif
 constexpr size_t dictCapacity = credit - rowCapacity * sizeof(Row) - 65536;
 constexpr size_t dictSlots = 65536;
 
