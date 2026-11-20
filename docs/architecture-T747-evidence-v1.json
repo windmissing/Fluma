@@ -1,0 +1,670 @@
+{
+  "schema": "T747_G13_U32_FEASIBILITY_OFFLINE_V1",
+  "deviceUsed": false,
+  "backendSelected": false,
+  "probe": {
+    "sourcePath": "tools/architecture/t747_u32_probe.comp",
+    "compilerSHA": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+    "arithmeticCoreBytes": 3198,
+    "gles": {
+      "flags": [
+        "-S",
+        "comp",
+        "-l",
+        "-q"
+      ],
+      "sourceBytes": 4078,
+      "sourceSHA": "b1601135d8b53be1a391fda26937a1baa8d6aee774ab22589b4067cce2fff056",
+      "staticResult": "PASS"
+    },
+    "vulkan": {
+      "flags": [
+        "-V",
+        "--target-env",
+        "vulkan1.1",
+        "--spirv-val",
+        "--spirv-dis"
+      ],
+      "sourceBytes": 4075,
+      "sourceSHA": "bca87304693ec43511953d25e5c2f190e7ab27ca25bec8f714904f7ca79c12c1",
+      "spirvBytes": 15624,
+      "spirvSHA": "7feb1b658e8b2a9f74031381f8f235e9d2272335782c1eb028239d715906f6c4",
+      "staticResult": "PASS",
+      "int32Only": true
+    },
+    "runtimeResult": "NOT_RUN"
+  },
+  "expectedWords": [
+    {
+      "op": "ADD",
+      "case": "op65/op66 denorm input",
+      "input": [
+        "00000000",
+        "00000001",
+        "00000000",
+        "00000000"
+      ],
+      "expected": "00000001"
+    },
+    {
+      "op": "ADD",
+      "case": "negative denorm input",
+      "input": [
+        "00000000",
+        "80000001",
+        "00000000",
+        "00000000"
+      ],
+      "expected": "80000001"
+    },
+    {
+      "op": "ADD",
+      "case": "carry into normal",
+      "input": [
+        "00000000",
+        "007fffff",
+        "00000001",
+        "00000000"
+      ],
+      "expected": "00800000"
+    },
+    {
+      "op": "ADD",
+      "case": "op65/op66 tie even",
+      "input": [
+        "00000000",
+        "3f800000",
+        "33800000",
+        "00000000"
+      ],
+      "expected": "3f800000"
+    },
+    {
+      "op": "ADD",
+      "case": "tie odd rounds up",
+      "input": [
+        "00000000",
+        "3f800001",
+        "33800000",
+        "00000000"
+      ],
+      "expected": "3f800002"
+    },
+    {
+      "op": "ADD",
+      "case": "tie plus sticky",
+      "input": [
+        "00000000",
+        "3f800000",
+        "33800001",
+        "00000000"
+      ],
+      "expected": "3f800001"
+    },
+    {
+      "op": "ADD",
+      "case": "tie carry across exponent",
+      "input": [
+        "00000000",
+        "3fffffff",
+        "33800000",
+        "00000000"
+      ],
+      "expected": "40000000"
+    },
+    {
+      "op": "SUB",
+      "case": "normal cancellation produces denorm",
+      "input": [
+        "00000001",
+        "00800001",
+        "00800000",
+        "00000000"
+      ],
+      "expected": "00000001"
+    },
+    {
+      "op": "SUB",
+      "case": "negative cancellation",
+      "input": [
+        "00000001",
+        "00800000",
+        "00800001",
+        "00000000"
+      ],
+      "expected": "80000001"
+    },
+    {
+      "op": "SUB",
+      "case": "exact nonzero cancellation",
+      "input": [
+        "00000001",
+        "00800000",
+        "00800000",
+        "00000000"
+      ],
+      "expected": "00000000"
+    },
+    {
+      "op": "SUB",
+      "case": "lower binade tie, gap 25",
+      "input": [
+        "00000001",
+        "3f800000",
+        "33000000",
+        "00000000"
+      ],
+      "expected": "3f800000"
+    },
+    {
+      "op": "SUB",
+      "case": "past lower binade tie",
+      "input": [
+        "00000001",
+        "3f800000",
+        "33000001",
+        "00000000"
+      ],
+      "expected": "3f7fffff"
+    },
+    {
+      "op": "SUB",
+      "case": "gap 26 dominant",
+      "input": [
+        "00000001",
+        "3f800000",
+        "32ffffff",
+        "00000000"
+      ],
+      "expected": "3f800000"
+    },
+    {
+      "op": "ADD",
+      "case": "negative zero + negative zero",
+      "input": [
+        "00000000",
+        "80000000",
+        "80000000",
+        "00000000"
+      ],
+      "expected": "80000000"
+    },
+    {
+      "op": "ADD",
+      "case": "opposed zero signs",
+      "input": [
+        "00000000",
+        "80000000",
+        "00000000",
+        "00000000"
+      ],
+      "expected": "00000000"
+    },
+    {
+      "op": "SUB",
+      "case": "negative zero - positive zero",
+      "input": [
+        "00000001",
+        "80000000",
+        "00000000",
+        "00000000"
+      ],
+      "expected": "80000000"
+    },
+    {
+      "op": "ADD",
+      "case": "below overflow tie",
+      "input": [
+        "00000000",
+        "7f7fffff",
+        "72ffffff",
+        "00000000"
+      ],
+      "expected": "7f7fffff"
+    },
+    {
+      "op": "ADD",
+      "case": "overflow tie",
+      "input": [
+        "00000000",
+        "7f7fffff",
+        "73000000",
+        "00000000"
+      ],
+      "expected": "7f800000"
+    },
+    {
+      "op": "ADD",
+      "case": "opposed infinities",
+      "input": [
+        "00000000",
+        "7f800000",
+        "ff800000",
+        "00000000"
+      ],
+      "expected": "7fc00000"
+    },
+    {
+      "op": "SUB",
+      "case": "same infinities subtract",
+      "input": [
+        "00000001",
+        "7f800000",
+        "7f800000",
+        "00000000"
+      ],
+      "expected": "7fc00000"
+    },
+    {
+      "op": "MUL",
+      "case": "op66 normal inputs produce denorm",
+      "input": [
+        "00000002",
+        "00800000",
+        "3f000000",
+        "00000000"
+      ],
+      "expected": "00400000"
+    },
+    {
+      "op": "MUL",
+      "case": "negative product denorm",
+      "input": [
+        "00000002",
+        "80800000",
+        "3f000000",
+        "00000000"
+      ],
+      "expected": "80400000"
+    },
+    {
+      "op": "MUL",
+      "case": "tie rounds to min normal",
+      "input": [
+        "00000002",
+        "00ffffff",
+        "3f000000",
+        "00000000"
+      ],
+      "expected": "00800000"
+    },
+    {
+      "op": "MUL",
+      "case": "positive half min denorm",
+      "input": [
+        "00000002",
+        "00000001",
+        "3f000000",
+        "00000000"
+      ],
+      "expected": "00000000"
+    },
+    {
+      "op": "MUL",
+      "case": "negative half min denorm",
+      "input": [
+        "00000002",
+        "80000001",
+        "3f000000",
+        "00000000"
+      ],
+      "expected": "80000000"
+    },
+    {
+      "op": "MUL",
+      "case": "tie rounds up to even denorm",
+      "input": [
+        "00000002",
+        "00000003",
+        "3f000000",
+        "00000000"
+      ],
+      "expected": "00000002"
+    },
+    {
+      "op": "MUL",
+      "case": "negative zero times negative one",
+      "input": [
+        "00000002",
+        "80000000",
+        "bf800000",
+        "00000000"
+      ],
+      "expected": "00000000"
+    },
+    {
+      "op": "MUL",
+      "case": "infinity times zero",
+      "input": [
+        "00000002",
+        "7f800000",
+        "00000000",
+        "00000000"
+      ],
+      "expected": "7fc00000"
+    },
+    {
+      "op": "MUL",
+      "case": "signed infinity product",
+      "input": [
+        "00000002",
+        "7f800000",
+        "bf800000",
+        "00000000"
+      ],
+      "expected": "ff800000"
+    },
+    {
+      "op": "ADD",
+      "case": "signaling NaN class",
+      "input": [
+        "00000000",
+        "7fa12345",
+        "3f800000",
+        "00000000"
+      ],
+      "expected": "7fc00000"
+    },
+    {
+      "op": "MUL",
+      "case": "quiet NaN class",
+      "input": [
+        "00000002",
+        "ffc12345",
+        "3f800000",
+        "00000000"
+      ],
+      "expected": "7fc00000"
+    },
+    {
+      "op": "RELAY",
+      "case": "raw word payload survives relay",
+      "input": [
+        "00000004",
+        "ffc12345",
+        "00000000",
+        "00000000"
+      ],
+      "expected": "ffc12345"
+    },
+    {
+      "op": "RELAY",
+      "case": "raw negative denorm survives relay",
+      "input": [
+        "00000004",
+        "80000001",
+        "00000000",
+        "00000000"
+      ],
+      "expected": "80000001"
+    },
+    {
+      "op": "CONVERT",
+      "case": "minimum denorm",
+      "input": [
+        "00000003",
+        "00000001",
+        "00000000",
+        "00007f6b"
+      ],
+      "expected": "00000001"
+    },
+    {
+      "op": "CONVERT",
+      "case": "negative underflow tie",
+      "input": [
+        "80000003",
+        "00000001",
+        "00000000",
+        "00007f6a"
+      ],
+      "expected": "80000000"
+    },
+    {
+      "op": "CONVERT",
+      "case": "denorm odd-to-even tie",
+      "input": [
+        "00000003",
+        "00000003",
+        "00000000",
+        "00007f6a"
+      ],
+      "expected": "00000002"
+    },
+    {
+      "op": "CONVERT",
+      "case": "round directly to min normal",
+      "input": [
+        "00000003",
+        "00ffffff",
+        "00000000",
+        "00007f6a"
+      ],
+      "expected": "00800000"
+    },
+    {
+      "op": "CONVERT",
+      "case": "U32 integer tie",
+      "input": [
+        "00000003",
+        "01000001",
+        "00000000",
+        "00008000"
+      ],
+      "expected": "4b800000"
+    },
+    {
+      "op": "CONVERT",
+      "case": "U32 max",
+      "input": [
+        "00000003",
+        "ffffffff",
+        "00000000",
+        "00008000"
+      ],
+      "expected": "4f800000"
+    },
+    {
+      "op": "CONVERT",
+      "case": "i32 min unsigned magnitude",
+      "input": [
+        "80000003",
+        "80000000",
+        "00000000",
+        "00008000"
+      ],
+      "expected": "cf000000"
+    },
+    {
+      "op": "CONVERT",
+      "case": "Q32 signed magnitude",
+      "input": [
+        "80000003",
+        "00000001",
+        "00000000",
+        "00007fe0"
+      ],
+      "expected": "af800000"
+    },
+    {
+      "op": "CONVERT",
+      "case": "Q32 max positive i64",
+      "input": [
+        "00000003",
+        "ffffffff",
+        "7fffffff",
+        "00007fe0"
+      ],
+      "expected": "4f000000"
+    },
+    {
+      "op": "CONVERT",
+      "case": "two-limb max",
+      "input": [
+        "00000003",
+        "ffffffff",
+        "ffffffff",
+        "00008000"
+      ],
+      "expected": "5f800000"
+    },
+    {
+      "op": "CONVERT",
+      "case": "explicit signed zero input",
+      "input": [
+        "80000003",
+        "00000000",
+        "00000000",
+        "00008000"
+      ],
+      "expected": "80000000"
+    }
+  ],
+  "scopeSanity": {
+    "normalInputCases": 22860,
+    "fastGuardSamples": {
+      "ADD": 6795,
+      "SUB": 6795,
+      "MUL": 4562
+    },
+    "scope": "EXACT_RATIONAL_HOST_SANITY_NOT_SHADER_EXECUTION_OR_RANGE_PROOF"
+  },
+  "budgets": {
+    "existingBuilds": [
+      {
+        "path": "test/reports/t728/SPLIT.json",
+        "bytes": 16791,
+        "sha256": "6afa2c26208ed489dd521be63d8495cf5bea37c97d432efa94cbc05c512cfdc1"
+      },
+      {
+        "path": "docs/architecture-T741-evidence-v1.json",
+        "bytes": 13247,
+        "sha256": "9da4d8b9703db7ff71669674e6f0782933662f1d324fc0c836e1a1adf0cccc69"
+      }
+    ],
+    "sourceLimitBytes": 49152,
+    "roles": [
+      {
+        "role": "BOOT",
+        "sourceBytes": {
+          "gles": 23834,
+          "vulkan": 24128
+        },
+        "headroom": {
+          "gles": 25318,
+          "vulkan": 25024
+        },
+        "overageIfEntireProbeCoreAppended": {
+          "gles": 0,
+          "vulkan": 0
+        }
+      },
+      {
+        "role": "OP_00",
+        "sourceBytes": {
+          "gles": 48759,
+          "vulkan": 49053
+        },
+        "headroom": {
+          "gles": 393,
+          "vulkan": 99
+        },
+        "overageIfEntireProbeCoreAppended": {
+          "gles": 2805,
+          "vulkan": 3099
+        }
+      },
+      {
+        "role": "OP_18",
+        "sourceBytes": {
+          "gles": 48612,
+          "vulkan": 48906
+        },
+        "headroom": {
+          "gles": 540,
+          "vulkan": 246
+        },
+        "overageIfEntireProbeCoreAppended": {
+          "gles": 2658,
+          "vulkan": 2952
+        }
+      },
+      {
+        "role": "OP_37",
+        "sourceBytes": {
+          "gles": 48445,
+          "vulkan": 48739
+        },
+        "headroom": {
+          "gles": 707,
+          "vulkan": 413
+        },
+        "overageIfEntireProbeCoreAppended": {
+          "gles": 2491,
+          "vulkan": 2785
+        }
+      },
+      {
+        "role": "OP_48",
+        "sourceBytes": {
+          "gles": 48577,
+          "vulkan": 48871
+        },
+        "headroom": {
+          "gles": 575,
+          "vulkan": 281
+        },
+        "overageIfEntireProbeCoreAppended": {
+          "gles": 2623,
+          "vulkan": 2917
+        }
+      },
+      {
+        "role": "OP_62",
+        "sourceBytes": {
+          "gles": 11458,
+          "vulkan": 11752
+        },
+        "headroom": {
+          "gles": 37694,
+          "vulkan": 37400
+        },
+        "overageIfEntireProbeCoreAppended": {
+          "gles": 0,
+          "vulkan": 0
+        }
+      }
+    ]
+  },
+  "g20": {
+    "scoreUnchanged": [
+      4,
+      12
+    ],
+    "dmBoot": {
+      "capture": {
+        "path": "test/reports/t491/t738/v5/dm20-v5-final.jsonl",
+        "bytes": 9837,
+        "sha256": "73943ab3203be6c72307334b26377f409d0a51679378b05f2bc138ca3a95d05d"
+      },
+      "tail": {
+        "path": "test/reports/t491/t738/v5/boot-work-tail.u32",
+        "bytes": 8,
+        "sha256": "caefc5423d2e981ab1684352d43ba11b3c2d4239abad4220dc03034facd114ef"
+      },
+      "attempt": {
+        "ticket": "1",
+        "pid": 45665,
+        "run": "7",
+        "owner": "1",
+        "context": "11",
+        "processStartTick": "5515434"
+      },
+      "durationNs": {
+        "SHADER_COMPILE": 184989218,
+        "PROGRAM_LINK": 510518907
+      },
+      "warmBinaryLoadCapturedInThisAttempt": false
+    }
+  }
+}

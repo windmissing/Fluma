@@ -1,0 +1,115 @@
+#version 310 es
+precision highp int;
+layout(local_size_x=64) in;
+layout(std430,binding=0) readonly buffer InputRows { uvec4 inputs[]; };
+layout(std430,binding=1) writeonly buffer OutputWords { uint outputs[]; };
+
+// Standalone feasibility probe. Inputs and outputs are raw words, not GLSL float.
+const uint signBit = 0x80000000u;
+const uint fractionMask = 0x007fffffu;
+const uint infinityBits = 0x7f800000u;
+const uint quietNaN = 0x7fc00000u;
+
+uint magnitude(uint a) { return a & ~signBit; }
+
+uvec2 left64(uvec2 v, uint n) {
+    if (n == 0u) return v;
+    if (n < 32u) return uvec2(v.x << n, (v.y << n) | (v.x >> (32u - n)));
+    if (n < 64u) return uvec2(0u, v.x << (n - 32u));
+    return uvec2(0u);
+}
+
+uint roundShift(uvec2 v, int n) {
+    if (n <= 0) return v.x << uint(-n); // Packing bounds the left shift to 23.
+    if (n > 64) return 0u;
+    uint k = uint(n - 1);
+    uint limb = k < 32u ? v.x : v.y;
+    uint bit = 1u << (k & 31u);
+    bool guard = (limb & bit) != 0u;
+    bool sticky = (limb & (bit - 1u)) != 0u || (k >= 32u && v.x != 0u);
+    uint q = 0u;
+    if (n < 32) q = (v.x >> uint(n)) | (v.y << uint(32 - n));
+    else if (n < 64) q = v.y >> uint(n - 32);
+    return q + uint(guard && (sticky || (q & 1u) != 0u));
+}
+
+uint packRte(uvec2 mag, int scale, uint sign) {
+    int top = mag.y == 0u ? findMSB(mag.x) : 32 + findMSB(mag.y);
+    if (top < 0) return sign;
+    int e = top + scale;
+    if (e < -126) return sign | roundShift(mag, -149 - scale);
+    if (e > 127) return sign | infinityBits;
+    uint q = roundShift(mag, top - 23);
+    if (q == 0x01000000u) { ++e; q >>= 1u; }
+    if (e > 127) return sign | infinityBits;
+    return sign | (uint(e + 127) << 23u) | (q & fractionMask);
+}
+
+// Precondition: positive finite nonzero magnitude. sig has its top at bit 23.
+void unpack(uint a, out uint sig, out int e) {
+    uint exponent = a >> 23u;
+    uint frac = a & fractionMask;
+    int shift = exponent == 0u ? 23 - findMSB(frac) : 0;
+    sig = exponent == 0u ? frac << uint(shift) : frac | 0x00800000u;
+    e = exponent == 0u ? -126 - shift : int(exponent) - 127;
+}
+
+uint addBits(uint a, uint b) {
+    uint x = magnitude(a), y = magnitude(b);
+    if (x > infinityBits || y > infinityBits) return quietNaN;
+    if (x == infinityBits || y == infinityBits) {
+        if (x == y && a != b) return quietNaN;
+        return x == infinityBits ? a : b;
+    }
+    if (x == 0u && y == 0u) return a & b;
+    if (x < y) { uint swap = a; a = b; b = swap; x = y; y = magnitude(b); }
+    if (y == 0u) return a;
+    uint sa, sb;
+    int ea, eb;
+    unpack(x, sa, ea);
+    unpack(y, sb, eb);
+    int gap = ea - eb;
+    if (gap >= 26) return a;
+    uvec2 m = left64(uvec2(sa, 0u), uint(gap));
+    uint carry;
+    if (((a ^ b) & signBit) != 0u) {
+        m.x = usubBorrow(m.x, sb, carry);
+        m.y -= carry;
+        if ((m.x | m.y) == 0u) return 0u;
+    } else {
+        m.x = uaddCarry(m.x, sb, carry);
+        m.y += carry;
+    }
+    return packRte(m, eb - 23, a & signBit);
+}
+
+uint mulBits(uint a, uint b) {
+    uint x = magnitude(a), y = magnitude(b), sign = (a ^ b) & signBit;
+    if (x > infinityBits || y > infinityBits) return quietNaN;
+    if (x == infinityBits || y == infinityBits) {
+        return x == 0u || y == 0u ? quietNaN : sign | infinityBits;
+    }
+    if (x == 0u || y == 0u) return sign;
+    uint sa, sb, hi, lo;
+    int ea, eb;
+    unpack(x, sa, ea);
+    unpack(y, sb, eb);
+    umulExtended(sa, sb, hi, lo);
+    return packRte(uvec2(lo, hi), ea + eb - 46, sign);
+}
+
+void main() {
+    uint index = gl_GlobalInvocationID.x;
+    if (index >= uint(inputs.length()) || index >= uint(outputs.length())) return;
+    uvec4 row = inputs[index];
+    uint op = row.x & 0xffu;
+    uint value = row.y;
+    if (op == 0u) value = addBits(row.y, row.z);
+    else if (op == 1u) value = addBits(row.y, row.z ^ signBit);
+    else if (op == 2u) value = mulBits(row.y, row.z);
+    else if (op == 3u) {
+        int scale = int(row.w & 0xffffu) - 32768; // biased signed exponent
+        value = packRte(row.yz, scale, row.x & signBit);
+    }
+    outputs[index] = value;
+}
