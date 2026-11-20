@@ -136,5 +136,7 @@ public:
   }
   bool Busy() const { return gpu_.Busy(); }
   bool Configured() const { return configured_; }
+  // Owner-thread diagnostic snapshot for the existing Configure / Pump calls.
+  const char *OwnerStage() const { return result_; }
 };
 } // namespace grs::g11vis

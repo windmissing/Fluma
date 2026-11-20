@@ -28,19 +28,27 @@ export class G11ColdArchiveCore {
   const f = await fs.open(path, fs.OpenMode.CREATE | fs.OpenMode.WRITE_ONLY);
   try { await this.write(f, new util.TextEncoder().encodeInto(text)); await fs.fsync(f.fd); } finally { await fs.close(f); }
  }
- async collect(kind: string, token: string, mode: string, directory: string): Promise<string> {
+ private nativeFailure(raw: string, observe: (value: string) => void): Error {
+  try { observe(raw); } catch (ignored) { /* Preserve the native return. */ }
+  return new Error(raw);
+ }
+ async collect(kind: string, token: string, mode: string, directory: string, observe: (value: string) => void): Promise<string> {
   if (this.busy || (kind !== 'COLD' && kind !== 'BOOTSTRAP' && kind !== 'WITNESS')) throw new Error('INVALID_OR_BUSY');
   this.busy = true; this.cancelled = false; let file: fs.File | null = null; let id: string = ''; let path: string = '';
+  let failed: boolean = false;
   try {
    const statusRaw: string = native.g11Status();
    let manifestRaw: string = ''; let total: number = 0; let expected: string = '';
    const segments: G11Segment[] = [];
    if (kind === 'COLD') {
-    manifestRaw = native.g11ColdBegin(token, mode); let m = JSON.parse(manifestRaw) as G11ColdManifest;
-    id = m.traceId; if (id === undefined || !/^[1-9][0-9]*$/.test(id)) throw new Error(manifestRaw);
+    manifestRaw = native.g11ColdBegin(token, mode);
+    let m: G11ColdManifest;
+    try { m = JSON.parse(manifestRaw) as G11ColdManifest; } catch (ignored) { throw this.nativeFailure(manifestRaw, observe); }
+    if (m.traceId === undefined || !/^[1-9][0-9]*$/.test(m.traceId)) throw this.nativeFailure(manifestRaw, observe);
+    id = m.traceId;
     for (let poll: number = 0; poll < 6000 && m.state !== 'TRACE_READY'; poll++) {
      if (this.cancelled) throw new Error('CANCELLED');
-     if (m.state !== 'BUILDING' && m.state !== 'HASHING') throw new Error(manifestRaw);
+     if (m.state !== 'BUILDING' && m.state !== 'HASHING') throw this.nativeFailure(manifestRaw, observe);
      await new Promise<void>((resolve) => { setTimeout(resolve, 10); });
      manifestRaw = native.g11ColdState(id); m = JSON.parse(manifestRaw) as G11ColdManifest;
     }
@@ -56,13 +64,13 @@ export class G11ColdArchiveCore {
     if (at !== total || total > 194154496) throw new Error('COLD_RESOURCE_BOUND');
    } else if (kind === 'BOOTSTRAP') {
     manifestRaw = native.g11BootstrapState(); const m = JSON.parse(manifestRaw) as G11SeedManifest;
-    if (m.schema !== 'G11_VIS_SEED_RAW_V1' || m.state !== 3 || m.segments.length !== 4) throw new Error('BOOTSTRAP_NOT_RAW_READY');
+    if (m.schema !== 'G11_VIS_SEED_RAW_V1' || m.state !== 3 || m.segments.length !== 4) throw this.nativeFailure(manifestRaw, observe);
     id = m.id; total = Number(m.rawBytes); expected = m.actualVisualSeedSHA; let at: number = 0;
     for (let i: number = 0; i < 4; i++) { const s = m.segments[i]; if (s.kind !== i + 1 || s.preimageOffset !== at) throw new Error('SEED_DIRECTORY'); segments.push({ id: i, name: 'SEED', byteOffset: at, bytes: s.bytes, strideWords: 1, sha256: s.sha256 }); at += s.bytes; }
     if (at !== total || (total !== 271104 && total !== 1057536)) throw new Error('SEED_BYTES');
    } else {
     manifestRaw = native.g11WitnessState(); const m = JSON.parse(manifestRaw) as G11WitnessManifest;
-    if (m.revision !== 'G11_PHASE_WITNESS_V2' || m.state !== 'READY' || (m.bytes !== 3149824 && m.bytes !== 4722688)) throw new Error('WITNESS_NOT_READY');
+    if (m.revision !== 'G11_PHASE_WITNESS_V2' || m.state !== 'READY' || (m.bytes !== 3149824 && m.bytes !== 4722688)) throw this.nativeFailure(manifestRaw, observe);
     id = m.id; total = m.bytes; expected = m.sha256; segments.push({ id: 0, name: 'WITNESS', byteOffset: 0, bytes: total, strideWords: 1, sha256: expected });
    }
    if (!Number.isSafeInteger(total) || total <= 0 || !/^[1-9][0-9]*$/.test(id) || !/^[0-9a-f]{64}$/.test(expected)) throw new Error('RAW_IDENTITY');
@@ -91,10 +99,18 @@ export class G11ColdArchiveCore {
    await this.smallFile(final + '.manifest.json', JSON.stringify({ revision: 'G11_STREAM_ARCHIVE_V2', state: 'ARCHIVED_RAW_NOT_PRODUCT_PASS', kind: kind, id: id, bytes: done, sha256: observed, pages: pages, nativeManifestRaw: manifestRaw, nativeStatusRaw: statusRaw }) + '\n');
    return final;
   } catch (error) {
+   failed = true;
    if (path !== '') { try { await this.smallFile(path + '.incomplete.json', JSON.stringify({ state: 'INCOMPLETE', kind: kind, id: id, error: String(error).slice(0, 1024) }) + '\n'); } catch (ignored) { /* Preserve the first failure. */ } }
    throw new Error('INCOMPLETE:' + String(error));
   } finally {
-   try { if (file !== null) await fs.close(file); } finally { if (kind === 'COLD' && id !== '') native.g11ColdEnd(id); if (kind === 'WITNESS') native.g11WitnessEnd(); this.busy = false; }
+   try {
+    try { if (file !== null) await fs.close(file); } finally {
+     if (kind === 'COLD' && id !== '') native.g11ColdEnd(id);
+     if (kind === 'WITNESS') native.g11WitnessEnd();
+    }
+   } catch (cleanup) {
+    if (!failed) throw new Error('ARCHIVE_CLEANUP:' + String(cleanup));
+   } finally { this.busy = false; }
   }
  }
 }

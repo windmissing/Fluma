@@ -7,8 +7,8 @@ export default class G11ResearchAbility extends UIAbility {
  onWindowStageCreate(stage: window.WindowStage): void {
   stage.loadContent('pages/GpuResidentG11', (error) => { if (error.code !== 0) console.error('G11_PAGE_LOAD_FAILED:' + String(error.code)); });
  }
- private revoke(): void { try { const s = JSON.parse(native.g11Status()) as G11Status; if (s.scope !== undefined) native.g11Stop(JSON.stringify(s.scope)); } catch (error) { console.error('G11_REVOKE_FAILED:' + String(error)); } }
- onBackground(): void { this.revoke(); }
- onWindowStageDestroy(): void { this.revoke(); }
- onDestroy(): void { this.revoke(); }
+ private revoke(source: string): void { try { const s = JSON.parse(native.g11Status()) as G11Status; if (s.scope !== undefined) native.g11Stop(JSON.stringify(s.scope), source); } catch (error) { console.error('G11_REVOKE_FAILED:' + String(error)); } }
+ onBackground(): void { this.revoke('ABILITY_BACKGROUND'); }
+ onWindowStageDestroy(): void { this.revoke('STAGE_DESTROY'); }
+ onDestroy(): void { this.revoke('ABILITY_DESTROY'); }
 }

@@ -1,0 +1,78 @@
+{
+  "schema": "T710_G11_PRODUCT_COMPILE_V1",
+  "exit": 0,
+  "deviceUsed": false,
+  "productExecuted": false,
+  "testsRun": false,
+  "signed": false,
+  "hap": {
+    "path": ".codex\\local-test\\t710\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "sha256": "04d95fa709c07b108aa1985cec63bbb61407612c76ecad3bd098966a672d1692",
+    "bytes": 8447571
+  },
+  "linkedELF": {
+    "sha256": "9e63dfd5e0bee4bd0838ecb94e025b42a11ecbfc3ebd0dc7c5971bbb002ea882",
+    "buildId": "f348698a621aadf22590901913d67eda78848199"
+  },
+  "packagedELF": {
+    "sha256": "6010df58797a178d881a3ac558a295728d85270fee3d9767b3f36116f65be3bf",
+    "buildId": "f348698a621aadf22590901913d67eda78848199",
+    "ownerABI": {
+      "revision": 2,
+      "ownerApp": 106056,
+      "command": 920,
+      "commandQueue32": 29440,
+      "replySlots32": 1024,
+      "threadObject": 8,
+      "loadedIdentityTransient": 1060
+    }
+  },
+  "broker": {
+    "sha256": "8d53e84f34be6b97cc1f4aaed896702e9e2a5cfc3a5f8848832823d1077ae421",
+    "buildId": "6fc7f10b51ab3d4f8e29840596144e056aa6a572"
+  },
+  "abc": {
+    "sha256": "d5eec5dee214b2886efaaecd5ab612a08fc082fd00ff76c1fc2ab29c61990545",
+    "bytes": 2825268
+  },
+  "worker": {
+    "loaderSHA256": "8ac613f5f62501cfa7a3d625cfd206f1a8c6a35bf377badfe742e44764b2b1f7",
+    "mode": "esmodule",
+    "module": "com.example.helloworld.entry.ets.workers.G11ColdWorker",
+    "url": "entry/ets/workers/G11ColdWorker.ets",
+    "executableEntry": true,
+    "entryAckBeforeBegin": true,
+    "independentWorkerAssets": [],
+    "resolverVerified": false
+  },
+  "shaders": {
+    "g11vis_r1.comp": {
+      "sha256": "052ea3fbd9778589163d48e460589f109863e31d0a14f1e61d7c02cc3ca791f2",
+      "staticCompilerExit": 0,
+      "priorT639SHA256": "052ea3fbd9778589163d48e460589f109863e31d0a14f1e61d7c02cc3ca791f2",
+      "sameAsT639": true
+    },
+    "g11vis_dm.comp": {
+      "sha256": "fc210210b1f30f5caf8c20f53aac2d556dc7a2b8847bbef91b095b1ea6913656",
+      "staticCompilerExit": 0,
+      "priorT639SHA256": "218f34b78031c5e47956b9ec75e9500ea5523cde375a4c97908a938aeb18511c",
+      "sameAsT639": false
+    }
+  },
+  "compiledSources": {
+    "entry/src/main/cpp/gpu_resident/g11vis/bridge.cpp": "43f937c52e2b22c48964d53d1f4f5c716b6180bdef98b629b86dd1490b94eb4b",
+    "entry/src/main/cpp/gpu_resident/g11vis/configure_evidence.h": "6bfef84fb5284f0d2c1d457ca64effe4fc36240b7006fc109f08b282f033144c",
+    "entry/src/main/cpp/gpu_resident/g11vis/controller.h": "480b7b2cda0230fe248636344efbfabbc54108ef7d9eb0cdb8be189d3f28c619",
+    "entry/src/main/cpp/gpu_resident/g11vis/wire.h": "f4d36d608d73da4942b2c6e543bb5e2183bbb72667fa424848dd867116f84ac7",
+    "entry/src/main/cpp/types/libgrs_g11/index.d.ts": "395efe0f8aec22b72a5d401f5a69116110ddf38e0ba8ae1fd1f3d58ef887fe34",
+    "entry/src/main/ets/entryability/G11ResearchAbility.ets": "10af5c4bae6ac821eb0220aef586b6b2c0438c245b3a2773f0ac4b358071499b",
+    "entry/src/main/ets/pages/GpuResidentG11.ets": "eddd6fdb4a88ab27f045541ca6f7a40ea9315a346cb561e5f918727ac2bf54b6",
+    "entry/src/main/ets/physics/G11ColdArchiveCore.ets": "533c4a16fdae8db262d1f104faa3cc3ce6db159830ec9c22fcf2bc5d0e9cdb64",
+    "entry/src/main/ets/physics/GpuG11Cold.ets": "c5d2903aa9cb87df6f1b7c0ca624b9421828d2fb7a01b09c5f879891d8070e77",
+    "entry/src/main/ets/physics/GpuG11Port.ets": "26e14b5a55ff3678a93bf1e3f4beb495524aacfacf8bb50bc0a6596117969204",
+    "entry/src/main/ets/physics/G11WorkerProtocol.ets": "1fb79b8a64ff8f775864bfa365fb30b3ac2d7af2f053638efc8a8952b064aa31",
+    "entry/src/main/ets/workers/G11ColdWorker.ets": "ddb692aea03f5bde26234e1cf82874533bdca94c248cef0d4341a601ca561799"
+  },
+  "buildLogSHA256": "f36adb7a34b847205da6b0101802604a778ae31f536548eaccaeb0004681d37c",
+  "initialFailedBuildLogSHA256": "4541d91f6302ea1f43f02c9f9631c040f3cb28616bdaa9665665d19bc398e2b1"
+}

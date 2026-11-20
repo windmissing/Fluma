@@ -98,6 +98,16 @@ inline bool DecodeScope(const std::string &text, Scope &s) {
          j.Number("permission", s.permission) && j.Number("window", s.window) &&
          j.Number("config", s.config) && j.Number("surface", s.surface);
 }
+inline std::string EncodeScope(const Scope &s) {
+  std::ostringstream out;
+  out << "{\"run\":\"" << s.run << "\",\"owner\":\"" << s.owner
+      << "\",\"context\":\"" << s.context << "\",\"inputEpoch\":\""
+      << s.inputEpoch << "\",\"pageSession\":\"" << s.pageSession
+      << "\",\"permission\":\"" << s.permission << "\",\"window\":\""
+      << s.window << "\",\"config\":\"" << s.config << "\",\"surface\":\""
+      << s.surface << "\"}";
+  return out.str();
+}
 inline bool Decimal(const std::string &text, uint64_t &n) {
   return Json("{\"n\":\"" + text + "\"}").Number("n", n);
 }
