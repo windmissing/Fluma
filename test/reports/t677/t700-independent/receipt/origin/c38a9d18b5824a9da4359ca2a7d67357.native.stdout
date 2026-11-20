@@ -1,0 +1,104 @@
+[
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "",
+    "file": "cmake_object_order_depends_target_grs_cold_slots",
+    "output": "cmake_object_order_depends_target_grs_foundation"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot   -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -fno-fast-math -ffp-contract=off -D__MUSL__ -O0 -g -fno-limit-debug-info  -std=gnu++17 -fPIC -MD -MT CMakeFiles/grs_foundation.dir/anchor.cpp.o -MF CMakeFiles\\grs_foundation.dir\\anchor.cpp.o.d -o CMakeFiles/grs_foundation.dir/anchor.cpp.o -c D:/hmprojects/HelloWorld/tools/build/broker_compile/anchor.cpp",
+    "file": "D:/hmprojects/HelloWorld/tools/build/broker_compile/anchor.cpp",
+    "output": "CMakeFiles/grs_foundation.dir/anchor.cpp.o"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "C:\\Windows\\system32\\cmd.exe /C \"cd . && C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\cmake.exe -E rm -f libgrs_foundation.a && C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\llvm-ar.exe qc libgrs_foundation.a  CMakeFiles/grs_foundation.dir/anchor.cpp.o && C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\llvm-ranlib.exe libgrs_foundation.a && cd .\"",
+    "file": "CMakeFiles/grs_foundation.dir/anchor.cpp.o",
+    "output": "libgrs_foundation.a"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "",
+    "file": "CMakeFiles/grs_cold_slots.dir",
+    "output": "cmake_object_order_depends_target_grs_cold_slots"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot -Dgrs_cold_slots_EXPORTS  -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -fno-fast-math -ffp-contract=off -D__MUSL__ -O0 -g -fno-limit-debug-info  -std=gnu++17 -fPIC -MD -MT CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o -MF CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o.d -o CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o -c D:/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp",
+    "file": "D:/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp",
+    "output": "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "C:\\Windows\\system32\\cmd.exe /C \"cd . && C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot -fPIC -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -fno-fast-math -ffp-contract=off -D__MUSL__ -O0 -g -fno-limit-debug-info  --rtlib=compiler-rt -fuse-ld=lld -Wl,--build-id=sha1 -Wl,--warn-shared-textrel -Wl,--fatal-warnings -lunwind -Wl,--no-undefined -Qunused-arguments -Wl,-z,noexecstack  -Wl,--as-needed -Wl,--no-as-needed -shared -Wl,-soname,libgrs_cold_slots.so -o lib\\libgrs_cold_slots.so CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o  -lm && cd .\"",
+    "file": "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o",
+    "output": "lib/libgrs_cold_slots.so"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "",
+    "file": "cmake_object_order_depends_target_grs_cold_slots",
+    "output": "cmake_object_order_depends_target_grsT666Consumer"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot -DgrsT666Consumer_EXPORTS -ID:/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -fno-fast-math -ffp-contract=off -D__MUSL__ -O0 -g -fno-limit-debug-info  -std=gnu++17 -fPIC -MD -MT CMakeFiles/grsT666Consumer.dir/consumer.cpp.o -MF CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o.d -o CMakeFiles/grsT666Consumer.dir/consumer.cpp.o -c D:/hmprojects/HelloWorld/tools/build/broker_compile/consumer.cpp",
+    "file": "D:/hmprojects/HelloWorld/tools/build/broker_compile/consumer.cpp",
+    "output": "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "C:\\Windows\\system32\\cmd.exe /C \"cd . && C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot -fPIC -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -fno-fast-math -ffp-contract=off -D__MUSL__ -O0 -g -fno-limit-debug-info  --rtlib=compiler-rt -fuse-ld=lld -Wl,--build-id=sha1 -Wl,--warn-shared-textrel -Wl,--fatal-warnings -lunwind -Wl,--no-undefined -Qunused-arguments -Wl,-z,noexecstack  -Wl,--as-needed -Wl,--no-as-needed -shared -Wl,-soname,libgrsT666Consumer.so -o libgrsT666Consumer.so CMakeFiles/grsT666Consumer.dir/consumer.cpp.o  -Wl,-rpath,\"C:/Users/admin/AppData/Local/Temp/T677 independent 4dc48593/lib\"  lib/libgrs_cold_slots.so  -lm && cd .\"",
+    "file": "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o",
+    "output": "libgrsT666Consumer.so"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "",
+    "file": "CMakeFiles/edit_cache.util",
+    "output": "edit_cache"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "",
+    "file": "CMakeFiles/rebuild_cache.util",
+    "output": "rebuild_cache"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "",
+    "file": "libgrsT666Consumer.so",
+    "output": "grsT666Consumer"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "",
+    "file": "lib/libgrs_cold_slots.so",
+    "output": "grs_cold_slots"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "",
+    "file": "libgrs_foundation.a",
+    "output": "grs_foundation"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "",
+    "file": "lib/libgrs_cold_slots.so",
+    "output": "libgrs_cold_slots.so"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "",
+    "file": "libgrs_foundation.a",
+    "output": "all"
+  },
+  {
+    "directory": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "command": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\cmake.exe --regenerate-during-build -SD:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile -B\"C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\"",
+    "file": "C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/build-tools/cmake/share/cmake-3.28/Modules/CMakeCXXCompiler.cmake.in",
+    "output": "build.ninja"
+  }
+]

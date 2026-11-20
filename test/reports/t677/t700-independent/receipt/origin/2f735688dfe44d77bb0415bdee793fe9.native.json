@@ -1,0 +1,39 @@
+{
+  "parent": "e8101f2baed14ef18a88707b8f261b24",
+  "step": "2f735688dfe44d77bb0415bdee793fe9",
+  "buildRoot": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+  "argv": [
+    "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\cmake.exe",
+    "-S",
+    "D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile",
+    "-B",
+    "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+    "-G",
+    "Ninja",
+    "-DCMAKE_TOOLCHAIN_FILE=C:/Users/admin/AppData/Local/Temp/T677 independent 4dc48593/grs_owned_toolchain.cmake",
+    "-DCMAKE_MAKE_PROGRAM=C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+    "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+    "-DOHOS_ARCH=arm64-v8a",
+    "-DCMAKE_BUILD_TYPE=Debug",
+    "-DCMAKE_CXX_FLAGS=-fno-fast-math -ffp-contract=off"
+  ],
+  "tool": {
+    "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\cmake.exe",
+    "bytes": 11936736,
+    "sha256": "60513fa0fa68f7a339c0eecf59d903f4207634d624830bf243149dfd3148406e"
+  },
+  "cwd": "D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile",
+  "beginNs": 1795139016685622200,
+  "endNs": 1795139020061211300,
+  "returnCode": 0,
+  "stdout": {
+    "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\2f735688dfe44d77bb0415bdee793fe9.native.stdout",
+    "bytes": 478,
+    "sha256": "b59b12420353f38e80f5a8fda593554ad1895e390bc1f23c916e078c5f690206"
+  },
+  "stderr": {
+    "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\2f735688dfe44d77bb0415bdee793fe9.native.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

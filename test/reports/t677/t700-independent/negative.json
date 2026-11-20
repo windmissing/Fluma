@@ -1,0 +1,153 @@
+{
+  "static": {
+    "argv": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "tools/build/build_receipt.py",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-followup-static-31b6dc79",
+      "--static-artifact-only"
+    ],
+    "exit": 0,
+    "stdout": "{\n  \"ELF\": {\n    \"path\": \"C:\\\\Users\\\\admin\\\\AppData\\\\Local\\\\Temp\\\\T677 independent 4dc48593\\\\lib\\\\libgrs_cold_slots.so\",\n    \"sha256\": \"691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d\",\n    \"buildId\": \"18504f06b8a593c34852f011f0199f44481cab02\",\n    \"requiredEightSymbols\": [\n      \"GrsColdReserve\",\n      \"GrsColdBuilderDone\",\n      \"GrsColdReadBegin\",\n      \"GrsColdReadEnd\",\n      \"GrsColdFreed\",\n      \"GrsFullGpuReserve\",\n      \"GrsFullGpuFreed\",\n      \"GrsFullGpuContextRetired\"\n    ],\n    \"soname\": \"libgrs_cold_slots.so\",\n    \"needed\": [\n      \"libc++_shared.so\",\n      \"libc.so\"\n    ]\n  },\n  \"flags\": {\n    \"explicitUserBaseline\": {\n      \"EXE\": \"\",\n      \"SHARED\": \"-Wl,--as-needed -Wl,--no-as-needed\",\n      \"MODULE\": \"\"\n    },\n    \"SDKSharedBlockCount\": 1,\n    \"effectiveSharedCache\": \"--rtlib=compiler-rt -fuse-ld=lld -Wl,--build-id=sha1 -Wl,--warn-shared-textrel -Wl,--fatal-warnings -lunwind -Wl,--no-undefined -Qunused-arguments -Wl,-z,noexecstack  -Wl,--as-needed -Wl,--no-as-needed\",\n    \"orderedArgvPreserved\": true,\n    \"globalTokenDeduplication\": false,\n    \"FPGuardsPreserved\": true,\n    \"reconfigure\": \"NOT_RUN\"\n  },\n  \"outerCharacters\": 211\n}\n",
+    "stderr": "",
+    "expected": "NOT_RUN"
+  },
+  "no-manifest": {
+    "argv": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "tools/build/build_receipt.py",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-followup-no-manifest-a1878d5d"
+    ],
+    "exit": 2,
+    "stdout": "",
+    "stderr": "usage: build_receipt.py [-h]\n                        (--invocation-manifest INVOCATION_MANIFEST | --static-artifact-only)\n                        build output\nbuild_receipt.py: error: one of the arguments --invocation-manifest --static-artifact-only is required\n",
+    "expected": "one of the arguments"
+  },
+  "wrong-manifest": {
+    "argv": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "tools/build/build_receipt.py",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-followup-wrong-manifest-12b5740c",
+      "--invocation-manifest",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-independent-receipt\\origin\\invocation.json"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 51, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 18, in main\n    invocation,observed=check(build,args.invocation_manifest) if args.invocation_manifest else (None,None)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 27, in check\n    manifest = contained(manifest, build)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_invocation.py\", line 43, in contained\n    raise ValueError(\"BUILD_SCOPE_MISMATCH \" + str(path))\nValueError: BUILD_SCOPE_MISMATCH D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-independent-receipt\\origin\\invocation.json\n",
+    "expected": "BUILD_SCOPE_MISMATCH"
+  },
+  "wrong-id": {
+    "argv": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "tools/build/build_receipt.py",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-followup-wrong-id-76ecd4ce",
+      "--invocation-manifest",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\invocation.json"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 51, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 18, in main\n    invocation,observed=check(build,args.invocation_manifest) if args.invocation_manifest else (None,None)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 32, in check\n    require(manifest == folder / \"invocation.json\", \"MANIFEST_PATH\")\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 13, in require\n    raise ValueError(\"SOURCE_BINDING_INCOMPLETE \" + reason)\nValueError: SOURCE_BINDING_INCOMPLETE MANIFEST_PATH\n",
+    "expected": "MANIFEST_PATH"
+  },
+  "wrong-root": {
+    "argv": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "tools/build/build_receipt.py",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-followup-wrong-root-a3c00bb3",
+      "--invocation-manifest",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\invocation.json"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 51, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 18, in main\n    invocation,observed=check(build,args.invocation_manifest) if args.invocation_manifest else (None,None)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 33, in check\n    require(data[\"schema\"] == SCHEMA and data[\"target\"] == TARGET and\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 13, in require\n    raise ValueError(\"SOURCE_BINDING_INCOMPLETE \" + reason)\nValueError: SOURCE_BINDING_INCOMPLETE MANIFEST_SCOPE\n",
+    "expected": "MANIFEST_SCOPE"
+  },
+  "wrong-target": {
+    "argv": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "tools/build/build_receipt.py",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-followup-wrong-target-76402a8e",
+      "--invocation-manifest",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\invocation.json"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 51, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 18, in main\n    invocation,observed=check(build,args.invocation_manifest) if args.invocation_manifest else (None,None)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 99, in check\n    require(step[\"cwd\"] == str(build) and step[\"argv\"] ==\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 13, in require\n    raise ValueError(\"SOURCE_BINDING_INCOMPLETE \" + reason)\nValueError: SOURCE_BINDING_INCOMPLETE NINJA_ARGV_TARGET\n",
+    "expected": "NINJA_ARGV_TARGET"
+  },
+  "missing-repeat": {
+    "argv": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "tools/build/build_receipt.py",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-followup-missing-repeat-2805fd06",
+      "--invocation-manifest",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\invocation.json"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 51, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 18, in main\n    invocation,observed=check(build,args.invocation_manifest) if args.invocation_manifest else (None,None)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 45, in check\n    require(len(steps) == len(plan), \"MISSING_STEP\")\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 13, in require\n    raise ValueError(\"SOURCE_BINDING_INCOMPLETE \" + reason)\nValueError: SOURCE_BINDING_INCOMPLETE MISSING_STEP\n",
+    "expected": "MISSING_STEP"
+  },
+  "prior-stream": {
+    "argv": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "tools/build/build_receipt.py",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-followup-prior-stream-07b119c0",
+      "--invocation-manifest",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\invocation.json"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 51, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 18, in main\n    invocation,observed=check(build,args.invocation_manifest) if args.invocation_manifest else (None,None)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 59, in check\n    stdout = digest(step[\"stdout\"], base.with_suffix(\".stdout\")).read_bytes()\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 18, in digest\n    require(path == expected, \"EVIDENCE_PATH \" + str(path))\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 13, in require\n    raise ValueError(\"SOURCE_BINDING_INCOMPLETE \" + reason)\nValueError: SOURCE_BINDING_INCOMPLETE EVIDENCE_PATH C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\05-a0280e5f44754e888ad05215ed928e38.stdout\n",
+    "expected": "EVIDENCE_PATH"
+  },
+  "nonzero-lingering-elf": {
+    "argv": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "tools/build/build_receipt.py",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-followup-nonzero-lingering-elf-82b610d1",
+      "--invocation-manifest",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\invocation.json"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 51, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 18, in main\n    invocation,observed=check(build,args.invocation_manifest) if args.invocation_manifest else (None,None)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 141, in check\n    raise ValueError(\"FAILED \" + str(manifest))\nValueError: FAILED C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\invocation.json\n",
+    "expected": "ValueError: FAILED "
+  },
+  "truncated": {
+    "argv": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "tools/build/build_receipt.py",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-followup-truncated-f55a8df9",
+      "--invocation-manifest",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\invocation.json"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 51, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 18, in main\n    invocation,observed=check(build,args.invocation_manifest) if args.invocation_manifest else (None,None)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 59, in check\n    stdout = digest(step[\"stdout\"], base.with_suffix(\".stdout\")).read_bytes()\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 19, in digest\n    require(describe(path) == record, \"EVIDENCE_BYTES \" + str(path))\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 13, in require\n    raise ValueError(\"SOURCE_BINDING_INCOMPLETE \" + reason)\nValueError: SOURCE_BINDING_INCOMPLETE EVIDENCE_BYTES C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\02-98b1456dc3804e46addcc97f59d6eb23.stdout\n",
+    "expected": "EVIDENCE_BYTES"
+  },
+  "changed-byte": {
+    "argv": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "tools/build/build_receipt.py",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t677-followup-changed-byte-6069426f",
+      "--invocation-manifest",
+      "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\invocation.json"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 51, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\build_receipt.py\", line 18, in main\n    invocation,observed=check(build,args.invocation_manifest) if args.invocation_manifest else (None,None)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 59, in check\n    stdout = digest(step[\"stdout\"], base.with_suffix(\".stdout\")).read_bytes()\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 19, in digest\n    require(describe(path) == record, \"EVIDENCE_BYTES \" + str(path))\n  File \"D:\\hmprojects\\HelloWorld\\tools\\build\\verify_invocation.py\", line 13, in require\n    raise ValueError(\"SOURCE_BINDING_INCOMPLETE \" + reason)\nValueError: SOURCE_BINDING_INCOMPLETE EVIDENCE_BYTES C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\02-98b1456dc3804e46addcc97f59d6eb23.stdout\n",
+    "expected": "EVIDENCE_BYTES"
+  }
+}

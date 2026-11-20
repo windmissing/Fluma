@@ -1,0 +1,1682 @@
+{
+  "schema": "GRS_BUILD_INVOCATION_V1",
+  "invocation": "e8101f2baed14ef18a88707b8f261b24",
+  "buildRoot": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+  "target": "grsT666Consumer",
+  "plan": [
+    "configure",
+    "prepare-link",
+    "initial",
+    "reconfigure",
+    "reprepare-link",
+    "no-work",
+    "rsp-relink",
+    "repeat"
+  ],
+  "steps": [
+    {
+      "id": "2f735688dfe44d77bb0415bdee793fe9",
+      "parent": "e8101f2baed14ef18a88707b8f261b24",
+      "buildRoot": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "stage": "configure",
+      "target": "grsT666Consumer",
+      "argv": [
+        "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "D:\\hmprojects\\HelloWorld\\tools\\build\\owned_build.py",
+        "configure",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 build cf5f712c\\policy.json",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593"
+      ],
+      "cwd": "D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile",
+      "tool": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "bytes": 104952,
+        "sha256": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a"
+      },
+      "before": {},
+      "beginNs": 1795139016580014800,
+      "endNs": 1795139020129922500,
+      "returnCode": 0,
+      "stdout": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\00-2f735688dfe44d77bb0415bdee793fe9.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\00-2f735688dfe44d77bb0415bdee793fe9.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16089,
+          "sha256": "01be02f9a0219be02878393466c0432c4aa29d897a6ce9b4d19133ac89ee2611"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 31815,
+          "sha256": "4b79fffe5e3c265d841aad735ffa9d270dae44763d17365bc0b0970dfbf62013"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "native": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\2f735688dfe44d77bb0415bdee793fe9.native.json",
+        "bytes": 1921,
+        "sha256": "5dc320330a4580a32d6b8a99f5456dd472c9c472e716d2f7d64ccac0cc62a250"
+      }
+    },
+    {
+      "id": "c38a9d18b5824a9da4359ca2a7d67357",
+      "parent": "e8101f2baed14ef18a88707b8f261b24",
+      "buildRoot": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "stage": "prepare-link",
+      "target": "grsT666Consumer",
+      "argv": [
+        "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "D:\\hmprojects\\HelloWorld\\tools\\build\\owned_build.py",
+        "prepare-link",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 build cf5f712c\\policy.json",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+        "grs_cold_slots"
+      ],
+      "cwd": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "tool": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "bytes": 104952,
+        "sha256": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a"
+      },
+      "before": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16089,
+          "sha256": "01be02f9a0219be02878393466c0432c4aa29d897a6ce9b4d19133ac89ee2611"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 31815,
+          "sha256": "4b79fffe5e3c265d841aad735ffa9d270dae44763d17365bc0b0970dfbf62013"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "beginNs": 1795139020192277900,
+      "endNs": 1795139020841794200,
+      "returnCode": 0,
+      "stdout": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\01-c38a9d18b5824a9da4359ca2a7d67357.stdout",
+        "bytes": 86,
+        "sha256": "d3e9318f1ef0e9b7123b07319bd1f42f52f508c873267334abe1238812c730e6"
+      },
+      "stderr": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\01-c38a9d18b5824a9da4359ca2a7d67357.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16089,
+          "sha256": "01be02f9a0219be02878393466c0432c4aa29d897a6ce9b4d19133ac89ee2611"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 32185,
+          "sha256": "0b7713612b8036d13e7db2dbb3c77c4d8a2dd4d7963ba207c123047c027e9785"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "7cde0399d2239cbdbc618c3b89809770dabb4a685fa8cb4e170356dbe3c0fc39"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "native": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\c38a9d18b5824a9da4359ca2a7d67357.native.json",
+        "bytes": 1366,
+        "sha256": "204cfb3e8b0e3a074124f373996ba92fe9497f0246c74c7973a1f4f68542df3f"
+      }
+    },
+    {
+      "id": "98b1456dc3804e46addcc97f59d6eb23",
+      "parent": "e8101f2baed14ef18a88707b8f261b24",
+      "buildRoot": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "stage": "initial",
+      "target": "grsT666Consumer",
+      "argv": [
+        "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+        "-v",
+        "grsT666Consumer"
+      ],
+      "cwd": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "tool": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+        "bytes": 626176,
+        "sha256": "feb665d72f923bcdea37edafe41690c8778146d948202a170fa18132793fd9a0"
+      },
+      "before": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16089,
+          "sha256": "01be02f9a0219be02878393466c0432c4aa29d897a6ce9b4d19133ac89ee2611"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 32185,
+          "sha256": "0b7713612b8036d13e7db2dbb3c77c4d8a2dd4d7963ba207c123047c027e9785"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "7cde0399d2239cbdbc618c3b89809770dabb4a685fa8cb4e170356dbe3c0fc39"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "beginNs": 1795139021088764400,
+      "endNs": 1795139025090956200,
+      "returnCode": 0,
+      "stdout": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\02-98b1456dc3804e46addcc97f59d6eb23.stdout",
+        "bytes": 3460,
+        "sha256": "58a72f7563539ef6474eb11ae9b76300674d7be130059c192ed20377a1e01651"
+      },
+      "stderr": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\02-98b1456dc3804e46addcc97f59d6eb23.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16089,
+          "sha256": "01be02f9a0219be02878393466c0432c4aa29d897a6ce9b4d19133ac89ee2611"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 32185,
+          "sha256": "0b7713612b8036d13e7db2dbb3c77c4d8a2dd4d7963ba207c123047c027e9785"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        ".ninja_log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\.ninja_log",
+          "bytes": 387,
+          "sha256": "8d87136956a84426fa561c50f2e5ead160c9abfb2d3528b3c47c640faf8c7f37"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "7cde0399d2239cbdbc618c3b89809770dabb4a685fa8cb4e170356dbe3c0fc39"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "grs_cold_slots.link-receipt.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link-receipt.json",
+          "bytes": 4152,
+          "sha256": "f23722a8888c5653c51755a1c4b885be4981657d24a50adfcc9df8ac24cf9ada"
+        },
+        "grs_cold_slots.driver-diagnostic.log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.driver-diagnostic.log",
+          "bytes": 2074,
+          "sha256": "56bdf92ae86f0f1b5aee88f13da5f26914f44a221f154b9c54f00f518e0f95c2"
+        },
+        "grs_cold_slots.link.stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "grs_cold_slots.link.stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "lib/libgrs_cold_slots.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\lib\\libgrs_cold_slots.so",
+          "bytes": 202504,
+          "sha256": "691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d"
+        },
+        "libgrsT666Consumer.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\libgrsT666Consumer.so",
+          "bytes": 25400,
+          "sha256": "59f1f47b7eafbdd4a0f0d16fe8a621f1d3a0aaad7dd481461cb8a0e3f1f596fb"
+        },
+        "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o",
+          "bytes": 62536,
+          "sha256": "1fa4ef72a6c929f5571fe4c13c24a393f085e1e8470af25dfe50d1e017bb9449"
+        },
+        "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o",
+          "bytes": 22536,
+          "sha256": "5c93c358f9bbe86102a1010ad930e8b39f0e9ca81ba9cf33e6848959a3cb7667"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "link": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\02-98b1456dc3804e46addcc97f59d6eb23.link.json",
+        "bytes": 4152,
+        "sha256": "f23722a8888c5653c51755a1c4b885be4981657d24a50adfcc9df8ac24cf9ada"
+      },
+      "linkStreams": {
+        "stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\02-98b1456dc3804e46addcc97f59d6eb23.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\02-98b1456dc3804e46addcc97f59d6eb23.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "c81f8d67514746eb82cc216e69b41145",
+      "parent": "e8101f2baed14ef18a88707b8f261b24",
+      "buildRoot": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "stage": "reconfigure",
+      "target": "grsT666Consumer",
+      "argv": [
+        "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "D:\\hmprojects\\HelloWorld\\tools\\build\\owned_build.py",
+        "configure",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 build cf5f712c\\policy.json",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593"
+      ],
+      "cwd": "D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile",
+      "tool": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "bytes": 104952,
+        "sha256": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a"
+      },
+      "before": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16089,
+          "sha256": "01be02f9a0219be02878393466c0432c4aa29d897a6ce9b4d19133ac89ee2611"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 32185,
+          "sha256": "0b7713612b8036d13e7db2dbb3c77c4d8a2dd4d7963ba207c123047c027e9785"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        ".ninja_log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\.ninja_log",
+          "bytes": 387,
+          "sha256": "8d87136956a84426fa561c50f2e5ead160c9abfb2d3528b3c47c640faf8c7f37"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "7cde0399d2239cbdbc618c3b89809770dabb4a685fa8cb4e170356dbe3c0fc39"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "grs_cold_slots.link-receipt.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link-receipt.json",
+          "bytes": 4152,
+          "sha256": "f23722a8888c5653c51755a1c4b885be4981657d24a50adfcc9df8ac24cf9ada"
+        },
+        "grs_cold_slots.driver-diagnostic.log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.driver-diagnostic.log",
+          "bytes": 2074,
+          "sha256": "56bdf92ae86f0f1b5aee88f13da5f26914f44a221f154b9c54f00f518e0f95c2"
+        },
+        "grs_cold_slots.link.stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "grs_cold_slots.link.stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "lib/libgrs_cold_slots.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\lib\\libgrs_cold_slots.so",
+          "bytes": 202504,
+          "sha256": "691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d"
+        },
+        "libgrsT666Consumer.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\libgrsT666Consumer.so",
+          "bytes": 25400,
+          "sha256": "59f1f47b7eafbdd4a0f0d16fe8a621f1d3a0aaad7dd481461cb8a0e3f1f596fb"
+        },
+        "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o",
+          "bytes": 62536,
+          "sha256": "1fa4ef72a6c929f5571fe4c13c24a393f085e1e8470af25dfe50d1e017bb9449"
+        },
+        "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o",
+          "bytes": 22536,
+          "sha256": "5c93c358f9bbe86102a1010ad930e8b39f0e9ca81ba9cf33e6848959a3cb7667"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "beginNs": 1795139025273650400,
+      "endNs": 1795139026425859400,
+      "returnCode": 0,
+      "stdout": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\03-c81f8d67514746eb82cc216e69b41145.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\03-c81f8d67514746eb82cc216e69b41145.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16118,
+          "sha256": "5b65971364e23fe285d086c58f4634a98d84eb4010ee4e4f5f1d8c1bb527757f"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 15265,
+          "sha256": "c67a33cf240e2f44b4eff5df59e66c531a9cfddd7c5ec615c29fc751a679c128"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        ".ninja_log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\.ninja_log",
+          "bytes": 387,
+          "sha256": "8d87136956a84426fa561c50f2e5ead160c9abfb2d3528b3c47c640faf8c7f37"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "7cde0399d2239cbdbc618c3b89809770dabb4a685fa8cb4e170356dbe3c0fc39"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "grs_cold_slots.link-receipt.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link-receipt.json",
+          "bytes": 4152,
+          "sha256": "f23722a8888c5653c51755a1c4b885be4981657d24a50adfcc9df8ac24cf9ada"
+        },
+        "grs_cold_slots.driver-diagnostic.log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.driver-diagnostic.log",
+          "bytes": 2074,
+          "sha256": "56bdf92ae86f0f1b5aee88f13da5f26914f44a221f154b9c54f00f518e0f95c2"
+        },
+        "grs_cold_slots.link.stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "grs_cold_slots.link.stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "lib/libgrs_cold_slots.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\lib\\libgrs_cold_slots.so",
+          "bytes": 202504,
+          "sha256": "691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d"
+        },
+        "libgrsT666Consumer.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\libgrsT666Consumer.so",
+          "bytes": 25400,
+          "sha256": "59f1f47b7eafbdd4a0f0d16fe8a621f1d3a0aaad7dd481461cb8a0e3f1f596fb"
+        },
+        "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o",
+          "bytes": 62536,
+          "sha256": "1fa4ef72a6c929f5571fe4c13c24a393f085e1e8470af25dfe50d1e017bb9449"
+        },
+        "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o",
+          "bytes": 22536,
+          "sha256": "5c93c358f9bbe86102a1010ad930e8b39f0e9ca81ba9cf33e6848959a3cb7667"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "native": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\c81f8d67514746eb82cc216e69b41145.native.json",
+        "bytes": 1921,
+        "sha256": "489cbde9ed0ce6f926d19a84bffd003f2667d90c1778280b9766c61900bead8b"
+      }
+    },
+    {
+      "id": "dde15a2acd0840a0acd0a76d5908ee9d",
+      "parent": "e8101f2baed14ef18a88707b8f261b24",
+      "buildRoot": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "stage": "reprepare-link",
+      "target": "grsT666Consumer",
+      "argv": [
+        "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "D:\\hmprojects\\HelloWorld\\tools\\build\\owned_build.py",
+        "prepare-link",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 build cf5f712c\\policy.json",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+        "grs_cold_slots"
+      ],
+      "cwd": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "tool": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "bytes": 104952,
+        "sha256": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a"
+      },
+      "before": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16118,
+          "sha256": "5b65971364e23fe285d086c58f4634a98d84eb4010ee4e4f5f1d8c1bb527757f"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 15265,
+          "sha256": "c67a33cf240e2f44b4eff5df59e66c531a9cfddd7c5ec615c29fc751a679c128"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        ".ninja_log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\.ninja_log",
+          "bytes": 387,
+          "sha256": "8d87136956a84426fa561c50f2e5ead160c9abfb2d3528b3c47c640faf8c7f37"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "7cde0399d2239cbdbc618c3b89809770dabb4a685fa8cb4e170356dbe3c0fc39"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "grs_cold_slots.link-receipt.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link-receipt.json",
+          "bytes": 4152,
+          "sha256": "f23722a8888c5653c51755a1c4b885be4981657d24a50adfcc9df8ac24cf9ada"
+        },
+        "grs_cold_slots.driver-diagnostic.log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.driver-diagnostic.log",
+          "bytes": 2074,
+          "sha256": "56bdf92ae86f0f1b5aee88f13da5f26914f44a221f154b9c54f00f518e0f95c2"
+        },
+        "grs_cold_slots.link.stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "grs_cold_slots.link.stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "lib/libgrs_cold_slots.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\lib\\libgrs_cold_slots.so",
+          "bytes": 202504,
+          "sha256": "691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d"
+        },
+        "libgrsT666Consumer.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\libgrsT666Consumer.so",
+          "bytes": 25400,
+          "sha256": "59f1f47b7eafbdd4a0f0d16fe8a621f1d3a0aaad7dd481461cb8a0e3f1f596fb"
+        },
+        "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o",
+          "bytes": 62536,
+          "sha256": "1fa4ef72a6c929f5571fe4c13c24a393f085e1e8470af25dfe50d1e017bb9449"
+        },
+        "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o",
+          "bytes": 22536,
+          "sha256": "5c93c358f9bbe86102a1010ad930e8b39f0e9ca81ba9cf33e6848959a3cb7667"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "beginNs": 1795139026517963100,
+      "endNs": 1795139027194147000,
+      "returnCode": 0,
+      "stdout": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\04-dde15a2acd0840a0acd0a76d5908ee9d.stdout",
+        "bytes": 86,
+        "sha256": "d3e9318f1ef0e9b7123b07319bd1f42f52f508c873267334abe1238812c730e6"
+      },
+      "stderr": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\04-dde15a2acd0840a0acd0a76d5908ee9d.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16118,
+          "sha256": "5b65971364e23fe285d086c58f4634a98d84eb4010ee4e4f5f1d8c1bb527757f"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 15644,
+          "sha256": "741b97485c0fb1eb25ce3ce2b727cfca94bda972ea73ca298e586aae59bf0459"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        ".ninja_log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\.ninja_log",
+          "bytes": 387,
+          "sha256": "8d87136956a84426fa561c50f2e5ead160c9abfb2d3528b3c47c640faf8c7f37"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "96a5f384700de05530a42aba5676071d09fe6966a433b9e96779e1d24749f8dc"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "grs_cold_slots.link-receipt.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link-receipt.json",
+          "bytes": 4152,
+          "sha256": "f23722a8888c5653c51755a1c4b885be4981657d24a50adfcc9df8ac24cf9ada"
+        },
+        "grs_cold_slots.driver-diagnostic.log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.driver-diagnostic.log",
+          "bytes": 2074,
+          "sha256": "56bdf92ae86f0f1b5aee88f13da5f26914f44a221f154b9c54f00f518e0f95c2"
+        },
+        "grs_cold_slots.link.stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "grs_cold_slots.link.stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "lib/libgrs_cold_slots.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\lib\\libgrs_cold_slots.so",
+          "bytes": 202504,
+          "sha256": "691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d"
+        },
+        "libgrsT666Consumer.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\libgrsT666Consumer.so",
+          "bytes": 25400,
+          "sha256": "59f1f47b7eafbdd4a0f0d16fe8a621f1d3a0aaad7dd481461cb8a0e3f1f596fb"
+        },
+        "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o",
+          "bytes": 62536,
+          "sha256": "1fa4ef72a6c929f5571fe4c13c24a393f085e1e8470af25dfe50d1e017bb9449"
+        },
+        "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o",
+          "bytes": 22536,
+          "sha256": "5c93c358f9bbe86102a1010ad930e8b39f0e9ca81ba9cf33e6848959a3cb7667"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "native": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\dde15a2acd0840a0acd0a76d5908ee9d.native.json",
+        "bytes": 1366,
+        "sha256": "1b7c79dc6357302390eebfe4bffde18a3c0f32e399b268f250717109cb76f5aa"
+      }
+    },
+    {
+      "id": "a0280e5f44754e888ad05215ed928e38",
+      "parent": "e8101f2baed14ef18a88707b8f261b24",
+      "buildRoot": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "stage": "no-work",
+      "target": "grsT666Consumer",
+      "argv": [
+        "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+        "-v",
+        "grsT666Consumer"
+      ],
+      "cwd": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "tool": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+        "bytes": 626176,
+        "sha256": "feb665d72f923bcdea37edafe41690c8778146d948202a170fa18132793fd9a0"
+      },
+      "before": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16118,
+          "sha256": "5b65971364e23fe285d086c58f4634a98d84eb4010ee4e4f5f1d8c1bb527757f"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 15644,
+          "sha256": "741b97485c0fb1eb25ce3ce2b727cfca94bda972ea73ca298e586aae59bf0459"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        ".ninja_log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\.ninja_log",
+          "bytes": 387,
+          "sha256": "8d87136956a84426fa561c50f2e5ead160c9abfb2d3528b3c47c640faf8c7f37"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "96a5f384700de05530a42aba5676071d09fe6966a433b9e96779e1d24749f8dc"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "grs_cold_slots.link-receipt.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link-receipt.json",
+          "bytes": 4152,
+          "sha256": "f23722a8888c5653c51755a1c4b885be4981657d24a50adfcc9df8ac24cf9ada"
+        },
+        "grs_cold_slots.driver-diagnostic.log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.driver-diagnostic.log",
+          "bytes": 2074,
+          "sha256": "56bdf92ae86f0f1b5aee88f13da5f26914f44a221f154b9c54f00f518e0f95c2"
+        },
+        "grs_cold_slots.link.stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "grs_cold_slots.link.stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "lib/libgrs_cold_slots.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\lib\\libgrs_cold_slots.so",
+          "bytes": 202504,
+          "sha256": "691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d"
+        },
+        "libgrsT666Consumer.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\libgrsT666Consumer.so",
+          "bytes": 25400,
+          "sha256": "59f1f47b7eafbdd4a0f0d16fe8a621f1d3a0aaad7dd481461cb8a0e3f1f596fb"
+        },
+        "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o",
+          "bytes": 62536,
+          "sha256": "1fa4ef72a6c929f5571fe4c13c24a393f085e1e8470af25dfe50d1e017bb9449"
+        },
+        "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o",
+          "bytes": 22536,
+          "sha256": "5c93c358f9bbe86102a1010ad930e8b39f0e9ca81ba9cf33e6848959a3cb7667"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "beginNs": 1795139027445290100,
+      "endNs": 1795139027549540700,
+      "returnCode": 0,
+      "stdout": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\05-a0280e5f44754e888ad05215ed928e38.stdout",
+        "bytes": 112,
+        "sha256": "31e177eec7d9282cd83f47ada904e6aaab507a8aca131d5cccb93380ce1e733e"
+      },
+      "stderr": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\05-a0280e5f44754e888ad05215ed928e38.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16118,
+          "sha256": "5b65971364e23fe285d086c58f4634a98d84eb4010ee4e4f5f1d8c1bb527757f"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 15644,
+          "sha256": "741b97485c0fb1eb25ce3ce2b727cfca94bda972ea73ca298e586aae59bf0459"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        ".ninja_log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\.ninja_log",
+          "bytes": 387,
+          "sha256": "8d87136956a84426fa561c50f2e5ead160c9abfb2d3528b3c47c640faf8c7f37"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "96a5f384700de05530a42aba5676071d09fe6966a433b9e96779e1d24749f8dc"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "grs_cold_slots.link-receipt.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link-receipt.json",
+          "bytes": 4152,
+          "sha256": "f23722a8888c5653c51755a1c4b885be4981657d24a50adfcc9df8ac24cf9ada"
+        },
+        "grs_cold_slots.driver-diagnostic.log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.driver-diagnostic.log",
+          "bytes": 2074,
+          "sha256": "56bdf92ae86f0f1b5aee88f13da5f26914f44a221f154b9c54f00f518e0f95c2"
+        },
+        "grs_cold_slots.link.stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "grs_cold_slots.link.stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "lib/libgrs_cold_slots.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\lib\\libgrs_cold_slots.so",
+          "bytes": 202504,
+          "sha256": "691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d"
+        },
+        "libgrsT666Consumer.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\libgrsT666Consumer.so",
+          "bytes": 25400,
+          "sha256": "59f1f47b7eafbdd4a0f0d16fe8a621f1d3a0aaad7dd481461cb8a0e3f1f596fb"
+        },
+        "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o",
+          "bytes": 62536,
+          "sha256": "1fa4ef72a6c929f5571fe4c13c24a393f085e1e8470af25dfe50d1e017bb9449"
+        },
+        "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o",
+          "bytes": 22536,
+          "sha256": "5c93c358f9bbe86102a1010ad930e8b39f0e9ca81ba9cf33e6848959a3cb7667"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      }
+    },
+    {
+      "id": "0917a0c5f2fe4eeb86d722bc84dfa476",
+      "parent": "e8101f2baed14ef18a88707b8f261b24",
+      "buildRoot": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "stage": "rsp-relink",
+      "target": "grsT666Consumer",
+      "argv": [
+        "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+        "-v",
+        "grsT666Consumer"
+      ],
+      "cwd": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "tool": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+        "bytes": 626176,
+        "sha256": "feb665d72f923bcdea37edafe41690c8778146d948202a170fa18132793fd9a0"
+      },
+      "before": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16118,
+          "sha256": "5b65971364e23fe285d086c58f4634a98d84eb4010ee4e4f5f1d8c1bb527757f"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 15644,
+          "sha256": "741b97485c0fb1eb25ce3ce2b727cfca94bda972ea73ca298e586aae59bf0459"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        ".ninja_log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\.ninja_log",
+          "bytes": 387,
+          "sha256": "8d87136956a84426fa561c50f2e5ead160c9abfb2d3528b3c47c640faf8c7f37"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "96a5f384700de05530a42aba5676071d09fe6966a433b9e96779e1d24749f8dc"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "grs_cold_slots.link-receipt.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link-receipt.json",
+          "bytes": 4152,
+          "sha256": "f23722a8888c5653c51755a1c4b885be4981657d24a50adfcc9df8ac24cf9ada"
+        },
+        "grs_cold_slots.driver-diagnostic.log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.driver-diagnostic.log",
+          "bytes": 2074,
+          "sha256": "56bdf92ae86f0f1b5aee88f13da5f26914f44a221f154b9c54f00f518e0f95c2"
+        },
+        "grs_cold_slots.link.stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "grs_cold_slots.link.stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "lib/libgrs_cold_slots.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\lib\\libgrs_cold_slots.so",
+          "bytes": 202504,
+          "sha256": "691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d"
+        },
+        "libgrsT666Consumer.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\libgrsT666Consumer.so",
+          "bytes": 25400,
+          "sha256": "59f1f47b7eafbdd4a0f0d16fe8a621f1d3a0aaad7dd481461cb8a0e3f1f596fb"
+        },
+        "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o",
+          "bytes": 62536,
+          "sha256": "1fa4ef72a6c929f5571fe4c13c24a393f085e1e8470af25dfe50d1e017bb9449"
+        },
+        "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o",
+          "bytes": 22536,
+          "sha256": "5c93c358f9bbe86102a1010ad930e8b39f0e9ca81ba9cf33e6848959a3cb7667"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "beginNs": 1795139027818097100,
+      "endNs": 1795139031359935100,
+      "returnCode": 0,
+      "stdout": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\06-0917a0c5f2fe4eeb86d722bc84dfa476.stdout",
+        "bytes": 1298,
+        "sha256": "462c2755663d2abadad9ab38f293aa2baa5d01b27c0a829c7de09cc90b94a51c"
+      },
+      "stderr": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\06-0917a0c5f2fe4eeb86d722bc84dfa476.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16118,
+          "sha256": "5b65971364e23fe285d086c58f4634a98d84eb4010ee4e4f5f1d8c1bb527757f"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 15644,
+          "sha256": "741b97485c0fb1eb25ce3ce2b727cfca94bda972ea73ca298e586aae59bf0459"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        ".ninja_log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\.ninja_log",
+          "bytes": 520,
+          "sha256": "a0c1a8c4a4d0f4c8539d2e2a52e139236730699d6040bd8eb0e48e44051323f9"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "96a5f384700de05530a42aba5676071d09fe6966a433b9e96779e1d24749f8dc"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "grs_cold_slots.link-receipt.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link-receipt.json",
+          "bytes": 4152,
+          "sha256": "7277c0e6eeac3ceb2ba84a29d3a2c26b9f451ea6d3f98081cb694681ad7c18c6"
+        },
+        "grs_cold_slots.driver-diagnostic.log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.driver-diagnostic.log",
+          "bytes": 2074,
+          "sha256": "56bdf92ae86f0f1b5aee88f13da5f26914f44a221f154b9c54f00f518e0f95c2"
+        },
+        "grs_cold_slots.link.stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "grs_cold_slots.link.stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "lib/libgrs_cold_slots.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\lib\\libgrs_cold_slots.so",
+          "bytes": 202504,
+          "sha256": "691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d"
+        },
+        "libgrsT666Consumer.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\libgrsT666Consumer.so",
+          "bytes": 25400,
+          "sha256": "59f1f47b7eafbdd4a0f0d16fe8a621f1d3a0aaad7dd481461cb8a0e3f1f596fb"
+        },
+        "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o",
+          "bytes": 62536,
+          "sha256": "1fa4ef72a6c929f5571fe4c13c24a393f085e1e8470af25dfe50d1e017bb9449"
+        },
+        "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o",
+          "bytes": 22536,
+          "sha256": "5c93c358f9bbe86102a1010ad930e8b39f0e9ca81ba9cf33e6848959a3cb7667"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "link": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\06-0917a0c5f2fe4eeb86d722bc84dfa476.link.json",
+        "bytes": 4152,
+        "sha256": "7277c0e6eeac3ceb2ba84a29d3a2c26b9f451ea6d3f98081cb694681ad7c18c6"
+      },
+      "linkStreams": {
+        "stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\06-0917a0c5f2fe4eeb86d722bc84dfa476.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\06-0917a0c5f2fe4eeb86d722bc84dfa476.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "72a299a09fd54f6bb562ff51ee49b445",
+      "parent": "e8101f2baed14ef18a88707b8f261b24",
+      "buildRoot": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "stage": "repeat",
+      "target": "grsT666Consumer",
+      "argv": [
+        "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+        "-C",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+        "-v",
+        "grsT666Consumer"
+      ],
+      "cwd": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593",
+      "tool": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+        "bytes": 626176,
+        "sha256": "feb665d72f923bcdea37edafe41690c8778146d948202a170fa18132793fd9a0"
+      },
+      "before": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16118,
+          "sha256": "5b65971364e23fe285d086c58f4634a98d84eb4010ee4e4f5f1d8c1bb527757f"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 15644,
+          "sha256": "741b97485c0fb1eb25ce3ce2b727cfca94bda972ea73ca298e586aae59bf0459"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        ".ninja_log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\.ninja_log",
+          "bytes": 520,
+          "sha256": "a0c1a8c4a4d0f4c8539d2e2a52e139236730699d6040bd8eb0e48e44051323f9"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "96a5f384700de05530a42aba5676071d09fe6966a433b9e96779e1d24749f8dc"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "grs_cold_slots.link-receipt.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link-receipt.json",
+          "bytes": 4152,
+          "sha256": "7277c0e6eeac3ceb2ba84a29d3a2c26b9f451ea6d3f98081cb694681ad7c18c6"
+        },
+        "grs_cold_slots.driver-diagnostic.log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.driver-diagnostic.log",
+          "bytes": 2074,
+          "sha256": "56bdf92ae86f0f1b5aee88f13da5f26914f44a221f154b9c54f00f518e0f95c2"
+        },
+        "grs_cold_slots.link.stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "grs_cold_slots.link.stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "lib/libgrs_cold_slots.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\lib\\libgrs_cold_slots.so",
+          "bytes": 202504,
+          "sha256": "691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d"
+        },
+        "libgrsT666Consumer.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\libgrsT666Consumer.so",
+          "bytes": 25400,
+          "sha256": "59f1f47b7eafbdd4a0f0d16fe8a621f1d3a0aaad7dd481461cb8a0e3f1f596fb"
+        },
+        "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o",
+          "bytes": 62536,
+          "sha256": "1fa4ef72a6c929f5571fe4c13c24a393f085e1e8470af25dfe50d1e017bb9449"
+        },
+        "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o",
+          "bytes": 22536,
+          "sha256": "5c93c358f9bbe86102a1010ad930e8b39f0e9ca81ba9cf33e6848959a3cb7667"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      },
+      "beginNs": 1795139031567811600,
+      "endNs": 1795139031815803300,
+      "returnCode": 0,
+      "stdout": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\07-72a299a09fd54f6bb562ff51ee49b445.stdout",
+        "bytes": 112,
+        "sha256": "31e177eec7d9282cd83f47ada904e6aaab507a8aca131d5cccb93380ce1e733e"
+      },
+      "stderr": {
+        "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-invocations\\e8101f2baed14ef18a88707b8f261b24\\07-72a299a09fd54f6bb562ff51ee49b445.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "CMakeCache.txt": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeCache.txt",
+          "bytes": 16118,
+          "sha256": "5b65971364e23fe285d086c58f4634a98d84eb4010ee4e4f5f1d8c1bb527757f"
+        },
+        "compile_commands.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\compile_commands.json",
+          "bytes": 3007,
+          "sha256": "44a8b13141c918fc56e67e83b15dbadd227bfc757847602b287eb32b4c2e2ac8"
+        },
+        "build.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\build.ninja",
+          "bytes": 15644,
+          "sha256": "741b97485c0fb1eb25ce3ce2b727cfca94bda972ea73ca298e586aae59bf0459"
+        },
+        "CMakeFiles/rules.ninja": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\rules.ninja",
+          "bytes": 5430,
+          "sha256": "ccbc10d066760f7f17ccb51e623fad633db9f177d7543d2d8ee6b2a8e862a2fb"
+        },
+        ".ninja_log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\.ninja_log",
+          "bytes": 520,
+          "sha256": "a0c1a8c4a4d0f4c8539d2e2a52e139236730699d6040bd8eb0e48e44051323f9"
+        },
+        "grs-link-policy.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-link-policy.json",
+          "bytes": 2029,
+          "sha256": "b3d4b5b5c67d1887fe918e34701a29e98fb658a897a4799b94d7930779a17ac8"
+        },
+        "grs_owned_toolchain.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_owned_toolchain.cmake",
+          "bytes": 3008,
+          "sha256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5"
+        },
+        "grs-sdk-flags.cmake": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs-sdk-flags.cmake",
+          "bytes": 407,
+          "sha256": "b4858697fe91d35db1ec8237346d7259b4dc51b1023270df0959a61a2a01029c"
+        },
+        "grs_cold_slots.link.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json",
+          "bytes": 4514,
+          "sha256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823"
+        },
+        "grs_cold_slots.patch-state.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.patch-state.json",
+          "bytes": 183,
+          "sha256": "96a5f384700de05530a42aba5676071d09fe6966a433b9e96779e1d24749f8dc"
+        },
+        "grs_cold_slots.full.rsp": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.full.rsp",
+          "bytes": 884,
+          "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb"
+        },
+        "grs_cold_slots.link-receipt.json": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link-receipt.json",
+          "bytes": 4152,
+          "sha256": "7277c0e6eeac3ceb2ba84a29d3a2c26b9f451ea6d3f98081cb694681ad7c18c6"
+        },
+        "grs_cold_slots.driver-diagnostic.log": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.driver-diagnostic.log",
+          "bytes": 2074,
+          "sha256": "56bdf92ae86f0f1b5aee88f13da5f26914f44a221f154b9c54f00f518e0f95c2"
+        },
+        "grs_cold_slots.link.stdout": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "grs_cold_slots.link.stderr": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "lib/libgrs_cold_slots.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\lib\\libgrs_cold_slots.so",
+          "bytes": 202504,
+          "sha256": "691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d"
+        },
+        "libgrsT666Consumer.so": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\libgrsT666Consumer.so",
+          "bytes": 25400,
+          "sha256": "59f1f47b7eafbdd4a0f0d16fe8a621f1d3a0aaad7dd481461cb8a0e3f1f596fb"
+        },
+        "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o",
+          "bytes": 62536,
+          "sha256": "1fa4ef72a6c929f5571fe4c13c24a393f085e1e8470af25dfe50d1e017bb9449"
+        },
+        "CMakeFiles/grsT666Consumer.dir/consumer.cpp.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o",
+          "bytes": 22536,
+          "sha256": "5c93c358f9bbe86102a1010ad930e8b39f0e9ca81ba9cf33e6848959a3cb7667"
+        },
+        "CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.o": {
+          "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+          "bytes": 3320,
+          "sha256": "12d312fb8f5fc1e5ae578e82f9ded386e09508c550c363599ecc8776fe3d4726"
+        }
+      }
+    }
+  ],
+  "inputs": {
+    "cmake": {
+      "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\cmake.exe",
+      "bytes": 11936736,
+      "sha256": "60513fa0fa68f7a339c0eecf59d903f4207634d624830bf243149dfd3148406e"
+    },
+    "ninja": {
+      "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+      "bytes": 626176,
+      "sha256": "feb665d72f923bcdea37edafe41690c8778146d948202a170fa18132793fd9a0"
+    },
+    "sdkToolchain": {
+      "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build\\cmake\\ohos.toolchain.cmake",
+      "bytes": 12631,
+      "sha256": "ed9ef39b5e32f1d9db139bf1d0dc7a6e56902848bf092f0296897063320499f8"
+    }
+  },
+  "policy": {
+    "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 build cf5f712c\\policy.json",
+    "bytes": 742,
+    "sha256": "9900ec6618d44d9832d824bf87d7227028383950e1cd02f2f9d71970e6320633"
+  },
+  "state": "SEALED"
+}

@@ -1,0 +1,147 @@
+{
+  "schema": "T700_OWNED_NATIVE_RECEIPT_V1",
+  "developmentCompile": "OBSERVED",
+  "productPASS": false,
+  "testsRun": false,
+  "deviceUsed": false,
+  "productExecuted": false,
+  "HAP": "NOT_APPLICABLE build-only wrapper/native broker ABI scope; no App behavior changed",
+  "SDKUnmodified": true,
+  "flags": {
+    "explicitUserBaseline": {
+      "EXE": "",
+      "SHARED": "-Wl,--as-needed -Wl,--no-as-needed",
+      "MODULE": ""
+    },
+    "SDKSharedBlockCount": 1,
+    "effectiveSharedCache": "--rtlib=compiler-rt -fuse-ld=lld -Wl,--build-id=sha1 -Wl,--warn-shared-textrel -Wl,--fatal-warnings -lunwind -Wl,--no-undefined -Qunused-arguments -Wl,-z,noexecstack  -Wl,--as-needed -Wl,--no-as-needed",
+    "orderedArgvPreserved": true,
+    "globalTokenDeduplication": false,
+    "FPGuardsPreserved": true,
+    "reconfigure": "OBSERVED"
+  },
+  "toolSHA": {
+    "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe": "c090283dcef69bb2792c1b8fde748557eab787a7a34ea1d35d01068fc6e0baf5",
+    "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\ld.lld.exe": "dcb387a95dff784fe985d12cedbf1348ad53a743b54202367694314b261e14cd",
+    "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\llvm-readelf.exe": "f51edda3fc2182d827f1ce1ac62595c9aae96b23f0b1ea7d8ef2571a081927bd",
+    "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\llvm-nm.exe": "afe5e8b8fbac5d44c944854035029097a0a20ac445ca6d71863388df638b7c82",
+    "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\cmake.exe": "60513fa0fa68f7a339c0eecf59d903f4207634d624830bf243149dfd3148406e",
+    "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe": "feb665d72f923bcdea37edafe41690c8778146d948202a170fa18132793fd9a0"
+  },
+  "sourceSHA": {
+    "D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile\\anchor.cpp": "94810d59c12f825fc02bca2748eadb4972af70dea8d717799ee23e1a9c3a1ce7",
+    "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp": "8a9e6325c67eaf152b95abebc5f258b91357a291a4a4f7809bf1ba795deba50f",
+    "D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile\\consumer.cpp": "630216ecebb172c989a689009ebdb5bded985b6d1c31edb5ef3216e363b86b2a"
+  },
+  "ownedTools": {
+    "tools\\build\\build_invocation.py": "c2850e54be13fbecaca5fbaba1ecb3d0055666d6997c736b3b562b0a263a6a1d",
+    "tools\\build\\build_receipt.py": "6dee57f2112a48631c4c3391c9177ca9c3f8331bc54db398ac531afac21022e3",
+    "tools\\build\\link_from_manifest.py": "51630c462a1370c4b9b2bef873df9c1718eedc72924df27508dec099f64c5c0e",
+    "tools\\build\\owned_build.py": "187136e85eb69abdaad10dabab2ca9b0bed7fe8029b6e26cd30bcb701a7d9c38",
+    "tools\\build\\README.md": "2ab86c3195b1e794d3e36427538ae650d2f6dce5344cf26ca54e643fbe9cdc35",
+    "tools\\build\\verify_invocation.py": "298d6212b720b4a248497ce58c9f418823fd77e223cf5cb206eb43ee998df13b",
+    "tools\\build\\broker_compile\\anchor.cpp": "94810d59c12f825fc02bca2748eadb4972af70dea8d717799ee23e1a9c3a1ce7",
+    "tools\\build\\broker_compile\\CMakeLists.txt": "b07faa274417d1160b2335c914d19b328affb7ff340c12eeebd64ff21de22850",
+    "tools\\build\\broker_compile\\consumer.cpp": "630216ecebb172c989a689009ebdb5bded985b6d1c31edb5ef3216e363b86b2a"
+  },
+  "outerCommand": "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe D:\\hmprojects\\HelloWorld\\tools\\build\\link_from_manifest.py \"C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\grs_cold_slots.link.json\"",
+  "outerCharacters": 211,
+  "nativeArgv": [
+    "C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm/bin/clang++.exe",
+    "@C:/Users/admin/AppData/Local/Temp/T677 independent 4dc48593/grs_cold_slots.full.rsp"
+  ],
+  "rsp": {
+    "sha256": "53df7b751c3cefd1867355fd2b82f8515331ad80629a92274b66e8b58469a3fb",
+    "bytes": 884,
+    "allEffectiveArgv": [
+      "--target=aarch64-linux-ohos",
+      "--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm",
+      "--sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot",
+      "-fPIC",
+      "-fdata-sections",
+      "-ffunction-sections",
+      "-funwind-tables",
+      "-fstack-protector-strong",
+      "-no-canonical-prefixes",
+      "-fno-addrsig",
+      "-Wa,--noexecstack",
+      "-Wformat",
+      "-Werror=format-security",
+      "-fno-fast-math",
+      "-ffp-contract=off",
+      "-D__MUSL__",
+      "-O0",
+      "-g",
+      "-fno-limit-debug-info",
+      "--rtlib=compiler-rt",
+      "-fuse-ld=lld",
+      "-Wl,--build-id=sha1",
+      "-Wl,--warn-shared-textrel",
+      "-Wl,--fatal-warnings",
+      "-lunwind",
+      "-Wl,--no-undefined",
+      "-Qunused-arguments",
+      "-Wl,-z,noexecstack",
+      "-Wl,--as-needed",
+      "-Wl,--no-as-needed",
+      "-shared",
+      "-Wl,-soname,libgrs_cold_slots.so",
+      "-o",
+      "lib/libgrs_cold_slots.so",
+      "CMakeFiles/grs_cold_slots.dir/D_/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp.o",
+      "-lm"
+    ],
+    "encoding": "UTF8 no BOM LF; LLVM driver rsp quoting, separate from Windows native argv"
+  },
+  "ELF": {
+    "path": "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\lib\\libgrs_cold_slots.so",
+    "sha256": "691d6a657261a97a7d5bcd9527195fbc7e5d724f11282e841118e053bd5a229d",
+    "buildId": "18504f06b8a593c34852f011f0199f44481cab02",
+    "requiredEightSymbols": [
+      "GrsColdReserve",
+      "GrsColdBuilderDone",
+      "GrsColdReadBegin",
+      "GrsColdReadEnd",
+      "GrsColdFreed",
+      "GrsFullGpuReserve",
+      "GrsFullGpuFreed",
+      "GrsFullGpuContextRetired"
+    ],
+    "soname": "libgrs_cold_slots.so",
+    "needed": [
+      "libc++_shared.so",
+      "libc.so"
+    ]
+  },
+  "consumer": {
+    "sha256": "59f1f47b7eafbdd4a0f0d16fe8a621f1d3a0aaad7dd481461cb8a0e3f1f596fb",
+    "needed": [
+      "libgrs_cold_slots.so",
+      "libc++_shared.so",
+      "libc.so"
+    ]
+  },
+  "objects": {
+    "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 independent 4dc48593\\CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o": "1fa4ef72a6c929f5571fe4c13c24a393f085e1e8470af25dfe50d1e017bb9449"
+  },
+  "manifestSHA256": "d1cef1e4ed31308bf8031254ffbfee591b30502e3027fd982822168564945823",
+  "SDKToolchainSHA256": "ed9ef39b5e32f1d9db139bf1d0dc7a6e56902848bf092f0296897063320499f8",
+  "scope": "actual repo broker through existing cold_slot_broker.cmake; only its Ninja edge/rule changed, original deps plus manifest/rsp/launcher. Incremental rebuild requires changed inputs.",
+  "mode": "INVOCATION_BOUND",
+  "artifact": "ARTIFACT_VERIFIED",
+  "observedSteps": {
+    "configure": "OBSERVED",
+    "prepare-link": "OBSERVED",
+    "initial": [
+      "COMPILE_OBSERVED",
+      "LINK_OBSERVED"
+    ],
+    "reconfigure": "OBSERVED",
+    "reprepare-link": "OBSERVED",
+    "no-work": "INCREMENTAL_NO_WORK",
+    "rsp-relink": "EXPECTED_RSP_RELINK",
+    "repeat": "INCREMENTAL_NO_WORK"
+  },
+  "invocation": "e8101f2baed14ef18a88707b8f261b24",
+  "invocationManifestSHA256": "8605c0bc001b1fa2ce67ddef5dace5eff5cd267d2daf4f7187cbda15f4959cdc"
+}
