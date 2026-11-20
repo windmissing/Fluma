@@ -1,0 +1,134 @@
+{
+ "revision": "T698_V2_FULLMATRIX_DEVICE_V1",
+ "date": "2026-11-20",
+ "package": {
+  "task": "t668_driver (T697 ELF 3dc69a93/BuildId 1907d3d7, libc++_shared 1262248B from T592-pairing HAP)",
+  "device": "011124264R000337",
+  "dir": "/data/local/tmp/t697"
+ },
+ "modes": {
+  "barrier_cancel": {
+   "rc0": true,
+   "results": [
+    "STDOUT_CAPTURED"
+   ],
+   "lines": 1
+  },
+  "barrier_release": {
+   "rc0": true,
+   "results": [
+    "CHECKPOINT_BARRIER",
+    "BARRIER_ENTER",
+    "COMPLETED_FIXTURE_NOT_PHYSICS"
+   ],
+   "lines": 9
+  },
+  "catalog_contention": {
+   "rc0": true,
+   "results": [
+    "STDOUT_CAPTURED"
+   ],
+   "lines": 4
+  },
+  "deadline": {
+   "rc0": true,
+   "results": [
+    "EXPECTED"
+   ],
+   "lines": 2
+  },
+  "fence_cancel": {
+   "rc0": true,
+   "results": [
+    "EXPECTED"
+   ],
+   "lines": 2
+  },
+  "files": {
+   "rc0": true,
+   "results": [
+    "RESOURCE_PHASE_SAMPLE",
+    "USE_PRODUCTION_READ_ONLY_PAGE",
+    "COMPLETED_FIXTURE_NOT_PHYSICS"
+   ],
+   "lines": 9
+  },
+  "files_mutation": {
+   "rc0": true,
+   "results": [
+    "RESOURCE_PHASE_SAMPLE",
+    "USE_PRODUCTION_READ_ONLY_PAGE",
+    "COMPLETED_FIXTURE_NOT_PHYSICS"
+   ],
+   "lines": 9
+  },
+  "files_mutation_delete": {
+   "rc0": true,
+   "results": [
+    "RESOURCE_PHASE_SAMPLE",
+    "USE_PRODUCTION_READ_ONLY_PAGE",
+    "COMPLETED_FIXTURE_NOT_PHYSICS"
+   ],
+   "lines": 9
+  },
+  "files_mutation_replace": {
+   "rc0": true,
+   "results": [
+    "RESOURCE_PHASE_SAMPLE",
+    "USE_PRODUCTION_READ_ONLY_PAGE",
+    "COMPLETED_FIXTURE_NOT_PHYSICS"
+   ],
+   "lines": 9
+  },
+  "files_mutation_truncate": {
+   "rc0": true,
+   "results": [
+    "RESOURCE_PHASE_SAMPLE",
+    "USE_PRODUCTION_READ_ONLY_PAGE",
+    "COMPLETED_FIXTURE_NOT_PHYSICS"
+   ],
+   "lines": 9
+  },
+  "files_ttl": {
+   "rc0": true,
+   "results": [
+    "RESOURCE_PHASE_SAMPLE",
+    "USE_PRODUCTION_READ_ONLY_PAGE",
+    "COMPLETED_FIXTURE_NOT_PHYSICS"
+   ],
+   "lines": 9
+  },
+  "full_queue_cancel": {
+   "rc0": true,
+   "results": [
+    "EXPECTED"
+   ],
+   "lines": 2
+  },
+  "injected_clock": {
+   "rc0": true,
+   "results": [
+    "TRACE_READY",
+    "CLOCK_REVERSED",
+    "COMPLETED_FIXTURE_NOT_PHYSICS"
+   ],
+   "lines": 7
+  },
+  "injected_fault": {
+   "rc0": true,
+   "results": [
+    "NATIVE_STEADY_NS",
+    "REJECTED",
+    "COMPLETED_FIXTURE_NOT_PHYSICS"
+   ],
+   "lines": 8
+  }
+ },
+ "summary": {
+  "executed": "14/14 modes (full_queue_pop/full_queue_cancel/fence_cancel/deadline single-process EXPECTED; barrier_cancel BARRIER_ENTER->CANCELLED; barrier_release/files/files_ttl/files_mutation x4/injected_clock/injected_fault COMPLETED_FIXTURE_NOT_PHYSICS; catalog_contention RESOURCE_PHASE_SAMPLE)",
+  "ttl": "files_ttl stdout: RUNNING -> FINISHED -> NO_FILES (61s-expiry semantics recorded)",
+  "fixture": "all FIXTURE_SYNTHETIC, no physics claim per page contract",
+  "recalled": "TTL_EDGE_INJECTED(injected_clock x3)/CACHE_FAULT(injected_fault x4)/TWO_SLOT_PIN_REPLACE(catalog_contention x1) labels present"
+ },
+ "NOT_RUN": "none of 14; directory-variant all with fresh absolute dirs per T697 contract"
+}
