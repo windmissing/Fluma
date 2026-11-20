@@ -1,0 +1,27 @@
+{
+  "schema": "T737_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-20",
+  "commit": "966c9dd65d2d3e1f7c8046eccbedc42e0ef13129",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b001b9de4b071ac016bff31",
+    "started": {
+      "id": "6b001bf7e4b056b393d9fc00",
+      "createdTime": "2026-11-20T10:07:51+0000"
+    },
+    "delivered": {
+      "id": "6b001db1e4b049946b8baf38",
+      "createdTime": "2026-11-20T10:15:13+0000",
+      "title": "T737 离线归因交付（966c9dd6，docs/architecture-T737-v1.md / architecture-T737-evidence-v1.json）。同票 250 的 CTRL 封印有效、tail[7]=27，先由 op65 的 WORK[+53] 次正规保留失败拒绝；记录末阶段 INIT_FP32_RESULT:EXIT 不代表越过 op65。op66 两轮索引2/3也均为零，原应 0x1/0x00400000。fence 已完成、两处 GL 读回码为 0、CTRL/WORK 对象偏移在界，后续稳态的旧双乘四路径未进。签前后 SPLIT 14 载荷全同；scene.vert 1697B CRLF→1674B LF 正好匹配两臂 ELF，旧适配另有角色类型与 opcode 错。用规范换行及生成器角色表，两臂严格 verify-only PASS。交 developer 分列 op65/op66 终态和生效首因、修角色回执，并按同票最小方案补实机映射和输入原字。并行 T731 核 Vulkan FP32 DenormPreserve/RTE 后跑同探针。历史缓存只证 BOOT；READY/Swap 未达。无真机、未放宽阈值。"
+    }
+  },
+  "statusRow": {
+    "before": "| T737 | 【T737·目标20 G13 op66 FP32拒因与签包回执核对】architect | architect | P5 | 进行中 | 6b001b9de4b071ac016bff31 |",
+    "after": "| T737 | 【T737·目标20 G13 op66 FP32拒因与签包回执核对】architect | architect | P5 | 结束待验收 | 6b001b9de4b071ac016bff31 |"
+  },
+  "beforeSha256": "bd3c0fe4770453aef2cc470f063a4eec27efd86bb9bf712a589ead6e8543fb2e",
+  "afterSha256": "0d55a95a6b161513c3b07a3bb1e9798aa6a14de3a771ec7d61c1061a74b3e4c1",
+  "evidenceSha256": "aca33a06a72917343739da94079edb2f7bdc7317546b1782370eb7d566cdf962"
+}
