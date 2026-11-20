@@ -1,0 +1,724 @@
+{
+  "caseCount": 24,
+  "finiteCases": 14,
+  "goalOrder": {
+    "15": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C07",
+      "C08"
+    ],
+    "16": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C08",
+      "C09",
+      "C10",
+      "C11",
+      "C12"
+    ],
+    "17": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C13",
+      "C14",
+      "C15",
+      "C16"
+    ],
+    "18": [
+      "C01",
+      "C03",
+      "C17",
+      "C18",
+      "C19",
+      "C20"
+    ],
+    "19": [
+      "C01",
+      "C03",
+      "C04",
+      "C16",
+      "C21",
+      "C22",
+      "C23",
+      "C24"
+    ]
+  },
+  "cases": [
+    {
+      "id": "C01",
+      "goals": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "kind": "ownership_and_transaction",
+      "input": "One-source and multiple-source seeds; failed trials, SOURCE, pause, stale frame; conversions in the selected representation",
+      "observe": [
+        "integer mass per owner and origin",
+        "accepted clock",
+        "work and contact history",
+        "visual commit identity"
+      ],
+      "criterion": "Exact authoritative integer mass/origin balance and one owner; rejection changes none of the accepted physical/visual/time state",
+      "negativeControl": "Duplicate full mass in both continuum and particles; mutate contact history during failed trial",
+      "reference": "Independent inventory/event audit; no CPU physics stepping",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact integer inventory and transaction identity",
+      "relativeToleranceSource": "none",
+      "positiveControl": "Exact authoritative integer mass/origin balance and one owner; rejection changes none of the accepted physical/visual/time state",
+      "finiteEvidence": {
+        "mass": 9,
+        "duplicate": 18
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C02",
+      "goals": [
+        15,
+        16,
+        17
+      ],
+      "kind": "frame_and_input",
+      "input": "Prescribed differentiable planar rotation with known theta, Omega and alpha; equivalent world and box descriptions",
+      "observe": [
+        "physical phase",
+        "Coriolis/Euler/centrifugal forces",
+        "world velocity",
+        "wall work",
+        "angular impulse including spin/affine contribution where defined"
+      ],
+      "criterion": "Coordinate identities and separately derived impulse/work balance; no duplicated world moving-wall and rotating-frame forcing",
+      "negativeControl": "Gravity-direction-only response presented as rapid physical spin; infer real angular speed from arrival timing",
+      "reference": "Analytic coordinate transformation and declared scripted motion",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "analytic transformed position/velocity/force; exact declared phase",
+      "relativeToleranceSource": "h/dt and measured work uncertainty",
+      "positiveControl": "Coordinate identities and separately derived impulse/work balance; no duplicated world moving-wall and rotating-frame forcing",
+      "finiteEvidence": null,
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C03",
+      "goals": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "kind": "capacity_and_cost",
+      "input": "Maximum state/source/event/contact/bin counts, worst failed-prefix and replay workload, old/new profile overlap",
+      "observe": [
+        "GPU allocations",
+        "active work and NOOP submissions",
+        "root timing",
+        "accepted simulation progress",
+        "fresh frame rate"
+      ],
+      "criterion": "All explicit maxima accounted for; overflow rejects without truncation; timing and memory measured separately from payload estimates",
+      "negativeControl": "Count only the accepted microstep; discard excess contacts; count repeated stale frames as fresh",
+      "reference": "Offline cost formula and actual device allocation/timing records",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact byte/row bounds and overflow rejection",
+      "relativeToleranceSource": "actual device budget for selected layout",
+      "positiveControl": "All explicit maxima accounted for; overflow rejects without truncation; timing and memory measured separately from payload estimates",
+      "finiteEvidence": {
+        "MACFaces": 103424,
+        "cellTimesThree": 98304,
+        "partialBytes": 3098990880
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C04",
+      "goals": [
+        15,
+        16,
+        17,
+        19
+      ],
+      "kind": "water_geometry_and_reaction",
+      "input": "Volume-preserving phase rename, prescribed contour motion, disconnected water or narrow gap; closed filled box inventory",
+      "observe": [
+        "solid/fluid cell volume",
+        "swept volume",
+        "face openings",
+        "pressure/shear impulse and work",
+        "paired water/sand reaction"
+      ],
+      "criterion": "Same physical occupancy does not displace additional water; closed-volume compatibility and geometry-time balance; loads counted once",
+      "negativeControl": "Use glyph as boundary, expand solid excluded volume without outlet, count pressure and buoyancy twice",
+      "reference": "Actual G14/G12 validated interface plus independent geometry algebra; no early release of T611/T612",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact occupancy identity and closed-box compatibility",
+      "relativeToleranceSource": "G14/G12 geometry and load residual budgets",
+      "positiveControl": "Same physical occupancy does not displace additional water; closed-volume compatibility and geometry-time balance; loads counted once",
+      "finiteEvidence": {
+        "incompatibleOverfill": "1/10"
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C05",
+      "goals": [
+        15
+      ],
+      "kind": "fixed_angle_sliding_subproblem",
+      "input": "Uniform local sliding problem with constant angle 45 degrees, g and mu, known initial velocity, no pressure gradient",
+      "observe": [
+        "acceleration",
+        "velocity",
+        "displacement",
+        "friction impulse and loss"
+      ],
+      "criterion": "Compare a=g*(sin(theta)-mu*cos(theta)), velocity and displacement under the stated sliding assumptions; refine dt/h",
+      "negativeControl": "Angle silently clamped to 30 degrees; moving mass assigned constant speed with no acceleration",
+      "reference": "Analytic subproblem, not an entire collapsing heap oracle",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "analytic signed acceleration and integrated motion",
+      "relativeToleranceSource": "selected h/dt error and declared absolute scale g",
+      "positiveControl": "Compare a=g*(sin(theta)-mu*cos(theta)), velocity and displacement under the stated sliding assumptions; refine dt/h",
+      "finiteEvidence": {
+        "signedForwardFactor": "(1-mu)/sqrt(2) at 45deg",
+        "muOne": "0"
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C06",
+      "goals": [
+        15
+      ],
+      "kind": "large_tilt_collapse",
+      "input": "0 to +/-45 degrees, hold and return; matched mass, shape and material across candidate profiles",
+      "observe": [
+        "physical direction",
+        "origin centroid",
+        "front",
+        "net transport",
+        "recovery time",
+        "final shape"
+      ],
+      "criterion": "Continuous physically accepted movement and collapse/recovery against declared reference uncertainty; reaching angle alone is insufficient",
+      "negativeControl": "Accepted gravity differs from input indefinitely; only a light visual marker moves",
+      "reference": "REFERENCE_REQUIRED for real-material claim; existing relevant physical evidence reused where applicable",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "accepted phase and same-seed identity",
+      "relativeToleranceSource": "material repeatability for centroid, front, recovery and final shape",
+      "positiveControl": "Continuous physically accepted movement and collapse/recovery against declared reference uncertainty; reaching angle alone is insufficient",
+      "finiteEvidence": null,
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C07",
+      "goals": [
+        15
+      ],
+      "kind": "closure_and_numerical_separation",
+      "input": "Same seed/input at two or more h/dt resolutions; same parameters; report all mobilization/energy/capacity rejection reasons",
+      "observe": [
+        "requested and actual mobilization",
+        "force",
+        "flux",
+        "mixing/friction/transfer loss",
+        "origin displacement"
+      ],
+      "criterion": "Distinguish closure, discretization, representation and visual errors using one reference/error budget; no unapproved old-profile resolution change",
+      "negativeControl": "Tune material independently at each resolution; use qPhysical as actual transported mass",
+      "reference": "Independent analytic or measured observables; new research identities for unsupported resolutions",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "identical fixture and parameters across resolutions",
+      "relativeToleranceSource": "reference uncertainty and separated closure/discretization errors",
+      "positiveControl": "Distinguish closure, discretization, representation and visual errors using one reference/error budget; no unapproved old-profile resolution change",
+      "finiteEvidence": null,
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C08",
+      "goals": [
+        15,
+        16
+      ],
+      "kind": "height_representation_limit",
+      "input": "Two occupied intervals [0,1] and [2,3] in one column; a detached dense slab; approach gn=0",
+      "observe": [
+        "occupied geometry",
+        "void",
+        "centroid and potential",
+        "support",
+        "division/range handling"
+      ],
+      "criterion": "Represent the state in the selected new domain or explicitly reject as unsupported; never collapse the gap or use abs/epsilon normal gravity silently",
+      "negativeControl": "Replace two intervals by [0,2]; keep unsupported dry bulk attached to the old floor",
+      "reference": "Finite geometric and unilateral-support counterexamples",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact interval mass and first moment",
+      "relativeToleranceSource": "geometry approximation budget of selected representation",
+      "positiveControl": "Represent the state in the selected new domain or explicitly reject as unsupported; never collapse the gap or use abs/epsilon normal gravity silently",
+      "finiteEvidence": {
+        "originalFirstMoment": 3,
+        "collapsedFirstMoment": 2
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C09",
+      "goals": [
+        16
+      ],
+      "kind": "free_flight",
+      "input": "Stress-free isolated mass or total centroid in a contact-free interval, known world gravity and initial state",
+      "observe": [
+        "world position and velocity",
+        "mass",
+        "time",
+        "energy"
+      ],
+      "criterion": "Analytic free-flight trajectory within declared spatial/time/quantization budget; no hidden contact or second integration at conversion",
+      "negativeControl": "Mass teleported to opposite bed or flight advanced twice during capture",
+      "reference": "Analytic before-contact interval only",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "analytic ballistic phase and trajectory in no-contact window",
+      "relativeToleranceSource": "gravity/length/time units and selected dt convergence",
+      "positiveControl": "Analytic free-flight trajectory within declared spatial/time/quantization budget; no hidden contact or second integration at conversion",
+      "finiteEvidence": null,
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C10",
+      "goals": [
+        16
+      ],
+      "kind": "fixed_and_moving_wall_contact",
+      "input": "Known mass and normal relative velocity, prescribed wall speed and restitution; separate friction-controlled oblique case",
+      "observe": [
+        "gap",
+        "normal/tangential impulse",
+        "wall reaction",
+        "wall work",
+        "collision loss",
+        "torque and rotational response"
+      ],
+      "criterion": "Analytic scalar impact impulse/energy plus declared nonpenetration tolerance; moving wall can supply work",
+      "negativeControl": "Delete normal momentum without support ledger; reject all kinetic energy increase despite positive wall work",
+      "reference": "Independent finite impact formula, not a DEM time integrator",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact finite impulse/work identity",
+      "relativeToleranceSource": "contact-time and restitution uncertainty",
+      "positiveControl": "Analytic scalar impact impulse/energy plus declared nonpenetration tolerance; moving wall can supply work",
+      "finiteEvidence": {
+        "impulse": "6",
+        "loss": "3"
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C11",
+      "goals": [
+        16
+      ],
+      "kind": "support_release_and_recontact",
+      "input": "Slow 80 to 100 to 180 degrees, corner contact, gap and separated masses; actual wall friction retained",
+      "observe": [
+        "support surface and normal force",
+        "detached volume",
+        "contact time",
+        "density",
+        "new pile"
+      ],
+      "criterion": "No tensile sticking without declared cohesion; support may transfer to side walls; mass flows/falls/recontacts continuously and conservatively",
+      "negativeControl": "Convert the whole bed to sparse P at exactly 90 degrees without capacity/contact proof",
+      "reference": "Support inequalities plus REFERENCE_REQUIRED for dense-material dynamics",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact unilateral force sign",
+      "relativeToleranceSource": "material recontact reference and contact tolerances",
+      "positiveControl": "No tensile sticking without declared cohesion; support may transfer to side walls; mass flows/falls/recontacts continuously and conservatively",
+      "finiteEvidence": {
+        "requiredReaction": [
+          24,
+          0,
+          -24
+        ]
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C12",
+      "goals": [
+        16
+      ],
+      "kind": "sparse_packet_capacity",
+      "input": "Legacy Q=2^20, packet max 244666, K192/512; detached mass example N128*S40=5120",
+      "observe": [
+        "total packet capacity",
+        "missing owner",
+        "collision/contact model scope"
+      ],
+      "criterion": "Recognize existing P capacity is insufficient for this whole detached mass; new bulk representation/capacity required",
+      "negativeControl": "Increase glyph size or exceed packet mass/slots silently",
+      "reference": "Exact finite capacity calculation; not a universal impossibility proof",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact integer or rational capacity arithmetic",
+      "relativeToleranceSource": "complete layout/work/overlap device measurement",
+      "positiveControl": "Recognize existing P capacity is insufficient for this whole detached mass; new bulk representation/capacity required",
+      "finiteEvidence": {
+        "K512Capacity": "122333/1024",
+        "required": 5120
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C13",
+      "goals": [
+        17
+      ],
+      "kind": "phase_wrap",
+      "input": "179 to 181 degrees represented across +/-180; equivalent drive offset by 2*pi with same initial physical state",
+      "observe": [
+        "unwrapped phase",
+        "Omega",
+        "alpha",
+        "forcing",
+        "accepted state"
+      ],
+      "criterion": "No artificial -358 degree jump; whole-phase offset is physically equivalent within the declared arithmetic domain",
+      "negativeControl": "Differentiate wrapped angle directly or reset input/energy history at 360",
+      "reference": "Phase algebra and independently prescribed derivatives",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact phase/quadrant from declared motion",
+      "relativeToleranceSource": "solver local convergence around wrap",
+      "positiveControl": "No artificial -358 degree jump; whole-phase offset is physically equivalent within the declared arithmetic domain",
+      "finiteEvidence": {
+        "unwrapped": 2,
+        "wrapped": -358
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C14",
+      "goals": [
+        17
+      ],
+      "kind": "stop_and_reverse",
+      "input": "Stop near 90/180/270 degrees; reverse before full turn; differentiable slow and rapid paths ending at same angle",
+      "observe": [
+        "angular kinematics",
+        "lagged bulk momentum",
+        "support",
+        "work and loss",
+        "origin trajectories"
+      ],
+      "criterion": "Respond to the complete motion path; sand need not reverse instantly or have same state at same final angle",
+      "negativeControl": "Compute state only from final angle; reverse visual flow while actual flux has not reversed",
+      "reference": "Declared input/force histories and material reference where needed",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact cycle/control identity and no pause advance",
+      "relativeToleranceSource": "torque, stop/reverse response and material uncertainty",
+      "positiveControl": "Respond to the complete motion path; sand need not reverse instantly or have same state at same final angle",
+      "finiteEvidence": null,
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C15",
+      "goals": [
+        17
+      ],
+      "kind": "repeated_rotation",
+      "input": "Multiple clockwise/counterclockwise turns and holds without reset within an explicitly bounded run duration",
+      "observe": [
+        "cumulative mass/momentum/work balance",
+        "origin/ID lifetime",
+        "events",
+        "memory",
+        "hot timing"
+      ],
+      "criterion": "No history clearing to hide drift; all resource/accuracy limits remain explicit; full turn is not a state-return identity",
+      "negativeControl": "Clear contact/energy ledger each turn; recycle origin identity without provenance",
+      "reference": "Independent cumulative audit plus actual sustained device record",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact accepted-part accounting through cycles",
+      "relativeToleranceSource": "repeatability and prescribed phase-aligned comparison",
+      "positiveControl": "No history clearing to hide drift; all resource/accuracy limits remain explicit; full turn is not a state-return identity",
+      "finiteEvidence": null,
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C16",
+      "goals": [
+        17,
+        19
+      ],
+      "kind": "axis_scope",
+      "input": "In-plane rotation versus forward/backward flipping with out-of-plane gravity/rotation",
+      "observe": [
+        "three-axis gravity/rotation",
+        "declared degrees of freedom",
+        "wall contact"
+      ],
+      "criterion": "Declare or reject out-of-plane motion in a planar profile; genuine coverage requires justified finite-gap/3D physics",
+      "negativeControl": "Use planar 180 degree result as proof of front/back flipping",
+      "reference": "Coordinate/scope audit; no restoration of paused goal10",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact declared supported axes and explicit rejection",
+      "relativeToleranceSource": "finite-gap model and compatible reference",
+      "positiveControl": "Declare or reject out-of-plane motion in a planar profile; genuine coverage requires justified finite-gap/3D physics",
+      "finiteEvidence": null,
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C17",
+      "goals": [
+        18
+      ],
+      "kind": "same_mean_different_profile",
+      "input": "Unit thickness/density profiles u=1, u=2z, and lower half 0 upper half 2",
+      "observe": [
+        "mass",
+        "mean momentum",
+        "kinetic energy",
+        "advective second moment",
+        "top and basal speed"
+      ],
+      "criterion": "All have mass=1 and momentum=1 but different energies/fluxes; chosen representation must distinguish target observables",
+      "negativeControl": "Assume the mean velocity uniquely determines top and basal response",
+      "reference": "Exact profile integrals",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact polynomial profile integrals",
+      "relativeToleranceSource": "spatial error budget after representation choice",
+      "positiveControl": "All have mass=1 and momentum=1 but different energies/fluxes; chosen representation must distinguish target observables",
+      "finiteEvidence": {
+        "firstAndSecondMoments": [
+          [
+            "1",
+            "1"
+          ],
+          [
+            "1",
+            "4/3"
+          ],
+          [
+            "1",
+            "2"
+          ]
+        ]
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C18",
+      "goals": [
+        18
+      ],
+      "kind": "counterflow_and_layer_order",
+      "input": "Equal half-mass layers with velocities -1,+1 and their vertically swapped state",
+      "observe": [
+        "net momentum",
+        "each-layer velocity",
+        "energy",
+        "basal response",
+        "rest flags"
+      ],
+      "criterion": "Net momentum=0 does not mean rest; equal variance does not fix basal velocity or layer ordering",
+      "negativeControl": "Deposit both counterflowing layers because total momentum is zero",
+      "reference": "Exact two-mass algebra",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact signed separate velocities and momentum",
+      "relativeToleranceSource": "basal load and rest-threshold uncertainty",
+      "positiveControl": "Net momentum=0 does not mean rest; equal variance does not fix basal velocity or layer ordering",
+      "finiteEvidence": {
+        "momentum": "0",
+        "energy": "1/2"
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C19",
+      "goals": [
+        18
+      ],
+      "kind": "layer_exchange_and_load",
+      "input": "Paired interlayer friction, donor-momentum mass transfer, top versus basal load and stop/restart",
+      "observe": [
+        "each-layer mass/origin/momentum",
+        "interface impulse",
+        "potential and kinetic energy",
+        "actual loading response"
+      ],
+      "criterion": "Paired internal force and nonnegative friction loss; no repeated full-bed friction or forced equal-velocity remix; full spatial closure still required",
+      "negativeControl": "Apply basal friction independently twice; add at-rest bed mass at unchanged flow speed",
+      "reference": "Finite impulse identity and REFERENCE_REQUIRED for actual shear law",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact paired impulse and loss on finite fixture",
+      "relativeToleranceSource": "selected material/shear closure uncertainty",
+      "positiveControl": "Paired internal force and nonnegative friction loss; no repeated full-bed friction or forced equal-velocity remix; full spatial closure still required",
+      "finiteEvidence": {
+        "pairedMomentum": "1",
+        "loss": "3/8"
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C20",
+      "goals": [
+        18
+      ],
+      "kind": "two_four_layer_or_volume_selection",
+      "input": "Same physical reference/scenes using single mean, prescribed profile, variance, two/four layers and selected volumetric model",
+      "observe": [
+        "top/basal speed",
+        "flux",
+        "shear/load response",
+        "errors versus uncertainty",
+        "complete GPU cost"
+      ],
+      "criterion": "Choose sufficient representation by target-observable error and cost; two layers are not frozen in advance; no duplicated mass if volume model resolves profile",
+      "negativeControl": "Compare only one fitted steady flow rate; stack an additional physical F on the same continuum mass",
+      "reference": "REFERENCE_REQUIRED plus resolution/error-budget comparison",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "same reference and cost envelope for all candidates",
+      "relativeToleranceSource": "independent top/basal/shear measurements and convergence",
+      "positiveControl": "Choose sufficient representation by target-observable error and cost; two layers are not frozen in advance; no duplicated mass if volume model resolves profile",
+      "finiteEvidence": null,
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C21",
+      "goals": [
+        19
+      ],
+      "kind": "finite_gap_water_channel",
+      "input": "Periodic-x, y-invariant parallel plates at z=0,b, no-slip, known nu>0, rho and constant x-acceleration",
+      "observe": [
+        "u(z)",
+        "mean flux",
+        "front/back wall shear",
+        "wall-normal flow"
+      ],
+      "criterion": "Compare u=f*z*(b-z)/(2nu), mean=f*b^2/(12nu), wall shear magnitude=rho*f*b/2; refine Nz and time independently",
+      "negativeControl": "Only multiply 2D velocity/volume by thickness; compare flow rate while ignoring incorrect wall stress",
+      "reference": "Analytic fully developed laminar channel, not a closed-box circulating-flow solution",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "analytic Newtonian profile, flux and shear",
+      "relativeToleranceSource": "independent Nz/dt refinement; declared absolute scale",
+      "positiveControl": "Compare u=f*z*(b-z)/(2nu), mean=f*b^2/(12nu), wall shear magnitude=rho*f*b/2; refine Nz and time independently",
+      "finiteEvidence": {
+        "mean": "2",
+        "shear": "15/2"
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C22",
+      "goals": [
+        19
+      ],
+      "kind": "true_transverse_motion",
+      "input": "Localized front/back forcing and out-of-plane gravity with finite-thickness sand/water seed",
+      "observe": [
+        "w velocity",
+        "z origin centroid and distribution",
+        "six-wall impulses",
+        "cross-sectional geometry"
+      ],
+      "criterion": "Independent physical depth motion/response present and conservative; observe cross-sections and oblique view, not only the front image",
+      "negativeControl": "Extrude rendering or use two sand-height F layers as container-depth freedom",
+      "reference": "Manufactured transverse subproblem plus material/flow references as applicable",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "signed actual depth motion and exact axis identity",
+      "relativeToleranceSource": "manufactured depth case, 3D reference accuracy",
+      "positiveControl": "Independent physical depth motion/response present and conservative; observe cross-sections and oblique view, not only the front image",
+      "finiteEvidence": null,
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C23",
+      "goals": [
+        19
+      ],
+      "kind": "gap_and_wall_scaling",
+      "input": "Vary b, b/d, wall friction and Nz at fixed physical dimensions/mass/material; compare depth-averaged and volumetric candidates",
+      "observe": [
+        "cross-gap profiles",
+        "sand contact/support",
+        "water drag and shear",
+        "refinement differences",
+        "runtime and memory"
+      ],
+      "criterion": "Separate thin-gap closure assumptions from true 3D degrees of freedom; explicitly test boundary resolution and time-scale validity",
+      "negativeControl": "Use water Hele-Shaw friction for grains; hold numerical particle count while silently changing physical grain diameter",
+      "reference": "Known laminar scale and REFERENCE_REQUIRED for granular wall law",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "analytic b scaling for laminar fixture",
+      "relativeToleranceSource": "granular wall reference and Nz/time resolution",
+      "positiveControl": "Separate thin-gap closure assumptions from true 3D degrees of freedom; explicitly test boundary resolution and time-scale validity",
+      "finiteEvidence": {
+        "doubleGapMeanFactor": 4,
+        "doubleGapShearFactor": 2
+      },
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    },
+    {
+      "id": "C24",
+      "goals": [
+        19
+      ],
+      "kind": "three_dimensional_water_sand_feedback",
+      "input": "Finite-depth sand/water, actual solid occupancy/porosity definition, erosion/lift/transport/redeposit and contour feedback",
+      "observe": [
+        "water/sand inventories",
+        "interface geometry",
+        "paired loads and work",
+        "suspension/settling",
+        "new sand shape",
+        "3D solver residuals"
+      ],
+      "criterion": "Both sand and water use qualified depth dynamics/boundaries and validated interactions; preserve G13/G14/G12 domain-specific evidence and revalidate 3D",
+      "negativeControl": "Declare goal19 complete after only 3D sand, or extrapolate 2D pressure/gauge/spectral bounds to arbitrary 3D cut cells",
+      "reference": "Actual valid G14/G12 interfaces plus independent 3D geometry/solver/material evidence",
+      "productStatus": "NOT_RUN",
+      "absoluteToleranceSource": "exact inventory/reaction pairing and authority",
+      "relativeToleranceSource": "validated 3D G13/G14/G12 interfaces and closure budget",
+      "positiveControl": "Both sand and water use qualified depth dynamics/boundaries and validated interactions; preserve G13/G14/G12 domain-specific evidence and revalidate 3D",
+      "finiteEvidence": null,
+      "toleranceStatus": "EXACT_FOR_FINITE_INVARIANTS; PRODUCT_PENDING_DESIGN",
+      "device": "NOT_RUN"
+    }
+  ],
+  "device": "NOT_RUN",
+  "product": "PENDING_DESIGN"
+}
