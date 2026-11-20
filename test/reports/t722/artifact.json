@@ -1,0 +1,99 @@
+{
+  "checks": {
+    "BuildId": "bbfe2dfc0148687bdbe22f60b7b161823e5c4eaa",
+    "compiledSources": 38,
+    "generatedInputs": 22,
+    "shaders": {
+      "g11vis_r1.comp": {
+        "argv": [
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+          "-S",
+          "comp",
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t639-delivery-v2\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g11vis\\g11_assets\\g11vis_r1.comp"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "sha256": "052ea3fbd9778589163d48e460589f109863e31d0a14f1e61d7c02cc3ca791f2"
+      },
+      "g11vis_dm.comp": {
+        "argv": [
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+          "-S",
+          "comp",
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t639-delivery-v2\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g11vis\\g11_assets\\g11vis_dm.comp"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "sha256": "218f34b78031c5e47956b9ec75e9500ea5523cde375a4c97908a938aeb18511c"
+      },
+      "kGlyphVertex.vert": {
+        "argv": [
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+          "-S",
+          "vert",
+          "D:\\hmprojects\\HelloWorld\\test\\reports\\t639\\kGlyphVertex.vert"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "sha256": "8cb59c06dcda7912a6192eadfa3b7ff0aecf927cfcede4a25456362cc23b17bc"
+      },
+      "kGlyphFragment.frag": {
+        "argv": [
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+          "-S",
+          "frag",
+          "D:\\hmprojects\\HelloWorld\\test\\reports\\t639\\kGlyphFragment.frag"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "sha256": "aa028768c542fec1a6046b907e14866edb43e684366afe3464e88cf42b7973c9"
+      },
+      "kG11CompositeSceneVertex.vert": {
+        "argv": [
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+          "-S",
+          "vert",
+          "D:\\hmprojects\\HelloWorld\\test\\reports\\t639\\kG11CompositeSceneVertex.vert"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "sha256": "540352ff77a0499e68133ee8679ab57a2099bc2ddde5549d7342bb72de596109"
+      },
+      "kG11CompositeSceneFragment.frag": {
+        "argv": [
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+          "-S",
+          "frag",
+          "D:\\hmprojects\\HelloWorld\\test\\reports\\t639\\kG11CompositeSceneFragment.frag"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "sha256": "22394ac8398ecaa9ef608db8886961e42a49bae951a8c05e40116816f6f0ec8f"
+      },
+      "kG11CompositePacketVertex.vert": {
+        "argv": [
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+          "-S",
+          "vert",
+          "D:\\hmprojects\\HelloWorld\\test\\reports\\t639\\kG11CompositePacketVertex.vert"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "sha256": "e185521a758031319fb3899d1a9028b1051e0da4a797e5f7608da2fae3074f5d"
+      },
+      "kG11CompositePacketFragment.frag": {
+        "argv": [
+          "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+          "-S",
+          "frag",
+          "D:\\hmprojects\\HelloWorld\\test\\reports\\t639\\kG11CompositePacketFragment.frag"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "sha256": "1297a09765e6911ab75110f4bad039c3723e4319a7c2f312e6b4e9587339fea5"
+      }
+    }
+  },
+  "device": "NOT_RUN",
+  "productPASS": false
+}
