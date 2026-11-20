@@ -65,7 +65,8 @@ inline void LogFirstFrameStage(const InitStage &row, const ConfigTicket &ticket)
       phase != "PROGRAM_LINK_STATUS" && phase != "REFLECT" &&
       phase != "CACHE_BINARY_LOAD" && phase != "COMPUTE_READY" &&
       phase != "FIRST_VALID_SWAP" && phase != "OWNER_EXCEPTION" &&
-      phase != "CONFIG_CANCELLED")
+      phase != "CONFIG_CANCELLED" && phase != "BOOT_READY" &&
+      phase != "ROLE_FP32" && phase != "CONFIG_RECEIVED")
     return;
   static const struct Module {
     char buildId[129]{};
@@ -74,25 +75,36 @@ inline void LogFirstFrameStage(const InitStage &row, const ConfigTicket &ticket)
     }
   } module;
   OH_LOG_Print(LOG_APP, LOG_INFO, 0xE720, "G13Init",
-               "boot=%{public}llu attempt=%{public}llu queue=%{public}llu run=%{public}llu context=%{public}llu surface=%{public}llu ns=%{public}llu phase=%{public}s edge=%{public}s raw=%{public}lld apiReturn=%{public}d sourceSHA=%{public}s mappedBuildId=%{public}s",
+               "boot=%{public}llu attempt=%{public}llu queue=%{public}llu run=%{public}llu context=%{public}llu surface=%{public}llu ns=%{public}llu phase=%{public}s edge=%{public}s op=%{public}u raw=%{public}lld apiReturn=%{public}d sourceSHA=%{public}s mappedBuildId=%{public}s",
                static_cast<unsigned long long>(row.boot),
                static_cast<unsigned long long>(row.attempt),
                static_cast<unsigned long long>(row.queue),
                static_cast<unsigned long long>(ticket.proposed.run),
                static_cast<unsigned long long>(ticket.proposed.context),
                static_cast<unsigned long long>(ticket.proposed.surface),
-               static_cast<unsigned long long>(row.ns), row.phase, row.edge,
+               static_cast<unsigned long long>(row.ns), row.phase, row.edge, row.op,
                static_cast<long long>(row.rawGL), row.apiReturn, row.sourceSHA,
                module.buildId);
 }
 class InitDiagnostic {
   mutable std::mutex mutex_;
   InitPayload payload_{};
+  uint64_t requestedNs_ = 0, bootReadyNs_ = 0, finishedNs_ = 0;
 
 public:
-  void Queued(uint64_t attempt) {
+  void Queued(const ConfigTicket &ticket, uint64_t received) {
     std::lock_guard<std::mutex> lock(mutex_);
-    payload_.control.queuedTicket = attempt;
+    payload_.control.queuedTicket = ticket.attempt;
+    requestedNs_ = received;
+    bootReadyNs_ = finishedNs_ = 0;
+    InitStage row{};
+    row.boot = ticket.boot;
+    row.attempt = ticket.attempt;
+    row.queue = ticket.queueSerial;
+    row.ns = received;
+    std::strcpy(row.phase, "CONFIG_RECEIVED");
+    std::strcpy(row.edge, "ENTER");
+    LogFirstFrameStage(row, ticket);
   }
   void Ticket(const ConfigTicket &t) {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -154,6 +166,8 @@ public:
     row.tid = syscall(SYS_gettid);
     row.op = op;
     row.apiReturn = apiReturn;
+    if (row.attempt == c.queuedTicket && std::strcmp(phase, "BOOT_READY") == 0)
+      bootReadyNs_ = row.ns;
     row.rawGL = rawGL;
     row.rawEGL = rawEGL;
     row.fence = fence;
@@ -180,10 +194,13 @@ public:
   void Handled(uint64_t id) {
     std::lock_guard<std::mutex> lock(mutex_);
     payload_.control.handledTicket = id;
+    if (payload_.control.queuedTicket == id)
+      finishedNs_ = Now();
   }
   std::string Summary() const {
     std::lock_guard<std::mutex> lock(mutex_);
     const auto &c = payload_.control;
+    const auto end = finishedNs_ ? finishedNs_ : Now();
     return "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,"
            "\"currentLifecycle\":" +
            Quote(c.lifecycle) + ",\"lastProgress\":" + Quote(c.lastProgress) +
@@ -192,7 +209,11 @@ public:
            std::to_string(c.firstFailureAttempt) + "\",\"queuedTicket\":\"" +
            std::to_string(c.queuedTicket) + "\",\"handledTicket\":\"" +
            std::to_string(c.handledTicket) +
-           "\",\"dropped\":" + std::to_string(c.dropped) +
+           "\",\"bootReadyNs\":\"" + std::to_string(bootReadyNs_) +
+           "\",\"elapsedNs\":\"" +
+           std::to_string(requestedNs_ && end >= requestedNs_ ? end-requestedNs_ : 0) +
+           "\"" +
+           ",\"dropped\":" + std::to_string(c.dropped) +
            ",\"truncated\":" + std::to_string(c.truncated) +
            ",\"unobservedRaw\":-1}";
   }

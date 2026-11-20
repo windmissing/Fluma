@@ -11,6 +11,7 @@ class Scene {
   uint64_t viewGeneration_ = 1, presented_ = 0, context_ = 0, swapFrame_ = 0;
   std::string mapping_, fieldToken_, sceneState_ = "WAIT_ACCEPTED_FIELD";
   uint64_t staleFrames_ = 0;
+  uint64_t loggedSwapRun_ = 0, loggedSourceSwap_ = 0;
   Config config_{};
   EGLContext actualContext_ = EGL_NO_CONTEXT;
   std::array<uint32_t, 64> policy_{};

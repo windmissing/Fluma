@@ -1,5 +1,7 @@
 #pragma once
-inline constexpr const char kG13Pipeline[]=R"G13GPU(#version 310 es
+namespace grs::g13 {
+inline constexpr bool kG13TestHooks=false;
+inline constexpr char kRoleSource0[]=R"G13GPU(#version 310 es
 precision highp float;
 precision highp int;
 layout(local_size_x=64) in;
@@ -4312,5 +4314,8 @@ aliasAudit();syncAll();actualFlowAudit();projectionLedger();audit(5u);audit(6u);
  traceStage(false);
 }
 )G13GPU";
-inline constexpr const char kG13PipelineSha[]="7563c61459861cec1eb5cea8f0e1a89387d0f2874daaf9f7e29e47d972f9f2d2";
-inline constexpr bool kG13TestHooks=false;
+inline constexpr PipelineRole kG13Roles[]={{"FULL",kRoleSource0,"7563c61459861cec1eb5cea8f0e1a89387d0f2874daaf9f7e29e47d972f9f2d2"}};
+inline constexpr uint8_t kG13OpcodeRole[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+inline constexpr char kG13PipelineSha[]="7563c61459861cec1eb5cea8f0e1a89387d0f2874daaf9f7e29e47d972f9f2d2";
+inline constexpr char kG13Variant[]="SINGLE_PROGRAM";
+}

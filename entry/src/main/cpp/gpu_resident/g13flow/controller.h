@@ -33,6 +33,7 @@ class Controller {
   std::string baseToken_;
   uint64_t issuedNonce_ = 0, issuedPlan_ = 0;
   Completion acceptedTail_{};
+  uint64_t acceptedRootNs_ = 0;
   bool runFault_ = false;
   uint64_t lastRootPoll_ = 0;
   uint32_t lastRootError_ = 0, lastRootOutcome_ = 0;
@@ -99,6 +100,8 @@ public:
   uint32_t RootError() const { return lastRootError_; }
   bool GpuTailObserved() const { return lastRootGpuTail_; }
   const Completion &AcceptedCompletion() const { return acceptedTail_; }
+  uint64_t AcceptedRootNs() const { return acceptedRootNs_; }
+  uint64_t ConsumedSource() const { return lastSource_; }
   void RecordSceneStale() { ++staleFrames_; }
   void RecordSceneSwap(bool source, bool repeated) {
     if (repeated)

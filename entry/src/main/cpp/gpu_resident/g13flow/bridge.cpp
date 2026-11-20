@@ -74,6 +74,7 @@ class App {
   uint64_t lastDraw_ = 0, firstSwapRun_ = 0, contextGeneration_ = 0, surfaceGeneration_ = 0,
            geometryGeneration_ = 0;
   bool initializing_ = false;
+  bool bootObserved_ = false;
   ConfigTicket pendingTicket_{};
   void Publish(const std::string &reply = "") {
     std::string status = controller_.Status(), scope = ScopeJson(id_);
@@ -344,6 +345,7 @@ class App {
       if (!error) {
         pendingTicket_ = cmd.ticket;
         initializing_ = true;
+        bootObserved_ = false;
         configured_ = false;
         configurePending_ = false;
         sceneReady_ = scene_.Prepare(proposed.context, cmd.words);
@@ -437,12 +439,44 @@ class App {
       controller_.PumpBounded(Now());
     if (initializing_) {
       if (pendingTicket_.cancelGeneration != revoked_.load()) {
+        if (controller_.Gpu().BootReady() && !controller_.RootIdle())
+          controller_.Gpu().PrepareSteady(true);
         if (controller_.RootIdle()) {
           controller_.Release(context_ != EGL_NO_CONTEXT);
           initializing_ = false;
           configured_ = false;
           InitObservation().State("UNCONFIGURED");
           InitStageEvent("CONFIG_CANCELLED", "EXIT");
+        }
+      } else if (controller_.Gpu().BootReady() && !bootObserved_) {
+        bootObserved_ = true;
+        InitObservation().State("BOOT_READY");
+        InitStageEvent("BOOT_READY", "EXIT", 0, -1, PipelineRoles()[0].sha);
+      } else if (controller_.Gpu().BootReady() && !controller_.Ready()) {
+        {
+          std::lock_guard<std::mutex> lock(mutex_);
+          if (count_)
+            return;
+          configureCallInFlight_ = true;
+        }
+        InitObservation().State("STEADY_PROGRAM_BUILD");
+        uint32_t error = 0;
+        try {
+          error = controller_.Gpu().PrepareSteady(false);
+        } catch (const std::exception &) {
+          error = 30;
+          InitStageEvent("OWNER_EXCEPTION", "EXIT");
+        }
+        {
+          std::lock_guard<std::mutex> lock(mutex_);
+          configureCallInFlight_ = false;
+        }
+        if (error && error != 34) {
+          controller_.Release(context_ != EGL_NO_CONTEXT);
+          initializing_ = false;
+          InitObservation().State("CONFIG_FAILED");
+          InitObservation().Failure("STEADY_PROGRAM_ERROR_" +
+                                        std::to_string(error), pendingTicket_.attempt);
         }
       } else if (controller_.Ready()) {
         id_ = pendingTicket_.proposed;
@@ -629,7 +663,7 @@ public:
             Hash(command.words.data(), sizeof(command.words));
         command.ticket.seedReceiptSHA =
             Hash(command.text.data(), command.text.size());
-        InitObservation().Queued(command.ticket.attempt);
+        InitObservation().Queued(command.ticket, command.received);
         InitObservation().State("CONFIG_QUEUED");
         InitStageEvent("CONFIG_QUEUED", "ENTER");
       }

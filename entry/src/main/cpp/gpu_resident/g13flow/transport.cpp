@@ -4,6 +4,111 @@
 #include "init_diagnostics.h"
 #include <fstream>
 namespace grs::g13 {
+namespace {
+constexpr size_t kProbeOffset = 18632;
+constexpr std::array<uint32_t, 8> kExpectedFp32{
+    0x3f800001u, 0x3f800000u, 1u, 0x00400000u, 7u, 0u, 0u, 0x46503332u};
+
+bool QualifiedProbe(const uint32_t *words) {
+  return std::equal(kExpectedFp32.begin(), kExpectedFp32.end(), words) &&
+         std::equal(kExpectedFp32.begin(), kExpectedFp32.end(), words + 8);
+}
+} // namespace
+
+bool Transport::Locations::Prepare(GLuint program) {
+  static constexpr const char *names[]{
+      "uOp", "uScope", "uJ", "uMicro", "uBlock", "uIndex", "uL[0]", "uTestHook"};
+  at.fill(-1);
+  layoutWords = 0;
+  GLint count = 0;
+  glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
+  if (count < 0 || count > GLint(at.size()))
+    return false;
+  for (GLint i = 0; i < count; ++i) {
+    char name[32]{};
+    GLint words = 0;
+    GLenum type = 0;
+    glGetActiveUniform(program, i, sizeof(name), nullptr, &words, &type, name);
+    size_t slot = 0;
+    while (slot < at.size() && std::strcmp(name, names[slot]) != 0 &&
+           !(slot == LayoutArray && std::strcmp(name, "uL") == 0))
+      ++slot;
+    if (slot == at.size() || type != GL_UNSIGNED_INT || at[slot] >= 0 ||
+        words < 1 || words > (slot == LayoutArray ? 80 : 1))
+      return false;
+    at[slot] = glGetUniformLocation(program, name);
+    if (at[slot] < 0)
+      return false;
+    if (slot == LayoutArray)
+      layoutWords = words;
+  }
+  if (at[Op] < 0 || at[Scope] < 0 || at[Index] < 0 ||
+      (requireLayout && !layoutWords))
+    return false;
+  const char *blocks[]{"Base", "Candidate", "Work", "Control"};
+  for (GLint binding = 0; binding < 4; ++binding) {
+    const GLuint index = glGetProgramResourceIndex(
+        program, GL_SHADER_STORAGE_BLOCK, blocks[binding]);
+    if (index == GL_INVALID_INDEX) {
+      if (binding == 3 || requireLayout)
+        return false;
+      continue;
+    }
+    constexpr GLenum property = GL_BUFFER_BINDING;
+    GLint actual = -1;
+    glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, index, 1,
+                           &property, 1, nullptr, &actual);
+    if (actual != binding)
+      return false;
+  }
+  return true;
+}
+
+bool Transport::BuildRole(size_t index) {
+  struct LegacyIsolation {
+    create468::Recorder *previous = create468::active;
+    LegacyIsolation() { create468::active = nullptr; }
+    ~LegacyIsolation() { create468::active = previous; }
+  } isolated;
+  auto &program = programs_[index];
+  const auto &role = PipelineRoles()[index];
+  std::string abi = std::string("G13_FOUR_SSBO_64_LANES|") +
+                    kHash_layoutSHA + "|MATH=" + kHash_mathSHA +
+                    "|GATES=" + kHash_gatesSHA +
+                    "|ALGORITHM=" + kHash_algorithmSHA;
+  if (PipelineRoleCount() > 1)
+    abi += std::string("|ROLE=") + role.name;
+  InitStageEvent("PROGRAM_BUILD", "ENTER", index, -1, role.sha);
+  const bool built = programcache::Build(13, role.source, role.sha, abi.c_str(),
+                                        program.id, firstGl_, {}, programGeneration_);
+  InitStageEvent("PROGRAM_BUILD", "EXIT", index, firstGl_, role.sha);
+  if (!built)
+    return false;
+  program.uniforms.requireLayout = index == 0;
+  InitStageEvent("REFLECT", "ENTER", index, -1, role.sha);
+  const bool reflected = programcache::Reflect(program.uniforms, program.id);
+  const auto raw = glGetError();
+  if (raw && !firstGl_)
+    firstGl_ = raw;
+  InitObservation().Stage("REFLECT", "EXIT", index, raw, role.sha,
+                          -1, -1, -1, -1, 0, reflected && !raw ? 1 : 0);
+  return reflected && !raw;
+}
+
+bool Transport::UploadRoleUniforms(size_t index) {
+  const auto &program = programs_[index];
+  const auto &uniforms = program.uniforms;
+  glUseProgram(program.id);
+  if (uniforms.layoutWords)
+    glUniform1uiv(uniforms.at[LayoutArray], uniforms.layoutWords, layout_.data());
+  if (uniforms.at[TestHook] >= 0)
+    glUniform1ui(uniforms.at[TestHook], testHook_);
+  const auto raw = glGetError();
+  if (raw && !firstGl_)
+    firstGl_ = raw;
+  return !raw;
+}
+
 bool Transport::Owner() const {
   return owner_ == std::this_thread::get_id() && context_ != EGL_NO_CONTEXT &&
          context_ == eglGetCurrentContext();
@@ -20,11 +125,6 @@ uint32_t Transport::Allocate(GLuint &b, size_t words) {
 }
 uint32_t Transport::Configure(const Config &config, const Seed &seed,
                               const Identity &identity) {
-  struct LegacyIsolation {
-    create468::Recorder *previous = create468::active;
-    LegacyIsolation() { create468::active = nullptr; }
-    ~LegacyIsolation() { create468::active = previous; }
-  } isolated;
   if (Busy() || RetirementPending())
     return 34;
   auto error = ValidateConfig(config, seed.diagnostic != 0);
@@ -33,11 +133,13 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
   Retire(true);
   context_ = eglGetCurrentContext();
   owner_ = std::this_thread::get_id();
+  programGeneration_ = identity.config;
   if (context_ == EGL_NO_CONTEXT)
     return 10;
   resource501::Bind(&ledger_, 13);
   profile_ = FindProfile(config[4], config[5]);
   config_ = config;
+  testHook_ = seed.testHook;
   seedReceipt_ = seed.receipt;
   if (seedReceipt_.size() > 448)
     return 30;
@@ -104,31 +206,18 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
       precision < 23 || group < 64 || shared < 4096 ||
       maxBlock < GLint64(profile_->ww * 4))
     return 29;
-  const std::string abi = std::string("G13_FOUR_SSBO_64_LANES|") +
-                          kHash_layoutSHA + "|MATH=" + kHash_mathSHA +
-                          "|GATES=" + kHash_gatesSHA +
-                          "|ALGORITHM=" + kHash_algorithmSHA;
   InitObservation().State("PROGRAM_BUILD");
-  InitStageEvent("PROGRAM_BUILD", "ENTER", 13, -1, PipelineSha());
-  if (!programcache::Build(13, PipelineSource(), PipelineSha(), abi.c_str(),
-                           program_, firstGl_)) {
-    InitStageEvent("PROGRAM_BUILD", "EXIT", 13, firstGl_, PipelineSha());
+  if (!BuildRole(0))
     return 29;
-  }
-  InitStageEvent("PROGRAM_BUILD", "EXIT", 13, firstGl_, PipelineSha());
   InitObservation().State("REFLECT");
-  InitStageEvent("REFLECT", "ENTER", program_);
-  const bool reflected = programcache::Reflect(locations_, program_);
-  const auto prepared =
-      reflected ? programcache::Prepared(program_) : GLenum(GL_NO_ERROR);
-  InitObservation().Stage("REFLECT", "EXIT", program_,
-                          reflected ? int64_t(prepared) : -1, nullptr, -1, -1,
-                          -1, -1, 0, reflected ? 1 : 0);
-  if (!reflected || prepared != GL_NO_ERROR)
+  const auto prepared = programcache::Prepared(programs_[0].id);
+  if (prepared != GL_NO_ERROR)
     return 29;
   InitObservation().State("ALLOCATE_SEED");
   InitStageEvent("ALLOCATE_SEED", "ENTER");
   compile_ = std::string("{\"pipelineSHA\":\"") + PipelineSha() +
+             "\",\"variant\":\"" + PipelineVariant() +
+             "\",\"bootSourceSHA\":\"" + PipelineRoles()[0].sha +
              "\",\"layoutSHA\":\"" + kHash_layoutSHA + "\",\"mathSHA\":\"" +
              kHash_mathSHA +
              "\",\"computeProgramLinked\":true,\"numericQualification\":\"NOT_"
@@ -165,7 +254,7 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
     layout_[16 + i] = profile_->work[i].offset;
   std::array<uint32_t, 18688> control{};
   std::copy(config.begin(), config.end(), control.begin());
-  auto mathHash = FromHex(kHash_mathSHA), programHash = FromHex(PipelineSha()),
+  auto mathHash = FromHex(kHash_mathSHA), programHash = FromHex(PipelineRoles()[0].sha),
        deviceHash = FromHex(programcache::Environment());
   std::copy(mathHash.begin(), mathHash.end(), control.begin() + 704);
   std::copy(programHash.begin(), programHash.end(), control.begin() + 720);
@@ -183,14 +272,11 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
   control[749] = 0x3ff921fbu;
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, ctrl_);
   glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(control), control.data());
-  glUseProgram(program_);
-  if (PipelineTestHooks()) {
-    auto location = locations_.Find("uTestHook");
-    if (location < 0)
-      return 29;
-    glUniform1ui(location, seed.testHook);
-  }
-  glUniform1uiv(locations_.Find("uL"), 80, layout_.data());
+  const auto &boot = programs_[0].uniforms.at;
+  if (!UploadRoleUniforms(0))
+    return 29;
+  if (PipelineTestHooks() && PipelineRoleCount() == 1 && boot[TestHook] < 0)
+    return 29;
   // The initial state is generated and audited by the cold GPU opcode. Native
   // writes only its identity header. One-time audited fixture uploads are raw.
   std::array<uint32_t, 256> header{};
@@ -229,16 +315,16 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
   InitStageEvent("ALLOCATE_SEED", "EXIT");
   InitObservation().State("INIT_DISPATCH64");
   InitStageEvent("INIT_DISPATCH64", "ENTER", 64);
-  glUniform1ui(locations_.Find("uOp"), 64);
+  glUniform1ui(boot[Op], 64);
   for (uint32_t i = 0; i < 3; i++) {
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, banks_[i]);
-    glUniform1ui(locations_.Find("uScope"), i == 0 ? 0 : 1);
+    glUniform1ui(boot[Scope], i == 0 ? 0 : 1);
     glDispatchCompute(1, 1, 1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
   }
   for (auto b : packs_) {
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, b);
-    glUniform1ui(locations_.Find("uScope"), 2);
+    glUniform1ui(boot[Scope], 2);
     glDispatchCompute(1, 1, 1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
   }
@@ -287,14 +373,14 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, banks_[0]);
   InitObservation().State("INIT_AUDIT65");
   InitStageEvent("INIT_AUDIT65", "ENTER", 65);
-  glUniform1ui(locations_.Find("uOp"), 65);
+  glUniform1ui(boot[Op], 65);
   glDispatchCompute(1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
   InitStageEvent("INIT_AUDIT65", "EXIT", 65);
   InitStageEvent("INIT_FP32", "ENTER", 66);
-  glUniform1ui(locations_.Find("uOp"), 66);
+  glUniform1ui(boot[Op], 66);
   for (uint32_t replay = 0; replay < 2; ++replay) {
-    glUniform1ui(locations_.Find("uScope"), replay);
+    glUniform1ui(boot[Scope], replay);
     glDispatchCompute(1, 1, 1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT |
                     GL_BUFFER_UPDATE_BARRIER_BIT);
@@ -319,7 +405,64 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
   pendingPack_ = 1;
   return 0;
 }
-bool Transport::Bind(const Pass &p) {
+uint32_t Transport::PrepareSteady(bool cancelled) {
+  if (!Owner() || !BootReady())
+    return 10;
+  if (nextSteadyRole_ >= PipelineRoleCount())
+    return 0;
+  const auto index = nextSteadyRole_;
+  const auto &role = PipelineRoles()[index];
+  auto &program = programs_[index];
+  if (steadyFence_) {
+    const GLenum status = glClientWaitSync(steadyFence_, 0, 0);
+    if (status == GL_TIMEOUT_EXPIRED)
+      return 34;
+    if (status == GL_WAIT_FAILED) {
+      const auto error = glGetError();
+      if (error && !firstGl_)
+        firstGl_ = error;
+    }
+    glDeleteSync(steadyFence_);
+    steadyFence_ = nullptr;
+    if (cancelled)
+      return 11;
+    std::array<uint32_t, 16> probe{};
+    const bool qualified = status != GL_WAIT_FAILED && !steadyProbeError_ &&
+        CopyBuffer(ctrl_, probe.data(), probe.size(), kProbeOffset * sizeof(uint32_t)) &&
+        QualifiedProbe(probe.data());
+    InitObservation().Stage("ROLE_FP32", "EXIT", index, firstGl_, role.sha,
+                            -1, status, -1, -1, 0, qualified ? 1 : 0);
+    if (!qualified)
+      return firstGl_ || status == GL_WAIT_FAILED ? 29 : 27;
+    if (programcache::Prepared(program.id) != GL_NO_ERROR)
+      return 29;
+    ++nextSteadyRole_;
+    return Ready() ? 0 : 34;
+  }
+  if (cancelled)
+    return 11;
+  if (!BuildRole(index) || !UploadRoleUniforms(index))
+    return 29;
+  InitStageEvent("ROLE_FP32", "ENTER", index, -1, role.sha);
+  const std::array<uint32_t, 16> clear{};
+  glBindBuffer(GL_SHADER_STORAGE_BUFFER, ctrl_);
+  glBufferSubData(GL_SHADER_STORAGE_BUFFER, kProbeOffset * sizeof(uint32_t),
+                  sizeof(clear), clear.data());
+  glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ctrl_);
+  glUniform1ui(program.uniforms.at[Op], 66);
+  for (uint32_t replay = 0; replay < 2; ++replay) {
+    glUniform1ui(program.uniforms.at[Scope], replay);
+    glDispatchCompute(1, 1, 1);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
+  }
+  steadyProbeError_ = glGetError();
+  if (steadyProbeError_ && !firstGl_)
+    firstGl_ = steadyProbeError_;
+  steadyFence_ = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+  glFlush();
+  return steadyFence_ ? 34 : 30;
+}
+void Transport::Bind(const Pass &p, const Locations &locations) {
   GLuint base = banks_[current_], out = banks_[p.scope ? replay_ : candidate_];
   if (p.op == OP_SOURCE_REPLAY_COPY || p.op == OP_SOURCE_REPLAY_INSTALL ||
       p.op == OP_SOURCE_REPLAY_AUDIT)
@@ -339,18 +482,17 @@ bool Transport::Bind(const Pass &p) {
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, out);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, work_);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ctrl_);
-  glUniform1ui(locations_.Find("uOp"), p.op);
-  glUniform1ui(locations_.Find("uScope"), p.scope);
-  glUniform1ui(locations_.Find("uJ"), p.J);
-  glUniform1ui(locations_.Find("uMicro"), p.micro);
-  glUniform1ui(locations_.Find("uBlock"), p.block);
-  glUniform1ui(locations_.Find("uIndex"), uint32_t(pass_));
-  return true;
+  glUniform1ui(locations.at[Op], p.op);
+  glUniform1ui(locations.at[Scope], p.scope);
+  glUniform1ui(locations.at[TrialJ], p.J);
+  glUniform1ui(locations.at[Micro], p.micro);
+  glUniform1ui(locations.at[Block], p.block);
+  glUniform1ui(locations.at[Index], uint32_t(pass_));
 }
 uint32_t Transport::BeginRoot(const Permit &permit, const Input &original,
                               const Input &canonical,
                               const std::array<uint32_t, 256> &quota) {
-  if (!Owner() || !ready_)
+  if (!Owner() || !Ready())
     return 10;
   if (Busy())
     return 34;
@@ -413,7 +555,6 @@ uint32_t Transport::BeginRoot(const Permit &permit, const Input &original,
                   capsule.data());
   pass_ = 0;
   submitted_ = true;
-  glUseProgram(program_);
   return 0;
 }
 uint32_t Transport::PumpBounded(uint64_t now) {
@@ -424,6 +565,7 @@ uint32_t Transport::PumpBounded(uint64_t now) {
   const auto limit = source_ ? 16u : 820u;
   const auto *passes = source_ ? k_source : k_quantum;
   uint64_t begin = Now();
+  size_t lastRole = PipelineRoleCount();
   for (uint32_t count = 0; pass_ < limit && count < 10; count++) {
     now = Now();
     if (!now || now > U64(permit_.data() + 38))
@@ -436,7 +578,14 @@ uint32_t Transport::PumpBounded(uint64_t now) {
     if (now - begin >= 8000000ull)
       break;
     const auto &p = passes[pass_];
-    Bind(p);
+    const auto role = PipelineRoleForOpcode(p.op);
+    if (role >= PipelineRoleCount() || !programs_[role].id)
+      return 29;
+    if (lastRole != role) {
+      glUseProgram(programs_[role].id);
+      lastRole = role;
+    }
+    Bind(p, programs_[role].uniforms);
     glDispatchCompute(1, 1, 1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     ++pass_;
@@ -514,14 +663,10 @@ uint32_t Transport::Poll(Completion &out) {
       return cold[7] ? cold[7] : 28;
     // Cold-only words, observed after the existing init fence. Both independent
     // runs use the same linked compute program and the same uploaded operands.
-    constexpr std::array<uint32_t, 8> expected{
-        0x3f800001u, 0x3f800000u, 1u, 0x00400000u, 7u, 0u, 0u, 0x46503332u};
     const bool observed =
-        cold[207] == expected.back() && cold[215] == expected.back();
+        cold[207] == kExpectedFp32.back() && cold[215] == kExpectedFp32.back();
     const bool qualified =
-        observed && !firstGl_ &&
-        std::equal(expected.begin(), expected.end(), cold.begin() + 200) &&
-        std::equal(cold.begin() + 200, cold.begin() + 208, cold.begin() + 208);
+        observed && !firstGl_ && QualifiedProbe(cold.data() + 200);
     std::ostringstream proof;
     proof << ",\"fp32Source\":\"SAME_PROGRAM_COLD_COMPUTE\",\"fp32Words\":[";
     for (size_t i = 200; i < 216; ++i) {
@@ -582,6 +727,8 @@ void Transport::Retire(bool same) {
   if (same && context_ == eglGetCurrentContext()) {
     if (fence_)
       glDeleteSync(fence_);
+    if (steadyFence_)
+      glDeleteSync(steadyFence_);
     for (auto b : banks_)
       if (b)
         glDeleteBuffers(1, &b);
@@ -592,13 +739,20 @@ void Transport::Retire(bool same) {
       glDeleteBuffers(1, &work_);
     if (ctrl_)
       glDeleteBuffers(1, &ctrl_);
-    if (program_)
-      glDeleteProgram(program_);
+    for (const auto &program : programs_)
+      if (program.id)
+        glDeleteProgram(program.id);
   }
+  for (const auto &program : programs_)
+    if (program.id)
+      programcache::Forget(program.id, context_, programGeneration_);
+  programs_ = {};
   banks_ = {};
   packs_ = {};
-  work_ = ctrl_ = program_ = 0;
-  fence_ = nullptr;
+  work_ = ctrl_ = 0;
+  fence_ = steadyFence_ = nullptr;
+  steadyProbeError_ = GL_NO_ERROR;
+  nextSteadyRole_ = 1;
   context_ = EGL_NO_CONTEXT;
 }
 uint32_t Transport::CaptureSpan(bool full, uint32_t *dst, size_t words,

@@ -55,6 +55,7 @@ uint32_t Controller::Configure(const Config &c, const Seed &seed,
   failure_ = 0;
   runFault_ = false;
   acceptedTail_ = {};
+  acceptedRootNs_ = 0;
   lastRootPoll_ = 0;
   lastRootError_ = lastRootOutcome_ = 0;
   lastRootGpuTail_ = false;
@@ -498,6 +499,7 @@ uint32_t Controller::Complete(uint64_t now) {
                     now > U64(permit_.data() + 38) ? 6 : 4);
     transport_.Accept();
     acceptedTail_ = tail;
+    acceptedRootNs_ = now;
     acceptedIdentity_ = identity_;
     acceptedNonce_ = U64(tail.data() + 8);
     rebind_ = false;

@@ -1,6 +1,6 @@
 #pragma once
 #include "../resource_ledger.h"
-#include "../uniform_locations.h"
+#include "pipeline_roles.h"
 #include "wire.h"
 #include <EGL/egl.h>
 #include <GLES3/gl31.h>
@@ -8,14 +8,29 @@
 namespace grs::g13 {
 class Transport {
   resource501::Ledger ledger_;
-  GLuint program_ = 0;
-  UniformLocations locations_;
+  enum Uniform { Op, Scope, TrialJ, Micro, Block, Index, LayoutArray, TestHook };
+  struct Locations {
+    std::array<GLint, 8> at{};
+    GLsizei layoutWords = 0;
+    bool requireLayout = false;
+    bool Prepare(GLuint);
+  };
+  struct Program {
+    GLuint id = 0;
+    Locations uniforms;
+  };
+  std::array<Program, kMaxPipelineRoles> programs_{};
   EGLContext context_ = EGL_NO_CONTEXT;
   std::thread::id owner_;
   std::array<GLuint, 3> banks_{};
   std::array<GLuint, 2> packs_{};
   GLuint work_ = 0, ctrl_ = 0;
   GLsync fence_ = nullptr;
+  GLsync steadyFence_ = nullptr;
+  size_t nextSteadyRole_ = 1;
+  uint64_t programGeneration_ = 0;
+  uint32_t testHook_ = 0;
+  GLenum steadyProbeError_ = GL_NO_ERROR;
   std::array<uint32_t, 80> layout_{};
   uint32_t current_ = 0, candidate_ = 1, replay_ = 2, pack_ = 0,
            pendingPack_ = 1;
@@ -34,13 +49,16 @@ class Transport {
   uint32_t (*guard_)(void *, uint64_t) = nullptr;
   EGLContext retiringContext_ = EGL_NO_CONTEXT;
   size_t retiringBytes_ = 0;
-  bool Bind(const Pass &);
+  void Bind(const Pass &, const Locations &);
+  bool BuildRole(size_t);
+  bool UploadRoleUniforms(size_t);
   bool Owner() const;
   bool CopyBuffer(GLuint, uint32_t *, size_t, size_t = 0);
   uint32_t Allocate(GLuint &, size_t);
 
 public:
   uint32_t Configure(const Config &, const Seed &, const Identity &);
+  uint32_t PrepareSteady(bool cancelled);
   void SetGuard(void *context, uint32_t (*guard)(void *, uint64_t)) {
     guardContext_ = context;
     guard_ = guard;
@@ -61,9 +79,10 @@ public:
   void Abort();
   void Accept();
   void Retire(bool currentContext);
-  bool Idle() const { return !submitted_ && !fence_; }
-  bool Ready() const { return ready_; }
-  bool Busy() const { return submitted_ || fence_; }
+  bool Idle() const { return !Busy(); }
+  bool BootReady() const { return ready_; }
+  bool Ready() const { return ready_ && nextSteadyRole_ == PipelineRoleCount(); }
+  bool Busy() const { return submitted_ || fence_ || steadyFence_; }
   GLuint Field() const { return banks_[current_]; }
   GLuint Pack() const { return packs_[pack_]; }
   const Profile *Layout() const { return profile_; }

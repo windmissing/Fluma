@@ -1,6 +1,7 @@
 #include "scene.h"
 #include "../resource_gl.h"
 #include "scene_sources.h"
+#include <hilog/log.h>
 namespace grs::g13 {
 bool Scene::Prepare(uint64_t context, const Config &config) {
   if (program_ && context_ != context)
@@ -203,6 +204,25 @@ bool Scene::Draw(Controller &owner, int width, int height,
   mapping_ = std::string("{\"sceneToken\":\"") + Hex(sceneHash.data()) +
              "\",\"mapping\":" + rawMapping + "}";
   sceneState_ = "SWAPPED_NOT_DISPLAY_VERIFIED";
+  const bool first = loggedSwapRun_ != lease.identity.run;
+  if (first) {
+    loggedSwapRun_ = lease.identity.run;
+    loggedSourceSwap_ = 0;
+  }
+  const auto source = owner.ConsumedSource();
+  const bool postSourceQuantum = tail[4] < 50 && source > loggedSourceSwap_;
+  if (first || postSourceQuantum) {
+    if (postSourceQuantum)
+      loggedSourceSwap_ = source;
+    const auto sceneToken = Hex(sceneHash.data());
+    OH_LOG_Print(LOG_APP, LOG_INFO, 0xE720, "G13FirstFrame",
+                 "ns=%{public}llu acceptedNs=%{public}llu rootOp=%{public}u outcome=%{public}u auditBits=%{public}u sourceSeq=%{public}llu quantum=%{public}llu rawSwap=1 fieldToken=%{public}s sceneToken=%{public}s",
+                 static_cast<unsigned long long>(Now()),
+                 static_cast<unsigned long long>(owner.AcceptedRootNs()),
+                 tail[4], tail[5], tail[38], static_cast<unsigned long long>(source),
+                 static_cast<unsigned long long>(U64(tail.data() + 34)),
+                 token.c_str(), sceneToken.c_str());
+  }
   successful = true;
   release();
   return true;
