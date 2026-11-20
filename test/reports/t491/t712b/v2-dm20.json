@@ -1,0 +1,32 @@
+{
+ "revision": "T712_V2_DM20_DEVICE_V2",
+ "date": "2026-11-20",
+ "package": {
+  "task": "T712-dm (T706 revision)",
+  "inputSha": "bc157d25",
+  "signedSha": "c5fbb714",
+  "so": {
+   "libgrs_dm_t647.so": {
+    "bytes": 5203432,
+    "sha256": "ef56d08a(earlier pkg)/current per T706 compile"
+   }
+  }
+ },
+ "facility": "g9_dm_differential 743304B (T706 ELF) + libgrs_dm_t647 5203432B deployed /data/local/tmp/t712; fixtures dm192 + cold-credit.u32(8B); input SHA table same as T569 v2",
+ "execution": {
+  "revision": "T549_GPU_EXECUTION_V1",
+  "evidenceOrigin": "ACTUAL_GL_EXECUTION",
+  "renderer": "Maleoon 935F",
+  "k": 192,
+  "residentPayloadBytes": 55339648,
+  "stages": [
+   {
+    "stage": "CREATE",
+    "result": 8
+   }
+  ]
+ },
+ "blocker": "driver 0:1063: S0001 coherent qualifier \u2014 g9dm family line 1063 (RX family moved to 1097->1987 across revisions, but g9dm family still at 1063 baseline; T706 revision did NOT include the qualifier transform for g9dm)",
+ "interpretation": "T706 DM revision loaded (GL execution reached, ACTUAL_GL_EXECUTION) but CREATE result=8 persists \u2014 g9dm shader carries the same coherent qualifier defect at line 1063, untouched by T706; DM20/22/29/31 all blocked until g9dm qualifier transform ships (same local-copy pattern as RX family)",
+ "route": "architect/developer: g9dm line 1063 coherent transform (RX pattern proven working at 1097/1987 chain); T712 arms ready per-round (ELF+so+inputs+budget all deployed)"
+}
