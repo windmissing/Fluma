@@ -1,0 +1,518 @@
+{
+  "schema": "T736_SOURCE_CONTINUATION_STATIC_V1",
+  "deviceUsed": false,
+  "runtimeResult": "NOT_RUN",
+  "sourceByteLimit": 49152,
+  "compilerSHA": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+  "families": {
+    "RX": {
+      "baseline": {
+        "signedReceipt": {
+          "path": "test/reports/t257/T720-rx.json",
+          "bytes": 2274,
+          "sha256": "73f8ee4069296e79e5ec41acb586a5fd1b6a97abaca5f8f7efdbe1dd05c0154f"
+        },
+        "signedSHA": "3c6af26b32cd76e6d15f18447416ad5359dc4c1f1c1c37bc93875244f74fb051",
+        "librarySHA": "4b08d7635d7501ff0e23aa65ca60195ff5104e741394140bd376010706b72935",
+        "buildId": "27c55879e0bf46db946611ef87f4551b53e4c683",
+        "shaderSHA": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+        "shaderBytes": 146301
+      },
+      "profileCode": 827477575,
+      "k": 192,
+      "inputMagic": 1481788999,
+      "inputRevision": 3,
+      "inputBody64To76": [
+        2576980378,
+        1070176665,
+        0,
+        1078984704,
+        0,
+        1080623104,
+        0,
+        0,
+        0,
+        0,
+        2,
+        1,
+        63701
+      ],
+      "seedTemplateSHA": "38625623e360557b2a62f92beab32260885b4016a17eaa506f6a73845eab1ab7",
+      "parameterSHA": "f7c133d23a49587c9905c6e5ac2e1d4739fe1271421446c9fd12a7791e62a858",
+      "sourceRole": {
+        "bytes": 41767,
+        "sha256": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+        "passSHA": "290ed82f9b220cc20ba44ce4d1160b05d6f3955e24eed7c74849f5c9680c3a9c"
+      }
+    },
+    "DM": {
+      "baseline": {
+        "signedReceipt": {
+          "path": "test/reports/t257/T718-dm.json",
+          "bytes": 2270,
+          "sha256": "da10e63f9307c2e86e38ea79f0f80c66ff37ed2faeb2f4300ee136ac435a029c"
+        },
+        "signedSHA": "cb63655348ca7d303a1fec35b79ee9edf8a2a3a35364c2bf17ecea3cb445bf96",
+        "librarySHA": "f3cd773ca1845d78e4d2039cb9d1e49a36d0a7a2b18c6ac357b697d8f68106e5",
+        "buildId": "9954e008b4d8b08907f30c44849f2cd2564ddf4d",
+        "shaderSHA": "c10b15ee3d7ba93bde10d393b5d8ebf0cbcec02df4ae6615f90b196007d5b0c4",
+        "shaderBytes": 146316
+      },
+      "profileCode": 843924551,
+      "k": 192,
+      "inputMagic": 843662407,
+      "inputRevision": 2,
+      "inputBody64To76": [
+        2576980378,
+        1070176665,
+        0,
+        1078984704,
+        0,
+        1080623104,
+        0,
+        0,
+        0,
+        0,
+        2,
+        1,
+        0
+      ],
+      "seedTemplateSHA": "cd62ff4d9963146ec22c8eaeac848784fb2ad500ef684a9f82ff4ae55633c02d",
+      "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+      "sourceRole": {
+        "bytes": 41802,
+        "sha256": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+        "passSHA": "290ed82f9b220cc20ba44ce4d1160b05d6f3955e24eed7c74849f5c9680c3a9c"
+      }
+    }
+  },
+  "reflection": {
+    "activeUniforms": {
+      "uAcceptedAngle": {
+        "glType": "0x1404",
+        "size": 1
+      },
+      "uArena": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uArenaGeneration": {
+        "glType": "0x8DC6",
+        "size": 1
+      },
+      "uBaseBank": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uBaseCommit": {
+        "glType": "0x8DC6",
+        "size": 1
+      },
+      "uBed": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uCandidateBank": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uColumn": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uCompletion": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uConfig": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uConfigId": {
+        "glType": "0x8DC6",
+        "size": 1
+      },
+      "uContext": {
+        "glType": "0x8DC6",
+        "size": 1
+      },
+      "uControls": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uDmBase": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uEventCapacity": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uFlow": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uGeometry": {
+        "glType": "0x8DC6",
+        "size": 1
+      },
+      "uInput": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uInputGeneration": {
+        "glType": "0x8DC6",
+        "size": 1
+      },
+      "uJslot": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uK": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uMicro": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uNonce": {
+        "glType": "0x8DC6",
+        "size": 1
+      },
+      "uOp": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uOriginAudit": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uOwner": {
+        "glType": "0x8DC6",
+        "size": 1
+      },
+      "uPacket": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uPass": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uPathCapacity": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uPathWord": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uPlan": {
+        "glType": "0x8DC6",
+        "size": 1
+      },
+      "uRequiredPasses": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uRole": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uRootKind": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uRun": {
+        "glType": "0x8DC6",
+        "size": 1
+      },
+      "uSession": {
+        "glType": "0x8DC6",
+        "size": 1
+      },
+      "uSources": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uStateWords": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uSummary": {
+        "glType": "0x1405",
+        "size": 1
+      },
+      "uSurface": {
+        "glType": "0x8DC6",
+        "size": 1
+      }
+    },
+    "blocks": {
+      "ReadState": 0,
+      "WriteState": 1,
+      "Workspace": 2,
+      "EventPath": 3
+    },
+    "localSize": [
+      64,
+      1,
+      1
+    ],
+    "groupsPerPass": [
+      1,
+      1,
+      1
+    ]
+  },
+  "passTable": [
+    {
+      "ordinal": 0,
+      "op": "SOURCE_INIT_BASE",
+      "programRole": "SOURCE",
+      "uRole": 0,
+      "uJslot": 0,
+      "uMicro": -1,
+      "bufferIndices": [
+        1,
+        2,
+        5,
+        6
+      ],
+      "beforeCopies": [
+        [
+          0,
+          1,
+          "stateBytes"
+        ]
+      ]
+    },
+    {
+      "ordinal": 1,
+      "op": "SOURCE_VALIDATE_INPUT",
+      "programRole": "SOURCE",
+      "uRole": 0,
+      "uJslot": 0,
+      "uMicro": -1,
+      "bufferIndices": [
+        0,
+        2,
+        5,
+        6
+      ]
+    },
+    {
+      "ordinal": 2,
+      "op": "SOURCE_DEDUP",
+      "programRole": "SOURCE",
+      "uRole": 0,
+      "uJslot": 0,
+      "uMicro": -1,
+      "bufferIndices": [
+        1,
+        2,
+        5,
+        6
+      ]
+    },
+    {
+      "ordinal": 3,
+      "op": "SOURCE_DECODE",
+      "programRole": "SOURCE",
+      "uRole": 0,
+      "uJslot": 0,
+      "uMicro": -1,
+      "bufferIndices": [
+        1,
+        2,
+        5,
+        6
+      ]
+    },
+    {
+      "ordinal": 4,
+      "op": "SOURCE_CREDIT",
+      "programRole": "SOURCE",
+      "uRole": 0,
+      "uJslot": 0,
+      "uMicro": -1,
+      "bufferIndices": [
+        1,
+        2,
+        5,
+        6
+      ]
+    },
+    {
+      "ordinal": 5,
+      "op": "SOURCE_PRIVATE_BIRTH",
+      "programRole": "SOURCE",
+      "uRole": 0,
+      "uJslot": 0,
+      "uMicro": -1,
+      "bufferIndices": [
+        1,
+        2,
+        5,
+        6
+      ]
+    },
+    {
+      "ordinal": 6,
+      "op": "SOURCE_ORIGIN_CERTIFICATE",
+      "programRole": "SOURCE",
+      "uRole": 0,
+      "uJslot": 0,
+      "uMicro": -1,
+      "bufferIndices": [
+        1,
+        2,
+        5,
+        6
+      ]
+    },
+    {
+      "ordinal": 7,
+      "op": "SOURCE_LEDGER",
+      "programRole": "SOURCE",
+      "uRole": 0,
+      "uJslot": 0,
+      "uMicro": -1,
+      "bufferIndices": [
+        1,
+        2,
+        5,
+        6
+      ]
+    },
+    {
+      "ordinal": 8,
+      "op": "SOURCE_AUDIT_REPLAY",
+      "programRole": "SOURCE",
+      "uRole": 0,
+      "uJslot": 0,
+      "uMicro": -1,
+      "bufferIndices": [
+        0,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "ordinal": 9,
+      "op": "SOURCE_COMPARE",
+      "programRole": "SOURCE",
+      "uRole": 0,
+      "uJslot": 0,
+      "uMicro": -1,
+      "bufferIndices": [
+        2,
+        4,
+        5,
+        6
+      ],
+      "afterCopies": [
+        [
+          6,
+          7,
+          "arenaBytes"
+        ],
+        [
+          6,
+          8,
+          "arenaBytes"
+        ]
+      ]
+    },
+    {
+      "ordinal": 10,
+      "op": "SOURCE_PACK_SCENE",
+      "programRole": "SOURCE",
+      "uRole": 0,
+      "uJslot": 0,
+      "uMicro": -1,
+      "bufferIndices": [
+        1,
+        2,
+        5,
+        6
+      ]
+    },
+    {
+      "ordinal": 11,
+      "op": "SOURCE_SEAL",
+      "programRole": "SOURCE",
+      "uRole": 0,
+      "uJslot": 0,
+      "uMicro": -1,
+      "bufferIndices": [
+        1,
+        2,
+        5,
+        6
+      ]
+    }
+  ],
+  "passTableScope": "Fresh Controller bank 0/candidate 2/arena 0; use live frozen permit at runtime.",
+  "firstRootExpected": {
+    "kind": 1,
+    "ordinal": 0,
+    "angleIndex": 0,
+    "positiveBodyValues": [
+      0.2,
+      64.0,
+      200.0,
+      0.0,
+      0.0
+    ],
+    "baseMassQ": 5368709120,
+    "admittedQ": 209715,
+    "finalMassQ": 5368918835,
+    "packetSlot": 0,
+    "packetId": 1,
+    "packetGeneration": 1,
+    "origin": 2,
+    "xQ20": 67108864,
+    "y2Q21": 419430400,
+    "column": 64,
+    "eventKinds": [
+      1,
+      3,
+      14
+    ],
+    "pathCount": 0,
+    "audits": 65535,
+    "outcome": 1,
+    "commitDelta": 1,
+    "quantaDelta": 0,
+    "gpuDispatches": 12,
+    "nativeDispatchBarriers": 12,
+    "hostCopyBarriersSeparate": 3
+  },
+  "historicalDmNotSource": {
+    "file": {
+      "path": "test/reports/t491/t712b/dm20-input/commands.u32",
+      "bytes": 768,
+      "sha256": "da0445e244fafad66e2683b309e4c568d62f019717eafd1c886770e3697f1b74"
+    },
+    "rootKindWord138": 2,
+    "inputKindWord40": 0
+  },
+  "dmControllerFinding": {
+    "status": "DETERMINISTIC_BY_SOURCE_INSPECTION",
+    "when": "SOURCE, activeRemaining == 0",
+    "reason": "The caller sets workspaceRetired only after CommitAccepted; the earlier retirement preflight requires it.",
+    "controller": {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/controller.cpp",
+      "bytes": 12255,
+      "sha256": "7dd8bb89c3f77f1957607df14ae750bed0172b406efd1b5304e8d268ef030405"
+    },
+    "clock": {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/progress_clock_v3.cpp",
+      "bytes": 8737,
+      "sha256": "729feb8ec4a3c73d3091c0d34aba4187cd5c8900ba9e4fa0fd6b7ae306009e5e"
+    }
+  }
+}
