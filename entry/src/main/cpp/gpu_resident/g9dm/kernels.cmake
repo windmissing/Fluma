@@ -2,6 +2,7 @@ get_filename_component(DM_REPO "${CMAKE_CURRENT_LIST_DIR}/../../../../../.." ABS
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 file(GLOB DM_INPUTS CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/*.cpp" "${CMAKE_CURRENT_LIST_DIR}/*.h" "${CMAKE_CURRENT_LIST_DIR}/frozen_t647/*" "${CMAKE_CURRENT_LIST_DIR}/../acceptance_t647/*" "${DM_REPO}/tools/g9dm/*")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${DM_INPUTS} "${DM_REPO}/docs/architecture-T647-acceptance-v1.json" "${DM_REPO}/docs/architecture-T554-g9-dm-manifest-v2.json" "${DM_REPO}/docs/architecture-T552-g9-seed-manifest-v2.json")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${DM_REPO}/tools/glsl/qualified_values.py")
 execute_process(COMMAND "${Python3_EXECUTABLE}" "${DM_REPO}/tools/g9dm/generate_assets.py" --out "${CMAKE_CURRENT_BINARY_DIR}/dm_assets" RESULT_VARIABLE DM_GENERATION)
 if(NOT DM_GENERATION EQUAL 0)
  message(FATAL_ERROR "DM_T647_GENERATION_FAILED; no stale fallback")

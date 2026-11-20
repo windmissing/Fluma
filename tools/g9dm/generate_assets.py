@@ -1,8 +1,20 @@
 #!/usr/bin/env python3
 # T648 default DM2 construction from frozen correct integer physics + T647.
 from pathlib import Path
-import argparse,hashlib,json,re,struct
+import argparse,hashlib,json,re,struct,sys
 ROOT=Path(__file__).resolve().parents[2];MOD=ROOT/'entry/src/main/cpp/gpu_resident/g9dm'
+QUALIFIED_VALUES=ROOT/'tools/glsl/qualified_values.py'
+sys.path.insert(0,str(QUALIFIED_VALUES.parent))
+from qualified_values import copy_value_arguments
+
+COHERENT_REVISION='T715_DM_COHERENT_VALUE_V1'
+COHERENT_BOUNDARIES={
+ ('g9AddMass',0,'C'):1, ('g9AddMass',0,'W'):1, ('g9MapAdd',3,'C'):1,
+ ('g9U32',0,'C'):17, ('g9U32',0,'W'):18,
+ ('g9ColumnPotential',1,'W'):1, ('g9ColumnPotential',2,'W'):1,
+ ('dmPut',2,'C'):2, ('dmPut',2,'W'):1, ('g9ProvisionalAdd',2,'W'):1,
+ ('g9PutColumn',2,'W'):1,
+}
 def sha(b):return hashlib.sha256(b).hexdigest()
 def source_bytes(p):return p.read_bytes().replace(b"\r\n",b"\n")
 
@@ -48,6 +60,11 @@ def generate(out,canonical=False):
  s=s.replace('g9Input(1u)!=3u','g9Input(1u)!=2u').replace('g9Input(1u)==3u','g9Input(1u)==2u')
  s=s.replace('// T644/T647: genuine DM48 implementation, private to the GNR1 variant.','// T648/T647: default DM2 genuine DM48 implementation.')
  s,capture=capture_scope(s)
+ before_coherent=sha(s.encode())
+ s,arguments=copy_value_arguments(s,{'C':'dmReadCandidateWord','W':'dmReadWorkWord','E':'dmReadEventWord'},
+                                 COHERENT_BOUNDARIES,'uvec4 g9ReadWide(uint at)')
+ coherent={'revision':COHERENT_REVISION,'inputShaderSHA':before_coherent,'arguments':arguments}
+ deps['tools/glsl/qualified_values.py']=sha(source_bytes(QUALIFIED_VALUES))
  (out/'pipeline.comp').write_text(s,encoding='utf8')
  schema=(frozen/'schema_parent.h').read_text(encoding='utf8');schema=schema.replace('t555-g9dm-v2-initial-construction','T648_T647_DM2_IMPLEMENTATION_1')
  # Exact formal table rows remain default-DM, never the composite counts.
@@ -108,8 +125,9 @@ def generate(out,canonical=False):
  if canonical:
   for name in ['pipeline.comp','schema_generated.h','dm_contract_generated.h','dm_seed_generated.h']:
    if (out/name).resolve()!=(MOD/name).resolve():(MOD/name).write_bytes((out/name).read_bytes())
- (out/'acceptance_dictionary.json').write_text(json.dumps({'schema':'T648_READER_DICTIONARY_V1','staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json'],'sourceIdentity':{'shaderSHA':sha(s.encode()),'implementationSHA':identity,'captureTransform':capture},'expectedWords':224,'expectedBytes':896,'encoding':'u32 little endian','rows':acceptance['rows'],'FrozenExpected224':acceptance['FrozenExpected224'],'DMControlWords':acceptance['DMControlWords'],'scopeBits':acceptance['scopeBits'],'DMWork':acceptance['DMWork']},indent=2)+'\n',encoding='utf8')
- (out/'identity.json').write_text(json.dumps({'schema':'T648_DM2_IDENTITY_V1','implementationSHA':identity,'shaderSHA':sha(s.encode()),'staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json'],'captureTransform':capture,'inputs':deps},indent=2)+'\n',encoding='utf8')
+ source_identity={'shaderSHA':sha(s.encode()),'implementationSHA':identity,'captureTransform':capture,'coherentTransform':coherent}
+ (out/'acceptance_dictionary.json').write_text(json.dumps({'schema':'T648_READER_DICTIONARY_V1','staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json'],'sourceIdentity':source_identity,'expectedWords':224,'expectedBytes':896,'encoding':'u32 little endian','rows':acceptance['rows'],'FrozenExpected224':acceptance['FrozenExpected224'],'DMControlWords':acceptance['DMControlWords'],'scopeBits':acceptance['scopeBits'],'DMWork':acceptance['DMWork']},indent=2)+'\n',encoding='utf8')
+ (out/'identity.json').write_text(json.dumps({'schema':'T648_DM2_IDENTITY_V1',**source_identity,'staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json'],'inputs':deps},indent=2)+'\n',encoding='utf8')
  if canonical:
   for name in ['identity.json','acceptance_dictionary.json']:(Path(__file__).parent/name).write_bytes((out/name).read_bytes())
 if __name__=='__main__':

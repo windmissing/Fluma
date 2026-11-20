@@ -1009,6 +1009,8 @@ uint g9Packet(uint slot,uint field){return C[uPacket+slot*64u+field];}
 void g9PutPacket(uint slot,uint field,uint value){C[uPacket+slot*64u+field]=value;}
 uvec4 g9Momentum(uint c){return g9S64(uvec2(g9Column(c,2u),g9Column(c,3u)));}
 bool g9PutMomentum(uint c,uvec4 p){uvec2 narrow;if(!g9I64(p,narrow)){g9Fault(29u,c,2u);return false;}g9PutColumn(c,2u,narrow.x);g9PutColumn(c,3u,narrow.y);g9PutColumn(c,4u,g9Zero(p)?0u:1u);return true;}
+uint dmReadCandidateWord(uint at){return C[at];}
+uint dmReadWorkWord(uint at){return W[at];}
 uvec4 g9ReadWide(uint at){return uvec4(W[at],W[at+1u],W[at+2u],W[at+3u]);}
 void g9WriteWide(uint at,uvec4 value){for(uint i=0u;i<4u;++i)W[at+i]=value[i];}
 uvec4 g9HeaderWide(uint at){return uvec4(C[at],C[at+1u],C[at+2u],C[at+3u]);}
@@ -1060,7 +1062,7 @@ bool g9MapAdd(bool flow,uint c,uvec3 key,uint q){
  if(!flow&&count>0u&&g9KeyCompare(g9Key(false,c,count-1u),key)==0)rank=count-1u;
  if(flow)for(uint i=0u;i<count;++i){int cmp=g9KeyCompare(g9Key(true,c,i),key);if(cmp>=0){rank=i;break;}}
  bool merge=rank<count&&g9KeyCompare(g9Key(flow,c,rank),key)==0;
- if(merge){uint at=g9MapAddress(flow,c,rank),next;if(!g9AddMass(C[at+3u],q,next))return false;C[at+3u]=next;return true;}
+ if(merge){uint at=g9MapAddress(flow,c,rank),next;if(!g9AddMass(dmReadCandidateWord(at+3u),q,next))return false;C[at+3u]=next;return true;}
  for(uint i=count;i>rank;--i)for(uint f=0u;f<4u;++f)C[g9MapAddress(flow,c,i)+f]=C[g9MapAddress(flow,c,i-1u)+f];
  uint at=g9MapAddress(flow,c,rank);C[at]=key.x;C[at+1u]=key.y;C[at+2u]=key.z;C[at+3u]=q;g9SetMapCount(flow,c,count+1u);return true;
 }
@@ -1094,14 +1096,14 @@ bool g9DepositPreflight(uint c){
 }
 bool g9DepositMap(uint c){
  if(!g9DepositPreflight(c))return false;
- uint count=g9MapCount(true,c);for(uint i=0u;i<count;++i){uint at=g9MapAddress(true,c,i);if(!g9MapAdd(false,c,g9Key(true,c,i),C[at+3u]))return false;}
+ uint count=g9MapCount(true,c);for(uint i=0u;i<count;++i){uint at=g9MapAddress(true,c,i);if(!g9MapAdd(false,c,g9Key(true,c,i),dmReadCandidateWord(at+3u)))return false;}
  for(uint i=0u;i<64u*4u;++i)C[uFlow+c*256u+i]=0u;g9SetMapCount(true,c,0u);return true;
 }
 // Left then right callers consume the remaining map, never the original M.
 bool g9Hamilton(uint donor,uint q,uint scratch){
  uint mass=g9Column(donor,1u),count=g9MapCount(true,donor);if(q>mass||mass==0u||count>64u)return false;uint sum=0u;
  for(uint i=0u;i<count;++i){uint at=g9MapAddress(true,donor,i);uvec4 product,quotient,remainder;
-  if(!g9UMul(g9U32(q),g9U32(C[at+3u]),product)||!g9UDiv(product,g9U32(mass),quotient,remainder))return false;
+  if(!g9UMul(g9U32(q),g9U32(dmReadCandidateWord(at+3u)),product)||!g9UDiv(product,g9U32(mass),quotient,remainder))return false;
   W[scratch+i*4u]=quotient.x;W[scratch+i*4u+1u]=remainder.x;W[scratch+i*4u+2u]=0u;sum+=quotient.x;
  }
  for(uint n=0u;n<q-sum;++n){uint best=count;for(uint i=0u;i<count;++i)if(W[scratch+i*4u+2u]==0u&&(best==count||W[scratch+i*4u+1u]>W[scratch+best*4u+1u]))best=i;
@@ -1113,7 +1115,7 @@ bool g9IntervalAdd(G9EnergyInterval a,G9EnergyInterval b,out G9EnergyInterval re
 bool g9IntervalSubtract(G9EnergyInterval after,G9EnergyInterval before,out G9EnergyInterval result){return g9SSub(after.low,before.high,result.low)&&g9SSub(after.high,before.low,result.high);}
 G9EnergyInterval g9Exact(uvec4 value){G9EnergyInterval result;result.low=result.high=value;return result;}
 bool g9ColumnPotential(uint c,uint bed,uint flow,out uvec4 potential){
- uvec4 x=g9U32(c*1048576u+524288u),gx=g9S32(int(C[22u])),gn=g9U32(C[23u]);
+ uvec4 x=g9U32(c*1048576u+524288u),gx=g9S32(int(C[22u])),gn=g9U32(dmReadCandidateWord(23u));
  uvec4 total=g9U32(bed+flow),horizontal,vertical,inside;
  if(!g9SMul(gx,x,horizontal)||!g9SShift(horizontal,1u,horizontal)||!g9SMul(gn,total,vertical)||!g9SSub(vertical,horizontal,inside)||!g9SMul(total,inside,potential)||!g9SShift(potential,24u,potential))return false;
  return true; // U_bed+U_flow = (S+F)*(gn*(S+F)-2gx*x).
@@ -1121,7 +1123,7 @@ bool g9ColumnPotential(uint c,uint bed,uint flow,out uvec4 potential){
 bool g9PacketEnergy(uint mass,uint x,uint y2,int vx,int vy,out uvec4 result){
  uvec4 xx,yy,kinetic,potential,horizontal;
  if(!g9SMul(g9S32(vx),g9S32(vx),xx)||!g9SMul(g9S32(vy),g9S32(vy),yy)||!g9SAdd(xx,yy,kinetic)||
-    !g9SMul(g9U32(C[23u]),g9U32(y2),potential)||!g9SMul(g9S32(int(C[22u])),g9U32(x),horizontal)||!g9SShift(horizontal,1u,horizontal)||
+    !g9SMul(g9U32(dmReadCandidateWord(23u)),g9U32(y2),potential)||!g9SMul(g9S32(int(C[22u])),g9U32(x),horizontal)||!g9SShift(horizontal,1u,horizontal)||
     !g9SSub(potential,horizontal,potential)||!g9SAdd(kinetic,potential,result)||!g9SMul(result,g9U32(mass),result)||!g9SShift(result,24u,result))return false;
  return true;
 }
@@ -1161,7 +1163,7 @@ bool g9AuditMicroEnergy(){
   // even if S changed. Do not manufacture a one-unit interval for a no-op.
   if(W[at+1u]==g9Column(c,1u)&&W[at+2u]==g9Column(c,2u)&&W[at+3u]==g9Column(c,3u)){
    uvec4 oldPotential,newPotential,exact;
-   if(!g9ColumnPotential(c,W[at],W[at+1u],oldPotential)||!g9ColumnPotential(c,g9Column(c,0u),g9Column(c,1u),newPotential)||!g9SSub(newPotential,oldPotential,exact)){g9Fault(29u,c,1u);return false;}change=g9Exact(exact);
+   if(!g9ColumnPotential(c,dmReadWorkWord(at),dmReadWorkWord(at+1u),oldPotential)||!g9ColumnPotential(c,g9Column(c,0u),g9Column(c,1u),newPotential)||!g9SSub(newPotential,oldPotential,exact)){g9Fault(29u,c,1u);return false;}change=g9Exact(exact);
   }else if(!g9ColumnEnergy(c,after)||!g9IntervalSubtract(after,before,change)){g9Fault(29u,c,2u);return false;}
   if(!g9IntervalAdd(delta,change,delta)){g9Fault(29u,c,3u);return false;}
  }
@@ -1177,7 +1179,7 @@ bool g9AuditMicroEnergy(){
 
 bool g9RneProduct(uvec4 a,uvec4 b,uint denominator,out uvec4 result){uvec4 product;return g9SMul(a,b,product)&&g9SDiv(product,g9U32(denominator),1u,result);}
 bool g9Drive(uint c,out uvec4 drive){
- drive=uvec4(0u);uvec4 gx=g9S32(int(C[22u])),gn=g9U32(C[23u]),term;
+ drive=uvec4(0u);uvec4 gx=g9S32(int(C[22u])),gn=g9U32(dmReadCandidateWord(23u)),term;
  uint bedFlow=g9Material(c);
  if(c<127u){uvec4 slope=g9S32(int(g9Material(c+1u))-int(bedFlow));if(!g9RneProduct(gn,slope,1048576u,term)||!g9SSub(gx,term,term))return false;if(g9SCmp(term,drive)>0)drive=term;}
  if(c>0u){uvec4 slope=g9S32(int(g9Material(c-1u))-int(bedFlow)),negativeG;if(!g9SNeg(gx,negativeG)||!g9RneProduct(gn,slope,1048576u,term)||!g9SSub(negativeG,term,term))return false;if(g9SCmp(term,drive)>0)drive=term;}
@@ -1220,7 +1222,7 @@ bool dmEval(uint q,uvec4 p,uint f0,uint b,uvec4 hg,uvec4 og,out DmEval e){
  if(!g9I32(u,e.velocity))return false;
  uint r=max(f,dmParam(2u));if(r==0u||C[23u]==0u)return false;
  uvec4 square,num,den,head,rem,yieldDepth,excess=uvec4(0u),hs,hSum,chiS,os,raw,deficit=uvec4(0u),lhs,rhs;
- if(!g9UMul(g9Magnitude(u),g9Magnitude(u),square)||!g9UMul(square,g9U32(W[uConfig+4u]),num)||!g9UMul(g9U32(65536u),g9U32(C[23u]),den)||!g9UDiv(num,den,head,rem)||!dmRneMul(g9U32(W[uConfig]),g9U32(r),16u,yieldDepth))return false;
+ if(!g9UMul(g9Magnitude(u),g9Magnitude(u),square)||!g9UMul(square,g9U32(dmReadWorkWord(uConfig+4u)),num)||!g9UMul(g9U32(65536u),g9U32(dmReadCandidateWord(23u)),den)||!g9UDiv(num,den,head,rem)||!dmRneMul(g9U32(dmReadWorkWord(uConfig)),g9U32(r),16u,yieldDepth))return false;
  if(g9UCmp(head,yieldDepth)>0&&!g9USub(head,yieldDepth,excess))return false;
  if(!dmFloorMul(g9U32(dmParam(1u)),excess,16u,hs)||!g9UAdd(g9U32(f0),hs,hSum))return false;e.hs=hs;
  e.h=g9UCmp(hg,hSum)>0?hg:hSum;if(g9UCmp(e.h,g9U32(b))>0)e.h=g9U32(b);
@@ -1232,7 +1234,7 @@ bool dmGeometry(uint c,out uvec4 chi,out uvec4 hg,out uvec4 og){
  uint b=g9Material(c),gn=C[23u];if(gn==0u)return false;uvec4 drive=uvec4(0u),term,d,negativeG,yield,excess=uvec4(0u),num,rem;
  if(c<127u){if(!g9RneProduct(g9U32(gn),g9S32(int(g9Material(c+1u))-int(b)),1048576u,term)||!g9SSub(g9S32(int(C[22u])),term,d))return false;if(g9SCmp(d,drive)>0)drive=d;}
  if(c>0u){if(!g9SNeg(g9S32(int(C[22u])),negativeG)||!g9RneProduct(g9U32(gn),g9S32(int(g9Material(c-1u))-int(b)),1048576u,term)||!g9SSub(negativeG,term,d))return false;if(g9SCmp(d,drive)>0)drive=d;}
- if(!dmRneMul(g9U32(W[uConfig]),g9U32(gn),16u,yield))return false;if(g9SCmp(drive,yield)>0&&!g9USub(drive,yield,excess))return false;
+ if(!dmRneMul(g9U32(dmReadWorkWord(uConfig)),g9U32(gn),16u,yield))return false;if(g9SCmp(drive,yield)>0&&!g9USub(drive,yield,excess))return false;
  if(!g9UMul(excess,g9U32(1048576u),num)||!g9UDiv(num,g9U32(gn),chi,rem)||!dmFloorMul(g9U32(dmParam(0u)),chi,16u,hg)||!dmFloorMul(g9U32(dmParam(4u)),chi,20u,og))return false;
  if(g9UCmp(hg,g9U32(b))>0)hg=g9U32(b);return true;
 }
@@ -1248,7 +1250,7 @@ bool dmOriginPrefix(uint c,uint q,out uint result){
 bool dmRequest(){
  for(uint c=0u;c<128u;++c){uint prior=dmWord(c,46u)&0xffff0000u;for(uint f=0u;f<48u;++f)dmPut(c,f,0u);dmPut(c,46u,prior);uint s=g9Column(c,0u),f0=g9Column(c,1u),b=g9Material(c);uvec4 p=g9Momentum(c),chi,hg,og;
   if(!dmGeometry(c,chi,hg,og)||any(notEqual(chi.yzw,uvec3(0u))))return false;
-  dmPut(c,0u,s);dmPut(c,1u,f0);if(!dmStore64(c,2u,p))return false;dmPut(c,4u,b);dmPut(c,5u,C[22u]);dmPut(c,6u,C[23u]);dmPut(c,7u,chi.x);dmPut(c,8u,hg.x);dmPut(c,24u,g9MapCount(false,c));dmPut(c,25u,g9MapCount(true,c));
+  dmPut(c,0u,s);dmPut(c,1u,f0);if(!dmStore64(c,2u,p))return false;dmPut(c,4u,b);dmPut(c,5u,dmReadCandidateWord(22u));dmPut(c,6u,dmReadCandidateWord(23u));dmPut(c,7u,chi.x);dmPut(c,8u,hg.x);dmPut(c,24u,g9MapCount(false,c));dmPut(c,25u,g9MapCount(true,c));
   DmEval e0,ep,en;if(!dmEval(0u,p,f0,b,hg,og,e0)||!e0.feasible)return false;
   uint deficit=e0.h.x>f0?e0.h.x-f0:0u;uvec4 numerator,denominator,quotient,remainder;
   if(!g9UMul(g9U32(e0.omega),g9U32(deficit),numerator)||!g9UAdd(g9U32(120u*uJ*65536u),g9U32(e0.omega),denominator)||!g9UDiv(numerator,denominator,quotient,remainder))return false;
@@ -1276,7 +1278,7 @@ bool dmApplyColumn(uint c){
 }
 bool dmProx(uint c,uvec4 trial,out uvec4 end,out bool supported){
  uint f=dmWord(c,32u);uvec4 product,staticBudget,dynamicBudget,num,den=g9U32(65536u*120u*uJ);
- if(!g9UMul(g9U32(C[23u]),g9U32(f),product)||!g9UMul(product,g9U32(W[uConfig]),num)||!g9UDiv(num,den,staticBudget,product)||!g9UMul(g9U32(C[23u]),g9U32(f),product)||!g9UMul(product,g9U32(W[uConfig+1u]),num)||!g9UDiv(num,den,dynamicBudget,product))return false;
+ if(!g9UMul(g9U32(dmReadCandidateWord(23u)),g9U32(f),product)||!g9UMul(product,g9U32(dmReadWorkWord(uConfig)),num)||!g9UDiv(num,den,staticBudget,product)||!g9UMul(g9U32(dmReadCandidateWord(23u)),g9U32(f),product)||!g9UMul(product,g9U32(dmReadWorkWord(uConfig+1u)),num)||!g9UDiv(num,den,dynamicBudget,product))return false;
  supported=dmWord(c,33u)==0u&&g9UCmp(g9Magnitude(trial),staticBudget)<=0;end=uvec4(0u);
  if(!supported&&g9UCmp(g9Magnitude(trial),dynamicBudget)>0){uvec4 diff;if(!g9USub(g9Magnitude(trial),dynamicBudget,diff)||!g9FromMagnitude(diff,g9Negative(trial),end))return false;}return true;
 }
@@ -1290,7 +1292,7 @@ bool dmMidpoint(){
  for(uint c=0u;c<128u;++c){uvec4 sum,mid;if(!g9SAdd(dmRead64(c,34u),dmRead64(c,38u),sum)||!g9SDiv(sum,g9U32(2u),1u,mid))return false;uint f=dmWord(c,32u);
   if(f==0u&&!g9Zero(mid)){g9Reject(7u,c,40u);return false;}uvec4 bound,product,speed=uvec4(0u);uint wave=0u;
   if(!g9UMul(g9U32(f),g9U32(1073741824u),bound))return false;if(g9UCmp(g9Magnitude(mid),bound)>0){g9Reject(6u,c,40u);return false;}if(!dmStore64(c,40u,mid))return false;
-  if(f>0u&&(!g9SDiv(g9Magnitude(mid),g9U32(f),3u,speed)||!g9UMul(g9U32(C[23u]),g9U32(f),product)||!g9CeilSqrt64(product.xy,wave)||!g9UAdd(speed,g9U32(wave),speed)))return false;
+  if(f>0u&&(!g9SDiv(g9Magnitude(mid),g9U32(f),3u,speed)||!g9UMul(g9U32(dmReadCandidateWord(23u)),g9U32(f),product)||!g9CeilSqrt64(product.xy,wave)||!g9UAdd(speed,g9U32(wave),speed)))return false;
   if(g9UCmp(speed,maximum)>0)maximum=speed;
  }
  for(uint slot=0u;slot<uK;++slot)if(g9Packet(slot,0u)!=0u){uint speed=max(uint(abs(int(g9Packet(slot,3u)))),uint(abs(int(g9Packet(slot,4u)))));if(g9UCmp(g9U32(speed),maximum)>0)maximum=g9U32(speed);}
@@ -1304,12 +1306,12 @@ bool dmPredictorEvents(){
 }
 
 
-bool g9StartThreshold(out uvec4 threshold){return g9RneProduct(g9U32(W[uConfig]),g9U32(C[23u]),65536u,threshold);}
+bool g9StartThreshold(out uvec4 threshold){return g9RneProduct(g9U32(dmReadWorkWord(uConfig)),g9U32(dmReadCandidateWord(23u)),65536u,threshold);}
 bool g9ActivationRequest(){
  for(uint c=0u;c<128u;++c){uvec4 drive,threshold;
   if(!g9Drive(c,drive)||!g9StartThreshold(threshold)){g9Fault(29u,c,0u);return false;}
   uint q=0u,bed=g9Column(c,0u);
-  if(g9SCmp(drive,threshold)>0){uvec4 numerator,quotient,remainder;if(!g9UMul(g9U32(min(bed,W[uConfig+2u])),g9U32(W[uConfig+3u]),numerator)||!g9UDiv(numerator,g9U32(65536u*120u*uJ),quotient,remainder)||!g9Uint(quotient,q)){g9Fault(29u,c,1u);return false;}q=min(q,bed);}
+  if(g9SCmp(drive,threshold)>0){uvec4 numerator,quotient,remainder;if(!g9UMul(g9U32(min(bed,W[uConfig+2u])),g9U32(dmReadWorkWord(uConfig+3u)),numerator)||!g9UDiv(numerator,g9U32(65536u*120u*uJ),quotient,remainder)||!g9Uint(quotient,q)){g9Fault(29u,c,1u);return false;}q=min(q,bed);}
   g9PutColumn(c,10u,q);g9PutColumn(c,11u,0u);g9PutColumn(c,13u,uMicro==0u?W[uColumnStage+c*64u+21u]:0u);g9WriteWide(uHamilton+c*2048u+256u,drive);
  }
  return true;
@@ -1331,7 +1333,7 @@ bool g9Activate(uint c,uint requested,uint trigger){
 bool g9ActivationApply(){for(uint c=0u;c<128u;++c)if(!g9Activate(c,g9Column(c,10u),1u))return false;return true;}
 bool g9Friction(){
  for(uint c=0u;c<128u;++c){uint flow=g9Column(c,1u),mode=dmWord(c,33u),oldRest=g9Column(c,5u),rest=0u;uvec4 oldP=g9Momentum(c),staticBudget,dynamicBudget,product,numerator,denominator=g9U32(65536u*120u*uJ);
-  if(!g9SMul(g9U32(C[23u]),g9U32(flow),product)||!g9SMul(product,g9U32(W[uConfig]),numerator)||!g9SDiv(numerator,denominator,0u,staticBudget)||!g9SMul(product,g9U32(W[uConfig+1u]),numerator)||!g9SDiv(numerator,denominator,0u,dynamicBudget)){g9Fault(29u,c,0u);return false;}
+  if(!g9SMul(g9U32(dmReadCandidateWord(23u)),g9U32(flow),product)||!g9SMul(product,g9U32(dmReadWorkWord(uConfig)),numerator)||!g9SDiv(numerator,denominator,0u,staticBudget)||!g9SMul(product,g9U32(dmReadWorkWord(uConfig+1u)),numerator)||!g9SDiv(numerator,denominator,0u,dynamicBudget)){g9Fault(29u,c,0u);return false;}
   uvec4 magnitude=g9Magnitude(oldP),newP=uvec4(0u);bool supported=mode==0u&&g9UCmp(magnitude,staticBudget)<=0;
   if(!supported&&g9UCmp(magnitude,dynamicBudget)>0){uvec4 difference;if(!g9USub(magnitude,dynamicBudget,difference)||!g9FromMagnitude(difference,g9Negative(oldP),newP)){g9Fault(29u,c,1u);return false;}}
   if(g9SCmp(g9Magnitude(newP),g9Magnitude(oldP))>0){g9Fault(29u,c,2u);return false;}
@@ -1481,10 +1483,10 @@ bool g9FlowTerms(uint c,uint z,out uint f,out uvec4 p,out int velocity){
 }
 bool g9Pressure(uvec4 p,uint flow,out uvec4 result){
  result=uvec4(0u);if(flow==0u)return g9Zero(p);
- uvec4 square,kinetic,pressure;if(!g9SMul(p,p,square)||!g9SDiv(square,g9U32(flow),1u,kinetic)||!g9UMul(g9U32(flow),g9U32(flow),square)||!g9SMul(square,g9U32(C[23u]),pressure)||!g9SDiv(pressure,g9U32(2u),1u,pressure)||!g9SAdd(kinetic,pressure,result))return false;return true;
+ uvec4 square,kinetic,pressure;if(!g9SMul(p,p,square)||!g9SDiv(square,g9U32(flow),1u,kinetic)||!g9UMul(g9U32(flow),g9U32(flow),square)||!g9SMul(square,g9U32(dmReadCandidateWord(23u)),pressure)||!g9SDiv(pressure,g9U32(2u),1u,pressure)||!g9SAdd(kinetic,pressure,result))return false;return true;
 }
 bool g9BedCorrection(uint original,uint reconstructed,out uvec4 result){
- uvec4 a,b,difference;if(!g9UMul(g9U32(original),g9U32(original),a)||!g9UMul(g9U32(reconstructed),g9U32(reconstructed),b)||!g9USub(a,b,difference)||!g9SMul(difference,g9U32(C[23u]),difference)||!g9SDiv(difference,g9U32(2u),1u,result))return false;return true;
+ uvec4 a,b,difference;if(!g9UMul(g9U32(original),g9U32(original),a)||!g9UMul(g9U32(reconstructed),g9U32(reconstructed),b)||!g9USub(a,b,difference)||!g9SMul(difference,g9U32(dmReadCandidateWord(23u)),difference)||!g9SDiv(difference,g9U32(2u),1u,result))return false;return true;
 }
 bool g9FaceFlux(){
  for(uint edge=0u;edge<129u;++edge){uint at=uFaces+edge*32u;for(uint i=0u;i<32u;++i)W[at+i]=0u;
@@ -1493,7 +1495,7 @@ bool g9FaceFlux(){
   if(!g9FlowTerms(left,z,fl,pl,ul)||!g9FlowTerms(right,z,fr,pr,ur)){g9Fault(29u,edge,0u);return false;}
   if(edge==0u){fl=fr;ul=-ur;if(!g9SNeg(pr,pl)){g9Fault(29u,edge,1u);return false;}}
   if(edge==128u){fr=fl;ur=-ul;if(!g9SNeg(pl,pr)){g9Fault(29u,edge,2u);return false;}}
-  uvec4 waveL,waveR;if(!g9UMul(g9U32(C[23u]),g9U32(fl),waveL)||!g9UMul(g9U32(C[23u]),g9U32(fr),waveR)){g9Fault(29u,edge,3u);return false;}
+  uvec4 waveL,waveR;if(!g9UMul(g9U32(dmReadCandidateWord(23u)),g9U32(fl),waveL)||!g9UMul(g9U32(dmReadCandidateWord(23u)),g9U32(fr),waveR)){g9Fault(29u,edge,3u);return false;}
   uint sl,sr;if(!g9CeilSqrt64(waveL.xy,sl)||!g9CeilSqrt64(waveR.xy,sr)){g9Fault(29u,edge,4u);return false;}uint speed=max(uint(abs(ul))+sl,uint(abs(ur))+sr);
   uvec4 fm,fp,al,ar,difference,viscosity;
   if(!g9SSub(g9U32(fr),g9U32(fl),difference)||!g9SMul(g9U32(speed),difference,viscosity)||!g9SAdd(pl,pr,fm)||!g9SSub(fm,viscosity,fm)||!g9SDiv(fm,g9U32(2u),1u,fm)||
@@ -1506,8 +1508,8 @@ bool g9FaceFlux(){
  for(uint c=0u;c<128u;++c){uint left=uFaces+c*32u,right=left+32u;uvec4 p=g9Momentum(c),change,bed,gravity,product;
   if(!g9SSub(g9ReadWide(left+4u),g9ReadWide(right+4u),change)||!g9SSub(g9ReadWide(left+12u),g9ReadWide(right+8u),bed)||!g9SMul(g9S32(int(C[22u])),g9U32(g9Column(c,1u)),product)||!g9SDiv(product,g9U32(120u*uJ),1u,gravity)||!g9SAdd(p,change,p)||!g9SAdd(p,bed,p)||!g9SAdd(p,gravity,p)){g9Fault(29u,c,7u);return false;}
   uint stage=uColumnStage+c*64u;g9WriteWide(stage,p);g9WriteWide(stage+4u,bed);g9WriteWide(stage+8u,gravity);W[stage+12u]=g9Column(c,1u);W[stage+13u]=g9Column(c,4u);
-  uvec4 limit;if(!g9UMul(g9U32(W[uConfig]),g9U32(C[23u]),product)||!g9UMul(product,g9U32(g9Column(c,1u)),product)||!g9SDiv(product,g9U32(65536u*120u*uJ),0u,limit)){g9Fault(29u,c,8u);return false;}
-  W[stage+14u]=g9Column(c,4u)==0u&&g9UCmp(g9Magnitude(p),limit)<=0?1u:0u;if(uOp==G9_OP_CORRECTOR_FACE){dmPut(c,43u,W[stage+14u]);W[stage+14u]&=dmWord(c,42u);}
+  uvec4 limit;if(!g9UMul(g9U32(dmReadWorkWord(uConfig)),g9U32(dmReadCandidateWord(23u)),product)||!g9UMul(product,g9U32(g9Column(c,1u)),product)||!g9SDiv(product,g9U32(65536u*120u*uJ),0u,limit)){g9Fault(29u,c,8u);return false;}
+  W[stage+14u]=g9Column(c,4u)==0u&&g9UCmp(g9Magnitude(p),limit)<=0?1u:0u;if(uOp==G9_OP_CORRECTOR_FACE){dmPut(c,43u,dmReadWorkWord(stage+14u));W[stage+14u]&=dmWord(c,42u);}
  }
  for(uint edge=1u;edge<128u;++edge)if(W[uColumnStage+(edge-1u)*64u+14u]!=0u&&W[uColumnStage+edge*64u+14u]!=0u)W[uFaces+edge*32u]=0u;
  return true;
@@ -1519,7 +1521,7 @@ bool g9ProvisionalAdd(uint c,uvec3 key,uint mass){
  if(mass==0u)return true;uint count=W[uHamilton+c*2048u+512u],rank=count;
  for(uint i=0u;i<count;++i){uint at=g9Provisional(c,i);uvec3 old=uvec3(W[at],W[at+1u],W[at+2u]);int cmp=g9KeyCompare(old,key);if(cmp>=0){rank=i;break;}}
  bool merge=false;if(rank<count){uint at=g9Provisional(c,rank);merge=g9KeyCompare(uvec3(W[at],W[at+1u],W[at+2u]),key)==0;}
- if(merge){uint at=g9Provisional(c,rank),next;if(!g9AddMass(W[at+3u],mass,next))return false;W[at+3u]=next;return true;}
+ if(merge){uint at=g9Provisional(c,rank),next;if(!g9AddMass(dmReadWorkWord(at+3u),mass,next))return false;W[at+3u]=next;return true;}
  if(count==64u)return false;
  for(uint i=count;i>rank;--i)for(uint f=0u;f<4u;++f)W[g9Provisional(c,i)+f]=W[g9Provisional(c,i-1u)+f];uint at=g9Provisional(c,rank);W[at]=key.x;W[at+1u]=key.y;W[at+2u]=key.z;W[at+3u]=mass;W[uHamilton+c*2048u+512u]=count+1u;return true;
 }
@@ -1545,7 +1547,7 @@ bool g9FlowReserve(){
     if(!g9ProvisionalAdd(receiver,uvec3(W[at],W[at+1u],W[at+2u]),share)){g9Reject(11u,receiver,i);return false;}W[at+3u]-=share;
    }W[base+1537u]-=q;
   }
-  for(uint i=0u;i<count;++i){uint at=base+1024u+i*4u;if(!g9ProvisionalAdd(donor,uvec3(W[at],W[at+1u],W[at+2u]),W[at+3u])){g9Reject(11u,donor,i);return false;}}
+  for(uint i=0u;i<count;++i){uint at=base+1024u+i*4u;if(!g9ProvisionalAdd(donor,uvec3(W[at],W[at+1u],W[at+2u]),dmReadWorkWord(at+3u))){g9Reject(11u,donor,i);return false;}}
  }return true;
 }
 bool g9FlowApply(){
@@ -1755,12 +1757,12 @@ bool g9TouchWeights(){
  uint total=0u;for(uint c=0u;c<128u;++c){uint distance=uint(abs(int(c*1048576u+524288u)-int(x))),weight=distance<radius?radius-distance:0u;W[uHamilton+c*2048u+1600u]=weight;total+=weight;}
  // N*r can exceed U32. Sum in limbs and use the same denominator on all
  // components; equal remainders resolve by ascending column.
- uvec4 sum=uvec4(0u);for(uint c=0u;c<128u;++c)if(!g9UAdd(sum,g9U32(W[uHamilton+c*2048u+1600u]),sum)){g9Fault(29u,c,0u);return false;}
+ uvec4 sum=uvec4(0u);for(uint c=0u;c<128u;++c)if(!g9UAdd(sum,g9U32(dmReadWorkWord(uHamilton+c*2048u+1600u)),sum)){g9Fault(29u,c,0u);return false;}
  if(g9Zero(sum)){g9Set(56u,2u);return true;}
  for(uint component=0u;component<2u;++component){uvec4 impulse=component==0u?g9S64(g9InputPair(56u)):g9U64(g9InputPair(58u)),magnitude=g9Magnitude(impulse),admitted=uvec4(0u);uvec4 limit=uvec4(0u,1u<<26u,0u,0u);
   if(g9UCmp(magnitude,limit)>0){g9Fault(22u,0u,56u+2u*component);return false;}
   for(uint c=0u;c<128u;++c){uint at=uHamilton+c*2048u+1604u+component*12u;uvec4 product,q,r;
-   if(!g9UMul(magnitude,g9U32(W[uHamilton+c*2048u+1600u]),product)||!g9UDiv(product,sum,q,r)||!g9UAdd(admitted,q,admitted)){g9Fault(29u,c,1u);return false;}
+   if(!g9UMul(magnitude,g9U32(dmReadWorkWord(uHamilton+c*2048u+1600u)),product)||!g9UDiv(product,sum,q,r)||!g9UAdd(admitted,q,admitted)){g9Fault(29u,c,1u);return false;}
    g9WriteWide(at,q);g9WriteWide(at+4u,r);W[at+8u]=0u;
   }
   uvec4 remaining;if(!g9USub(magnitude,admitted,remaining)||any(notEqual(remaining.yzw,uvec3(0u)))||remaining.x>=128u){g9Fault(29u,0u,2u);return false;}
@@ -1773,7 +1775,7 @@ bool g9TouchWeights(){
 // Snapshot one column and its full bed/flow maps in its fixed Hamilton range.
 // A rejected local touch restores all recruited sources, p and rest state.
 void g9SaveTouchColumn(uint c){uint base=uHamilton+c*2048u;for(uint i=0u;i<32u;++i)W[base+1664u+i]=g9Column(c,i);for(uint i=0u;i<256u;++i){W[base+512u+i]=C[uBed+c*256u+i];W[base+768u+i]=C[uFlow+c*256u+i];}}
-void g9RestoreTouchColumn(uint c){uint base=uHamilton+c*2048u;for(uint i=0u;i<32u;++i)g9PutColumn(c,i,W[base+1664u+i]);for(uint i=0u;i<256u;++i){C[uBed+c*256u+i]=W[base+512u+i];C[uFlow+c*256u+i]=W[base+768u+i];}}
+void g9RestoreTouchColumn(uint c){uint base=uHamilton+c*2048u;for(uint i=0u;i<32u;++i)g9PutColumn(c,i,dmReadWorkWord(base+1664u+i));for(uint i=0u;i<256u;++i){C[uBed+c*256u+i]=W[base+512u+i];C[uFlow+c*256u+i]=W[base+768u+i];}}
 bool g9Launch(uint c,uvec4 jy,out uvec4 actualJy,out uvec4 work){
  actualJy=work=uvec4(0u);uint flow=g9Column(c,1u),count=g9MapCount(true,c);if(flow==0u||count==0u||g9Zero(jy))return true;
  uint originAt=g9MapAddress(true,c,0u),q=min(C[originAt+3u],min(W[uConfig+2u],244666u)),slot=uK;
@@ -1803,9 +1805,9 @@ bool g9Touch(){
  uvec4 cap=uvec4(g9Input(60u),g9Input(61u),g9Input(62u),g9Input(63u));if(g9UCmp(cap,uvec4(0u,0u,0u,1u<<24u))>0){g9Fault(22u,0u,60u);return false;}g9WriteWide(uControls+32u,uvec4(0u));g9WriteWide(uControls+36u,cap);
  for(uint c=0u;c<128u;++c){uint base=uHamilton+c*2048u;uvec4 jx=g9ReadWide(base+1604u),jy=g9ReadWide(base+1616u);if(g9Zero(jx)&&g9Zero(jy))continue;
   uint eventBefore=g9Ctl(6u),pathBefore=g9Ctl(8u);uvec4 usedBefore=g9ReadWide(uControls+32u);g9SaveTouchColumn(c);g9Set(57u,0u);
-  uint band=min(g9Column(c,0u),W[uConfig+2u]);uvec4 threshold,product;if(!g9UMul(g9U32(W[uConfig]),g9U32(C[23u]),product)||!g9UMul(product,g9U32(band),product)||!g9SDiv(product,g9U32(65536u*120u),3u,threshold)){g9Fault(29u,c,5u);return false;}
+  uint band=min(g9Column(c,0u),W[uConfig+2u]);uvec4 threshold,product;if(!g9UMul(g9U32(dmReadWorkWord(uConfig)),g9U32(dmReadCandidateWord(23u)),product)||!g9UMul(product,g9U32(band),product)||!g9SDiv(product,g9U32(65536u*120u),3u,threshold)){g9Fault(29u,c,5u);return false;}
   bool activate=!g9Zero(jy)||g9UCmp(g9Magnitude(jx),threshold)>0;
-  if(activate){uvec4 q,r;if(!g9UMul(g9U32(band),g9U32(W[uConfig+3u]),product)||!g9UDiv(product,g9U32(65536u*120u),q,r)){g9Fault(29u,c,6u);return false;}if(q.x>0u&&!g9Activate(c,min(q.x,g9Column(c,0u)),2u))return false;}
+  if(activate){uvec4 q,r;if(!g9UMul(g9U32(band),g9U32(dmReadWorkWord(uConfig+3u)),product)||!g9UDiv(product,g9U32(65536u*120u),q,r)){g9Fault(29u,c,6u);return false;}if(q.x>0u&&!g9Activate(c,min(q.x,g9Column(c,0u)),2u))return false;}
   uint flow=g9Column(c,1u);uvec4 oldP=g9Momentum(c),newP,admittedX=uvec4(0u),admittedY=uvec4(0u),touchWork=uvec4(0u);
   if(flow>0u&&!g9Zero(jx)){
    G9EnergyInterval before,after,delta;if(!g9ColumnEnergy(c,before)||!g9SAdd(oldP,jx,newP)){g9Fault(29u,c,7u);return false;}
@@ -1878,7 +1880,7 @@ bool g9AuditMassGeometry(){
 bool g9Cfl(){
  uvec4 maximum=uvec4(0u);
  for(uint c=0u;c<128u;++c){uint f=g9Column(c,1u);if(f==0u){if(!g9Zero(g9Momentum(c))){g9Reject(7u,c,0u);return false;}continue;}
-  uvec4 speed,product;uint wave;if(!g9SDiv(g9Magnitude(g9Momentum(c)),g9U32(f),3u,speed)||!g9UMul(g9U32(C[23u]),g9U32(f),product)||!g9CeilSqrt64(product.xy,wave)||!g9UAdd(speed,g9U32(wave),speed)){g9Fault(29u,c,0u);return false;}if(g9UCmp(speed,maximum)>0)maximum=speed;
+  uvec4 speed,product;uint wave;if(!g9SDiv(g9Magnitude(g9Momentum(c)),g9U32(f),3u,speed)||!g9UMul(g9U32(dmReadCandidateWord(23u)),g9U32(f),product)||!g9CeilSqrt64(product.xy,wave)||!g9UAdd(speed,g9U32(wave),speed)){g9Fault(29u,c,0u);return false;}if(g9UCmp(speed,maximum)>0)maximum=speed;
  }
  for(uint slot=0u;slot<uK;++slot)if(g9Packet(slot,0u)!=0u){uint speed=max(uint(abs(int(g9Packet(slot,3u)))),uint(abs(int(g9Packet(slot,4u)))));if(g9UCmp(g9U32(speed),maximum)>0)maximum=g9U32(speed);}
  uint g=W[uConfig+7u],extra=g/120u+uint(g%120u!=0u);if(!g9UAdd(maximum,g9U32(extra),maximum)){g9Fault(29u,0u,1u);return false;}
@@ -1925,7 +1927,7 @@ void g9CopyBase(){for(uint i=gl_LocalInvocationIndex;i<uStateWords;i+=64u)C[i]=B
 bool g9GravityWork(){
  int oldGx=int(B[22u]);uint oldGn=B[23u];uvec4 gxWide,gnWide;
  if(uAcceptedAngle< -7680||uAcceptedAngle>7680||uAngleCos<=0||uAngleCos>1048576||uAngleSin< -1048576||uAngleSin>1048576||
-    !g9RneProduct(g9U32(W[uConfig+7u]),g9S32(uAngleSin),1048576u,gxWide)||!g9RneProduct(g9U32(W[uConfig+7u]),g9S32(uAngleCos),1048576u,gnWide)){g9Fault(29u,0u,22u);return false;}
+    !g9RneProduct(g9U32(dmReadWorkWord(uConfig+7u)),g9S32(uAngleSin),1048576u,gxWide)||!g9RneProduct(g9U32(dmReadWorkWord(uConfig+7u)),g9S32(uAngleCos),1048576u,gnWide)){g9Fault(29u,0u,22u);return false;}
  int gx;uint gn;if(!g9I32(gxWide,gx)||!g9Uint(gnWide,gn)||gn==0u){g9Fault(29u,0u,23u);return false;}
  if(oldGx==gx&&oldGn==gn){C[22u]=uint(gx);C[23u]=gn;C[20u]=uint(uAcceptedAngle);return true;}
  C[22u]=uint(oldGx);C[23u]=oldGn;
@@ -2101,7 +2103,7 @@ void g9Run(){
  if(!dmStageEnter())return;
  if(uOp==G9_OP_CONFIG_INPUT_GATE||uOp==G9_OP_SOURCE_DEDUP){if(!g9Dedup())return;}
  else if(uOp==G9_OP_INPUT_AND_CFL){
-  uvec4 gx,gn;int x;uint n;if(!g9RneProduct(g9U32(W[uConfig+7u]),g9S32(uAngleSin),1048576u,gx)||!g9RneProduct(g9U32(W[uConfig+7u]),g9S32(uAngleCos),1048576u,gn)||!g9I32(gx,x)||!g9Uint(gn,n)||n==0u){g9Fault(29u,0u,22u);return;}C[22u]=uint(x);C[23u]=n;C[20u]=uint(uAcceptedAngle);
+  uvec4 gx,gn;int x;uint n;if(!g9RneProduct(g9U32(dmReadWorkWord(uConfig+7u)),g9S32(uAngleSin),1048576u,gx)||!g9RneProduct(g9U32(dmReadWorkWord(uConfig+7u)),g9S32(uAngleCos),1048576u,gn)||!g9I32(gx,x)||!g9Uint(gn,n)||n==0u){g9Fault(29u,0u,22u);return;}C[22u]=uint(x);C[23u]=n;C[20u]=uint(uAcceptedAngle);
   bool eligible=g9Cfl();if(eligible&&(g9Ctl(12u)==0u||uJ<g9Ctl(12u)))g9Set(12u,uJ);
  }
  else if(uOp==G9_OP_GRAVITY_WORK){if(g9Ctl(14u)==0u)g9GravityWork();}
