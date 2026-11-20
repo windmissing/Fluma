@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "tools/build/build_receipt.py",
+    "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 build cf5f712c\\build",
+    "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 receipt replay 33t_8t4f"
+  ],
+  "exit": 0,
+  "comparisons": {
+    "native-build.log": {
+      "receiptSHA": "aa5e20a631902cf2b12d5b42395c577848c63d41f0fca88861b7f2d65cb73b79",
+      "historicalSHA": "aa5e20a631902cf2b12d5b42395c577848c63d41f0fca88861b7f2d65cb73b79"
+    },
+    "incremental.log": {
+      "receiptSHA": "ebfb0d754513ca5f9799ebcb15e4eca74bd818ab5f0287a3ad15e43855fac8d9",
+      "historicalSHA": "ebfb0d754513ca5f9799ebcb15e4eca74bd818ab5f0287a3ad15e43855fac8d9"
+    }
+  },
+  "result": "HISTORICAL_LOG_CONTAMINATION",
+  "productPASS": false,
+  "device": "NOT_RUN"
+}

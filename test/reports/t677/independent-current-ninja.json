@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+    "-C",
+    "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 build cf5f712c\\build",
+    "-v"
+  ],
+  "stdout": "ninja: Entering directory `C:\\Users\\admin\\AppData\\Local\\Temp\\T677 build cf5f712c\\build'\n[1/2] C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot   -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -fno-fast-math -ffp-contract=off -D__MUSL__ -O0 -g -fno-limit-debug-info  -std=gnu++17 -fPIC -MD -MT CMakeFiles/grs_foundation.dir/anchor.cpp.o -MF CMakeFiles\\grs_foundation.dir\\anchor.cpp.o.d -o CMakeFiles/grs_foundation.dir/anchor.cpp.o -c D:/hmprojects/HelloWorld/tools/build/broker_compile/anchor.cpp\nclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]\n[2/2] C:\\Windows\\system32\\cmd.exe /C \"cd . && C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\cmake.exe -E rm -f libgrs_foundation.a && C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\llvm-ar.exe qc libgrs_foundation.a  CMakeFiles/grs_foundation.dir/anchor.cpp.o && C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\llvm-ranlib.exe libgrs_foundation.a && cd .\"\n",
+  "stderr": "",
+  "exit": 0
+}

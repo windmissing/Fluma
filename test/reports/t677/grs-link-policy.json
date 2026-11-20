@@ -1,0 +1,41 @@
+{
+  "schema": "GRS_EXPLICIT_LINK_BASELINE_V1",
+  "policySHA256": "9900ec6618d44d9832d824bf87d7227028383950e1cd02f2f9d71970e6320633",
+  "policy": {
+    "schema": "GRS_EXPLICIT_LINK_BASELINE_V1",
+    "cmake": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\cmake.exe",
+    "baseline": {
+      "EXE": "",
+      "SHARED": "-Wl,--as-needed -Wl,--no-as-needed",
+      "MODULE": ""
+    },
+    "sdkToolchain": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build\\cmake\\ohos.toolchain.cmake",
+    "ninja": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+    "definitions": [
+      "-DOHOS_ARCH=arm64-v8a",
+      "-DCMAKE_BUILD_TYPE=Debug",
+      "-DCMAKE_CXX_FLAGS=-fno-fast-math -ffp-contract=off"
+    ],
+    "source": "D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile"
+  },
+  "sdkToolchainSHA256": "ed9ef39b5e32f1d9db139bf1d0dc7a6e56902848bf092f0296897063320499f8",
+  "wrapperSHA256": "db34a3b38f90a984a50cd189767fa1f8b9c8d7510bb5a6dd371fcdbb434846f5",
+  "note": "Known original baseline re-established before every SDK evaluation; ordered target/implicit libraries untouched.",
+  "configureArgv": [
+    "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\cmake.exe",
+    "-S",
+    "D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile",
+    "-B",
+    "C:\\Users\\admin\\AppData\\Local\\Temp\\T677 build cf5f712c\\build",
+    "-G",
+    "Ninja",
+    "-DCMAKE_TOOLCHAIN_FILE=C:/Users/admin/AppData/Local/Temp/T677 build cf5f712c/build/grs_owned_toolchain.cmake",
+    "-DCMAKE_MAKE_PROGRAM=C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\build-tools\\cmake\\bin\\ninja.exe",
+    "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+    "-DOHOS_ARCH=arm64-v8a",
+    "-DCMAKE_BUILD_TYPE=Debug",
+    "-DCMAKE_CXX_FLAGS=-fno-fast-math -ffp-contract=off"
+  ],
+  "cwd": "D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile",
+  "configureReturnCode": 0
+}
