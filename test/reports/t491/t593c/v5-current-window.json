@@ -1,0 +1,33 @@
+{
+ "revision": "T593_V5_CURRENT_WINDOW_DEVICE_V1",
+ "date": "2026-11-20",
+ "package": {
+  "task": "T593-probe re-deploy (formal M1 t597-fixed)",
+  "signedSha": "133f1257f3898a96d49861daf4a97d7fe3a76e7db28d164093ae836577442ce4"
+ },
+ "sequence": [
+  "new-run reset (run2/epoch4) -> 30s wait -> touch1 (swipe 220ms) -> status CURRENT/NONE observed -> touch2 (250ms) -> 6 more touches during STALE busy states -> boot export"
+ ],
+ "keyObservations": {
+  "CURRENT_WINDOW": "status line CURRENT \u00b7 NONE observed at sample 5981 (physics 0:649) \u2014 READY gate PASSED, source chain gate open",
+  "touchDuringCurrent": "touch2 (250ms) right after CURRENT observation: status transitioned to STALE/DRAW_PENDING, receipt stayed #0",
+  "busyTouches": "6 touches during GPU_WORK_PENDING/DRAW_PENDING oscillation (physics 0:846->, samples 7808-9279) \u2014 all during busy, receipts #0",
+  "bootOriginal": {
+   "pid": 13252,
+   "recoveryPhase": "READY",
+   "resetSerial": 2,
+   "epoch": 4,
+   "session": 2,
+   "runLo": 2,
+   "resources": true,
+   "attempt4": {
+    "terminal": true,
+    "readyEpoch": 4,
+    "publishedRun": 2,
+    "firstFailure": null
+   }
+  }
+ },
+ "interpretation": "CURRENT window exists but is narrow (single sample at 5981 then busy again); touches during busy states rejected (not through READY gate); the one CURRENT-window touch still receipt #0 \u2014 down reached model.down but source enqueue did not produce receipt, OR receipt read missed enqueue window; typed enqueue/same-seq claim requires in-page handler observation (T676-B.4) not UI-status sampling",
+ "route": "continue: in-page handler/changedTouches capture (T678 \u00a7B.4) \u2014 UI status sampling insufficient for SOURCE receipt; T671 offline parser for cold-export pairing"
+}
