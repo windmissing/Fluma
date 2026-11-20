@@ -127,3 +127,10 @@ R(running) 状态，utime 持续推进（185k/155k/125k ticks/200s）——**编
 
 worker/分段编译容忍已在 architect/developer 域；下一扫采样
 execution.jsonl 于编译完成后出 CREATE result。
+
+
+### v6 补采（13:46，编译持续确认）
+
+10 分钟后二采样：utime 238344/209150/179480 ticks（较 200s 样本 +530/537/
+536 CPU 秒/400s wall ≈ 1.3 核持续满载）——**编译仍在推进，driver 无退出
+无挂死**；execution.jsonl 仍 0B（CREATE 未出，如实）。
