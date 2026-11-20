@@ -90,7 +90,23 @@ void completion(){
  for(uint scope=0u;scope<2u;++scope){uint root=scope==0u?2048u:10240u;for(uint i=0u;i<255u;++i)c[root+256u+i]=c[t+i];c[root+511u]=0xc0de1301u;}
  memoryBarrierBuffer();c[t+255u]=0xc0de1301u;
 }
-void main(){lane=gl_LocalInvocationID.x;if(lane==0u){c[752]=uIndex;errorAtEntry=c[514];selectedAtEntry=c[518u+min(uScope,1u)];convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));c[676]=0u;}syncAll();
+// T690: isolated cold qualification, prior to any claim or field publication.
+void coldFP32Probe(){
+ if(gl_LocalInvocationID.x!=0u||uScope>1u)return;
+ uint dst=18632u+8u*uScope;
+ highp float one=uintBitsToFloat(c[746]), zero=uintBitsToFloat(c[747]);
+ highp float ulp=one+uintBitsToFloat(c[18648u]), tie=one+uintBitsToFloat(c[745]);
+ highp float retained=uintBitsToFloat(c[744])+zero;
+ highp float produced=uintBitsToFloat(c[18649u])*uintBitsToFloat(c[18650u]);
+ c[dst]=floatBitsToUint(ulp);c[dst+1u]=floatBitsToUint(tie);
+ c[dst+2u]=floatBitsToUint(retained);c[dst+3u]=floatBitsToUint(produced);
+ c[dst+4u]=uint(!isinf(ulp)&&!isnan(ulp)) |
+           (uint(isinf(uintBitsToFloat(c[18651u])))<<1u) |
+           (uint(isnan(uintBitsToFloat(c[18652u])))<<2u);
+ c[dst+5u]=0u;c[dst+6u]=0u;
+ memoryBarrierBuffer();c[dst+7u]=0x46503332u;
+}
+void main(){if(uOp==66u){coldFP32Probe();return;}lane=gl_LocalInvocationID.x;if(lane==0u){c[752]=uIndex;errorAtEntry=c[514];selectedAtEntry=c[518u+min(uScope,1u)];convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));c[676]=0u;}syncAll();
  if(uOp==64u){coldInitialize();return;}
  if(uOp==65u){coldAudit();return;}
  if(uOp==OP_ROOT_INIT||uOp==OP_SOURCE_INIT){rootInit();return;}if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));if(nooped)c[523]++;else c[522]++;if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));c[r+(nooped?9u:8u)]++;}}

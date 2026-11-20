@@ -47,22 +47,41 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
         precision = 0, range[2] = {};
   glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &bindings);
   glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &invocations);
-  glGetShaderPrecisionFormat(GL_COMPUTE_SHADER, GL_HIGH_FLOAT, range,
-                             &precision);
   GLint64 maxBlock = 0;
   glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS, &blocks);
   glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &group);
   glGetIntegerv(GL_MAX_COMPUTE_SHARED_MEMORY_SIZE, &shared);
   glGetInteger64v(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &maxBlock);
   firstGl_ = glGetError();
+  const GLenum resourceGl = firstGl_;
+  glGetShaderPrecisionFormat(GL_VERTEX_SHADER, GL_HIGH_FLOAT, range,
+                             &precision);
+  const GLenum precisionGl = glGetError();
+  if (!firstGl_)
+    firstGl_ = precisionGl;
   InitStageEvent("CAPABILITY", "EXIT", 0, firstGl_);
   std::ostringstream cap;
   cap << "{\"stage\":\"CAP_COMPUTE\",\"blocks\":" << blocks
       << ",\"bindings\":" << bindings << ",\"invocations\":" << invocations
-      << ",\"floatPrecision\":" << precision << ",\"driverEnvironmentSHA\":\""
-      << programcache::Environment() << "\",\"laneX\":" << group
-      << ",\"shared\":" << shared << ",\"maxBlock\":\"" << maxBlock
-      << "\",\"rawGL\":" << firstGl_
+      << ",\"precisionSource\":\"VERTEX_HIGH_FLOAT_DECLARATION\"";
+  cap << ",\"precisionThreshold\":23,\"precisionRawGL\":" << precisionGl
+      << ",\"resourceRawGL\":" << resourceGl << ",\"precisionStatus\":\""
+      << (precisionGl      ? "QUERY_ERROR"
+          : precision < 23 ? "LOW_PRECISION"
+                           : "PREFILTER_PASS")
+      << "\",\"floatPrecision\":";
+  if (precisionGl)
+    cap << "null";
+  else
+    cap << precision;
+  cap << ",\"precisionRange\":";
+  if (precisionGl)
+    cap << "null";
+  else
+    cap << '[' << range[0] << ',' << range[1] << ']';
+  cap << ",\"driverEnvironmentSHA\":\"" << programcache::Environment()
+      << "\",\"laneX\":" << group << ",\"shared\":" << shared
+      << ",\"maxBlock\":\"" << maxBlock << "\",\"rawGL\":" << firstGl_
       << ",\"CAP_FP32\":\"NOT_MEASURED\",\"CAP_MATH\":\"NOT_MEASURED\",\"CAP_"
          "SCENE\":\"NOT_MEASURED\"}";
   auto driverString = [](GLenum key) {
@@ -155,6 +174,11 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
   control[745] = 0x33800000u;
   control[746] = 0x3f800000u;
   control[747] = 0u;
+  control[18648] = 0x34000000u; // one ULP at 1
+  control[18649] = 0x00800000u; // smallest normal
+  control[18650] = 0x3f000000u; // factor of one half
+  control[18651] = 0x7f800000u; // +infinity
+  control[18652] = 0x7fc00000u; // quiet NaN
   control[748] = 0x54442d18u;
   control[749] = 0x3ff921fbu;
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, ctrl_);
@@ -267,6 +291,19 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
   glDispatchCompute(1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
   InitStageEvent("INIT_AUDIT65", "EXIT", 65);
+  InitStageEvent("INIT_FP32", "ENTER", 66);
+  glUniform1ui(locations_.Find("uOp"), 66);
+  for (uint32_t replay = 0; replay < 2; ++replay) {
+    glUniform1ui(locations_.Find("uScope"), replay);
+    glDispatchCompute(1, 1, 1);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT |
+                    GL_BUFFER_UPDATE_BARRIER_BIT);
+  }
+  const auto probeGl = glGetError();
+  if (probeGl && !firstGl_)
+    firstGl_ = probeGl;
+  InitStageEvent("INIT_FP32", "EXIT", 66, probeGl);
+
   InitObservation().State("INIT_FENCE_PENDING");
   InitStageEvent("INIT_FENCE_PENDING", "ENTER");
   fence_ = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
@@ -475,6 +512,39 @@ uint32_t Transport::Poll(Completion &out) {
                    cold[7]);
     if (cold[255] != kSeal || cold[7])
       return cold[7] ? cold[7] : 28;
+    // Cold-only words, observed after the existing init fence. Both independent
+    // runs use the same linked compute program and the same uploaded operands.
+    constexpr std::array<uint32_t, 8> expected{
+        0x3f800001u, 0x3f800000u, 1u, 0x00400000u, 7u, 0u, 0u, 0x46503332u};
+    const bool observed =
+        cold[207] == expected.back() && cold[215] == expected.back();
+    const bool qualified =
+        observed && !firstGl_ &&
+        std::equal(expected.begin(), expected.end(), cold.begin() + 200) &&
+        std::equal(cold.begin() + 200, cold.begin() + 208, cold.begin() + 208);
+    std::ostringstream proof;
+    proof << ",\"fp32Source\":\"SAME_PROGRAM_COLD_COMPUTE\",\"fp32Words\":[";
+    for (size_t i = 200; i < 216; ++i) {
+      if (i != 200)
+        proof << ',';
+      proof << cold[i];
+    }
+    proof << "],\"fp32RawGL\":" << firstGl_;
+    auto capability = capabilities_;
+    const std::string pending = "\"CAP_FP32\":\"NOT_MEASURED\"";
+    capability.replace(capability.find(pending), pending.size(),
+                       std::string("\"CAP_FP32\":\"") +
+                           (qualified  ? "QUALIFIED"
+                            : observed ? "FAILED"
+                                       : "NOT_MEASURED") +
+                           "\"");
+    capability.insert(capability.size() - 1, proof.str());
+    if (capability.size() > 1984)
+      return 30;
+    capabilities_ = std::move(capability);
+    InitStageEvent("INIT_FP32_RESULT", "EXIT", 66, firstGl_);
+    if (!qualified)
+      return firstGl_ ? 29 : 27;
     InitObservation().State("INIT_TAIL_VALID");
     ready_ = true;
     return 0;
