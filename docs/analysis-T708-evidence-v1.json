@@ -1,0 +1,221 @@
+{
+  "schema": "T708_G11_ORIGINAL_BYTE_ATTRIBUTION_V1",
+  "deviceUsed": false,
+  "unsigned": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t639-delivery-v2\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "bytes": 8391282,
+    "sha256": "74ae28e15b01d4db170e6a7c8970327ed6365dc68c051b37c58af8e745577d77",
+    "zipCRC": "OK",
+    "mergedAbc": {
+      "bytes": 2805992,
+      "sha256": "18490ca797a3a8baab9aee3031f2d3f9984d60beee3c1387db710fa37a60090e"
+    },
+    "separateWorkerEntries": [],
+    "libgrs_g11": {
+      "bytes": 2018024,
+      "sha256": "36b72b1ec66daa9ddda61ad8e89056f419ff7f3655068e0010911acb6f664f02",
+      "buildId": "bbfe2dfc0148687bdbe22f60b7b161823e5c4eaa"
+    },
+    "moduleName": "entry",
+    "mainAbility": "EntryAbility",
+    "abilitySource": "./ets/entryability/G11ResearchAbility.ets",
+    "g11PageInProfile": true,
+    "targetAPI": 26
+  },
+  "signed": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T687-g11\\T687-g11-signed.hap",
+    "bytes": 8498484,
+    "sha256": "e237f6b671fad40a5d718839dff5130ad37c7a6cc76d59e62005709573ecc22b",
+    "zipCRC": "OK",
+    "mergedAbc": {
+      "bytes": 2805992,
+      "sha256": "18490ca797a3a8baab9aee3031f2d3f9984d60beee3c1387db710fa37a60090e"
+    },
+    "separateWorkerEntries": [],
+    "libgrs_g11": {
+      "bytes": 2018024,
+      "sha256": "36b72b1ec66daa9ddda61ad8e89056f419ff7f3655068e0010911acb6f664f02",
+      "buildId": "bbfe2dfc0148687bdbe22f60b7b161823e5c4eaa"
+    },
+    "moduleName": "entry",
+    "mainAbility": "EntryAbility",
+    "abilitySource": "./ets/entryability/G11ResearchAbility.ets",
+    "g11PageInProfile": true,
+    "targetAPI": 26
+  },
+  "signingReceipt": {
+    "path": "test/reports/t257/T687-g11.json",
+    "bytes": 2286,
+    "sha256": "0e8fd806e419ecd91c77484432878fb1dee81d09c71e7d54d39d5dc02bc8b30e"
+  },
+  "compileReceipt": {
+    "path": "test/reports/t639/compile-receipt-v2.json",
+    "bytes": 246463,
+    "sha256": "17c8cef28b680f309dc0429e90c67240b9bf0b0dd37883400ffd0a6da80ecfe9"
+  },
+  "buildProfile": {
+    "path": ".codex/local-test/t639-delivery-v2/entry/build-profile.json5",
+    "bytes": 568,
+    "sha256": "212244ce4c38a37a865d4426b93b795424c749ff32ecc78c34d7060df72fa7b7"
+  },
+  "effectiveLoader": {
+    "path": ".codex/local-test/t639-delivery-v2/entry/build/default/intermediates/loader/default/loader.json",
+    "bytes": 1330,
+    "sha256": "054b85918defb383202e39d9a6dcb316d209f848fcb573456cd5914f180e80e9",
+    "compileMode": "esmodule",
+    "workers": [
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t639-delivery-v2\\entry\\src\\main\\ets\\workers\\P011NaturalObservationWorker.ets",
+      "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t639-delivery-v2\\entry\\src\\main\\ets\\workers\\G11ColdWorker.ets"
+    ]
+  },
+  "verifiedOriginalSource": {
+    "entry/src/main/ets/entryability/G11ResearchAbility.ets": {
+      "rawCompiledSHA256": "8d481877008dcfb4775d831109ee2e16289def059255719a9485d74aa26c9bf6",
+      "normalizedLFSHA256": "8d481877008dcfb4775d831109ee2e16289def059255719a9485d74aa26c9bf6"
+    },
+    "entry/src/main/ets/pages/GpuResidentG11.ets": {
+      "rawCompiledSHA256": "aea0f7e3719bbb44065732e086308e478a640caa5953f1faa82759b4fc7665a7",
+      "normalizedLFSHA256": "aea0f7e3719bbb44065732e086308e478a640caa5953f1faa82759b4fc7665a7"
+    },
+    "entry/src/main/ets/physics/GpuG11Port.ets": {
+      "rawCompiledSHA256": "7e377660e94e9211c62dfb51e28e8ca96430794739f5141b9a53245e3a470ca0",
+      "normalizedLFSHA256": "7e377660e94e9211c62dfb51e28e8ca96430794739f5141b9a53245e3a470ca0"
+    },
+    "entry/src/main/ets/physics/GpuG11Cold.ets": {
+      "rawCompiledSHA256": "5a53f116ff569461c9b45454c5481dd32d64d51b8951d7e305a85f2e857df5a7",
+      "normalizedLFSHA256": "5a53f116ff569461c9b45454c5481dd32d64d51b8951d7e305a85f2e857df5a7"
+    },
+    "entry/src/main/ets/physics/G11ColdArchiveCore.ets": {
+      "rawCompiledSHA256": "df024fabe96c6de4697e7199341418e6bac3a94603b9b57df7e972aa086d5597",
+      "normalizedLFSHA256": "df024fabe96c6de4697e7199341418e6bac3a94603b9b57df7e972aa086d5597"
+    },
+    "entry/src/main/ets/workers/G11ColdWorker.ets": {
+      "rawCompiledSHA256": "bdffd05239184c149c698906b61546069ba8f8b9e9ad26f8f23831b6e3d06b32",
+      "normalizedLFSHA256": "bdffd05239184c149c698906b61546069ba8f8b9e9ad26f8f23831b6e3d06b32"
+    },
+    "entry/src/main/cpp/gpu_resident/g11vis/bridge.cpp": {
+      "rawCompiledSHA256": "c1f7f49bcb667da72f718f94fbf22e7892ba2cc5cc7e987fd3a649585a5a2143",
+      "normalizedLFSHA256": "838a107679551c91d9dae040c17af86c185c6be5b7e96a29343eeb2b695ac942"
+    },
+    "entry/src/main/cpp/gpu_resident/g11vis/controller.cpp": {
+      "rawCompiledSHA256": "29ded9afa70dd9ed74f0073dba633fb01a84cd4eb9648dab4c3fbaf94b0e0c2f",
+      "normalizedLFSHA256": "c1cd82550c2dc04485451fefec4054330b865ec3790e64cd2fa96edc95a7e9fa"
+    }
+  },
+  "workerBytecode": {
+    "tool": "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\toolchains\\ark_disasm.exe",
+    "toolSha256": "84aa01efabceb8387a5989aeb6f3ad341f7089e5826c1a4359b4e51efd857586",
+    "moduleRecord": "com.example.helloworld.entry.ets.workers.G11ColdWorker",
+    "executableMainInstallsOnmessage": true,
+    "messageCallbackHandlesBeginAndCancel": true,
+    "hostWorkerURL": "entry/ets/workers/G11ColdWorker.ets",
+    "runtimeExecutionProven": false
+  },
+  "deviceOriginals": {
+    "report": {
+      "path": "docs/test-report-T600-v2.md",
+      "bytes": 1571,
+      "sha256": "df3d5ca261591072231f0067f0a6a36c88a8e98e0174d039b59a0622277a9ba0"
+    },
+    "summary": {
+      "path": "test/reports/t491/t600b/v2-g11.json",
+      "bytes": 1284,
+      "sha256": "417af8050fbc47ea595a80e442267f01a4aa6a20ecaef126894d4e2220ee350f"
+    },
+    "hilog": {
+      "path": "test/reports/t491/t600b/h600.txt",
+      "bytes": 1247386,
+      "sha256": "509b31d1e92bde148b339761a826aa89e9322a7e6fe4a364d6f47cbbb374581a"
+    },
+    "workerAttemptLog": [
+      {
+        "line": 5441,
+        "text": "11-20 09:26:22.147 48183 48183 I C03F05/com.example.helloworld/NAPI: worker:: workers num 1"
+      },
+      {
+        "line": 5478,
+        "text": "11-20 09:26:22.154 48183 49307 E C03F00/com.example.helloworld/ArkEtsVm: [nodict]ani: Cannot attach current thread, reached the limit of EAWorkers"
+      },
+      {
+        "line": 5484,
+        "text": "11-20 09:26:22.160 48183 49307 I C01321/com.example.helloworld/JsRuntime: [js_worker.cpp539]stageModule: 1"
+      },
+      {
+        "line": 5485,
+        "text": "11-20 09:26:22.160 48183 49307 I C01321/com.example.helloworld/JsRuntime: [js_worker.cpp539]stageModule: 1"
+      },
+      {
+        "line": 5486,
+        "text": "11-20 09:26:22.160 48183 49307 I C01321/com.example.helloworld/JsRuntime: [js_worker.cpp539]stageModule: 1"
+      },
+      {
+        "line": 5487,
+        "text": "11-20 09:26:22.160 48183 49307 E C01305/com.example.helloworld/Base: [zip_file.cpp(IsEntryDataConsistent:1036)]GetEntry failed for ets/workers/G11ColdWorker.abc"
+      },
+      {
+        "line": 5488,
+        "text": "11-20 09:26:22.160 48183 49307 W C01305/com.example.helloworld/Base: [extractor.cpp(GetSafeData:154)]Entry data not consistent for ets/workers/G11ColdWorker.abc, result=4"
+      },
+      {
+        "line": 5489,
+        "text": "11-20 09:26:22.160 48183 49307 W C01305/com.example.helloworld/Base: [zip_file.cpp(CreateFileMapper:943)]GetEntry from ets/workers/G11ColdWorker.abc err"
+      },
+      {
+        "line": 5490,
+        "text": "11-20 09:26:22.160 48183 49307 W C01321/com.example.helloworld/JsRuntime: [js_worker.cpp446]null safeData file <private>"
+      },
+      {
+        "line": 5492,
+        "text": "11-20 09:26:22.170 48183 48183 I C03F05/com.example.helloworld/NAPI: worker:: host post nullptr to worker."
+      },
+      {
+        "line": 5508,
+        "text": "11-20 09:26:22.172 48183 48183 I C03F05/com.example.helloworld/NAPI: worker:: host receive terminate."
+      }
+    ],
+    "layouts": [
+      {
+        "path": "test/reports/t491/t600b/l1.json",
+        "bytes": 49480,
+        "sha256": "e8d3554edb09062c2a473eae85528f9a3b287861a4788bb4213ca93a4f5817e8",
+        "G11Page": true,
+        "state": "STOPPED",
+        "presentedMappingDisplay": "等待有效新管线帧"
+      },
+      {
+        "path": "test/reports/t491/t600b/l2.json",
+        "bytes": 49480,
+        "sha256": "0da936fd859617d24b731b00beac814012c1105b147597106b4b40903c4a5349",
+        "G11Page": true,
+        "state": "STOPPED",
+        "presentedMappingDisplay": "等待有效新管线帧"
+      },
+      {
+        "path": "test/reports/t491/t600b/l3.json",
+        "bytes": 49480,
+        "sha256": "3d0c8fd0d5b0d930389aa8808e4fce662ba92b7b183f2ccc1c7a9de0a3c3984f",
+        "G11Page": true,
+        "state": "STOPPED",
+        "presentedMappingDisplay": "等待有效新管线帧"
+      },
+      {
+        "path": "test/reports/t491/t600b/l4.json",
+        "bytes": 49480,
+        "sha256": "5951fb569732d9419e109d741f756cf0380d49ea40363a8188ee7d9900efb074",
+        "G11Page": true,
+        "state": "STOPPED",
+        "presentedMappingDisplay": "等待有效新管线帧"
+      }
+    ],
+    "nativeConfigureReplyOrSameRunLoadedMap": "NOT_IN_HANDOFF",
+    "workerOnmessageOrTerminalReceipt": "NOT_IN_HANDOFF"
+  },
+  "verdict": {
+    "separatePathLookupFailed": true,
+    "workerMissingFromPackage": false,
+    "terminalWorkerLoadFailureProven": false,
+    "workerOnConfigurePath": false,
+    "firstConfigureStopCause": "UNRESOLVED_NO_SAME_SCOPE_RAW_REPLY",
+    "productPASS": false
+  }
+}

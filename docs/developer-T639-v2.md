@@ -59,3 +59,7 @@ python tools/g11/build_receipt.py <构建目录> <证据目录> <glslang.exe>
 - 包内 libgrs_g11.so：`36b72b1ec66daa9ddda61ad8e89056f419ff7f3655068e0010911acb6f664f02`
 - BuildId：`bbfe2dfc0148687bdbe22f60b7b161823e5c4eaa`
 - ABC：`18490ca797a3a8baab9aee3031f2d3f9984d60beee3c1387db710fa37a60090e`
+
+## T708 工程裁定
+
+T639 unsigned 与 T687-g11 signed 均按 Stage esmodule 合并打包。反汇编已确认两者同一份 modules.abc 包含 G11ColdWorker 的可执行模块。T600-v2 的单独 Worker 路径读取确实失败，实际模块入口与归档首拒待设备回执。G11 Configure、bootstrap、封存与激活的首帧链独立于 Worker。后续按 [T708 工程分流](architecture-T708-v1.md) 保配置原始回执和冷档启动诊断，打包检查以现行编译模式和实际内容为依据。
