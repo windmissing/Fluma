@@ -1,0 +1,27 @@
+{
+  "schema": "T731_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-20",
+  "commit": "25bd810dac0dbf3881efa2a809998b0cdd4b9e55",
+  "statusRow": {
+    "before": "| T731 | 【T731·目标20 Vulkan 最小同机对照架构准备】architect | architect | P5 | 进行中 | 6b00058de4b049946b85c42c |",
+    "after": "| T731 | 【T731·目标20 Vulkan 最小同机对照架构准备】architect | architect | P5 | 结束待验收 | 6b00058de4b049946b85c42c |"
+  },
+  "beforeSha256": "5599dce1177604c6aea2e3fe8eb5fc2c0e9c67d343b6a40672210c9001e24ea6",
+  "afterSha256": "01b8219037e95c10fb8e61753a1dbf51f38e80d67eb5e0e852dee52d30f1c553",
+  "checklistSha256": "5ad77b575e29264f369efe8b4a28ee8da0f63721d4755d4b01f7b26d0a756ad2",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "taskId": "6b00058de4b049946b85c42c",
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "started": {
+      "id": "6b0007f0e4b071ac0169e723",
+      "createdTime": "2026-11-20T08:42:24+0000"
+    },
+    "delivered": {
+      "id": "6b000bd0e4b0ef7c684935b3",
+      "createdTime": "2026-11-20T08:58:56+0000",
+      "title": "T731 离线架构交付完成（25bd810d，docs/architecture-T731-v1.md / architecture-T731-checklist-v1.json）。SDK 26.0.0.38 的 VK_OHOS_surface/ARM64 链接已核，目标 935F 真机能力待证。用 T728/T729 实际 SPLIT 字节做了离线接口探针，6 compute+2 graphics 可生成 Vulkan 1.1 SPIR-V，源最大 48,855B≤49,152B。方案先 P0/P1/BOOT，再用同一 G13 非零输入/oracle、原角色与同步取得首根同 token 的真实 XComponent Present，独立度量 pipeline、缓存与 WSI 安全退役。T730-v2 的 G13_COMPUTE SHA 实际是 23,834B BOOT，原阶段 compile 49.850s、link 66.635s、build 116.491s；同 binary 后次加载/反射有窄证，缺暖新进程/全角色证据。当前 INIT_ERROR_27、bootReadyNs=0，优先核 GLES 初始化尾与原 FP32 谓词；Vulkan 保留做同机对照，未选后端。原设备退出原因保未知。不使用真机。"
+    }
+  }
+}
