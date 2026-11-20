@@ -20,7 +20,7 @@ inline constexpr char kLinkConfig[] =
     "COMPUTE|SEPARABLE=0|EXPLICIT_GLSL_BINDINGS|NO_PRELINK_ATTRIBUTE_BINDINGS";
 struct Pending {
   std::string key, role, shader, layout, environment, route, log, shaderLog,
-      cacheLog;
+      cacheLog, loadedBinarySHA;
   uint64_t begin = 0, compiled = 0, compileBegin = 0, compileEnd = 0,
            linkBegin = 0, linkEnd = 0, loadBegin = 0, loadEnd = 0,
            reflectBegin = 0, reflectEnd = 0, prepareBegin = 0, prepareEnd = 0,
@@ -284,6 +284,8 @@ inline bool Build(uint32_t object, const char *source,
         Receipt(p, "LOAD_CHECKED", a);
         if (good && !p.cacheError) {
           p.route = "BINARY_LOAD";
+          if (object == 13)
+            p.loadedBinarySHA = Hash(a->bytes.data(), a->bytes.size());
           p.compiled = Stamp();
           if (pending.size() >= 32)
             pending.erase(pending.begin());

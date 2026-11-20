@@ -617,12 +617,16 @@ bool Transport::CopyBuffer(GLuint b, uint32_t *dest, size_t words,
     else if (raw && !firstGl_)
       firstGl_ = raw;
   };
+  const auto stage = [&](const char *value) {
+    if (!diagnosticGl)
+      copyStage_ = value;
+  };
   glBindBuffer(GL_COPY_READ_BUFFER, b);
   void *p = glMapBufferRange(GL_COPY_READ_BUFFER,
                              GLintptr(wordOffset * sizeof(uint32_t)),
                              GLsizeiptr(words * sizeof(uint32_t)), GL_MAP_READ_BIT);
   if (!p) {
-    copyStage_ = "MAP_FAILED";
+    stage("MAP_FAILED");
     observe(glGetError());
     return false;
   }
@@ -631,11 +635,11 @@ bool Transport::CopyBuffer(GLuint b, uint32_t *dest, size_t words,
   auto e = glGetError();
   observe(e);
   if (!ok)
-    copyStage_ = "UNMAP_FAILED";
+    stage("UNMAP_FAILED");
   else if (e)
-    copyStage_ = "COPY_GL_ERROR";
+    stage("COPY_GL_ERROR");
   else
-    copyStage_ = "COPIED";
+    stage("COPIED");
   return ok && !e;
 }
 uint32_t Transport::Poll(Completion &out) {
@@ -644,14 +648,19 @@ uint32_t Transport::Poll(Completion &out) {
   if (!fence_)
     return 34;
   GLenum s = glClientWaitSync(fence_, 0, 0);
-  if (pass_ == SIZE_MAX)
+  if (pass_ == SIZE_MAX && s != GL_WAIT_FAILED)
     InitStageEvent("INIT_FENCE_POLL", "EXIT", 0, -1, nullptr, -1, s);
   if (s == GL_TIMEOUT_EXPIRED)
     return 34;
+  const bool boot = pass_ == SIZE_MAX;
+  const auto fenceHandle = boot ? reinterpret_cast<uintptr_t>(fence_) : 0;
   if (s == GL_WAIT_FAILED) {
     auto e = glGetError();
     if (!firstGl_)
       firstGl_ = e;
+    if (boot)
+      InitStageEvent("INIT_FENCE_POLL", "EXIT", 0, e, PipelineRoles()[0].sha,
+                     eglGetError(), s);
     return 10;
   }
   glDeleteSync(fence_);
@@ -660,32 +669,75 @@ uint32_t Transport::Poll(Completion &out) {
     aborted_ = false;
     return 11;
   }
-  if (pass_ == SIZE_MAX) {
-    Completion cold{};
+  if (boot) {
     BootReadback sample;
     sample.sourceSHA = PipelineRoles()[0].sha;
     sample.fence = s;
-    if (!CopyBuffer(ctrl_, cold.data(), cold.size(), kColdTailWordOffset)) {
+    sample.fenceHandle = fenceHandle;
+    sample.program = programs_[0].id;
+    sample.ctrl = ctrl_;
+    sample.work = work_;
+    sample.ctrlTailByteOffset = kColdTailWordOffset * sizeof(uint32_t);
+    sample.workByteOffset = (size_t(profile_->work[19].offset) + 512) * sizeof(uint32_t);
+    sample.firstEgl = eglGetError();
+    const auto record = programcache::qualified.find(sample.program);
+    if (record != programcache::qualified.end()) {
+      const auto &facts = record->second;
+      if (facts.context == context_ && facts.owner == std::this_thread::get_id() &&
+          facts.generation == programGeneration_ && facts.shader == sample.sourceSHA) {
+        sample.route = facts.route;
+        sample.cacheKey = facts.key;
+        sample.binarySHA = facts.loadedBinarySHA;
+        sample.environmentSHA = facts.environment;
+      }
+    }
+    const auto finishBoot = [&](const char *rejectStage, uint32_t result) {
+      sample.result = result;
+      sample.effectiveRejectStage = rejectStage;
       sample.firstGl = firstGl_;
       InitObservation().RecordBootReadback(sample);
-      return 10;
-    }
+      InitStageEvent("BOOT_EFFECTIVE_TERMINAL", "EXIT", result, sample.firstGl,
+                     sample.sourceSHA, sample.firstEgl, sample.fence,
+                     sample.controlRead ? int64_t(sample.seal) : -1,
+                     sample.controlRead ? int64_t(sample.tailError) : -1);
+      return result;
+    };
+    Completion cold{};
+    if (!CopyBuffer(ctrl_, cold.data(), cold.size(), kColdTailWordOffset))
+      return finishBoot("CTRL_READ", 10);
     pass_ = 0;
     sample.controlRead = true;
     sample.seal = cold[255];
     sample.tailError = cold[7];
-    sample.firstGl = firstGl_;
     std::copy_n(cold.data() + 200, sample.fp32.size(), sample.fp32.data());
     InitStageEvent("INIT_TAIL_VALID", "EXIT", 65, firstGl_, sample.sourceSHA,
                    -1, s, sample.seal, sample.tailError);
     // Cold-only words, observed after the existing init fence. Both independent
     // runs use the same linked compute program and the same uploaded operands.
-    const bool observed =
-        cold[207] == kExpectedFp32.back() && cold[215] == kExpectedFp32.back();
+    for (size_t replay = 0; replay < sample.present.size(); ++replay) {
+      const auto *words = cold.data() + 200 + replay * kExpectedFp32.size();
+      sample.present[replay] = words[7] == kExpectedFp32.back();
+      for (size_t i = 0; i < kExpectedFp32.size(); ++i)
+        if (words[i] != kExpectedFp32[i])
+          sample.mismatches[replay] |= 1u << i;
+    }
+    const bool observed = sample.present[0] && sample.present[1];
     const bool qualified =
         observed && !firstGl_ && QualifiedProbe(cold.data() + 200);
     const bool auditFailed = sample.seal != kSeal || sample.tailError != 0;
-    if ((auditFailed || !qualified) && sample.seal == kSeal &&
+    sample.op65State = sample.seal != kSeal ? "UNSEALED" :
+                       sample.tailError ? "REJECTED" : "QUALIFIED";
+    sample.op66State = !observed ? "MISSING_PROBE_SEAL" :
+                       qualified ? "QUALIFIED" : "REJECTED";
+    sample.qualified = qualified;
+    GLenum raw = GL_NO_ERROR;
+    sample.op65InputsRead = CopyBuffer(ctrl_, sample.op65Inputs.data(),
+                                       sample.op65Inputs.size(), 744, &raw);
+    sample.op65InputGl = raw;
+    sample.op66InputsRead = CopyBuffer(ctrl_, sample.op66Inputs.data(),
+                                       sample.op66Inputs.size(), 18648, &raw);
+    sample.op66InputGl = raw;
+    if (sample.seal == kSeal &&
         profile_->work[19].words >= 512 + 60) {
       std::array<uint32_t, 60> math{};
       GLenum diagnosticGl = GL_NO_ERROR;
@@ -697,12 +749,11 @@ uint32_t Transport::Poll(Completion &out) {
         for (size_t i = 0; i < sample.math.size(); ++i)
           sample.math[i] = math[35 + i * 6];
     }
-    InitObservation().RecordBootReadback(sample);
     InitObservation().Stage("INIT_FP32_RESULT", "EXIT", 66, firstGl_,
                             sample.sourceSHA, -1, s, cold[255], cold[7], 0,
                             observed ? int32_t(qualified) : -1);
     if (auditFailed)
-      return cold[7] ? cold[7] : 28;
+      return finishBoot("OP65", cold[7] ? cold[7] : 28);
     std::ostringstream proof;
     proof << ",\"fp32Source\":\"SAME_PROGRAM_COLD_COMPUTE\",\"fp32Words\":[";
     for (size_t i = 200; i < 216; ++i) {
@@ -721,13 +772,13 @@ uint32_t Transport::Poll(Completion &out) {
                            "\"");
     capability.insert(capability.size() - 1, proof.str());
     if (capability.size() > 1984)
-      return 30;
+      return finishBoot("CAPABILITY_RECEIPT", 30);
     capabilities_ = std::move(capability);
     if (!qualified)
-      return firstGl_ ? 29 : 27;
+      return finishBoot("OP66", firstGl_ ? 29 : 27);
     InitObservation().State("INIT_TAIL_VALID");
     ready_ = true;
-    return 0;
+    return finishBoot("NONE", 0);
   }
   if (!CopyBuffer(ctrl_, out.data(), out.size(), kColdTailWordOffset))
     return 10;

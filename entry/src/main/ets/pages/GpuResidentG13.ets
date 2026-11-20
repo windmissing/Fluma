@@ -6,7 +6,9 @@ import { GpuG13Input } from '../physics/GpuG13Input';
 import { common } from '@kit.AbilityKit';
 interface G13Scope { session: string; }
 interface G13Status { scope: G13Scope; native: G13Native; initialization: G13Initialization; }
-interface G13Initialization { currentLifecycle: string; firstConfigFailure: string; queuedTicket: string; }
+interface G13BootScope { attempt: string; }
+interface G13BootQualification { effectiveRejectStage: string; result: number; scope: G13BootScope; }
+interface G13Initialization { currentLifecycle: string; firstConfigFailure: string; queuedTicket: string; bootQualification?: G13BootQualification | null; }
 interface G13SessionReply { state: string; }
 interface G13Native { commit: string; fieldToken: string; coldToken: string; }
 class G13Frame extends FrameCallback {
@@ -61,7 +63,13 @@ struct GpuResidentG13 {
     try { const status = JSON.parse(native.g13Status()) as G13Status;
       this.initStatus = JSON.stringify(status.initialization);
       this.ready = status.initialization.currentLifecycle === 'COMPUTE_READY';
-      if (status.initialization.firstConfigFailure.length > 0) this.firstConfigFailure = status.initialization.firstConfigFailure;
+      const boot: G13BootQualification | null = status.initialization.bootQualification ?? null;
+      if (boot !== null && boot.scope.attempt === status.initialization.queuedTicket) {
+        this.firstConfigFailure = boot.result === 0 ? '' :
+          'BOOT ' + boot.effectiveRejectStage + ' · ' + String(boot.result);
+      } else {
+        this.firstConfigFailure = status.initialization.firstConfigFailure;
+      }
     } catch (error) { this.ready = false; this.initStatus = 'INIT_STATUS_REJECTED ' + String(error); }
   }
   aboutToAppear(): void { this.statusTimer = setInterval(() => { this.sampleInit(); }, 250); }

@@ -64,14 +64,16 @@ def read_build(project, arm, validator, readelf, out):
             'kind': 'compute' if compute else 'graphics',
             'sha256': role['sha256'], 'bytes': role['bytes'],
             'opcodes': role.get('opcodes', []), 'reworked': reworked,
+            'sourceSHA256': digest(disk),
+            'sourceNewlines': 'CPP_TRANSLATION_LF' if source != disk else 'AS_IS',
             'dependencies': role.get('dependencies'),
             'ssboBindings': role.get('ssboBindings'),
             'requiredUniforms': role.get('requiredUniforms', []),
             'optionalUniforms': role.get('optionalUniforms', []),
             'staticUniforms': [line.split(':',1)[0] for line in uniforms.splitlines() if ':' in line],
         }
-        if source != disk:
-            entries[name].update(sourceNewlines='CPP_TRANSLATION_LF', sourceSHA256=digest(disk))
+        if compute:
+            entries[name]['qualificationOpcode'] = role['qualificationOpcode']
     parent_shader = (assets / 'pipeline_assembled.comp').read_bytes()
     if arm == 'SPLIT':
         assert parent_shader + b'\0' not in packaged
@@ -99,7 +101,7 @@ def main():
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     evidence = args.out.resolve()
-    tmp = args.monolith.parent / 't728-receipt-artifacts'
+    tmp = args.monolith.parent / (args.split.name + '-receipt-artifacts')
     tmp.mkdir(exist_ok=True)
     ma, mono = read_build(args.monolith.resolve(), 'MONOLITH', args.validator.resolve(),
                           args.readelf.resolve(), tmp)

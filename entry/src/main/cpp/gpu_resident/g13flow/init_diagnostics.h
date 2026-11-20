@@ -1,6 +1,7 @@
 #pragma once
 #include "../program_cache/mapped_build_id.h"
 #include "../program_cache/program_observer.h"
+#include "boot_qualification.h"
 #include "wire.h"
 #include <GLES3/gl31.h>
 #include <cstdio>
@@ -59,15 +60,6 @@ struct InitPayload {
   std::array<uint8_t, 4096 - sizeof(InitControl)> pad{};
 };
 static_assert(sizeof(InitPayload) == 32768);
-struct BootReadback {
-  bool controlRead = false, mathRead = false;
-  uint32_t seal = 0, tailError = 0;
-  GLenum fence = 0, firstGl = 0;
-  int64_t mathReadGl = -1;
-  const char *sourceSHA = "";
-  std::array<uint32_t, 16> fp32{};
-  std::array<uint32_t, 5> math{};
-};
 inline void LogFirstFrameStage(const InitStage &row, const ConfigTicket &ticket) {
   const std::string_view phase(row.phase);
   if (phase != "PROGRAM_BUILD" && phase != "SHADER_COMPILE" &&
@@ -78,6 +70,7 @@ inline void LogFirstFrameStage(const InitStage &row, const ConfigTicket &ticket)
       phase != "CONFIG_CANCELLED" && phase != "BOOT_READY" &&
       phase != "ROLE_FP32" && phase != "CONFIG_RECEIVED" &&
       phase != "INIT_TAIL_VALID" && phase != "INIT_FP32_RESULT" &&
+      phase != "BOOT_EFFECTIVE_TERMINAL" &&
       !(phase == "INIT_FENCE_POLL" && row.fence != GL_TIMEOUT_EXPIRED))
     return;
   static const struct Module {
@@ -105,6 +98,7 @@ class InitDiagnostic {
   InitPayload payload_{};
   uint64_t requestedNs_ = 0, bootReadyNs_ = 0, finishedNs_ = 0;
   std::string bootReadback_ = "null";
+  std::string bootQualification_ = "null";
 
 public:
   void Queued(const ConfigTicket &ticket, uint64_t received) {
@@ -123,8 +117,10 @@ public:
   }
   void Ticket(const ConfigTicket &t) {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (payload_.control.ticket.attempt != t.attempt)
+    if (payload_.control.ticket.attempt != t.attempt) {
       bootReadback_ = "null";
+      bootQualification_ = "null";
+    }
     payload_.control.ticket = t;
   }
   void Environment(void *w, void *c) {
@@ -147,34 +143,87 @@ public:
     }
   }
   void RecordBootReadback(const BootReadback &sample) {
+    const auto *anchor = reinterpret_cast<const void *>(&PipelineSha);
+    static const auto module = g9rx::ReadLoadedIdentity(anchor);
+    static const auto processStart = ProcessStartTicks();
+    char mappedBuild[129]{};
+    BuildIdForAddress(anchor, mappedBuild);
     std::lock_guard<std::mutex> lock(mutex_);
-    const auto &ticket = payload_.control.ticket;
+    const auto &control = payload_.control;
+    const auto &ticket = control.ticket;
+    const auto stamp = Now();
     std::ostringstream out;
     out << "{\"schema\":\"G13BootReadbackV1\",\"boot\":\"" << ticket.boot
         << "\",\"attempt\":\"" << ticket.attempt << "\",\"queue\":\""
         << ticket.queueSerial << "\",\"run\":\"" << ticket.proposed.run
         << "\",\"context\":\"" << ticket.proposed.context << "\",\"ns\":\""
-        << Now() << "\",\"sourceSHA\":" << Quote(sample.sourceSHA)
+        << stamp << "\",\"sourceSHA\":" << Quote(sample.sourceSHA)
         << ",\"fence\":" << sample.fence << ",\"firstGl\":" << sample.firstGl
         << ",\"ctrl255\":" << (sample.controlRead ? int64_t(sample.seal) : -1)
         << ",\"ctrl7\":" << (sample.controlRead ? int64_t(sample.tailError) : -1)
         << ",\"mathReadGl\":" << sample.mathReadGl;
-    const auto words = [&out](const char *name, const auto &raw, bool available) {
-      out << ",\"" << name << "\":[";
-      if (available)
-        for (size_t i = 0; i < raw.size(); ++i) {
-          if (i)
-            out << ',';
-          out << raw[i];
-        }
-      out << ']';
-    };
-    words("ctrl200To215", sample.fp32, sample.controlRead);
-    words("work65_35_41_47_53_59", sample.math, sample.mathRead);
+    BootWords(out, "ctrl200To215", sample.fp32, sample.controlRead);
+    BootWords(out, "work65_35_41_47_53_59", sample.math, sample.mathRead);
     out << '}';
     bootReadback_ = out.str();
     OH_LOG_Print(LOG_APP, LOG_INFO, 0xE720, "G13Boot", "%{public}s",
                  bootReadback_.c_str());
+
+    std::ostringstream key;
+    key << "\"boot\":\"" << ticket.boot << "\",\"attempt\":\"" << ticket.attempt
+        << "\",\"queue\":\"" << ticket.queueSerial << "\",\"ns\":\"" << stamp << '"';
+    const auto scoped = key.str();
+    std::ostringstream scope, program, op65, op66;
+    scope << '{' << scoped << ",\"run\":\"" << ticket.proposed.run
+          << "\",\"context\":\"" << ticket.proposed.context << "\",\"surface\":\""
+          << ticket.proposed.surface << "\",\"eglContext\":\"" << control.context
+          << "\",\"pid\":" << getpid() << ",\"ownerTid\":" << syscall(SYS_gettid)
+          << ",\"processStartTicks\":" << Quote(processStart)
+          << ",\"mappedBuildId\":" << Quote(mappedBuild)
+          << ",\"program\":" << sample.program << ",\"ctrl\":" << sample.ctrl
+          << ",\"work\":" << sample.work << ",\"fenceHandle\":\"" << sample.fenceHandle
+          << "\",\"fence\":" << sample.fence << ",\"firstGl\":" << sample.firstGl
+          << ",\"rawEgl\":" << sample.firstEgl << ",\"configRawSHA\":"
+          << Quote(Hex(ticket.configRawSHA.data())) << ",\"seedReceiptSHA\":"
+          << Quote(Hex(ticket.seedReceiptSHA.data()))
+          << ",\"effectiveRejectStage\":" << Quote(sample.effectiveRejectStage)
+          << ",\"result\":" << sample.result << '}';
+    program << '{' << scoped << ",\"sourceSHA\":" << Quote(sample.sourceSHA)
+            << ",\"route\":" << Quote(sample.route) << ",\"cacheKey\":"
+            << Quote(sample.cacheKey) << ",\"binarySHA\":" << Quote(sample.binarySHA)
+            << ",\"environmentSHA\":" << Quote(sample.environmentSHA)
+            << ",\"loadedModule\":" << module.receipt << '}';
+    op65 << '{' << scoped << ",\"state\":" << Quote(sample.op65State)
+         << ",\"ctrl255\":" << (sample.controlRead ? int64_t(sample.seal) : -1)
+         << ",\"ctrl7\":" << (sample.controlRead ? int64_t(sample.tailError) : -1)
+         << ",\"ctrlTailByteOffset\":" << sample.ctrlTailByteOffset
+         << ",\"workByteOffset\":" << sample.workByteOffset
+         << ",\"mathReadGl\":" << sample.mathReadGl
+         << ",\"inputReadGl\":" << sample.op65InputGl;
+    BootWords(op65, "work35_41_47_53_59", sample.math, sample.mathRead);
+    BootWords(op65, "input744To747", sample.op65Inputs, sample.op65InputsRead);
+    op65 << '}';
+    op66 << std::boolalpha << '{' << scoped << ",\"state\":" << Quote(sample.op66State)
+         << ",\"qualified\":" << sample.qualified << ",\"presence\":["
+         << sample.present[0] << ',' << sample.present[1] << "],\"inputReadGl\":"
+         << sample.op66InputGl;
+    BootWords(op66, "mismatchMasks", sample.mismatches, sample.controlRead);
+    BootWords(op66, "ctrl200To215", sample.fp32, sample.controlRead);
+    BootWords(op66, "input18648To18652", sample.op66Inputs, sample.op66InputsRead);
+    op66 << '}';
+    bootQualification_ = "{\"schema\":\"G13BootQualificationV2\",\"effectiveRejectStage\":" +
+        Quote(sample.effectiveRejectStage) + ",\"result\":" +
+        std::to_string(sample.result) + ",\"scope\":" + scope.str() +
+        ",\"program\":" + program.str() + ",\"op65\":" + op65.str() +
+        ",\"op66\":" + op66.str() + '}';
+    OH_LOG_Print(LOG_APP, LOG_INFO, 0xE720, "G13BootScope", "%{public}s",
+                 scope.str().c_str());
+    OH_LOG_Print(LOG_APP, LOG_INFO, 0xE720, "G13BootProgram", "%{public}s",
+                 program.str().c_str());
+    OH_LOG_Print(LOG_APP, LOG_INFO, 0xE720, "G13BootOp65", "%{public}s",
+                 op65.str().c_str());
+    OH_LOG_Print(LOG_APP, LOG_INFO, 0xE720, "G13BootOp66", "%{public}s",
+                 op66.str().c_str());
   }
   void Decode(const InitDecode &record, bool valid) {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -263,6 +312,7 @@ public:
            ",\"dropped\":" + std::to_string(c.dropped) +
            ",\"truncated\":" + std::to_string(c.truncated) +
            ",\"bootReadback\":" + bootReadback_ +
+           ",\"bootQualification\":" + bootQualification_ +
            ",\"unobservedRaw\":-1}";
   }
   std::string Page(uint64_t attempt, uint32_t page) const {
