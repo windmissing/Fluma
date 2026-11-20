@@ -1,0 +1,27 @@
+{
+  "schema": "T747_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "2fa87bae703726d688225e195ef4a6db2c0a15e6",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b00d78ee4b0890c8a9b6102",
+    "started": {
+      "id": "6b00d822e4b011b710b9d44f",
+      "createdTime": "2026-11-20T23:30:42+0000"
+    },
+    "delivered": {
+      "id": "6b00d9dde4b011b710b9e3e9",
+      "createdTime": "2026-11-20T23:38:05+0000",
+      "title": "T747 离线架构已交（2fa87bae，docs/architecture-T747-v1.md，附原字向量、可复算证据和独立 probe）。纯 U32 add/sub/mul/带二进制尺度的整数转 FP32，44 条期望原字经精确有理数复核。GLES 4078 B 通过静态反射，Vulkan 4075 B GLSL/15624 B SPIR-V 通过校验。现有四个主角色直接拼 3198 B 核心会超 48 KiB，接续须按原闭包重分。正常数快路按逐算子范围证明、实际 RTE 和禁收缩资格，对消/下溢及不确定域走 U32。按 T744，仅当 935F 仍必需且进入验证计划，先双轮实机原字及跨程序回读，再做真实 OP_VISC_BLOCK 切片，按原 250 ms 根门及有效 30 FPS 判断是否扩完整研究变体。保 T741/T628 原门。当前未选后端、未接产品、未用真机。T738 v5 的 DM 证据仍属 BOOT，G20 4/12≈33%。"
+    }
+  },
+  "statusRow": {
+    "before": "| T747 | 【T747·目标20 G13位精确GPU算子可行性架构】architect | architect | P5 | 进行中 | 6b00d78ee4b0890c8a9b6102 |",
+    "after": "| T747 | 【T747·目标20 G13位精确GPU算子可行性架构】architect | architect | P5 | 结束待验收 | 6b00d78ee4b0890c8a9b6102 |"
+  },
+  "beforeSha256": "320fadf839145a99d950da63bd908a672d68a7894dd80ae3af0625a24c632765",
+  "afterSha256": "1bbe360648071c91e987d40c301368172116dc7853cce60f2133edad5d7aafba",
+  "evidenceSha256": "33c1dcef2702538db88f21a11fdf81ad295d0b0891acc9835e620a74fbd536e1"
+}
