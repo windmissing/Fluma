@@ -1,0 +1,71 @@
+{
+  "schema": "T705_M2_LINK_CENSORING_ROUTING_V1",
+  "date": "2026-11-20",
+  "task": "T705",
+  "document": "docs/architecture-T705-v1.md",
+  "evidence": "docs/analysis-T702-T705-evidence-v1.json",
+  "observations": [
+    {
+      "report": "T591-v4",
+      "role": "SOURCE_V3",
+      "object": 0,
+      "handle": 2,
+      "api": "glLinkProgram",
+      "boundary": "API_ENTER_OPEN",
+      "minimumNs": 32233489688
+    },
+    {
+      "report": "T590-v3",
+      "role": "QUANTUM_FINAL_V3",
+      "object": 2,
+      "handle": 4,
+      "api": "glLinkProgram",
+      "boundary": "API_ENTER_OPEN",
+      "minimumNs": 20567682344
+    },
+    {
+      "report": "T591-v3",
+      "role": "SOURCE_V3",
+      "object": 0,
+      "handle": 2,
+      "api": "NOT_CAPTURED",
+      "boundary": "COMPOSITE_LINK_OPEN",
+      "minimumNs": 40140833750
+    },
+    {
+      "report": "T590-v3",
+      "role": "SOURCE_V3",
+      "object": 0,
+      "handle": 2,
+      "api": "COMPOSITE",
+      "boundary": "LINK_RETURNED_SUCCESS",
+      "durationNs": 73431850156
+    }
+  ],
+  "exactApiOpenAcrossRoles": 2,
+  "sameRoleRepeatedExactApiEstablished": false,
+  "permanentDeadlockEstablished": false,
+  "loadedDeviceIdentity": "NOT_CAPTURED",
+  "directReuse": [
+    "T694",
+    "T676",
+    "T663_native",
+    "T676-original-a signed 038d1b04"
+  ],
+  "next": "recover original same-process chain or T694 A true M2 page pre-arm; route T696 source/cache comparisons separately",
+  "owners": {
+    "offline": "tester",
+    "device": "effector",
+    "failureAttribution": "architect"
+  },
+  "limits": {
+    "seconds": 60,
+    "totalQueries": 64,
+    "rowBytes": 16384,
+    "sliceBytes": 8192,
+    "directoryBytes": 1048576
+  },
+  "actualTerminal": "same-scope sealed=true and nativeEndNs>0",
+  "deviceUsed": false,
+  "productPASS": false
+}

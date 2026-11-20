@@ -1,0 +1,1050 @@
+{
+  "schema": "T702_T705_ORIGINAL_BYTE_ATTRIBUTION_V1",
+  "deviceUsed": false,
+  "T702": {
+    "dm": {
+      "executionOriginal": {
+        "path": "test/reports/t491/t569b/dm20-execution.jsonl",
+        "bytes": 225,
+        "sha256": "ef24314bad75f9a404198993364ca307a27912d36ecdf308df989ebd9e5b3723"
+      },
+      "execution": [
+        {
+          "revision": "T549_GPU_EXECUTION_V1",
+          "evidenceOrigin": "ACTUAL_GL_EXECUTION",
+          "physicsVerdict": "TESTER_OWNED",
+          "renderer": "Maleoon 935F",
+          "k": 192,
+          "residentPayloadBytes": 55339648,
+          "fullArenaBytes": 0
+        },
+        {
+          "stage": "CREATE",
+          "result": 8
+        }
+      ],
+      "reportedDeviceSignature": "0:1728 S0022 Symbol 'slot' redeclared",
+      "signatureReceipt": {
+        "path": "test/reports/t491/t569b/v2-dm20.json",
+        "bytes": 1477,
+        "sha256": "57825ba3a023435b89d32761ff554813baf06833c9343edb01e8c1859bf72243"
+      },
+      "loadedDeviceIdentity": "NOT_CAPTURED",
+      "standaloneLocal": {
+        "expectedSha256": "db325543181051bb08b2b15a73f5227cffd4f78ce8c78b317e27410332df0e70",
+        "actualSha256": "7c8284b9298a675a31e8c128a9dcdf27ec0cedf8cdc7662584c60ae039620bad",
+        "expectedBuildId": "ee6dead096651e4b1efe70a301f115ebc5712a47",
+        "actualBuildId": "bf832f6f3d4f777d9d3d1ebf7a5c765c9464b827"
+      },
+      "source": {
+        "path": ".codex/local-test/t670-dm/entry/.cxx/default/default/debug/arm64-v8a/dm_native/dm_assets/pipeline.comp",
+        "bytes": 147430,
+        "sha256": "c04444580c530fb9c8d7ca1ec75dd2e2d760ec4f2934779e486d9aa24f34fc5a",
+        "normalizedSha256": "a85f6da894d361f2013f878c313cd4a7dd4ed2d30131c31a92ac7d175c980bf4",
+        "scopeExcerpt": {
+          "1723": "bool g9Capture(){",
+          "1724": " // Deterministic order is independent of slot allocation and invocation order.",
+          "1725": " for(uint slot=0u;slot<uK;++slot)W[uContacts+slot*16u+15u]=0u;",
+          "1726": " for(uint ordinal=0u;ordinal<uK;++ordinal){",
+          "1727": "  uint best=uK;for(uint slot=0u;slot<uK;++slot)if(g9Packet(slot,0u)!=0u&&W[uContacts+slot*16u+9u]==4u&&W[uContacts+slot*16u+15u]==0u&&(best==uK||g9CaptureLess(slot,best)))best=slot;",
+          "1728": "  if(best==uK)break;uint slot=best,c=g9Packet(slot,5u),mass=g9Packet(slot,0u),y2=g9Packet(slot,2u),surface=2u*g9Material(c)+mass;W[uContacts+slot*16u+15u]=1u;"
+        }
+      },
+      "packages": [
+        {
+          "name": "T569-dmfix",
+          "signedSha256": "515dbbc77bb8580b1b201948d526aabb013b35139331ff7fc6c48f8699b6f2af",
+          "library": {
+            "entry": "libs/arm64-v8a/libgrs_dm_t647.so",
+            "bytes": 1340392,
+            "sha256": "f63f4cc9e6f384f0516b2e80d28ff0775199135abed92d853607788d3e1b5785",
+            "buildId": "f30835f4667cf98c5030a85fc714eb2c72b694ca"
+          },
+          "containsExactNormalizedSource": true
+        },
+        {
+          "name": "T670-dm-final",
+          "signedSha256": "79769acc921d42f0ea37aebab4de88c32e064da494de9137af82588e4e2b24e1",
+          "library": {
+            "entry": "libs/arm64-v8a/libgrs_dm_t647.so",
+            "bytes": 1340392,
+            "sha256": "f63f4cc9e6f384f0516b2e80d28ff0775199135abed92d853607788d3e1b5785",
+            "buildId": "f30835f4667cf98c5030a85fc714eb2c72b694ca"
+          },
+          "containsExactNormalizedSource": true
+        }
+      ],
+      "localInputsNotProvenLoaded": {
+        "dm20-input": {
+          "files": [
+            {
+              "path": "test/reports/t491/t569b/dm20-input/cold-credit.u32",
+              "bytes": 8,
+              "sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20-input/commands.u32",
+              "bytes": 768,
+              "sha256": "97f9994087f834e6e9fb45cbdc214778ba08e44d775767952bf17c67acde07b8"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20-input/config.u32",
+              "bytes": 256,
+              "sha256": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20-input/fixture.json",
+              "bytes": 1262,
+              "sha256": "0693f8f4f0b072f0c0833879dd78584281e7c199a4dbc348061cca4185c6ffc6"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20-input/identity.u32",
+              "bytes": 72,
+              "sha256": "6ff8e0f3f106865a95243fe1c175fc47af138cb5ad07631de00c938b08650cb5"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20-input/quota.u32",
+              "bytes": 1024,
+              "sha256": "26f2820b663e97a1eaaecbc45289cd639e591453f3445748bb3853516d5584c0"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20-input/seed.u32",
+              "bytes": 591872,
+              "sha256": "cd62ff4d9963146ec22c8eaeac848784fb2ad500ef684a9f82ff4ae55633c02d"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20-input/settings.u32",
+              "bytes": 4,
+              "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+            }
+          ],
+          "localManifestMismatches": []
+        },
+        "dm20b-input": {
+          "files": [
+            {
+              "path": "test/reports/t491/t569b/dm20b-input/cold-credit.u32",
+              "bytes": 8,
+              "sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20b-input/commands.u32",
+              "bytes": 768,
+              "sha256": "c4877278b77e2c6eb03e43e8355b40bc5c903373000a15ab5a8e75d7141055fc"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20b-input/config.u32",
+              "bytes": 256,
+              "sha256": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20b-input/fixture.json",
+              "bytes": 1262,
+              "sha256": "e8324e33a5b628e656b48098677d162a037073a3f93bdda2cbe139c810c8367d"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20b-input/identity.u32",
+              "bytes": 72,
+              "sha256": "6ff8e0f3f106865a95243fe1c175fc47af138cb5ad07631de00c938b08650cb5"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20b-input/quota.u32",
+              "bytes": 1024,
+              "sha256": "26f2820b663e97a1eaaecbc45289cd639e591453f3445748bb3853516d5584c0"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20b-input/seed-49152.u32",
+              "bytes": 37584,
+              "sha256": "8e4a05af9bb753069c3ef2b366cc4bbb521660011f4b834a50ee96b8a33d012c"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20b-input/seed.u32",
+              "bytes": 37584,
+              "sha256": "8e4a05af9bb753069c3ef2b366cc4bbb521660011f4b834a50ee96b8a33d012c"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20b-input/settings.u32",
+              "bytes": 4,
+              "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+            }
+          ],
+          "localManifestMismatches": [
+            "seed.u32"
+          ]
+        },
+        "dm20c-input": {
+          "files": [
+            {
+              "path": "test/reports/t491/t569b/dm20c-input/cold-credit.u32",
+              "bytes": 8,
+              "sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20c-input/commands.u32",
+              "bytes": 768,
+              "sha256": "97f9994087f834e6e9fb45cbdc214778ba08e44d775767952bf17c67acde07b8"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20c-input/config.u32",
+              "bytes": 256,
+              "sha256": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20c-input/fixture.json",
+              "bytes": 1262,
+              "sha256": "0693f8f4f0b072f0c0833879dd78584281e7c199a4dbc348061cca4185c6ffc6"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20c-input/identity.u32",
+              "bytes": 72,
+              "sha256": "6ff8e0f3f106865a95243fe1c175fc47af138cb5ad07631de00c938b08650cb5"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20c-input/quota.u32",
+              "bytes": 1024,
+              "sha256": "26f2820b663e97a1eaaecbc45289cd639e591453f3445748bb3853516d5584c0"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20c-input/seed.u32",
+              "bytes": 591872,
+              "sha256": "cd62ff4d9963146ec22c8eaeac848784fb2ad500ef684a9f82ff4ae55633c02d"
+            },
+            {
+              "path": "test/reports/t491/t569b/dm20c-input/settings.u32",
+              "bytes": 4,
+              "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+            }
+          ],
+          "localManifestMismatches": []
+        }
+      },
+      "otherArms": {
+        "DM22": "NOT_RUN",
+        "DM29": "NOT_RUN",
+        "DM31": "NOT_RUN"
+      }
+    },
+    "v5": {
+      "firstOriginal": {
+        "path": "test/reports/t491/t594b/v5-m3b-first.json",
+        "bytes": 213,
+        "sha256": "74ba06716c8772e12f02a540a04e2f4a02d8e1a907b40752a93e5db8e3aa4c75"
+      },
+      "lastOriginal": {
+        "path": "test/reports/t491/t594b/v5-m3b-last.json",
+        "bytes": 2880,
+        "sha256": "bf7a1b7c509cbc089ddb623a1d10fb64248a3078ae0489d202493bb926aadc63"
+      },
+      "repeatedLast": {
+        "path": "test/reports/t491/t594b/v5-m3b-last2.json",
+        "bytes": 2880,
+        "sha256": "bf7a1b7c509cbc089ddb623a1d10fb64248a3078ae0489d202493bb926aadc63"
+      },
+      "configureRequest": {
+        "uiRequest": "2",
+        "route": "M3B",
+        "api": "m5Configure",
+        "schema": "M5_CONFIG32_V5",
+        "type": "Uint32Array",
+        "length": 32,
+        "byteOffset": 0,
+        "byteLength": 128,
+        "backingBytes": 128,
+        "words": [
+          5,
+          31,
+          192,
+          64,
+          7680,
+          8388608,
+          1048576,
+          65536,
+          1048576,
+          0,
+          0,
+          120,
+          524288,
+          1048576,
+          1,
+          0,
+          0,
+          65536,
+          1048576,
+          65536,
+          65536,
+          1048576,
+          1048576,
+          1,
+          354263650,
+          732052945,
+          2182321239,
+          1119917281,
+          158966333,
+          1837514072,
+          874793232,
+          2197235110
+        ]
+      },
+      "configureWordsLE_SHA256": "f2bbd14492dfb246ed9aabb2bbef16c48381760a12e0438be741c60c277a62e4",
+      "configureReply": {
+        "state": "M5_NEW_EMPTY_RUN_REQUESTED",
+        "requestTicket": "1",
+        "inputCall": {
+          "api": "m5Configure",
+          "route": "M3B",
+          "bootStamp": "331203009245315",
+          "diagGeneration": "2",
+          "attemptId": "2"
+        }
+      },
+      "configureFirstFailureScope": {
+        "revision": "T582_FIRST_FAILURE_FILE_V1",
+        "route": "M3B",
+        "currentCall": {
+          "route": "M3B",
+          "api": "m5Configure",
+          "bootStamp": "331203009245315",
+          "diagGeneration": "2",
+          "attemptId": "2"
+        },
+        "state": "NO_FIRST_FAILURE",
+        "snapshot": ""
+      },
+      "coldCapabilities": [
+        {
+          "original": {
+            "path": "test/reports/t491/t594b/cB.json",
+            "bytes": 51883,
+            "sha256": "9ff1fd768fba570834403d1b0edbe4eee1c1ec62f241a65f9e38bf395f6fd254"
+          },
+          "reply": {
+            "revision": "GPU_NAPI_ERROR_V1",
+            "ok": false,
+            "state": "REJECTED",
+            "code": "M5_NOT_READY",
+            "api": "m5ColdCapabilities",
+            "route": "M3B",
+            "bootStamp": "331203009245315",
+            "diagGeneration": "2",
+            "attemptId": "3",
+            "stage": "API_SEMANTIC",
+            "reason": "M5_NOT_READY",
+            "napiStatus": null,
+            "qualification": "NOT_EVALUATED",
+            "diagnosticRevision": "GPU_INPUT_DIAGNOSTIC_V2"
+          }
+        },
+        {
+          "original": {
+            "path": "test/reports/t491/t594b/cC.json",
+            "bytes": 51883,
+            "sha256": "ac0520ddf988b92ee5c952f613fd89ef58c822c3293d77fc13af52a294b9fe6a"
+          },
+          "reply": {
+            "revision": "GPU_NAPI_ERROR_V1",
+            "ok": false,
+            "state": "REJECTED",
+            "code": "M5_NOT_READY",
+            "api": "m5ColdCapabilities",
+            "route": "M3B",
+            "bootStamp": "331203009245315",
+            "diagGeneration": "2",
+            "attemptId": "4",
+            "stage": "API_SEMANTIC",
+            "reason": "M5_NOT_READY",
+            "napiStatus": null,
+            "qualification": "NOT_EVALUATED",
+            "diagnosticRevision": "GPU_INPUT_DIAGNOSTIC_V2"
+          }
+        },
+        {
+          "original": {
+            "path": "test/reports/t491/t594b/cD.json",
+            "bytes": 51883,
+            "sha256": "505de657c74c6bc1a76067278fdbd2ed0c1a32b810a3a1236a3a962fdfb5241d"
+          },
+          "reply": {
+            "revision": "GPU_NAPI_ERROR_V1",
+            "ok": false,
+            "state": "REJECTED",
+            "code": "M5_NOT_READY",
+            "api": "m5ColdCapabilities",
+            "route": "M3B",
+            "bootStamp": "331203009245315",
+            "diagGeneration": "2",
+            "attemptId": "5",
+            "stage": "API_SEMANTIC",
+            "reason": "M5_NOT_READY",
+            "napiStatus": null,
+            "qualification": "NOT_EVALUATED",
+            "diagnosticRevision": "GPU_INPUT_DIAGNOSTIC_V2"
+          }
+        }
+      ],
+      "bootFile": {
+        "path": "test/reports/t491/t594b/v5-boot.json",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "signedSha256": "ce9ba9af289e766a18b8c31956a512ed7ae5b0b15e4a486f304ea92548b3e10a",
+      "packageLibrary": {
+        "entry": "libs/arm64-v8a/libgrsm1.so",
+        "bytes": 3201504,
+        "sha256": "35ac238c0eb000010736eaf5d5e70917e8e28a7884d460d5832016429669b7f0",
+        "buildId": "7f31c1de559a8e10a3ee7ba7dcc8837fb732a51b"
+      },
+      "loadedDeviceIdentity": "NOT_CAPTURED",
+      "initArchive": "NOT_IN_FORMAL_HANDOFF",
+      "verdict": "REQUEST_ACCEPTED_CONTROLLER_ABSENT_AT_CAPS_QUERIES_FIRST_BLOCKER_UNKNOWN"
+    }
+  },
+  "T703": {
+    "folders": {
+      "second-off": [
+        {
+          "path": "test/reports/t496/t693-second-off/gltrace-t693-second-off.ndjson.t693.dict",
+          "bytes": 7122759,
+          "sha256": "e8ffb358f8eef38ef9a7cc4099256fef47ada1acc70fd7f2378759c9892fb7ee"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/gltrace-t693-second-off.ndjson.t693.end",
+          "bytes": 194,
+          "sha256": "71104e9749658c3f8a1aaab52992a66a0db9386671a6d99f2d48f13895798e48"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/gltrace-t693-second-off.ndjson.t693.fn",
+          "bytes": 172,
+          "sha256": "0351315b33bc6c9306060b7e0888361433b3cb9b7d9f66f26258e716f8dbc70d"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/gltrace-t693-second-off.ndjson.t693.index",
+          "bytes": 8479,
+          "sha256": "0aea544605ff9306416e3213e702b8035de9913f246e06b7f6f17b94c1e77de3"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/gltrace-t693-second-off.ndjson.t693.meta",
+          "bytes": 69,
+          "sha256": "317ced51a984f263e3b9a61b6a2005f8161555d443f2b2162f28aa04e0df0bbe"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/gltrace-t693-second-off.ndjson.t693.rows",
+          "bytes": 2779328,
+          "sha256": "8d37b4730cb9f3b6f5e0c9e667e14ba33db388ae249dd80e34868db7debd0061"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/launch.json",
+          "bytes": 3445,
+          "sha256": "fe6c894e348148936565fd982c9b106ac2822869cfa63b64787bbd7ae28270bd"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/result.json",
+          "bytes": 333949,
+          "sha256": "5d3e2f83b7eb95e4b0b235c06894fc02c5ff2db434dd3d2649414270c03dd96d"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/source-closure.json",
+          "bytes": 46503,
+          "sha256": "547865f609613557bbb63ca3696d86c86c185c7c3c09ae6c8be8405c008a8121"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/stderr.bin",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/stdout.bin",
+          "bytes": 31,
+          "sha256": "15ab06a082d74be97aa13b8aecad3ab0d6a9514b69970457d680355d8cc042bf"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/t496-stages_t693-second-off.ndjson",
+          "bytes": 41003,
+          "sha256": "874b324c7bc3c7be6674a94ada600a7b8acc113008e6a5f6eae810e9f0e4f492"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/t496_log_t693-second-off.ndjson",
+          "bytes": 139570,
+          "sha256": "2b4f8ae0972566f6ba876881639113bfeb8c301ce60e4fb55eb592b4fe721f0f"
+        },
+        {
+          "path": "test/reports/t496/t693-second-off/t693-second-off.active",
+          "bytes": 64,
+          "sha256": "2cade14be63c0d309dc54a41c91718b6f36c3abe4e4531c44b0d69c22c2a1599"
+        }
+      ],
+      "second-on": [
+        {
+          "path": "test/reports/t496/t693-second-on/gltrace-t693-second-on.ndjson.t693.dict",
+          "bytes": 7122759,
+          "sha256": "22518fd18ed80cd277ae5b38b037670ec25ba77713123291ca8c85538d17b8a7"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/gltrace-t693-second-on.ndjson.t693.end",
+          "bytes": 194,
+          "sha256": "3c65d95eac6de3d13a821750052402d3eda124ef8a5376a087f9f037ab51be94"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/gltrace-t693-second-on.ndjson.t693.fn",
+          "bytes": 172,
+          "sha256": "0351315b33bc6c9306060b7e0888361433b3cb9b7d9f66f26258e716f8dbc70d"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/gltrace-t693-second-on.ndjson.t693.index",
+          "bytes": 8474,
+          "sha256": "fbe02750e743282afc36c52d37f4ebadf487254c0c35fc678c61cb2fd18c9481"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/gltrace-t693-second-on.ndjson.t693.meta",
+          "bytes": 67,
+          "sha256": "284a824fb5c986ff60b42170ff6f9430e11a9cbb124ae1a6d2312c6493b7f033"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/gltrace-t693-second-on.ndjson.t693.rows",
+          "bytes": 2761472,
+          "sha256": "5acb129eabc7db19762a1a9ddcbbab1c955bbd8a3033bb78b102c62834473418"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/launch.json",
+          "bytes": 3442,
+          "sha256": "2a1e0da5333c5d2cb70937c470047eb364b79bbdd822ee98febedd61e61b656b"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/result.json",
+          "bytes": 320775,
+          "sha256": "4968bd907ec95e6e8e368f80d4e4d5d9a97d0e1870ced8e66d801ba96674dcd6"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/source-closure.json",
+          "bytes": 46503,
+          "sha256": "f7eea77c60c28cb8741ae7d53a9778c2a8ba1ad0cdd23ed0b6846984750d17f2"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/stderr.bin",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/stdout.bin",
+          "bytes": 30,
+          "sha256": "2d19da3e168b6b958b05d4036d1a1ea9da79fea429ea36a0b012e6fb08e4719e"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/t496-stages_t693-second-on.ndjson",
+          "bytes": 41004,
+          "sha256": "411b97a77f2b6c682e4b06f93880682b251b4139c020e44289329ccbc68d84c6"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/t496_log_t693-second-on.ndjson",
+          "bytes": 431043,
+          "sha256": "b7e3f350e742ca4568b546e5c3c3a946a7e889ba0662442e250dce0f0bec8ea5"
+        },
+        {
+          "path": "test/reports/t496/t693-second-on/t693-second-on.active",
+          "bytes": 64,
+          "sha256": "3de38886de87b34e47e5807a793d12c9906aeb77d6087dd3156d85342a38010b"
+        }
+      ],
+      "replay-off": [
+        {
+          "path": "test/reports/t496/t693-replay-off/gltrace-t693-replay-off.ndjson.t693.dict",
+          "bytes": 7123272,
+          "sha256": "f725c7bb7f96e3cdb97a6f40186b6e8ce09474abfdc19e371c977b94b5ac524d"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/gltrace-t693-replay-off.ndjson.t693.end",
+          "bytes": 194,
+          "sha256": "4728fb8b57ff6743531bb5a2c8446d195d1e4bd450cd296d1f5d243538e1682e"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/gltrace-t693-replay-off.ndjson.t693.fn",
+          "bytes": 172,
+          "sha256": "0351315b33bc6c9306060b7e0888361433b3cb9b7d9f66f26258e716f8dbc70d"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/gltrace-t693-replay-off.ndjson.t693.index",
+          "bytes": 9047,
+          "sha256": "00ba6200756c3429c46762a6bd97bc69c13636c023d086903b61790783516264"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/gltrace-t693-replay-off.ndjson.t693.meta",
+          "bytes": 70,
+          "sha256": "b7e35ba70264d0ce1d7817a979a688eda2c42906442374f3f5b35bc52550e179"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/gltrace-t693-replay-off.ndjson.t693.rows",
+          "bytes": 2972992,
+          "sha256": "f20c5e5308942f7283e2e24480fb717f4bc0dce9154d9623b1eddfae16dc53e5"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/launch.json",
+          "bytes": 3466,
+          "sha256": "1bcc5e7d8398bf1b4c6ddef7923333f16a0752af15a47dcc894857fc97d0eb2c"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/result.json",
+          "bytes": 343054,
+          "sha256": "0c7bad664fcfb07b4ca15faf41b43a508440d8703c405dc0438d165dbd8d1dd0"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/source-closure.json",
+          "bytes": 47175,
+          "sha256": "6bb1326f8d7f6c430451d99cd2303481e133cea78a2e6b1e8b662947ee006eea"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/stderr.bin",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/stdout.bin",
+          "bytes": 31,
+          "sha256": "15ab06a082d74be97aa13b8aecad3ab0d6a9514b69970457d680355d8cc042bf"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/t496-stages_t693-replay-off.ndjson",
+          "bytes": 40490,
+          "sha256": "8c7dc72d5286716b1f770890c23cc8048c924da3a987625e42a7ca9c179f8046"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/t496_log_t693-replay-off.ndjson",
+          "bytes": 139569,
+          "sha256": "3a7b0776ca53f1f7357f130feabcfeaebb681eab129ba40fc3d9520ec5c0fa0d"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/t693-replay-off.active",
+          "bytes": 64,
+          "sha256": "e30d0efb0283cceb98fde728cda591e0cef126a19fc550f50b1af1c7189e91fd"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/t693-replay-t693-replay-off.completion.bin",
+          "bytes": 94208,
+          "sha256": "d5c7ccf3f030500ba61a7dfb21f8d61074c5c9aa0b74c748a7b729002786651f"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/t693-replay-t693-replay-off.root.bin",
+          "bytes": 2750208,
+          "sha256": "2b1878568ae0d80c28cc8fc5159570376961d32a5963a05d312d0947278bb633"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-off/t693-replay-t693-replay-off.root.ndjson",
+          "bytes": 30595,
+          "sha256": "7aa81cd1fa9ac00f2475715f781f20460b344eb4875c80f2071871d925b98aa0"
+        }
+      ],
+      "replay-on": [
+        {
+          "path": "test/reports/t496/t693-replay-on/gltrace-t693-replay-on.ndjson.t693.dict",
+          "bytes": 7123272,
+          "sha256": "59106b487bada4244a140a006fc40f35267490008d7920b78189f7637c9960bd"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/gltrace-t693-replay-on.ndjson.t693.end",
+          "bytes": 194,
+          "sha256": "3ce9d0af1b2cebca9d541c6d43a99362cab9b0ca5c6c634a55769473465da171"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/gltrace-t693-replay-on.ndjson.t693.fn",
+          "bytes": 172,
+          "sha256": "0351315b33bc6c9306060b7e0888361433b3cb9b7d9f66f26258e716f8dbc70d"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/gltrace-t693-replay-on.ndjson.t693.index",
+          "bytes": 7257,
+          "sha256": "71e643a645372748907bb0a3784caa10f88e1e3a9e4d38fc48bbe18e87482e06"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/gltrace-t693-replay-on.ndjson.t693.meta",
+          "bytes": 67,
+          "sha256": "70aed1c966d6b0f8d8d3ca4b919aa51c059cebd8064c5f7f17bbca4bc9e20bb0"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/gltrace-t693-replay-on.ndjson.t693.rows",
+          "bytes": 2786112,
+          "sha256": "77ba8657878fec989eaac6e43d88b10569a7278425b76fbddefa1c26528e42c1"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/launch.json",
+          "bytes": 3462,
+          "sha256": "d9e624fb953375bf201796469a4209fc0c203d89b8d950fcdeadb0b11cb9c95c"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/replay-inputs.json",
+          "bytes": 1103,
+          "sha256": "ae4be96efa98d229d892550531ef28a4a9f6f576974ca989ed116d61a4a43898"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/result.json",
+          "bytes": 295507,
+          "sha256": "3dbe33caa56ad7493376f8a64481006570511eb34a03f75bf9028787fc7b355a"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/source-closure.json",
+          "bytes": 47175,
+          "sha256": "9f088671cc4ac439f298bbf40f5f11c20fc4d649af2ff201904c707bbe7c1ad5"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/stderr.bin",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/stdout.bin",
+          "bytes": 30,
+          "sha256": "2d19da3e168b6b958b05d4036d1a1ea9da79fea429ea36a0b012e6fb08e4719e"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/t496-stages_t693-replay-on.ndjson",
+          "bytes": 40748,
+          "sha256": "79daeca1b56f02b961842eb956afefdc3246b840531cdd233fbc904e4e4f7243"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/t496_log_t693-replay-on.ndjson",
+          "bytes": 430813,
+          "sha256": "c2924c030c20d890da467f7fd070c238ad93a2669edc015c90d8552950471c6f"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/t693-replay-on.active",
+          "bytes": 64,
+          "sha256": "522af4a4e9208423c1b55abb66a0313cc8ed4abc02d025c83392cf26f0f02811"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/t693-replay-t693-replay-on.completion.bin",
+          "bytes": 94208,
+          "sha256": "d5c7ccf3f030500ba61a7dfb21f8d61074c5c9aa0b74c748a7b729002786651f"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/t693-replay-t693-replay-on.root.bin",
+          "bytes": 2750208,
+          "sha256": "2b1878568ae0d80c28cc8fc5159570376961d32a5963a05d312d0947278bb633"
+        },
+        {
+          "path": "test/reports/t496/t693-replay-on/t693-replay-t693-replay-on.root.ndjson",
+          "bytes": 30595,
+          "sha256": "06c6752e24534b89cd463a93aa4f9658fd4947a1d3fc38e6f96272a078aa1e85"
+        }
+      ]
+    },
+    "actionComparison": {
+      "actions": "MATCH",
+      "bankEventReplay": "NOT_MEASURED",
+      "productPASS": false
+    },
+    "replayComparison": {
+      "rootCount": 92,
+      "replayByteMatch": true,
+      "correlatedWithMain": [
+        92,
+        92
+      ],
+      "requiresMainArmCorrelation": true,
+      "productPASS": false
+    },
+    "mainPair": {
+      "path": "test/reports/t693/main-pair.json",
+      "bytes": 6014,
+      "sha256": "f4294bf6ef675a7a0a3fad0162dc5984acb172686e3a6c15e9ecb6d80473b737"
+    },
+    "replayPair": {
+      "path": "test/reports/t693/replay-pair.json",
+      "bytes": 213,
+      "sha256": "f1b41cef3040a773c1d2fe51eab6ee4fbaeb6015d35a3d51a4d046905504ea17"
+    },
+    "mainArms": {
+      "off": {
+        "rows": 86854,
+        "rootCount": 92,
+        "mapCount": 92,
+        "rawBytes": 9911001
+      },
+      "on": {
+        "rows": 86296,
+        "rootCount": 92,
+        "mapCount": 92,
+        "rawBytes": 9893138
+      }
+    },
+    "fullT684Proof": "INCOMPLETE",
+    "cycle32": "NOT_MEASURED"
+  },
+  "T705": {
+    "v4Manifest": {
+      "path": "test/reports/t491/t591c/out/t468-create-1-1795136945713-manifest.json",
+      "bytes": 719,
+      "sha256": "ad7a334e4bd9a7fc33f10e7b476028d61ee0ce704de15112bfaea92053443069"
+    },
+    "v4Native": {
+      "path": "test/reports/t491/t591c/out/t468-create-1-1795136945713-native.json",
+      "bytes": 5118,
+      "sha256": "29c643212a0718c8e6629039426257d555b36ddcd2e8d2ac072a4a65e8a16f77"
+    },
+    "v4RawLogs": [
+      {
+        "path": "test/reports/t491/t591c/out/t468-create-1-1795136945713-0.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "test/reports/t491/t591c/out/t468-create-1-1795136945713-1.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "test/reports/t491/t591c/out/t468-create-1-1795136945713-2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "declaration": {
+      "packageSha256": "",
+      "libElfSha256": "",
+      "status": "DECLARATION_MISSING",
+      "source": "COLD_WANT_EXTERNAL_RECEIPT"
+    },
+    "packageSignedSha256": "6b1faa1df776c52b356313f52a22d7d021bdea6704cbdb424fe07a613246c647",
+    "packageLibrary": {
+      "entry": "libs/arm64-v8a/libgrsm1.so",
+      "bytes": 1180096,
+      "sha256": "7a0bcbaab37c3fabcff3a5874164bbea1767e2877db903ad867477fdb781253f",
+      "buildId": "c23e231c781476010af91f631c60d2239371205c"
+    },
+    "followUpSignedA": {
+      "receipt": {
+        "path": "test/reports/t257/T676-original-a.json",
+        "bytes": 2307,
+        "sha256": "4925e06dd327df6bac790b864d03295a7fd05ca0ca75b9963d1987e0165559cf"
+      },
+      "signedSha256": "038d1b044194c1193460c15e915c118dce2cf122b0a621ebae2972f19cd0c715",
+      "nativeIdentity": {
+        "path": "test/reports/t676-original-a/original-identity.json",
+        "bytes": 2862,
+        "sha256": "c0747bc0e22932351df6c8d79cb8efd9285f427d660bcaffe28ad5d8ace37525"
+      },
+      "device": "NOT_RUN_IN_THIS_AUDIT"
+    },
+    "loadedDeviceIdentity": "NOT_CAPTURED",
+    "preArmAndContinuousTail": "NOT_CAPTURED",
+    "nativeScope": {
+      "bootSerial": "1",
+      "epoch": "3",
+      "window": "387037432160",
+      "eglContext": "387043882336",
+      "ownerTid": "37305",
+      "candidateRun": "1",
+      "layoutSha": "6e01a7bd26032beb1efd3cb58d8fb7377c4a5e4c16903572187dc11d9b87c73e",
+      "combinedShaderSha": "7e19a455a8e4b213a3823111cc0c00c802912fdc5f361b05d57f82c923654a49",
+      "nativeBeginNs": "331574156570158"
+    },
+    "apiCursor": {
+      "revision": 1,
+      "majorStage": 5,
+      "object": 0,
+      "api": 6,
+      "edge": 1,
+      "handle": 2,
+      "returned": -1,
+      "rawGl": -1,
+      "sequence": "15",
+      "beginNs": "331578978575627",
+      "endNs": "0",
+      "ownerTid": "37305",
+      "epoch": "3",
+      "window": "387037432160",
+      "context": "387043882336",
+      "bootSerial": "1",
+      "reservedZero": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "lastCompletedStage": {
+      "object": 0,
+      "stage": "ATTACH",
+      "enterNs": "331578978550940",
+      "exitNs": "331578978574690",
+      "handle": 2,
+      "success": true,
+      "rawGl": 0,
+      "a": "1",
+      "b": "0",
+      "c": "0"
+    },
+    "programs": [
+      {
+        "object": 0,
+        "name": "SOURCE_V3",
+        "sha256": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1",
+        "sourceBytes": 85839,
+        "rawBytes": 0,
+        "compileLog": {
+          "queried": true,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        },
+        "linkLog": {
+          "queried": false,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        }
+      },
+      {
+        "object": 1,
+        "name": "QUANTUM_INTERMEDIATE",
+        "sha256": "",
+        "sourceBytes": 0,
+        "rawBytes": 0,
+        "compileLog": {
+          "queried": false,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        },
+        "linkLog": {
+          "queried": false,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        }
+      },
+      {
+        "object": 2,
+        "name": "QUANTUM_FINAL_V3",
+        "sha256": "",
+        "sourceBytes": 0,
+        "rawBytes": 0,
+        "compileLog": {
+          "queried": false,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        },
+        "linkLog": {
+          "queried": false,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        }
+      }
+    ],
+    "compileStageNs": 4821495156,
+    "observedAtDerivedNativeNs": 331611212065315,
+    "openLowerBoundNativeNs": 32233489688,
+    "attemptAgeNativeNs": 37055495157,
+    "oldComparators": {
+      "T590": "OPEN_AT_OBSERVATION_END",
+      "T590Object": {
+        "id": 2,
+        "role": "QUANTUM_FINAL_V3",
+        "shaderHandle": 3,
+        "programHandle": 4,
+        "api": 6,
+        "apiName": "glLinkProgram",
+        "majorStage": 5,
+        "sequence": "71",
+        "edge": 1,
+        "returned": -1,
+        "rawGl": -1,
+        "endNs": "0",
+        "openNs": "20567682344",
+        "attemptAgeNs": "124764355782"
+      },
+      "T591": {
+        "role": "SOURCE_V3",
+        "object": 0,
+        "programHandle": 2,
+        "openNs": "40140833750",
+        "boundary": "COMPOSITE_LINK",
+        "singleApi": "NOT_CAPTURED"
+      },
+      "sameApiRepeated": false,
+      "permanentDeadlock": "UNPROVEN",
+      "driverDefect": "UNPROVEN",
+      "loadedElf": "NOT_CAPTURED",
+      "persistentRootCause": "UNPROVEN",
+      "physicalOrRenderPass": false,
+      "completedCompositeStages": [
+        {
+          "object": 0,
+          "role": "SOURCE_V3",
+          "compileNs": "3966885313",
+          "linkNs": "73431850156",
+          "success": true,
+          "rawGl": 0
+        },
+        {
+          "object": 1,
+          "role": "QUANTUM_INTERMEDIATE",
+          "compileNs": "3118145625",
+          "linkNs": "11883291719",
+          "success": true,
+          "rawGl": 0
+        },
+        {
+          "object": 2,
+          "role": "QUANTUM_FINAL_V3",
+          "compileNs": "11779646093",
+          "success": true,
+          "rawGl": 0
+        }
+      ]
+    },
+    "oldEvidence": {
+      "path": "docs/analysis-T682-evidence-v1.json",
+      "bytes": 44791,
+      "sha256": "fe6545a901de2b5aa29c5c21211804bc2bfa81935f834b1da16b8cfdc53497ff"
+    },
+    "singleApiOpenObservationsAcrossRoles": 2,
+    "sameRoleRepeatedSingleApiProven": false,
+    "permanentDeadlockProven": false,
+    "productPASS": false
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "schema": "T703_T684_MAPPING_CLOCK_CONTRACT_V1",
+  "date": "2026-11-20",
+  "task": "T703",
+  "document": "docs/architecture-T703-v1.md",
+  "evidence": "docs/analysis-T702-T705-evidence-v1.json",
+  "existingProof": {
+    "actionsPerArm": 52,
+    "acceptedRootsPerArm": {
+      "source": 2,
+      "quantum": 90
+    },
+    "independentReplaysMatched": [
+      92,
+      92
+    ],
+    "originalMapObjectGeneration": "NOT_CAPTURED",
+    "fullT684Proof": "INCOMPLETE",
+    "cycle32": "NOT_MEASURED"
+  },
+  "mapWitness": {
+    "wrapperOwner": "tester",
+    "sites": [
+      "test/t496/gl_forward_sink.cpp",
+      "test/t496/argument_shadow.h",
+      "ScopedCall",
+      "test/t693/trace.h"
+    ],
+    "callIdentity": "allocate once and reuse for ENTER, RETURNED, original bytes and EXIT",
+    "params": [
+      "target",
+      "signedOffset",
+      "signedLength",
+      "fullAccessBits"
+    ],
+    "scope": [
+      "contextGeneration",
+      "observedShareGroup",
+      "GLName",
+      "objectLifetimeGeneration",
+      "storageGeneration",
+      "bindingGeneration",
+      "tid",
+      "mapToken"
+    ],
+    "unmap": "match token, resolved context, target and object/storage generation with actual GL_TRUE",
+    "originalCompletionBytes": 1024,
+    "mainAdditionalGlCalls": 0,
+    "replay": "T692 separate role; original completion map stays distinct",
+    "acceptedKey": [
+      "runScope",
+      "kind",
+      "nonce",
+      "frame",
+      "control",
+      "sourceCommit",
+      "physicsCommit",
+      "profile",
+      "bank",
+      "publication",
+      "eventArena",
+      "eventSequence"
+    ]
+  },
+  "trace": {
+    "rowBytes": 32,
+    "reference": "stampId and flags to versioned committed anchor/dictionary",
+    "roles": [
+      "DECLARED_SCRIPT_ACTION_AND_ACTUAL_CONSUMPTION",
+      "PROCESS_LOCAL_STEADY_AND_PARENT_WATCHDOG",
+      "ACTUAL_TRANSPORT_ROOT_PERMIT_AND_STAMP"
+    ],
+    "clockValueEqualityAllowed": true,
+    "transportT496D1": "RootIsolation.stamp -> App::Stamp -> hostNow -> g_hostNowNs; preserve actual permit start/deadline/revision and existing distinct TailObserver samples",
+    "missing": [
+      "NOT_APPLICABLE",
+      "UNKNOWN"
+    ],
+    "appendOnly": true
+  },
+  "limits": {
+    "totalMiB": 32,
+    "glMiB": 12,
+    "rootMiB": 16,
+    "businessMiB": 4,
+    "outerSeconds": 420,
+    "businessSeconds": 120,
+    "drainSeconds": 30
+  },
+  "completion": "new matched main and replay pairs plus complete same-owner map/unmap, actual accepted identity and three-role row relations",
+  "deviceUsed": false,
+  "productPASS": false
+}
