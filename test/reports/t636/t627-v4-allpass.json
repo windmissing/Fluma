@@ -1,0 +1,22 @@
+{
+ "revision": "T627_V4_T675_ALLPASS_DEVICE_V1",
+ "date": "2026-11-20",
+ "package": {
+  "task": "T675 broker set (libadapter_a 14800B/libadapter_b 14768B/libgrs_cold_slots 200824B/driver3 95072B)",
+  "device": "011124264R000337"
+ },
+ "harness": "t636driver3 (T675 driver_v3, two-arg contract: dso-dir + attempt-prefix, boot/pid/pidStartTicks/attempt keys per line, 88 lines)",
+ "results": {
+  "M1": "PASS(seq23)",
+  "M2a": "PASS(seq30)",
+  "M2b": "PASS(seq42)",
+  "M3": "PASS(seq59)",
+  "M4-route": "PASS(seq67)",
+  "M4-process": "PASS(seq75)",
+  "M5": "PASS(seq86)"
+ },
+ "coverage": "M1 fresh0 gates+B wrappers on A ticket; M2a/b self-builder and reader gates; M3 Freed-while-reader ordering; M4-route accumulated credit (4097 reject/full); M4-process cap charge (cap-4096 charge, 4097 reject during, 4096 OK); M5 GPU domain (fresh0, same-ctx reject, wrong-free/retire guards, corrected ContextRetired order)",
+ "semantics": "all phases observed==expected including corrected T656 ContextRetired order (kept-active gB, retired clears ctx lease, fresh0 reserve OK)",
+ "notes": "T675 driver_v3 resolves real symbol addresses+ABI per line; facility: nested-dir trap hit on all 4 files (mv/cp from root temp fixed); libadapter needed 644 after promotion",
+ "route": "T627 close: cross-DSO broker shared-run independent verification COMPLETE (all 7 phases PASS on device)"
+}
