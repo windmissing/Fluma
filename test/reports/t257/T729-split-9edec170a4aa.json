@@ -1,0 +1,58 @@
+{
+  "revision": "T257_LOCAL_SIGNED_HANDOFF_V1",
+  "task": "T729-split-9edec170a4aa",
+  "bundleName": "com.example.helloworld",
+  "compatibleVersion": 26,
+  "input": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t728-split\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "sha256": "9edec170a4aaaccceca6fe3ce11a13b701dd1064750ef2482f34db5bbdcc301b"
+  },
+  "signed": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T729-split-9edec170a4aa\\T729-split-9edec170a4aa-signed.hap",
+    "sha256": "b513374aa7c096ce22757baf22be7228bbd6952c61330464fa990640a6a09098",
+    "bytes": 7839547
+  },
+  "toolSha256": "a434b6747e6c5d0b14e73837a46b39f4816ab25b42d1833d6f767bf867cf616d",
+  "certificateSha256": "b2242708021fcc788b890ac7de63e62110090a414c8490febeb3852cc6ce28c9",
+  "profileCertificateSha256": "8e93863fc32ee238060bf69a9b37e2608fffb21f93c862dd511cbac9f30024b5",
+  "certificateSPKI": "67cfa9fffa8f817f5fd3ab37ad8dc686cd01153d3cb453bd851004f3fb93fa7e",
+  "profileVerified": true,
+  "profileMatchedPublicChainSha256": "5585edc5c58bc9bea4a00f157cb6c1ad9128a54619ac61fd23fa3e328b6045ab",
+  "originalLeafSignatureMismatchHandledWithExistingProfileCertificate": true,
+  "keystoreCertificateMatchesProfile": true,
+  "verifyApp": "PASS",
+  "payloadEntriesUnchanged": 14,
+  "sourceConfigUnchanged": true,
+  "credentialsLogged": false,
+  "device": "NOT_RUN",
+  "operations": [
+    {
+      "operation": "verify-profile",
+      "exitCode": 0,
+      "stdoutBytes": 100,
+      "stderrBytes": 0,
+      "outputSha256": "acfcc669111e861a138c51f4e58d9bd711ca0462c9264d9815826f298117271d"
+    },
+    {
+      "operation": "sign-app",
+      "exitCode": 0,
+      "stdoutBytes": 1036,
+      "stderrBytes": 0,
+      "outputSha256": "2972dd447e12d85dfac141b772a6d2b8f6892aa68f40aa6b3bab1f3a2a0e1507"
+    },
+    {
+      "operation": "verify-app",
+      "exitCode": 0,
+      "stdoutBytes": 3143,
+      "stderrBytes": 56,
+      "outputSha256": "235d23c8c2e05f5e4de924170494943340bd2747b06899f4a9b495d20877132e"
+    },
+    {
+      "operation": "verify-profile",
+      "exitCode": 0,
+      "stdoutBytes": 100,
+      "stderrBytes": 0,
+      "outputSha256": "4780b59ee4c7c454472ae3522993a2a85d36c14b9734d83f20ee9b1a9cb6652a"
+    }
+  ]
+}

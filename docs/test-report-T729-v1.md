@@ -1,6 +1,13 @@
 # T729 G13 编译对照离线判定与签包设施
 
-离线设施已交付，T728 实物签包待到件。设备与产品首帧均为 NOT_RUN。任务启动时 T728 仍在开发，检查到 BOOT 和五份 OP 探索源码，未找到正式同父两臂 HAP 或完整角色及 BuildId 收据。已有 T720 历史单程序包只用于实物验证器回归，真实包内 BuildId `428dea61036dfa0fb9297eabe258aeabe3d63495`，三份着色器的 SHA 与 ELF 内编译源字节相符，四项错件负控通过。[历史工件联核](../test/reports/t729/t720-reference.json)
+离线设施已交付。T728 正式同父 MONOLITH、SPLIT 两臂现已完成预检、签名及 verifyApp。逐臂核对签前签后全部 14 个 HAP 条目和包内 ELF，11 份角色着色器全部重跑 glslang 并退出 0。设备装载、冷暖计时与产品首帧均为 NOT_RUN。[部署收据](../test/reports/t729/deployment.json) [独立复核](../test/reports/t729/deployment-verification.json)
+
+| 臂 | 已签 HAP SHA-256 | 预期加载 BuildId |
+| --- | --- | --- |
+| MONOLITH | `3a9aea812aba1f7bbc64e7df825fa3f02e89e870fd4367058ec3672660885053` | `7c64adb33546ba1a24e8aca89e078b671830996a` |
+| SPLIT | `b513374aa7c096ce22757baf22be7228bbd6952c61330464fa990640a6a09098` | `a9363c84680c230ac8ecfe92d594d7c8e5889146` |
+
+T720 历史单程序包继续作为实物验证器回归。三份着色器与该 ELF 内编译源字节相符，四项错件负控通过。[历史工件联核](../test/reports/t729/t720-reference.json)
 
 ## T730 离线入口
 
@@ -19,4 +26,4 @@
 
 `python test/t729/units.py` 与 `python test/t729/sign_units.py` 均通过。前者覆盖十项测量拒绝、暖二进制错配、四页宽票据与锚错配，后者覆盖合成包正例和五项错件拒绝。Python 编译检查通过。[测量用例](../test/reports/t729/measurement-units.json) [签包入口用例](../test/reports/t729/signature-units.json)
 
-续办前置为 T728 正式 MONOLITH/SPLIT 两份构建目录、unsigned HAP、各自角色源和实际 BuildId、同父原回执。tester 到件后预检并签包，effector 再消费 T730 设备输入。当前暂无签名或部署收据。
+T730 使用部署收据中的两个 `signedPath` 和角色清单，分别验证实机加载 ELF，再按 T727 顺序取冷暖原件。

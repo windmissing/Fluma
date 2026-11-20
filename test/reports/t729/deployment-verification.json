@@ -1,0 +1,194 @@
+{
+  "parentSHA256": "e0ac7f736e2584601b873c3ed8a06ed74a5333695d49c3a5d0537a592e2d3927",
+  "arms": {
+    "MONOLITH": {
+      "payloadEntries": {
+        "module.json": "e1deaf3996505b0f92b258312d77781e28486a567cd4d1f507f5cbefd2aa48b5",
+        "resources.index": "89844a3d21bb38c5f56204787c1a33080c543ef454b35c9eaf8383419cf1da61",
+        "libs/arm64-v8a/libc++_shared.so": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+        "libs/arm64-v8a/libgrs_cold_slots.so": "74e5f9f515ecc47fbc7f0665964890be849f22d9db4e3558023201af4b17b4da",
+        "libs/arm64-v8a/libgrs_g13.so": "b1e234348e7d71b0e1afdaa0d1b56d703ce37fbf4f94e80e013e3ed6b6a2c3a3",
+        "resources/base/media/app_icon.svg": "ff8ba8247963992176aae181f58473fb9e7e9ba4930fe43a51d6b3ab6ca8a391",
+        "resources/base/media/start_icon.svg": "e127c84c5e680548b9571479310d1944c6263ce8e28a2ec75129362a810c6191",
+        "resources/base/profile/main_pages.json": "f79c8f79dd53439d84fcdf2207789cb660a5901286defc777eea82f28ea6a43a",
+        "ets/modules.abc": "886861e30664d252c7a44ed0932967827ec1c3fb8b295d7b220e16497c9146f0",
+        "ets/render/preparation/p1_material_functions.glsl": "0a3becd5a81ed2190fa4b8322bb9cf72248d50b0d0afbb90ba00ebf418cf5ff5",
+        "ets/sourceMaps.map": "586d49ba2cdfba332d73459f6fba4ed9df55a27478b08b252a385b4b4c521257",
+        "rpcid.sc": "3aa1e3d77844b03f1d0eb1ac4486fa45999769d18f2382eeacc2452dd8dfa78d",
+        "pack.info": "c128e1f43216046b8fdcb8a1278558a6722bc59b01e82e8e49745dcbd0feaee5",
+        "pkgSdkInfo.json": "c82cd4422b2f8b5299c807a371802eaab0a7a785377b7e8a5a847c10fed4cdd3"
+      },
+      "verifyApp": "PASS",
+      "buildId": "7c64adb33546ba1a24e8aca89e078b671830996a",
+      "roles": {
+        "FULL": {
+          "bytes": 259025,
+          "sha256": "7563c61459861cec1eb5cea8f0e1a89387d0f2874daaf9f7e29e47d972f9f2d2",
+          "argv": [
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+            "-S",
+            "comp",
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t728-single\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g13flow\\g13_assets\\pipeline_assembled.comp"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "scene.vert": {
+          "bytes": 1674,
+          "sha256": "478d2e92204468435279f83adefccbe9ea30cbe9fea6f712d85a6b3dde43b44b",
+          "argv": [
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+            "-S",
+            "vert",
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t728-single\\entry\\src\\main\\cpp\\gpu_resident\\g13flow\\scene.vert"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "scene.frag": {
+          "bytes": 1517,
+          "sha256": "c9cdc98f3f6d10643b808484cab4b9410e3ebadbb383062e218383acf9e31da9",
+          "argv": [
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+            "-S",
+            "frag",
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t728-single\\entry\\src\\main\\cpp\\gpu_resident\\g13flow\\scene.frag"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      }
+    },
+    "SPLIT": {
+      "payloadEntries": {
+        "module.json": "e1deaf3996505b0f92b258312d77781e28486a567cd4d1f507f5cbefd2aa48b5",
+        "resources.index": "89844a3d21bb38c5f56204787c1a33080c543ef454b35c9eaf8383419cf1da61",
+        "libs/arm64-v8a/libc++_shared.so": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+        "libs/arm64-v8a/libgrs_cold_slots.so": "7f3f03a79a292f92b68512eaec020a900d488bc78f85ababbd87aaec966401c3",
+        "libs/arm64-v8a/libgrs_g13.so": "0b1c188493a5bb8b4bf229e8cccbf11b893678029744fa20b5a4a339381628a3",
+        "resources/base/media/app_icon.svg": "ff8ba8247963992176aae181f58473fb9e7e9ba4930fe43a51d6b3ab6ca8a391",
+        "resources/base/media/start_icon.svg": "e127c84c5e680548b9571479310d1944c6263ce8e28a2ec75129362a810c6191",
+        "resources/base/profile/main_pages.json": "f79c8f79dd53439d84fcdf2207789cb660a5901286defc777eea82f28ea6a43a",
+        "ets/modules.abc": "886861e30664d252c7a44ed0932967827ec1c3fb8b295d7b220e16497c9146f0",
+        "ets/render/preparation/p1_material_functions.glsl": "0a3becd5a81ed2190fa4b8322bb9cf72248d50b0d0afbb90ba00ebf418cf5ff5",
+        "ets/sourceMaps.map": "586d49ba2cdfba332d73459f6fba4ed9df55a27478b08b252a385b4b4c521257",
+        "rpcid.sc": "3aa1e3d77844b03f1d0eb1ac4486fa45999769d18f2382eeacc2452dd8dfa78d",
+        "pack.info": "c128e1f43216046b8fdcb8a1278558a6722bc59b01e82e8e49745dcbd0feaee5",
+        "pkgSdkInfo.json": "c82cd4422b2f8b5299c807a371802eaab0a7a785377b7e8a5a847c10fed4cdd3"
+      },
+      "verifyApp": "PASS",
+      "buildId": "a9363c84680c230ac8ecfe92d594d7c8e5889146",
+      "roles": {
+        "BOOT": {
+          "bytes": 23834,
+          "sha256": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+          "argv": [
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+            "-S",
+            "comp",
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t728-split\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g13flow\\g13_assets\\role_BOOT.comp"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "OP_00": {
+          "bytes": 48759,
+          "sha256": "617adf29a80f7fb7e8e3c8ca18df9f0604f7081ff1d319701ad73cb099cda7ea",
+          "argv": [
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+            "-S",
+            "comp",
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t728-split\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g13flow\\g13_assets\\role_OP_00.comp"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "OP_18": {
+          "bytes": 48612,
+          "sha256": "e9ff05a22fca32361ce24312f824d4c811e13ed08611c35d6ffa7b98d8e2e5eb",
+          "argv": [
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+            "-S",
+            "comp",
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t728-split\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g13flow\\g13_assets\\role_OP_18.comp"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "OP_37": {
+          "bytes": 48445,
+          "sha256": "fb0ff4fce8e3ad0ddc10fedb5f220088a1d480610dc8d7880d3e8f470e3ef516",
+          "argv": [
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+            "-S",
+            "comp",
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t728-split\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g13flow\\g13_assets\\role_OP_37.comp"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "OP_48": {
+          "bytes": 48577,
+          "sha256": "840391626a47625a537dfad19d32887c78db88f2f6afd522f2c34f522791c974",
+          "argv": [
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+            "-S",
+            "comp",
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t728-split\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g13flow\\g13_assets\\role_OP_48.comp"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "OP_62": {
+          "bytes": 11458,
+          "sha256": "0d4a77c880ec1fe2f140683032c2683aa56ae2ee266c43ff95dfce6e8b0bb340",
+          "argv": [
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+            "-S",
+            "comp",
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t728-split\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g13flow\\g13_assets\\role_OP_62.comp"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "scene.vert": {
+          "bytes": 1674,
+          "sha256": "478d2e92204468435279f83adefccbe9ea30cbe9fea6f712d85a6b3dde43b44b",
+          "argv": [
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+            "-S",
+            "vert",
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t728-split\\entry\\src\\main\\cpp\\gpu_resident\\g13flow\\scene.vert"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "scene.frag": {
+          "bytes": 1517,
+          "sha256": "c9cdc98f3f6d10643b808484cab4b9410e3ebadbb383062e218383acf9e31da9",
+          "argv": [
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+            "-S",
+            "frag",
+            "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t728-split\\entry\\src\\main\\cpp\\gpu_resident\\g13flow\\scene.frag"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        }
+      }
+    }
+  },
+  "validatorSHA256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+  "device": "NOT_RUN"
+}
