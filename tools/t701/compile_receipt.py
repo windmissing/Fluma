@@ -119,12 +119,15 @@ def evidence(matrix, arm, log):
     declaration_keys = ["route", "variant", "cache", "roles", "role1", "independentQ", "sourceSha", "finalSha"]
     if "firstFrameControl" in manifest:
         declaration_keys.append("firstFrameControl")
+    if "sessionControl" in manifest:
+        declaration_keys.append("sessionControl")
     declaration_text = json.dumps({key: manifest[key] for key in declaration_keys},
         separators=(",", ":")).encode()
     require(declaration_text + b"\0" in packaged, "linked arm declaration missing")
     return {
         "arm": arm, "variant": manifest["variant"], "cache": manifest["cache"],
         "firstFrameControl": manifest.get("firstFrameControl"),
+        "sessionControl": manifest.get("sessionControl"),
         "roles": manifest["roles"], "role1": manifest["role1"],
         "independentQ": manifest["independentQ"], "parent": manifest["parentDigest"],
         "roleSources": source_digests, "objects": objects, "abi": "arm64-v8a",

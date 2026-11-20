@@ -4,13 +4,16 @@ const path = require('node:path');
 const cp = require('node:child_process');
 const crypto = require('node:crypto');
 const {applyFirstFrameControl} = require('./first_frame_control.cjs');
+const {applySessionControl} = require('./session_control.cjs');
 const root = path.resolve(__dirname, '../..');
 const local = path.join(root, '.codex/local-test');
 const [route, directory, control] = process.argv.slice(2);
 if (!['M1', 'M2'].includes(route) || !directory ||
-    (control !== undefined && control !== '--first-frame-control') || process.argv.length > 5)
-  throw Error('Usage: node tools/t701/prepare.cjs M1|M2 <new .codex/local-test directory> [--first-frame-control]');
-const firstFrameControl = control === '--first-frame-control';
+    (control !== undefined && control !== '--first-frame-control' && !(route==='M1'&&control==='--session-control')) ||
+    process.argv.length > 5)
+  throw Error('Usage: node tools/t701/prepare.cjs M1|M2 <new .codex/local-test directory> [--first-frame-control | --session-control (M1)]');
+const sessionControl = control === '--session-control';
+const firstFrameControl = control === '--first-frame-control' || sessionControl;
 const output = path.resolve(directory);
 if (!output.startsWith(local + path.sep) || fs.existsSync(output))
   throw Error('T701_FRESH_ISOLATED_DIRECTORY_REQUIRED');
@@ -310,6 +313,8 @@ for (const variant of ['THREE','TWO']) for (const cache of ['OFF','ON']) {
     independentQ:'SOURCE_BUILD', sourceSha:canonical[0], finalSha:canonical[1]};
   if (firstFrameControl)
     declaration.firstFrameControl = m2 ? 'T714_M2_DIRECT_ENTRY' : 'T714_M1_CLOCK_V2';
+  if (sessionControl)
+    declaration.sessionControl = 'T717_M1_SESSION_EVIDENCE';
   const identity = `#pragma once
 namespace grs::t701 {
 inline constexpr bool kTwo = ${variant==='TWO'};
@@ -351,6 +356,10 @@ endif()
 ${!m2&&cached?'target_sources(grsm1 PRIVATE gpu_resident/m2/create_diagnostics_abi.cpp)':''}
 `);
   if (firstFrameControl) applyFirstFrameControl(edit,m2);
+  if (sessionControl) {
+    fs.copyFileSync(path.join(__dirname,'first_frame_session.h'),path.join(native,'t717_session.h'));
+    applySessionControl(edit);
+  }
   if (sha(fs.readFileSync(path.join(native,folder,'full_kernel.cpp'))) !== sha(parentShader))
     throw Error('T701_SHADER_SOURCE_CHANGED');
   const armEvidence = {...declaration,parentDigest, changes,
@@ -363,5 +372,7 @@ writeJson(path.join(output,'t701-generation.json'),{route,inputCommit,parentDige
   parent:m2?'T663 -> T468 -> T452 actual m2route':baseline,
   checkoutBytes, recipeSHA256:sha(fs.readFileSync(__filename)),
   firstFrameControlSHA256:firstFrameControl ? sha(fs.readFileSync(require.resolve('./first_frame_control.cjs'))) : undefined,
+  sessionControlSHA256:sessionControl ? sha(fs.readFileSync(require.resolve('./session_control.cjs'))) : undefined,
+  sessionHeaderSHA256:sessionControl ? sha(fs.readFileSync(path.join(__dirname,'first_frame_session.h'))) : undefined,
   arms:evidence});
 console.log(output);

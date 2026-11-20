@@ -1,0 +1,196 @@
+{
+  "schema": "T717_ATTRIBUTION_V1",
+  "deviceUsed": false,
+  "packages": {
+    "M1": {
+      "inputSHA": "04011a05da28896c3ca5ba99d6d082997d4fae20ffc300336bca2cbc7faf57d6",
+      "signedSHA": "e79744561eb09b21d14aedd01eebe4c6806da14a418dde345414e0c5dc40285f",
+      "packagedELF": "73b28e6dc943d98bb9d9845169b9996331b7807dabb3c44d10181687fef9a084",
+      "buildId": "e369d8b08b5d1e5d429975a1dcc2d21a8cbfc1f3"
+    },
+    "M2": {
+      "inputSHA": "a978771a79402dba004a1232d9ef21ad9cd44f037f299be0324a2b85b8110c4b",
+      "signedSHA": "98065974e910d6c944398ad9b1dbc714965495390a9e5afaf0c38db722289089",
+      "packagedELF": "09dfafb9db550c00a4bc9308d1252131fdf639fd66e11f049d7fe9709913b0f0",
+      "buildId": "78dcff92544a15549d1329c4b3cec4689e7d8baf"
+    }
+  },
+  "m1": {
+    "originals": [
+      {
+        "path": "test\\reports\\t491\\t714b\\m1.json",
+        "sha256": "f4f2208471f227a3b73addc48b14b44095f1e0a9d02f34e5dad57dd6e490c75b",
+        "lines": [
+          "STALE · GRS_M1_PROGRESS_CLOCK_V2 / run 0:0 / epoch 2 / session 1 / sample 4268 · STATE_LOST",
+          "STALE · 账 GRS_M1_PROGRESS_CLOCK_V1 / run 0:0 / epoch 0 / session 0 / sample 4268 · 最近源收据#0 0.0000 · 物理 0:0"
+        ]
+      },
+      {
+        "path": "test\\reports\\t491\\t714b\\m1b.json",
+        "sha256": "37362b235ffad33ca4f73f6939ddb8f374cef4934539afd0256d5c734745c331",
+        "lines": [
+          "STALE · GRS_M1_PROGRESS_CLOCK_V2 / run 0:1 / epoch 2 / session 1 / sample 7086 · STALE_PAGE_SESSION",
+          "STALE · 账 GRS_M1_PROGRESS_CLOCK_V2 / run 0:1 / epoch 2 / session 1 / sample 7086 · 最近源收据#0 0.0000 · 物理 0:1"
+        ]
+      }
+    ],
+    "callbackToken": "NOT_CAPTURED",
+    "nativeOpen": "NOT_CAPTURED",
+    "firstRootAndSwap": "NOT_CAPTURED_SAME_SCOPE",
+    "revokeCause": "UNRESOLVED",
+    "t477Mechanism": "PROVEN_SHARED_MASKING_PATH_ONLY",
+    "t477": [
+      {
+        "path": "test\\reports\\t477\\device-rerun-v2\\timeline\\manifest.json",
+        "sha256": "504558afbf0363087c86c5de33fbf2f60028f25d96c676e25517fa4897fab499",
+        "statusBefore": {
+          "state": "PAUSED_CLOCK",
+          "stage": "CLOCK_GAP",
+          "pageFault": "CLOCK_GAP",
+          "pageSession": "1",
+          "clockDeltaNs": 34329218,
+          "epoch": 3,
+          "newPhysicalFrames": "2446"
+        }
+      },
+      {
+        "path": "test\\reports\\t477\\device-rerun-v2\\timeline\\manifest2.json",
+        "sha256": "694d354fcda7acdd0104849a5a4a65210bfc1aec42323759e6b73459079a49e8",
+        "statusBefore": {
+          "state": "PAUSED_CLOCK",
+          "stage": "CLOCK_GAP",
+          "pageFault": "CLOCK_GAP",
+          "pageSession": "1",
+          "clockDeltaNs": 34329218,
+          "epoch": 3,
+          "newPhysicalFrames": "2446"
+        }
+      }
+    ]
+  },
+  "m2": {
+    "path": "test\\reports\\t491\\t714b\\m2out\\native.json",
+    "sha256": "289ea2a563d7d6589721ab2b2804ad960f723efc9bf55447ebb82959a79cb617",
+    "cursor": {
+      "revision": 1,
+      "majorStage": 2,
+      "object": 2,
+      "api": 1,
+      "edge": 1,
+      "handle": 3,
+      "returned": -1,
+      "rawGl": -1,
+      "sequence": "29",
+      "beginNs": "338258856337815",
+      "endNs": "0",
+      "ownerTid": "32632",
+      "epoch": "3",
+      "window": "387049985056",
+      "context": "387393641600",
+      "bootSerial": "1",
+      "reservedZero": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "api": "glCompileShader",
+    "openNs": "10323132969",
+    "sourceLink": {
+      "object": 0,
+      "stage": "LINK",
+      "enterNs": "338186661043127",
+      "exitNs": "338258826280158",
+      "handle": 2,
+      "success": true,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    "sourceLinkNs": "72165237031",
+    "source": {
+      "object": 0,
+      "name": "SOURCE_V3",
+      "sha256": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1",
+      "sourceBytes": 85839,
+      "rawBytes": 0,
+      "compileLog": {
+        "queried": true,
+        "reportedLength": 0,
+        "copiedLength": 0,
+        "offset": 0,
+        "truncated": false,
+        "emptyLog": true,
+        "queryError": 0
+      },
+      "linkLog": {
+        "queried": true,
+        "reportedLength": 0,
+        "copiedLength": 0,
+        "offset": 0,
+        "truncated": false,
+        "emptyLog": true,
+        "queryError": 0
+      }
+    },
+    "final": {
+      "object": 2,
+      "name": "QUANTUM_FINAL_V3",
+      "sha256": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc",
+      "sourceBytes": 54857,
+      "rawBytes": 0,
+      "compileLog": {
+        "queried": false,
+        "reportedLength": 0,
+        "copiedLength": 0,
+        "offset": 0,
+        "truncated": false,
+        "emptyLog": true,
+        "queryError": 0
+      },
+      "linkLog": {
+        "queried": false,
+        "reportedLength": 0,
+        "copiedLength": 0,
+        "offset": 0,
+        "truncated": false,
+        "emptyLog": true,
+        "queryError": 0
+      }
+    },
+    "intermediate": "NOT_USED_BY_VARIANT",
+    "nativeEndNs": "0",
+    "terminal": "RIGHT_CENSORED",
+    "processLoadedElf": "NOT_CAPTURED"
+  }
+}
