@@ -78,3 +78,25 @@ signedSha 6b1faa1d）。证据：`test/reports/t491/t591c/out/`（新 attempt �
 
 R1 合规（同 attempt 身份/三日志/cursor/终态全交，DECLARE 缺失域如实
 NOT_CAPTURED）；回 architect：三次观测汇聚表+空日志诚实记录。
+
+
+## v5 追加（2026-11-20 11:42，effector；T715 DM coherent 修复包验证）
+
+日期：2026-11-20，真机。被测：T715-dm-signed（DM coherent 修复 b6559016，
+inputSha 31d64085→signed c0a95917，sign=PASS）+T715 ELF/so 刷新设备。
+证据：`test/reports/t491/t712b/`（v3-t715.json、execution.jsonl 原件）。
+
+### 执行链
+
+g9_dm_differential（T715 构建 743304B）+libgrs_dm_t647（5204216B）→
+ACTUAL_GL_EXECUTION（Maleoon 935F/k192）→ CREATE result=8，driver
+`0:1987: S0001 readonly qualifier`
+
+### 判定
+
+- **DM coherent@1063 已消**（修复生效）——链推进到 **readonly@1987，与
+  RX 族同线**（共享生成管线已对齐）
+- 两族现处同一 readonly@1987 门：RX 族经 T716 已过（CONFIG_QUEUED），
+  DM 族 T715 尚未含 readonly 变换——**developer 将 T716 RX 同型变换套到
+  g9dm 族即对齐**
+- 设施全就绪（ELF/so/输入/预算），每轮即测
