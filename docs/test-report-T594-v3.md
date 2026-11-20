@@ -118,3 +118,33 @@ f6495df7→signed e6a34091，sign=PASS；libgrs_g9rx.so cf9fdd68/BuildId
 ### 回执
 
 Create/READY/首 Swap 如实 NOT_REACHED（卡编译进行中）；阶段链原件齐。
+
+
+## v7 追加（2026-11-20 14:25，effector；T720 缓存预载包验证——修复在位，冷缓存首跑如实）
+
+日期：2026-11-20，真机。被测：T720-rx-signed（6ceb1c34 首帧停顿隔离，
+inputSha c24d08cc→signed 3c6af26b，sign=PASS）。证据：
+`test/reports/t491/t594e/`（l1–l9 布局、v7-t720.json）。
+
+### 执行链
+
+启用研究 → RX #1 SHADER_COMPILE_ENTER（与 v6 同）→ 累计 >900s 编译中
+（300s 前台+600s 后台，锁屏等待）→ 重进 **CANCEL_REQUESTED → 重启用
+→ BUSY 持续**。
+
+### 判定
+
+- **T720 两项修复设备验证**：
+  1. **缓存预载在位**（filesDir 传入 GL 工厂，T475 store 预载路径接通）——
+     但 T475 store 仅 1 条旧缓存（cba01a94），RX shader（2cb9a848 族）尚无
+     PERSISTED——冷缓存首跑必须编译（合同如实，无现成 binary）
+  2. **停止/取消语义修复**：CANCEL_REQUESTED 即时生效、新 attempt BUSY
+     门控——同步调用不再被编译插队无限等（G13 族 UI 等待问题在 RX 侧
+     语义对齐）
+- 编译墙时门不变（本轮冷缓存）；**首轮 PERSISTED 后暖启动跳过编译**——
+  下轮扫采样 PERSISTED+swap
+
+### 回执
+
+Create/READY/首 Swap 如实 NOT_REACHED（冷缓存编译中）；T720 修复域
+设备验证成立。
