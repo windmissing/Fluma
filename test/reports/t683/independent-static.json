@@ -1,0 +1,79 @@
+{
+  "schema": "T681_COMPILE_DELIVERY_V1",
+  "status": "DEVELOPMENT_COMPILE_COMPLETE",
+  "deviceUsed": false,
+  "testsRun": false,
+  "productExecuted": false,
+  "shaderExecuted": false,
+  "signed": false,
+  "deployed": false,
+  "productPASS": false,
+  "baseline": "9ec800f446c62d45197ec74abc4023e85400756d",
+  "baselineReason": "Same real product baseline as T592; current DiagnosticColdFiles has a different writer API and is outside owner fix scope. No baseline source overwritten in workspace.",
+  "canonicalOverlays": {
+    "test/t426/PrepareReadinessV4.ets": "d5e0f364aea7d328e360c1daadc6d2d3fb62e5e6298b9fff4f259dd31706f73f",
+    "test/t426/PreparePairingEvidence.ets": "4eefa9fc7cb9c663c6e4791941aff9cffa695c9fe0a829aa6d470fe19b069da1",
+    "test/t574/t574_prepare_v4_overlay.cjs": "4d3cdd9fd18178da09b544604e23e7c99d9747186e169892beba10d6114f3e6c",
+    "test/t574/t659_owner_glue.cjs": "83fbb5dd058ae079e78e9fe54795b21aa08df40a3e17c92281489dd94d75659b"
+  },
+  "sourceManifestSHA256": "56fb7f7a4c8d78b3a57d97cebbe4ccecc0fbaee9750ab254b152081cb13f75c1",
+  "verifiedGeneratedFiles": 600,
+  "buildDirectory": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t681-source-release\\.codex\\local-test\\product",
+  "build": {
+    "command": "hvigorw --mode module -p product=default -p module=entry@default assembleHap --no-daemon",
+    "result": "BUILD SUCCESSFUL",
+    "elapsed": "46 s 982 ms",
+    "errors": 0,
+    "logSHA256": "1792fc51087bdfb29e5376773c92a33fa38923d0c063f29e12c3d40ca17f04e6"
+  },
+  "unsignedHap": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t681-source-release\\.codex\\local-test\\product\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "bytes": 8038930,
+    "sha256": "176461c39e0c548d162424299dcff404c29f366853279b19101510de995a37fc"
+  },
+  "abc": {
+    "bytes": 2191440,
+    "sha256": "9ee4321898dd09035b8c6e7f04648af050dc8aba6c9f9de00b146eddb2b3b8b4"
+  },
+  "packagedNative": {
+    "libs/arm64-v8a/libc++_shared.so": {
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "BuildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+    },
+    "libs/arm64-v8a/libgrsm0.so": {
+      "bytes": 638640,
+      "sha256": "a117421be24748c2c19fdbd266eadbf727b75a47d946f12912ecbbad0f65e1dc",
+      "BuildId": "42332a3bcd818cab29b9368b32cb56dd6e428310"
+    },
+    "libs/arm64-v8a/libgrsm1.so": {
+      "bytes": 1512272,
+      "sha256": "0618ae4b289b61cf5648c4d90caad1ae376cd53519a948f6cf537edb35a4692e",
+      "BuildId": "9d891ba1c643b38e8854c052c51e6f3e3167241e"
+    },
+    "libs/arm64-v8a/libp013hello.so": {
+      "bytes": 70544,
+      "sha256": "b51b897f526454a275aafed3684bf9858c871eacb65c88df07b5138854d950c6",
+      "BuildId": "f681d951b2c9e5f681b09c188e16654b8bb5b427"
+    },
+    "libs/arm64-v8a/libp013renderer.so": {
+      "bytes": 520640,
+      "sha256": "c466e6734feddf1db8364a82b47e7a9e6089d5d53377c7843a5a55ff7d8eb631",
+      "BuildId": "5f30a03d8bbcb2236003bf24601cb5eb1e56403e"
+    }
+  },
+  "actualConsumers": {
+    "render/PrepareReadinessV4.ets": "d5e0f364aea7d328e360c1daadc6d2d3fb62e5e6298b9fff4f259dd31706f73f",
+    "render/PreparePairingEvidence.ets": "4eefa9fc7cb9c663c6e4791941aff9cffa695c9fe0a829aa6d470fe19b069da1",
+    "pages/P051DerivedV2Demo.ets": "e5d81077c5958dd7740241265cdad0026c4ecc2c763bb8012af031cea71e7f36",
+    "render/PrepareReadiness.ets": "7188835ecea951c738da3282e660cdd924d24e42e6fe7f8497256f34a65d9ec2",
+    "render/P013SingleSandController.ets": "50c84d9b2d042c13d6839aff86f901e08a486794051ab32f05c6bbb73edc6db7",
+    "render/RasterGeometry.ets": "51e39548100fcca4a3a9a08ac397d516df261de5233f845207a867606ef6c1dc"
+  },
+  "formalInputs": {
+    "docs/architecture-T680-v1.md": "efdd2abe95c9fa2cb316197e7f3e2bc209bc49401162203c2e3a7f4559ebd04a",
+    "docs/architecture-T680-contract-v1.json": "c5109b7fcb2cbc13d24619fa0275f1f213918c70b1918b56c34e984b8b2ad4d0",
+    "tools/singlesand/prepare_owner_build.py": "e89bc799d76b84c0edf68254c5358029cd9a1c3cafb46ff592ce11fd96242fd9",
+    "tools/singlesand/build_owner_receipt.py": "1ffde393a3a94b8146bb00743d8132fe1b39a475b2eb09b599d970d58e2d1a20"
+  }
+}
