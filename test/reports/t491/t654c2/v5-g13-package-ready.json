@@ -1,0 +1,17 @@
+{
+ "revision": "T654_G13_PACKAGE_READY_V1",
+ "date": "2026-11-20",
+ "package": {
+  "task": "T725-g13 (T720-rx tree + g13flow integration + g13-flag route)",
+  "inputSha": "0b55dbc6",
+  "signedSha": "dc1294df",
+  "sign": "PASS",
+  "so": {
+   "libgrs_g13.so": 1369880,
+   "libgrs_g9rx.so_note": "1473912B with T720 isolation fix"
+  }
+ },
+ "integration": "assets pregen copied (7 files) + kernels.cmake pregen-copy mode + types/libgrs_g13 + root CMake subdirectory + G9RxResearchAbility page g13 route; BUILD SUCCESSFUL 31s",
+ "sequencing": "QUEUED behind RX compile: installing now would kill RX compile (same bundleName, RX ~3h CPU not persisted); fire order = RX PERSISTED -> install T725-g13 -> page g13 -> G13 configure -> 259KB compile (est 4-5h, T720 UI-sync keeps app alive) -> PERSISTED -> T654 threshold table",
+ "note": "T724-g12 (P013 probe) superseded by T725-g13; T724 retained as P013 utility"
+}

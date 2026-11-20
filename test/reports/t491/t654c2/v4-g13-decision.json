@@ -1,0 +1,9 @@
+{
+ "revision": "T654_G13_COMPILE_DECISION_V1",
+ "date": "2026-11-20",
+ "g13Facility": "t720-rx tree has G13 page + bridge (libgrs_g13.so import) + 259KB pipeline_source.h + T720 UI-sync fix; needs g13flow CMake integration + libgrs_g13.so build + g13-flag route (same pattern as T654-g13c, ~15 min work)",
+ "value": "G13 compile completes -> PERSISTED -> T654 threshold table fires immediately (target-13 closeout); T720 UI-sync fix means no compile-time app exit (unlike T654 v4)",
+ "cost": "259KB shader = likely >2x RX wall-time (>4-5h), but runs in parallel with DM x3 (CPU only ~3.5/12 used)",
+ "sequencing": "installing a G13-capable package kills the RX compile (same bundleName; RX at ~3h CPU, not persisted yet) \u2014 must wait for RX PERSISTED first, then swap package and start G13",
+ "decision": "G13 YES \u2014 queued behind RX compile completion; package prep (route+cmake integration) can be done NOW without touching the device"
+}

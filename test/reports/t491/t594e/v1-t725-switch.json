@@ -1,0 +1,13 @@
+{
+ "revision": "T725_G13_ROUTE_V1",
+ "date": "2026-11-20 15:30",
+ "events": [
+  "T725-g13 installed (RX old compile sacrificed per user decision B)",
+  "RX page reached, \u542f\u7528\u7814\u7a76 -> RX #1 SHADER_COMPILE_ENTER (RX compile restarted in T725 process)",
+  "route switch --ps page g13 -> ability restarted -> G13 page LOADS but blank (only clock widgets, XComponent grs_g13 not initializing)"
+ ],
+ "diagnosis": "/proc/37477/maps: libgrs_g9rx mapped (RX page attempt) but **libgrs_g13 NOT mapped** \u2014 XComponent library load did not complete; G13 page is in XComponent-loading/blocked state (5-item layout = empty shell)",
+ "concurrencyFinding": "RX and G13 CAN run in the same process only sequentially \u2014 a single ability instance routes ONE page at a time; concurrent RX+G13 needs either two abilities or the G13 compile in its own process; currently RX compile restarted in T725 (attempt #1 of new run) and must finish before G13 page switch (switching now would kill the fresh RX compile same as before)",
+ "decision": "RX first (attempt clock reset ~0h), G13 queued after RX PERSISTED (same-package route switch then costs nothing)",
+ "route": "monitor continues; DM x3 unaffected"
+}

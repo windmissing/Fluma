@@ -1,0 +1,13 @@
+{
+ "revision": "T724_G12_IDENTITY_CORRECTION_V1",
+ "date": "2026-11-20",
+ "correction": "ClearWaterDemo.ets = P013 clear-water probe page (CPU-era P013ClearWaterController), NOT G12; G12 water line (target-14 water shader, g12water/water_core.glsl compiled into grs_foundation) has NO ArkTS page entry yet \u2014 its GL compile consumer page does not exist in current trees (targets 13->14->12 sequence still pending)",
+ "implication": "T724-g12 package routes to P013 probe, not G12; genuine G12 first-compile requires the G12 page (future target-14 work) \u2014 cannot parallel-compile G12 today",
+ "rxCompile": {
+  "pid": "60528 alive",
+  "persisted": "no (cache entries still 1)",
+  "note": "RX compile continues (thread sampling unavailable in this quick check; prior 0.93-core sustained)"
+ },
+ "parallelStatus": "DM x3 (T718 same-input instances) + RX 1 = 4 compiles; G12 not startable until its page exists",
+ "route": "G12 compile deferred to target-14 implementation (13->14->12 sequence per user 2026-11-19 ruling); T724-g12 package kept as P013-probe utility only"
+}

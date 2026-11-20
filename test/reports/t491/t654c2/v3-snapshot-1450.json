@@ -1,0 +1,32 @@
+{
+ "revision": "T591_T724_DEVICE_STATE_SNAPSHOT_1450_V1",
+ "date": "2026-11-20",
+ "top101": [
+  {
+   "pid": 38234,
+   "cpu": "100%",
+   "time": "106:43",
+   "proc": "g9_dm_differential (DM #3)"
+  },
+  {
+   "pid": 35542,
+   "cpu": "100%",
+   "time": "111:54",
+   "proc": "g9_dm_differential (DM #2)"
+  },
+  {
+   "pid": 32859,
+   "cpu": "100%",
+   "time": "117:16",
+   "proc": "g9_dm_differential (DM #1)"
+  }
+ ],
+ "rx": {
+  "pid": 60528,
+  "cpu": "0% NOW",
+  "cpuTime": "22:24.95",
+  "state": "S \u2014 GL thread NOT running this sample"
+ },
+ "interpretation": "DM x3 all 100% CPU still compiling (117/111/106 core-minutes each); RX app at 0% CPU with S state = its GL compile thread is NO LONGER RUNNING this sample \u2014 either compile finished (check PERSISTED + page state) or thread parked; immediate page-state check required to classify",
+ "check": "next sweep reads RX page state line + cache entries + hilog G9RxConfigure"
+}

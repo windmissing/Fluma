@@ -1,0 +1,23 @@
+{
+ "revision": "T594_T591_MONITOR_CONCLUSION_1622_V1",
+ "date": "2026-11-20 16:22",
+ "deviceState": {
+  "appPid": "NONE (exited)",
+  "dmDrivers": "NONE (all exited)",
+  "faultlog": "no new jscrash (silent exits)",
+  "hdcDropped": "yes, reconnected"
+ },
+ "cacheEntries": "ONE entry (671d037d) = TWO COMPILE_ENTER records, BOTH persistence=CACHE_NOT_STORED, compileEndNs=0",
+ "recordAnalysis": [
+  {
+   "rec0": "compileBeginNs=354024000904846, compileEndNs=0 \u2014 compile ENTERED but never returned; process died during compile",
+   "rec1": "compileBeginNs=354096799242502, compileEndNs=0 \u2014 same pattern; second attempt (T725 restart) also died mid-compile"
+  },
+  {
+   "timestampMath": "rec0 begin=354024000904846ns; rec1 begin=354096799242502ns; delta=727,984,537,656ns = ~12.1 min between attempts; both records end at COMPILE_ENTER with persistence CACHE_NOT_STORED"
+  }
+ ],
+ "CONCLUSION": "BOTH RX compile attempts (T720 old process ~3.4h and T725 restart ~20min) DIED SILENTLY mid-compile \u2014 no crash log, no compile return, no PERSISTED; cache shows only COMPILE_ENTER stubs; the 260KB-family shader compile on this device driver does NOT return (either killed by system OOM/LMK at 2.1G RES per process, or driver-internal abort); DM x3 also exited silently (same pattern, execution.jsonl 0B)",
+ "rootDirection": "silent-death during glCompileShader across ALL four runs = strongest evidence yet the driver compiler process gets killed (LMK: 2.1GB RES each instance) or aborts internally; NOT a wall-time problem \u2014 a kill/abort problem",
+ "route": "architect/developer priority: (1) capture the actual killer (dmesg/LMK events via hidumperer or kernel log), (2) shader reduction to get under whatever memory/time limit triggers the kill, (3) driver compiler abort diagnosis"
+}

@@ -148,3 +148,20 @@ inputSha c24d08cc→signed 3c6af26b，sign=PASS）。证据：
 
 Create/READY/首 Swap 如实 NOT_REACHED（冷缓存编译中）；T720 修复域
 设备验证成立。
+
+
+## v8 追加（2026-11-20 16:22，effector；**编译静默死亡结论**）
+
+**设备终态**：应用/DM driver 全部退出（无新 jscrash=静默死亡）；缓存仅
+一条（671d037d）=两条 COMPILE_ENTER 记录，**persistence=CACHE_NOT_STORED、
+compileEndNs=0**——两次 RX 编译（旧进程 ~3.4h + T725 重启 ~20min）都在
+编译中死亡，未返回未落盘。DM×3 同模式静默退出（execution.jsonl 0B）。
+
+**结论**：260KB 族 shader 编译在本设备驱动上**不会返回**——不是墙时
+问题，是**杀/弃问题**（每实例 RES 2.1G，LMK 杀或驱动内部中止的形态）。
+修复链（slot/coherent/readonly/队列消费/缓存预载）全部有效但止步于此。
+
+**回 architect/developer（优先级升级）**：
+1. 抓真凶（LMK/内核日志 hidumper，确认是内存杀还是驱动中止）
+2. shader 缩减实验（降到触发线以下，定位阈值）
+3. 驱动编译器中止诊断
