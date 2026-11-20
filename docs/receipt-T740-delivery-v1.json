@@ -1,0 +1,27 @@
+{
+  "schema": "T740_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-20",
+  "commit": "1ec7c0db624154fe713d8e656a1cd8ddf6dd72f5",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b001f0de4b049946b8bf334",
+    "started": {
+      "id": "6b001f6be4b06f392486ce23",
+      "createdTime": "2026-11-20T10:22:35+0000"
+    },
+    "delivered": {
+      "id": "6b002187e4b028e901ba6a6c",
+      "createdTime": "2026-11-20T10:31:35+0000",
+      "title": "T740 离线架构交付（1ec7c0db，docs/architecture-T740-v1.md / architecture-T740-quantum-contract-v1.json）。核 RX/DM T734 生成头与 T554 原 2,404 逐项一致，九角色 802 次计划切换、八角色成本对照 612 次，保实际 4 SSBO 与 ROOT/FULL 3/9 次 copy。静态发现 RX owner 固定 2 ms wait 与 241 批下限冲突，批间约 480 ms 高于 250 ms root；方案按提交/等 fence 分相，保 10/8 ms、绝对截止和撤权。提交/原 0x3ffff、真实最终 fence 及 1024 B、同 token QUANTUM Swap/退役均落合同。已从 T738 RX 的 UNMAP_EXIT 原件取得 [0,0x641647]、同 PID/映射及 ticket，缺 PID start/新进程暖。DM 1638 已见，仍缺同次两字尾、映射/进程原件。各族另需 T736 非零 SOURCE 实测后方可实施完整臂。本卡无真机、无完整臂实施。"
+    }
+  },
+  "statusRow": {
+    "before": "| T740 | 【T740·目标20 RX与DM 完整量子角色接续架构】architect | architect | P5 | 进行中 | 6b001f0de4b049946b8bf334 |",
+    "after": "| T740 | 【T740·目标20 RX与DM 完整量子角色接续架构】architect | architect | P5 | 结束待验收 | 6b001f0de4b049946b8bf334 |"
+  },
+  "beforeSha256": "a36d1b4961092f9deef8484127afc05bead083cae38220b4c1ac4c0fc27705bf",
+  "afterSha256": "0e952d93318ee01b2debe3728e0beed35a9b58c68d7839eed8124696367c3b70",
+  "contractSha256": "2d3b1d676c20ed4ba032a0f6bcb63203caf8842cb378abcebf37cc0abda73ec3"
+}
