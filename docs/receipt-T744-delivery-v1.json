@@ -1,0 +1,27 @@
+{
+  "schema": "T744_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-20",
+  "commit": "b6f465f146eb5e34c4d430f5068b2dfa74e75eb9",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b005e58e4b0bdebdc72bcd4",
+    "started": {
+      "id": "6b005f01e4b07c2761984c0f",
+      "createdTime": "2026-11-20T14:53:53+0000"
+    },
+    "delivered": {
+      "id": "6b00610ee4b0bdebdc73111a",
+      "createdTime": "2026-11-20T15:02:38+0000",
+      "title": "T744 离线架构已交（b6f465f1，docs/architecture-T744-v1.md / architecture-T744-evidence-v1.json）。T743 签包/映射/实际 SPIR-V 已闭合，Vulkan 935F 三属性 0/1/1，在设备预检拒绝，未到逻辑设备、pipeline、fence、op65/66 或 Present；DenormPreserve=0不等于测得 Vulkan FTZ 或内部硬件根因。GLES 四次原读证实当前程序清零。保 MUST-PASS，优先候选合格设备用 T742/T739 原工件跑同合同；当前 935F 原生路线明确不支持，RX/DM 独立走 T736/T740。若 935F 必需则先做等价 GPU 路线最小算子验证，缩域/FTZ 政策须用户明确裁决并版本化。离线反例 exp(-90) 0x0008ec28 的舍入误差低于 T628 原门，置零误差1，正常数输入亦可生成次正规。未用真机，未放宽门。G20 4/12≈33%，RX 暖启动实证仍为 BOOT 阶段。"
+    }
+  },
+  "statusRow": {
+    "before": "| T744 | 【T744·目标20 G13次正规资格失败与后续路线裁定】architect | architect | P5 | 进行中 | 6b005e58e4b0bdebdc72bcd4 |",
+    "after": "| T744 | 【T744·目标20 G13次正规资格失败与后续路线裁定】architect | architect | P5 | 结束待验收 | 6b005e58e4b0bdebdc72bcd4 |"
+  },
+  "beforeSha256": "3bf2a08155ecf1c9ce532568e09747d30416902d86d4f955f179d04b0d59d950",
+  "afterSha256": "342a8fa92aca4460a1c270da8a13fc6325a307ae153477daf7d3c8b4c2635ad2",
+  "evidenceSha256": "6b32c814e46781ba7c1c69b9fb7a661863136e8b37ef6e7bdc13c36817b10ad2"
+}
