@@ -1,0 +1,91 @@
+{
+  "cases": {
+    "wide": "SYNCHRONIZED_FP32_EVIDENCE",
+    "rounded": "IDENTITY_MISMATCH",
+    "anchor": "ANCHOR_MISMATCH",
+    "scope": "STAGE_SCOPE_OR_ORDER",
+    "unqueried": "MISSING_QUERY_STAGE",
+    "rawGL": "STAGE_IDENTITY_OR_GL",
+    "rawWords": "INVALID_RAW_VALUES",
+    "missingCapability": "NOT_MEASURED"
+  },
+  "fixtureUnits": {
+    "L0": 2,
+    "rho0": 1000,
+    "muSI": 4,
+    "T0": 1
+  },
+  "nu": "1/1000",
+  "velocityScale": 2,
+  "pressureScale": 4000,
+  "layout": [
+    "L0Binary64.lo",
+    "L0Binary64.hi",
+    "rho0Binary64.lo",
+    "rho0Binary64.hi",
+    "muSIBinary64.lo",
+    "muSIBinary64.hi",
+    "nuF32"
+  ],
+  "artifactFields": {
+    "nuF32": "#define Config128_nuF32 18u",
+    "viscosityResidual": "#define Completion256_rHRMSF32 104u",
+    "divergenceRMS": "#define Completion256_divergenceRMSF32 106u",
+    "pressureCertificate": "#define Completion256_pressureCertificateF32 108u"
+  },
+  "thresholds": {
+    "blocks": 4,
+    "bindings": 4,
+    "invocations": 64,
+    "laneX": 64,
+    "shared": 4096,
+    "maxBlock": 2331392
+  },
+  "baselineQ": "1/6",
+  "baselineTail": 2.7120243262812697e-12,
+  "numericalFixtureVerdicts": [
+    "THRESHOLDS_SATISFIED",
+    "THRESHOLDS_EXCEEDED",
+    "INVALID",
+    "NOT_MEASURED"
+  ],
+  "historical": {
+    "boot": "287785986262658",
+    "ticket": "216",
+    "statusAPIInvocation": "217",
+    "rawGL": 1280,
+    "result": "HISTORICAL_CAPABILITY_FAILED",
+    "pages": [
+      {
+        "path": "r1-page0.json",
+        "jsonSHA": "9ec50b05cbcba20438904b1c5b62b1290c1b7cadde6dd6722e0f3d10bd5d7365",
+        "decodedSHA": "6e5aba26944e01947e379dadabbb5bf6e6773d961887a0adb37e2f33d0f5f60c",
+        "sampleSeq": "16"
+      },
+      {
+        "path": "r1-page1.json",
+        "jsonSHA": "46adaa386a2f08817bd306c4ca18f8596c9187ebeb2ae5f1efc00321731f1bc2",
+        "decodedSHA": "126cbee743165bbad30f5bdbfce3fa4a124b0ef34dca674c2e63078f1d2eccc8",
+        "sampleSeq": "16"
+      },
+      {
+        "path": "r1-page2.json",
+        "jsonSHA": "de22781416e1218ee31d7c86f71f287e882243dfe9b87896ca78d286ba4f2cea",
+        "decodedSHA": "8b9f7ed920a12c1a860f5dacaf367222c78094116fbe3ba9377f50428d6e1ca5",
+        "sampleSeq": "16"
+      },
+      {
+        "path": "r1-page3.json",
+        "jsonSHA": "cbf13391305e1c246b45452d8b20e14ef9897510514e89f6b9cd22d34c08f736",
+        "decodedSHA": "981d92cda65c8e49830f34526b6394fc31fa3ba08c989a86693662892574c94f",
+        "sampleSeq": "16"
+      }
+    ],
+    "missing": [
+      "configure.json",
+      "r1-anchor-before.json",
+      "r1-anchor-after.json"
+    ]
+  },
+  "device": "NOT_RUN"
+}
