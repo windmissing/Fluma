@@ -1,0 +1,27 @@
+{
+  "schema": "T746_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-20",
+  "commit": "61bbcc1476b45a5e3356ae526992de3214448dba",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b00619ee4b0890c8a988761",
+    "started": {
+      "id": "6b006287e4b0890c8a989520",
+      "createdTime": "2026-11-20T15:08:55+0000"
+    },
+    "delivered": {
+      "id": "6b0064d7e4b0bdebdc738e1b",
+      "createdTime": "2026-11-20T15:18:47+0000",
+      "title": "T746 离线架构已交（61bbcc14，docs/architecture-T746-v1.md 与 architecture-T746-evidence-v1.json）。RX T738 签包/实际映射与 BOOT 22,318 B 对齐。冷 PID 43774、暖 PID 45505 各有同票 fence→8 B map/unmap→BOOT_AUDIT_OK 原链，原字 [0,0x641647]。冷 637.261 ms、暖 186.281 ms。T475 较早已落盘，v3 暖轮走缓存由实际代码与时点推断，缺直接 load key/binarySHA 回执。T736 正式实施只差同次 RX BOOT 的 startTick；优先复用旧原件，无原件由 effector 用同签包一轮 Configure，同 PID 保存 /proc/<pid>/stat 第22字段与现有 BOOT 链。DM/G13 独立推进。已锁定真实 NAPI 输入 mass=0.2 → 209715 Q20、41,767 B SOURCE、原 12 pass/typed proof。离线复算和静态反射通过，真机 SOURCE 尚未运行。G20 4/12≈33%。"
+    }
+  },
+  "statusRow": {
+    "before": "| T746 | 【T746·目标20 RX非零SOURCE实施前置联核】architect | architect | P5 | 进行中 | 6b00619ee4b0890c8a988761 |",
+    "after": "| T746 | 【T746·目标20 RX非零SOURCE实施前置联核】architect | architect | P5 | 结束待验收 | 6b00619ee4b0890c8a988761 |"
+  },
+  "beforeSha256": "59035818b92cef8a2c08e9ec77cd33a71bb94f914936ea6cc813d713155aa626",
+  "afterSha256": "8b24276eb16c6891cbaf39de881240012dd168a2eb1f477ef497295fb58fa11b",
+  "evidenceSha256": "1670a058d14fb1ee15c0e0c3c21d4024e17bf17ff1c1b9b23cce95b23bd8f8a4"
+}
