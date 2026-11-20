@@ -1,0 +1,69 @@
+{
+  "schema": "T718_DEVELOPER_COMPILE_V1",
+  "exit": 0,
+  "deviceUsed": false,
+  "testsRun": false,
+  "glslangExit": 0,
+  "shaderSHA": "c10b15ee3d7ba93bde10d393b5d8ebf0cbcec02df4ae6615f90b196007d5b0c4",
+  "implementationSHA": "97ce0904eb848b34eb1da4f9c7a6bb7ae4275b538fc4a17142323c7eeb22615a",
+  "readonlyTransform": {
+    "revision": "T718_DM_READONLY_VALUE_V1",
+    "inputShaderSHA": "cfd723bfcc175ee2147e87fe5a465358bb6a97cbeb8a75097edaa5e30666c4d3",
+    "arguments": [
+      {
+        "callee": "g9EventMask",
+        "argument": 1,
+        "buffer": "B",
+        "line": 1987,
+        "canonicalLine": 1988,
+        "before": "B[at+2u]",
+        "after": "dmReadBaseWord(at+2u)"
+      }
+    ]
+  },
+  "exactOtherSourceBytesPreserved": true,
+  "differential": {
+    "path": ".codex\\local-test\\t718\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\g9_dm_differential",
+    "bytes": 743304,
+    "sha256": "cce1a14ba7e4260590e6d95671cfd0ccb203e9e605a692add7fc87a4bbc3260a",
+    "buildId": "cb94c860b110e7dcdd2b8041ad9772858b9d8a2e",
+    "needed": [
+      "libgrs_dm_t647.so",
+      "libEGL.so",
+      "libGLESv3.so",
+      "libhilog_ndk.z.so",
+      "libc++_shared.so",
+      "libc.so"
+    ]
+  },
+  "sharedLibrary": {
+    "path": ".codex\\local-test\\t718\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrs_dm_t647.so",
+    "bytes": 5204264,
+    "sha256": "82f5bea24d12ad3e889fb606a6e563645300817296b69bfa764c33dfd730b9bc",
+    "buildId": "9954e008b4d8b08907f30c44849f2cd2564ddf4d",
+    "needed": [
+      "libEGL.so",
+      "libGLESv3.so",
+      "libhilog_ndk.z.so",
+      "libc++_shared.so",
+      "libc.so"
+    ]
+  },
+  "unsignedHap": {
+    "path": ".codex\\local-test\\t718\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "sha256": "19e75d787b62889191403fc59a6c3926b3a9d9c0a9181c61fc42e6536296ba74",
+    "packagedElfSHA256": "f3cd773ca1845d78e4d2039cb9d1e49a36d0a7a2b18c6ac357b697d8f68106e5",
+    "abcSHA256": "923b0d240ea9848f01682bc9ab2542c3ebd88f695d6986801479ea5c1a193b2a"
+  },
+  "logSHA256": "c915dbab4b7ea3cb1c95373304173c991663de23970bf18ad2f9115bf5796ef0",
+  "priorAttribution": {
+    "deviceRecord": "test/reports/t491/t712b/v3-t715.json",
+    "driverError": "0:1987: S0001: Function call discards 'readonly' access qualifier",
+    "unsignedSHA": "31d6408548fa901da9e114e0626d2f024d1f60717d349e561efd3720621b0925",
+    "signedSHA": "c0a95917c9a019b82650f60b296d657a03e9870b3620cea5a795fc0e84eb97c6",
+    "shaderSHA": "cfd723bfcc175ee2147e87fe5a465358bb6a97cbeb8a75097edaa5e30666c4d3",
+    "sharedLibraryBuildId": "30f789aef392db12d12647d54d1df47d29dd610a",
+    "differentialBuildId": "bce4c73c6efa809ede4a88c6656d4ec2aae8f309",
+    "processMappingCaptured": false
+  }
+}

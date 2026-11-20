@@ -8,6 +8,7 @@ sys.path.insert(0,str(QUALIFIED_VALUES.parent))
 from qualified_values import copy_value_arguments
 
 COHERENT_REVISION='T715_DM_COHERENT_VALUE_V1'
+READONLY_REVISION='T718_DM_READONLY_VALUE_V1'
 COHERENT_BOUNDARIES={
  ('g9AddMass',0,'C'):1, ('g9AddMass',0,'W'):1, ('g9MapAdd',3,'C'):1,
  ('g9U32',0,'C'):17, ('g9U32',0,'W'):18,
@@ -63,7 +64,16 @@ def generate(out,canonical=False):
  before_coherent=sha(s.encode())
  s,arguments=copy_value_arguments(s,{'C':'dmReadCandidateWord','W':'dmReadWorkWord','E':'dmReadEventWord'},
                                  COHERENT_BOUNDARIES,'uvec4 g9ReadWide(uint at)')
+ if s.count('readonly buffer ReadState{uint B[];}')!=1:raise ValueError('DM_READONLY_STORAGE_DECLARATION')
+ before_readonly=sha(s.encode())
+ s,readonly_arguments=copy_value_arguments(s,{'B':'dmReadBaseWord'},
+                                          {('g9EventMask',0,'B'):1},'uvec4 g9ReadWide(uint at)')
+ helper_line=s[:s.index('uint dmReadBaseWord(uint at)')].count('\n')+1
+ for argument in arguments:
+  if argument['canonicalLine']>=helper_line:argument['canonicalLine']+=1
+ capture['firstLine']=s[:s.index('bool g9Capture(){')].count('\n')+1
  coherent={'revision':COHERENT_REVISION,'inputShaderSHA':before_coherent,'arguments':arguments}
+ readonly={'revision':READONLY_REVISION,'inputShaderSHA':before_readonly,'arguments':readonly_arguments}
  deps['tools/glsl/qualified_values.py']=sha(source_bytes(QUALIFIED_VALUES))
  (out/'pipeline.comp').write_text(s,encoding='utf8')
  schema=(frozen/'schema_parent.h').read_text(encoding='utf8');schema=schema.replace('t555-g9dm-v2-initial-construction','T648_T647_DM2_IMPLEMENTATION_1')
@@ -125,7 +135,7 @@ def generate(out,canonical=False):
  if canonical:
   for name in ['pipeline.comp','schema_generated.h','dm_contract_generated.h','dm_seed_generated.h']:
    if (out/name).resolve()!=(MOD/name).resolve():(MOD/name).write_bytes((out/name).read_bytes())
- source_identity={'shaderSHA':sha(s.encode()),'implementationSHA':identity,'captureTransform':capture,'coherentTransform':coherent}
+ source_identity={'shaderSHA':sha(s.encode()),'implementationSHA':identity,'captureTransform':capture,'coherentTransform':coherent,'readonlyTransform':readonly}
  (out/'acceptance_dictionary.json').write_text(json.dumps({'schema':'T648_READER_DICTIONARY_V1','staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json'],'sourceIdentity':source_identity,'expectedWords':224,'expectedBytes':896,'encoding':'u32 little endian','rows':acceptance['rows'],'FrozenExpected224':acceptance['FrozenExpected224'],'DMControlWords':acceptance['DMControlWords'],'scopeBits':acceptance['scopeBits'],'DMWork':acceptance['DMWork']},indent=2)+'\n',encoding='utf8')
  (out/'identity.json').write_text(json.dumps({'schema':'T648_DM2_IDENTITY_V1',**source_identity,'staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json'],'inputs':deps},indent=2)+'\n',encoding='utf8')
  if canonical:

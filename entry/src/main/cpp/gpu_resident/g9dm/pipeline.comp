@@ -1011,6 +1011,7 @@ uvec4 g9Momentum(uint c){return g9S64(uvec2(g9Column(c,2u),g9Column(c,3u)));}
 bool g9PutMomentum(uint c,uvec4 p){uvec2 narrow;if(!g9I64(p,narrow)){g9Fault(29u,c,2u);return false;}g9PutColumn(c,2u,narrow.x);g9PutColumn(c,3u,narrow.y);g9PutColumn(c,4u,g9Zero(p)?0u:1u);return true;}
 uint dmReadCandidateWord(uint at){return C[at];}
 uint dmReadWorkWord(uint at){return W[at];}
+uint dmReadBaseWord(uint at){return B[at];}
 uvec4 g9ReadWide(uint at){return uvec4(W[at],W[at+1u],W[at+2u],W[at+3u]);}
 void g9WriteWide(uint at,uvec4 value){for(uint i=0u;i<4u;++i)W[at+i]=value[i];}
 uvec4 g9HeaderWide(uint at){return uvec4(C[at],C[at+1u],C[at+2u],C[at+3u]);}
@@ -1984,7 +1985,7 @@ void g9ScopeSeal(){
 // event pair. They never require a fifth SSBO.
 bool g9CompareStream(){
  uint events=g9Ctl(22u),paths=g9Ctl(23u);if(events!=g9Ctl(7u)||paths!=g9Ctl(9u)){g9Fault(25u,0u,0u);return false;}
- for(uint row=0u;row<events;++row){uint at=row*64u;uvec2 mask=g9EventMask(B[at+2u]);
+ for(uint row=0u;row<events;++row){uint at=row*64u;uvec2 mask=g9EventMask(dmReadBaseWord(at+2u));
   if(all(equal(mask,uvec2(0u)))||B[at+63u]!=G9_SEAL||C[at+63u]!=G9_SEAL){g9Fault(26u,row,63u);return false;}
   uint expectedRole=B[at+14u]&3u,actualRole=C[at+14u]&3u;if(expectedRole!=0u||actualRole!=(uRole==2u?1u:2u)){g9Fault(25u,row,14u);return false;}
   for(uint word=0u;word<64u;++word){uint a=B[at+word],b=C[at+word];if(word==14u){a&=~3u;b&=~3u;}if(((mask[word/32u]>>(word%32u))&1u)==0u&&(a!=0u||b!=0u)||a!=b){g9Fault(25u,row,word);return false;}}

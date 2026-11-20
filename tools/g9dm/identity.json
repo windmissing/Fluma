@@ -1,12 +1,12 @@
 {
   "schema": "T648_DM2_IDENTITY_V1",
-  "shaderSHA": "cfd723bfcc175ee2147e87fe5a465358bb6a97cbeb8a75097edaa5e30666c4d3",
-  "implementationSHA": "ca11e394392ed3ac7091abedeac6d32fd030664df99c54b221da57b616b73ee9",
+  "shaderSHA": "c10b15ee3d7ba93bde10d393b5d8ebf0cbcec02df4ae6615f90b196007d5b0c4",
+  "implementationSHA": "97ce0904eb848b34eb1da4f9c7a6bb7ae4275b538fc4a17142323c7eeb22615a",
   "captureTransform": {
     "revision": "T706_DM_CAPTURE_SCOPE_V1",
     "beforeSHA256LF": "5e1b5b3b3f22dc8b2d379a97f73451355a0b2cf82e892826bdfedbe994e651f1",
     "afterSHA256LF": "4e9aefb176dddce24986c9e39768eefff603875988b6a5f23bbb063e3713c4e1",
-    "firstLine": 1723,
+    "firstLine": 1726,
     "bindings": [
       "clearSlot",
       "scanSlot",
@@ -22,7 +22,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1063,
-        "canonicalLine": 1065,
+        "canonicalLine": 1066,
         "before": "C[at+3u]",
         "after": "dmReadCandidateWord(at+3u)"
       },
@@ -31,7 +31,7 @@
         "argument": 4,
         "buffer": "C",
         "line": 1097,
-        "canonicalLine": 1099,
+        "canonicalLine": 1100,
         "before": "C[at+3u]",
         "after": "dmReadCandidateWord(at+3u)"
       },
@@ -40,7 +40,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1104,
-        "canonicalLine": 1106,
+        "canonicalLine": 1107,
         "before": "C[at+3u]",
         "after": "dmReadCandidateWord(at+3u)"
       },
@@ -49,7 +49,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1116,
-        "canonicalLine": 1118,
+        "canonicalLine": 1119,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -58,7 +58,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1124,
-        "canonicalLine": 1126,
+        "canonicalLine": 1127,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -67,7 +67,7 @@
         "argument": 2,
         "buffer": "W",
         "line": 1164,
-        "canonicalLine": 1166,
+        "canonicalLine": 1167,
         "before": "W[at]",
         "after": "dmReadWorkWord(at)"
       },
@@ -76,7 +76,7 @@
         "argument": 3,
         "buffer": "W",
         "line": 1164,
-        "canonicalLine": 1166,
+        "canonicalLine": 1167,
         "before": "W[at+1u]",
         "after": "dmReadWorkWord(at+1u)"
       },
@@ -85,7 +85,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1180,
-        "canonicalLine": 1182,
+        "canonicalLine": 1183,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -94,7 +94,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1223,
-        "canonicalLine": 1225,
+        "canonicalLine": 1226,
         "before": "W[uConfig+4u]",
         "after": "dmReadWorkWord(uConfig+4u)"
       },
@@ -103,7 +103,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1223,
-        "canonicalLine": 1225,
+        "canonicalLine": 1226,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -112,7 +112,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1223,
-        "canonicalLine": 1225,
+        "canonicalLine": 1226,
         "before": "W[uConfig]",
         "after": "dmReadWorkWord(uConfig)"
       },
@@ -121,7 +121,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1235,
-        "canonicalLine": 1237,
+        "canonicalLine": 1238,
         "before": "W[uConfig]",
         "after": "dmReadWorkWord(uConfig)"
       },
@@ -130,7 +130,7 @@
         "argument": 3,
         "buffer": "C",
         "line": 1251,
-        "canonicalLine": 1253,
+        "canonicalLine": 1254,
         "before": "C[22u]",
         "after": "dmReadCandidateWord(22u)"
       },
@@ -139,7 +139,7 @@
         "argument": 3,
         "buffer": "C",
         "line": 1251,
-        "canonicalLine": 1253,
+        "canonicalLine": 1254,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -148,7 +148,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1279,
-        "canonicalLine": 1281,
+        "canonicalLine": 1282,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -157,7 +157,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1279,
-        "canonicalLine": 1281,
+        "canonicalLine": 1282,
         "before": "W[uConfig]",
         "after": "dmReadWorkWord(uConfig)"
       },
@@ -166,7 +166,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1279,
-        "canonicalLine": 1281,
+        "canonicalLine": 1282,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -175,7 +175,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1279,
-        "canonicalLine": 1281,
+        "canonicalLine": 1282,
         "before": "W[uConfig+1u]",
         "after": "dmReadWorkWord(uConfig+1u)"
       },
@@ -184,7 +184,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1293,
-        "canonicalLine": 1295,
+        "canonicalLine": 1296,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -193,7 +193,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1307,
-        "canonicalLine": 1309,
+        "canonicalLine": 1310,
         "before": "W[uConfig]",
         "after": "dmReadWorkWord(uConfig)"
       },
@@ -202,7 +202,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1307,
-        "canonicalLine": 1309,
+        "canonicalLine": 1310,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -211,7 +211,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1312,
-        "canonicalLine": 1314,
+        "canonicalLine": 1315,
         "before": "W[uConfig+3u]",
         "after": "dmReadWorkWord(uConfig+3u)"
       },
@@ -220,7 +220,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1334,
-        "canonicalLine": 1336,
+        "canonicalLine": 1337,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -229,7 +229,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1334,
-        "canonicalLine": 1336,
+        "canonicalLine": 1337,
         "before": "W[uConfig]",
         "after": "dmReadWorkWord(uConfig)"
       },
@@ -238,7 +238,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1334,
-        "canonicalLine": 1336,
+        "canonicalLine": 1337,
         "before": "W[uConfig+1u]",
         "after": "dmReadWorkWord(uConfig+1u)"
       },
@@ -247,7 +247,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1484,
-        "canonicalLine": 1486,
+        "canonicalLine": 1487,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -256,7 +256,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1487,
-        "canonicalLine": 1489,
+        "canonicalLine": 1490,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -265,7 +265,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1496,
-        "canonicalLine": 1498,
+        "canonicalLine": 1499,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -274,7 +274,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1496,
-        "canonicalLine": 1498,
+        "canonicalLine": 1499,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -283,7 +283,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1509,
-        "canonicalLine": 1511,
+        "canonicalLine": 1512,
         "before": "W[uConfig]",
         "after": "dmReadWorkWord(uConfig)"
       },
@@ -292,7 +292,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1509,
-        "canonicalLine": 1511,
+        "canonicalLine": 1512,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -301,7 +301,7 @@
         "argument": 3,
         "buffer": "W",
         "line": 1510,
-        "canonicalLine": 1512,
+        "canonicalLine": 1513,
         "before": "W[stage+14u]",
         "after": "dmReadWorkWord(stage+14u)"
       },
@@ -310,7 +310,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1522,
-        "canonicalLine": 1524,
+        "canonicalLine": 1525,
         "before": "W[at+3u]",
         "after": "dmReadWorkWord(at+3u)"
       },
@@ -319,7 +319,7 @@
         "argument": 3,
         "buffer": "W",
         "line": 1548,
-        "canonicalLine": 1550,
+        "canonicalLine": 1551,
         "before": "W[at+3u]",
         "after": "dmReadWorkWord(at+3u)"
       },
@@ -328,7 +328,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1758,
-        "canonicalLine": 1760,
+        "canonicalLine": 1761,
         "before": "W[uHamilton+c*2048u+1600u]",
         "after": "dmReadWorkWord(uHamilton+c*2048u+1600u)"
       },
@@ -337,7 +337,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1763,
-        "canonicalLine": 1765,
+        "canonicalLine": 1766,
         "before": "W[uHamilton+c*2048u+1600u]",
         "after": "dmReadWorkWord(uHamilton+c*2048u+1600u)"
       },
@@ -346,7 +346,7 @@
         "argument": 3,
         "buffer": "W",
         "line": 1776,
-        "canonicalLine": 1778,
+        "canonicalLine": 1779,
         "before": "W[base+1664u+i]",
         "after": "dmReadWorkWord(base+1664u+i)"
       },
@@ -355,7 +355,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1806,
-        "canonicalLine": 1808,
+        "canonicalLine": 1809,
         "before": "W[uConfig]",
         "after": "dmReadWorkWord(uConfig)"
       },
@@ -364,7 +364,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1806,
-        "canonicalLine": 1808,
+        "canonicalLine": 1809,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -373,7 +373,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1808,
-        "canonicalLine": 1810,
+        "canonicalLine": 1811,
         "before": "W[uConfig+3u]",
         "after": "dmReadWorkWord(uConfig+3u)"
       },
@@ -382,7 +382,7 @@
         "argument": 1,
         "buffer": "C",
         "line": 1881,
-        "canonicalLine": 1883,
+        "canonicalLine": 1884,
         "before": "C[23u]",
         "after": "dmReadCandidateWord(23u)"
       },
@@ -391,7 +391,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1928,
-        "canonicalLine": 1930,
+        "canonicalLine": 1931,
         "before": "W[uConfig+7u]",
         "after": "dmReadWorkWord(uConfig+7u)"
       },
@@ -400,7 +400,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 1928,
-        "canonicalLine": 1930,
+        "canonicalLine": 1931,
         "before": "W[uConfig+7u]",
         "after": "dmReadWorkWord(uConfig+7u)"
       },
@@ -409,7 +409,7 @@
         "argument": 1,
         "buffer": "W",
         "line": 2104,
-        "canonicalLine": 2106,
+        "canonicalLine": 2107,
         "before": "W[uConfig+7u]",
         "after": "dmReadWorkWord(uConfig+7u)"
       },
@@ -418,9 +418,24 @@
         "argument": 1,
         "buffer": "W",
         "line": 2104,
-        "canonicalLine": 2106,
+        "canonicalLine": 2107,
         "before": "W[uConfig+7u]",
         "after": "dmReadWorkWord(uConfig+7u)"
+      }
+    ]
+  },
+  "readonlyTransform": {
+    "revision": "T718_DM_READONLY_VALUE_V1",
+    "inputShaderSHA": "cfd723bfcc175ee2147e87fe5a465358bb6a97cbeb8a75097edaa5e30666c4d3",
+    "arguments": [
+      {
+        "callee": "g9EventMask",
+        "argument": 1,
+        "buffer": "B",
+        "line": 1987,
+        "canonicalLine": 1988,
+        "before": "B[at+2u]",
+        "after": "dmReadBaseWord(at+2u)"
       }
     ]
   },
