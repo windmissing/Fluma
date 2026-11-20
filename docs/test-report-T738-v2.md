@@ -77,3 +77,22 @@ T734 规范核）。
 
 SOURCE 前置：按 T736 各族同域原证——G13 SOURCE 被次正规决策阻塞
 （T743 确认硬件 FTZ）；RX/DM SOURCE 配置未跑（本轮 BOOT-only 范围）。
+
+
+## v5 追加（2026-11-21 07:30，effector；T745 driver 导出 DM BOOT 原件——**8B 尾 [0,0x641647] PASS**）
+
+被测：T745 新 driver（g9_dm_differential 713344B buildId a2f4a69e + 
+libgrs_dm_t647 5441272B，32f1061b 交付）。复跑 dm20-out9。
+
+**schema 缺口关闭**：T745 driver 逐事件输出 G9BootV1 原件（ROOT_INIT→
+WARM→FINISH(fenceWaitRaw 37146 fenceCompleted=true)→MAP→UNMAP
+(workByteOffset 1166976 workTailBytes 8)→PREPARE→**BOOT_AUDIT_OK**），
+pid 45665、**真实映射 BuildId 9b6cc802**、run 7/owner 1/context 11 全齐。
+
+**8B 尾 [0,0x641647] PASS**：boot-work-tail.u32 导出，od 实测
+**[0, 6559303] == [0, 0x641647]**——合同 MUST-PASS 项 PASS（v4 的 schema
+缺口已由 T745 关闭；seal=6559303 与尾值互证）。
+
+**卡面全项达成**：签包/BuildId 映射✔、pid/start✔、fence-8B 尾✔（DM），
+BOOT_AUDIT_OK✔、暖命中✔（v3 RX）；SOURCE 前置按 T736 保持（G13 硬件
+FTZ 阻塞）。
