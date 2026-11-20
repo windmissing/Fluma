@@ -34,3 +34,25 @@ ROOT/ FULL/投沙/加水/合成信号/冷档状态/导出 V5 冷档 按钮全在
 
 V5 入口/页面/按钮/请求链原件齐；M5_NOT_READY 持续原件交 architect 定
 V5 资格链缺口（API_SEMANTIC 域）。
+
+
+## v4 追加（2026-11-20，effector；T707 RX 修订产物设备验证）
+
+日期：2026-11-20，真机。被测：T707-signed（RX 修订产物，signedSha dfc7f60e；
+libgrs_g9rx.so 1404664B/SHA 4728e218/BuildId 624ba445）。证据：
+`test/reports/t491/t594b/`（d1–d4 布局、h594d.txt、v4-t707.json）。
+
+### 执行链
+
+grsm1 直达 RX 研究页 → 启用研究：
+- **LOADED_FILE_OBSERVED：memoryBuildIdMatched=true**（T707 修订 so 正确加载）
+- **CONFIGURE_FAILED_8**：driver `0:1097: S0001: Function call discards
+  coherent access qualifier`——错误行从 1063 移到 1097（同 S0001 类）
+
+### 判定
+
+- T691 修订变换（两处 merge 分支局部化）已进包并加载，但 **coherent 拒因
+  仍在**（新行 1097）——第三个未变换调用点存在，或变换未覆盖实际被拒构造
+- 修复链：S0022（slot）FIXED → S0001（coherent）仍 OPEN @1097
+- 回 architect：T691 变换不完整，1097 行需重查（第三分支 g9AddMass 调用或
+  已变换点仍被拒）——同 S0001 族非新缺陷类

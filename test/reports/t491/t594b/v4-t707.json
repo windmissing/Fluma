@@ -1,0 +1,22 @@
+{
+ "revision": "T594_V4_T707_RX_DEVICE_V1",
+ "date": "2026-11-20",
+ "package": {
+  "task": "T707-signed (RX revision, T691 boundary)",
+  "signedSha": "dfc7f60e",
+  "so": {
+   "libgrs_g9rx.so": {
+    "bytes": 1404664,
+    "sha256": "4728e218",
+    "BuildId": "624ba445"
+   }
+  }
+ },
+ "observed": {
+  "loaded": "memoryBuildIdMatched=true (T707 revision correctly loaded)",
+  "configure": "CONFIGURE_FAILED_8",
+  "driverError": "0:1097: S0001 Function call discards coherent access qualifier (line moved 1063->1097, same S0001 class)"
+ },
+ "interpretation": "T691 transform loaded but coherent rejection persists at line 1097 - third untransformed call site or transform did not cover rejected construct; S0022 FIXED -> S0001 OPEN @1097; routed to architect",
+ "NOT_claimed": "no physics/pixel PASS"
+}
