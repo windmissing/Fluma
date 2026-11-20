@@ -3,11 +3,14 @@ const fs = require('node:fs');
 const path = require('node:path');
 const cp = require('node:child_process');
 const crypto = require('node:crypto');
+const {applyFirstFrameControl} = require('./first_frame_control.cjs');
 const root = path.resolve(__dirname, '../..');
 const local = path.join(root, '.codex/local-test');
-const [route, directory] = process.argv.slice(2);
-if (!['M1', 'M2'].includes(route) || !directory)
-  throw Error('Usage: node tools/t701/prepare.cjs M1|M2 <new .codex/local-test directory>');
+const [route, directory, control] = process.argv.slice(2);
+if (!['M1', 'M2'].includes(route) || !directory ||
+    (control !== undefined && control !== '--first-frame-control') || process.argv.length > 5)
+  throw Error('Usage: node tools/t701/prepare.cjs M1|M2 <new .codex/local-test directory> [--first-frame-control]');
+const firstFrameControl = control === '--first-frame-control';
 const output = path.resolve(directory);
 if (!output.startsWith(local + path.sep) || fs.existsSync(output))
   throw Error('T701_FRESH_ISOLATED_DIRECTORY_REQUIRED');
@@ -285,6 +288,7 @@ napi_value setProgressV2(`);
 
 for (const variant of ['THREE','TWO']) for (const cache of ['OFF','ON']) {
   const arm = variant + '_' + cache;
+  if (firstFrameControl && arm !== (m2 ? 'TWO_ON' : 'THREE_OFF')) continue;
   const cached = cache === 'ON';
   const dest = path.join(output, arm);
   fs.cpSync(parent, dest, {recursive:true, filter:file=>path.basename(file)!=='oh_modules'});
@@ -298,12 +302,14 @@ for (const variant of ['THREE','TWO']) for (const cache of ['OFF','ON']) {
     const before = fs.readFileSync(file);
     const after = transform(read(file));
     fs.writeFileSync(file,after);
-    changes[relative] = {before:sha(before),after:sha(after)};
+    changes[relative] = {before:changes[relative]?.before ?? sha(before),after:sha(after)};
   }
   const declaration = {route,variant,cache,
     roles:variant==='THREE'?[0,1,2]:[0,2],
     role1:variant==='THREE'?'INTERMEDIATE_Q':'NOT_USED_BY_VARIANT',
     independentQ:'SOURCE_BUILD', sourceSha:canonical[0], finalSha:canonical[1]};
+  if (firstFrameControl)
+    declaration.firstFrameControl = m2 ? 'T714_M2_DIRECT_ENTRY' : 'T714_M1_CLOCK_V2';
   const identity = `#pragma once
 namespace grs::t701 {
 inline constexpr bool kTwo = ${variant==='TWO'};
@@ -344,6 +350,7 @@ if(NOT GRS_FULL_CREATE_VARIANT STREQUAL "${variant}" OR NOT GRS_FULL_COMPUTE_CAC
 endif()
 ${!m2&&cached?'target_sources(grsm1 PRIVATE gpu_resident/m2/create_diagnostics_abi.cpp)':''}
 `);
+  if (firstFrameControl) applyFirstFrameControl(edit,m2);
   if (sha(fs.readFileSync(path.join(native,folder,'full_kernel.cpp'))) !== sha(parentShader))
     throw Error('T701_SHADER_SOURCE_CHANGED');
   const armEvidence = {...declaration,parentDigest, changes,
@@ -354,5 +361,7 @@ ${!m2&&cached?'target_sources(grsm1 PRIVATE gpu_resident/m2/create_diagnostics_a
 }
 writeJson(path.join(output,'t701-generation.json'),{route,inputCommit,parentDigest,
   parent:m2?'T663 -> T468 -> T452 actual m2route':baseline,
-  checkoutBytes, recipeSHA256:sha(fs.readFileSync(__filename)),arms:evidence});
+  checkoutBytes, recipeSHA256:sha(fs.readFileSync(__filename)),
+  firstFrameControlSHA256:firstFrameControl ? sha(fs.readFileSync(require.resolve('./first_frame_control.cjs'))) : undefined,
+  arms:evidence});
 console.log(output);

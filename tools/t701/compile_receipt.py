@@ -116,12 +116,15 @@ def evidence(matrix, arm, log):
         objects[source.name] = {"sourceSHA256": filesha(source), "objectSHA256": filesha(obj),
                                 "argvSHA256": sha(command.encode()), "object": output}
     require(set(objects) == names | {"app_bridge.cpp"}, "missing actual App entry or role compile commands")
-    declaration_text = json.dumps({key: manifest[key] for key in
-        ("route", "variant", "cache", "roles", "role1", "independentQ", "sourceSha", "finalSha")},
+    declaration_keys = ["route", "variant", "cache", "roles", "role1", "independentQ", "sourceSha", "finalSha"]
+    if "firstFrameControl" in manifest:
+        declaration_keys.append("firstFrameControl")
+    declaration_text = json.dumps({key: manifest[key] for key in declaration_keys},
         separators=(",", ":")).encode()
     require(declaration_text + b"\0" in packaged, "linked arm declaration missing")
     return {
         "arm": arm, "variant": manifest["variant"], "cache": manifest["cache"],
+        "firstFrameControl": manifest.get("firstFrameControl"),
         "roles": manifest["roles"], "role1": manifest["role1"],
         "independentQ": manifest["independentQ"], "parent": manifest["parentDigest"],
         "roleSources": source_digests, "objects": objects, "abi": "arm64-v8a",
@@ -144,8 +147,10 @@ def main():
     matrix = args.matrix.resolve()
     generation = read(matrix / "t701-generation.json")
     route = generation["route"]
-    arms = [evidence(matrix, arm, args.logs / f"t701-{route}-{arm}.log")
-            for arm in ("THREE_OFF", "TWO_OFF", "THREE_ON", "TWO_ON")]
+    selected = ("THREE_OFF", "TWO_OFF", "THREE_ON", "TWO_ON")
+    if "firstFrameControlSHA256" in generation:
+        selected = ("THREE_OFF",) if route == "M1" else ("TWO_ON",)
+    arms = [evidence(matrix, arm, args.logs / f"t701-{route}-{arm}.log") for arm in selected]
     require(len({json.dumps(arm["roleSources"]) for arm in arms}) == 1, "role GLSL differs across arms")
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps({
