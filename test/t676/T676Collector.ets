@@ -11,6 +11,8 @@ class T676Record {
   sequence: number = 0;
   tag: string = '';
   scope: string = '';
+  enterMs: number = 0;
+  returnMs: number = 0;
   bytes: number = 0;
   sha256: string = '';
   observeSideEffect: boolean = false;
@@ -38,6 +40,7 @@ export class T676Collector {
     fs.mkdirSync(this.directory);
   }
   bind(scope: string): void { this.scope = scope; }
+  elapsed(): number { return Date.now() - this.start; }
   remaining(): number { return 1048576 - 32768 - this.total; }
   private write(name: string, bytes: Uint8Array): void {
     if (bytes.byteLength > 8192 || bytes.byteLength > this.remaining()) throw new Error('NOT_CAPTURED_CAPACITY');
@@ -56,14 +59,18 @@ export class T676Collector {
   async query(tag: string, read: () => string): Promise<string> {
     if (this.calls >= 64 || Date.now() - this.start > 60000) throw new Error('NOT_CAPTURED_QUERY_BUDGET');
     this.calls++;
+    const enter: number = Date.now();
     let raw: string = '';
     try { raw = read(); } catch (error) { raw = 'THROW:' + String(error); }
+    const returned: number = Date.now();
     const bytes: Uint8Array = this.encoder.encodeInto(raw);
     if (bytes.length > this.remaining()) throw new Error('NOT_CAPTURED_CAPACITY');
     const md = crypto.createMd('SHA256');
     await md.update({ data: bytes });
     const digest = await md.digest();
     const record = new T676Record();
+    record.enterMs = enter;
+    record.returnMs = returned;
     record.sequence = this.calls;
     record.tag = tag;
     record.scope = this.scope;
@@ -80,16 +87,18 @@ export class T676Collector {
     this.records.push(record);
     return raw;
   }
+  async handoff(raw: string): Promise<void> {
+    const bytes = this.encoder.encodeInto(raw);
+    if (bytes.length > 8192 || bytes.length > this.remaining()) throw new Error('NOT_CAPTURED_CAPACITY');
+    this.write('page-witness.json', bytes);
+  }
   async finish(state: string): Promise<string> {
     const index = new T676Index();
     index.scope = this.scope;
     index.elapsedMs = Date.now() - this.start;
     index.queries = this.records;
     index.state = state;
-    for (const record of index.queries) {
-      // The first discovery query precedes scope binding.
-      if (!record.scope) record.scope = this.scope;
-    }
+
     const raw: string = JSON.stringify(index);
     if (this.encoder.encodeInto(raw).length > 32768) throw new Error('INDEX_BUDGET');
     await new DiagnosticColdFiles(this.directory).save('index.json', raw);

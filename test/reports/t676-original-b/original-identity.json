@@ -1,0 +1,76 @@
+{
+  "native": {
+    "libs/arm64-v8a/libc++_shared.so": {
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "bytes": 1262248,
+      "BuildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+    },
+    "libs/arm64-v8a/libgrsm0.so": {
+      "sha256": "5cc42ffdd8754e197560650853cc73daf7d79f54dae0b4890c9aa12bd6f4c5d7",
+      "bytes": 665960,
+      "BuildId": "03c5fbd0baeb6a557b805380a0ac4ac809475170"
+    },
+    "libs/arm64-v8a/libgrsm1.so": {
+      "sha256": "527c863f36bf543f1d4c45d212ef60ec62c2401f5fe693e5a453589c7f4280bf",
+      "bytes": 1950560,
+      "BuildId": "dc54802f9e1a0f0f8fae93a95aa7b343bce3a59c"
+    },
+    "libs/arm64-v8a/libp013hello.so": {
+      "sha256": "5ddb718eac8457afea2da11facdb6317de8c4288e344abdc2715669e7ac54689",
+      "bytes": 70544,
+      "BuildId": "746be84a485f42da449c3e446eb9e31b2c878de7"
+    },
+    "libs/arm64-v8a/libp013renderer.so": {
+      "sha256": "51881877fad851ff7c25849cf1d653472df7f68f8e0478aeb8ed74578846aade",
+      "bytes": 511256,
+      "BuildId": "cf9437bd32655b9eeae2e2d2ed014e6b64582abc"
+    }
+  },
+  "baseline": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T597-fixed\\T597-fixed-signed.hap",
+    "sha256": "20bad4993786c3edf5e6d478767b0f28d49f54084b6c892ab290f788dcf87550",
+    "bytes": 9743520
+  },
+  "oldAbcSHA": "511bc6afb97ca30c22d6393e54212b7fb3b8dda79810a89ae9378bd655ba4c64",
+  "newAbcSHA": "3c7590ce5c3aa346ca49054b8fe0da273bc5a947613fb1c69e6960e3ebf2f4cb",
+  "pageSHA": "dd7076dafe491784f03d3ac28eea8530192744764c9926ed50f7d225a5192732",
+  "entry": {
+    "name": "entry",
+    "mainElement": "EntryAbility",
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "exported": true,
+        "iconId": 16777217,
+        "startWindowIconId": 16777222,
+        "icon": "$media:app_icon",
+        "startWindowIcon": "$media:start_icon",
+        "startWindowBackgroundId": 16777221,
+        "description": "$string:EntryAbility_desc",
+        "label": "$string:EntryAbility_label",
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home"
+            ]
+          }
+        ],
+        "srcEntry": "./ets/entryability/EntryAbility.ets",
+        "descriptionId": 16777218,
+        "labelId": 16777219,
+        "startWindowBackground": "$color:start_window_background",
+        "name": "EntryAbility"
+      }
+    ]
+  },
+  "signed": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T676-original-b\\T676-original-b-signed.hap",
+    "sha256": "a6f1731e20440150e1738d7137643e6535e5a6feb2115f3f228d0995348b2799",
+    "bytes": 9779312
+  },
+  "device": "NOT_RUN",
+  "runtimeLoadedModule": "REQUIRES_DEVICE"
+}

@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import sys
 import base64
+from classify_cursor import classify, u64
 
 def audit(directory):
     index = directory / 'index.json'
@@ -16,8 +17,10 @@ def audit(directory):
         raise ValueError('QUERY_OR_TIME_BUDGET')
     scope = receipt['scope']
     files = set()
+    payloads = []
     for sequence, record in enumerate(records, 1):
-        if record['sequence'] != sequence or record['scope'] != scope:
+        unbound = record['scope']=='' and record['tag'] in ('M2_PRE_ARM','M2_DISCOVERY','COLD_CAPABILITIES')
+        if record['sequence'] != sequence or (record['scope'] != scope and not unbound):
             raise ValueError('QUERY_SCOPE_OR_ORDER')
         if record['tag'] == 'STATUS' and record.get('observeSideEffect') is not True:
             raise ValueError('STATUS_EFFECT_UNDECLARED')
@@ -36,8 +39,66 @@ def audit(directory):
             files.add(name)
         if len(raw) != record['bytes'] or hashlib.sha256(raw).hexdigest() != record['sha256']:
             raise ValueError('RAW_IDENTITY')
-        raw.decode('utf8', errors='strict')
-    return {'queries':len(records),'rawFiles':len(files),'productPASS':False}
+        native=raw.decode('utf8', errors='strict')
+        payloads.append(native)
+        if receipt.get('schema')=='T676_COLLECTOR_V1':
+            if not 0 < record['enterMs'] <= record['returnMs']:
+                raise ValueError('QUERY_TIME_DOMAIN')
+            if sequence>1 and record['enterMs']<records[sequence-2]['returnMs']:
+                raise ValueError('QUERY_TIME_ORDER')
+    result={'queries':len(records),'rawFiles':len(files),'productPASS':False}
+    if receipt.get('schema')=='T676_COLLECTOR_V1' and records:
+        result.update(classify_archive(directory,receipt,payloads))
+    return result
+
+def classify_archive(directory, receipt, payloads):
+    records=receipt['queries']
+    tags=[row['tag'] for row in records]
+    state=receipt['state']
+    if state.startswith('INCOMPLETE'):
+        return {'captureState':state}
+    witness=json.loads((directory/'page-witness.json').read_bytes())
+    if tags[0]=='M2_PRE_ARM':
+        assert records[0]['scope']==''
+        initial=json.loads(payloads[0]); baseline=u64(initial.get('bootSerial','0'))
+        assert u64(witness['baseline'])==baseline
+        assert records[0]['returnMs']<=witness['preArmMs'] and witness['mountRequested'] is True
+        selected=u64(receipt['scope'] or '0')
+        if not selected:
+            assert state=='CLOSED_WITHOUT_ATTEMPT'
+            return {'captureState':state}
+        assert selected>baseline
+        rows=[]
+        for tag, raw in zip(tags[1:],payloads[1:]):
+            if tag not in ('M2_LOCKED','M2_DISCOVERY','M2_AFTER'):
+                continue
+            value=json.loads(raw)
+            if tag=='M2_DISCOVERY' and u64(value.get('bootSerial','0'))==baseline:
+                continue
+            assert u64(value['bootSerial'])==selected
+            rows.append((value,classify(value)))
+        assert rows
+        last, report=rows[-1]
+        identity=('bootSerial','epoch','window','eglContext','ownerTid')
+        assert all(all(row[k]==last[k] for k in identity) for row,_ in rows)
+        if report['observation']=='NATIVE_TERMINAL':
+            assert tags[-4:]==['M2_LOG','M2_LOG','M2_LOG','M2_AFTER']
+            for i,raw in enumerate(payloads[-4:-1]):
+                item=json.loads(raw)
+                assert item['state']=='CREATE_LOG' and u64(item['bootSerial'])==selected and item['object']==i
+        return {'captureState':state,'attempt':report,'deviceProcessIdentity':'REQUIRES_EXTERNAL_BINDING'}
+    assert tags==['COLD_CAPABILITIES','STATUS','RECOVERY','BOOT','EXEC_DIAG','COLD_CAPABILITIES_AFTER']
+    cap,_,_,_,diagnostic,after=map(json.loads,payloads)
+    assert cap['scope']==after['scope']==json.loads(receipt['scope'])
+    assert records[0]['scope']==''
+    if diagnostic.get('state')!='COMPLETE' or diagnostic.get('scopeStale'):
+        return {'captureState':'EXEC_DIAG_INCOMPLETE','rawState':diagnostic.get('state')}
+    for event in witness:
+        assert type(event['returned']) is bool and event['count']>=1
+        assert event['pointIndex']<event['count']
+    return {'captureState':state,'handlerReturns':witness,'inputStagesPresent':'inputStages' in diagnostic,
+            'claimWitnessPresent':'claimWitness' in diagnostic,'inputCompletion':'REQUIRES_SAME_SCOPE_JOIN'}
+
 
 def legacy_m1(raw):
     rows = []
