@@ -1,0 +1,379 @@
+{
+  "schema": "T701_APP_COMPILE_V1",
+  "route": "M2",
+  "generationManifestSHA256": "fc602cc09e51a734b310bc640f24323593b1e4b8dd98557b133ab196baf0f439",
+  "generatorCommit": "7f99f37617b3020cfc7f83e498625438a11ca91e",
+  "arms": [
+    {
+      "arm": "THREE_OFF",
+      "variant": "THREE",
+      "cache": "OFF",
+      "roles": [
+        0,
+        1,
+        2
+      ],
+      "role1": "INTERMEDIATE_Q",
+      "independentQ": "SOURCE_BUILD",
+      "parent": "29aef488fcf90f37627683033136895630ccd97ad6d5981ac6b47f582ae237b2",
+      "roleSources": {
+        "SOURCE": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1",
+        "FINAL_Q": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc"
+      },
+      "objects": {
+        "app_bridge.cpp": {
+          "sourceSHA256": "bf81088729aab622c5a6c0fac163138f2d0961fefffe6f17bb3c5ae854fa2403",
+          "objectSHA256": "f607e65ae5b06a2209cf651ef1da4c71c0a8cae418c5d2a654ab61efbc6712ce",
+          "argvSHA256": "cebfba8685a7df1524b2b0fb3ab0960c6fbcc3e0de118d773a0a64558ba1c999",
+          "object": "CMakeFiles\\grsm1.dir\\gpu_resident\\app_bridge.cpp.o"
+        },
+        "source_transport.cpp": {
+          "sourceSHA256": "7af89598cc4c75c41245973ad8898820ca36838826459120d42829334f85548b",
+          "objectSHA256": "5e2c38085b566e5799639adf3f6cf15689453a5f5272fd741dfff434fb5f6e34",
+          "argvSHA256": "4821ca4a2ff584dc0c55804a63a0e762babf186649622536ca2f8e4105224096",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\source_transport.cpp.o"
+        },
+        "quantum_candidate.cpp": {
+          "sourceSHA256": "bb737b8d0893decdde10657966e2ad3c16403e0f4166398567b74ec6036bfbe2",
+          "objectSHA256": "f95c6a3c2ba1020fb1d5a0430244f662aca82c5b529894805f91f9243891a37f",
+          "argvSHA256": "1be7fc82c1bb978de1b2f593635b50c7fa9745f32c737def57193ee374f40736",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\quantum_candidate.cpp.o"
+        },
+        "full_transport.cpp": {
+          "sourceSHA256": "fc0c7bd85a455e15f06dee7671959e6fa2a24872a4bc933110f693f4604b713f",
+          "objectSHA256": "58dfb2a9363a77393dd82b6bb27ef0ff1adadb8fa9d7a3e8f35664a0011f913c",
+          "argvSHA256": "39a225b1ace5aa2554376d0cc5b62cb5a04bc4596c0574a0adc2a4537a9fcca1",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\full_transport.cpp.o"
+        },
+        "full_kernel.cpp": {
+          "sourceSHA256": "e6ebb13f47b28cee21b08c690a24894efdae28e04037895dc5263d304016db77",
+          "objectSHA256": "d2528c841b68734857cede42877627688a8ca3812e6be64308ac2c5373f55c90",
+          "argvSHA256": "dd5d00cfd772a3f3e070ee821baa7fad6b091318c6fc14767778b1671afcff48",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\full_kernel.cpp.o"
+        }
+      },
+      "abi": "arm64-v8a",
+      "resourceLayout": [
+        {
+          "K": 192,
+          "Kw": 64,
+          "candidateBytes": 25600,
+          "finalWorkspaceBytes": 580176,
+          "oneQEventArenaBytes": 10795008
+        },
+        {
+          "K": 192,
+          "Kw": 128,
+          "candidateBytes": 29696,
+          "finalWorkspaceBytes": 585040,
+          "oneQEventArenaBytes": 11843584
+        },
+        {
+          "K": 512,
+          "Kw": 64,
+          "candidateBytes": 46080,
+          "finalWorkspaceBytes": 602960,
+          "oneQEventArenaBytes": 26605568
+        },
+        {
+          "K": 512,
+          "Kw": 128,
+          "candidateBytes": 50176,
+          "finalWorkspaceBytes": 607824,
+          "oneQEventArenaBytes": 27654144
+        }
+      ],
+      "cmake": "5635e4d4931431eeac0386aa620fae21dd98300a60029333ebb4f999c1d282b3",
+      "compileCommands": "a8da3dd161d46185470c5ecbd638e4c094e39c96b90ad2e38a23cd9f46188288",
+      "ninja": "65ac446344e9ddc1e4981525f99babf3d32a597e35a46edbdf54a7d62522a499",
+      "logSHA256": "d15934b337725088e703666d2363ab6e1e64bae3d141b2629c19e28a6cc8e1a2",
+      "exit": 0,
+      "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t701-final\\M2\\THREE_OFF\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "hapSHA256": "b873156d2c73bf6defb4098a9d73135e83778344a20b59b6a08f73e86bb0b71d",
+      "elfSHA256": "a617586a062a0d06327399bf790a1c877cacdfb30d4e9c9da6064e5ff64771a9",
+      "buildId": "e3b149d2c1b9dc091dc083cfc78026ae1ded0d66",
+      "linkedELFSHA256": "3773e07cf1e272735eaba2208937ec6674a5b0a9f102eb4eef1a18e6d7c71105",
+      "abcSHA256": "a64b403ad3ba061e8540ea24fa7fd6dcb2d3b5be9a52d68f1538ee5924a4948c",
+      "duration": "2 min 40 s 49 ms \u001b[39m"
+    },
+    {
+      "arm": "TWO_OFF",
+      "variant": "TWO",
+      "cache": "OFF",
+      "roles": [
+        0,
+        2
+      ],
+      "role1": "NOT_USED_BY_VARIANT",
+      "independentQ": "SOURCE_BUILD",
+      "parent": "29aef488fcf90f37627683033136895630ccd97ad6d5981ac6b47f582ae237b2",
+      "roleSources": {
+        "SOURCE": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1",
+        "FINAL_Q": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc"
+      },
+      "objects": {
+        "app_bridge.cpp": {
+          "sourceSHA256": "bf81088729aab622c5a6c0fac163138f2d0961fefffe6f17bb3c5ae854fa2403",
+          "objectSHA256": "bee551ea1237e9895b310849cb470355b3f6a32c956296f4581339a7b9a33e40",
+          "argvSHA256": "fbac05e9cbbe1b465912afacff77ffc6dde5507be39a8de0701775201cc4be0a",
+          "object": "CMakeFiles\\grsm1.dir\\gpu_resident\\app_bridge.cpp.o"
+        },
+        "source_transport.cpp": {
+          "sourceSHA256": "7af89598cc4c75c41245973ad8898820ca36838826459120d42829334f85548b",
+          "objectSHA256": "1ee790c1fb79321cc66d3c24b2daf65a652f75898feea170919b189d9d5fa48c",
+          "argvSHA256": "b6a671cb95e0568315fcc65a15434b3d8e3428aa267035cf47936ff33dcc2990",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\source_transport.cpp.o"
+        },
+        "quantum_candidate.cpp": {
+          "sourceSHA256": "bb737b8d0893decdde10657966e2ad3c16403e0f4166398567b74ec6036bfbe2",
+          "objectSHA256": "44db55468759d9c1c265a6298f12446dd5fa3e646314ad50b14f0b7b454af652",
+          "argvSHA256": "c43b0e97a6d6f707968fe1d1b6defb5f92979e46205f3b96f7f9d33a09da3d93",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\quantum_candidate.cpp.o"
+        },
+        "full_transport.cpp": {
+          "sourceSHA256": "fc0c7bd85a455e15f06dee7671959e6fa2a24872a4bc933110f693f4604b713f",
+          "objectSHA256": "405a32eec0af172f6f9f1eb291a6db9b8cc8d14686b7bd73a0d250dcdae1a03a",
+          "argvSHA256": "9144b8fb2fd219d04fdf47b66bc53d5b9a71992c51c77c2a1dd02c657f7d8bdb",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\full_transport.cpp.o"
+        },
+        "full_kernel.cpp": {
+          "sourceSHA256": "e6ebb13f47b28cee21b08c690a24894efdae28e04037895dc5263d304016db77",
+          "objectSHA256": "e1d8a58f24cf15f9157ec93d7ddca9b8c782e24a53693c9389afe1e1f0752ec4",
+          "argvSHA256": "4fd05124377a5fe687440bfbe764b2f0a7bb4a34b06479346e2416d2b6917c34",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\full_kernel.cpp.o"
+        }
+      },
+      "abi": "arm64-v8a",
+      "resourceLayout": [
+        {
+          "K": 192,
+          "Kw": 64,
+          "candidateBytes": 25600,
+          "finalWorkspaceBytes": 580176,
+          "oneQEventArenaBytes": 10795008
+        },
+        {
+          "K": 192,
+          "Kw": 128,
+          "candidateBytes": 29696,
+          "finalWorkspaceBytes": 585040,
+          "oneQEventArenaBytes": 11843584
+        },
+        {
+          "K": 512,
+          "Kw": 64,
+          "candidateBytes": 46080,
+          "finalWorkspaceBytes": 602960,
+          "oneQEventArenaBytes": 26605568
+        },
+        {
+          "K": 512,
+          "Kw": 128,
+          "candidateBytes": 50176,
+          "finalWorkspaceBytes": 607824,
+          "oneQEventArenaBytes": 27654144
+        }
+      ],
+      "cmake": "5d164920bcbc58d5f68a61229660c9c5348e7c83a858ab7dc08d8df2db405486",
+      "compileCommands": "5fd3d6f704acc2e86a7968bfb93497e18630ca90f169c2020924e72fce4836c5",
+      "ninja": "9f63afdeb8a0e50ea5c0286414131d246c47ef3adb8a8a23ec4a1ac09048f82e",
+      "logSHA256": "86c8310ac378c07615136d11c296ae0b2f0122660162cf8c939c00d4c9400206",
+      "exit": 0,
+      "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t701-final\\M2\\TWO_OFF\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "hapSHA256": "7f73ec8c1b298b020428828f42d1d4ab35724c3fe889c0ff0cc05e37f56fec6e",
+      "elfSHA256": "e4da02d5db218073c4302772208b65b0ce93a140de8da800c6a8d3c568c48516",
+      "buildId": "626a182220410493c6d5a245cc27895d7de64b3a",
+      "linkedELFSHA256": "80d6704af7b45051643dffda9acbb715761e59921f8f28e0c0acf7ae4c2a6949",
+      "abcSHA256": "a64b403ad3ba061e8540ea24fa7fd6dcb2d3b5be9a52d68f1538ee5924a4948c",
+      "duration": "1 min 27 s 452 ms \u001b[39m"
+    },
+    {
+      "arm": "THREE_ON",
+      "variant": "THREE",
+      "cache": "ON",
+      "roles": [
+        0,
+        1,
+        2
+      ],
+      "role1": "INTERMEDIATE_Q",
+      "independentQ": "SOURCE_BUILD",
+      "parent": "29aef488fcf90f37627683033136895630ccd97ad6d5981ac6b47f582ae237b2",
+      "roleSources": {
+        "SOURCE": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1",
+        "FINAL_Q": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc"
+      },
+      "objects": {
+        "app_bridge.cpp": {
+          "sourceSHA256": "d90fb8e720750febd795fd90cdf8fc77eaacab3ca35603b87b6414764c1fe883",
+          "objectSHA256": "87be3d62a94f14352f620acc305fd7d66e795d606f9ce7a216eb438cd4d0c62c",
+          "argvSHA256": "65f3713070c306687bae8a7f4cacfb6c51896a080d782ee013de5f5dabc2a265",
+          "object": "CMakeFiles\\grsm1.dir\\gpu_resident\\app_bridge.cpp.o"
+        },
+        "source_transport.cpp": {
+          "sourceSHA256": "55660c7e9af8a10d4afba8cf331f1abddf0c070c68cd170e2ce9fb917b150136",
+          "objectSHA256": "b1a16830cd90167f2e64e0b0cb80f696dfd7aaf8a1ff25a90354a320ef67e8d8",
+          "argvSHA256": "8972cc5c5df3672303fe41dc8e64c9fd359c984148232206c4366cd2121fbde8",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\source_transport.cpp.o"
+        },
+        "quantum_candidate.cpp": {
+          "sourceSHA256": "cfe961ce842302ddd846105ce213e5c4efa5a84dbc07341fd9830cf853ea7411",
+          "objectSHA256": "5b9306e8772ff344d5703b2b8ecc8de26adbaa4eff2070966b5824156be09039",
+          "argvSHA256": "aec799111ca2acca8b3580aa255917510fa5d9896fabb77d815d67f317cc3e3b",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\quantum_candidate.cpp.o"
+        },
+        "full_transport.cpp": {
+          "sourceSHA256": "4f8a7be44a25e037343b527eb0ca97d8785873d9bbf2bcbcfbf1b5ebd1d4ecc3",
+          "objectSHA256": "a44f5b872c7ddb6d4fc6acb4ed92d73354879fe1f1acff9d18d1ac4e1c6529d5",
+          "argvSHA256": "4bad4e38e77a66a5da469566e977e93b1841a136254034cebca8d5db19db8481",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\full_transport.cpp.o"
+        },
+        "full_kernel.cpp": {
+          "sourceSHA256": "e6ebb13f47b28cee21b08c690a24894efdae28e04037895dc5263d304016db77",
+          "objectSHA256": "7bd0e9af517bd06dc661b450c2163f8c687662435ebfb09af28ba08cc5c3cc67",
+          "argvSHA256": "db3229c3cda50619489e8faefb691220b6400218073cfeca9af73bafa08d9812",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\full_kernel.cpp.o"
+        }
+      },
+      "abi": "arm64-v8a",
+      "resourceLayout": [
+        {
+          "K": 192,
+          "Kw": 64,
+          "candidateBytes": 25600,
+          "finalWorkspaceBytes": 580176,
+          "oneQEventArenaBytes": 10795008
+        },
+        {
+          "K": 192,
+          "Kw": 128,
+          "candidateBytes": 29696,
+          "finalWorkspaceBytes": 585040,
+          "oneQEventArenaBytes": 11843584
+        },
+        {
+          "K": 512,
+          "Kw": 64,
+          "candidateBytes": 46080,
+          "finalWorkspaceBytes": 602960,
+          "oneQEventArenaBytes": 26605568
+        },
+        {
+          "K": 512,
+          "Kw": 128,
+          "candidateBytes": 50176,
+          "finalWorkspaceBytes": 607824,
+          "oneQEventArenaBytes": 27654144
+        }
+      ],
+      "cmake": "2ad9e5166e0626f3075d0d366f829c8db31ac90f5719e3c537ce1a7edd65913f",
+      "compileCommands": "70251833f4d66a7da8f636c9937f1ef2a29ceca889b0c0d664cf191cfed372fb",
+      "ninja": "a361c8e0584509f12d42cc4140273119b3833eeb972705430adc0fb94a699872",
+      "logSHA256": "b741c482e0f1aacf11328ca0a210bb795a2229f6b73170574c8314d134e0d0f9",
+      "exit": 0,
+      "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t701-final\\M2\\THREE_ON\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "hapSHA256": "24adbfe3e24bb83be5f2d1a71b3a68896a271f224b394cab6e917341d3bc5a37",
+      "elfSHA256": "6f2900359d1c0a56415a4f0117c4dec3d80ed1a2be5467b67f7145c876e403be",
+      "buildId": "413bb45a2c14b902517f84784342cac88b90f91c",
+      "linkedELFSHA256": "5f8ce195e55bea88fc5ef58ca564688ac525c991a75319897acf1b02d25379ed",
+      "abcSHA256": "6f4a40f59fbdcac794fb7dea99f5a85a139a38be0034ae4424e1e332d4a93dda",
+      "duration": "1 min 22 s 844 ms \u001b[39m"
+    },
+    {
+      "arm": "TWO_ON",
+      "variant": "TWO",
+      "cache": "ON",
+      "roles": [
+        0,
+        2
+      ],
+      "role1": "NOT_USED_BY_VARIANT",
+      "independentQ": "SOURCE_BUILD",
+      "parent": "29aef488fcf90f37627683033136895630ccd97ad6d5981ac6b47f582ae237b2",
+      "roleSources": {
+        "SOURCE": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1",
+        "FINAL_Q": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc"
+      },
+      "objects": {
+        "app_bridge.cpp": {
+          "sourceSHA256": "d90fb8e720750febd795fd90cdf8fc77eaacab3ca35603b87b6414764c1fe883",
+          "objectSHA256": "40cbd58f9d35b48141794de5cb512717acc097a88ac869fb00bf67cf38094fd2",
+          "argvSHA256": "c77ef023a15377ea34f88eda4d25a2533efb729abe9498757d3f984656c132f6",
+          "object": "CMakeFiles\\grsm1.dir\\gpu_resident\\app_bridge.cpp.o"
+        },
+        "source_transport.cpp": {
+          "sourceSHA256": "55660c7e9af8a10d4afba8cf331f1abddf0c070c68cd170e2ce9fb917b150136",
+          "objectSHA256": "019ac493c6108d30952ac86d51369825b09b36c9967e2980a725821e06270a2f",
+          "argvSHA256": "65533d0799ed1398f670b12d44276e0f6df88c08f1d9c663b96761d9b5c974c2",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\source_transport.cpp.o"
+        },
+        "quantum_candidate.cpp": {
+          "sourceSHA256": "cfe961ce842302ddd846105ce213e5c4efa5a84dbc07341fd9830cf853ea7411",
+          "objectSHA256": "18047b34968177dd65903ca342a9258803f24429469ad3902a245116703943ff",
+          "argvSHA256": "3df4dd5dba86e2993f03ff5647c820cb683a395c2abd30534824be48463e34db",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\quantum_candidate.cpp.o"
+        },
+        "full_transport.cpp": {
+          "sourceSHA256": "4f8a7be44a25e037343b527eb0ca97d8785873d9bbf2bcbcfbf1b5ebd1d4ecc3",
+          "objectSHA256": "01e4ba991c5732a46165dfb421ad4e68df72e35a93ace0d9ed614cfcd799db28",
+          "argvSHA256": "44ea8d9affc8cc14150ebcaae3275450197be99ced6d9f430281a0f8f3bbef97",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\full_transport.cpp.o"
+        },
+        "full_kernel.cpp": {
+          "sourceSHA256": "e6ebb13f47b28cee21b08c690a24894efdae28e04037895dc5263d304016db77",
+          "objectSHA256": "ed71de5daed6b03ba6c536a9e69344c9f89bca9b324e98c8c66d238e8d126d6d",
+          "argvSHA256": "226b822e074fcbea4870d4bf209dd089e8524ef3b406f9d396be9c1c0bf35d5e",
+          "object": "gpu_resident\\CMakeFiles\\grs_foundation.dir\\m2route\\full_kernel.cpp.o"
+        }
+      },
+      "abi": "arm64-v8a",
+      "resourceLayout": [
+        {
+          "K": 192,
+          "Kw": 64,
+          "candidateBytes": 25600,
+          "finalWorkspaceBytes": 580176,
+          "oneQEventArenaBytes": 10795008
+        },
+        {
+          "K": 192,
+          "Kw": 128,
+          "candidateBytes": 29696,
+          "finalWorkspaceBytes": 585040,
+          "oneQEventArenaBytes": 11843584
+        },
+        {
+          "K": 512,
+          "Kw": 64,
+          "candidateBytes": 46080,
+          "finalWorkspaceBytes": 602960,
+          "oneQEventArenaBytes": 26605568
+        },
+        {
+          "K": 512,
+          "Kw": 128,
+          "candidateBytes": 50176,
+          "finalWorkspaceBytes": 607824,
+          "oneQEventArenaBytes": 27654144
+        }
+      ],
+      "cmake": "9c22adc0de73992d4a668c886e778c88a059d57b31391c4411f523401b647c81",
+      "compileCommands": "131d4be2f8da1506fc9fb19ced837b9d7293f0bf90c64fcf82b84f51291ee51d",
+      "ninja": "57425b52e8a3a5ab6fe33f30227b5f78a40dfa7b735c93d2d72d926fa17ec03f",
+      "logSHA256": "8c37d00715077020351963bdd196c928dd75a003409bc3ea652d1fc6c789fbde",
+      "exit": 0,
+      "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t701-final\\M2\\TWO_ON\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "hapSHA256": "d09e82e8bdcacec42e224e9f936a232049c547b2924a381afa7cccef6a3eb982",
+      "elfSHA256": "2b9de829d0f4d3cbc0521156a9635356200645497b507cd4f79e5b7d80880bac",
+      "buildId": "a8458cc8da839b53afead521b898caae639bf67f",
+      "linkedELFSHA256": "f9992166f71c68445fa734ff3f8b8c43817d4c5fa98c868482babe6f466dc9ea",
+      "abcSHA256": "6f4a40f59fbdcac794fb7dea99f5a85a139a38be0034ae4424e1e332d4a93dda",
+      "duration": "1 min 30 s 689 ms \u001b[39m"
+    }
+  ],
+  "unsigned": true,
+  "productExecuted": false,
+  "deviceUsed": false,
+  "testsRun": false,
+  "actualGain": "NOT_MEASURED"
+}

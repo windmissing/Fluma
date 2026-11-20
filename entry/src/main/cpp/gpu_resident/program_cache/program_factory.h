@@ -24,12 +24,14 @@ struct Pending {
   uint64_t begin = 0, compiled = 0, compileBegin = 0, compileEnd = 0,
            linkBegin = 0, linkEnd = 0, loadBegin = 0, loadEnd = 0,
            reflectBegin = 0, reflectEnd = 0, prepareBegin = 0, prepareEnd = 0,
-           warmupBegin = 0, warmupEnd = 0;
+           warmupBegin = 0, warmupEnd = 0, generation = 0;
+  bool exportAttempted = false;
   GLenum cacheError = 0, originalError = 0;
   GLint reported = 0, shaderReported = 0;
   EGLint cacheEgl = EGL_SUCCESS;
   std::vector<GLint> formats;
   EGLContext context = EGL_NO_CONTEXT;
+  GLuint program = 0;
   std::thread::id owner;
 };
 inline thread_local std::map<GLuint, Pending> pending;
@@ -123,6 +125,9 @@ inline void Receipt(const Pending &p, const char *stage,
       << ",\"shaderLogCopied\":" << p.shaderLog.size()
       << ",\"shaderLogTruncated\":"
       << (p.shaderReported > int(p.shaderLog.size() + 1) ? "true" : "false")
+      << ",\"contextGeneration\":" << p.generation
+      << ",\"contextHandle\":" << reinterpret_cast<uintptr_t>(p.context)
+      << ",\"programHandle\":" << p.program
       << ",\"beginNs\":" << p.begin << ",\"buildEndNs\":" << p.compiled
       << ",\"endNs\":" << Stamp()
       << ",\"binaryBytes\":" << (artifact ? artifact->bytes.size() : 0)
@@ -187,7 +192,7 @@ struct RetrievableApi : create468::GlApi {
 inline bool Build(uint32_t object, const char *source,
                   const char *suppliedShaderSha, const char *layout,
                   GLuint &program, GLenum &originalError,
-                  SubmitObserver observer = {}) {
+                  SubmitObserver observer = {}, uint64_t generation = 0) {
   if (create468::active) {
     create468::active->object = object;
     create468::active->store.Change(
@@ -198,6 +203,7 @@ inline bool Build(uint32_t object, const char *source,
         });
   }
   Pending p;
+  p.generation = generation;
   p.begin = Stamp();
   p.context = eglGetCurrentContext();
   p.owner = std::this_thread::get_id();
@@ -246,6 +252,7 @@ inline bool Build(uint32_t object, const char *source,
         p.loadBegin = Stamp();
         Receipt(p, "BINARY_LOAD_ENTER", a);
         program = glCreateProgram();
+        p.program = program;
         glProgramBinary(program, a->format, a->bytes.data(),
                         GLsizei(a->bytes.size()));
         GLint good = 0;
@@ -279,6 +286,7 @@ inline bool Build(uint32_t object, const char *source,
   RetrievableApi api(p);
   const bool ok = create468::Build(api, object, source, suppliedShaderSha,
                                    program, originalError, observer);
+  p.program = program;
   p.compiled = Stamp();
   const auto postBuild = glGetError();
   if (postBuild && !originalError)
@@ -338,6 +346,7 @@ inline void Warmup(GLuint program, uint64_t begin, uint64_t end, GLenum error) {
   p.warmupBegin = begin;
   p.warmupEnd = end;
   p.originalError = error;
+  at->second = p;
   Receipt(p, error ? "WARMUP_FAILED" : "WARMUP_OK", Store().Get(p.key));
 }
 inline void Forget(GLuint program) {
@@ -350,7 +359,8 @@ inline void Forget(GLuint program) {
 }
 // Called only AFTER the existing uniform reflection and original PrepareProgram
 // succeeded.
-inline GLenum Prepared(GLuint program) {
+inline GLenum ExportPrepared(GLuint program);
+inline GLenum Prepared(GLuint program, bool exportNow = true) {
   auto at = pending.find(program);
   if (at == pending.end())
     return GL_NO_ERROR;
@@ -370,6 +380,22 @@ inline GLenum Prepared(GLuint program) {
   if (qualified.size() >= 32)
     qualified.erase(qualified.begin());
   qualified[program] = p;
+  if (!exportNow) {
+    Receipt(p, "REFLECT_PREPARE_OK_EXPORT_DEFERRED");
+    return GL_NO_ERROR;
+  }
+  return ExportPrepared(program);
+}
+inline GLenum ExportPrepared(GLuint program) {
+  auto at = qualified.find(program);
+  if (at == qualified.end() || at->second.exportAttempted)
+    return GL_NO_ERROR;
+  auto &record = at->second;
+  if (record.context != eglGetCurrentContext() ||
+      record.owner != std::this_thread::get_id())
+    return GL_NO_ERROR;
+  record.exportAttempted = true;
+  Pending p = record;
   if (p.route == "BINARY_LOAD") {
     Receipt(p, "REFLECT_PREPARE_OK", Store().Get(p.key));
     return GL_NO_ERROR;
@@ -417,6 +443,20 @@ inline GLenum Prepared(GLuint program) {
     Store().DisableExport(p.key);
     Receipt(p, "CACHE_EXPORT_EXCEPTION");
     return GL_NO_ERROR;
+  }
+}
+inline void Forget(GLuint program, EGLContext context, uint64_t generation) {
+  auto matches = [&](const auto &records) {
+    auto at = records.find(program);
+    return at != records.end() && at->second.context == context &&
+           at->second.owner == std::this_thread::get_id() &&
+           at->second.generation == generation;
+  };
+  if (matches(qualified))
+    qualified.erase(program);
+  if (matches(pending)) {
+    Receipt(pending.find(program)->second, "RESOURCE_REFLECT_PREPARE_ABORTED");
+    pending.erase(program);
   }
 }
 } // namespace grs::programcache
