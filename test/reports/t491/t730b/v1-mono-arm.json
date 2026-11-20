@@ -1,0 +1,23 @@
+{
+ "revision": "T730_V1_MONOLITH_ARM_V1",
+ "date": "2026-11-20 16:45",
+ "package": {
+  "task": "T730-mono (T728 single arm)",
+  "inputSha": "fd7ed272",
+  "signedSha": "89be7cc5",
+  "sign": "PASS"
+ },
+ "sequence": [
+  "EntryAbility start (G13ResearchAbility registered as EntryAbility per module.json)",
+  "G13 page direct",
+  "configure REST"
+ ],
+ "observed": {
+  "pageReached": "G13 pure-flow research page (all buttons)",
+  "configure": "PROGRAM_BUILD / SHADER_COMPILE:ENTER, queuedTicket=177",
+  "death": "app silently exited during compile wait (~5min); NO new jscrash; cache entries still 1; MemTotal 15.8G Free 10.5G = NOT LMK"
+ },
+ "attribution": "silent death reproduced on the T728 monolith arm \u2014 same signature as T654 v4/T594 v8: driver compiler internally aborts and takes the process; NOT memory pressure (10.5G free), NOT LMK",
+ "T727Measurement": "wall-time recorded from configure click to death about 5min truncation; no READY/Swap (NOT_REACHED honest)",
+ "route": "MONOLITH arm RED (silent death); SPLIT arm next - split shader may compile under the same driver where monolith dies; deploying T730-split now"
+}
