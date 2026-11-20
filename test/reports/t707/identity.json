@@ -1,0 +1,40 @@
+{
+  "schema": "T707_INDEPENDENT_RX_IDENTITY_V1",
+  "shaderSHA256": "5d9cd082f30983806537c52cf2fb1aa96ca870eb50b7b0d59a84e77fbcf2881c",
+  "shaderBytes": 145492,
+  "linkedELFSHA256": "f2d714472584f9aa8593f04dd4582d48f5d6e0d1d4d6f6266397816bc2777cc7",
+  "buildId": "624ba44500d160259727e2b25a8422ebe5ee1884",
+  "packagedELFSHA256": "4728e21826d72891aca6716f1e3f3046b3d7f42203b84ff6c02deb74d3e97fe6",
+  "unsigned": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t699\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "bytes": 7757779,
+    "sha256": "cce353bc9984c0b151e271b2cbabc2a41c258759abcb31e990c0dd969879c5a1"
+  },
+  "signed": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T707\\T707-signed.hap",
+    "bytes": 7856565,
+    "sha256": "dfc7f60ebaf4c9889452dd4d423f9f977a16191f59c8298edab421df6330e962"
+  },
+  "verifyApp": "PASS",
+  "unchangedUnsignedEntries": {
+    "module.json": "48e49c06252b9549f9c6b1c4093eec3071c3a4d1858080d9014e6f2f471f2bb4",
+    "resources.index": "89844a3d21bb38c5f56204787c1a33080c543ef454b35c9eaf8383419cf1da61",
+    "libs/arm64-v8a/libc++_shared.so": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+    "libs/arm64-v8a/libgrs_cold_slots.so": "d8576650de2e0ad1d4f273932bd4358ce46c1e071900dc270efb9cc845b1e696",
+    "libs/arm64-v8a/libgrs_g9rx.so": "4728e21826d72891aca6716f1e3f3046b3d7f42203b84ff6c02deb74d3e97fe6",
+    "resources/base/media/app_icon.svg": "ff8ba8247963992176aae181f58473fb9e7e9ba4930fe43a51d6b3ab6ca8a391",
+    "resources/base/media/start_icon.svg": "e127c84c5e680548b9571479310d1944c6263ce8e28a2ec75129362a810c6191",
+    "resources/base/profile/main_pages.json": "76dacbdab2ddd676274f0ca060ae6386c710624c1fdef189fdd8984c56f24500",
+    "ets/modules.abc": "708434fd1a6573dda28c91f9e9f5b055032a3133a7f9b7ddadee4a3ace9d990a",
+    "ets/render/preparation/p1_material_functions.glsl": "0a3becd5a81ed2190fa4b8322bb9cf72248d50b0d0afbb90ba00ebf418cf5ff5",
+    "ets/sourceMaps.map": "ebdecdb3cf387c61b182af2f12845db74e563d94d05e4b919de6780b03db061f",
+    "rpcid.sc": "3aa1e3d77844b03f1d0eb1ac4486fa45999769d18f2382eeacc2452dd8dfa78d",
+    "pack.info": "c128e1f43216046b8fdcb8a1278558a6722bc59b01e82e8e49745dcbd0feaee5",
+    "pkgSdkInfo.json": "c82cd4422b2f8b5299c807a371802eaab0a7a785377b7e8a5a847c10fed4cdd3"
+  },
+  "validatorSHA256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+  "validatorExit": 0,
+  "validatorStdout": "",
+  "validatorStderr": "",
+  "device": "NOT_RUN"
+}
