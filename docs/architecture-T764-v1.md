@@ -2,6 +2,8 @@
 
 2026-11-21 · G20 · P5 · architect · 离线归因和实施合同。
 
+> T777 补充。T767 实装以 Q5/Q410 的 OP12 作 scope gate，再由 Q6/Q411 的 OP13 做实际 copy。独立诊断 HAP 优先用原授权主 bundle 的显式构建，仍保独立诊断入口和 owner/context，按 T777 管理同名安装冲突、证据和恢复。 [T777 签名工程合同](architecture-T777-v1.md)
+
 新增一个仅在诊断构建可达的 G13 离屏入口，在独立 owner、上下文和资源上执行选定的生产 pass。该入口完成后只交付可见性证据和退役收据。T730 的 BOOT、逐角色 FP32 资格、根调度和发布链照原路径。近期先走 935F 上已有 T756 GLES 角色，收集 T760 缺失的绑定和可见性原件。 [T753 绑定合同](architecture-T753-v1.md) · [T764 原件联核](architecture-T764-evidence-v1.json)
 
 ## T760 首次工程归因
