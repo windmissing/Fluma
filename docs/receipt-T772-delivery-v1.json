@@ -1,0 +1,33 @@
+{
+  "schema": "T772_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "f4483de4db2b63c4d7ef3b25e3f3afc23bacb6d9",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b01897be4b07c2761a637a5",
+    "started": {
+      "id": "6b018a94e4b07c2761a6460c",
+      "createdTime": "2026-11-21T12:12:04+0000"
+    },
+    "delivered": {
+      "id": "6b018bf4e4b0572f632eafc5",
+      "createdTime": "2026-11-21T12:17:56+0000",
+      "title": "T772 architect 已交付。T766 签包/实装 4bdd76dd 联核。第一轮 l4 只证 PUMP_FAILED 5；第二轮 ticket 2/PID927/ownerTid1129/run-owner-context 2/1/1，BOOT FINISH_EXIT.raw=37146、map/unmap 原尾 [0,6559303]，SOURCE 编译 82.303 s、链接 98.108 s 后 APPLIED，l5 code=6。T763 代码能确认已过首 pulse/Claim/Begin 后在 live Pump 检查到 now>根 deadline，现场具体 guard、cursor、真实 pulse age、执行/退役 fence 原件均缺，两轮不能归同一谓词。先在原机及归档找同票 g9rx-source-*.json；找不到，复用 T766 签包一次真入口，终态点「保存原件」并核 PID/start/ticket/scope、firstReject/recentPass，退役后同票再存。文档有 HDC 和 T765 判定步骤。DM 的轮询/末批单 flush 按 RX 实测阶段决定，保原 250 ms、33,333,333 ns、12 pass/3 copy、真实 pulse 和 typed。离线复核通过，本卡无真机。docs/architecture-T772-v1.md，提交 f4483de4。"
+    }
+  },
+  "statusRow": {
+    "path": "docs/后续工作清单.md",
+    "task": "T772",
+    "before": "进行中",
+    "after": "结束待验收",
+    "line": "| T772 | 【T772·目标20 RX SOURCE DEADLINE首次归因及阶段原件闭环】architect | architect | P5 | 结束待验收 | 6b01897be4b07c2761a637a5 |",
+    "beforeSha256": "431ea149de7bc296339e02e1db65bf9868e5196263d73c7ffc5d84370e923300",
+    "afterSha256": "1f141aec9d91585a0d7159e0aace7e66eb453494367c654cdc69a24df31107f1"
+  },
+  "evidence": {
+    "path": "docs/architecture-T772-evidence-v1.json",
+    "sha256": "7d5630d63b316d6c8378f5bfe9da3ca1bfc64f51eaa153940a2bb1cd858cf0e8"
+  }
+}
