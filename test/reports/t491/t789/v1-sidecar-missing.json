@@ -1,0 +1,21 @@
+{
+ "revision": "T789_V1_RX_SIDECAR_V1",
+ "date": "2026-11-21 22:45",
+ "package": {
+  "task": "T789-rx (T785-authorized-handoff 957af8e1)",
+  "note": "handoff was UNSIGNED \u2014 signed on receipt 1079fd0e then install OK"
+ },
+ "run": {
+  "entry": "single real Configure pid 8890 ticket 1",
+  "chain": "15 phases ENQUEUED->CACHE_PRELOAD->APPLY->BOOT compile/link->SOURCE compile/link->APPLIED->PUMP",
+  "terminal": "PUMP_FAILED code=5 STALE at state line"
+ },
+ "sidecar": "automatic terminal/retirement JSON NOT emitted by this build \u2014 files domain only has gpu-program-cache, no sidecar on device",
+ "originals": {
+  "hilog": "18 lines saved (chain.txt)",
+  "retireChain": "G9BootV1 retire events evicted from ring before capture (hilog rolled) \u2014 NOT captured"
+ },
+ "firstReject": "Pump after APPLIED (STALE=5 this run; T776 captured DEADLINE=6 \u2014 same freshness-window family, run-to-run elapsed variance)",
+ "missing": "sidecar JSON absent (instrumentation not in handoff); retire originals evicted \u2014 recorded honestly per card \"\u7f3a\u8bc1\u6309\u539f\u5931\u8d25\u62a5\u544a\"",
+ "route": "developer: T785 handoff lacks terminal/retirement sidecar emission \u2014 needs instrumented build; tester pipeline proven in T776, ready for instrumented package"
+}
