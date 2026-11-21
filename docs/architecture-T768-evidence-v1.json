@@ -1,0 +1,610 @@
+{
+  "schema": "T768_DM_SOURCE_ROOT_BUDGET_V1",
+  "deviceUsed": false,
+  "sourceRecords": [
+    {
+      "path": "test/reports/t491/t738/v8/dm22-final.jsonl",
+      "bytes": 141524,
+      "sha256": "6ced9996469e8e097e3db4ad739ff0d3295ffc17b77bb3c2e208d7cff44425f8"
+    },
+    {
+      "path": "test/reports/t491/t738/v8/dm22-wait.txt",
+      "bytes": 747,
+      "sha256": "83d0760d857d1556a162c3c64a86d8ba60376d458836ec6cba1656e077c4db98"
+    }
+  ],
+  "identity": {
+    "receipt": {
+      "path": "docs/receipt-T758-compile-v1.json",
+      "bytes": 2903,
+      "sha256": "34e7e60e2bb8772a81e31a6a0e9ac7155e6597e78c833c618c441cd4ee8bdedc"
+    },
+    "attempt": {
+      "schema": "DM_BOOT_ATTEMPT_V1",
+      "stage": "ATTEMPT_IDENTITY",
+      "ticket": "1",
+      "pid": 54691,
+      "processStartTick": "9752360",
+      "driverMappedBuildId": "652b030ae1ab03be23041a359bca94f568affa01",
+      "driverMappedPath": "/data/local/tmp/t712/g9_dm_differential",
+      "run": "97523765513750",
+      "owner": "1",
+      "context": "97523765513750"
+    },
+    "driver": {
+      "path": ".codex/local-test/t758-source/handoff/g9_dm_differential",
+      "bytes": 990744,
+      "sha256": "4875eadf8ac267a803cdcfa72b7f4d0ceb63dcdd14c9d16cbb9a6798b67e0725",
+      "md5": "05d413b12c9be857bed70000b963392b",
+      "buildId": "652b030ae1ab03be23041a359bca94f568affa01"
+    },
+    "packagedDso": {
+      "path": ".codex/local-test/t758-source/handoff/libgrs_dm_t647.so",
+      "bytes": 1363040,
+      "sha256": "2aa71299cc3f3d25570ae37a567e70bf555a938fe782dbb3a56584ea759a0c76",
+      "md5": "7ee8669788fa7ac43e63fe5a5d165ce5",
+      "buildId": "88b8e1b3f9b8e58f2dbc88a0ce1000c6b4fb7cc5"
+    },
+    "hap": {
+      "path": ".codex/local-test/t758-source/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "bytes": 7666810,
+      "sha256": "fde7c6c424da30872a9b20f2430ec2eb01df2997270d52db80ec82e9e5090bec"
+    },
+    "pairedCpp": {
+      "path": ".codex/local-test/t758-source/handoff/libc++_shared.so",
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274"
+    },
+    "targetWholeFileSha256Captured": false,
+    "bootAudit": {
+      "schema": "G9BootV1",
+      "family": "DM",
+      "role": "BOOT",
+      "stage": "BOOT_AUDIT_OK",
+      "pid": 54691,
+      "tid": 54691,
+      "run": "97523765513750",
+      "owner": "1",
+      "context": "97523765513750",
+      "ns": "97524587726719",
+      "sourceSHA": "486538f1921304c2f1cfee843f8624995f0ca99650fd505e7ce83a6fca5ab3a8",
+      "roleSetSHA": "607ccb622eac2d1f0bd0dedd3934eee030c29a63cc4dc9392f30305f07ad5079",
+      "mappedBuildId": "88b8e1b3f9b8e58f2dbc88a0ce1000c6b4fb7cc5",
+      "raw": 1,
+      "gl": 0,
+      "egl": 12288,
+      "error": 0,
+      "seal": 6559303,
+      "ticket": "1"
+    },
+    "bootUnmap": {
+      "schema": "G9BootV1",
+      "family": "DM",
+      "role": "BOOT",
+      "stage": "UNMAP_EXIT",
+      "pid": 54691,
+      "tid": 54691,
+      "run": "97523765513750",
+      "owner": "1",
+      "context": "97523765513750",
+      "ns": "97524586136406",
+      "sourceSHA": "486538f1921304c2f1cfee843f8624995f0ca99650fd505e7ce83a6fca5ab3a8",
+      "roleSetSHA": "607ccb622eac2d1f0bd0dedd3934eee030c29a63cc4dc9392f30305f07ad5079",
+      "mappedBuildId": "88b8e1b3f9b8e58f2dbc88a0ce1000c6b4fb7cc5",
+      "raw": 1,
+      "gl": 0,
+      "egl": 12288,
+      "error": 0,
+      "seal": 6559303,
+      "ticket": "1",
+      "workObject": 6,
+      "workByteOffset": 1166976,
+      "workTailBytes": 8,
+      "glSample": 0,
+      "eglSample": 12288
+    },
+    "sourceConfigureEntry": {
+      "stage": "CONFIGURE_ENTER",
+      "variant": "BOOT_SOURCE",
+      "roleSetSHA": "cd9b850def693b7b06eb064a2dd7fa06abfa4c2bb45b58b5cec7ed78508ed291",
+      "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+      "cacheConfigured": false
+    }
+  },
+  "rootTimeline": {
+    "root": {
+      "stage": "SOURCE_ROOT",
+      "ticket": "1",
+      "result": 6,
+      "pid": 54691,
+      "tid": 54691,
+      "scope": "97523765513750",
+      "nonce": "1",
+      "plan": "1",
+      "owner": "1",
+      "context": "97523765513750",
+      "inputEpoch": "1",
+      "session": "1",
+      "permission": "1",
+      "window": "1",
+      "config": "1",
+      "surface": "1",
+      "geometry": "1",
+      "frame": "1",
+      "arenaGeneration": "1",
+      "baseBank": 0,
+      "candidateBank": 2,
+      "arena": 0,
+      "kind": 1,
+      "ordinal": 0,
+      "rootBeginNs": "97841893238281",
+      "deadlineNs": "97842143238281",
+      "fenceNs": "0",
+      "commitNs": "0",
+      "baseCommit": "0",
+      "commit": "0",
+      "baseQuanta": "0",
+      "quanta": "0",
+      "generation": "0",
+      "expectedSHA": "0000000000000000000000000000000000000000000000000000000000000000",
+      "inputSHA": "76cae6f1a54908d9375e949859c458ee36c3039cbf2be34a6280b29aab213fde",
+      "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+      "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+      "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+      "seedSHA": "9d79af473357c4545245c3b5e2d14ce6a08d8eb2dce1d6fc264fc8df10aa0d7e",
+      "actualProgram": 2,
+      "workObject": 0,
+      "eglContext": "391387795136",
+      "eglDisplay": "389154182288",
+      "eglSurface": "391387795184",
+      "uploaded": true,
+      "workByteOffset": 0,
+      "workReadBytes": 0,
+      "dispatches": 12,
+      "barriers": 12,
+      "copyBarriers": 3,
+      "fenceCreated": true,
+      "fencePolls": 13069,
+      "fenceWaitRaw": 37147,
+      "mapReturned": false,
+      "unmapRaw": null,
+      "glSample": 0,
+      "eglSample": 12288,
+      "firstGl": 0,
+      "firstEgl": 0,
+      "typedAccepted": false,
+      "preflight": false,
+      "proposedPlanRetired": false,
+      "committed": false,
+      "baseObject": 1,
+      "candidateObject": 3,
+      "committedObject": 0,
+      "queueBefore": 1,
+      "queueAfter": 0,
+      "pendingAtClaim": 0,
+      "activeRemaining": 0,
+      "pendingAfter": 0,
+      "controlFault": 9,
+      "heartbeatResult": 0,
+      "outcome": 0,
+      "admittedQ20": 0,
+      "passes": [
+        [
+          0,
+          0,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          4294967295,
+          1,
+          3,
+          6,
+          7
+        ],
+        [
+          2,
+          2,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          3,
+          3,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          4,
+          4,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          5,
+          5,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          6,
+          6,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          7,
+          7,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          8,
+          8,
+          0,
+          0,
+          4294967295,
+          1,
+          5,
+          6,
+          7
+        ],
+        [
+          9,
+          9,
+          0,
+          0,
+          4294967295,
+          3,
+          5,
+          6,
+          7
+        ],
+        [
+          10,
+          10,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          11,
+          11,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ]
+      ]
+    },
+    "preRootApi": {
+      "SHADER_COMPILE": {
+        "enter": [
+          "SHADER_COMPILE",
+          "ENTER",
+          "97524597021094",
+          1,
+          null,
+          null
+        ],
+        "return": [
+          "SHADER_COMPILE",
+          "RETURNED",
+          "97607417198594",
+          1,
+          null,
+          null
+        ],
+        "elapsedNs": 82820177500
+      },
+      "PROGRAM_LINK": {
+        "enter": [
+          "PROGRAM_LINK",
+          "ENTER",
+          "97607417356719",
+          2,
+          null,
+          null
+        ],
+        "return": [
+          "PROGRAM_LINK",
+          "RETURNED",
+          "97841890716094",
+          2,
+          null,
+          null
+        ],
+        "elapsedNs": 234473359375
+      },
+      "SOURCE_REFLECT": {
+        "enter": [
+          "SOURCE_REFLECT",
+          "ENTER",
+          "97841890888125",
+          2,
+          null,
+          null
+        ],
+        "return": [
+          "SOURCE_REFLECT",
+          "RETURNED",
+          "97841890980781",
+          2,
+          1,
+          null
+        ],
+        "elapsedNs": 92656
+      }
+    },
+    "buildQualifiedNs": "97841890985937",
+    "firstUse": {
+      "enter": [
+        "SOURCE_FIRST_USE",
+        "ENTER",
+        "97841893294531",
+        2,
+        null,
+        null
+      ],
+      "return": [
+        "SOURCE_FIRST_USE",
+        "RETURNED",
+        "97841893296094",
+        2,
+        null,
+        null
+      ],
+      "elapsedNs": 1563
+    },
+    "copies": [
+      {
+        "enter": [
+          "COPY",
+          "ENTER",
+          "97841893496719",
+          1,
+          2,
+          591872
+        ],
+        "return": [
+          "COPY",
+          "RETURNED",
+          "97841893689687",
+          1,
+          2,
+          591872
+        ],
+        "elapsedNs": 192968
+      },
+      {
+        "enter": [
+          "COPY",
+          "ENTER",
+          "97841894213906",
+          7,
+          8,
+          12767232
+        ],
+        "return": [
+          "COPY",
+          "RETURNED",
+          "97841979765000",
+          7,
+          8,
+          12767232
+        ],
+        "elapsedNs": 85551094
+      },
+      {
+        "enter": [
+          "COPY",
+          "ENTER",
+          "97841979788750",
+          7,
+          9,
+          12767232
+        ],
+        "return": [
+          "COPY",
+          "RETURNED",
+          "97841979817656",
+          7,
+          9,
+          12767232
+        ],
+        "elapsedNs": 28906
+      }
+    ],
+    "submitFlushes": [
+      {
+        "enter": [
+          "SUBMIT_FLUSH",
+          "ENTER",
+          "97841979824687",
+          10,
+          null,
+          null
+        ],
+        "return": [
+          "SUBMIT_FLUSH",
+          "RETURNED",
+          "97841979826250",
+          10,
+          null,
+          null
+        ],
+        "elapsedNs": 1563
+      },
+      {
+        "enter": [
+          "SUBMIT_FLUSH",
+          "ENTER",
+          "97841979901094",
+          12,
+          null,
+          null
+        ],
+        "return": [
+          "SUBMIT_FLUSH",
+          "RETURNED",
+          "97842057360625",
+          12,
+          null,
+          null
+        ],
+        "elapsedNs": 77459531
+      }
+    ],
+    "executionFenceCreate": {
+      "enter": [
+        "EXEC_FENCE",
+        "ENTER",
+        "97842057376406",
+        12,
+        null,
+        null
+      ],
+      "return": [
+        "EXEC_FENCE",
+        "RETURNED",
+        "97842057396719",
+        1,
+        null,
+        null
+      ],
+      "elapsedNs": 20313
+    },
+    "executionFlush": {
+      "enter": [
+        "EXEC_FLUSH",
+        "ENTER",
+        "97842057396875",
+        null,
+        null,
+        null
+      ],
+      "return": [
+        "EXEC_FLUSH",
+        "RETURNED",
+        "97842057397344",
+        null,
+        null,
+        null
+      ],
+      "elapsedNs": 469
+    },
+    "firstPoll": [
+      "EXEC_POLL",
+      "ENTER",
+      "97842057400312",
+      12,
+      null,
+      null
+    ],
+    "longCopyPlusFlushNs": 163010625,
+    "pollPrefix": {
+      "count": 233,
+      "minGapNs": 6718,
+      "medianGapNs": 7031.0,
+      "maxGapNs": 14844,
+      "droppedEvents": 102821
+    },
+    "pulse": {
+      "count": 49,
+      "maxGapNs": 5750469,
+      "ageAtLastGuardNs": 819687
+    },
+    "cutoff": {
+      "lastAllowed": [
+        "PUMP_ENTRY_GUARD",
+        "PASS",
+        "97842143237812",
+        12,
+        49,
+        97842142418125
+      ],
+      "firstDenied": [
+        "PRE_EXEC_POLL_GUARD",
+        "DEADLINE",
+        "97842143239531",
+        12,
+        null,
+        null
+      ],
+      "beforeNs": 469,
+      "afterNs": 1250,
+      "widthNs": 1719
+    },
+    "execution": {
+      "attempted": true,
+      "created": true,
+      "reusedExecution": false,
+      "handle": "1",
+      "polls": 13069,
+      "lastWaitRaw": 37147,
+      "lastPollNs": "97842143235937",
+      "signaled": false
+    },
+    "retirement": {
+      "attempted": false,
+      "created": false,
+      "reusedExecution": true,
+      "handle": "1",
+      "polls": 62,
+      "lastWaitRaw": 37146,
+      "lastPollNs": "97842224779844",
+      "signaled": true
+    },
+    "drainBeginNs": "97842155290000",
+    "drainEndNs": "97842224799375",
+    "observedFifoAfter": 1,
+    "driverTerminalExitCode": 6,
+    "separatelyAttributedShellExit": null
+  }
+}
