@@ -2,6 +2,8 @@
 
 2026-11-20 · 目标20 · P5 · architect · 离线裁定。
 
+> T783 补充。T760 的 `G13_COMPUTE` 落盘原件对应 T756 的 BOOT 角色，key `bacbc911…`。按 T783 用同签产品包保数据换进程，联核实际 cache 文件、加载、反射和原 FP32 终态。旧 T730 的 `856a…` 仅证旧 key 加载。BOOT 缓存窄证可独立取，完整角色和首 Swap 继续等原资格与根。 [T783 暖进程合同](architecture-T783-v1.md)
+
 **保留 T690/T607 原次正规、RTE 和数学资格。下一步优先在同一台 Maleoon 935F 上跑 T731 的 Vulkan 资格探针，只创建一个 BOOT pipeline。** 先核 Vulkan 32 位浮点属性，再用实际同源 BOOT 跑原 op64/65/66。待两轮原始位型和原数学尾均通过，再接实际 XComponent 和完整首根。已有 T739 GLES 样本可作比较基线。设备侧尚未验证 Vulkan，也尚未裁定切换产品后端。 [T731 同机方案](architecture-T731-v1.md) · [T741 原件与静态证据](architecture-T741-evidence-v1.json)
 
 ## 已定位的拒绝
