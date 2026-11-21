@@ -1,0 +1,38 @@
+{
+ "revision": "T755_V1_RX_SOURCE_STALE_V1",
+ "date": "2026-11-21 15:45",
+ "package": {
+  "task": "T755-rx (T752 one-shot RX BOOT+SOURCE, 7b8c0953)",
+  "inputSha": "6cdcfc7d (receipt-identical)",
+  "signedSha": "7f8a2900",
+  "sign": "PASS",
+  "roleSetSHA": "b718fe04"
+ },
+ "sequence": [
+  "EntryAbility",
+  "\u542f\u7528\u7814\u7a76 (one-shot BOOT+SOURCE per T752 design)",
+  "wait 60/180/300s"
+ ],
+ "observed": {
+  "bootChain": "BOOT_AUDIT_OK reached (G9BootV1 PREPARE_EXIT->BOOT_AUDIT_OK at 15:30:30)",
+  "sourceBuild": "SOURCE_BUILD_ENTER 41767B sha=ee66f5f2 (T736 frozen bytes match)",
+  "compile": "SHADER_COMPILE 85.6s + PROGRAM_LINK 235.3s (SOURCE program, ticket 1)",
+  "reflect": "SOURCE_REFLECT_EXIT program=4 activeUniforms=40 qualified=1",
+  "applied": "CONFIGURE_RESEARCH_EXIT result=0 -> APPLIED result=0 (mappedBuildId 7bd1cae4)",
+  "terminal": "PUMP_FAILED code=5 at ~15:39"
+ },
+ "code5": "Result::STALE (enum index 5: OK/IN_PROGRESS/WOULD_BLOCK/INVALID/UNSUPPORTED/STALE) \u2014 transport_.Pump() returned STALE, RevokeLocked issued",
+ "crossFamily": "SAME precision-domain pattern as DM: T751 DM SOURCE rejected Result::DEADLINE=6/ControlResult::DEADLINE=9 at 12th dispatch before fence; RX SOURCE reaches APPLIED but Pump STALE \u2014 both families fail at source-claim/pulse freshness window (250ms class per T754 attribution)",
+ "T736ContractItems": {
+  "BOOT same-ticket": "YES (BOOT_AUDIT_OK ticket 1)",
+  "first qualified pulse": "NOT reached (Pump STALE)",
+  "original SOURCE input": "submitted (ee66f5f2 41767B)",
+  "12 pass": "NOT reached",
+  "fence/1024B": "NOT reached",
+  "typed proof/209715 Q20": "NOT reached",
+  "commit+1/quanta unchanged/FIFO consumption": "NOT reached",
+  "cold-archive events": "NOT reached",
+  "XComponent valid swap": "NOT reached (independently recorded NOT_REACHED)"
+ },
+ "route": "architect: T754 already attributed DM DEADLINE to 250ms gate; RX STALE is same freshness-window family (Pump after APPLIED exceeded window) \u2014 same design decision domain as denormal FTZ (gate window vs 85.6s+235.3s compile wall-time); compile wall-time (SOURCE 85.6s compile + 235.3s link) itself exceeds the 250ms freshness budget"
+}
