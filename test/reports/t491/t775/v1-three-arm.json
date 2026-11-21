@@ -1,0 +1,35 @@
+{
+ "revision": "T775_V1_DM_THREE_ARM_V1",
+ "date": "2026-11-21 21:10",
+ "package": {
+  "task": "T771 driver (receipt-T771-compile-v1, driver buildId 71b03f56, md5 device-verified 67639ad2)",
+  "so": "libgrs_dm_t647 cbb01f59 (T771)",
+  "cpp": "paired",
+  "input": "same K192/S40 dm20-input for all arms",
+  "cadence": "one arm per fresh process"
+ },
+ "threeArms": {
+  "A": {
+   "exitCode": 6,
+   "firstGuardFailure": "PUMP_ENTRY_GUARD DEADLINE @dispatch 12",
+   "lastGuardSuccess": "PRE_EXEC_POLL_GUARD PASS",
+   "records": 28
+  },
+  "B": {
+   "exitCode": 6,
+   "firstGuardFailure": "PRE_EXEC_POLL_GUARD CONTROLLER_REJECTED @dispatch 12 (49us after PUMP_ENTRY PASS)",
+   "lastGuardSuccess": "PUMP_ENTRY_GUARD PASS",
+   "records": 28
+  },
+  "C": {
+   "exitCode": 6,
+   "firstGuardFailure": "PUMP_ENTRY_GUARD DEADLINE @dispatch 12",
+   "lastGuardSuccess": "PRE_EXEC_POLL_GUARD PASS",
+   "records": 28
+  }
+ },
+ "crossArmPattern": "ALL THREE ARMS exitCode=6 (DEADLINE) at dispatch 12; failure oscillates between PUMP_ENTRY_GUARD-DEADLINE (A,C) and PRE_EXEC_POLL_GUARD-CONTROLLER_REJECTED (B) \u2014 same 250ms budget consumed, slightly different guard that notices first; source timing ORIGINALS saved (T771_DM_SOURCE_TIMING_V1 with dispatch api/barrier ns + root/deadline) for T773 reader",
+ "tail": "boot-work-tail.u32 produced all arms (not re-read this round, 4 prior confirmations)",
+ "T768Contract": "one arm one fresh process kept; original deadline preserved (all DEADLINE=6); late-tail retirement only (retirementFence signaled pattern carried over from T762)",
+ "route": "T773 reader independent adjudication (originals in test/reports/t491/t775/A.jsonl B.jsonl C.jsonl); architect: three-arm DEADLINE consistency confirms 250ms budget as the deterministic cause"
+}
