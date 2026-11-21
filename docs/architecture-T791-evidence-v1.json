@@ -1,0 +1,88 @@
+{
+  "schema": "T791_RX_BUILD_INPUT_AUDIT_V1",
+  "t787Commit": "2faeb152",
+  "t787ReceiptSHA256": "a0980b63444364ecef146ab648c277c951eb602ac8621f1600044ac1bd291cfb",
+  "approved": {
+    "path": "docs/design-G9-dynamic-mobilization-manifest-v2.json",
+    "bytes": 13045,
+    "sha256": "b17060c0441e481ec99f3279c76c8b8c94a1013b0fd9045d6b01b6cb827dac77",
+    "t637ReferenceSHA256": "87920db46fa1e14055adcc8f275e49898788d56a0cf755e51b5abab72795fbb7",
+    "schema": "G9_DYNAMIC_MOBILIZATION_DESIGN_V2",
+    "route": "gpu-spf-dynamic-mobilization-v2",
+    "profile": "G9_SPF_DM_Q20_V2"
+  },
+  "freshAssetReplay": {
+    "approved": {
+      "manifestSHA256": "b17060c0441e481ec99f3279c76c8b8c94a1013b0fd9045d6b01b6cb827dac77",
+      "generatedShaderSHA256": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+      "recordedDependencyMatchesCurrent": true,
+      "verifyOldOutput": null,
+      "freshGenerate": {
+        "rc": 0,
+        "stdout": "",
+        "errorTail": []
+      },
+      "verifyFreshOutput": {
+        "rc": 0,
+        "stdout": "RX_CANONICAL_SOURCE_VERIFIED 2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e 146301",
+        "errorTail": []
+      }
+    },
+    "malformed": {
+      "manifestSHA256": "93f0120dc544d689217f51c46d5dccd326f8513d0eaecf20d686b4669b9dd640",
+      "generatedShaderSHA256": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+      "recordedDependencyMatchesCurrent": true,
+      "verifyOldOutput": {
+        "rc": 1,
+        "stdout": "",
+        "errorTail": [
+          "ValueError: RX_STALE_INPUT docs/design-G9-dynamic-mobilization-manifest-v2.json"
+        ]
+      },
+      "freshGenerate": {
+        "rc": 0,
+        "stdout": "",
+        "errorTail": []
+      },
+      "verifyFreshOutput": {
+        "rc": 0,
+        "stdout": "RX_CANONICAL_SOURCE_VERIFIED 2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e 146301",
+        "errorTail": []
+      }
+    },
+    "validChanged": {
+      "manifestSHA256": "3e763298e2efc52d522b5852da7e254cb6cfd3a239c07bdab056564781b8fe1a",
+      "generatedShaderSHA256": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e",
+      "recordedDependencyMatchesCurrent": true,
+      "verifyOldOutput": {
+        "rc": 1,
+        "stdout": "",
+        "errorTail": [
+          "ValueError: RX_STALE_INPUT docs/design-G9-dynamic-mobilization-manifest-v2.json"
+        ]
+      },
+      "freshGenerate": {
+        "rc": 0,
+        "stdout": "",
+        "errorTail": []
+      },
+      "verifyFreshOutput": {
+        "rc": 0,
+        "stdout": "RX_CANONICAL_SOURCE_VERIFIED 2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e 146301",
+        "errorTail": []
+      }
+    }
+  },
+  "t787CorruptHvigor": {
+    "result": "ACCEPTED",
+    "buildLog": {
+      "path": "D:/hmprojects/HelloWorld-T787/.codex/local-test/t787-corrupt-rx.log",
+      "sha256": "172d67932112df80454be5cf9a0424bd54e2d47ddada58944cf4dcf74a2c7d22",
+      "bytes": 24029
+    },
+    "manifestSHA": "93f0120dc544d689217f51c46d5dccd326f8513d0eaecf20d686b4669b9dd640",
+    "unsignedHapSHA": "9768dc5e3c70635848581d12e1693354ca5a57aad70fb601c756de7da2c66afa",
+    "canonicalSHA": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e"
+  },
+  "deviceUsed": false
+}

@@ -1,5 +1,7 @@
 # T665 · RX 设备 shader 重复符号与产物偏差归因
 
+> 2026-11-21 T791 修订。RX 生成和只读校验均须从 T641 已核验的 T637 引用检查动态设计的 UTF-8 JSON、schema 和批准原字节 SHA。现有产物依赖摘要用于一致性核对。错误在冻结输入阶段终止，保 T781 正常重建及生产 shader 原字。 [T791 构建合同](architecture-T791-v1.md)
+
 2026-11-19；architect；不使用真机，不运行生成器、编译器、shader或产品。读取T645全4份UI/三份hilog、真实signed HAP、T644开发收据/旧ELF、prod/harness生成物及冻结父源/生成器/调用链。原件 `analysis-T665-evidence-v1.json`；正式工程修订 `architecture-T665-contract-v1.json`。
 
 结论 **RX_TARGET_COMPILER_REJECTED_CAPTURE_LOCAL_SYMBOL_REUSE**。两native ELF确实不同，但嵌入的完整生产compute shader完全相同；不能把本次失败仅归旧包/错误shader，也不能从静态glslang“通过”断言设备驱动缺陷。先最小RX工程兼容修订+完整源身份闭包，再原T645独立设备续证；不改DM物理数学/接受门，不转designer。
