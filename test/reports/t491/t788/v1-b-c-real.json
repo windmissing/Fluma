@@ -1,0 +1,33 @@
+{
+ "revision": "T788_V1_DM_B_C_REAL_EXECUTION_V1",
+ "date": "2026-11-21 22:30",
+ "fix": "T784 attribution accepted \u2014 T775 three arms were all A (argv --timing omitted, T771 entry defaults to A); now --timing=B/C EXPLICITLY passed per fresh process",
+ "arms": {
+  "B": {
+   "--timing": "B",
+   "TIMING arm reported": "B",
+   "cadenceNs": 250000,
+   "wake.count": 252,
+   "exitCode": 6,
+   "firstGuardFailure": "PUMP_ENTRY_GUARD DEADLINE @dispatch 12",
+   "lastGuardSuccess": "PRE_EXEC_POLL_GUARD PASS"
+  },
+  "C": {
+   "--timing": "C",
+   "TIMING arm reported": "C",
+   "cadenceNs": 250000,
+   "wake.count": 246,
+   "exitCode": 6,
+   "firstGuardFailure": "PUMP_ENTRY_GUARD DEADLINE @dispatch 12",
+   "lastGuardSuccess": "PRE_EXEC_POLL_GUARD PASS"
+  }
+ },
+ "REAL_B_C_CONFIRMED": "TIMING schema now reports arm=B and arm=C respectively with live cadence 250000ns and actual wake counts (252/246) \u2014 argv effective, arms REAL this time (vs T775 all-A)",
+ "sameVerdict": "both real B/C arms still exitCode=6 DEADLINE at dispatch 12 \u2014 deadline crossing is arm-independent (window too small regardless of timing arm)",
+ "compared": {
+  "wall/CPU": "dispatch 12 submitted in all; fence pattern consistent with T762 (execution fence unsignaled, retirement reuse signaled)",
+  "typed/oracle": "NOT_REACHED (map never returned)",
+  "deadline": "original preserved, no relaxation"
+ },
+ "route": "architect: real B/C arms confirmed the deadline is timing-arm-independent \u2014 window relaxation / two-phase-claim decision unchanged; T773 reader originals now include real-B/C timing"
+}
