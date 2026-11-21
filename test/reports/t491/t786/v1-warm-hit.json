@@ -1,0 +1,22 @@
+{
+ "revision": "T786_V1_G13_BOOT_CACHE_WARM_HIT_V1",
+ "date": "2026-11-21 21:40",
+ "priorCheck": "T783 locator: T760-era same-product signed package (com.example.helloworld installTime 1795266764668) with same-device same-key cache present (7 entries)",
+ "cacheAudit": {
+  "keys": "4 keys pulled (t786-cache.tar 89088B)",
+  "G9_BOOT": "760d1593 PERSISTED binaryBytes=37965 shaderSHA 8e0a89e6 (T760-era BOOT)",
+  "SCENE_PARTICLES": "893544ba PERSISTED 4845B",
+  "SCENE_FULL": "8f8f4ee9 PERSISTED 4693B",
+  "G9_SOURCE": "e4ab06f6 CACHE_NOT_STORED (SOURCE never persisted \u2014 expected, pump never reached commit)",
+  "header+SHA": "verified via T475 jsonl last records"
+ },
+ "warmRun": {
+  "freshProcess": "pid 43232 (startTick 406010 captured in-flight)",
+  "chain": "ENQUEUED->OWNER_SEEN->CACHE_PRELOAD_ENTER->CACHE_PRELOAD_READY->APPLY_ENTER(0.0ms after READY = compile/link 0 VERIFIED)->SHADER_COMPILE_ENTER(later scene domain)->BOOT_AUDIT_OK",
+  "glProgramBinary/state/reflect": "same-role cached binary consumed \u2014 no compile/link phase for BOOT role",
+  "FP32 terminal": "PUMP_FAILED code=5 at scene/SOURCE stage \u2014 numeric gate domain unchanged (RX STALE family per T755)"
+ },
+ "note": "miss/fallback: none observed for BOOT role (clean hit); SHADER_COMPILE_ENTER after APPLY belongs to SOURCE/scene domain not BOOT",
+ "T770coexistence": "probe bundle com.example.helloworld.g13visibility NOT installed on device (install blocked by profile CA gate) \u2014 product data and originals preserved, no overwrite conflict",
+ "route": "T760/T763-era same-key warm-hit evidence COMPLETE for BOOT role; scene roles also hit; SOURCE role not persisted (pump never reached commit)"
+}
