@@ -1,0 +1,375 @@
+{
+  "dmOracle": {
+    "schema": "T556_INDEPENDENT_ORACLE_V1",
+    "source": "algorithm-G9-dynamic-mobilization-v2.md SS4/SS9 + fixtures-v2",
+    "independence": "no designer module import; own rne/floor/eval implementation",
+    "parameterSet": "G9_DM_RESEARCH_R0_UNAPPROVED",
+    "results": {
+      "DM01": {
+        "gn_used": 464943848,
+        "q": [
+          {
+            "chiG": "0",
+            "qPhysical": 0,
+            "U": 0,
+            "H0": 0,
+            "omega0": 262144
+          },
+          {
+            "chiG": "1/64",
+            "qPhysical": 4610,
+            "U": 4610,
+            "H0": 131072,
+            "omega0": 286720
+          },
+          {
+            "chiG": "1/8",
+            "qPhysical": 57795,
+            "U": 57795,
+            "H0": 1048576,
+            "omega0": 458752
+          },
+          {
+            "chiG": "1",
+            "qPhysical": 1587033,
+            "U": 1587033,
+            "H0": 8388608,
+            "omega0": 1835008
+          }
+        ],
+        "nondecreasing": true,
+        "firstZero": true
+      },
+      "DM02": {
+        "per_angle": [
+          {
+            "deg": 0,
+            "chiG": 0,
+            "qPhysical": 0,
+            "H0": 0,
+            "omega0": 262144
+          },
+          {
+            "deg": 15,
+            "chiG": 0,
+            "qPhysical": 0,
+            "H0": 0,
+            "omega0": 262144
+          },
+          {
+            "deg": 30,
+            "chiG": 81107,
+            "qPhysical": 30192,
+            "H0": 648856,
+            "omega0": 383804
+          }
+        ],
+        "stable0_15": true,
+        "candidate30": true,
+        "chiG30_matches_design_0_07735": true
+      },
+      "DM05": {
+        "u_before": 4,
+        "u_after": 2,
+        "ke_before": 48,
+        "ke_after": 24,
+        "p_unchanged": true,
+        "velocity_drops": true,
+        "ke_drops": true
+      },
+      "DM06": {
+        "feasible": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "max_q": 5,
+        "q6_infeasible": true,
+        "expected5": true
+      },
+      "DM07": {
+        "qOrigin": 4,
+        "qActual": 4,
+        "expected": [
+          4,
+          4
+        ],
+        "no_skip": true
+      },
+      "DM19": {
+        "actual_before_friction": 7,
+        "not_10": true,
+        "pMid6_diagnostic_only": true
+      },
+      "DM17": {
+        "counterexample": "ORDERING_LEVEL",
+        "rejects": true,
+        "argument": [
+          "old-p flux zero under uniform F/p=0",
+          "gravity source adds p>0 with PE unchanged",
+          "angle work already consumed in snapshot",
+          "strict audit must reject; no epsilon release authorized"
+        ]
+      }
+    },
+    "notRun": [
+      "DM03",
+      "DM04",
+      "DM08-DM16",
+      "DM18",
+      "DM20-DM32 (need GPU route or designer-side schema detail; GPU domains NOT_RUN pending T555)"
+    ]
+  },
+  "rxDisplacement": {
+    "R01": {
+      "eligible": false
+    },
+    "R02": {
+      "eligible": false
+    },
+    "R03": {
+      "eligible": true
+    },
+    "R04": {
+      "eligible": true
+    },
+    "R05": {
+      "eligible": true
+    },
+    "R06": {
+      "eligible": false
+    },
+    "A01": {
+      "eligible": false
+    },
+    "A02": {
+      "eligible": true
+    },
+    "A03": {
+      "eligible": true
+    },
+    "A04": {
+      "eligible": true
+    },
+    "A05": {
+      "eligible": false
+    },
+    "V01": {
+      "eligible": true
+    },
+    "V02": {
+      "eligible": true
+    },
+    "V03": {
+      "eligible": false
+    },
+    "V04": {
+      "eligible": false
+    },
+    "P01": {
+      "status": "COMMAND",
+      "vxQ": 524288,
+      "vyQ": 0,
+      "sat": 0
+    },
+    "P02": {
+      "status": "NO_IMPULSE"
+    },
+    "P03": {
+      "status": "COMMAND",
+      "vxQ": 2097152,
+      "vyQ": 0,
+      "sat": 0
+    },
+    "P04": {
+      "status": "COMMAND",
+      "vxQ": -2097152,
+      "vyQ": 0,
+      "sat": 0
+    },
+    "P05": {
+      "status": "NO_IMPULSE"
+    },
+    "P06": {
+      "status": "COMMAND",
+      "vxQ": 25165824,
+      "vyQ": 33554432,
+      "sat": 0
+    },
+    "P07": {
+      "status": "COMMAND",
+      "vxQ": 25165824,
+      "vyQ": 33554432,
+      "sat": 3
+    },
+    "P08": {
+      "status": "COMMAND",
+      "vxQ": -25165824,
+      "vyQ": 33554432,
+      "sat": 3
+    },
+    "P09": {
+      "status": "NO_IMPULSE"
+    },
+    "P10": {
+      "status": "REJECT"
+    },
+    "P11": {
+      "status": "REJECT"
+    },
+    "P12": {
+      "status": "REJECT"
+    }
+  },
+  "ledgerChecks": {
+    "fixtureOnly": true,
+    "transitions": [
+      "S_TO_F",
+      "F_TO_P",
+      "P_TO_F",
+      "F_TO_S"
+    ],
+    "negative": [
+      "ORIGIN_CONSERVATION",
+      "REJECTED_MUTATION",
+      "REPLAY_MISMATCH"
+    ]
+  },
+  "inputs": {
+    "DM20": {
+      "files": {
+        "config.u32": {
+          "sha256": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+          "bytes": 256
+        },
+        "identity.u32": {
+          "sha256": "6ff8e0f3f106865a95243fe1c175fc47af138cb5ad07631de00c938b08650cb5",
+          "bytes": 72
+        },
+        "seed.u32": {
+          "sha256": "cd62ff4d9963146ec22c8eaeac848784fb2ad500ef684a9f82ff4ae55633c02d",
+          "bytes": 591872
+        },
+        "commands.u32": {
+          "sha256": "d9d36ad1e4361401e500660ba17cde41c4c1752ab1b1e1aa6bc26e7729be9d82",
+          "bytes": 768
+        },
+        "quota.u32": {
+          "sha256": "26f2820b663e97a1eaaecbc45289cd639e591453f3445748bb3853516d5584c0",
+          "bytes": 1024
+        },
+        "settings.u32": {
+          "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+          "bytes": 4
+        }
+      },
+      "inputFixtureOnly": true,
+      "device": "NOT_RUN"
+    },
+    "DM22": {
+      "files": {
+        "config.u32": {
+          "sha256": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+          "bytes": 256
+        },
+        "identity.u32": {
+          "sha256": "6ff8e0f3f106865a95243fe1c175fc47af138cb5ad07631de00c938b08650cb5",
+          "bytes": 72
+        },
+        "seed.u32": {
+          "sha256": "cd62ff4d9963146ec22c8eaeac848784fb2ad500ef684a9f82ff4ae55633c02d",
+          "bytes": 591872
+        },
+        "commands.u32": {
+          "sha256": "aec534a8fc9de55e9026a414defff0eba42ba64e506b2ee0d87946a992969d49",
+          "bytes": 768
+        },
+        "quota.u32": {
+          "sha256": "26f2820b663e97a1eaaecbc45289cd639e591453f3445748bb3853516d5584c0",
+          "bytes": 1024
+        },
+        "settings.u32": {
+          "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+          "bytes": 4
+        }
+      },
+      "inputFixtureOnly": true,
+      "device": "NOT_RUN"
+    },
+    "DM29": {
+      "files": {
+        "config.u32": {
+          "sha256": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+          "bytes": 256
+        },
+        "identity.u32": {
+          "sha256": "6ff8e0f3f106865a95243fe1c175fc47af138cb5ad07631de00c938b08650cb5",
+          "bytes": 72
+        },
+        "seed.u32": {
+          "sha256": "cd62ff4d9963146ec22c8eaeac848784fb2ad500ef684a9f82ff4ae55633c02d",
+          "bytes": 591872
+        },
+        "commands.u32": {
+          "sha256": "0429ce698076d6d06e974a94612aba9f365ab429b4762f6a0cdce5a8e591fa7f",
+          "bytes": 1536
+        },
+        "quota.u32": {
+          "sha256": "26f2820b663e97a1eaaecbc45289cd639e591453f3445748bb3853516d5584c0",
+          "bytes": 1024
+        },
+        "settings.u32": {
+          "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+          "bytes": 4
+        }
+      },
+      "inputFixtureOnly": true,
+      "device": "NOT_RUN"
+    },
+    "DM31": {
+      "files": {
+        "config.u32": {
+          "sha256": "8d3276868f4ebeb2c5b7e5ea229c3170f5a61ff0576efc9f702aa9de370bb6b5",
+          "bytes": 256
+        },
+        "identity.u32": {
+          "sha256": "6ff8e0f3f106865a95243fe1c175fc47af138cb5ad07631de00c938b08650cb5",
+          "bytes": 72
+        },
+        "seed.u32": {
+          "sha256": "33aadbd3d4be9b99d2e890c4181abd146ffebd6508bae0ae2d8e492c7f1abe9e",
+          "bytes": 673792
+        },
+        "commands.u32": {
+          "sha256": "4be9d98d8f505a0b6523c92309c022d8970746a118f7aa541c5a65e8443ce39d",
+          "bytes": 768
+        },
+        "quota.u32": {
+          "sha256": "26f2820b663e97a1eaaecbc45289cd639e591453f3445748bb3853516d5584c0",
+          "bytes": 1024
+        },
+        "settings.u32": {
+          "sha256": "67abdd721024f0ff4e0b3f4c2fc13bc5bad42d0b7851d456d88d203d15aaa450",
+          "bytes": 4
+        },
+        "cold-credit.u32": {
+          "sha256": "ef3be77da638a5dd119dc860b768b409bebdd9af3092eee2937b9b22ac8ce7ea",
+          "bytes": 8
+        }
+      },
+      "inputFixtureOnly": true,
+      "device": "NOT_RUN"
+    }
+  },
+  "coldNegativeControls": {
+    "DM_ROOT": "COLD_LAYOUT",
+    "DM_FULL": "COLD_LAYOUT",
+    "RX_PAGE": "PAGE_ORDER"
+  },
+  "acceptedRootFullReplay": "NOT_OBSERVED_OFFLINE",
+  "device": "NOT_RUN",
+  "productPASS": false
+}
