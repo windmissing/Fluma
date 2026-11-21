@@ -1,0 +1,589 @@
+{
+  "shaders": {
+    "T718_DM": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\t780-archived-shaders-pgiwvwy_\\T718_DM.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "c10b15ee3d7ba93bde10d393b5d8ebf0cbcec02df4ae6615f90b196007d5b0c4"
+    },
+    "T720_RX": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\t780-archived-shaders-pgiwvwy_\\T720_RX.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e"
+    },
+    "T748_DM_boot": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t748-source\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\dm_native\\dm_assets\\boot.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "486538f1921304c2f1cfee843f8624995f0ca99650fd505e7ce83a6fca5ab3a8"
+    },
+    "T748_DM_source": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t748-source\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\dm_native\\dm_assets\\source.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802"
+    },
+    "T763_RX_boot": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t763-final\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g9rx\\rx_assets\\boot.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef"
+    },
+    "T763_RX_source": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t763-final\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\g9rx\\rx_assets\\source.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8"
+    },
+    "T771_DM_boot": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "D:\\hmprojects\\HelloWorld-T771\\.codex\\local-test\\t771-source\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\dm_native\\dm_assets\\boot.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "486538f1921304c2f1cfee843f8624995f0ca99650fd505e7ce83a6fca5ab3a8"
+    },
+    "T771_DM_source": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "D:\\hmprojects\\HelloWorld-T771\\.codex\\local-test\\t771-source\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\dm_native\\dm_assets\\source.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802"
+    },
+    "T771_DM_default": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\t780-archived-shaders-pgiwvwy_\\T771_DM_default_c10b15ee3d7b.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "c10b15ee3d7ba93bde10d393b5d8ebf0cbcec02df4ae6615f90b196007d5b0c4"
+    },
+    "T763_RX_default": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\t780-archived-shaders-pgiwvwy_\\T763_RX_default_2cb9a8481383.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "2cb9a84813833027f68ee7434f98f833dae01e310d9ea053e57e2870d133778e"
+    }
+  },
+  "independentELF": {
+    "T718_DM_DRIVER": {
+      "argv": [
+        "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\native\\llvm\\bin\\llvm-readelf.exe",
+        "-h",
+        "-d",
+        "-n",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t718\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\g9_dm_differential"
+      ],
+      "rawReadelf": "ELF Header:\n  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00\n  Class:                             ELF64\n  Data:                              2's complement, little endian\n  Version:                           1 (current)\n  OS/ABI:                            UNIX - System V\n  ABI Version:                       0\n  Type:                              DYN (Shared object file)\n  Machine:                           AArch64\n  Version:                           0x1\n  Entry point address:               0x108E4\n  Start of program headers:          64 (bytes into file)\n  Start of section headers:          740680 (bytes into file)\n  Flags:                             0x0\n  Size of this header:               64 (bytes)\n  Size of program headers:           56 (bytes)\n  Number of program headers:         12\n  Size of section headers:           64 (bytes)\n  Number of section headers:         41\n  Section header string table index: 39\nDynamic section at offset 0x25138 contains 31 entries:\n  Tag                Type           Name/Value\n  0x000000000000001d (RUNPATH)      Library runpath: [D:/hmprojects/HelloWorld/.codex/local-test/t718/entry/build/default/intermediates/cmake/default/obj/arm64-v8a]\n  0x0000000000000001 (NEEDED)       Shared library: [libgrs_dm_t647.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libEGL.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libGLESv3.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libhilog_ndk.z.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libc++_shared.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libc.so]\n  0x000000000000001e (FLAGS)        BIND_NOW \n  0x000000006ffffffb (FLAGS_1)      NOW PIE \n  0x0000000000000015 (DEBUG)        0x0\n  0x0000000000000007 (RELA)         0x56f0\n  0x0000000000000008 (RELASZ)       2520 (bytes)\n  0x0000000000000009 (RELAENT)      24 (bytes)\n  0x000000006ffffff9 (RELACOUNT)    60\n  0x0000000000000017 (JMPREL)       0x60c8\n  0x0000000000000002 (PLTRELSZ)     2568 (bytes)\n  0x0000000000000003 (PLTGOT)       0x273e8\n  0x0000000000000014 (PLTREL)       RELA\n  0x0000000000000006 (SYMTAB)       0x340\n  0x000000000000000b (SYMENT)       24 (bytes)\n  0x0000000000000005 (STRTAB)       0x2950\n  0x000000000000000a (STRSZ)        11675 (bytes)\n  0x000000006ffffef5 (GNU_HASH)     0x1d08\n  0x0000000000000004 (HASH)         0x20b0\n  0x0000000000000019 (INIT_ARRAY)   0x26e50\n  0x000000000000001b (INIT_ARRAYSZ) 8 (bytes)\n  0x000000000000001a (FINI_ARRAY)   0x26e58\n  0x000000000000001c (FINI_ARRAYSZ) 16 (bytes)\n  0x000000000000000c (INIT)         0x2574c\n  0x000000000000000d (FINI)         0x25760\n  0x0000000000000000 (NULL)         0x0\nDisplaying notes found in: .note.ohos.ident\n  Owner                Data size \tDescription\n  OHOS\u0000\u0000\u0000\u0000\u0000\u0000\u0000          0x00000004\tNT_VERSION (version)\n   description data: 01 00 00 00\n\nDisplaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: cb94c860b110e7dcdd2b8041ad9772858b9d8a2e\n",
+      "DT_NEEDED": [
+        "libgrs_dm_t647.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libhilog_ndk.z.so",
+        "libc++_shared.so",
+        "libc.so"
+      ],
+      "sha256": "cce1a14ba7e4260590e6d95671cfd0ccb203e9e605a692add7fc87a4bbc3260a",
+      "BuildId": "cb94c860b110e7dcdd2b8041ad9772858b9d8a2e"
+    },
+    "T748_DM_DRIVER": {
+      "argv": [
+        "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\native\\llvm\\bin\\llvm-readelf.exe",
+        "-h",
+        "-d",
+        "-n",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t748-source\\handoff\\g9_dm_differential"
+      ],
+      "rawReadelf": "ELF Header:\n  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00\n  Class:                             ELF64\n  Data:                              2's complement, little endian\n  Version:                           1 (current)\n  OS/ABI:                            UNIX - System V\n  ABI Version:                       0\n  Type:                              DYN (Shared object file)\n  Machine:                           AArch64\n  Version:                           0x1\n  Entry point address:               0x15284\n  Start of program headers:          64 (bytes into file)\n  Start of section headers:          960080 (bytes into file)\n  Flags:                             0x0\n  Size of this header:               64 (bytes)\n  Size of program headers:           56 (bytes)\n  Number of program headers:         12\n  Size of section headers:           64 (bytes)\n  Number of section headers:         41\n  Section header string table index: 39\nDynamic section at offset 0x30f08 contains 31 entries:\n  Tag                Type           Name/Value\n  0x000000000000001d (RUNPATH)      Library runpath: [D:/hmprojects/HelloWorld/.codex/local-test/t748-source/entry/build/default/intermediates/cmake/default/obj/arm64-v8a]\n  0x0000000000000001 (NEEDED)       Shared library: [libgrs_dm_t647.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libEGL.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libGLESv3.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libhilog_ndk.z.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libc++_shared.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libc.so]\n  0x000000000000001e (FLAGS)        BIND_NOW \n  0x000000006ffffffb (FLAGS_1)      NOW PIE \n  0x0000000000000015 (DEBUG)        0x0\n  0x0000000000000007 (RELA)         0x7348\n  0x0000000000000008 (RELASZ)       3408 (bytes)\n  0x0000000000000009 (RELAENT)      24 (bytes)\n  0x000000006ffffff9 (RELACOUNT)    80\n  0x0000000000000017 (JMPREL)       0x8098\n  0x0000000000000002 (PLTRELSZ)     3360 (bytes)\n  0x0000000000000003 (PLTGOT)       0x331b8\n  0x0000000000000014 (PLTREL)       RELA\n  0x0000000000000006 (SYMTAB)       0x340\n  0x000000000000000b (SYMENT)       24 (bytes)\n  0x0000000000000005 (STRTAB)       0x344c\n  0x000000000000000a (STRSZ)        16122 (bytes)\n  0x000000006ffffef5 (GNU_HASH)     0x23f8\n  0x0000000000000004 (HASH)         0x295c\n  0x0000000000000019 (INIT_ARRAY)   0x32ab0\n  0x000000000000001b (INIT_ARRAYSZ) 8 (bytes)\n  0x000000000000001a (FINI_ARRAY)   0x32ab8\n  0x000000000000001c (FINI_ARRAYSZ) 16 (bytes)\n  0x000000000000000c (INIT)         0x311a4\n  0x000000000000000d (FINI)         0x311b8\n  0x0000000000000000 (NULL)         0x0\nDisplaying notes found in: .note.ohos.ident\n  Owner                Data size \tDescription\n  OHOS\u0000\u0000\u0000\u0000\u0000\u0000\u0000          0x00000004\tNT_VERSION (version)\n   description data: 01 00 00 00\n\nDisplaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: 0a496a947e090be7d462e3951ffe25d71ac8faf1\n",
+      "DT_NEEDED": [
+        "libgrs_dm_t647.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libhilog_ndk.z.so",
+        "libc++_shared.so",
+        "libc.so"
+      ],
+      "sha256": "492e17c3177a6fc6ca4995a8e093428dcde119b0e07f40040ef4ddc9d9055f09",
+      "BuildId": "0a496a947e090be7d462e3951ffe25d71ac8faf1"
+    },
+    "T670_DM_DRIVER": {
+      "argv": [
+        "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\native\\llvm\\bin\\llvm-readelf.exe",
+        "-h",
+        "-d",
+        "-n",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t670-dm\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\g9_dm_differential"
+      ],
+      "rawReadelf": "ELF Header:\n  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00\n  Class:                             ELF64\n  Data:                              2's complement, little endian\n  Version:                           1 (current)\n  OS/ABI:                            UNIX - System V\n  ABI Version:                       0\n  Type:                              DYN (Shared object file)\n  Machine:                           AArch64\n  Version:                           0x1\n  Entry point address:               0x108E4\n  Start of program headers:          64 (bytes into file)\n  Start of section headers:          740696 (bytes into file)\n  Flags:                             0x0\n  Size of this header:               64 (bytes)\n  Size of program headers:           56 (bytes)\n  Number of program headers:         12\n  Size of section headers:           64 (bytes)\n  Number of section headers:         41\n  Section header string table index: 39\nDynamic section at offset 0x25138 contains 31 entries:\n  Tag                Type           Name/Value\n  0x000000000000001d (RUNPATH)      Library runpath: [D:/hmprojects/HelloWorld/.codex/local-test/t670-dm/entry/build/default/intermediates/cmake/default/obj/arm64-v8a]\n  0x0000000000000001 (NEEDED)       Shared library: [libgrs_dm_t647.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libEGL.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libGLESv3.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libhilog_ndk.z.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libc++_shared.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libc.so]\n  0x000000000000001e (FLAGS)        BIND_NOW \n  0x000000006ffffffb (FLAGS_1)      NOW PIE \n  0x0000000000000015 (DEBUG)        0x0\n  0x0000000000000007 (RELA)         0x56f0\n  0x0000000000000008 (RELASZ)       2520 (bytes)\n  0x0000000000000009 (RELAENT)      24 (bytes)\n  0x000000006ffffff9 (RELACOUNT)    60\n  0x0000000000000017 (JMPREL)       0x60c8\n  0x0000000000000002 (PLTRELSZ)     2568 (bytes)\n  0x0000000000000003 (PLTGOT)       0x273e8\n  0x0000000000000014 (PLTREL)       RELA\n  0x0000000000000006 (SYMTAB)       0x340\n  0x000000000000000b (SYMENT)       24 (bytes)\n  0x0000000000000005 (STRTAB)       0x2950\n  0x000000000000000a (STRSZ)        11678 (bytes)\n  0x000000006ffffef5 (GNU_HASH)     0x1d08\n  0x0000000000000004 (HASH)         0x20b0\n  0x0000000000000019 (INIT_ARRAY)   0x26e50\n  0x000000000000001b (INIT_ARRAYSZ) 8 (bytes)\n  0x000000000000001a (FINI_ARRAY)   0x26e58\n  0x000000000000001c (FINI_ARRAYSZ) 16 (bytes)\n  0x000000000000000c (INIT)         0x2574c\n  0x000000000000000d (FINI)         0x25760\n  0x0000000000000000 (NULL)         0x0\nDisplaying notes found in: .note.ohos.ident\n  Owner                Data size \tDescription\n  OHOS\u0000\u0000\u0000\u0000\u0000\u0000\u0000          0x00000004\tNT_VERSION (version)\n   description data: 01 00 00 00\n\nDisplaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: ee6dead096651e4b1efe70a301f115ebc5712a47\n",
+      "DT_NEEDED": [
+        "libgrs_dm_t647.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libhilog_ndk.z.so",
+        "libc++_shared.so",
+        "libc.so"
+      ],
+      "sha256": "db325543181051bb08b2b15a73f5227cffd4f78ce8c78b317e27410332df0e70",
+      "BuildId": "ee6dead096651e4b1efe70a301f115ebc5712a47",
+      "receiptPathSHAObserved": "7c8284b9298a675a31e8c128a9dcdf27ec0cedf8cdc7662584c60ae039620bad"
+    },
+    "T771_DM_DRIVER": {
+      "argv": [
+        "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\native\\llvm\\bin\\llvm-readelf.exe",
+        "-h",
+        "-d",
+        "-n",
+        "D:\\hmprojects\\HelloWorld-T771\\.codex\\local-test\\t771-source\\handoff\\g9_dm_differential"
+      ],
+      "rawReadelf": "ELF Header:\n  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00\n  Class:                             ELF64\n  Data:                              2's complement, little endian\n  Version:                           1 (current)\n  OS/ABI:                            UNIX - System V\n  ABI Version:                       0\n  Type:                              DYN (Shared object file)\n  Machine:                           AArch64\n  Version:                           0x1\n  Entry point address:               0x172FC\n  Start of program headers:          64 (bytes into file)\n  Start of section headers:          1094712 (bytes into file)\n  Flags:                             0x0\n  Size of this header:               64 (bytes)\n  Size of program headers:           56 (bytes)\n  Number of program headers:         12\n  Size of section headers:           64 (bytes)\n  Number of section headers:         41\n  Section header string table index: 39\nDynamic section at offset 0x3a028 contains 31 entries:\n  Tag                Type           Name/Value\n  0x000000000000001d (RUNPATH)      Library runpath: [D:/hmprojects/HelloWorld-T771/.codex/local-test/t771-source/entry/build/default/intermediates/cmake/default/obj/arm64-v8a]\n  0x0000000000000001 (NEEDED)       Shared library: [libgrs_dm_t647.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libEGL.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libGLESv3.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libhilog_ndk.z.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libc++_shared.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libc.so]\n  0x000000000000001e (FLAGS)        BIND_NOW \n  0x000000006ffffffb (FLAGS_1)      NOW PIE \n  0x0000000000000015 (DEBUG)        0x0\n  0x0000000000000007 (RELA)         0x7820\n  0x0000000000000008 (RELASZ)       3408 (bytes)\n  0x0000000000000009 (RELAENT)      24 (bytes)\n  0x000000006ffffff9 (RELACOUNT)    80\n  0x0000000000000017 (JMPREL)       0x8570\n  0x0000000000000002 (PLTRELSZ)     3528 (bytes)\n  0x0000000000000003 (PLTGOT)       0x3c2d8\n  0x0000000000000014 (PLTREL)       RELA\n  0x0000000000000006 (SYMTAB)       0x340\n  0x000000000000000b (SYMENT)       24 (bytes)\n  0x0000000000000005 (STRTAB)       0x36a0\n  0x000000000000000a (STRSZ)        16765 (bytes)\n  0x000000006ffffef5 (GNU_HASH)     0x2590\n  0x0000000000000004 (HASH)         0x2b28\n  0x0000000000000019 (INIT_ARRAY)   0x3bbd0\n  0x000000000000001b (INIT_ARRAYSZ) 8 (bytes)\n  0x000000000000001a (FINI_ARRAY)   0x3bbd8\n  0x000000000000001c (FINI_ARRAYSZ) 16 (bytes)\n  0x000000000000000c (INIT)         0x3a258\n  0x000000000000000d (FINI)         0x3a26c\n  0x0000000000000000 (NULL)         0x0\nDisplaying notes found in: .note.ohos.ident\n  Owner                Data size \tDescription\n  OHOS\u0000\u0000\u0000\u0000\u0000\u0000\u0000          0x00000004\tNT_VERSION (version)\n   description data: 01 00 00 00\n\nDisplaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: 71b03f560e78806ca43c29eea161ab50a6ec73c1\n",
+      "DT_NEEDED": [
+        "libgrs_dm_t647.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libhilog_ndk.z.so",
+        "libc++_shared.so",
+        "libc.so"
+      ],
+      "sha256": "269a7eb9381186117496e7f2e1d874e6fdfc4f9be6154b7751161b3f12dd05cf",
+      "BuildId": "71b03f560e78806ca43c29eea161ab50a6ec73c1"
+    }
+  },
+  "current": {
+    "T748_DM": {
+      "BuildId": "63b69fe3f7e825b81ab730c67fd02b08c1d42172",
+      "elfSHA": "fb8d734f12fc03e6539fe1477ead8aec90f2bdb23b4a2c07f44242aca8eab0e6",
+      "hapSHA": "bcf532c72de92410de834fc18a0faa85289f0c066e5289a1c60e5f32a7a1a6a4"
+    },
+    "T763_RX": {
+      "BuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+      "elfSHA": "6f0690651b1173176c48c36b374b5c2c6b88eba8aa956c40b9c50f5a9164d479",
+      "hapSHA": "376720d85d8d1fcb38addc7528a4ea58cab51596af840c0616995b66890eb042"
+    },
+    "T771_DM": {
+      "BuildId": "86e14c1a342d257ab3ddbaa87662332be4d782ea",
+      "elfSHA": "c36d5837233b6854788395150ede00b65e6b334e1fb9f8991987a7bf0ae73d67",
+      "hapSHA": "a1bf043f5060bdde5e19b94877ae7f6ef1b6753a8a7ea48ec608626f367be96d",
+      "receiptSHA": "5d107248e1c7d3879ddc3f6fe47475c39bc1b1b3de4f560b983d5f5fc5dc462d"
+    },
+    "T771_DM_default": {
+      "BuildId": "afe8968055bd57cd3271677b6fb40a729f53893d",
+      "elfSHA": "d65ee77ce03dc586feffd60747470315430a60b38726af7054db02f809989a31",
+      "hapSHA": "e7de9444263dbc9b74094e011d4a3f080cb42cb4183def12ccce069b247cf66b"
+    },
+    "T763_RX_default": {
+      "BuildId": "0db444d0a424cdafa9f08125c104b3db36b18396",
+      "elfSHA": "906589de8409d83fe8dfebde2e5541d8652dde0c22f6ffaef85a1ca5fa6cc22e",
+      "hapSHA": "acef1bc665493986a958f070f1fef3d0dddaf041f4e61d884dd71941e830b334"
+    }
+  },
+  "historicalSigned": {
+    "T720_RX_unsignedAtHistoricalPath": {
+      "expected": "c24d08cca0168259adf5d8103a57af6a802541aa54d7c87d8d7a5a84996a909b",
+      "observed": "0b55dbc6cd792aa4429ac2f8fcc513dd7626881ffa9d62514e35675ca7491e97",
+      "matches": false,
+      "authoritativeOriginal": "T720-rx signed HAP"
+    },
+    "T718-dm": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T718-dm\\T718-dm-signed.hap",
+      "sha256": "cb63655348ca7d303a1fec35b79ee9edf8a2a3a35364c2bf17ecea3cb445bf96",
+      "bytes": 7736998
+    },
+    "T720-rx": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T720-rx\\T720-rx-signed.hap",
+      "sha256": "3c6af26b32cd76e6d15f18447416ad5359dc4c1f1c1c37bc93875244f74fb051",
+      "bytes": 7924967
+    },
+    "T766_RX_mapping": {
+      "path": "test\\reports\\t491\\t766\\v6\\g9boot-t766.jsonl",
+      "sha256": "a16329deabe02f8963b1ab8b5d88ad021414bfb3370c862e02a392392b3cd147",
+      "pids": [
+        927
+      ],
+      "rows": 12,
+      "BuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63"
+    }
+  },
+  "controls": {
+    "DM": [
+      {
+        "canonicalLine": 1988,
+        "actual": " for(uint row=0u;row<events;++row){uint at=row*64u;uvec2 mask=g9EventMask(dmReadBaseWord(at+2u));",
+        "before": "B[at+2u]"
+      }
+    ],
+    "DMReadonlyRollback": "DIRECT_VALUE_ARGUMENT_DETECTED",
+    "RX": [
+      {
+        "canonicalLine": 1100,
+        "actual": " uint count=g9MapCount(true,c);for(uint i=0u;i<count;++i){uint at=g9MapAddress(true,c,i);if(!g9MapAdd(false,c,g9Key(true,c,i),rxReadCandidateWord(at+3u)))return false;}",
+        "before": "C[at+3u]"
+      },
+      {
+        "canonicalLine": 1107,
+        "actual": "  if(!g9UMul(g9U32(q),g9U32(rxReadCandidateWord(at+3u)),product)||!g9UDiv(product,g9U32(mass),quotient,remainder))return false;",
+        "before": "C[at+3u]"
+      },
+      {
+        "canonicalLine": 1119,
+        "actual": " uvec4 x=g9U32(c*1048576u+524288u),gx=g9S32(int(C[22u])),gn=g9U32(rxReadCandidateWord(23u));",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1127,
+        "actual": "    !g9SMul(g9U32(rxReadCandidateWord(23u)),g9U32(y2),potential)||!g9SMul(g9S32(int(C[22u])),g9U32(x),horizontal)||!g9SShift(horizontal,1u,horizontal)||",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1167,
+        "actual": "   if(!g9ColumnPotential(c,rxReadWorkWord(at),rxReadWorkWord(at+1u),oldPotential)||!g9ColumnPotential(c,g9Column(c,0u),g9Column(c,1u),newPotential)||!g9SSub(newPotential,oldPotential,exact)){g9Fault(29u,c,1u);return false;}change=g9Exact(exact);",
+        "before": "W[at]"
+      },
+      {
+        "canonicalLine": 1167,
+        "actual": "   if(!g9ColumnPotential(c,rxReadWorkWord(at),rxReadWorkWord(at+1u),oldPotential)||!g9ColumnPotential(c,g9Column(c,0u),g9Column(c,1u),newPotential)||!g9SSub(newPotential,oldPotential,exact)){g9Fault(29u,c,1u);return false;}change=g9Exact(exact);",
+        "before": "W[at+1u]"
+      },
+      {
+        "canonicalLine": 1183,
+        "actual": " drive=uvec4(0u);uvec4 gx=g9S32(int(C[22u])),gn=g9U32(rxReadCandidateWord(23u)),term;",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1226,
+        "actual": " if(!g9UMul(g9Magnitude(u),g9Magnitude(u),square)||!g9UMul(square,g9U32(rxReadWorkWord(uConfig+4u)),num)||!g9UMul(g9U32(65536u),g9U32(rxReadCandidateWord(23u)),den)||!g9UDiv(num,den,head,rem)||!dmRneMul(g9U32(rxReadWorkWord(uConfig)),g9U32(r),16u,yieldDepth))return false;",
+        "before": "W[uConfig+4u]"
+      },
+      {
+        "canonicalLine": 1226,
+        "actual": " if(!g9UMul(g9Magnitude(u),g9Magnitude(u),square)||!g9UMul(square,g9U32(rxReadWorkWord(uConfig+4u)),num)||!g9UMul(g9U32(65536u),g9U32(rxReadCandidateWord(23u)),den)||!g9UDiv(num,den,head,rem)||!dmRneMul(g9U32(rxReadWorkWord(uConfig)),g9U32(r),16u,yieldDepth))return false;",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1226,
+        "actual": " if(!g9UMul(g9Magnitude(u),g9Magnitude(u),square)||!g9UMul(square,g9U32(rxReadWorkWord(uConfig+4u)),num)||!g9UMul(g9U32(65536u),g9U32(rxReadCandidateWord(23u)),den)||!g9UDiv(num,den,head,rem)||!dmRneMul(g9U32(rxReadWorkWord(uConfig)),g9U32(r),16u,yieldDepth))return false;",
+        "before": "W[uConfig]"
+      },
+      {
+        "canonicalLine": 1238,
+        "actual": " if(!dmRneMul(g9U32(rxReadWorkWord(uConfig)),g9U32(gn),16u,yield))return false;if(g9SCmp(drive,yield)>0&&!g9USub(drive,yield,excess))return false;",
+        "before": "W[uConfig]"
+      },
+      {
+        "canonicalLine": 1254,
+        "actual": "  dmPut(c,0u,s);dmPut(c,1u,f0);if(!dmStore64(c,2u,p))return false;dmPut(c,4u,b);dmPut(c,5u,rxReadCandidateWord(22u));dmPut(c,6u,rxReadCandidateWord(23u));dmPut(c,7u,chi.x);dmPut(c,8u,hg.x);dmPut(c,24u,g9MapCount(false,c));dmPut(c,25u,g9MapCount(true,c));",
+        "before": "C[22u]"
+      },
+      {
+        "canonicalLine": 1254,
+        "actual": "  dmPut(c,0u,s);dmPut(c,1u,f0);if(!dmStore64(c,2u,p))return false;dmPut(c,4u,b);dmPut(c,5u,rxReadCandidateWord(22u));dmPut(c,6u,rxReadCandidateWord(23u));dmPut(c,7u,chi.x);dmPut(c,8u,hg.x);dmPut(c,24u,g9MapCount(false,c));dmPut(c,25u,g9MapCount(true,c));",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1282,
+        "actual": " if(!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(f),product)||!g9UMul(product,g9U32(rxReadWorkWord(uConfig)),num)||!g9UDiv(num,den,staticBudget,product)||!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(f),product)||!g9UMul(product,g9U32(rxReadWorkWord(uConfig+1u)),num)||!g9UDiv(num,den,dynamicBudget,product))return false;",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1282,
+        "actual": " if(!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(f),product)||!g9UMul(product,g9U32(rxReadWorkWord(uConfig)),num)||!g9UDiv(num,den,staticBudget,product)||!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(f),product)||!g9UMul(product,g9U32(rxReadWorkWord(uConfig+1u)),num)||!g9UDiv(num,den,dynamicBudget,product))return false;",
+        "before": "W[uConfig]"
+      },
+      {
+        "canonicalLine": 1282,
+        "actual": " if(!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(f),product)||!g9UMul(product,g9U32(rxReadWorkWord(uConfig)),num)||!g9UDiv(num,den,staticBudget,product)||!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(f),product)||!g9UMul(product,g9U32(rxReadWorkWord(uConfig+1u)),num)||!g9UDiv(num,den,dynamicBudget,product))return false;",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1282,
+        "actual": " if(!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(f),product)||!g9UMul(product,g9U32(rxReadWorkWord(uConfig)),num)||!g9UDiv(num,den,staticBudget,product)||!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(f),product)||!g9UMul(product,g9U32(rxReadWorkWord(uConfig+1u)),num)||!g9UDiv(num,den,dynamicBudget,product))return false;",
+        "before": "W[uConfig+1u]"
+      },
+      {
+        "canonicalLine": 1296,
+        "actual": "  if(f>0u&&(!g9SDiv(g9Magnitude(mid),g9U32(f),3u,speed)||!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(f),product)||!g9CeilSqrt64(product.xy,wave)||!g9UAdd(speed,g9U32(wave),speed)))return false;",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1310,
+        "actual": "bool g9StartThreshold(out uvec4 threshold){return g9RneProduct(g9U32(rxReadWorkWord(uConfig)),g9U32(rxReadCandidateWord(23u)),65536u,threshold);}",
+        "before": "W[uConfig]"
+      },
+      {
+        "canonicalLine": 1310,
+        "actual": "bool g9StartThreshold(out uvec4 threshold){return g9RneProduct(g9U32(rxReadWorkWord(uConfig)),g9U32(rxReadCandidateWord(23u)),65536u,threshold);}",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1315,
+        "actual": "  if(g9SCmp(drive,threshold)>0){uvec4 numerator,quotient,remainder;if(!g9UMul(g9U32(min(bed,W[uConfig+2u])),g9U32(rxReadWorkWord(uConfig+3u)),numerator)||!g9UDiv(numerator,g9U32(65536u*120u*uJ),quotient,remainder)||!g9Uint(quotient,q)){g9Fault(29u,c,1u);return false;}q=min(q,bed);}",
+        "before": "W[uConfig+3u]"
+      },
+      {
+        "canonicalLine": 1337,
+        "actual": "  if(!g9SMul(g9U32(rxReadCandidateWord(23u)),g9U32(flow),product)||!g9SMul(product,g9U32(rxReadWorkWord(uConfig)),numerator)||!g9SDiv(numerator,denominator,0u,staticBudget)||!g9SMul(product,g9U32(rxReadWorkWord(uConfig+1u)),numerator)||!g9SDiv(numerator,denominator,0u,dynamicBudget)){g9Fault(29u,c,0u);return false;}",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1337,
+        "actual": "  if(!g9SMul(g9U32(rxReadCandidateWord(23u)),g9U32(flow),product)||!g9SMul(product,g9U32(rxReadWorkWord(uConfig)),numerator)||!g9SDiv(numerator,denominator,0u,staticBudget)||!g9SMul(product,g9U32(rxReadWorkWord(uConfig+1u)),numerator)||!g9SDiv(numerator,denominator,0u,dynamicBudget)){g9Fault(29u,c,0u);return false;}",
+        "before": "W[uConfig]"
+      },
+      {
+        "canonicalLine": 1337,
+        "actual": "  if(!g9SMul(g9U32(rxReadCandidateWord(23u)),g9U32(flow),product)||!g9SMul(product,g9U32(rxReadWorkWord(uConfig)),numerator)||!g9SDiv(numerator,denominator,0u,staticBudget)||!g9SMul(product,g9U32(rxReadWorkWord(uConfig+1u)),numerator)||!g9SDiv(numerator,denominator,0u,dynamicBudget)){g9Fault(29u,c,0u);return false;}",
+        "before": "W[uConfig+1u]"
+      },
+      {
+        "canonicalLine": 1487,
+        "actual": " uvec4 square,kinetic,pressure;if(!g9SMul(p,p,square)||!g9SDiv(square,g9U32(flow),1u,kinetic)||!g9UMul(g9U32(flow),g9U32(flow),square)||!g9SMul(square,g9U32(rxReadCandidateWord(23u)),pressure)||!g9SDiv(pressure,g9U32(2u),1u,pressure)||!g9SAdd(kinetic,pressure,result))return false;return true;",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1490,
+        "actual": " uvec4 a,b,difference;if(!g9UMul(g9U32(original),g9U32(original),a)||!g9UMul(g9U32(reconstructed),g9U32(reconstructed),b)||!g9USub(a,b,difference)||!g9SMul(difference,g9U32(rxReadCandidateWord(23u)),difference)||!g9SDiv(difference,g9U32(2u),1u,result))return false;return true;",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1499,
+        "actual": "  uvec4 waveL,waveR;if(!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(fl),waveL)||!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(fr),waveR)){g9Fault(29u,edge,3u);return false;}",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1499,
+        "actual": "  uvec4 waveL,waveR;if(!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(fl),waveL)||!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(fr),waveR)){g9Fault(29u,edge,3u);return false;}",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1512,
+        "actual": "  uvec4 limit;if(!g9UMul(g9U32(rxReadWorkWord(uConfig)),g9U32(rxReadCandidateWord(23u)),product)||!g9UMul(product,g9U32(g9Column(c,1u)),product)||!g9SDiv(product,g9U32(65536u*120u*uJ),0u,limit)){g9Fault(29u,c,8u);return false;}",
+        "before": "W[uConfig]"
+      },
+      {
+        "canonicalLine": 1512,
+        "actual": "  uvec4 limit;if(!g9UMul(g9U32(rxReadWorkWord(uConfig)),g9U32(rxReadCandidateWord(23u)),product)||!g9UMul(product,g9U32(g9Column(c,1u)),product)||!g9SDiv(product,g9U32(65536u*120u*uJ),0u,limit)){g9Fault(29u,c,8u);return false;}",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1513,
+        "actual": "  W[stage+14u]=g9Column(c,4u)==0u&&g9UCmp(g9Magnitude(p),limit)<=0?1u:0u;if(uOp==G9_OP_CORRECTOR_FACE){dmPut(c,43u,rxReadWorkWord(stage+14u));W[stage+14u]&=dmWord(c,42u);}",
+        "before": "W[stage+14u]"
+      },
+      {
+        "canonicalLine": 1551,
+        "actual": "  for(uint i=0u;i<count;++i){uint at=base+1024u+i*4u;if(!g9ProvisionalAdd(donor,uvec3(W[at],W[at+1u],W[at+2u]),rxReadWorkWord(at+3u))){g9Reject(11u,donor,i);return false;}}",
+        "before": "W[at+3u]"
+      },
+      {
+        "canonicalLine": 1761,
+        "actual": " uvec4 sum=uvec4(0u);for(uint c=0u;c<128u;++c)if(!g9UAdd(sum,g9U32(rxReadWorkWord(uHamilton+c*2048u+1600u)),sum)){g9Fault(29u,c,0u);return false;}",
+        "before": "W[uHamilton+c*2048u+1600u]"
+      },
+      {
+        "canonicalLine": 1766,
+        "actual": "   if(!g9UMul(magnitude,g9U32(rxReadWorkWord(uHamilton+c*2048u+1600u)),product)||!g9UDiv(product,sum,q,r)||!g9UAdd(admitted,q,admitted)){g9Fault(29u,c,1u);return false;}",
+        "before": "W[uHamilton+c*2048u+1600u]"
+      },
+      {
+        "canonicalLine": 1779,
+        "actual": "void g9RestoreTouchColumn(uint c){uint base=uHamilton+c*2048u;for(uint i=0u;i<32u;++i)g9PutColumn(c,i,rxReadWorkWord(base+1664u+i));for(uint i=0u;i<256u;++i){C[uBed+c*256u+i]=W[base+512u+i];C[uFlow+c*256u+i]=W[base+768u+i];}}",
+        "before": "W[base+1664u+i]"
+      },
+      {
+        "canonicalLine": 1809,
+        "actual": "  uint band=min(g9Column(c,0u),W[uConfig+2u]);uvec4 threshold,product;if(!g9UMul(g9U32(rxReadWorkWord(uConfig)),g9U32(rxReadCandidateWord(23u)),product)||!g9UMul(product,g9U32(band),product)||!g9SDiv(product,g9U32(65536u*120u),3u,threshold)){g9Fault(29u,c,5u);return false;}",
+        "before": "W[uConfig]"
+      },
+      {
+        "canonicalLine": 1809,
+        "actual": "  uint band=min(g9Column(c,0u),W[uConfig+2u]);uvec4 threshold,product;if(!g9UMul(g9U32(rxReadWorkWord(uConfig)),g9U32(rxReadCandidateWord(23u)),product)||!g9UMul(product,g9U32(band),product)||!g9SDiv(product,g9U32(65536u*120u),3u,threshold)){g9Fault(29u,c,5u);return false;}",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1811,
+        "actual": "  if(activate){uvec4 q,r;if(!g9UMul(g9U32(band),g9U32(rxReadWorkWord(uConfig+3u)),product)||!g9UDiv(product,g9U32(65536u*120u),q,r)){g9Fault(29u,c,6u);return false;}if(q.x>0u&&!g9Activate(c,min(q.x,g9Column(c,0u)),2u))return false;}",
+        "before": "W[uConfig+3u]"
+      },
+      {
+        "canonicalLine": 1884,
+        "actual": "  uvec4 speed,product;uint wave;if(!g9SDiv(g9Magnitude(g9Momentum(c)),g9U32(f),3u,speed)||!g9UMul(g9U32(rxReadCandidateWord(23u)),g9U32(f),product)||!g9CeilSqrt64(product.xy,wave)||!g9UAdd(speed,g9U32(wave),speed)){g9Fault(29u,c,0u);return false;}if(g9UCmp(speed,maximum)>0)maximum=speed;",
+        "before": "C[23u]"
+      },
+      {
+        "canonicalLine": 1931,
+        "actual": "    !g9RneProduct(g9U32(rxReadWorkWord(uConfig+7u)),g9S32(uAngleSin),1048576u,gxWide)||!g9RneProduct(g9U32(rxReadWorkWord(uConfig+7u)),g9S32(uAngleCos),1048576u,gnWide)){g9Fault(29u,0u,22u);return false;}",
+        "before": "W[uConfig+7u]"
+      },
+      {
+        "canonicalLine": 1931,
+        "actual": "    !g9RneProduct(g9U32(rxReadWorkWord(uConfig+7u)),g9S32(uAngleSin),1048576u,gxWide)||!g9RneProduct(g9U32(rxReadWorkWord(uConfig+7u)),g9S32(uAngleCos),1048576u,gnWide)){g9Fault(29u,0u,22u);return false;}",
+        "before": "W[uConfig+7u]"
+      },
+      {
+        "canonicalLine": 2107,
+        "actual": "  uvec4 gx,gn;int x;uint n;if(!g9RneProduct(g9U32(rxReadWorkWord(uConfig+7u)),g9S32(uAngleSin),1048576u,gx)||!g9RneProduct(g9U32(rxReadWorkWord(uConfig+7u)),g9S32(uAngleCos),1048576u,gn)||!g9I32(gx,x)||!g9Uint(gn,n)||n==0u){g9Fault(29u,0u,22u);return;}C[22u]=uint(x);C[23u]=n;C[20u]=uint(uAcceptedAngle);",
+        "before": "W[uConfig+7u]"
+      },
+      {
+        "canonicalLine": 2107,
+        "actual": "  uvec4 gx,gn;int x;uint n;if(!g9RneProduct(g9U32(rxReadWorkWord(uConfig+7u)),g9S32(uAngleSin),1048576u,gx)||!g9RneProduct(g9U32(rxReadWorkWord(uConfig+7u)),g9S32(uAngleCos),1048576u,gn)||!g9I32(gx,x)||!g9Uint(gn,n)||n==0u){g9Fault(29u,0u,22u);return;}C[22u]=uint(x);C[23u]=n;C[20u]=uint(uAcceptedAngle);",
+        "before": "W[uConfig+7u]"
+      },
+      {
+        "canonicalLine": 1988,
+        "actual": " for(uint row=0u;row<events;++row){uint at=row*64u;uvec2 mask=g9EventMask(rxReadBaseWord(at+2u));",
+        "before": "B[at+2u]"
+      }
+    ],
+    "RXReadonlyRollback": "DIRECT_VALUE_ARGUMENT_DETECTED",
+    "RXCoherentRollback": "DIRECT_VALUE_ARGUMENT_DETECTED",
+    "redeclaredSlot": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\t780-glsl-knmo4bxe\\duplicate.comp"
+      ],
+      "exit": 2,
+      "stdout": "C:\\Users\\admin\\AppData\\Local\\Temp\\t780-glsl-knmo4bxe\\duplicate.comp\nERROR: 0:4: 'slot' : redefinition \nERROR: 0:4: '' : compilation terminated \nERROR: 2 compilation errors.  No code generated.\n\n\n",
+      "stderr": "",
+      "sha256": "73825bb816ba31f3ed2ea1b7b609d1e1e50e61ad697fc904b5e4e9e473bacbe3",
+      "source": "#version 310 es\nprecision highp int;\nlayout(local_size_x=1) in;\nvoid main(){uint slot=0u;uint slot=1u;}\n"
+    },
+    "legalScopes": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\t780-glsl-knmo4bxe\\scoped.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "01a760d08b17af15152caa56f9da31fe6edd9227c0b396c1b6307762a63d545c"
+    },
+    "coherentDirectObserved": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\t780-glsl-knmo4bxe\\coherentTrue.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "a1c3803d82b3bfc296531e51f2f7f3baece5a615074244edbcfe04c982c7d2ee",
+      "source": "#version 310 es\nprecision highp int;\nlayout(local_size_x=1) in;\nlayout(std430,binding=0) coherent buffer InputState{uint B[];};\nuint copyValue(uint i){return B[i];}\nvoid consume(uint x){}\nvoid main(){consume(B[0]);}\n"
+    },
+    "coherentValueCopy": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\t780-glsl-knmo4bxe\\coherentFalse.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "41139e8a1b44a1842cd0489aa7e1f3df49f9c541cc64e0ad5c895822a4362a28",
+      "source": "#version 310 es\nprecision highp int;\nlayout(local_size_x=1) in;\nlayout(std430,binding=0) coherent buffer InputState{uint B[];};\nuint copyValue(uint i){return B[i];}\nvoid consume(uint x){}\nvoid main(){consume(copyValue(0u));}\n"
+    },
+    "readonlyDirectObserved": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\t780-glsl-knmo4bxe\\readonlyTrue.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "3fd226f706bee87cbce85451e8776a88021d068c7274703e5fe715f1e85830d7",
+      "source": "#version 310 es\nprecision highp int;\nlayout(local_size_x=1) in;\nlayout(std430,binding=0) readonly buffer InputState{uint B[];};\nuint copyValue(uint i){return B[i];}\nvoid consume(uint x){}\nvoid main(){consume(B[0]);}\n"
+    },
+    "readonlyValueCopy": {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\g13-glslang\\bin\\glslang.exe",
+        "-S",
+        "comp",
+        "C:\\Users\\admin\\AppData\\Local\\Temp\\t780-glsl-knmo4bxe\\readonlyFalse.comp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "sha256": "79a9f6e56d90361e9ac423b0691d633eda06031729006f4d51e75cc3b0ff52c8",
+      "source": "#version 310 es\nprecision highp int;\nlayout(local_size_x=1) in;\nlayout(std430,binding=0) readonly buffer InputState{uint B[];};\nuint copyValue(uint i){return B[i];}\nvoid consume(uint x){}\nvoid main(){consume(copyValue(0u));}\n"
+    }
+  },
+  "historicalDiagnostics": {
+    "DMReadonly": {
+      "deviceRecord": "test/reports/t491/t712b/v3-t715.json",
+      "driverError": "0:1987: S0001: Function call discards 'readonly' access qualifier",
+      "unsignedSHA": "31d6408548fa901da9e114e0626d2f024d1f60717d349e561efd3720621b0925",
+      "signedSHA": "c0a95917c9a019b82650f60b296d657a03e9870b3620cea5a795fc0e84eb97c6",
+      "shaderSHA": "cfd723bfcc175ee2147e87fe5a465358bb6a97cbeb8a75097edaa5e30666c4d3",
+      "sharedLibraryBuildId": "30f789aef392db12d12647d54d1df47d29dd610a",
+      "differentialBuildId": "bce4c73c6efa809ede4a88c6656d4ec2aae8f309",
+      "processMappingCaptured": false
+    },
+    "RXCurrentDeviceOriginal": "test/reports/t491/t766/v6/g9boot-t766.jsonl",
+    "RXCurrentMapping": "T766 historical only, separate from this offline run"
+  },
+  "loadedRuntimeIdentity": "NOT_OBSERVED_OFFLINE",
+  "device": "NOT_RUN"
+}
