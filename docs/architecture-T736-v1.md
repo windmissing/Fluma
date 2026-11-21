@@ -2,6 +2,8 @@
 
 2026-11-20 · 目标20 · architect · 离线准备。
 
+> 2026-11-21 T792/T793 补充。DM 真 B/C 继续超期，B 明显降轮询 CPU，C 将末批重开销移入 fence。先按 B 的时序定位第一笔 arena copy 与队列提交。RX 同签包原件证实已触发 T785 导出，保存报 `Invalid argument`，先修文件 API 模板并验证同票写盘和取件。两线保原时限、真实 pulse 和同根准入。 [T792 GPU 提交](architecture-T792-v1.md) · [T793 侧车写盘](architecture-T793-v1.md)
+
 > 2026-11-21 T784 复核。DM 的 T775 三份原件实际均为 A 基线，先补经原生身份验证的 B/C，再量 paced poll 和末批单 flush。RX 的 T776 原件支持 Pump 根期限拒绝，首拒谓词位置与 pulse age 仍待 T785 侧车。两线保 250 ms、真实 pulse freshness 和原同根 oracle。 [T784 原件归因与执行路线](architecture-T784-v1.md)
 
 > 2026-11-21 T772 补充（RX）。T766 第二轮同票 SOURCE compile/link 后 APPLIED，其 UI `PUMP_FAILED 6` 与 T763 实装共同支持 live Pump 根期限拒绝。第一轮 UI 5 的原谓词及第二轮精确失效边未采。先恢复或用同签包保存 T763 页面时序 JSON，再按 RX 实测决定是否迁移 DM 的轮询/末批 flush 调整。保原 250 ms、真实 33,333,333 ns PagePulse、12 pass/3 copy 和 typed 提交。 [T772 原件与保存闭环](architecture-T772-v1.md)

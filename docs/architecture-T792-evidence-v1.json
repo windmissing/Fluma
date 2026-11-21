@@ -1,0 +1,597 @@
+{
+  "schema": "T792_DM_SOURCE_TIMING_REVIEW_V1",
+  "readerRevision": "b41656c1",
+  "deviceUsed": false,
+  "arms": {
+    "A": {
+      "raw": "test/reports/t491/t775/A.jsonl",
+      "sha256": "00f85c2176f679068acb788b050e728d52dc6f1c805ef63a2101d8b5b4d5af67",
+      "reader": {
+        "state": "DEADLINE",
+        "executionFence": "UNSIGNALED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "A",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 250018281,
+        "ownerCpuNs": 245620624,
+        "executionPollCount": 4480,
+        "retirementPollCount": 38,
+        "wakeCount": 0,
+        "wakeOvershootMaxObservedNs": null,
+        "copyWallNs": [
+          149219,
+          61269062,
+          33125
+        ],
+        "pollTailWindow": 32,
+        "pulsesDropped": 0
+      },
+      "identity": {
+        "pid": 22926,
+        "processStartTick": "133816",
+        "scope": "1338363186563",
+        "driverBuildId": "71b03f560e78806ca43c29eea161ab50a6ec73c1",
+        "dsoBuildId": "86e14c1a342d257ab3ddbaa87662332be4d782ea",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356"
+      },
+      "cadenceNs": 0,
+      "rootBeginNs": 1656090758594,
+      "deadlineNs": 1656340758594,
+      "copy": [
+        {
+          "pass": 0,
+          "bytes": 591872,
+          "from": 1,
+          "to": 2,
+          "mask": 8704,
+          "api": {
+            "beginOffsetNs": 244375,
+            "endOffsetNs": 393594,
+            "wallNs": 149219,
+            "ownerCpuNs": 150156
+          },
+          "barrier": {
+            "beginOffsetNs": 397031,
+            "endOffsetNs": 399688,
+            "wallNs": 2657,
+            "ownerCpuNs": 2657
+          },
+          "bind": {
+            "beginOffsetNs": 238750,
+            "endOffsetNs": 242500,
+            "wallNs": 3750,
+            "ownerCpuNs": 3750
+          }
+        },
+        {
+          "pass": 9,
+          "bytes": 12767232,
+          "from": 7,
+          "to": 8,
+          "mask": 8704,
+          "api": {
+            "beginOffsetNs": 1042969,
+            "endOffsetNs": 62312031,
+            "wallNs": 61269062,
+            "ownerCpuNs": 61107811
+          },
+          "barrier": {
+            "beginOffsetNs": 62318125,
+            "endOffsetNs": 62322188,
+            "wallNs": 4063,
+            "ownerCpuNs": 4219
+          },
+          "bind": {
+            "beginOffsetNs": 1038594,
+            "endOffsetNs": 1041094,
+            "wallNs": 2500,
+            "ownerCpuNs": 2500
+          }
+        },
+        {
+          "pass": 9,
+          "bytes": 12767232,
+          "from": 7,
+          "to": 9,
+          "mask": 8704,
+          "api": {
+            "beginOffsetNs": 62361875,
+            "endOffsetNs": 62395000,
+            "wallNs": 33125,
+            "ownerCpuNs": 33594
+          },
+          "barrier": {
+            "beginOffsetNs": 62397500,
+            "endOffsetNs": 62399375,
+            "wallNs": 1875,
+            "ownerCpuNs": 1719
+          },
+          "bind": {
+            "beginOffsetNs": 62355781,
+            "endOffsetNs": 62359844,
+            "wallNs": 4063,
+            "ownerCpuNs": 4375
+          }
+        }
+      ],
+      "flush": [
+        {
+          "kind": "SUBMIT_FLUSH",
+          "next": 10,
+          "api": {
+            "beginOffsetNs": 62419219,
+            "endOffsetNs": 62423750,
+            "wallNs": 4531,
+            "ownerCpuNs": 4531
+          }
+        },
+        {
+          "kind": "SUBMIT_FLUSH",
+          "next": 12,
+          "api": {
+            "beginOffsetNs": 62552344,
+            "endOffsetNs": 150064219,
+            "wallNs": 87511875,
+            "ownerCpuNs": 83696251
+          }
+        },
+        {
+          "kind": "EXEC_FLUSH",
+          "next": 12,
+          "api": {
+            "beginOffsetNs": 150113281,
+            "endOffsetNs": 150115469,
+            "wallNs": 2188,
+            "ownerCpuNs": 2188
+          }
+        }
+      ],
+      "fenceCreate": {
+        "beginOffsetNs": 150090313,
+        "endOffsetNs": 150110625,
+        "wallNs": 20312,
+        "ownerCpuNs": 20468
+      },
+      "lastExecPoll": {
+        "beginOffsetNs": 1406,
+        "endOffsetNs": 4844,
+        "wallNs": 3438,
+        "ownerCpuNs": 3438
+      },
+      "lastGuardSuccess": [
+        "PRE_EXEC_POLL_GUARD",
+        "PASS",
+        "1656340754844",
+        12,
+        49,
+        1656336651250
+      ],
+      "pulseAgeAtLastPassingGuardNs": 4103594,
+      "maxPulseReceiptGapNs": 5635157,
+      "firstGuardFailure": [
+        "PUMP_ENTRY_GUARD",
+        "DEADLINE",
+        "1656340770938",
+        12,
+        null,
+        null
+      ],
+      "firstGuardRejectSinceDeadlineNs": 12344,
+      "latestDiagnosticTimeoutSinceDeadlineNs": 6563,
+      "firstObservedRetirementSignalSinceDeadlineNs": 47612969,
+      "firstObservedRetirementSignalSinceRootNs": 297612969,
+      "drainStartSinceDeadlineNs": 7423281,
+      "execWaitRaw": 37147,
+      "retireWaitRaw": 37146,
+      "dispatch9": {
+        "beginOffsetNs": 1020313,
+        "endOffsetNs": 1026875,
+        "wallNs": 6562,
+        "ownerCpuNs": 6718
+      },
+      "dispatch11": {
+        "beginOffsetNs": 62527813,
+        "endOffsetNs": 62535469,
+        "wallNs": 7656,
+        "ownerCpuNs": 7812
+      }
+    },
+    "B": {
+      "raw": "test/reports/t491/t788/B.jsonl",
+      "sha256": "443d88587fdb7d212092ab2c7f842fe38acb86306b17c278d1bf66bea7b9316f",
+      "reader": {
+        "state": "DEADLINE",
+        "executionFence": "UNSIGNALED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "B",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 250175469,
+        "ownerCpuNs": 175077191,
+        "executionPollCount": 252,
+        "retirementPollCount": 66,
+        "wakeCount": 252,
+        "wakeOvershootMaxObservedNs": 374688,
+        "copyWallNs": [
+          165000,
+          76879375,
+          30156
+        ],
+        "pollTailWindow": 32,
+        "pulsesDropped": 0
+      },
+      "identity": {
+        "pid": 58688,
+        "processStartTick": "612068",
+        "scope": "6120844332032",
+        "driverBuildId": "71b03f560e78806ca43c29eea161ab50a6ec73c1",
+        "dsoBuildId": "86e14c1a342d257ab3ddbaa87662332be4d782ea",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356"
+      },
+      "cadenceNs": 250000,
+      "rootBeginNs": 6439336457344,
+      "deadlineNs": 6439586457344,
+      "copy": [
+        {
+          "pass": 0,
+          "bytes": 591872,
+          "from": 1,
+          "to": 2,
+          "mask": 8704,
+          "api": {
+            "beginOffsetNs": 258594,
+            "endOffsetNs": 423594,
+            "wallNs": 165000,
+            "ownerCpuNs": 166094
+          },
+          "barrier": {
+            "beginOffsetNs": 427031,
+            "endOffsetNs": 429688,
+            "wallNs": 2657,
+            "ownerCpuNs": 2500
+          },
+          "bind": {
+            "beginOffsetNs": 252813,
+            "endOffsetNs": 256563,
+            "wallNs": 3750,
+            "ownerCpuNs": 3750
+          }
+        },
+        {
+          "pass": 9,
+          "bytes": 12767232,
+          "from": 7,
+          "to": 8,
+          "mask": 8704,
+          "api": {
+            "beginOffsetNs": 1102344,
+            "endOffsetNs": 77981719,
+            "wallNs": 76879375,
+            "ownerCpuNs": 76805937
+          },
+          "barrier": {
+            "beginOffsetNs": 77987969,
+            "endOffsetNs": 77991875,
+            "wallNs": 3906,
+            "ownerCpuNs": 3906
+          },
+          "bind": {
+            "beginOffsetNs": 1098125,
+            "endOffsetNs": 1100469,
+            "wallNs": 2344,
+            "ownerCpuNs": 2500
+          }
+        },
+        {
+          "pass": 9,
+          "bytes": 12767232,
+          "from": 7,
+          "to": 9,
+          "mask": 8704,
+          "api": {
+            "beginOffsetNs": 78030469,
+            "endOffsetNs": 78060625,
+            "wallNs": 30156,
+            "ownerCpuNs": 30625
+          },
+          "barrier": {
+            "beginOffsetNs": 78063438,
+            "endOffsetNs": 78065313,
+            "wallNs": 1875,
+            "ownerCpuNs": 1875
+          },
+          "bind": {
+            "beginOffsetNs": 78023906,
+            "endOffsetNs": 78028125,
+            "wallNs": 4219,
+            "ownerCpuNs": 4375
+          }
+        }
+      ],
+      "flush": [
+        {
+          "kind": "SUBMIT_FLUSH",
+          "next": 10,
+          "api": {
+            "beginOffsetNs": 78087188,
+            "endOffsetNs": 78090781,
+            "wallNs": 3593,
+            "ownerCpuNs": 3437
+          }
+        },
+        {
+          "kind": "SUBMIT_FLUSH",
+          "next": 12,
+          "api": {
+            "beginOffsetNs": 78220625,
+            "endOffsetNs": 152586250,
+            "wallNs": 74365625,
+            "ownerCpuNs": 74367500
+          }
+        },
+        {
+          "kind": "EXEC_FLUSH",
+          "next": 12,
+          "api": {
+            "beginOffsetNs": 152638750,
+            "endOffsetNs": 152640625,
+            "wallNs": 1875,
+            "ownerCpuNs": 1875
+          }
+        }
+      ],
+      "fenceCreate": {
+        "beginOffsetNs": 152613906,
+        "endOffsetNs": 152636094,
+        "wallNs": 22188,
+        "ownerCpuNs": 22500
+      },
+      "lastExecPoll": {
+        "beginOffsetNs": -105781,
+        "endOffsetNs": -87656,
+        "wallNs": 18125,
+        "ownerCpuNs": 18281
+      },
+      "lastGuardSuccess": [
+        "PRE_EXEC_POLL_GUARD",
+        "PASS",
+        "6439586323282",
+        12,
+        48,
+        6439582535469
+      ],
+      "pulseAgeAtLastPassingGuardNs": 3787813,
+      "maxPulseReceiptGapNs": 6542031,
+      "firstGuardFailure": [
+        "PUMP_ENTRY_GUARD",
+        "DEADLINE",
+        "6439586600782",
+        12,
+        null,
+        null
+      ],
+      "firstGuardRejectSinceDeadlineNs": 143438,
+      "latestDiagnosticTimeoutSinceDeadlineNs": -77969,
+      "firstObservedRetirementSignalSinceDeadlineNs": 86186875,
+      "firstObservedRetirementSignalSinceRootNs": 336186875,
+      "drainStartSinceDeadlineNs": 9313906,
+      "execWaitRaw": 37147,
+      "retireWaitRaw": 37146,
+      "dispatch9": {
+        "beginOffsetNs": 1077188,
+        "endOffsetNs": 1085156,
+        "wallNs": 7968,
+        "ownerCpuNs": 8125
+      },
+      "dispatch11": {
+        "beginOffsetNs": 78193594,
+        "endOffsetNs": 78201563,
+        "wallNs": 7969,
+        "ownerCpuNs": 8125
+      }
+    },
+    "C": {
+      "raw": "test/reports/t491/t788/C.jsonl",
+      "sha256": "75a053fd3defeeb521e84c90a504d06efa6fb2fe61a8d6c41e9369a03c013480",
+      "reader": {
+        "state": "DEADLINE",
+        "executionFence": "UNSIGNALED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "C",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 250151250,
+        "ownerCpuNs": 177029071,
+        "executionPollCount": 246,
+        "retirementPollCount": 65,
+        "wakeCount": 246,
+        "wakeOvershootMaxObservedNs": 158437,
+        "copyWallNs": [
+          180468,
+          81109688,
+          28125
+        ],
+        "pollTailWindow": 32,
+        "pulsesDropped": 0
+      },
+      "identity": {
+        "pid": 61408,
+        "processStartTick": "664206",
+        "scope": "6642226147969",
+        "driverBuildId": "71b03f560e78806ca43c29eea161ab50a6ec73c1",
+        "dsoBuildId": "86e14c1a342d257ab3ddbaa87662332be4d782ea",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356"
+      },
+      "cadenceNs": 250000,
+      "rootBeginNs": 6960760112032,
+      "deadlineNs": 6961010112032,
+      "copy": [
+        {
+          "pass": 0,
+          "bytes": 591872,
+          "from": 1,
+          "to": 2,
+          "mask": 8704,
+          "api": {
+            "beginOffsetNs": 281875,
+            "endOffsetNs": 462343,
+            "wallNs": 180468,
+            "ownerCpuNs": 181406
+          },
+          "barrier": {
+            "beginOffsetNs": 465937,
+            "endOffsetNs": 468750,
+            "wallNs": 2813,
+            "ownerCpuNs": 2813
+          },
+          "bind": {
+            "beginOffsetNs": 276250,
+            "endOffsetNs": 279843,
+            "wallNs": 3593,
+            "ownerCpuNs": 3750
+          }
+        },
+        {
+          "pass": 9,
+          "bytes": 12767232,
+          "from": 7,
+          "to": 8,
+          "mask": 8704,
+          "api": {
+            "beginOffsetNs": 1147187,
+            "endOffsetNs": 82256875,
+            "wallNs": 81109688,
+            "ownerCpuNs": 80937500
+          },
+          "barrier": {
+            "beginOffsetNs": 82262812,
+            "endOffsetNs": 82265781,
+            "wallNs": 2969,
+            "ownerCpuNs": 2813
+          },
+          "bind": {
+            "beginOffsetNs": 1142656,
+            "endOffsetNs": 1145312,
+            "wallNs": 2656,
+            "ownerCpuNs": 2500
+          }
+        },
+        {
+          "pass": 9,
+          "bytes": 12767232,
+          "from": 7,
+          "to": 9,
+          "mask": 8704,
+          "api": {
+            "beginOffsetNs": 82303593,
+            "endOffsetNs": 82331718,
+            "wallNs": 28125,
+            "ownerCpuNs": 28125
+          },
+          "barrier": {
+            "beginOffsetNs": 82333906,
+            "endOffsetNs": 82335625,
+            "wallNs": 1719,
+            "ownerCpuNs": 1719
+          },
+          "bind": {
+            "beginOffsetNs": 82296875,
+            "endOffsetNs": 82301875,
+            "wallNs": 5000,
+            "ownerCpuNs": 4844
+          }
+        }
+      ],
+      "flush": [
+        {
+          "kind": "SUBMIT_FLUSH",
+          "next": 10,
+          "api": {
+            "beginOffsetNs": 82355312,
+            "endOffsetNs": 82358750,
+            "wallNs": 3438,
+            "ownerCpuNs": 3438
+          }
+        },
+        {
+          "kind": "EXEC_FLUSH",
+          "next": 12,
+          "api": {
+            "beginOffsetNs": 156644531,
+            "endOffsetNs": 156646718,
+            "wallNs": 2187,
+            "ownerCpuNs": 2031
+          }
+        }
+      ],
+      "fenceCreate": {
+        "beginOffsetNs": 82478906,
+        "endOffsetNs": 156634843,
+        "wallNs": 74155937,
+        "ownerCpuNs": 74054687
+      },
+      "lastExecPoll": {
+        "beginOffsetNs": -116250,
+        "endOffsetNs": -101094,
+        "wallNs": 15156,
+        "ownerCpuNs": 15156
+      },
+      "lastGuardSuccess": [
+        "PRE_EXEC_POLL_GUARD",
+        "PASS",
+        "6961009973282",
+        12,
+        48,
+        6961009457500
+      ],
+      "pulseAgeAtLastPassingGuardNs": 515782,
+      "maxPulseReceiptGapNs": 6783125,
+      "firstGuardFailure": [
+        "PUMP_ENTRY_GUARD",
+        "DEADLINE",
+        "6961010241250",
+        12,
+        null,
+        null
+      ],
+      "firstGuardRejectSinceDeadlineNs": 129218,
+      "latestDiagnosticTimeoutSinceDeadlineNs": -94688,
+      "firstObservedRetirementSignalSinceDeadlineNs": 87962656,
+      "firstObservedRetirementSignalSinceRootNs": 337962656,
+      "drainStartSinceDeadlineNs": 12955625,
+      "execWaitRaw": 37147,
+      "retireWaitRaw": 37146,
+      "dispatch9": {
+        "beginOffsetNs": 1125468,
+        "endOffsetNs": 1130937,
+        "wallNs": 5469,
+        "ownerCpuNs": 5625
+      },
+      "dispatch11": {
+        "beginOffsetNs": 82453437,
+        "endOffsetNs": 82462187,
+        "wallNs": 8750,
+        "ownerCpuNs": 8750
+      }
+    }
+  }
+}

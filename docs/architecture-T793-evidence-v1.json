@@ -1,0 +1,85 @@
+{
+  "schema": "T793_RX_SIDECAR_EXPORT_REVIEW_V1",
+  "deviceUsed": false,
+  "build": {
+    "compile": {
+      "path": "D:/hmprojects/HelloWorld-T771/docs/receipt-T785-compile-v1.json",
+      "sha256": "1319240f4a89bff2675ab2aa016e8ea553da3c6dddb9b18c79d71a601b07ff16",
+      "bytes": 2196
+    },
+    "sign": {
+      "path": "D:/hmprojects/HelloWorld/test/reports/t257/T789-rx.json",
+      "sha256": "e25874bf3fdc3831bfd04a1627ff2cf3b33332d2bd4f0375098c9cb5b7c91fdb",
+      "bytes": 2290
+    },
+    "unsigned": {
+      "path": "D:/hmprojects/HelloWorld/.codex/local-test/t785-authorized-handoff/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "sha256": "957af8e144c8a08d3b735b6070d55d67f96d24e6eb8c8be930360d2b4bbe534c",
+      "bytes": 7821789
+    },
+    "signed": {
+      "path": "D:/hmprojects/HelloWorld/.codex/local-test/t257-sign/T789-rx/T789-rx-signed.hap",
+      "sha256": "1079fd0e818019373cc3589ecf8ebe2a6ae9e7f68805e54a1de6b7f5e0bae172",
+      "bytes": 7923197
+    },
+    "abcSHA256": "0f442eeea392ee888eb9edd9836a815bebaa90db49023e24f61ade1fd2790097",
+    "entry": "./ets/entryability/G9RxResearchAbility.ets",
+    "page": "pages/GpuResidentG9Rx",
+    "abcMarkers": [
+      "G9RxSourceExport",
+      "SAVE_FAILED ticket=",
+      "g9rx-source-",
+      "g9RxSourceDiagnostics",
+      "mkdtempSync"
+    ],
+    "elf": {
+      "member": "libs/arm64-v8a/libgrs_g9rx.so",
+      "buildId": "e80a72482133670dbaa3ed9e06ebdc141aa591fd",
+      "sha256": "fde237cd6ec65d7b13c64043b18c2a3fffc262dacc1674783a655e4b2dd29c1f",
+      "bytes": 1440120
+    }
+  },
+  "runtime": {
+    "archive": {
+      "path": "D:/hmprojects/HelloWorld/test/reports/t491/t789/chain.txt",
+      "sha256": "09eb54674f946ebca44aff6b87395372985e77d713c9eef265993c88b2f3fc94",
+      "bytes": 5400
+    },
+    "pid": 8890,
+    "ownerTid": 9118,
+    "ticket": "1",
+    "run": "1",
+    "context": "1",
+    "observedBuildId": "e80a72482133670dbaa3ed9e06ebdc141aa591fd",
+    "appliedRaw": "11-21 22:41:43.473  8890  9118 I A0E719/com.example.helloworld/G9RxConfigure: ticket=1 ns=8258527039532 phase=APPLIED run=1 context=1 result=0 failure= egl=12288 gl=0 shader=1 link=1 mappedBuildId=e80a72482133670dbaa3ed9e06ebdc141aa591fd sourceSHA=ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+    "saveFailedRaw": "11-21 22:41:43.769  8890  8890 E A0E734/com.example.helloworld/G9RxSourceExport: SAVE_FAILED ticket=1 reason=Error: Invalid argument",
+    "layoutArchive": {
+      "path": "D:/hmprojects/HelloWorld/test/reports/t491/t789/l2.json",
+      "sha256": "ba0eb2b2846fb9882c1c9c1cb5c732e5fc833881af4b33e235caba928972fcab",
+      "bytes": 39057
+    },
+    "layoutText": [
+      "PUMP_FAILED code=5",
+      "SOURCE 保存失败：Error: Invalid argument"
+    ]
+  },
+  "export": {
+    "publisherReached": true,
+    "savedObserved": false,
+    "failureApiStageObserved": null,
+    "source": {
+      "path": "D:/hmprojects/HelloWorld-T771/entry/src/main/ets/pages/GpuResidentG9Rx.ets",
+      "sha256": "21c9b795f2154061e66ac13af8c4ab096a875637d94945353f2f500a29bba9ef",
+      "bytes": 15200
+    },
+    "directoryTemplateSource": "const folder: string = fs.mkdtempSync(directory + '/g9rx-source-' + ticket + '-');",
+    "candidate": "MISSING_SIX_X_TEMPLATE",
+    "missing": [
+      "stage-specific BusinessError code",
+      "in-process sandbox listing",
+      "HDC exact command and raw status",
+      "terminal/retirement JSON",
+      "SOURCE retirement evidence"
+    ]
+  }
+}
