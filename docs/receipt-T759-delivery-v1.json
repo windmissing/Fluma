@@ -1,0 +1,33 @@
+{
+  "schema": "T759_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "e59fc0329161b61bb48ca017c1c5f4c87ef5b2d7",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b014f9ee4b06b9ce608f5f0",
+    "started": {
+      "id": "6b01785ce4b0890c8aa60160",
+      "createdTime": "2026-11-21T10:54:20+0000"
+    },
+    "delivered": {
+      "id": "6b017a5fe4b011b710c53d76",
+      "createdTime": "2026-11-21T11:02:55+0000",
+      "title": "T759 architect 已交付。T755 同票 BOOT 真 fence/map/unmap 通过，SOURCE 在 APPLIED 前编译 85.324 s、链接 235.364 s；UI 的 PUMP_FAILED 5 结合实装调用链，确定已接受 baseline/pulse、通过 Claim/Freeze/Transport::Begin，随后 live Pump STALE。原件未采该次首次拒绝谓词、Pump 序号或 dispatch/fence，不能从现证选择具体触发点。DM T754 已提交 12 次 dispatch/barrier，在执行 fence 前真正跨根期限，分别分流。源码可复现 owner 先取 now 后读到更新 pulse、旧 now 误删新 FIFO 队首，另有 Target(0) 刷新 pulse 的混用。T736 已补同锁真实时钟快照、持锁提交专用校验和真实 PagePulse 权威，保 33,333,333 ns／250 ms。developer 按合同修订并抓首拒及阶段原边，tester 离线交错及边界，effector 用签名工件同票复测。已通过离线原件复核，无真机。文档 docs/architecture-T759-v1.md，提交 e59fc032。"
+    }
+  },
+  "statusRow": {
+    "path": "docs/后续工作清单.md",
+    "task": "T759",
+    "before": "进行中",
+    "after": "结束待验收",
+    "line": "| T759 | 【T759·目标20 RX SOURCE首个pulse失鲜归因与接线合同】architect | architect | P5 | 结束待验收 | 6b014f9ee4b06b9ce608f5f0 |",
+    "beforeSha256": "856b7274802d130819dd4d04e07c6bc01ad3f20789a7e13739d29a209776f276",
+    "afterSha256": "24d90ce6ddb8a9302ea153ae4b8f6ef96591a72443afa57c9b51b73287759ab2"
+  },
+  "evidence": {
+    "path": "docs/architecture-T759-evidence-v1.json",
+    "sha256": "d47cdc0defb0331260e1a28d439f484a34dccd774d91a5cd31828c7d389fad74"
+  }
+}
