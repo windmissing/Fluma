@@ -1,0 +1,127 @@
+{
+  "schema": "T765_RX_SOURCE_OFFLINE_V1",
+  "deviceUsed": false,
+  "signed": false,
+  "deviceRuntime": "NOT_RUN",
+  "t763": {
+    "path": "test/reports/t763/compile.json",
+    "bytes": 3742,
+    "sha256": "ef9ad9a389159d6eea0044b8e8ba598aad8375a111fa3c434485ca6c4cb85f8b"
+  },
+  "t763ElfBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+  "history": {
+    "hilog": {
+      "path": "test/reports/t491/t755/h755.txt",
+      "bytes": 1259759,
+      "sha256": "63bc6708cb8eeca4debb66fe119f948f547bbb4d9f0e5427022771125ac272de"
+    },
+    "ui": {
+      "path": "test/reports/t491/t755/l4.json",
+      "bytes": 40604,
+      "sha256": "efb05cb373b180528cbeb55a0e031ce5064e0a5b992dc10c97422cbb4a11a112"
+    },
+    "appliedNs": "84422103143594",
+    "terminal": "PUMP_FAILED code=5",
+    "firstRejectedPredicate": "UNKNOWN",
+    "rootCursor": "NOT_OBSERVED"
+  },
+  "nativeFixtures": {
+    "clockAndInterleaving": {
+      "first_actual_clock_pulse_baseline": "PASS",
+      "zero_quota_claim": "PASS",
+      "old_owner_new_pulse": "PASS",
+      "locked_resample": "PASS",
+      "target_does_not_publish_pulse": "PASS",
+      "wrong_scope_does_not_refresh": "PASS",
+      "duplicate_sequence_does_not_refresh": "PASS",
+      "pending_before_claim_rejected_without_mutation": "PASS",
+      "real_ui_gap_revokes": "PASS",
+      "stop_is_not_repaired_by_pulse": "PASS"
+    },
+    "deadlineAndFreshness": {
+      "old_now_new_pulse": "PULSE_FROM_FUTURE",
+      "locked_now_new_pulse": "NONE",
+      "fresh_edge": "NONE",
+      "fresh_plus_1ns": "PULSE_EXPIRED",
+      "deadline_edge": "NONE",
+      "fresh_pulse_after_deadline": "DEADLINE",
+      "old_owner_new_fifo": "COMMAND_FROM_FUTURE",
+      "locked_resample_new_fifo": "NONE",
+      "command_age_plus_1ns": "COMMAND_EXPIRED",
+      "late_fence_is_deadline": "DEADLINE"
+    }
+  },
+  "productionWiringStatic": {
+    "snapshot_fields_then_clock": "PASS",
+    "unlocked_callback_takes_protocol_lock": "PASS",
+    "begin_after_scene_and_under_lock": "PASS",
+    "commit_samples_under_existing_lock": "PASS",
+    "commit_entry_does_not_relock_or_invoke_egl": "PASS",
+    "commit_validates_typed_proof_before_swap": "PASS",
+    "first_reject_is_write_once": "PASS",
+    "real_pulse_is_clock_authority": "PASS",
+    "page_defers_first_pulse_until_original_source_offer": "PASS",
+    "pre_map_guard_follows_actual_wait": "PASS"
+  },
+  "syntheticTraceCases": {
+    "positive": {
+      "observation": "SOURCE_COMMIT_RECEIPT",
+      "truncated": false
+    },
+    "scope": {
+      "observation": "REJECT_OBSERVED",
+      "reason": "SCOPE",
+      "phase": "PUMP_ENTRY",
+      "truncated": false
+    },
+    "stop": {
+      "observation": "REJECT_OBSERVED",
+      "reason": "OWNER_INACTIVE",
+      "phase": "PUMP_ENTRY",
+      "truncated": false
+    },
+    "typed_reject": {
+      "observation": "REJECT_OBSERVED",
+      "reason": "TYPED_PROOF",
+      "phase": "TYPED_PROOF",
+      "truncated": false
+    },
+    "pending": {
+      "observation": "REJECT_OBSERVED",
+      "reason": "QUOTA_ALREADY_PENDING",
+      "phase": "PRE_CLAIM",
+      "truncated": false
+    },
+    "late_fence_retired": {
+      "observation": "REJECT_RETIRED",
+      "reason": "DEADLINE",
+      "phase": "PRE_MAP",
+      "truncated": false
+    },
+    "target_cannot_extend": {
+      "observation": "REJECT_OBSERVED",
+      "reason": "PULSE_EXPIRED",
+      "phase": "PUMP_ENTRY",
+      "truncated": false
+    },
+    "no_first_reject_originals": {
+      "observation": "INCOMPLETE",
+      "truncated": false
+    },
+    "late_commit_rejected": {
+      "rejected": "COMMIT_AFTER_FIRST_REJECT"
+    },
+    "late_map_rejected": {
+      "rejected": "MAP_AFTER_LATE_FENCE"
+    },
+    "forged_target_receipt_rejected": {
+      "rejected": "PULSE_NOT_FROM_PAGE_PULSE"
+    },
+    "claim_before_applied_rejected": {
+      "rejected": "PRE_APPLIED_OR_MISORDERED_ROOT"
+    },
+    "retire_without_wait_rejected": {
+      "rejected": "RETIRE_WITHOUT_SIGNAL_OR_MAPPED_FLIGHT"
+    }
+  }
+}
