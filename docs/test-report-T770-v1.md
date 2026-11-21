@@ -64,3 +64,28 @@ REST 配置 180s：**CONFIG_FAILED INIT_ERROR_27 @ BOOT_EFFECTIVE_TERMINAL
 WORK 重用、tail map、PACK 顶点消费、非法入口、退役）仍位于数值门后——
 重打包解决了签名，但未创建门前探针入口。归 architect：门前探针入口
 或 FTZ 决策（与 T760 v1 同一精确缺口）。
+
+
+## v4 追加（2026-11-21 23:35，effector；缺口分析修正——探针本自包含，唯一阻塞是签名信任）
+
+**T760 v1 缺口分析修正**：T767 可见性探针用例（RESET/COMPARE/LANE63/
+LANE0/TRACE_SCOPE/SEAL/SETUP/VISC/WORK_REUSE/PACK/TAIL/ALIAS/BAD_SCOPE/
+BAD_GENERATION）在**自包含离屏 pbuffer context** 中逐 attempt 运行——
+**不经过产品 BOOT 数值门**。T760 v1 记"探针全在数值门后"有误（探针与
+门本就无关）。
+
+**真实唯一阻塞=签名信任**：探针需 bundleName
+com.example.helloworld.g13visibility + 设备信任 profile（自签被拒
+9568404，v2）；主 bundle 重打包（v3）不含 G13VisibilityAbility
+（abilities 仅 EntryAbility，无 visibility 页），探针不可达。
+
+**选项排序**：(a) developer 提供**设备信任的 g13visibility profile**
+（正规修法，启用真探针）；(b) 将 visibility ability+页并入主 bundle
+构建（工程绕行，改 bundle 结构）；(c) 接受离线 fixture 结果（T769
+reader 836 rows fixtureOnly）作为覆盖证据。
+
+设备侧：split-product（v3）无探针入口（G13 页为产品研究页），REST
+复现 OP65=27 属数值门域，与探针用例无关。
+
+**归 developer/architect：选 (a) 或 (b)；探针入口可安装后 tester 立即
+可执行全部用例。**

@@ -1,0 +1,9 @@
+{
+ "revision": "T770_V4_PROBE_ENTRY_ANALYSIS_V1",
+ "date": "2026-11-21 23:35",
+ "correction": "T760 v1 gap analysis REVISED: T767 visibility probe cases (RESET/COMPARE/LANE63/LANE0/TRACE_SCOPE/SEAL/SETUP/VISC/WORK_REUSE/PACK/TAIL/ALIAS/BAD_SCOPE/BAD_GENERATION) run in SELF-CONTAINED offscreen pbuffer context per attempt \u2014 they do NOT pass through the product BOOT numeric gate; the T760-v1 \"probes live after numeric gate\" claim was WRONG (probes are gate-independent by design)",
+ "actualBlocker": "the ONLY blocker is signing: probe needs bundleName com.example.helloworld.g13visibility with a device-trusted profile (self-signed profile rejected 9568404, v2); main-bundle re-bundle (v3) does not carry G13VisibilityAbility (abilities=[EntryAbility] only, no visibility page) so probes unreachable from main bundle",
+ "optionsRanked": "(a) developer provisions device-trusted g13visibility profile (proper fix, enables genuine probe), (b) merge visibility ability+pages into main-bundle split-product build (engineering workaround, changes bundle structure), (c) accept offline fixture results (T769 reader 836 rows fixtureOnly) as the coverage evidence",
+ "deviceRun": "split-product installed (v3) has NO probe entry \u2014 G13 page is product research page; REST configure reproduced OP65=27 as expected (numeric gate domain, unrelated to probe cases)",
+ "route": "developer/architect: choose (a) or (b); tester ready to execute all cases immediately once probe entry installable"
+}
