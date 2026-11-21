@@ -1,0 +1,33 @@
+{
+  "schema": "T777_DELIVERY_RECEIPT_V1",
+  "task": "T777",
+  "commit": "41457a8871d41486d8a996ba415d0fa05167d03b",
+  "date": "2026-11-21",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b019077e4b0572f632f3dd9",
+    "started": {
+      "id": "6b01922de4b0890c8aa796e7",
+      "createdTime": "2026-11-21T12:44:29+0000"
+    },
+    "delivered": {
+      "id": "6b019452e4b07c2761a6d417",
+      "createdTime": "2026-11-21T12:53:38+0000",
+      "title": "T777 architect 已交付。T770 v1 是探针后缀与现有 profile bundle 不一致；v2 的本地签名返回成功，设备原报 9568404 CODE_SIGNATURE_DELIVERY_FILE_FAILED，定位为 BMS 交付签名配置阶段。T738 主 bundle+原 profile 安装对照成功，现证不能唯一确认设备拒绝的 CA 或更细原因。T778 优先用原授权 com.example.helloworld 的显式隔离诊断变体，保独立 ability/DSO/owner/context，默认产品包无诊断入口；编译与签名收据按实际 HAP/ELF/BuildId 重绑，T769 判定不能继续硬绑旧收据。真机仅在已核实备份、同签名覆盖及产品恢复条件的串行窗口执行；需要并存或无法安全恢复，走正式后缀 profile。保 T730 数值门，T770 未到达 GPU。离线复核 T767 两包、T738 原件通过，不使用真机。合同 docs/architecture-T777-v1.md，提交 41457a88。"
+    }
+  },
+  "document": {
+    "path": "docs/architecture-T777-v1.md",
+    "sha256": "118b7f7a6e5270a34f2d8a75f02300257d33f86c9ca0d0453d0aa4b98797cb85"
+  },
+  "statusRow": {
+    "path": "docs/后续工作清单.md",
+    "before": "进行中",
+    "after": "结束待验收",
+    "line": "| T777 | 【T777·目标20 G13探针拒装首次归因与签名工程合同】architect | architect | P5 | 结束待验收 | 6b019077e4b0572f632f3dd9 |",
+    "beforeSha256": "b320855e53b4e861bc7b85ad07d5abc214c2be50dba651ac678569641953877c",
+    "afterSha256": "4cb9d404d6095b1de0efe9fce470b78d5384ce50d16732c207edde6390044fc9"
+  }
+}
