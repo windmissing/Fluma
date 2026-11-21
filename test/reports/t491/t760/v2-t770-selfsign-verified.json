@@ -1,0 +1,19 @@
+{
+ "revision": "T770_V2_SIGN_CHANNEL_VERIFIED_V1",
+ "date": "2026-11-21 20:32",
+ "selfSignAttempt": "COMPLETE but device-rejected",
+ "whatWasDone": [
+  "profile json extracted from entry-default.p7b (issuer pki_internal, type debug, device-ids E41BCC8B...)",
+  "bundle-name changed to com.example.helloworld.g13visibility, current device UDID 8BA8C071 appended to debug-info.device-ids",
+  "sign-profile localSign with dev-cert-chain + OpenHarmony.p12 = SUCCESS (rc 0)",
+  "sign-app localSign with dev-cert-chain.pem (NOT .cer/short pem \u2014 chain required) = SUCCESS (rc 0)"
+ ],
+ "deviceInstall": "FAILED code 9568404 CODE_SIGNATURE_DELIVERY_FILE_FAILED \u2014 BMS DeliverySignProfile TransactInstalldCmd failed: device-side BMS does not accept self-signed profile for a NEW bundleName; control test: T738-rx (main bundle, original p7b) installs fine \u2014 channel itself OK",
+ "conclusion": "the device delivery-sign-profile gate requires the profile to be signed by the profile CA pre-provisioned on device (or use the exact original p7b); local p12 CAN sign-profile but the result is not trusted for new bundle names \u2014 this is a device trust-store constraint, NOT a tooling gap",
+ "options": [
+  "a) re-bundle probe under com.example.helloworld (main bundle, original p7b) \u2014 but collides with real app install; use -r replace carefully in a session where the main app is uninstalled first",
+  "b) developer provides a properly provisioned g13visibility profile signed by the accepted profile CA",
+  "c) acceptance test bundle com.example.physics_test exists on device \u2014 same delivery gate applies"
+ ],
+ "recommendation": "option (a) fastest: rebuild probe with bundleName com.example.helloworld \u2014 needs developer rebuild; tester-side ready to install+run immediately once received"
+}

@@ -32,3 +32,20 @@ reset/compare、WORK/跨 lane、同代 tail map、PACK 顶点消费、非法入�
 ## 原件
 
 `test/reports/t491/t760/v1-t770-sign-blocked.json`
+
+
+## v2 追加（2026-11-21 20:32，effector；自签全链打通——设备信任门拦截，精确选项）
+
+**自签全链 rc=0**：①p7b 内 profile json 解出（issuer pki_internal，
+type debug，device-ids 旧 UDID）→②bundle-name 改 g13visibility+当前设备
+UDID 8BA8C071 追加→③sign-profile localSign（dev-cert-chain+p12，密码内
+传）rc=0→④sign-app localSign（**appCertFile 必须链文件 dev-cert-chain
+.pem**，.cer/短 pem 报 Profile cert must a cert chain）rc=0。
+
+**设备安装 FAILED code 9568404 CODE_SIGNATURE_DELIVERY_FILE_FAILED**：
+BMS DeliverySignProfile 拒收自签 profile 的新 bundleName。对照实验：
+T738-rx（主 bundle+原 p7b）安装成功——**通道本身正常，是设备信任库只
+认预置 profile CA**。
+
+**三选项**：(a) probe 重打包主 bundleName（最快，开发者重构建）；(b)
+developer 提供正式 g13visibility profile；(c) 不可行已排除。
