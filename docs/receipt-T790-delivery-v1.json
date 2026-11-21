@@ -1,0 +1,33 @@
+{
+  "schema": "T790_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "2649027f8bd32c3ef13c310572e0ead75ebe3b33",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b01a340e4b011b710c86652",
+    "started": {
+      "id": "6b01a7cfe4b0890c8aa908ef",
+      "createdTime": "2026-11-21T14:16:47+0000"
+    },
+    "delivered": {
+      "id": "6b01a9ace4b0890c8aa92403",
+      "createdTime": "2026-11-21T14:24:44+0000",
+      "title": "T790 architect 已交付。T770 v3 实际未签 1cf1bfbc…→已签 a44752df…是 G13 产品包，l4 同 PID/start/attempt 实读 libgrs_g13.so 映射 SHA dcac1489…/BuildId c9a8c0a5…，OP65=27。用 T778 fd24d289…+e4bc6faa…按 T257 实际签包，在 G13VisibilityAbility/pages/G13Visibility 采 TRUSTED_MAIN 侧车，T782 实际包验证、同窗可恢复。T782 已离线接受 T778 未签工件并拒绝误选的 T770 产品包。T786 原 10 条为 RX / BOOT，映射 4bdd76dd…，760d1593…/37965B 为 RX 落盘，缺该进程 BINARY_LOAD；不计 G13 暖证。G13 BOOT 另用既有 T760 已签 868106e2…/e5ec50ff…以及原 bacbc911… key、301961B 冷轮，关联实际新 PID、BINARY_LOAD/状态/反射，FP32 与首 Swap 沿原门。严格按实际签包、入口、映射、角色和进程留证，缺项不得倒填。不使用真机。docs/architecture-T790-v1.md，提交 2649027f。"
+    }
+  },
+  "statusRow": {
+    "path": "docs/后续工作清单.md",
+    "task": "T790",
+    "before": "进行中",
+    "after": "结束待验收",
+    "line": "| T790 | 【T790·目标20 G13探针与暖启动取证工件错配首次归因】architect | architect | P5 | 结束待验收 | 6b01a340e4b011b710c86652 |",
+    "beforeSha256": "ceffe998bf1d7a707ee1ed8302d54c14e844ae3f3874f7f14734eb759d845ff0",
+    "afterSha256": "77530ab501869acff100cb28d3f22f689ef88c0e45c2d0907a16e12c219d7a81"
+  },
+  "evidence": {
+    "path": "docs/architecture-T790-evidence-v1.json",
+    "sha256": "2ca5997bfe7a70b026274e347dbadcef53d41bbb3915d927006739de2ea56db5"
+  }
+}

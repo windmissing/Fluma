@@ -1,0 +1,33 @@
+{
+  "schema": "T791_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "9cfee7052701bf45f2a5972d7da931bc5c936ab7",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b01a340e4b0572f63319c51",
+    "started": {
+      "id": "6b01a7cfe4b0c0fef856411b",
+      "createdTime": "2026-11-21T14:16:47+0000"
+    },
+    "delivered": {
+      "id": "6b01a9ace4b0572f63326e60",
+      "createdTime": "2026-11-21T14:24:44+0000",
+      "title": "T791 architect 已交付，分流 developer 实施。动态设计是 T637/T554 已批准冻结依赖，13045 B CRLF，SHA b17060c0…，RX generator 只将当前文件重新哈希，verify 只比同一份新 inputs.json。独立复跑：坏 JSON 和合法 iterations=31 均被旧资产拒绝，但 fresh generate/verify 均返回 0，canonical GLSL 与 T781/T787 正例 2cb9a848… 字节身份一致。更新 T665 构建合同：生成及 verifier 共用批准链，从经 T641 核验的 T637 取原路径/hash，核严格 UTF-8 JSON、schema/route/profile、原字节 SHA；失败在 CMake 配置期/只读 guard 带路径非零，保错误细分。Tester 覆盖 fresh Hvigor 坏输入、已生成坏收据、合法改值、CRLF 与原 T781 正例。保原 shader、ABI、物理和正常重建证据。仅离线，不使用真机。docs/architecture-T791-v1.md，提交 9cfee705。"
+    }
+  },
+  "statusRow": {
+    "path": "docs/后续工作清单.md",
+    "task": "T791",
+    "before": "进行中",
+    "after": "结束待验收",
+    "line": "| T791 | 【T791·目标9 RX冻结动态设计manifest坏输入首次归因】architect | architect | P3 | 结束待验收 | 6b01a340e4b0572f63319c51 |",
+    "beforeSha256": "ceffe998bf1d7a707ee1ed8302d54c14e844ae3f3874f7f14734eb759d845ff0",
+    "afterSha256": "77530ab501869acff100cb28d3f22f689ef88c0e45c2d0907a16e12c219d7a81"
+  },
+  "evidence": {
+    "path": "docs/architecture-T791-evidence-v1.json",
+    "sha256": "edf2f7db002f753badc3d4cfcfe651ee66faab7290f65714d01cde8ebe76dc23"
+  }
+}
