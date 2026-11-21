@@ -49,3 +49,18 @@ T738-rx（主 bundle+原 p7b）安装成功——**通道本身正常，是设�
 
 **三选项**：(a) probe 重打包主 bundleName（最快，开发者重构建）；(b)
 developer 提供正式 g13visibility profile；(c) 不可行已排除。
+
+
+## v3 追加（2026-11-21 21:55，effector；主 bundle 重打包签通——隔离域缺口不变）
+
+T767 树 t767-split-product（11-21 19:50 构建）已把探针重打包为
+com.example.helloworld 主 bundleName（1cf1bfbc 回据核）→ sign.py PASS
+（a44752df）→ 安装成功（v2 的 profile CA 约束由重打包解决）。
+
+REST 配置 180s：**CONFIG_FAILED INIT_ERROR_27 @ BOOT_EFFECTIVE_TERMINAL
+:EXIT，OP65 result=27**——资格门原位复现。
+
+**隔离域缺口不变**：门前隔离探针（固定 ordinal reset/compare、跨 lane、
+WORK 重用、tail map、PACK 顶点消费、非法入口、退役）仍位于数值门后——
+重打包解决了签名，但未创建门前探针入口。归 architect：门前探针入口
+或 FTZ 决策（与 T760 v1 同一精确缺口）。

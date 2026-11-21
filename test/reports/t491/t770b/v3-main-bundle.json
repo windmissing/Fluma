@@ -1,0 +1,15 @@
+{
+ "revision": "T770_V3_MAIN_BUNDLE_PROBE_V1",
+ "date": "2026-11-21 21:55",
+ "package": {
+  "task": "T770-v3 (T767-split-product re-bundled under com.example.helloworld, 19:50 build)",
+  "inputSha": "1cf1bfbc (receipt-verified)",
+  "signedSha": "a44752df",
+  "sign": "PASS \u2014 main-bundle profile accepted (T770 v2 self-sign constraint bypassed by re-bundling)"
+ },
+ "install": "com.example.helloworld installed fresh, pid 47610",
+ "run": "REST configure 180s -> CONFIG_FAILED INIT_ERROR_27 @ BOOT_EFFECTIVE_TERMINAL:EXIT, bootQualification OP65 result=27 (diag captured t770-diag.json)",
+ "isolationDomain": "probes (fixed-ordinal reset/compare, cross-lane, WORK reuse, tail map, PACK vertex, illegal entry, retirement) remain AFTER numeric gate \u2014 still NOT_REACHABLE; T756/T767 probe entry is not a pre-gate isolated channel in this re-bundle either",
+ "verdict": "re-bundle under main bundleName enables install/sign (v2 constraint solved) but does NOT create a pre-gate probe entry; the isolation-domain evidence requires either gate-pass (FTZ decision) or a pre-gate probe path \u2014 same precise gap as T760 v1",
+ "route": "architect: unchanged \u2014 pre-gate probe entry OR FTZ decision; developer note: re-bundling solved signing, entry design still needed"
+}
