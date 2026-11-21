@@ -1,0 +1,436 @@
+{
+  "schema": "T754_DM_SOURCE_FIRST_ATTRIBUTION_V1",
+  "deviceUsed": false,
+  "artifacts": {
+    "t745": {
+      "receipt": {
+        "path": "test/reports/t745/compile.json",
+        "bytes": 3372,
+        "sha256": "30dd4ad214a60db9132dc2264fea7d5f7440523037aef628b0429b76d7baa83e"
+      },
+      "driver": {
+        "path": ".codex/local-test/t745-dm/handoff/g9_dm_differential",
+        "bytes": 713344,
+        "sha256": "e8c14c142806c65d57d09ecf04f60ac1fc7fb2152e51bc8da0460c47b06e5688",
+        "md5": "738388e78d8943d6be3eee5a171d5660",
+        "buildId": "a2f4a69e507275d5564fd8a6546c6973fb262085"
+      },
+      "packagedDso": {
+        "path": ".codex/local-test/t745-dm/handoff/libgrs_dm_t647.so",
+        "bytes": 1301712,
+        "sha256": "6cbe82a295ef6d2b3f2520cfd49ed12602d086789183e30dd140db591d1bf2d5",
+        "md5": "bebaee548a884dca26fe156633e350fd",
+        "buildId": "9b6cc8027c854800cca2bcb7577df91720373bf5"
+      },
+      "linkedDso": {
+        "path": ".codex/local-test/t745-dm/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_dm_t647.so",
+        "bytes": 5441272,
+        "sha256": "c950356d7512ac3bf414a9defc09ad3654f90bef7d814ff4dd4b6b702d3d795f",
+        "md5": "526a4431f3c4d2b5c42ae57a5c7b31dc",
+        "buildId": "9b6cc8027c854800cca2bcb7577df91720373bf5"
+      },
+      "unsignedHap": {
+        "path": ".codex/local-test/t745-dm/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "bytes": 7605482,
+        "sha256": "227c3d6ed6e7b3fc41b1bbf7e87967a853283399e3759a739af1e65f9be51b49"
+      }
+    },
+    "t748": {
+      "receipt": {
+        "path": "test/reports/t748/compile.json",
+        "bytes": 6035,
+        "sha256": "790bd1f97a935f8fad71fae1f220747d22a969e100bb61a939192cd43b933934"
+      },
+      "driver": {
+        "path": ".codex/local-test/t748-source/handoff/g9_dm_differential",
+        "bytes": 962704,
+        "sha256": "492e17c3177a6fc6ca4995a8e093428dcde119b0e07f40040ef4ddc9d9055f09",
+        "md5": "0804440281343f2b4fc460b71b97401c",
+        "buildId": "0a496a947e090be7d462e3951ffe25d71ac8faf1"
+      },
+      "packagedDso": {
+        "path": ".codex/local-test/t748-source/handoff/libgrs_dm_t647.so",
+        "bytes": 1353304,
+        "sha256": "fb8d734f12fc03e6539fe1477ead8aec90f2bdb23b4a2c07f44242aca8eab0e6",
+        "md5": "b99227cc35c2762d6321aed414e37de5",
+        "buildId": "63b69fe3f7e825b81ab730c67fd02b08c1d42172"
+      },
+      "linkedDso": {
+        "path": ".codex/local-test/t748-source/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_dm_t647.so",
+        "bytes": 5436792,
+        "sha256": "e0fd1ec2bfa29bce9312117cb3248ea47e214136bb95569b448d277bb6b0e582",
+        "md5": "780cc7c1e3462d3b85966df1fa8fcd56",
+        "buildId": "63b69fe3f7e825b81ab730c67fd02b08c1d42172"
+      },
+      "unsignedHap": {
+        "path": ".codex/local-test/t748-source/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "bytes": 7657074,
+        "sha256": "bcf532c72de92410de834fc18a0faa85289f0c066e5289a1c60e5f32a7a1a6a4"
+      }
+    },
+    "md5TranscriptionSource": {
+      "path": "docs/test-report-T751-v1.md",
+      "bytes": 2341,
+      "sha256": "55bf05c152968c24caae91bdee1ecf9b7f91c8c361ad44ba0625e8752206d2f3"
+    },
+    "targetWholeFileSha256Captured": false,
+    "identityConclusion": "SECOND_DRIVER_AND_MAPPED_DSO_ARE_T748_PACKAGED_VARIANT"
+  },
+  "initialBootOnly": {
+    "file": {
+      "path": "test/reports/t491/t738/v7/dm21.jsonl",
+      "bytes": 9796,
+      "sha256": "76d2dd72f31aaf3574ca2535226e093d028bd1e2923e45609357b3b413087e93"
+    },
+    "identity": {
+      "schema": "DM_BOOT_ATTEMPT_V1",
+      "stage": "ATTEMPT_IDENTITY",
+      "ticket": "1",
+      "pid": 4219,
+      "processStartTick": "5850766",
+      "driverMappedBuildId": "a2f4a69e507275d5564fd8a6546c6973fb262085",
+      "driverMappedPath": "/data/local/tmp/t712/g9_dm_differential",
+      "run": "7",
+      "owner": "1",
+      "context": "11"
+    },
+    "actualDsoBuildId": "9b6cc8027c854800cca2bcb7577df91720373bf5",
+    "bootTail": [
+      0,
+      6559303
+    ],
+    "bootAuditNs": "58508669438906",
+    "bootDurationsNs": {
+      "SHADER_COMPILE": 182301875,
+      "PROGRAM_LINK": 512976094
+    },
+    "terminalConfigure": {
+      "stage": "CREATE_EXIT",
+      "result": 1638,
+      "state": "BOOT_AUDIT_OK",
+      "ticket": "1",
+      "rootsAuthorized": false,
+      "workTailFile": "boot-work-tail.u32"
+    }
+  },
+  "formalBootSource": {
+    "file": {
+      "path": "test/reports/t491/t738/v7/dm21-v2-final.jsonl",
+      "bytes": 11984,
+      "sha256": "8cb3c6f44ea6433b7661ded70d30389e2b2517c00c0a65a5eff3cb738c124100"
+    },
+    "identity": {
+      "schema": "DM_BOOT_ATTEMPT_V1",
+      "stage": "ATTEMPT_IDENTITY",
+      "ticket": "1",
+      "pid": 6695,
+      "processStartTick": "5882046",
+      "driverMappedBuildId": "0a496a947e090be7d462e3951ffe25d71ac8faf1",
+      "driverMappedPath": "/data/local/tmp/t712/g9_dm_differential",
+      "run": "58820616386719",
+      "owner": "1",
+      "context": "58820616386719"
+    },
+    "actualDsoBuildId": "63b69fe3f7e825b81ab730c67fd02b08c1d42172",
+    "bootTail": [
+      0,
+      6559303
+    ],
+    "bootAuditNs": "58821451366875",
+    "bootDurationsNs": {
+      "SHADER_COMPILE": 188274219,
+      "PROGRAM_LINK": 515846562
+    },
+    "terminalConfigure": {
+      "stage": "CONFIGURE_EXIT",
+      "result": 0,
+      "bootAudited": true,
+      "bootProgram": 2,
+      "sourceProgram": 2,
+      "firstGl": 0,
+      "firstEgl": 0
+    }
+  },
+  "source": {
+    "sourceManifest": {
+      "path": ".codex/local-test/t748-source/handoff/source_manifest.json",
+      "bytes": 7749,
+      "sha256": "8eee2d097974a67ffd928d72ad0b0810d4812477527892a6ee57e44c4dce7bc0"
+    },
+    "sourceAdmission": {
+      "stage": "SOURCE_ADMISSION_EXIT",
+      "pulse": 0,
+      "offered": 0,
+      "began": 0
+    },
+    "rootRecord": {
+      "stage": "SOURCE_ROOT",
+      "ticket": "1",
+      "result": 6,
+      "pid": 6695,
+      "tid": 6695,
+      "scope": "58820616386719",
+      "nonce": "1",
+      "plan": "1",
+      "owner": "1",
+      "context": "58820616386719",
+      "inputEpoch": "1",
+      "session": "1",
+      "permission": "1",
+      "window": "1",
+      "config": "1",
+      "surface": "1",
+      "geometry": "1",
+      "frame": "1",
+      "arenaGeneration": "1",
+      "baseBank": 0,
+      "candidateBank": 2,
+      "arena": 0,
+      "kind": 1,
+      "ordinal": 0,
+      "rootBeginNs": "59137486619531",
+      "deadlineNs": "59137736619531",
+      "fenceNs": "0",
+      "commitNs": "0",
+      "baseCommit": "0",
+      "commit": "0",
+      "baseQuanta": "0",
+      "quanta": "0",
+      "generation": "0",
+      "expectedSHA": "0000000000000000000000000000000000000000000000000000000000000000",
+      "inputSHA": "568c126cd19dc46c905f5f7fbea54d5527f250064e801b85af95110b0fc3cad9",
+      "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+      "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+      "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+      "seedSHA": "17c88ede519ea6e5d49fbdd03939317ce1d955fe1e00823bff16b0d9cd7a779b",
+      "actualProgram": 2,
+      "workObject": 0,
+      "eglContext": "391547293424",
+      "eglDisplay": "389324051600",
+      "eglSurface": "391547293568",
+      "uploaded": true,
+      "workByteOffset": 0,
+      "workReadBytes": 0,
+      "dispatches": 12,
+      "barriers": 12,
+      "copyBarriers": 3,
+      "fenceCreated": false,
+      "fencePolls": 0,
+      "fenceWaitRaw": null,
+      "mapReturned": false,
+      "unmapRaw": null,
+      "glSample": 0,
+      "eglSample": 12288,
+      "firstGl": 0,
+      "firstEgl": 0,
+      "typedAccepted": false,
+      "preflight": false,
+      "proposedPlanRetired": false,
+      "committed": false,
+      "baseObject": 1,
+      "candidateObject": 3,
+      "committedObject": 0,
+      "queueBefore": 1,
+      "queueAfter": 0,
+      "pendingAtClaim": 0,
+      "activeRemaining": 0,
+      "pendingAfter": 0,
+      "controlFault": 9,
+      "heartbeatResult": 0,
+      "outcome": 0,
+      "admittedQ20": 0,
+      "passes": [
+        [
+          0,
+          0,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          4294967295,
+          1,
+          3,
+          6,
+          7
+        ],
+        [
+          2,
+          2,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          3,
+          3,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          4,
+          4,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          5,
+          5,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          6,
+          6,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          7,
+          7,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          8,
+          8,
+          0,
+          0,
+          4294967295,
+          1,
+          5,
+          6,
+          7
+        ],
+        [
+          9,
+          9,
+          0,
+          0,
+          4294967295,
+          3,
+          5,
+          6,
+          7
+        ],
+        [
+          10,
+          10,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ],
+        [
+          11,
+          11,
+          0,
+          0,
+          4294967295,
+          2,
+          3,
+          6,
+          7
+        ]
+      ]
+    },
+    "bootAuditToRootBeginNs": 316035252656,
+    "rootBudgetNs": 250000000,
+    "classification": "TRANSPORT_DEADLINE_BEFORE_EXECUTION_FENCE_AND_AFTER_LAST_DISPATCH_AND_BARRIER_SUBMITTED",
+    "rootExpiryExactCheckpoint": "NOT_OBSERVED",
+    "sourceCompileLinkWallTime": "NOT_OBSERVED_WITHIN_PRE_ROOT_GAP",
+    "rootWorkProof": "NOT_REACHED",
+    "retirementOutcome": "NOT_OBSERVED",
+    "seedReconstructedFromImmutableTemplateMatchesReceipt": true,
+    "expectedQ20FromContract": 209715
+  },
+  "code": {
+    "sourceFiles": [
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9dm/research_config.h",
+        "bytes": 3895,
+        "sha256": "958ef7ce94db1588a80b9bc08c27db9431756752e2beda6dbb30f289bc50b34a"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9dm/control_types.h",
+        "bytes": 2566,
+        "sha256": "cd156f8a0c896fe19b270e27a9d7abee92253b308b311b0459065e8cfd962b97"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9dm/transport.cpp",
+        "bytes": 37349,
+        "sha256": "7bce85dee93378acf6005b19fd0f9f51729815264d1d135e10566794b4576936"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9dm/controller.cpp",
+        "bytes": 14468,
+        "sha256": "e5be4591fce8893a6b8192cbac111a0aedd5e5488d8df8f47e43da32bf24d02b"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9dm/source_trace.h",
+        "bytes": 1535,
+        "sha256": "23b8c5e377dcd36a6def635a0e9bf98da14e75b511a94ad941a830cd937db8c6"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9dm/progress_clock_v3.cpp",
+        "bytes": 8737,
+        "sha256": "729feb8ec4a3c73d3091c0d34aba4187cd5c8900ba9e4fa0fd6b7ae306009e5e"
+      },
+      {
+        "path": "test/t670/dm_source_run.h",
+        "bytes": 11739,
+        "sha256": "c8f1546b1fa34913d9b740cce110d2d172efe1b23e0e98281666a0f1f070f197"
+      }
+    ],
+    "deadlineEnums": {
+      "transport": 6,
+      "control": 9
+    },
+    "preFenceCandidateWindows": [
+      "final_dispatch_post_guard",
+      "after_submit_loop_before_flush",
+      "after_flush_before_fence"
+    ],
+    "queueAfterAndCompletionOnFailure": "DEFAULT_FIELDS_NOT_SAMPLED_AT_REJECTION"
+  }
+}

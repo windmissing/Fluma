@@ -2,6 +2,8 @@
 
 2026-11-20 · 目标20 · architect · 离线准备。
 
+> 2026-11-21 T754 补充（DM）。T751 正式次以 T748 打包 DSO 运行，`DEADLINE=6/9` 落在第 12 次 dispatch/barrier 提交后、执行 fence 创建前。修订诊断按最后 Dispatch post-guard、Pump flush 前后及 pre-fence 分段，保同根 `now/deadline`、last pulse、API 原边、原始退役 fence 与终态。未到 map 的数值默认值保未测。部署须对实际 `driver` 和 `pairedDsoFromHap` 的文件字节、完整摘要与映射 BuildId，`linkedDso` 保为独立未剥离工件。冷 SOURCE build/reflect 单列时长。250 ms、33,333,333 ns、真实 typed gate 和原 12-pass 规则保持。 [T754 首次归因与复测合同](architecture-T754-v1.md)
+
 在 T734 之后增加一个显式 `BOOT + SOURCE` 研究变体。每族独立验证一次原 12-pass 非零 SOURCE，以真实 GPU 尾、同根 typed proof 和正增量验收。新变体只允许 SOURCE，单体对照继续走同一族的原生产 math、布局和数值判据。RX 复用现存研究页和 XComponent，DM 首轮使用实际原生 Controller/Transport 入口。T736 未运行驱动或设备，以下输入和期望为实施合同。 [T733 拆分方案](architecture-T733-v1.md) · [机器合同与静态核对](architecture-T736-source-contract-v1.json)
 
 ## 真实入口与最小非零输入
@@ -19,7 +21,7 @@
 
 配好 SOURCE program 后，RX 研究变体在 session 激活后、首个合格 pulse 建立 baseline 时发送原页命令。通过原 NAPI 方法和 native clock 顺序，避免依赖人工在一个刷新间隔内点击。DM runner 同样在真实 clock/baseline 下排入命令。真实 scene/owner 准备好后再武装诊断。保 FIFO 队首、prior root 未发生、中性角、非零 intent、fresh pulse 与 `pending==0`。持锁在 `ClaimLocked` 前检查这些条件，同时在 `Transport::Begin` 防御性拒绝 kind≠1。短臂只放一次 claim。若首次 claim 之前已积攒 QUANTUM 配额，保真实原因，按原 Stop/retirement 开新 scope；不强清 quota 或执行未装载的 QUANTUM。claim 后真实 pulse 可继续，新增 pending 与本根 `activeRemaining==0` 分别记账。收完本根 cold/呈现证据后按原 Stop 收口。
 
-DM 零配额路径存在确定的预检顺序问题。现 `BeginRoot` 把 `run_.workspaceRetired` 置 false，而 `PumpBounded` 在设置 true 前，对 copy 的 `nextRun` 调用 `RetireSourcePlanLocked`。该函数要求 workspaceRetired 为 true，现有顺序会将合法输完的 SOURCE 作为 `STALE_REJECTED` 撤权。实现沿 RX 现有处理，只在 fence/读回、typed proof 与 fresh permit 验毕后，在**局部提交提案**上置 `nextRun.workspaceRetired=true`，完成零配额 plan 退役预检。随后原 `CommitAccepted` 再核真实时钟/permit 并原子晋升，成功才发布 nextRun/nextClock。失败继续按原 fence 退役真实对象。验证须覆盖真实 DM Controller 的零 quota 提交，单跑 T670 `Transport::CommitAccepted` 绕过该调用，无法覆盖。 [DM 调用处](../entry/src/main/cpp/gpu_resident/g9dm/controller.cpp#L71) · [原退役先决](../entry/src/main/cpp/gpu_resident/g9dm/progress_clock_v3.cpp#L107) · [RX 参照](../entry/src/main/cpp/gpu_resident/g9rx/controller.cpp#L575)
+T748 已按下列顺序修订 DM 零配额提案。T736 初审发现旧 `BeginRoot` 把 `run_.workspaceRetired` 置 false，而 `PumpBounded` 在设置 true 前，对 copy 的 `nextRun` 调用 `RetireSourcePlanLocked`。该函数要求 workspaceRetired 为 true，旧路径会将合法输完的 SOURCE 作为 `STALE_REJECTED` 撤权。实现沿 RX 现有处理，只在 fence/读回、typed proof 与 fresh permit 验毕后，在**局部提交提案**上置 `nextRun.workspaceRetired=true`，完成零配额 plan 退役预检。随后原 `CommitAccepted` 再核真实时钟/permit 并原子晋升，成功才发布 nextRun/nextClock。失败继续按原 fence 退役真实对象。T751 超期时还未到该预检，零 quota 提交留待实际 Controller 验证。单跑 T670 `Transport::CommitAccepted` 不能覆盖这一调用。 [DM 调用处](../entry/src/main/cpp/gpu_resident/g9dm/controller.cpp#L98) · [原退役先决](../entry/src/main/cpp/gpu_resident/g9dm/progress_clock_v3.cpp#L107) · [RX 参照](../entry/src/main/cpp/gpu_resident/g9rx/controller.cpp#L575)
 
 ## 角色、反射和绑定
 
