@@ -1,0 +1,32 @@
+{
+  "schema": "T793_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "9f245e4d94b2c12844659fabd26783f21c02bd2b",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b01b082e4b07c2761a8d987",
+    "started": {
+      "id": "6b01ba89e4b07c2761a98587",
+      "createdTime": "2026-11-21T15:36:41+0000"
+    },
+    "delivered": {
+      "id": "6b01bc2ce4b0c0fef857bb02",
+      "createdTime": "2026-11-21T15:43:40+0000",
+      "title": "T793 architect 已交付，分流 developer 修导出。T789 实签 1079fd0e 与 T785 未签 957af8e1 的 payload 一致，ABC 含导出入口，映射 e80a7248… 与 T785 匹配。原 chain 最后一行为 PID8890 票1 G9RxSourceExport SAVE_FAILED：Error: Invalid argument，UI 同样记录。T785 mkdtempSync 模板少 XXXXXX，确定存在 API 参数缺陷，旧日志未标具体 API 阶段。修模板、导出阶段原 BusinessError 与路径/字节/SHA 回执，保不可变同票终态、退役和有界重试。effector 再按 SAVED 路径保存授权 HDC 的原命令、返回和 SHA。STALE=5 仍是多谓词映射，真实 pulse/首拒/SOURCE 退役待 JSON。保原期限和 oracle。不使用真机。docs/architecture-T793-v1.md，提交 9f245e4d。"
+    }
+  },
+  "statusRow": {
+    "path": "docs/后续工作清单.md",
+    "before": "进行中",
+    "after": "结束待验收",
+    "line": "| T793 | 【T793·目标20 RX侧车未落盘首次归因与交付合同】architect | architect | P5 | 结束待验收 | 6b01b082e4b07c2761a8d987 |",
+    "beforeSha256": "9fae86c7772ec2751bd0357527533c4e4ab5ea377d7fdf8ea58d96a98332a016",
+    "afterSha256": "9dd277a5f445025fbb3146dccf0099559a506b0ce717bb6b3a5d6fc8d71f47e5"
+  },
+  "evidence": {
+    "path": "docs/architecture-T793-evidence-v1.json",
+    "sha256": "10ce9f6926bf6229176591d48e6a30a413ec45b52e92f8625bae55d44df61a9d"
+  }
+}

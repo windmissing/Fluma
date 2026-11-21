@@ -1,0 +1,32 @@
+{
+  "schema": "T792_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "9f245e4d94b2c12844659fabd26783f21c02bd2b",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b01b082e4b011b710c95ece",
+    "started": {
+      "id": "6b01ba8ae4b011b710ca583c",
+      "createdTime": "2026-11-21T15:36:42+0000"
+    },
+    "delivered": {
+      "id": "6b01bc2ce4b0572f6334b749",
+      "createdTime": "2026-11-21T15:43:40+0000",
+      "title": "T792 architect 已交付。T773 重读 T775/A+T788/B/C，真实 arm 对齐，均 12 dispatch、执行 TIMEOUT、晚 signal 同句柄仅退役。B 250µs cadence 将执行 poll 4480→252、owner CPU 245.621→175.077ms。C 省末批 SUBMIT_FLUSH，但 FenceSync 74.156ms（CPU 74.055ms）；B 的相应 flush 74.366ms。根→首次观察退役 signal 297.613/336.187/337.963ms。GPU 时间未知，部署全字节回执仍缺。先沿 B 做 op8/op9/两 arena copy/op11 的低扰动 GPU 或独立 prefix fence 分段，见实证再选择 shader 或 copy/提交研究臂。保 250ms、真实 33,333,333ns pulse、原同根 1024B/209715Q20/typed/commit/FIFO，禁止调大时限。不使用真机。docs/architecture-T792-v1.md，提交 9f245e4d。"
+    }
+  },
+  "statusRow": {
+    "path": "docs/后续工作清单.md",
+    "before": "进行中",
+    "after": "结束待验收",
+    "line": "| T792 | 【T792·目标20 DM SOURCE真实三臂预算归因与GPU修订合同】architect | architect | P5 | 结束待验收 | 6b01b082e4b011b710c95ece |",
+    "beforeSha256": "9fae86c7772ec2751bd0357527533c4e4ab5ea377d7fdf8ea58d96a98332a016",
+    "afterSha256": "9dd277a5f445025fbb3146dccf0099559a506b0ce717bb6b3a5d6fc8d71f47e5"
+  },
+  "evidence": {
+    "path": "docs/architecture-T792-evidence-v1.json",
+    "sha256": "c8ca621676d685d87ae4331e5d8acf8c8a62eab6c9e19c8d3d122c9a95e160da"
+  }
+}
