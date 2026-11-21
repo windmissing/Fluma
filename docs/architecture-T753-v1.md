@@ -2,6 +2,8 @@
 
 2026-11-21 · G20 · P5 · architect · 离线交付。
 
+> T764 补充。T760 首拒 OP65 后未达到 T756 生产稳态角色与隔离可见性验证。隔离真机验证改由独立诊断 HAP、owner/context 和固定 pass 入口执行，复用生产绑定、barrier、map 和顶点属性配置，保原数值门和实际场景发布路径。 [T764 门前独立探针合同](architecture-T764-v1.md)
+
 **把调度阶段、shader 索引和物理 bank 分开。** 现有 QUANTUM 的 ACTUAL 和 REPLAY 均写 REPLAY bank 与 CTRL word 10240。REPLAY 成功封口还可能将选定 J 写进原根 opcode 的 `CTRL[520]`。本卡锁定映射、GPU 可见性及发布边界，供 developer 实施。T730 原 FP32 数值门继续生效。 [T750 原定位](architecture-T750-v1.md#完整根前置--actualreplay-作用域映射) · [T753 可复核证据](architecture-T753-evidence-v1.json)
 
 ## 实际根因与修正位置

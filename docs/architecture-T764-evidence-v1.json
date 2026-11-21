@@ -1,0 +1,509 @@
+{
+  "schema": "T764_G13_PREQUALIFICATION_VISIBILITY_ARCHITECTURE_V1",
+  "deviceUsed": false,
+  "productImplementationChanged": false,
+  "artifact": {
+    "receipts": [
+      {
+        "path": "docs/receipt-T756-split-v1.json",
+        "bytes": 21603,
+        "sha256": "1cf9dbbeb9e9a346d0ceded5ca1a12972ec1c61d86b91a23e27dca860fdf0d77"
+      },
+      {
+        "path": "test/reports/t257/T760-split.json",
+        "bytes": 2286,
+        "sha256": "aef698ab204b5472bbc8cbdfa8fc9b0b49d88f29d27a58497789aa56a08b7cef"
+      }
+    ],
+    "hap": {
+      "input": {
+        "path": ".codex/local-test/t756-final/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "bytes": 7753815,
+        "sha256": "ab373f280593c3a79b4cba72c5c5b2bb6bdc8942009d7445b51149b32ce728e0"
+      },
+      "signed": {
+        "path": ".codex/local-test/t257-sign/T760-split/T760-split-signed.hap",
+        "bytes": 7852781,
+        "sha256": "868106e231b1b8362c3537c08bd812d75386ee45a2d4f98fa3292d112e027da9"
+      }
+    },
+    "elfBytes": 1365792,
+    "elfSHA": "369d5ee8f316adc3810cd8e9c6a3ff96ad8351bcee599d75ce77ec4784ba4d77",
+    "buildId": "e5ec50ff304bc372189b8ad210a24f0b82e24771",
+    "computeRoles": {
+      "BOOT": {
+        "sourceSHA": "e18933691fc21846ae976557f18521de6450924e9095364b5b74d94d4367777a",
+        "bytes": 23861,
+        "opcodes": [
+          64,
+          65,
+          66
+        ]
+      },
+      "OP_00": {
+        "sourceSHA": "1b8ce7f6cb7fc077e728dda15102f95d4125efb9cc21a6d95b434ee7146ed2a4",
+        "bytes": 48695,
+        "opcodes": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      "OP_18": {
+        "sourceSHA": "04dc4b7f185b2784b23759016b3bce08b96ae4a15f45d88c50f5211d795ca258",
+        "bytes": 48639,
+        "opcodes": [
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36
+        ]
+      },
+      "OP_37": {
+        "sourceSHA": "a0ad7d383bfa824657854e9a33f63c95cf6f092ef424766b47b89b80bd29c5c1",
+        "bytes": 48708,
+        "opcodes": [
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          50,
+          51,
+          53
+        ]
+      },
+      "OP_48": {
+        "sourceSHA": "df71255d51e2ed558bad698725dcbd950a71edb6110df14dbe9a37c9d5a5ad99",
+        "bytes": 48755,
+        "opcodes": [
+          48,
+          49,
+          52,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          62
+        ]
+      },
+      "OP_61": {
+        "sourceSHA": "90d252eb8ed26e90dba99a6b717d7b51005bf9704bb32ce5b30a68ad048d8843",
+        "bytes": 11878,
+        "opcodes": [
+          61,
+          63
+        ]
+      }
+    }
+  },
+  "t760Capture": {
+    "inputRecords": [
+      {
+        "path": "test/reports/t491/t760/t760-diag-full.json",
+        "bytes": 2811,
+        "sha256": "ce781182679cb61d58ab9c2f28965c2ccd6ea102db9c33b95f7f35efdf6d0e5b"
+      },
+      {
+        "path": "test/reports/t491/t730b/v5/l2.json",
+        "bytes": 53008,
+        "sha256": "6c9f50b40fc1d189b82a0dcd136b0f080c7b0e94bfb7d86063426705fd2fa472"
+      },
+      {
+        "path": "test/reports/t491/t760/t756-compute-persisted.jsonl",
+        "bytes": 9249,
+        "sha256": "274e2460316b56e38bd8b54bdfaf1f2d0797e9e68c53f9d0758bdce82d3af277"
+      }
+    ],
+    "scope": {
+      "boot": "86140170759062",
+      "attempt": "191",
+      "queue": "3",
+      "ns": "86363720518750",
+      "run": "1",
+      "context": "1",
+      "surface": "1",
+      "eglContext": "390351290432",
+      "pid": 46924,
+      "ownerTid": 47218,
+      "processStartTicks": "8613992",
+      "mappedBuildId": "e5ec50ff304bc372189b8ad210a24f0b82e24771",
+      "program": 2,
+      "ctrl": 7,
+      "work": 6,
+      "fenceHandle": "1",
+      "fence": 37146,
+      "firstGl": 0,
+      "rawEgl": 12288,
+      "configRawSHA": "35241d9f2d2baac8deaa84493787903c5ce7e064e5955971d16f7c5039255513",
+      "seedReceiptSHA": "62dfc01eb4a04ab8f89914202edbbea04622d61fb34c887b6e82c24ffa2e6638",
+      "effectiveRejectStage": "OP65",
+      "result": 27
+    },
+    "bootSourceSHA": "e18933691fc21846ae976557f18521de6450924e9095364b5b74d94d4367777a",
+    "repeatedFp32Words": {
+      "op65": {
+        "boot": "86140170759062",
+        "attempt": "191",
+        "queue": "3",
+        "ns": "86363720518750",
+        "state": "REJECTED",
+        "ctrl255": 3235779329,
+        "ctrl7": 27,
+        "ctrlTailByteOffset": 73728,
+        "workByteOffset": 583296,
+        "mathReadGl": 0,
+        "inputReadGl": 0,
+        "work35_41_47_53_59": [
+          0,
+          1065353216,
+          1065353216,
+          0,
+          1065353216
+        ],
+        "input744To747": [
+          1,
+          864026624,
+          1065353216,
+          0
+        ]
+      },
+      "op66": {
+        "boot": "86140170759062",
+        "attempt": "191",
+        "queue": "3",
+        "ns": "86363720518750",
+        "state": "REJECTED",
+        "qualified": false,
+        "presence": [
+          true,
+          true
+        ],
+        "inputReadGl": 0,
+        "mismatchMasks": [
+          12,
+          12
+        ],
+        "ctrl200To215": [
+          1065353217,
+          1065353216,
+          0,
+          0,
+          7,
+          0,
+          0,
+          1179661106,
+          1065353217,
+          1065353216,
+          0,
+          0,
+          7,
+          0,
+          0,
+          1179661106
+        ],
+        "input18648To18652": [
+          872415232,
+          8388608,
+          1056964608,
+          2139095040,
+          2143289344
+        ]
+      }
+    },
+    "bootBinary": {
+      "revision": "T475_PROGRAM_ARTIFACT_V1",
+      "role": "G13_COMPUTE",
+      "key": "bacbc9118da2e5c1e8c459602f8d78c0a05b20b95aca1afdf4a4f244435c8cb6",
+      "shaderSHA": "e18933691fc21846ae976557f18521de6450924e9095364b5b74d94d4367777a",
+      "layoutSHA": "34a397363d73a97df72d58c0795a5bec8cbb22b1480eb452e398b0177a5470d0",
+      "linkConfigSHA": "6841f249566ce08e8ec085102ee73abcbc1f97190e468656f4599d07661791ae",
+      "environmentSHA": "1338b161964299696eaa4a6c9c2c7b0f0bb5144bef61afded796983d1a613d72",
+      "packageSource": "UNDECLARED",
+      "route": "SOURCE_COMPILE",
+      "stage": "EXPORT_WRITE_SUBMITTED",
+      "cacheRawGL": 0,
+      "originalRawGL": 0,
+      "log": "",
+      "logReported": 0,
+      "logCopied": 0,
+      "logTruncated": false,
+      "shaderLog": "",
+      "shaderLogReported": 0,
+      "shaderLogCopied": 0,
+      "shaderLogTruncated": false,
+      "contextGeneration": 1,
+      "contextHandle": 390351290432,
+      "programHandle": 2,
+      "beginNs": 86187766023437,
+      "buildEndNs": 86363562179062,
+      "endNs": 86363567972812,
+      "binaryBytes": 301961,
+      "binaryFormat": 38769,
+      "cacheLog": "",
+      "logBytesHex": "",
+      "shaderLogBytesHex": "",
+      "cacheLogBytesHex": "",
+      "cacheRawEGL": 12288,
+      "compileBeginNs": 86187769841094,
+      "compileEndNs": 86253006899687,
+      "linkBeginNs": 86253006937500,
+      "linkEndNs": 86363562141406,
+      "loadBeginNs": 0,
+      "loadEndNs": 0,
+      "reflectBeginNs": 86363562817187,
+      "reflectEndNs": 86363563051562,
+      "prepareBeginNs": 0,
+      "prepareEndNs": 0,
+      "warmupBeginNs": 0,
+      "warmupEndNs": 0,
+      "supportedFormats": [
+        38769
+      ],
+      "binarySHA": "3368e1911fffcebfa8c95863406e3b0ffebee9801925475224fe5d96397b1b42",
+      "persistence": "PERSISTED"
+    },
+    "otherComputeRoles": "NOT_REACHED",
+    "warmNewProcess": "NOT_OBSERVED",
+    "steadyVisibility": "NOT_REACHABLE"
+  },
+  "pinnedProbePlan": {
+    "authorities": [
+      {
+        "path": ".codex/local-test/t756-final/entry/src/main/cpp/gpu_resident/g13flow/transport.cpp",
+        "bytes": 33610,
+        "sha256": "234bf5f7f26cda7d83c0bd3b2d6ffdafdb4f75124f5374d7b2c8184e166371be"
+      },
+      {
+        "path": ".codex/local-test/t756-final/entry/src/main/cpp/gpu_resident/g13flow/bridge.cpp",
+        "bytes": 40154,
+        "sha256": "95433d5d168605422d9b0574007d42ba6f00f7b3359f4d0217845f359c80bd99"
+      },
+      {
+        "path": "docs/architecture-T607-g13-dispatch-v1.json",
+        "bytes": 143062,
+        "sha256": "6d0cf08bf17389f3915cfb0bd5406327ab6cdd030aa1541db5e4e3dffa90f0af"
+      }
+    ],
+    "rows": [
+      {
+        "ordinal": 5,
+        "opcode": 12,
+        "logicalScope": 1,
+        "J": 1,
+        "micro": 0,
+        "block": 0,
+        "route": {
+          "phase": "ACTUAL",
+          "shader_scope": 0,
+          "ssbo0": "CURRENT",
+          "ssbo1": "CANDIDATE"
+        },
+        "role": "OP_00"
+      },
+      {
+        "ordinal": 26,
+        "opcode": 33,
+        "logicalScope": 1,
+        "J": 1,
+        "micro": 0,
+        "block": 0,
+        "route": {
+          "phase": "ACTUAL",
+          "shader_scope": 0,
+          "ssbo0": "CURRENT",
+          "ssbo1": "CANDIDATE"
+        },
+        "role": "OP_18"
+      },
+      {
+        "ordinal": 27,
+        "opcode": 48,
+        "logicalScope": 1,
+        "J": 1,
+        "micro": 0,
+        "block": 0,
+        "route": {
+          "phase": "ACTUAL",
+          "shader_scope": 0,
+          "ssbo0": "CURRENT",
+          "ssbo1": "CANDIDATE"
+        },
+        "role": "OP_48"
+      },
+      {
+        "ordinal": 28,
+        "opcode": 48,
+        "logicalScope": 1,
+        "J": 1,
+        "micro": 0,
+        "block": 1,
+        "route": {
+          "phase": "ACTUAL",
+          "shader_scope": 0,
+          "ssbo0": "CURRENT",
+          "ssbo1": "CANDIDATE"
+        },
+        "role": "OP_48"
+      },
+      {
+        "ordinal": 410,
+        "opcode": 12,
+        "logicalScope": 2,
+        "J": 1,
+        "micro": 0,
+        "block": 0,
+        "route": {
+          "phase": "REPLAY",
+          "shader_scope": 1,
+          "ssbo0": "CURRENT",
+          "ssbo1": "REPLAY"
+        },
+        "role": "OP_00"
+      },
+      {
+        "ordinal": 431,
+        "opcode": 33,
+        "logicalScope": 2,
+        "J": 1,
+        "micro": 0,
+        "block": 0,
+        "route": {
+          "phase": "REPLAY",
+          "shader_scope": 1,
+          "ssbo0": "CURRENT",
+          "ssbo1": "REPLAY"
+        },
+        "role": "OP_18"
+      },
+      {
+        "ordinal": 432,
+        "opcode": 48,
+        "logicalScope": 2,
+        "J": 1,
+        "micro": 0,
+        "block": 0,
+        "route": {
+          "phase": "REPLAY",
+          "shader_scope": 1,
+          "ssbo0": "CURRENT",
+          "ssbo1": "REPLAY"
+        },
+        "role": "OP_48"
+      },
+      {
+        "ordinal": 433,
+        "opcode": 48,
+        "logicalScope": 2,
+        "J": 1,
+        "micro": 0,
+        "block": 1,
+        "route": {
+          "phase": "REPLAY",
+          "shader_scope": 1,
+          "ssbo0": "CURRENT",
+          "ssbo1": "REPLAY"
+        },
+        "role": "OP_48"
+      },
+      {
+        "ordinal": 814,
+        "opcode": 6,
+        "logicalScope": 0,
+        "J": 0,
+        "micro": 0,
+        "block": 0,
+        "route": {
+          "phase": "COMPARE",
+          "shader_scope": 0,
+          "ssbo0": "CANDIDATE",
+          "ssbo1": "REPLAY"
+        },
+        "role": "OP_00"
+      },
+      {
+        "ordinal": 817,
+        "opcode": 9,
+        "logicalScope": 0,
+        "J": 0,
+        "micro": 0,
+        "block": 0,
+        "route": {
+          "phase": "PACK",
+          "shader_scope": 0,
+          "ssbo0": "CANDIDATE",
+          "ssbo1": "PENDING_PACK"
+        },
+        "role": "OP_00"
+      },
+      {
+        "ordinal": 818,
+        "opcode": 10,
+        "logicalScope": 0,
+        "J": 0,
+        "micro": 0,
+        "block": 0,
+        "route": {
+          "phase": "PACK",
+          "shader_scope": 0,
+          "ssbo0": "CANDIDATE",
+          "ssbo1": "PENDING_PACK"
+        },
+        "role": "OP_00"
+      }
+    ],
+    "firstBlockWordOffsets": [
+      3456,
+      11648
+    ],
+    "neighborFaces": [
+      127,
+      128
+    ],
+    "rootTailBytes": {
+      "offset": 73728,
+      "length": 1024
+    },
+    "packVertexStride": 64,
+    "tracerVertexStride": 32
+  }
+}
