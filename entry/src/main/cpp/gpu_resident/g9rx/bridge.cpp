@@ -60,6 +60,7 @@ class App {
 #ifdef GRS_G9_BOOT_SOURCE
   uint64_t qualifiedSourceGeometry_ = 0;
   bool sourceWake_ = false;
+  uint64_t sourceWakeSequence_ = 0, sourceWakeReceipt_ = 0;
 #endif
   Config pendingConfig_{};
   std::string pendingCacheDirectory_;
@@ -290,6 +291,9 @@ public:
   }
   std::string Status() {
     std::lock_guard<std::mutex> lock(mutex_);
+    return StatusLocked();
+  }
+  std::string StatusLocked() {
     auto text = controller_.Status();
     text.pop_back();
     text += ",\"initialization\":\"" + stage_ + "\"";
@@ -332,12 +336,18 @@ public:
     return text + "]}";
   }
 #ifdef GRS_G9_BOOT_SOURCE
-  void WakeSource() {
+  void WakeSource(uint64_t sequence, uint64_t receipt) {
     {
       std::lock_guard<std::mutex> lock(mutex_);
       sourceWake_ = true;
+      sourceWakeSequence_ = sequence;
+      sourceWakeReceipt_ = receipt;
     }
     wake_.notify_one();
+  }
+  std::string SourceDiagnostics() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return "{\"status\":" + StatusLocked() + ",\"trace\":" + controller_.SourceDiagnostics() + "}";
   }
 #endif
 };
@@ -354,6 +364,10 @@ void App::Loop() {
     std::string cacheDirectory;
     uint32_t width = 0, height = 0;
     uint64_t geometry = 0;
+#ifdef GRS_G9_BOOT_SOURCE
+    bool pulseWake = false;
+    uint64_t wokeForSequence = 0, wokeForReceipt = 0;
+#endif
     {
       std::unique_lock<std::mutex> lock(mutex_);
       wake_.wait_for(lock, std::chrono::milliseconds(2),
@@ -367,6 +381,9 @@ void App::Loop() {
       if (quit_)
         break;
 #ifdef GRS_G9_BOOT_SOURCE
+      pulseWake = sourceWake_;
+      wokeForSequence = sourceWakeSequence_;
+      wokeForReceipt = sourceWakeReceipt_;
       sourceWake_ = false;
 #endif
       if (configurePending_ && !ownerSeen_) {
@@ -500,6 +517,9 @@ void App::Loop() {
       } else {
         stage_ = "CONFIGURED";
         ConfigureStage("APPLIED");
+#ifdef GRS_G9_BOOT_SOURCE
+        controller_.SourceOwnerEdge("APPLIED", receipt_.finishNs, receipt_.ticket, receipt_.run);
+#endif
       }
     }
     if (!windowReady_)
@@ -520,12 +540,18 @@ void App::Loop() {
 #ifdef GRS_G9_BOOT_SOURCE
     const bool extentKnown = width && height && extent();
     bool claimWindow = false;
+    bool newExtent = false;
     {
       std::lock_guard<std::mutex> lock(mutex_);
       claimWindow = extentKnown && !windowPending_ && geometry == geometryGeneration_ &&
                     std::strcmp(receipt_.phase, "APPLIED") == 0;
+      newExtent = claimWindow && qualifiedSourceGeometry_ != geometry;
       qualifiedSourceGeometry_ = claimWindow ? geometry : 0;
     }
+    if (newExtent)
+      controller_.SourceOwnerEdge("EXTENT_QUALIFIED", CheckedClockRead().ns, width, height);
+    if (pulseWake)
+      controller_.SourceOwnerEdge("OWNER_WAKE", CheckedClockRead().ns, wokeForSequence, wokeForReceipt);
 #endif
     if (controller_.RootLive()) {
       if (controller_.NeedsRetirement())
@@ -560,6 +586,8 @@ void App::Loop() {
             receipt_.firstSwapNs = presented.ns;
 #ifdef GRS_G9_BOOT_SOURCE
             receipt_.firstSourceSwapToken = token;
+            controller_.SourceOwnerEdge("SWAP", presented.ns,
+                                        controller_.SceneGeneration(), receipt_.ticket);
 #endif
             LogConfigureStage("FIRST_VALID_SWAP", presented.ns);
           }
@@ -729,6 +757,13 @@ napi_value Api(napi_env env, napi_callback_info info) {
   auto &core = app.Core();
   if (api == "g9RxStatus")
     return Text(env, app.Status());
+  if (api == "g9RxSourceDiagnostics") {
+#ifdef GRS_G9_BOOT_SOURCE
+    return Text(env, app.SourceDiagnostics());
+#else
+    return Text(env, "{\"state\":\"UNSUPPORTED\"}");
+#endif
+  }
   if (api == "g9RxCancelConfigure") {
     std::string expected;
     uint64_t ticket = 0;
@@ -784,7 +819,7 @@ napi_value Api(napi_env env, napi_callback_info info) {
                    receipt);
 #ifdef GRS_G9_BOOT_SOURCE
     if (result == ControlResult::OK)
-      app.WakeSource();
+      app.WakeSource(Pair(w.words.data(), 18), receipt.ns);
 #endif
     return Text(env, "{\"code\":" + std::to_string(uint32_t(result)) + "}");
   }
@@ -901,7 +936,7 @@ napi_value Init(napi_env env, napi_value exports) {
   const char *names[] = {
       "g9RxResearchConfig", "g9RxConfigure", "g9RxSession",   "g9RxSetActive",
       "g9RxPulse",          "g9RxTarget",    "g9RxStatus",    "g9RxStop",
-      "g9RxLoadedIdentity", "g9RxSource",    "g9RxColdBegin", "g9RxColdState",
+      "g9RxLoadedIdentity", "g9RxSource",    "g9RxSourceDiagnostics", "g9RxColdBegin", "g9RxColdState",
       "g9RxColdPage",       "g9RxColdEnd", "g9RxCancelConfigure"};
   for (auto name : names) {
     napi_property_descriptor p{

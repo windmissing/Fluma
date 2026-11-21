@@ -7,6 +7,7 @@ export const g9RxTarget: (target: Uint32Array) => string;
 export const g9RxTouchIngress: (raw: Uint32Array) => string;
 export const g9RxSource: (request: string) => string;
 export const g9RxStatus: () => string;
+export const g9RxSourceDiagnostics: () => string;
 export const g9RxCancelConfigure: (ticket: string) => string;
 export const g9RxStop: (scope: string) => string;
 export const g9RxLoadedIdentity: () => string;

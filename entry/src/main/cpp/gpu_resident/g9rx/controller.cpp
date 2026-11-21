@@ -66,6 +66,69 @@ bool Controller::RecheckLocked(const Permit &p, uint64_t now) const {
   }
   return true;
 }
+#ifdef GRS_G9_BOOT_SOURCE
+SourceGuard Controller::SampleSourceLocked(const Permit *p, uint64_t receipt) const {
+  const auto &ctl = protocol_.payload.control;
+  SourceGuard s;
+  s.actual = identity_;
+  s.expected = p ? p->identity : identity_;
+  s.currentClock = protocol_.Get(RxProtocol::CLOCK_GEN);
+  s.currentLifecycle = protocol_.sync.lifecycleInvalidation.load();
+  s.clock = p ? p->clockGeneration : s.currentClock;
+  s.lifecycle = p ? p->lifecycleGeneration : s.currentLifecycle;
+  s.nonce = p ? p->nonce : 0;
+  s.plan = p ? p->plan : 0;
+  s.currentNonce = run_.nonce;
+  s.currentPlan = run_.plan;
+  s.sequence = clock_.counters.pulseSequence;
+  s.pending = clock_.pending;
+  s.active = protocol_.sync.ownerActive.load() && ctl[RxProtocol::ACTIVE];
+  s.rootLive = protocol_.sync.ownerRootLive.load() && ctl[RxProtocol::ROOT_LIVE];
+  s.times = {false, clock_.hasPulse, 0, clock_.counters.receiveNs, receipt,
+             p ? p->rootBeginNs : 0, p ? p->deadline : UINT64_MAX};
+  // Read only after the published PagePulse, FIFO and permit snapshot. The
+  // caller owns the protocol mutex, so no ingress can publish between them.
+  const auto current = CheckedClockRead();
+  s.times.clockOk = current.ok;
+  s.times.now = current.ns;
+  s.rawErrno = current.rawErrno;
+  if (p && !configured_) s.reason = SourceReject::NoPermit;
+  else if (p && !s.active) s.reason = SourceReject::OwnerInactive;
+  else if (p && !s.rootLive) s.reason = SourceReject::RootNotLive;
+  else if (p && s.expected != s.actual) s.reason = SourceReject::Scope;
+  else if (p && (s.clock != s.currentClock || s.lifecycle != s.currentLifecycle ||
+                 s.lifecycle != protocol_.Get(RxProtocol::LIFECYCLE_GEN)))
+    s.reason = SourceReject::Generation;
+  else if (p && (!(*p == active_) || p->baseCommit != commit_ || !clock_.ready ||
+                 !clock_.baseline || clock_.mode != PlanningMode::RUNNABLE ||
+                 !run_.active || s.plan != s.currentPlan || s.nonce != s.currentNonce ||
+                 !clock_.jobLive || !run_.jobLive))
+    s.reason = SourceReject::Permit;
+  else s.reason = SourceTimeGuard(s.times);
+  return s;
+}
+SourceGuard Controller::Check(void *user, const Permit &p) {
+  auto &self = *static_cast<Controller *>(user);
+  std::lock_guard<std::mutex> lock(self.protocol_.sync.protocol);
+  return self.SampleSourceLocked(&p, Pair(self.protocol_.payload.inputs[16].data(), 43));
+}
+void Controller::RecordControlGuardLocked(SourceGuard sample, const char *phase) {
+  sample.phase = phase;
+  sample.cursor = transport_.next_;
+  sample.dispatches = transport_.source_.dispatches;
+  if (sample.reason == SourceReject::None)
+    lastSourcePass_ = sample;
+  else if (firstSourceReject_.reason == SourceReject::None)
+    firstSourceReject_ = sample;
+}
+void Controller::EdgeLocked(const char *stage, uint64_t ns, uint64_t a, uint64_t b) {
+  sourceControlEdges_.Add({stage, ns, a, b});
+}
+void Controller::SourceOwnerEdge(const char *stage, uint64_t ns, uint64_t a, uint64_t b) {
+  std::lock_guard<std::mutex> lock(protocol_.sync.protocol);
+  EdgeLocked(stage, ns, a, b);
+}
+#else
 bool Controller::Check(void *user, const Permit &p, uint64_t now) {
   auto &self = *static_cast<Controller *>(user);
   auto &sync = self.protocol_.sync;
@@ -79,6 +142,7 @@ bool Controller::Check(void *user, const Permit &p, uint64_t now) {
   return frozen[40] == 0 ||
          self.protocol_.CurrentAge(now, Pair(frozen.data(), 43));
 }
+#endif
 
 Result Controller::ConfigureResearch(const Config &config,
                                      const ControlIdentity &id,
@@ -169,6 +233,11 @@ Result Controller::ConfigureResearch(const Config &config,
 #ifdef GRS_G9_BOOT_SOURCE
   sourceReport_ = transport_.SourceEvidence();
   sourcePhase_ = "WAIT_SOURCE";
+  sourceControlEdges_ = {};
+  sourceTransportEdges_ = {};
+  sourcePulses_ = {};
+  firstSourceReject_ = {};
+  lastSourcePass_ = {};
 #endif
   return Result::OK;
 }
@@ -242,6 +311,9 @@ bool Controller::SetActive(bool value, const ControlIdentity &expected,
   }
   protocol_.payload.control[RxProtocol::ACTIVE] = 1;
   protocol_.sync.ownerActive.store(true);
+#ifdef GRS_G9_BOOT_SOURCE
+  EdgeLocked("SET_ACTIVE", CheckedClockRead().ns, time.ns, identity_.pageSession);
+#endif
   return true;
 }
 void Controller::InvalidateGeometry() {
@@ -254,23 +326,59 @@ void Controller::InvalidateGeometry() {
 
 ControlResult Controller::Pulse(const PagePulseV3 &pulse, CheckedTime now) {
   std::lock_guard<std::mutex> lock(protocol_.sync.protocol);
+#ifdef GRS_G9_BOOT_SOURCE
+  const auto priorSequence = clock_.counters.pulseSequence;
+  const auto priorUi = clock_.counters.uiNs;
+  const auto priorNative = clock_.counters.receiveNs;
+  const auto record = [&](ControlResult result, uint64_t published) {
+    sourcePulses_.Add({pulse.identity, pulse.sequence, pulse.uiNs, now.ns, published,
+                       priorSequence && now.ns >= priorNative ? now.ns - priorNative : 0,
+                       priorSequence && pulse.uiNs >= priorUi ? pulse.uiNs - priorUi : 0,
+                       uint32_t(result)});
+    if (result == ControlResult::OK && !priorSequence)
+      EdgeLocked("FIRST_PULSE", published, pulse.sequence, now.ns);
+    return result;
+  };
+#endif
   if (!now.ok) {
     RevokeLocked(1);
+#ifdef GRS_G9_BOOT_SOURCE
+    return record(ControlResult::CONTROL_CLOCK_REVERSED, 0);
+#else
     return ControlResult::CONTROL_CLOCK_REVERSED;
+#endif
   }
   auto result = clock_.PulseLocked(pulse, now.ns);
   if (result == ControlResult::OK) {
+#ifdef GRS_G9_BOOT_SOURCE
+    const auto publication = CheckedClockRead();
+    if (!publication.ok || publication.ns < now.ns) {
+      RevokeLocked(1);
+      return record(ControlResult::CONTROL_CLOCK_REVERSED, 0);
+    }
+#endif
     protocol_.sync.ownerPulseNs.store(now.ns);
     poseObserved_ = now.ns;
     if (poseSequence_ == UINT64_MAX) {
       RevokeLocked(4);
+#ifdef GRS_G9_BOOT_SOURCE
+      return record(ControlResult::QUOTA_OVERFLOW, 0);
+#else
       return ControlResult::QUOTA_OVERFLOW;
+#endif
     }
     ++poseSequence_;
+#ifdef GRS_G9_BOOT_SOURCE
+    return record(result, publication.ns);
+#endif
   } else if (result != ControlResult::STALE_REJECTED &&
              result != ControlResult::SEQUENCE_REJECTED)
     RevokeLocked(uint32_t(result));
+#ifdef GRS_G9_BOOT_SOURCE
+  return record(result, 0);
+#else
   return result;
+#endif
 }
 ControlResult Controller::Target(const ControlIdentity &id, int32_t angle,
                                  CheckedTime now) {
@@ -286,8 +394,12 @@ ControlResult Controller::Target(const ControlIdentity &id, int32_t angle,
   int32_t old = clock_.target;
   auto result = clock_.RegisterTargetLocked(id, angle);
   if (result == ControlResult::OK) {
+#ifdef GRS_G9_BOOT_SOURCE
+    EdgeLocked("TARGET", CheckedClockRead().ns, now.ns, uint32_t(angle));
+#else
     protocol_.sync.ownerPulseNs.store(now.ns);
     poseObserved_ = now.ns;
+#endif
     if (old != angle) {
       protocol_.payload.control[RxProtocol::STROKE] = 0;
       protocol_.payload.metadata[3][2] = 0;
@@ -398,6 +510,7 @@ Result Controller::OfferSource(Input128 body, uint64_t intent,
   sourceReport_.intent = intent;
   sourceReport_.command = command;
   sourcePhase_ = "QUEUED";
+  EdgeLocked("QUEUE", CheckedClockRead().ns, command, receipt.ns);
 #endif
   return Result::OK;
 }
@@ -528,8 +641,10 @@ bool Controller::FreezeLocked(uint64_t now, uint64_t frame, uint64_t geometry,
 }
 Result Controller::BeginRoot(CheckedTime now, uint64_t frame,
                              uint64_t geometry) {
+#ifndef GRS_G9_BOOT_SOURCE
   if (!now.ok)
     return Result::INPUT_CLOCK_UNVERIFIED;
+#endif
   if (!PollSceneFence())
     return Result::GL_FAILED;
   Input128 frozen{};
@@ -541,28 +656,68 @@ Result Controller::BeginRoot(CheckedTime now, uint64_t frame,
         transport_.Busy() || lease_ || sceneFence_ || coldPin_ ||
         !run_.workspaceRetired)
       return Result::WOULD_BLOCK;
-    ExpireLocked(now.ns);
 #ifdef GRS_G9_BOOT_SOURCE
+    if (nonce_ || run_.active)
+      return Result::WOULD_BLOCK;
+    const uint64_t headReceipt = c[RxProtocol::SIZE] ?
+        Pair(protocol_.payload.inputs[c[RxProtocol::HEAD]].data(), 43) : 0;
+    auto sample = SampleSourceLocked(nullptr, headReceipt);
+    now = {sample.times.clockOk, sample.times.now, sample.rawErrno};
+    if (!now.ok || (headReceipt && now.ns < headReceipt)) {
+      sample.reason = now.ok ? SourceReject::CommandFromFuture : SourceReject::Clock;
+      RecordControlGuardLocked(sample, "PRE_CLAIM");
+      RevokeLocked(1);
+      sourcePhase_ = "CLAIM_CLOCK_REJECTED";
+      return Result::INPUT_CLOCK_UNVERIFIED;
+    }
+    if (headReceipt && now.ns - headReceipt > kSourceRootLimitNs) {
+      sample.reason = SourceReject::CommandExpired;
+      RecordControlGuardLocked(sample, "PRE_CLAIM");
+      ExpireLocked(now.ns);
+      RevokeLocked(32);
+      sourcePhase_ = "SOURCE_COMMAND_EXPIRED";
+      return Result::STALE;
+    }
     const bool source = c[RxProtocol::SIZE] &&
         protocol_.payload.inputs[c[RxProtocol::HEAD]][40] == 1 &&
         clock_.intents.Get(c[RxProtocol::HEAD]).sequence != 0;
     const auto gate = SourceClaimGate(!nonce_ && !run_.active, clock_.baseline,
         clock_.Fresh(now.ns), clock_.target == 0, source, clock_.pending);
     if (gate == SourceClaim::QuotaAlreadyPending) {
+      sample.reason = SourceReject::Pending;
+      RecordControlGuardLocked(sample, "PRE_CLAIM");
       sourceReport_.pending = clock_.pending;
       RevokeLocked(44);
       sourcePhase_ = "QUOTA_ALREADY_PENDING";
       return Result::STALE;
     }
-    if (gate != SourceClaim::Claim)
+    if (gate != SourceClaim::Claim) {
+      if (clock_.baseline && source && sample.reason != SourceReject::None) {
+        RecordControlGuardLocked(sample, "PRE_CLAIM");
+        RevokeLocked(uint32_t(SourceGuardResult(sample.reason)));
+        return SourceGuardResult(sample.reason);
+      }
       return Result::WOULD_BLOCK;
+    }
+    RecordControlGuardLocked(sample, "PRE_CLAIM");
     sourceReport_.queueBefore = c[RxProtocol::SIZE];
     sourceReport_.pending = clock_.pending;
+#else
+    ExpireLocked(now.ns);
 #endif
     if (!FreezeLocked(now.ns, frame, geometry, frozen, p))
       return Result::WOULD_BLOCK;
+#ifdef GRS_G9_BOOT_SOURCE
+    EdgeLocked("CLAIM", p.rootBeginNs, p.nonce, p.plan);
+    EdgeLocked("FREEZE", Pair(frozen.data(), 20), Pair(frozen.data(), 41), Pair(frozen.data(), 43));
+#endif
   }
   auto result = transport_.Begin(p, frozen, Check, this);
+#ifdef GRS_G9_BOOT_SOURCE
+  transport_.Edge("BEGIN_RESULT", uint32_t(result));
+  if (result != Result::OK)
+    transport_.Edge("BEGIN_API_ERRORS", transport_.source_.gl, transport_.source_.egl);
+#endif
   if (result != Result::OK) {
     std::lock_guard<std::mutex> lock(protocol_.sync.protocol);
     RevokeLocked(uint32_t(result));
@@ -580,9 +735,16 @@ Result Controller::BeginRoot(CheckedTime now, uint64_t frame,
   return result;
 }
 Result Controller::PumpBounded(CheckedTime time) {
+#ifndef GRS_G9_BOOT_SOURCE
   if (!time.ok)
     return Result::INPUT_CLOCK_UNVERIFIED;
+#endif
   auto result = transport_.Pump();
+#ifdef GRS_G9_BOOT_SOURCE
+  transport_.Edge("PUMP_EXIT", uint32_t(result), transport_.source_.gl);
+  if (result != Result::OK && result != Result::IN_PROGRESS)
+    transport_.Edge("PUMP_API_ERRORS", transport_.source_.gl, transport_.source_.egl);
+#endif
   if (result == Result::IN_PROGRESS)
     return result;
   if (result != Result::OK) {
@@ -594,6 +756,7 @@ Result Controller::PumpBounded(CheckedTime time) {
     return result;
   }
   auto accepted = transport_.AcceptedProof();
+#ifndef GRS_G9_BOOT_SOURCE
   auto blocked = transport_.BlockedProof();
   auto now = CheckedClockRead();
   if (!now.ok)
@@ -617,21 +780,43 @@ Result Controller::PumpBounded(CheckedTime time) {
     protocol_.Journal(4, 4, now.ns, 0, active_.nonce);
     return Result::OK;
   }
+#endif
   if (!accepted) {
     std::lock_guard<std::mutex> lock(protocol_.sync.protocol);
+#ifdef GRS_G9_BOOT_SOURCE
+    if (transport_.firstSourceReject_.reason == SourceReject::None) {
+      auto sample = SampleSourceLocked(&active_, Pair(protocol_.payload.inputs[16].data(), 43));
+      if (sample.reason == SourceReject::None)
+        sample.reason = SourceReject::Typed;
+      RecordControlGuardLocked(sample, "TYPED_PROOF");
+    }
+#endif
     RevokeLocked(34);
 #ifdef GRS_G9_BOOT_SOURCE
-    PublishSourceLocked("TYPED_REJECTED", 34);
-#endif
+    const auto denied = transport_.sourceDenied_;
+    PublishSourceLocked(denied == Result::OK ? "TYPED_REJECTED" : "PROOF_GUARD_REJECTED",
+                        denied == Result::OK ? 34 : uint32_t(denied));
+    return denied == Result::OK ? Result::INVALID : denied;
+#else
     return Result::INVALID;
+#endif
   }
   std::lock_guard<std::mutex> lock(protocol_.sync.protocol);
+#ifdef GRS_G9_BOOT_SOURCE
+  auto snapshot = SampleSourceLocked(&active_, Pair(protocol_.payload.inputs[16].data(), 43));
+  RecordControlGuardLocked(snapshot, "COMMIT_PREFLIGHT");
+  const auto now = CheckedTime{snapshot.times.clockOk, snapshot.times.now, snapshot.rawErrno};
+  if (snapshot.reason != SourceReject::None) {
+#else
   if (!RecheckLocked(active_, now.ns)) {
+#endif
     RevokeLocked(36);
 #ifdef GRS_G9_BOOT_SOURCE
     PublishSourceLocked("PERMIT_REVOKED", 36);
-#endif
+    return SourceGuardResult(snapshot.reason);
+#else
     return Result::STALE;
+#endif
   }
 #ifdef GRS_G9_BOOT_SOURCE
   const auto &ctl = protocol_.payload.control;
@@ -643,6 +828,8 @@ Result Controller::PumpBounded(CheckedTime time) {
       !ctl[RxProtocol::CLAIMED] || ctl[RxProtocol::CLAIM_SLOT] != slot ||
       !intent.sequence || intent.generation != clock_.sourceControlGeneration ||
       !SameBody(protocol_.payload.inputs[slot], protocol_.payload.inputs[16])) {
+    snapshot.reason = SourceReject::Queue;
+    RecordControlGuardLocked(snapshot, "COMMIT_PREFLIGHT");
     RevokeLocked(38);
     PublishSourceLocked("FROZEN_SOURCE_MISMATCH", 38);
     return Result::STALE;
@@ -673,12 +860,19 @@ Result Controller::PumpBounded(CheckedTime time) {
       }
     }
   }
+#ifdef GRS_G9_BOOT_SOURCE
+  auto commitGuard = SampleSourceLocked(&active_, Pair(protocol_.payload.inputs[16].data(), 43));
+  if (!transport_.CommitSourceLocked(*accepted, commitGuard)) {
+#else
   if (!transport_.CommitAccepted(*accepted)) {
+#endif
     RevokeLocked(35);
 #ifdef GRS_G9_BOOT_SOURCE
     PublishSourceLocked("COMMIT_REJECTED", 35);
-#endif
+    return transport_.Denied();
+#else
     return Result::STALE;
+#endif
   }
   clock_ = nextClock;
   run_ = nextRun;
@@ -731,13 +925,19 @@ Result Controller::PumpBounded(CheckedTime time) {
   sourceReport_.retiredPlan = !run_.active && run_.workspaceRetired && !clock_.grant.id;
   sourceReport_.committed = true;
   sourceReport_.generation = generation_;
+  EdgeLocked("COMMIT", sourceReport_.commitNs, commit_, quanta_);
 #endif
   return Result::OK;
 }
 Result Controller::Stop() {
+#ifndef GRS_G9_BOOT_SOURCE
   protocol_.sync.ownerActive.store(false);
+#endif
   protocol_.sync.CancelStroke();
   std::lock_guard<std::mutex> lock(protocol_.sync.protocol);
+#ifdef GRS_G9_BOOT_SOURCE
+  EdgeLocked("STOP", CheckedClockRead().ns);
+#endif
   RevokeLocked(39);
   return Result::OK;
 }
@@ -753,19 +953,31 @@ void Controller::PrepareSourceCacheIfSettled(CheckedTime time, bool presented) {
 }
 #endif
 bool Controller::Drain() {
+#ifdef GRS_G9_BOOT_SOURCE
+  const bool wasBusy = transport_.Busy();
+  const bool retired = !wasBusy || transport_.RetireRejected(active_);
+  if (!retired && transport_.Busy())
+    return false;
+#else
   if (transport_.Busy() && !transport_.RetireRejected(active_))
     return false;
+#endif
   std::lock_guard<std::mutex> lock(protocol_.sync.protocol);
 #ifdef GRS_G9_BOOT_SOURCE
-  if (nonce_ && sourceReport_.fault && !sourceReport_.committed &&
-      protocol_.payload.control[RxProtocol::ROOT_LIVE])
+  if (wasBusy && nonce_ && sourceReport_.fault && !sourceReport_.committed) {
     PublishSourceLocked(sourcePhase_);
+    EdgeLocked(retired ? "RETIRED" : "RETIRE_GL_FAULT", CheckedClockRead().ns, active_.nonce);
+  }
 #endif
   protocol_.payload.control[RxProtocol::ROOT_LIVE] =
       protocol_.payload.control[RxProtocol::CLAIMED] = 0;
   run_.workspaceRetired = true;
   protocol_.sync.ownerRootLive.store(false);
+#ifdef GRS_G9_BOOT_SOURCE
+  return retired;
+#else
   return true;
+#endif
 }
 void Controller::Release(bool current) {
   if (current && sceneFence_)
@@ -831,7 +1043,95 @@ void Controller::PublishSourceLocked(const char *phase, uint32_t fault) {
   sourceReport_.queueAfter = protocol_.payload.control[RxProtocol::SIZE];
   sourceReport_.activeRemaining = clock_.activeRemaining;
   sourceReport_.fault = before.fault ? before.fault : fault;
+  sourceTransportEdges_ = transport_.sourceEdges_;
+  if (firstSourceReject_.reason == SourceReject::None)
+    firstSourceReject_ = transport_.firstSourceReject_;
+  if (transport_.lastSourcePass_.times.now >= lastSourcePass_.times.now)
+    lastSourcePass_ = transport_.lastSourcePass_;
   sourcePhase_ = phase;
+}
+
+std::string Controller::SourceDiagnostics() const {
+  SourceGuard first, recent;
+  SourceLog<SourceEdge, 160> control;
+  SourceLog<SourceEdge, 384> transport;
+  SourceLog<SourcePulse, 96> pulses;
+  {
+    std::lock_guard<std::mutex> lock(protocol_.sync.protocol);
+    first = firstSourceReject_;
+    recent = lastSourcePass_;
+    control = sourceControlEdges_;
+    transport = sourceTransportEdges_;
+    pulses = sourcePulses_;
+  }
+  std::ostringstream out;
+  auto scope = [&](const ControlIdentity &id) {
+    out << '[';
+    for (size_t i = 0; i < 9; ++i) {
+      if (i) out << ',';
+      out << '"' << ScopeWord(id, i) << '"';
+    }
+    out << ']';
+  };
+  auto guard = [&](const SourceGuard &s) {
+    if (!*s.phase) {
+      out << "null";
+      return;
+    }
+    out << "{\"phase\":\"" << s.phase << "\",\"reason\":\"" << SourceRejectName(s.reason)
+        << "\",\"code\":" << uint32_t(SourceGuardResult(s.reason))
+        << ",\"nowNs\":\"" << s.times.now << "\",\"pulseNs\":\"" << s.times.pulse
+        << "\",\"receiptNs\":\"" << s.times.receipt << "\",\"beginNs\":\"" << s.times.begin
+        << "\",\"deadlineNs\":\"" << s.times.deadline << "\",\"nonce\":\"" << s.nonce
+        << "\",\"plan\":\"" << s.plan << "\",\"pulseSeq\":\"" << s.sequence
+        << "\",\"clockGeneration\":\"" << s.clock << "\",\"lifecycleGeneration\":\"" << s.lifecycle
+        << "\",\"actualClockGeneration\":\"" << s.currentClock
+        << "\",\"actualLifecycleGeneration\":\"" << s.currentLifecycle
+        << "\",\"actualNonce\":\"" << s.currentNonce << "\",\"actualPlan\":\"" << s.currentPlan
+        << "\",\"clockOk\":" << s.times.clockOk
+        << ",\"hasPagePulse\":" << s.times.hasPulse << ",\"active\":" << s.active
+        << ",\"rootLive\":" << s.rootLive << ",\"rawClockErrno\":" << s.rawErrno
+        << ",\"pending\":" << s.pending << ",\"cursor\":" << s.cursor
+        << ",\"dispatches\":" << s.dispatches << ",\"expectedScope\":";
+    scope(s.expected);
+    out << ",\"actualScope\":";
+    scope(s.actual);
+    out << '}';
+  };
+  auto edge = [&](const SourceEdge &e) {
+    out << "[\"" << e.stage << "\",\"" << e.ns << "\",\"" << e.a << "\",\"" << e.b
+        << "\"," << e.cursor << ',' << e.dispatches << ']';
+  };
+  auto pulse = [&](const SourcePulse &p) {
+    out << "{\"scope\":";
+    scope(p.scope);
+    out << ",\"sequence\":\"" << p.sequence << "\",\"uiNs\":\"" << p.ui
+        << "\",\"receiptNs\":\"" << p.receipt << "\",\"publishNs\":\"" << p.published
+        << "\",\"nativeGapNs\":\"" << p.nativeGap << "\",\"uiGapNs\":\"" << p.uiGap
+        << "\",\"result\":" << p.result << '}';
+  };
+  auto log = [&](const auto &items, const auto &write) {
+    out << "{\"dropped\":" << items.dropped << ",\"rows\":[";
+    for (size_t i = 0; i < items.size; ++i) {
+      if (i) out << ',';
+      write(items.rows[i]);
+    }
+    out << "],\"last\":";
+    if (items.size) write(items.last);
+    else out << "null";
+    out << '}';
+  };
+  out << "{\"schema\":\"RX_SOURCE_TRACE_V1\",\"firstReject\":";
+  guard(first);
+  out << ",\"recentPass\":";
+  guard(recent);
+  out << ",\"control\":";
+  log(control, edge);
+  out << ",\"transport\":";
+  log(transport, edge);
+  out << ",\"pulses\":";
+  log(pulses, pulse);
+  return out.str() + '}';
 }
 
 void Controller::WriteSourceStatus(std::ostringstream &out) const {

@@ -23,12 +23,23 @@ class Controller {
   LoadedIdentity loaded_{};
 #ifdef GRS_G9_BOOT_SOURCE
   SourceReceipt sourceReport_{};
+  SourceGuard firstSourceReject_{}, lastSourcePass_{};
+  SourceLog<SourceEdge, 160> sourceControlEdges_{};
+  SourceLog<SourceEdge, 384> sourceTransportEdges_{};
+  SourceLog<SourcePulse, 96> sourcePulses_{};
   const char *sourcePhase_ = "OFF";
   void PublishSourceLocked(const char *phase, uint32_t fault = 0);
   void WriteSourceStatus(std::ostringstream &) const;
+  SourceGuard SampleSourceLocked(const Permit *, uint64_t receipt) const;
+  void RecordControlGuardLocked(SourceGuard, const char *);
+  void EdgeLocked(const char *, uint64_t, uint64_t a = 0, uint64_t b = 0);
 #endif
   bool RecheckLocked(const Permit &, uint64_t) const;
+#ifdef GRS_G9_BOOT_SOURCE
+  static SourceGuard Check(void *, const Permit &);
+#else
   static bool Check(void *, const Permit &, uint64_t);
+#endif
   void RevokeLocked(uint32_t);
   void DropHeadLocked(uint64_t, uint32_t);
   void ExpireLocked(uint64_t);
@@ -52,6 +63,8 @@ public:
   Result PumpBounded(CheckedTime);
 #ifdef GRS_G9_BOOT_SOURCE
   void PrepareSourceCacheIfSettled(CheckedTime, bool presented);
+  void SourceOwnerEdge(const char *, uint64_t, uint64_t a = 0, uint64_t b = 0);
+  std::string SourceDiagnostics() const;
 #endif
   Result Stop();
   bool Drain();

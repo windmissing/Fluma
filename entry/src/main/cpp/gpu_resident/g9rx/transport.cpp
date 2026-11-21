@@ -93,19 +93,53 @@ bool Transport::ReadNow(CheckedTime &value) const {
   }
   return true;
 }
-bool Transport::Allowed() const {
+#ifdef GRS_G9_BOOT_SOURCE
+void Transport::Edge(const char *stage, uint64_t a, uint64_t b) {
+  sourceEdges_.Add({stage, CheckedClockRead().ns, a, b, next_, evidence_.dispatches});
+}
+void Transport::RecordSourceGuard(SourceGuard sample, const char *phase) const {
+  sample.phase = phase;
+  sample.cursor = next_;
+  sample.dispatches = evidence_.dispatches;
+  sourceDenied_ = SourceGuardResult(sample.reason);
+  if (sample.reason == SourceReject::None)
+    lastSourcePass_ = sample;
+  else if (firstSourceReject_.reason == SourceReject::None)
+    firstSourceReject_ = sample;
+}
+#endif
+bool Transport::Allowed(const char *phase) const {
+#ifdef GRS_G9_BOOT_SOURCE
+  SourceGuard sample;
+  if (!check_) {
+    sample.reason = SourceReject::NoPermit;
+  } else {
+    const bool current = Current(); // EGL calls stay outside the protocol lock.
+    sample = check_(checkUser_, permit_);
+    if (!current)
+      sample.reason = SourceReject::Context;
+  }
+  RecordSourceGuard(sample, phase);
+  return sample.reason == SourceReject::None;
+#else
+  (void)phase;
   CheckedTime now;
   return Current() && ReadNow(now) && now.ns >= rootBeginNs_ &&
          now.ns <= permit_.deadline && check_ &&
          check_(checkUser_, permit_, now.ns);
+#endif
 }
 Result Transport::Denied() const {
+#ifdef GRS_G9_BOOT_SOURCE
+  return sourceDenied_ == Result::OK ? Result::STALE : sourceDenied_;
+#else
   if (!Current())
     return Result::CONTEXT_LOST;
   CheckedTime now;
   if (!ReadNow(now))
     return Result::INPUT_CLOCK_UNVERIFIED;
   return now.ns > permit_.deadline ? Result::DEADLINE : Result::STALE;
+#endif
 }
 
 void Transport::U(const char *n, uint32_t v) {
@@ -244,7 +278,12 @@ Result Transport::Create(const Config &config, const ControlIdentity &id,
     return Result::UNSUPPORTED;
 #ifdef GRS_G9_BOOT_SOURCE
   source_ = {};
+  firstSourceReject_ = {};
+  lastSourcePass_ = {};
+  sourceDenied_ = Result::OK;
+  sourceEdges_ = {};
   sourceCacheAttempted_ = false;
+  retirementFenceOwn_ = false;
   source_.ownerTid = uint64_t(syscall(SYS_gettid));
   source_.eglContext = reinterpret_cast<uintptr_t>(context_);
   static const char mappedBootAnchor = 0;
@@ -473,19 +512,23 @@ Result Transport::Create(const Config &config, const ControlIdentity &id,
 }
 bool Transport::Copy(GLuint from, size_t fromWord, GLuint to, size_t toWord,
                      size_t words) {
-  if (!Allowed() || from == to || fromWord > SIZE_MAX / 4 ||
+  if (!Allowed("PRE_COPY") || from == to || fromWord > SIZE_MAX / 4 ||
       toWord > SIZE_MAX / 4 || words > SIZE_MAX / 4)
     return false;
   glBindBuffer(GL_COPY_READ_BUFFER, from);
   glBindBuffer(GL_COPY_WRITE_BUFFER, to);
+#ifdef GRS_G9_BOOT_SOURCE
+  Edge("COPY_ENTER", from, to);
+#endif
   glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
                       GLintptr(fromWord * 4), GLintptr(toWord * 4),
                       GLsizeiptr(words * 4));
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
 #ifdef GRS_G9_BOOT_SOURCE
   ++source_.copies;
+  Edge("COPY_EXIT", from, to);
 #endif
-  return Good() && Allowed();
+  return Good() && Allowed("POST_COPY");
 }
 void Transport::Common(const Input128 &input,
                        const std::array<uint32_t, 8> &layout,
@@ -555,11 +598,13 @@ Result Transport::Begin(const Permit &p, const Input128 &input, Check check,
   }
   qualifiedClockGeneration_ = p.clockGeneration;
   rootBeginNs_ = p.rootBeginNs;
+#ifndef GRS_G9_BOOT_SOURCE
   CheckedTime begin;
   if (!ReadNow(begin))
     return Result::INPUT_CLOCK_UNVERIFIED;
   if (begin.ns < rootBeginNs_ || begin.ns > p.deadline)
     return Result::DEADLINE;
+#endif
   permit_ = p;
 #ifdef GRS_G9_BOOT_SOURCE
   source_.permit = p;
@@ -567,7 +612,10 @@ Result Transport::Begin(const Permit &p, const Input128 &input, Check check,
 #endif
   check_ = check;
   checkUser_ = user;
-  if (!Allowed())
+#ifdef GRS_G9_BOOT_SOURCE
+  Edge("BEGIN_ENTER");
+#endif
+  if (!Allowed("BEGIN_GUARD"))
     return Denied();
   std::array<uint32_t, 128> config{};
   config[0] = config_.muStart;
@@ -590,6 +638,9 @@ Result Transport::Begin(const Permit &p, const Input128 &input, Check check,
   lastInput_ = input;
   lastConfig_ = config;
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffers_[5]);
+#ifdef GRS_G9_BOOT_SOURCE
+  Edge("UPLOAD_ENTER", buffers_[5]);
+#endif
   glBufferSubData(GL_SHADER_STORAGE_BUFFER, GLintptr(profile_->work[5].begin),
                   512, input.data());
   glBufferSubData(GL_SHADER_STORAGE_BUFFER, GLintptr(profile_->work[9].begin),
@@ -597,6 +648,7 @@ Result Transport::Begin(const Permit &p, const Input128 &input, Check check,
   glUseProgram(program_.id);
   Common(input, p.layoutSha, p.shaderSha);
 #ifdef GRS_G9_BOOT_SOURCE
+  Edge("UPLOAD_EXIT", buffers_[5], program_.id);
   GLint current = 0;
   glGetIntegerv(GL_CURRENT_PROGRAM, &current);
   source_.currentProgram = current;
@@ -610,6 +662,9 @@ Result Transport::Begin(const Permit &p, const Input128 &input, Check check,
   next_ = 0;
   busy_ = true;
   mapped_ = false;
+#ifdef GRS_G9_BOOT_SOURCE
+  Edge("BEGIN_EXIT", uint32_t(Result::OK));
+#endif
   return Result::OK;
 }
 void Transport::Bind(const Pass &pass) {
@@ -657,7 +712,7 @@ void Transport::Bind(const Pass &pass) {
 #endif
 }
 bool Transport::Dispatch(const Pass &pass, uint32_t index) {
-  if (!Allowed())
+  if (!Allowed("DISPATCH_ENTRY"))
     return false;
   // BASE is frozen once; every trial starts from this exact complete copy.
   if (permit_.kind == 1 && index == 0 &&
@@ -675,10 +730,17 @@ bool Transport::Dispatch(const Pass &pass, uint32_t index) {
   U("uJslot", pass.j);
   U("uMicro", uint32_t(pass.micro));
   U("uPass", index);
-  if (!Allowed())
+  if (!Allowed("PRE_DISPATCH"))
     return false;
+#ifdef GRS_G9_BOOT_SOURCE
+  Edge("DISPATCH_ENTER", uint32_t(pass.op), program_.id);
+#endif
   glDispatchCompute(1, 1, 1);
   ++evidence_.dispatches;
+#ifdef GRS_G9_BOOT_SOURCE
+  Edge("DISPATCH_EXIT", uint32_t(pass.op), program_.id);
+  Edge("BARRIER_ENTER");
+#endif
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
   ++evidence_.barriers;
 #ifdef GRS_G9_BOOT_SOURCE
@@ -689,6 +751,7 @@ bool Transport::Dispatch(const Pass &pass, uint32_t index) {
   entry.micro = uint32_t(pass.micro);
   source_.dispatches = evidence_.dispatches;
   source_.barriers = evidence_.barriers;
+  Edge("BARRIER_EXIT", source_.barriers);
 #endif
   if (!Good())
     return false;
@@ -711,12 +774,15 @@ bool Transport::Dispatch(const Pass &pass, uint32_t index) {
               profile_->arenaBytes / 4))
       return false;
   }
-  return Allowed();
+  return Allowed("POST_DISPATCH");
 }
 Result Transport::Pump() {
   if (!busy_)
     return Result::INVALID;
-  if (!Allowed())
+#ifdef GRS_G9_BOOT_SOURCE
+  Edge("PUMP_ENTER");
+#endif
+  if (!Allowed("PUMP_ENTRY"))
     return Denied();
   if (mapped_)
     return Result::OK;
@@ -734,34 +800,57 @@ Result Transport::Pump() {
         break;
       const auto &pass =
           permit_.kind == 1 ? kSourcePasses[next_] : kQuantumPasses[next_];
-      if (!Dispatch(pass, next_))
+      if (!Dispatch(pass, next_)) {
+#ifdef GRS_G9_BOOT_SOURCE
+        return sourceDenied_ != Result::OK ? Denied() : Result::GL_FAILED;
+#else
         return !Allowed() ? Denied() : Result::GL_FAILED;
+#endif
+      }
       ++next_;
       ++submitted;
     }
-    if (!Allowed())
+    if (!Allowed("PRE_FLUSH"))
       return Denied();
+#ifdef GRS_G9_BOOT_SOURCE
+    Edge("FLUSH_ENTER");
+#endif
     glFlush();
+#ifdef GRS_G9_BOOT_SOURCE
+    Edge("FLUSH_EXIT");
+#endif
     if (!Good())
       return Result::GL_FAILED;
     if (next_ != count)
       return Result::IN_PROGRESS;
-    if (!Allowed())
+    if (!Allowed("PRE_FENCE_CREATE"))
       return Denied();
+#ifdef GRS_G9_BOOT_SOURCE
+    Edge("EXEC_FENCE_CREATE_ENTER");
+#endif
     fence_ = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 #ifdef GRS_G9_BOOT_SOURCE
     source_.fenceCreated = fence_ != nullptr;
+    Edge("EXEC_FENCE_CREATE_EXIT", reinterpret_cast<uintptr_t>(fence_));
+    Edge("FENCE_FLUSH_ENTER");
 #endif
     glFlush();
+#ifdef GRS_G9_BOOT_SOURCE
+    Edge("FENCE_FLUSH_EXIT");
+#endif
     if (!fence_ || !Good())
       return Result::GL_FAILED;
   }
-  if (!Allowed())
+  if (!Allowed("PRE_FENCE_WAIT"))
     return Denied();
+#ifdef GRS_G9_BOOT_SOURCE
+  Edge("EXEC_FENCE_WAIT_ENTER", reinterpret_cast<uintptr_t>(fence_));
+#endif
   const auto result = glClientWaitSync(fence_, 0, 0);
 #ifdef GRS_G9_BOOT_SOURCE
   source_.rawWait = result;
   ++source_.fencePolls;
+  Edge("EXEC_FENCE_WAIT_EXIT", reinterpret_cast<uintptr_t>(fence_), result);
   if (result == GL_WAIT_FAILED) {
     Good();
     return Result::GL_FAILED;
@@ -783,18 +872,20 @@ Result Transport::Pump() {
 #ifdef GRS_G9_BOOT_SOURCE
   source_.fenceNs = fenceTime.ns;
 #endif
-  if (!Allowed())
+  if (!Allowed("PRE_MAP"))
     return Denied();
   glBindBuffer(GL_COPY_READ_BUFFER, buffers_[5]);
   const auto offset = profile_->work[8].begin;
 #ifdef GRS_G9_BOOT_SOURCE
   source_.work = buffers_[5];
   source_.workOffset = offset;
+  Edge("MAP_ENTER", buffers_[5], offset);
 #endif
   auto *mapped = glMapBufferRange(GL_COPY_READ_BUFFER, GLintptr(offset), 1024,
                                   GL_MAP_READ_BIT);
 #ifdef GRS_G9_BOOT_SOURCE
   source_.mapReturned = mapped != nullptr;
+  Edge("MAP_EXIT", mapped != nullptr, 1024);
 #endif
   if (!mapped) {
 #ifdef GRS_G9_BOOT_SOURCE
@@ -803,9 +894,13 @@ Result Transport::Pump() {
     return Result::GL_FAILED;
   }
   std::memcpy(tail_.data(), mapped, 1024);
+#ifdef GRS_G9_BOOT_SOURCE
+  Edge("UNMAP_ENTER", buffers_[5]);
+#endif
   const bool unmapped = glUnmapBuffer(GL_COPY_READ_BUFFER) == GL_TRUE;
 #ifdef GRS_G9_BOOT_SOURCE
   source_.unmapped = unmapped;
+  Edge("UNMAP_EXIT", unmapped);
   if (!unmapped) {
     Good();
     return Result::GL_FAILED;
@@ -821,10 +916,16 @@ Result Transport::Pump() {
 #ifdef GRS_G9_BOOT_SOURCE
   source_.mapped = true;
   source_.tail = tail_;
+  Edge("READBACK_COMPLETE", source_.gl, source_.egl);
 #endif
   return Result::OK;
 }
 bool Transport::CommitAccepted(const ValidatedRecord &proof) {
+#ifdef GRS_G9_BOOT_SOURCE
+  // This variant commits only via the Controller's already-locked entry.
+  (void)proof;
+  return false;
+#else
   // The proof was created on this owner's still-current mapped flight; no GL
   // calls here, so the controller can atomically promote the FIFO and banks.
   CheckedTime commitTime;
@@ -836,21 +937,34 @@ bool Transport::CommitAccepted(const ValidatedRecord &proof) {
       thread_ != std::this_thread::get_id() || !(p == permit_) || w != tail_ ||
       !check_ || !check_(checkUser_, p, commitTime.ns))
     return false;
-#ifdef GRS_G9_BOOT_SOURCE
-  if (!Current() || p.kind != 1 || program_.id != source_.currentProgram ||
-      p.shaderSha != ShaderHash())
-    return false;
-#endif
   if (w[6] != 2)
     std::swap(buffers_[current_], buffers_[p.candidateBank]);
   commitObservedNs_ = commitTime.ns;
-#ifdef GRS_G9_BOOT_SOURCE
-  source_.commitNs = commitTime.ns;
-  source_.committedObject = buffers_[current_];
+  busy_ = mapped_ = false;
+  return true;
 #endif
+}
+#ifdef GRS_G9_BOOT_SOURCE
+bool Transport::CommitSourceLocked(const ValidatedRecord &proof, const SourceGuard &snapshot) {
+  auto guard = snapshot;
+  const auto &p = proof.Permission();
+  const auto &w = proof.Words();
+  if (guard.reason == SourceReject::None &&
+      (!proof.ProducedBy(this) || !busy_ || !mapped_ || thread_ != std::this_thread::get_id() ||
+       !(p == permit_) || w != tail_ || p.kind != 1 || program_.id != source_.currentProgram ||
+       p.shaderSha != ShaderHash()))
+    guard.reason = SourceReject::Commit;
+  RecordSourceGuard(guard, "COMMIT_LOCKED");
+  if (guard.reason != SourceReject::None)
+    return false;
+  if (w[6] != 2)
+    std::swap(buffers_[current_], buffers_[p.candidateBank]);
+  commitObservedNs_ = source_.commitNs = guard.times.now;
+  source_.committedObject = buffers_[current_];
   busy_ = mapped_ = false;
   return true;
 }
+#endif
 bool Transport::Commit(const Permit &p, const Completion256 &w) {
   auto proof = AcceptedProof();
   return proof && p == proof->Permission() && w == proof->Words() &&
@@ -875,32 +989,56 @@ bool Transport::RetireRejected(const Permit &p) {
     return false;
   if (!mapped_) {
     if (!fence_) {
+#ifdef GRS_G9_BOOT_SOURCE
+      Edge("RETIRE_FENCE_CREATE_ENTER");
+#endif
       fence_ = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
       glFlush();
+#ifdef GRS_G9_BOOT_SOURCE
+      retirementFenceOwn_ = fence_ != nullptr;
+      Edge("RETIRE_FENCE_CREATE_EXIT", reinterpret_cast<uintptr_t>(fence_));
+#endif
       return false;
     }
+#ifdef GRS_G9_BOOT_SOURCE
+    Edge("RETIRE_FENCE_WAIT_ENTER", reinterpret_cast<uintptr_t>(fence_), retirementFenceOwn_ ? 1 : 0);
+#endif
     const auto result = glClientWaitSync(fence_, 0, 0);
+#ifdef GRS_G9_BOOT_SOURCE
+    Edge("RETIRE_FENCE_WAIT_EXIT", reinterpret_cast<uintptr_t>(fence_), result);
+#endif
     if (result != GL_ALREADY_SIGNALED && result != GL_CONDITION_SATISFIED)
       return false;
     glDeleteSync(fence_);
     fence_ = nullptr;
   }
   busy_ = mapped_ = false;
+#ifdef GRS_G9_BOOT_SOURCE
+  Edge("RETIRE_COMPLETE");
+#endif
   return Good();
 }
 std::optional<ValidatedRecord> Transport::AcceptedProof() const {
+#ifdef GRS_G9_BOOT_SOURCE
+  if (!busy_ || !mapped_ || !Allowed("PROOF_GUARD") || evidence_.fenceNs < rootBeginNs_)
+    return {};
+#else
   CheckedTime now;
   if (!ReadNow(now))
     return {};
   if (!busy_ || !mapped_ || !Current() || !check_ ||
       !check_(checkUser_, permit_, now.ns) || evidence_.fenceNs < rootBeginNs_)
     return {};
+#endif
   return CompletionGate::Accepted(
       FrozenExpectedView(*profile_, permit_, lastInput_, config_.seedSha,
                          ShaderHash(), this),
       tail_, evidence_);
 }
 std::optional<ValidatedBlockedControlRecord> Transport::BlockedProof() const {
+#ifdef GRS_G9_BOOT_SOURCE
+  return {}; // SOURCE has no typed QUANTUM-blocked outcome.
+#else
   CheckedTime now;
   if (!ReadNow(now))
     return {};
@@ -911,6 +1049,7 @@ std::optional<ValidatedBlockedControlRecord> Transport::BlockedProof() const {
                                                     lastInput_, config_.seedSha,
                                                     ShaderHash(), this),
                                  tail_, evidence_);
+#endif
 }
 bool Transport::CaptureBuffer(uint32_t *dst, size_t words, uint32_t kind,
                               uint32_t index) {

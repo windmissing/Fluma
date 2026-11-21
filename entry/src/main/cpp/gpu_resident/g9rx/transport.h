@@ -9,6 +9,7 @@
 #include <thread>
 #ifdef GRS_G9_BOOT_SOURCE
 #include "source_receipt.h"
+#include "source_timeline.h"
 #endif
 namespace grs::g9rx {
 class Transport {
@@ -35,6 +36,14 @@ class Transport {
 #ifdef GRS_G9_BOOT_SOURCE
   SourceReceipt source_{};
   bool sourceCacheAttempted_ = false;
+  bool retirementFenceOwn_ = false;
+  mutable SourceGuard firstSourceReject_{}, lastSourcePass_{};
+  mutable Result sourceDenied_ = Result::OK;
+  SourceLog<SourceEdge, 384> sourceEdges_{};
+  friend class Controller;
+  void RecordSourceGuard(SourceGuard sample, const char *phase) const;
+  void Edge(const char *, uint64_t a = 0, uint64_t b = 0);
+  bool CommitSourceLocked(const ValidatedRecord &, const SourceGuard &);
 #endif
   Input128 lastInput_{};
   std::array<uint32_t, 128> lastConfig_{};
@@ -45,13 +54,17 @@ class Transport {
            commitObservedNs_ = 0;
   mutable bool clockFailed_ = false;
   bool ready_ = false, busy_ = false, mapped_ = false;
+#ifdef GRS_G9_BOOT_SOURCE
+  using Check = SourceGuard (*)(void *, const Permit &);
+#else
   using Check = bool (*)(void *, const Permit &, uint64_t);
+#endif
   Check check_ = nullptr;
   void *checkUser_ = nullptr;
   bool ReadNow(CheckedTime &) const;
   bool Current() const;
   bool Good();
-  bool Allowed() const;
+  bool Allowed(const char *phase = "") const;
   Result Denied() const;
   void U(const char *, uint32_t);
   void I(const char *, int32_t);

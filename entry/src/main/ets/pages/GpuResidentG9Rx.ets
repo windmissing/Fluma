@@ -2,6 +2,8 @@ import native from 'libgrs_g9rx.so';
 import { GpuG9RxCold } from '../physics/GpuG9RxCold';
 import { common } from '@kit.AbilityKit';
 import { FrameCallback } from '@ohos.arkui.UIContext';
+import fs from '@ohos.file.fs';
+import util from '@ohos.util';
 interface RxConfig { words: number[]; }
 interface RxConfigureReply { state: string; ticket?: string; }
 interface RxConfigureStatus { ticket: string; phase: string; failure: string; result: number; firstEgl: number; firstGl: number; }
@@ -20,7 +22,40 @@ struct GpuResidentG9Rx {
   @State private message: string = '原生回执粒子场研究 OFF';
   @State private singleSource: boolean = false;
   private cold: GpuG9RxCold = new GpuG9RxCold();
-  private archive(): void { const context = getContext(this) as common.UIAbilityContext; this.cold.collect('ROOT', context.filesDir).then((path: string): void => { this.message = path; }).catch((error: Error): void => { this.message = error.message; }); }
+  private async archive(): Promise<void> {
+    const context = getContext(this) as common.UIAbilityContext;
+    let timing: string = '';
+    try {
+      if (this.singleSource) {
+        const status = JSON.parse(native.g9RxStatus()) as RxStatus;
+        if (status.source?.phase === 'ROOT_LIVE' || status.source?.phase === 'QUEUED') {
+          this.message = '等待 SOURCE 终态';
+          return;
+        }
+        timing = context.filesDir + '/g9rx-source-' + String(Date.now()) + '.json';
+        const bytes = new util.TextEncoder().encodeInto(native.g9RxSourceDiagnostics() + '\n');
+        const file = await fs.open(timing, fs.OpenMode.CREATE | fs.OpenMode.WRITE_ONLY | fs.OpenMode.TRUNC);
+        try {
+          let written: number = 0;
+          while (written < bytes.length) {
+            const n: number = await fs.write(file.fd, bytes.buffer.slice(written));
+            if (n <= 0) throw new Error('TRACE_SHORT_WRITE');
+            written += n;
+          }
+          await fs.fsync(file.fd);
+        } finally {
+          await fs.close(file.fd);
+        }
+        if (status.source?.committed !== true) {
+          this.message = timing;
+          return;
+        }
+      }
+      this.message = await this.cold.collect('ROOT', context.filesDir);
+    } catch (error) {
+      this.message = (timing.length > 0 ? timing + '\n' : '') + String(error);
+    }
+  }
   private frame: RxFrame | null = null;
   private session: string = '';
   private configureTicket: string = '';
