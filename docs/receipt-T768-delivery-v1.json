@@ -1,0 +1,33 @@
+{
+  "schema": "T768_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "3874d84593bdaca109f6763401bed0d2e3cd2b36",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b0182a7e4b0572f632da73f",
+    "started": {
+      "id": "6b01833de4b011b710c5b006",
+      "createdTime": "2026-11-21T11:40:45+0000"
+    },
+    "delivered": {
+      "id": "6b01846ee4b0572f632dd4db",
+      "createdTime": "2026-11-21T11:45:50+0000",
+      "title": "T768 architect 已交付。T762 原件 PID/TID 54691、start 9752360、run/context 97523765513750。根前 SOURCE 编译 82.820 s、链接 234.473 s。根内第一笔 12,767,232 B copy 85.551 ms，末批首次 flush 77.460 ms，共 163.011 ms。最后执行 poll 截止前 2,344 ns 仍 TIMEOUT；PUMP_ENTRY PASS 到 PRE_EXEC_POLL DEADLINE 相差 1,719 ns，后者未调用 wait。pulse 最大 gap 5.751 ms；执行 fence handle 1 复用为退役，截止后 81.542 ms 才观察到 signal，terminal FIFO=1/commit=0/quanta=0，无 map 或 typed。可确认 API 墙时，GPU、driver 和 owner 各自份额待补证。T736 已补 A 基线、B 有界 owner 零超时轮询、C 末批先 fence 后单 flush 的隔离对照和调度采证，保持固定 250 ms、33,333,333 ns、12 dispatch/3 copy 及同根 typed；晚信号仅退役。developer 实施编译，tester 判定，effector 同输入复测。离线复核通过，无真机。文档 docs/architecture-T768-v1.md，提交 3874d845。"
+    }
+  },
+  "statusRow": {
+    "path": "docs/后续工作清单.md",
+    "task": "T768",
+    "before": "进行中",
+    "after": "结束待验收",
+    "line": "| T768 | 【T768·目标20 DM SOURCE根内超期归因与预算修订合同】architect | architect | P5 | 结束待验收 | 6b0182a7e4b0572f632da73f |",
+    "beforeSha256": "5c8199a7197dfaca8fdd9537777126018d9b24c59cb0ac35e4fee12d83133148",
+    "afterSha256": "edb5da3841d6550cfb47739d536d971300977e55618cdde1bb5c8dd37061a2cf"
+  },
+  "evidence": {
+    "path": "docs/architecture-T768-evidence-v1.json",
+    "sha256": "c98cc101a61ff1c7b1350dbc4e3249aa43725dcc37492d4dd1d8e06ef8fd3781"
+  }
+}
