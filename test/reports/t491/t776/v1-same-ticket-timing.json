@@ -1,0 +1,35 @@
+{
+ "revision": "T776_V1_RX_SAME_TICKET_FIRST_REJECT_V1",
+ "date": "2026-11-21 21:25",
+ "package": {
+  "task": "T766-rx reused (receipt-identical 0c980f70, T763 revision, mapped 4bdd76d)",
+  "archived": "g9rx-source JSON NOT_FOUND (prior runs captured via dumpLayout+hilog only) \u2014 per contract, reused T766 signed package for one real entry"
+ },
+ "run": {
+  "entry": "single real SOURCE via research page, pid 34145, ticket 1, mapped 4bdd76d",
+  "phases": "ENQUEUED->CACHE_PRELOAD->APPLY->BOOT compile 0.2s->link 0.3s->SOURCE_BUILD 41767B ee66f5f2->SOURCE compile 84.3s->link 235.0s->REFLECT qualified->CONFIGURE_RESEARCH_EXIT result=0->APPLIED->PUMP_FAILED code=6 DEADLINE"
+ },
+ "timingOriginals": {
+  "hilog": "17 phase events with ns timestamps",
+  "phaseTimings": {
+   "bootCompile": "~0.28s",
+   "bootLink": "~0.3s",
+   "sourceCompile": "84.35s",
+   "sourceLink": "235.0s",
+   "appliedAtNs": "3279540338125",
+   "pumpFail": "clock 09:20 (minutes after APPLIED)"
+  }
+ },
+ "firstReject": {
+  "code": "6 DEADLINE",
+  "firstReject": "Pump after APPLIED",
+  "recentPass": "CONFIGURE_RESEARCH_EXIT result=0 + APPLIED result=0 immediately prior",
+  "pulseAge": "APPLIED->PUMP gap = minutes \u2014 pulse freshness long expired at pump time (vs DM 1.7us bracket)"
+ },
+ "fences": {
+  "retireChain": "8 G9BootV1 events (MAP->UNMAP seal 6559303->PREPARE->BOOT_AUDIT_OK)",
+  "rxSchema": "BOOT events lack fenceWaitRaw field (RX/DM schema difference noted)"
+ },
+ "analysis": "RX pulse age at pump = minutes vs 250ms window; DM bracket showed 1.7us crossing \u2014 SAME freshness-window root cause, RX first reject now with full phase timing chain",
+ "route": "architect: RX+DM both DEADLINE confirmed, window-relaxation/two-phase-claim decision input complete"
+}
