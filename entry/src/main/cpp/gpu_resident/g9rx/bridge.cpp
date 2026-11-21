@@ -6,6 +6,10 @@
 #include "scene.h"
 #include <ace/xcomponent/native_interface_xcomponent.h>
 #include <condition_variable>
+#ifdef GRS_G9_BOOT_SOURCE
+#include <fstream>
+#include <unistd.h>
+#endif
 #include <hilog/log.h>
 #include <napi/native_api.h>
 #include <native_window/external_window.h>
@@ -16,6 +20,21 @@ namespace grs::g9rx {
 extern "C" const uint32_t GrsG9RxAbi[16];
 namespace {
 thread_local bool uiIngressChannel = false;
+#ifdef GRS_G9_BOOT_SOURCE
+std::string ProcessStartTick() {
+  std::ifstream file("/proc/self/stat");
+  std::string line, value;
+  std::getline(file, line);
+  const auto end = line.rfind(')');
+  if (end == std::string::npos)
+    return {};
+  std::istringstream fields(line.substr(end + 1));
+  for (int field = 3; field <= 22; ++field)
+    if (!(fields >> value))
+      return {};
+  return value.find_first_not_of("0123456789") == std::string::npos ? value : "";
+}
+#endif
 class App {
   struct ConfigureReceipt {
     uint64_t ticket = 0, enqueueNs = 0, ownerNs = 0, applyNs = 0, finishNs = 0;
@@ -24,6 +43,9 @@ class App {
     const char *phase = "OFF";
     const char *failure = "";
     char mappedBuildId[129]{};
+#ifdef GRS_G9_BOOT_SOURCE
+    std::string firstSourceSwapToken;
+#endif
     int32_t result = -1, shaderStatus = -1, linkStatus = -1;
     EGLint firstEgl = EGL_SUCCESS;
     GLenum firstGl = GL_NO_ERROR;
@@ -35,6 +57,10 @@ class App {
   void *pendingWindow_ = nullptr;
   bool windowPending_ = false, configurePending_ = false;
   bool ownerSeen_ = false, applying_ = false, cancelApplying_ = false;
+#ifdef GRS_G9_BOOT_SOURCE
+  uint64_t qualifiedSourceGeometry_ = 0;
+  bool sourceWake_ = false;
+#endif
   Config pendingConfig_{};
   std::string pendingCacheDirectory_;
   ConfigureReceipt receipt_{};
@@ -199,6 +225,9 @@ public:
       OH_NativeWindow_NativeObjectUnreference(pendingWindow_);
     pendingWindow_ = window;
     windowPending_ = true;
+#ifdef GRS_G9_BOOT_SOURCE
+    qualifiedSourceGeometry_ = 0;
+#endif
     wake_.notify_all();
   }
   void Resize(uint32_t w, uint32_t h) {
@@ -211,6 +240,9 @@ public:
     std::lock_guard<std::mutex> lock(mutex_);
     width_ = w;
     height_ = h;
+#ifdef GRS_G9_BOOT_SOURCE
+    qualifiedSourceGeometry_ = 0;
+#endif
     if (geometryGeneration_ != UINT64_MAX)
       ++geometryGeneration_;
     wake_.notify_all();
@@ -225,6 +257,9 @@ public:
       return "{\"state\":\"IDENTITY_EXHAUSTED\"}";
     controller_.Stop();
     const auto ticket = receipt_.ticket + 1;
+#ifdef GRS_G9_BOOT_SOURCE
+    qualifiedSourceGeometry_ = 0;
+#endif
     receipt_ = {};
     receipt_.ticket = ticket;
     receipt_.enqueueNs = CheckedClockRead().ns;
@@ -275,8 +310,19 @@ public:
               << ",\"firstEgl\":" << receipt_.firstEgl
               << ",\"firstGl\":" << receipt_.firstGl
               << ",\"shaderStatus\":" << receipt_.shaderStatus
-              << ",\"linkStatus\":" << receipt_.linkStatus << '}';
+              << ",\"linkStatus\":" << receipt_.linkStatus;
+#ifdef GRS_G9_BOOT_SOURCE
+    configure << ",\"firstSourceSwapToken\":\"" << receipt_.firstSourceSwapToken << '"';
+#endif
+    configure << '}';
     text += configure.str();
+#ifdef GRS_G9_BOOT_SOURCE
+    static const auto start = ProcessStartTick();
+    text += ",\"pid\":" + std::to_string(getpid()) + ",\"processStartTick\":\"" + start + "\"";
+    text += ",\"sourceGeometryReady\":";
+    text += (!windowPending_ && qualifiedSourceGeometry_ == geometryGeneration_ &&
+             std::strcmp(receipt_.phase, "APPLIED") == 0) ? "true" : "false";
+#endif
     text += ",\"abi\":[";
     for (size_t i = 0; i < 16; ++i) {
       if (i)
@@ -285,6 +331,15 @@ public:
     }
     return text + "]}";
   }
+#ifdef GRS_G9_BOOT_SOURCE
+  void WakeSource() {
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      sourceWake_ = true;
+    }
+    wake_.notify_one();
+  }
+#endif
 };
 App &Product() {
   static App app;
@@ -304,10 +359,16 @@ void App::Loop() {
       wake_.wait_for(lock, std::chrono::milliseconds(2),
                      [this] {
                        return quit_ || windowPending_ ||
+#ifdef GRS_G9_BOOT_SOURCE
+                              sourceWake_ ||
+#endif
                               (configurePending_ && !ownerSeen_);
                      });
       if (quit_)
         break;
+#ifdef GRS_G9_BOOT_SOURCE
+      sourceWake_ = false;
+#endif
       if (configurePending_ && !ownerSeen_) {
         ownerSeen_ = true;
         receipt_.ownerNs = CheckedClockRead().ns;
@@ -450,6 +511,22 @@ void App::Loop() {
     }
     controller_.PollSceneFence();
     cold_.Build(controller_, now);
+    const auto extent = [&] {
+      EGLint actualWidth = 0, actualHeight = 0;
+      return eglQuerySurface(display_, surface_, EGL_WIDTH, &actualWidth) &&
+             eglQuerySurface(display_, surface_, EGL_HEIGHT, &actualHeight) &&
+             actualWidth == int(width) && actualHeight == int(height);
+    };
+#ifdef GRS_G9_BOOT_SOURCE
+    const bool extentKnown = width && height && extent();
+    bool claimWindow = false;
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      claimWindow = extentKnown && !windowPending_ && geometry == geometryGeneration_ &&
+                    std::strcmp(receipt_.phase, "APPLIED") == 0;
+      qualifiedSourceGeometry_ = claimWindow ? geometry : 0;
+    }
+#endif
     if (controller_.RootLive()) {
       if (controller_.NeedsRetirement())
         controller_.Drain();
@@ -457,13 +534,14 @@ void App::Loop() {
         controller_.PumpBounded(now);
     } else {
       controller_.Drain();
+#ifdef GRS_G9_BOOT_SOURCE
+      if (claimWindow)
+#endif
       controller_.BeginRoot(CheckedClockRead(), ++frame_, geometry);
     }
-    EGLint actualWidth = 0, actualHeight = 0;
-    bool extentKnown =
-        eglQuerySurface(display_, surface_, EGL_WIDTH, &actualWidth) &&
-        eglQuerySurface(display_, surface_, EGL_HEIGHT, &actualHeight) &&
-        actualWidth == int(width) && actualHeight == int(height);
+#ifndef GRS_G9_BOOT_SOURCE
+    const bool extentKnown = extent();
+#endif
     if (!extentKnown && controller_.ReadyForScene()) {
       scene_.ObserveErrors();
       controller_.MarkSceneFault();
@@ -480,6 +558,9 @@ void App::Loop() {
               receipt_.run == runSerial_ && !receipt_.firstSwapNs &&
               std::strcmp(receipt_.phase, "APPLIED") == 0) {
             receipt_.firstSwapNs = presented.ns;
+#ifdef GRS_G9_BOOT_SOURCE
+            receipt_.firstSourceSwapToken = token;
+#endif
             LogConfigureStage("FIRST_VALID_SWAP", presented.ns);
           }
         }
@@ -510,6 +591,14 @@ void App::Loop() {
         SetStage("PRESENT_STALE_OR_FAULT");
       }
     }
+#ifdef GRS_G9_BOOT_SOURCE
+    bool presented = false;
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      presented = receipt_.firstSwapNs != 0;
+    }
+    controller_.PrepareSourceCacheIfSettled(CheckedClockRead(), presented);
+#endif
   }
   Retire();
 }
@@ -589,6 +678,9 @@ std::string DecodeReceipt(std::string reply,
 napi_value Touch(napi_env env, napi_callback_info info) {
   const auto receipt =
       CheckedClockRead(); // first operation, before singleton, locks or NAPI
+#ifdef GRS_G9_BOOT_SOURCE
+  return Text(env, IngressUnqualified("SOURCE_ONLY", receipt));
+#else
   auto &protocol = Product().Core().Protocol();
   if (!uiIngressChannel ||
       protocol.sync.ingressEnv.load() != reinterpret_cast<uintptr_t>(env))
@@ -623,6 +715,7 @@ napi_value Touch(napi_env env, napi_callback_info info) {
   return Text(
       env,
       DecodeReceipt(protocol.ValidateStroke(raw.words.data(), receipt), raw));
+#endif
 }
 napi_value Api(napi_env env, napi_callback_info info) {
   auto receipt = CheckedClockRead();
@@ -689,6 +782,10 @@ napi_value Api(napi_env env, napi_callback_info info) {
         core.Pulse({Identity(w.words.data()), Pair(w.words.data(), 18),
                     Pair(w.words.data(), 20)},
                    receipt);
+#ifdef GRS_G9_BOOT_SOURCE
+    if (result == ControlResult::OK)
+      app.WakeSource();
+#endif
     return Text(env, "{\"code\":" + std::to_string(uint32_t(result)) + "}");
   }
   if (api == "g9RxTarget") {

@@ -99,7 +99,50 @@ def file_sha(path):
  with path.open('rb') as f:
   while chunk:=f.read(65536):h.update(chunk)
  return h.hexdigest()
-def decode(path):
+def check_source(role_path, archive, header, tail, inp):
+ raw=(ROOT/'docs/architecture-T736-source-contract-v1.json').read_bytes()
+ contract=json.loads(raw); approved=contract['families']['RX']; roles=json.loads(role_path.read_bytes())
+ role_set=roles.pop('roleSetSHA')
+ require(role_set==digest(json.dumps(roles,sort_keys=True,separators=(',',':')).encode()),'SOURCE_MANIFEST_SHA')
+ require((roles['schema'],roles['backend'],roles['variant'],roles['family'],roles['supportsRoots'],
+          roles['t736ContractSHA'],roles['source'],roles['reflection'],roles['passTable'])==
+         ('G9_BOOT_SOURCE_V1','GLES','BOOT_SOURCE','RX',['SOURCE'],digest(raw),
+          {**approved['sourceRole'],'opcodes':list(range(12))},contract['reflection'],contract['passTable']),
+         'UNTRUSTED_SOURCE_MANIFEST')
+ initial=json.loads(archive['initialStatusRaw']); final=json.loads(archive['finalStatusRaw'])
+ root=initial['source']; other=final['source']
+ loaded=json.loads(archive['loadedIdentityRaw'])
+ require(root=={**other,'pendingNow':root['pendingNow']} and initial['configure']['ticket']==final['configure']['ticket'] and
+         initial['pid']==final['pid'] and initial['processStartTick']==final['processStartTick'] and bool(initial['processStartTick']) and
+         loaded['memoryBuildIdMatched'] and initial['configure']['mappedBuildId']==final['configure']['mappedBuildId']==loaded['BuildId'],
+         'SOURCE_ARCHIVE_SCOPE_CHANGED')
+ require(root['variant']=='BOOT_SOURCE' and root['roleSetSHA']==role_set==hexwords(header[120:128]) and
+         root['sourceSHA']==approved['sourceRole']['sha256']==hexwords(tail[80:88]) and
+         root['inputSHA']==sha_words(inp) and root['seedSHA']==hexwords(header[152:160]) and
+         root['parameterSHA']==hexwords(header[144:152]) and header[7]==192 and tail[5]==1 and inp[40]==1,
+         'SOURCE_ROOT_IDENTITY')
+ require(inp[64:77]==approved['inputBody64To76'] and inp[24]==0 and tail[6]==1 and
+         tail[62]==root['admittedQ20']==contract['firstRootExpected']['admittedQ'] and
+         int(initial['commit'])==int(final['commit'])==int(root['baseCommit'])+1==u64(tail,30) and
+         int(initial['quanta'])==int(final['quanta'])==int(root['baseQuanta'])==u64(tail,54),
+         'T736_POSITIVE_SOURCE')
+ require(initial['configure']['run']==root['run'] and initial['configure']['context']==root['context'] and
+         all(int(root[name])==u64(tail,at) for name,at in [('nonce',8),('run',10),('owner',12),('context',14),('geometry',18),('plan',26),('baseCommit',28)]),
+         'SOURCE_TAIL_SCOPE')
+ require(root['typedAccepted'] and root['committed'] and root['planRetired'] and not root['fault'] and
+         root['pendingAtClaim']==root['activeRemaining']==root['queueAfter']==0 and root['queueBefore']==1 and
+         root['candidateObject']==root['committedObject']!=0 and bool(int(root['expectedSHA'],16)) and
+         root['fenceCreated'] and root['fenceWaitRaw'] in (0x911a,0x911c) and root['mapReturned'] and root['unmapped'] and
+         root['workByteOffset']==1171072 and root['workReadBytes']==1024 and root['gl']==0 and root['egl']==12288 and
+         0<int(root['beginNs'])<=int(root['fenceNs'])<=int(root['commitNs'])<=int(root['deadlineNs']),
+         'SOURCE_NATIVE_PROOF')
+ require((root['dispatches'],root['dispatchBarriers'],root['copyBarriers'])==(12,12,3) and
+         [r[:5] for r in root['passes']]==[[i,i,0,0,0xffffffff] for i in range(12)] and
+         root['boundProgram']==root['sourceProgram']!=0 and root['bootProgram']!=root['sourceProgram'],
+         'SOURCE_DISPATCH_RECEIPT')
+ return role_set
+
+def decode(path,source_manifest=None):
  table=json.loads((ROOT/'docs/architecture-T641-storage-cold-v1.json').read_text(encoding='utf8'));pages_hash=hashlib.sha256();payload_hash=hashlib.sha256();prefix_hash=hashlib.sha256();manifest=None;trace=None;page_index=0
  with tempfile.TemporaryFile() as raw:
   with path.open('rb') as archive:
@@ -139,6 +182,11 @@ def decode(path):
      a=selected[64*row:64*(row+1)];b=actual[64*row:64*(row+1)];a[14]&=~3;b[14]&=~3;require(a==b,'AUTHORITATIVE_EVENT_REPLAY')
     p=profile['pathByteOffset']//4;require(selected[p:p+paths*16]==actual[p:p+paths*16],'AUTHORITATIVE_PATH_REPLAY')
    journal=manifest.get('journal',[]);require(len(journal)==256,'TERMINAL_JOURNAL_ORIGINALS');loaded=manifest.get('loadedIdentityRaw','');eqhash(h,176,loaded.encode(),'LOADED_RECEIPT_SHA');require(json.loads(loaded)['sha256']==hexwords(h[216:224]),'LOADED_MODULE_LINK')
-   return {'schema':'GNR1_COLD_READER_V1','archiveSHA':file_sha(path),'inputReceipt':'VALID_FROZEN_PROTOCOL' if current else 'NO_CURRENT_IMPULSE','baseHistory':'REFERENCE_ONLY_NO_PRIOR_ROOT_ARCHIVE' if base else 'ABSENT','physicalMassMomentum':'CLOSED','dmEventChecks':results,'acceptedStreamReplay':tail[6]!=4,'nativeCommitAndVisibleFrame':'REQUIRE_EXTERNAL_LIFECYCLE_DEVICE_EVIDENCE','deviceUsed':False}
+   result={'schema':'GNR1_COLD_READER_V1','archiveSHA':file_sha(path),'inputReceipt':'VALID_FROZEN_PROTOCOL' if current else 'NO_CURRENT_IMPULSE','baseHistory':'REFERENCE_ONLY_NO_PRIOR_ROOT_ARCHIVE' if base else 'ABSENT','physicalMassMomentum':'CLOSED','dmEventChecks':results,'acceptedStreamReplay':tail[6]!=4,'nativeCommitAndVisibleFrame':'REQUIRE_EXTERNAL_LIFECYCLE_DEVICE_EVIDENCE','deviceUsed':False}
+   source_status=json.loads(manifest.get('initialStatusRaw','{}')).get('source')
+   if source_manifest or source_status:
+    require(source_manifest is not None,'SOURCE_MANIFEST_REQUIRED')
+    result['sourceRoleSetSHA']=check_source(source_manifest,manifest,h,tail,inp)
+   return result
 if __name__=='__main__':
- parser=argparse.ArgumentParser();parser.add_argument('archive',type=Path);args=parser.parse_args();print(json.dumps(decode(args.archive),indent=2))
+ parser=argparse.ArgumentParser();parser.add_argument('archive',type=Path);parser.add_argument('--source-manifest',type=Path);args=parser.parse_args();print(json.dumps(decode(args.archive,args.source_manifest),indent=2))

@@ -134,21 +134,25 @@ def write_boot(out, source, schema, family):
 
 
 def write_dm_source(out, parent):
+    write_source(out, parent, "DM")
+
+
+def write_source(out, parent, family):
     root = Path(__file__).resolve().parents[2]
     raw = (root / "docs/architecture-T736-source-contract-v1.json").read_bytes()
     contract = json.loads(raw)
-    expected = contract["families"]["DM"]["sourceRole"]
+    expected = contract["families"][family]["sourceRole"]
     boot = json.loads((out / "boot_manifest.json").read_bytes())
     digest = lambda data: hashlib.sha256(data).hexdigest()
     _, emit = split_inputs(parent.decode("utf8"))
     shader, _ = emit(range(12))
     if len(shader) != expected["bytes"] or len(shader) > LIMIT or digest(shader) != expected["sha256"]:
-        raise ValueError("DM SOURCE differs from approved T736 closure or exceeds cap")
+        raise ValueError(f"{family} SOURCE differs from approved T736 closure or exceeds cap")
     if expected["passSHA"] != boot["schedule"]["Source"]["passesSHA"]:
-        raise ValueError("DM SOURCE pass table differs from T736")
+        raise ValueError(f"{family} SOURCE pass table differs from T736")
     reflection = contract["reflection"]
     manifest = {
-        "schema": "G9_BOOT_SOURCE_V1", "family": "DM", "backend": "GLES",
+        "schema": "G9_BOOT_SOURCE_V1", "family": family, "backend": "GLES",
         "variant": "BOOT_SOURCE", "supportsRoots": ["SOURCE"],
         "parentShaderSHA": boot["parentShaderSHA"], "t736ContractSHA": digest(raw),
         "boot": {"sourceSHA": boot["sourceSHA"], "sourceBytes": boot["sourceBytes"],

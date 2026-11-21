@@ -6,7 +6,10 @@ interface RxConfig { words: number[]; }
 interface RxConfigureReply { state: string; ticket?: string; }
 interface RxConfigureStatus { ticket: string; phase: string; failure: string; result: number; firstEgl: number; firstGl: number; }
 interface RxSession { scope: string[]; }
-interface RxStatus { configured: boolean; active: boolean; initialization: string; sceneStale: boolean; capability: number[]; mapping: number[]; commit: string; configure: RxConfigureStatus; }
+interface RxSourceStatus { variant: string; phase: string; fault: number; committed: boolean; outcome: number; admittedQ20: number; }
+interface RxNativeCode { code?: number; }
+interface RxActiveReply { state: string; }
+interface RxStatus { configured: boolean; active: boolean; initialization: string; sceneStale: boolean; capability: number[]; mapping: number[]; commit: string; configure: RxConfigureStatus; source?: RxSourceStatus; sourceGeometryReady?: boolean; }
 class RxFrame extends FrameCallback {
   owner: GpuResidentG9Rx | null = null;
   onFrame(ns: number): void { this.owner?.tick(this, ns); }
@@ -15,6 +18,7 @@ class RxFrame extends FrameCallback {
 @Component
 struct GpuResidentG9Rx {
   @State private message: string = '原生回执粒子场研究 OFF';
+  @State private singleSource: boolean = false;
   private cold: GpuG9RxCold = new GpuG9RxCold();
   private archive(): void { const context = getContext(this) as common.UIAbilityContext; this.cold.collect('ROOT', context.filesDir).then((path: string): void => { this.message = path; }).catch((error: Error): void => { this.message = error.message; }); }
   private frame: RxFrame | null = null;
@@ -23,6 +27,7 @@ struct GpuResidentG9Rx {
   private sequence: number = 0;
   private researchActive: boolean = false;
   private sourceIntent: number = 0;
+  private armed: boolean = false;
   private scopeWords: Uint32Array = new Uint32Array(18);
   private cap: number[] = [];
   private mapping: number[] = [];
@@ -47,6 +52,7 @@ struct GpuResidentG9Rx {
     if (ack.state !== 'CONFIG_QUEUED' || ack.ticket === undefined) return;
     this.configureTicket = ack.ticket;
     this.researchActive = true; this.session = ''; this.sequence = 0;
+    this.armed = false;
     this.cap = []; this.mapping = [];
     if (this.frame === null) { const frame = new RxFrame(); frame.owner = this; this.frame = frame; this.getUIContext().postFrameCallback(frame); }
   }
@@ -55,6 +61,8 @@ struct GpuResidentG9Rx {
     try {
       if (!Number.isSafeInteger(ns) || ns < 0) throw new Error('UI_CLOCK_UNQUALIFIED');
       const status = JSON.parse(native.g9RxStatus()) as RxStatus;
+      const source = status.source;
+      this.singleSource = source?.variant === 'BOOT_SOURCE';
       const attempt: RxConfigureStatus = status.configure;
       if (attempt.ticket !== this.configureTicket) throw new Error('STALE_CONFIGURE_TICKET');
       if (attempt.phase !== 'APPLIED') {
@@ -76,19 +84,44 @@ struct GpuResidentG9Rx {
         this.message = status.initialization;
         return;
       } else if (status.configured) {
+        if (source !== undefined && source.fault !== 0) {
+          this.stop();
+          this.message = source.phase + ' code=' + String(source.fault);
+          return;
+        }
+        if (source !== undefined && !this.armed && status.sourceGeometryReady !== true) {
+          this.message = '等待 SOURCE 窗口几何';
+          this.getUIContext().postFrameCallback(frame);
+          return;
+        }
         const latestSession: string = native.g9RxSession();
+        if (source !== undefined && this.armed && (latestSession !== this.session || !status.active))
+          throw new Error('SOURCE_SCOPE_REVOKED');
         if (this.session.length === 0 || latestSession !== this.session || !status.active) {
           this.session = latestSession; const scope = JSON.parse(this.session) as RxSession;
           if (scope.scope.length !== 9) throw new Error('BAD_SCOPE');
           for (let i: number = 0; i < 9; i++) this.u64(this.scopeWords, 2 * i, scope.scope[i]);
           this.message = native.g9RxSetActive(true, this.session);
+          if (source !== undefined && (JSON.parse(this.message) as RxActiveReply).state !== 'ACTIVE')
+            throw new Error(this.message);
           const activated: string = native.g9RxSession(); if (activated !== this.session) { this.session = activated; const renewed = JSON.parse(activated) as RxSession; for (let i: number = 0; i < 9; i++) this.u64(this.scopeWords, 2 * i, renewed.scope[i]); }
           this.sequence = 0;
         }
+        if (source !== undefined && !this.armed) {
+          const accepted: string = this.offerSource();
+          if ((JSON.parse(accepted) as RxNativeCode).code !== 0) throw new Error(accepted);
+          this.armed = true;
+          this.message = 'SOURCE 已入队，等待 GPU 回执';
+        }
         const pulse = new Uint32Array(22); pulse.set(this.scopeWords);
-        this.u64(pulse, 18, String(++this.sequence)); this.u64(pulse, 20, String(ns)); native.g9RxPulse(pulse);
+        this.u64(pulse, 18, String(++this.sequence)); this.u64(pulse, 20, String(ns));
+        const pulseReply: string = native.g9RxPulse(pulse);
+        if (source !== undefined && (JSON.parse(pulseReply) as RxNativeCode).code !== 0)
+          throw new Error(pulseReply);
         this.cap = status.capability; this.mapping = status.mapping;
         if (status.sceneStale) this.message = 'STALE：' + status.initialization;
+        else if (source?.committed === true)
+          this.message = 'SOURCE outcome=' + String(source.outcome) + ' admitted=' + String(source.admittedQ20) + ' Q20';
         else if (this.sequence % 30 === 0) this.message = 'GNR1 commit=' + status.commit + '；设备效果未验证';
       }
       this.getUIContext().postFrameCallback(frame);
@@ -101,7 +134,7 @@ struct GpuResidentG9Rx {
     native.g9RxTouchIngress(cancel);
   }
   private touch(event: TouchEvent): void {
-    if (!this.researchActive || this.cap.length !== 64 || this.mapping.length !== 64) return;
+    if (this.singleSource || !this.researchActive || this.cap.length !== 64 || this.mapping.length !== 64) return;
     try {
       const raw = new Uint32Array(64); const view = new DataView(raw.buffer);
       raw[0] = 1347899975; raw[1] = 1; raw[2] = 64; raw[7] = 1;
@@ -119,7 +152,9 @@ struct GpuResidentG9Rx {
       this.message = native.g9RxTouchIngress(raw);
     } catch (error) { this.cancelInput(); this.message = 'INPUT_REJECTED:' + String(error); }
   }
-  private source(): void { this.message = native.g9RxSource('{"intent":"' + String(++this.sourceIntent) + '","sourceId":"2","mass":"0.2","x":"64","y":"200","vx":"0","vy":"0"}'); }
+  private offerSource(): string {
+    return native.g9RxSource('{"intent":"' + String(++this.sourceIntent) + '","sourceId":"2","mass":"0.2","x":"64","y":"200","vx":"0","vy":"0"}');
+  }
   private stop(): void {
     this.researchActive = false;
     if (this.configureTicket.length > 0 && this.session.length === 0) {
@@ -136,7 +171,7 @@ struct GpuResidentG9Rx {
     Column() {
       Row() {
         Button('启用研究').onClick(() => this.configure())
-        Button('注入粒子').onClick(() => this.source())
+        Button('注入粒子').enabled(!this.singleSource).onClick(() => { this.message = this.offerSource(); })
         Button('停止').onClick(() => this.stop())
         Button('保存原件').onClick(() => this.archive())
       }.height(48)

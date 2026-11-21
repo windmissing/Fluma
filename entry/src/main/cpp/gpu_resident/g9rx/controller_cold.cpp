@@ -68,7 +68,11 @@ bool Controller::CaptureCold(uint32_t *out, size_t words, bool full,
   std::copy(payload.metadata[2].begin(), payload.metadata[2].end(), out + 40);
   H(out + 104, GeometryHash(payload.witnesses[17].data()));
   H(out + 112, GeometryHash(payload.witnesses[18].data()));
+#ifdef GRS_G9_BOOT_SOURCE
+  H(out + 120, FromHex(SourceRoleSetSHA()));
+#else
   H(out + 120, FromHex(kPipelineSHA));
+#endif
   H(out + 128, FromHex(kLayoutSHA));
   H(out + 136,
     FromHex(

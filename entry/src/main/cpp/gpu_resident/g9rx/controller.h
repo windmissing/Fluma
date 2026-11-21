@@ -21,6 +21,12 @@ class Controller {
   bool configured_ = false, lastGood_ = false, stale_ = false, lease_ = false,
        coldPin_ = false;
   LoadedIdentity loaded_{};
+#ifdef GRS_G9_BOOT_SOURCE
+  SourceReceipt sourceReport_{};
+  const char *sourcePhase_ = "OFF";
+  void PublishSourceLocked(const char *phase, uint32_t fault = 0);
+  void WriteSourceStatus(std::ostringstream &) const;
+#endif
   bool RecheckLocked(const Permit &, uint64_t) const;
   static bool Check(void *, const Permit &, uint64_t);
   void RevokeLocked(uint32_t);
@@ -44,6 +50,9 @@ public:
   Result OfferSource(Input128, uint64_t intent, CheckedTime);
   Result BeginRoot(CheckedTime, uint64_t frame, uint64_t geometry);
   Result PumpBounded(CheckedTime);
+#ifdef GRS_G9_BOOT_SOURCE
+  void PrepareSourceCacheIfSettled(CheckedTime, bool presented);
+#endif
   Result Stop();
   bool Drain();
   void Release(bool current);

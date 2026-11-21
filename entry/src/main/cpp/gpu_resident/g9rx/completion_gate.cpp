@@ -1,4 +1,7 @@
 #include "completion_gate.h"
+#ifdef GRS_G9_BOOT_SOURCE
+#include "transport.h"
+#endif
 namespace grs::g9rx {
 uint32_t FrozenExpectedView::Word(size_t at) const {
   const auto &p = permit_;
@@ -54,7 +57,11 @@ uint32_t FrozenExpectedView::Word(size_t at) const {
         "b17060c0441e481ec99f3279c76c8b8c94a1013b0fd9045d6b01b6cb827dac77")
         [at - 104];
   if (at >= 120 && at < 128)
+#ifdef GRS_G9_BOOT_SOURCE
+    return FromHex(SourceRoleSetSHA())[at - 120];
+#else
     return FromHex(kPipelineSHA)[at - 120];
+#endif
   if (at >= 152 && at < 160)
     return FromHex(kStaticContractSHA)[at - 152];
   if (at >= 160 && at < 168)

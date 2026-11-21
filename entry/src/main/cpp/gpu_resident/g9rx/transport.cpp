@@ -1,6 +1,10 @@
 #include "transport.h"
-#ifdef GRS_G9_BOOT_ONLY
+#if defined(GRS_G9_BOOT_ONLY) || defined(GRS_G9_BOOT_SOURCE)
 #include "../g9_boot.h"
+#endif
+#ifdef GRS_G9_BOOT_SOURCE
+#include "boot_source.h"
+#include "source_shader.h"
 #endif
 #include "../angles_generated.h"
 #include "../program_cache/program_factory.h"
@@ -12,6 +16,42 @@
 #include <limits>
 namespace grs::g9rx {
 namespace {
+#ifdef GRS_G9_BOOT_SOURCE
+bool ReflectSource(GLuint program, UniformLocations &locations) {
+  if (!locations.Prepare(program) || locations.count != std::size(kSourceUniforms))
+    return false;
+  uint64_t seen = 0;
+  for (GLuint i = 0; i < locations.count; ++i) {
+    char name[96]{};
+    GLenum type = 0;
+    GLint size = 0;
+    glGetActiveUniform(program, i, sizeof(name), nullptr, &size, &type, name);
+    for (size_t j = 0; j < std::size(kSourceUniforms); ++j)
+      if (size == 1 && type == kSourceUniforms[j].type &&
+          std::strcmp(name, kSourceUniforms[j].name) == 0 && locations.Find(name) >= 0)
+        seen |= uint64_t(1) << j;
+  }
+  if (seen != (uint64_t(1) << std::size(kSourceUniforms)) - 1)
+    return false;
+  constexpr const char *blocks[]{"ReadState", "WriteState", "Workspace", "EventPath"};
+  GLint lanes[3]{}, count = 0;
+  glGetProgramiv(program, GL_COMPUTE_WORK_GROUP_SIZE, lanes);
+  glGetProgramInterfaceiv(program, GL_SHADER_STORAGE_BLOCK, GL_ACTIVE_RESOURCES, &count);
+  if (lanes[0] != 64 || lanes[1] != 1 || lanes[2] != 1 || count != 4)
+    return false;
+  for (GLint binding = 0; binding < count; ++binding) {
+    const auto index = glGetProgramResourceIndex(program, GL_SHADER_STORAGE_BLOCK, blocks[binding]);
+    if (index == GL_INVALID_INDEX)
+      return false;
+    constexpr GLenum property = GL_BUFFER_BINDING;
+    GLint actual = -1;
+    glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, index, 1, &property, 1, nullptr, &actual);
+    if (actual != binding)
+      return false;
+  }
+  return true;
+}
+#endif
 std::array<uint32_t, 8> ParseHash(const char *hex) {
   std::array<uint32_t, 8> result{};
   auto digit = [](char c) {
@@ -33,6 +73,10 @@ bool Transport::Current() const {
 bool Transport::Good() {
   const auto gl = glGetError();
   const auto egl = eglGetError();
+#ifdef GRS_G9_BOOT_SOURCE
+  source_.gl = gl;
+  source_.egl = egl;
+#endif
   if (gl && !firstGl_)
     firstGl_ = gl;
   if (egl != EGL_SUCCESS && !firstEgl_)
@@ -198,7 +242,21 @@ Result Transport::Create(const Config &config, const ControlIdentity &id,
       uint64_t(maximum) <
           std::max(p->arenaBytes, std::max(p->stateBytes, p->workBytes)))
     return Result::UNSUPPORTED;
-#ifdef GRS_G9_BOOT_ONLY
+#ifdef GRS_G9_BOOT_SOURCE
+  source_ = {};
+  sourceCacheAttempted_ = false;
+  source_.ownerTid = uint64_t(syscall(SYS_gettid));
+  source_.eglContext = reinterpret_cast<uintptr_t>(context_);
+  static const char mappedBootAnchor = 0;
+  g9boot::Trace boot{"RX", kBootPipelineSHA, kBootRoleSetSHA, id.run,
+                    id.owner, id.context, &mappedBootAnchor};
+  if (!g9boot::Build(boot, kBootPipeline, "GNR1|" kRxCoherentRevision "|" kRxImplementationSHA,
+                     program_.id, program_.uniforms, firstGl_, firstEgl_, observer)) {
+    Release(true);
+    return Result::SHADER_FAILED;
+  }
+  source_.bootProgram = program_.id;
+#elif defined(GRS_G9_BOOT_ONLY)
   g9boot::Trace boot{"RX", PipelineSourceHash(), BootRoleSetSHA(), id.run,
                     id.owner, id.context, reinterpret_cast<const void *>(&PipelineSource)};
   if (!g9boot::Build(boot, PipelineSource(), "GNR1|" kRxCoherentRevision "|" kRxImplementationSHA,
@@ -309,11 +367,58 @@ Result Transport::Create(const Config &config, const ControlIdentity &id,
   Bind(kQuantumPasses[0]);
   U("uOp", uint32_t(Op::ROOT_INIT));
   U("uPass", 0);
-#ifdef GRS_G9_BOOT_ONLY
+#if defined(GRS_G9_BOOT_ONLY) || defined(GRS_G9_BOOT_SOURCE)
   const auto audit = g9boot::RunAudit<CheckedTime>(
       boot, program_.id, program_.uniforms.Find("uOp"), buffers_[5],
       profile_->work[7].begin, [this](CheckedTime &time) { return ReadNow(time); },
       firstGl_, firstEgl_);
+#ifdef GRS_G9_BOOT_SOURCE
+  if (audit == g9boot::Audit::Ok) {
+    const auto *shader = PipelineSource();
+    const size_t bytes = std::strlen(shader);
+    if (!bytes || bytes > g9boot::kSourceLimit ||
+        programcache::Hash(shader, bytes) != PipelineSourceHash()) {
+      Release(true);
+      return Result::SOURCE_IDENTITY_MISMATCH;
+    }
+    const std::string key = "GNR1|" kRxCoherentRevision "|" kRxImplementationSHA
+                            "|ROLE=SOURCE|ROLE_SET=" + std::string(SourceRoleSetSHA());
+    GLenum error = GL_NO_ERROR;
+    Program source{};
+    OH_LOG_Print(LOG_APP, LOG_INFO, 0xE734, "G9RxSource",
+                 "SOURCE_BUILD_ENTER run=%{public}llu bytes=%{public}zu sha=%{public}s roles=%{public}s",
+                 static_cast<unsigned long long>(id.run), bytes, PipelineSourceHash(), SourceRoleSetSHA());
+    const bool built = programcache::Build(1, shader, PipelineSourceHash(), key.c_str(),
+                                           source.id, error, observer, 0, "G9_SOURCE");
+    const bool reflected = built && ReflectSource(source.id, source.uniforms);
+    const bool good = Good();
+    OH_LOG_Print(LOG_APP, LOG_INFO, 0xE734, "G9RxSource",
+                 "SOURCE_REFLECT_EXIT program=%{public}u activeUniforms=%{public}u qualified=%{public}d",
+                 source.id, source.uniforms.count, reflected && good && error == GL_NO_ERROR);
+    if (!reflected || !good || error) {
+      if (error && !firstGl_)
+        firstGl_ = error;
+      if (source.id) {
+        programcache::Forget(source.id);
+        glDeleteProgram(source.id);
+      }
+      Release(true);
+      return Result::SHADER_FAILED;
+    }
+    programcache::Forget(program_.id);
+    glUseProgram(0);
+    glDeleteProgram(program_.id);
+    program_ = source;
+    if (!Good()) {
+      Release(true);
+      return Result::GL_FAILED;
+    }
+    source_.program = source.id;
+    current_ = 0;
+    ready_ = true;
+    return Result::OK;
+  }
+#endif
   Release(true);
   switch (audit) {
   case g9boot::Audit::Ok: return Result::BOOT_AUDIT_OK;
@@ -377,6 +482,9 @@ bool Transport::Copy(GLuint from, size_t fromWord, GLuint to, size_t toWord,
                       GLintptr(fromWord * 4), GLintptr(toWord * 4),
                       GLsizeiptr(words * 4));
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
+#ifdef GRS_G9_BOOT_SOURCE
+  ++source_.copies;
+#endif
   return Good() && Allowed();
 }
 void Transport::Common(const Input128 &input,
@@ -429,6 +537,10 @@ void Transport::Common(const Input128 &input,
 }
 Result Transport::Begin(const Permit &p, const Input128 &input, Check check,
                         void *user) {
+#ifdef GRS_G9_BOOT_SOURCE
+  if (p.kind != 1 || p.ordinal || input[40] != 1 || p.shaderSha != ShaderHash())
+    return Result::INVALID;
+#endif
   if (!ready_ || busy_ || !Current())
     return Result::WOULD_BLOCK;
   if (p.baseBank != current_ || p.candidateBank >= 5 ||
@@ -449,6 +561,10 @@ Result Transport::Begin(const Permit &p, const Input128 &input, Check check,
   if (begin.ns < rootBeginNs_ || begin.ns > p.deadline)
     return Result::DEADLINE;
   permit_ = p;
+#ifdef GRS_G9_BOOT_SOURCE
+  source_.permit = p;
+  source_.candidateObject = buffers_[p.candidateBank];
+#endif
   check_ = check;
   checkUser_ = user;
   if (!Allowed())
@@ -480,6 +596,13 @@ Result Transport::Begin(const Permit &p, const Input128 &input, Check check,
                   512, config.data());
   glUseProgram(program_.id);
   Common(input, p.layoutSha, p.shaderSha);
+#ifdef GRS_G9_BOOT_SOURCE
+  GLint current = 0;
+  glGetIntegerv(GL_CURRENT_PROGRAM, &current);
+  source_.currentProgram = current;
+  if (GLuint(current) != source_.program)
+    return Result::GL_FAILED;
+#endif
   if (!Good())
     return Result::GL_FAILED;
   evidence_ = {};
@@ -528,6 +651,10 @@ void Transport::Bind(const Pass &pass) {
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, write);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, buffers_[5]);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, events);
+#ifdef GRS_G9_BOOT_SOURCE
+  if (permit_.kind == 1 && next_ < source_.passes.size())
+    source_.passes[next_].objects = {read, write, buffers_[5], events};
+#endif
 }
 bool Transport::Dispatch(const Pass &pass, uint32_t index) {
   if (!Allowed())
@@ -554,6 +681,15 @@ bool Transport::Dispatch(const Pass &pass, uint32_t index) {
   ++evidence_.dispatches;
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
   ++evidence_.barriers;
+#ifdef GRS_G9_BOOT_SOURCE
+  auto &entry = source_.passes[index];
+  entry.op = uint32_t(pass.op);
+  entry.role = pass.role;
+  entry.j = pass.j;
+  entry.micro = uint32_t(pass.micro);
+  source_.dispatches = evidence_.dispatches;
+  source_.barriers = evidence_.barriers;
+#endif
   if (!Good())
     return false;
   if (config_.fullTrialTrace && pass.role == 1 &&
@@ -613,6 +749,9 @@ Result Transport::Pump() {
     if (!Allowed())
       return Denied();
     fence_ = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+#ifdef GRS_G9_BOOT_SOURCE
+    source_.fenceCreated = fence_ != nullptr;
+#endif
     glFlush();
     if (!fence_ || !Good())
       return Result::GL_FAILED;
@@ -620,25 +759,58 @@ Result Transport::Pump() {
   if (!Allowed())
     return Denied();
   const auto result = glClientWaitSync(fence_, 0, 0);
+#ifdef GRS_G9_BOOT_SOURCE
+  source_.rawWait = result;
+  ++source_.fencePolls;
+  if (result == GL_WAIT_FAILED) {
+    Good();
+    return Result::GL_FAILED;
+  }
+#endif
   if (result == GL_WAIT_FAILED || !Good())
     return Result::GL_FAILED;
   if (result == GL_TIMEOUT_EXPIRED)
     return Result::IN_PROGRESS;
+#ifdef GRS_G9_BOOT_SOURCE
+  if (result != GL_ALREADY_SIGNALED && result != GL_CONDITION_SATISFIED)
+    return Result::GL_FAILED;
+#endif
   CheckedTime fenceTime;
   if (!ReadNow(fenceTime))
     return Result::INPUT_CLOCK_UNVERIFIED;
   evidence_.fenceNs = fenceTime.ns;
   evidence_.fenceObserved = true;
+#ifdef GRS_G9_BOOT_SOURCE
+  source_.fenceNs = fenceTime.ns;
+#endif
   if (!Allowed())
     return Denied();
   glBindBuffer(GL_COPY_READ_BUFFER, buffers_[5]);
   const auto offset = profile_->work[8].begin;
+#ifdef GRS_G9_BOOT_SOURCE
+  source_.work = buffers_[5];
+  source_.workOffset = offset;
+#endif
   auto *mapped = glMapBufferRange(GL_COPY_READ_BUFFER, GLintptr(offset), 1024,
                                   GL_MAP_READ_BIT);
-  if (!mapped)
+#ifdef GRS_G9_BOOT_SOURCE
+  source_.mapReturned = mapped != nullptr;
+#endif
+  if (!mapped) {
+#ifdef GRS_G9_BOOT_SOURCE
+    Good();
+#endif
     return Result::GL_FAILED;
+  }
   std::memcpy(tail_.data(), mapped, 1024);
   const bool unmapped = glUnmapBuffer(GL_COPY_READ_BUFFER) == GL_TRUE;
+#ifdef GRS_G9_BOOT_SOURCE
+  source_.unmapped = unmapped;
+  if (!unmapped) {
+    Good();
+    return Result::GL_FAILED;
+  }
+#endif
   if (!unmapped || !Good())
     return Result::GL_FAILED;
   glDeleteSync(fence_);
@@ -646,6 +818,10 @@ Result Transport::Pump() {
   evidence_.gl = firstGl_;
   evidence_.egl = firstEgl_;
   mapped_ = true;
+#ifdef GRS_G9_BOOT_SOURCE
+  source_.mapped = true;
+  source_.tail = tail_;
+#endif
   return Result::OK;
 }
 bool Transport::CommitAccepted(const ValidatedRecord &proof) {
@@ -660,9 +836,18 @@ bool Transport::CommitAccepted(const ValidatedRecord &proof) {
       thread_ != std::this_thread::get_id() || !(p == permit_) || w != tail_ ||
       !check_ || !check_(checkUser_, p, commitTime.ns))
     return false;
+#ifdef GRS_G9_BOOT_SOURCE
+  if (!Current() || p.kind != 1 || program_.id != source_.currentProgram ||
+      p.shaderSha != ShaderHash())
+    return false;
+#endif
   if (w[6] != 2)
     std::swap(buffers_[current_], buffers_[p.candidateBank]);
   commitObservedNs_ = commitTime.ns;
+#ifdef GRS_G9_BOOT_SOURCE
+  source_.commitNs = commitTime.ns;
+  source_.committedObject = buffers_[current_];
+#endif
   busy_ = mapped_ = false;
   return true;
 }
@@ -671,6 +856,17 @@ bool Transport::Commit(const Permit &p, const Completion256 &w) {
   return proof && p == proof->Permission() && w == proof->Words() &&
          CommitAccepted(*proof);
 }
+#ifdef GRS_G9_BOOT_SOURCE
+void Transport::PrepareSourceCache() {
+  if (sourceCacheAttempted_ || !ready_ || busy_ || !Current() || !commitObservedNs_ ||
+      permit_.kind != 1 || tail_[6] != 1 || !evidence_.fenceObserved)
+    return;
+  sourceCacheAttempted_ = true;
+  const auto result = programcache::Prepared(program_.id);
+  if (result == GL_NO_ERROR)
+    programcache::Warmup(program_.id, rootBeginNs_, evidence_.fenceNs, GL_NO_ERROR);
+}
+#endif
 
 bool Transport::RetireRejected(const Permit &p) {
   if (!busy_)

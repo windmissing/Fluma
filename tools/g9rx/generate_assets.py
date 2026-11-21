@@ -11,7 +11,7 @@ def sha(b):return hashlib.sha256(b).hexdigest()
 def one(s,a,b):
  if s.count(a)!=1:raise ValueError('RX_ANCHOR '+a[:100])
  return s.replace(a,b)
-def generate(out,test_hooks=False,boot_only=False):
+def generate(out,test_hooks=False,boot_only=False,boot_source=False):
  if boot_only and test_hooks:
   raise ValueError('BOOT_ONLY does not include test hooks')
  out.mkdir(parents=True,exist_ok=True);contract=json.loads((ROOT/'docs/architecture-T665-contract-v1.json').read_text(encoding='utf8'));receipt=json.loads((MOD/'frozen/source_receipt.json').read_text(encoding='utf8'));deps={}
@@ -172,11 +172,14 @@ def generate(out,test_hooks=False,boot_only=False):
  pipeline=sha(canonical)
  with (out/'contract_generated.h').open('a',encoding='utf8',newline='\n') as f:f.write('namespace grs::g9rx { inline constexpr const char* kPipelineSHA="'+pipeline+'"; }\n')
  identity['pipelineSHA']=pipeline
- if boot_only:
+ if boot_only or boot_source:
   sys.path.insert(0,str(ROOT/'tools/glsl'))
   from g9_boot import write_boot
   write_boot(out,canonical,schema,'RX')
-  identity['selectedVariant']='BOOT_ONLY'
+  identity['selectedVariant']='BOOT_SOURCE' if boot_source else 'BOOT_ONLY'
+ if boot_source:
+  from g9_boot import write_source
+  write_source(out,canonical,'RX')
  reader=dict(tables);reader['sourceIdentity']={key:identity[key] for key in ['schema','shaderSHA','canonicalBytes','hygieneRevision','coherentRevision','coherentTransforms','coherentArgumentInputSHA','coherentArgumentTransforms','readonlyRevision','readonlyArgumentInputSHA','readonlyArgumentTransforms','sourceManifestSHA','variant']}
  (out/'reader_schema.json').write_bytes((json.dumps(reader,ensure_ascii=False,indent=2)+'\n').encode('utf8'))
  (out/'capture_line_map.json').write_bytes((json.dumps(hygiene,indent=2)+'\n').encode())
@@ -190,5 +193,5 @@ def generate(out,test_hooks=False,boot_only=False):
  (out/'pipeline_identity.json').write_bytes((json.dumps(identity,indent=2)+'\n').encode())
  return s
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--out',type=Path,default=MOD/'generated');p.add_argument('--test-hooks',action='store_true');p.add_argument('--boot-only',action='store_true');a=p.parse_args();generate(a.out,a.test_hooks,a.boot_only)
+ p=argparse.ArgumentParser();p.add_argument('--out',type=Path,default=MOD/'generated');p.add_argument('--test-hooks',action='store_true');variants=p.add_mutually_exclusive_group();variants.add_argument('--boot-only',action='store_true');variants.add_argument('--boot-source',action='store_true');a=p.parse_args();generate(a.out,a.test_hooks,a.boot_only,a.boot_source)
 

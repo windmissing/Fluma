@@ -7,6 +7,9 @@
 #include "stage_capability.h"
 #include <EGL/egl.h>
 #include <thread>
+#ifdef GRS_G9_BOOT_SOURCE
+#include "source_receipt.h"
+#endif
 namespace grs::g9rx {
 class Transport {
   struct Program {
@@ -29,6 +32,10 @@ class Transport {
   GLsync fence_ = nullptr;
   Completion256 tail_{};
   NativeEvidence evidence_{};
+#ifdef GRS_G9_BOOT_SOURCE
+  SourceReceipt source_{};
+  bool sourceCacheAttempted_ = false;
+#endif
   Input128 lastInput_{};
   std::array<uint32_t, 128> lastConfig_{};
   uint32_t coldGl_ = 0, coldEgl_ = 0;
@@ -76,6 +83,10 @@ public:
   uint64_t CommitObservedNs() const { return commitObservedNs_; }
   uint64_t RootBegin() const { return rootBeginNs_; }
   Digest SeedHash() const { return config_.seedSha; }
+#ifdef GRS_G9_BOOT_SOURCE
+  const SourceReceipt &SourceEvidence() const { return source_; }
+  void PrepareSourceCache();
+#endif
   bool RetireRejected(const Permit &);
   void Release(bool contextCurrent);
   bool Busy() const { return busy_; }
@@ -99,6 +110,9 @@ public:
 };
 const char *PipelineSource();
 const char *PipelineSourceHash();
+#ifdef GRS_G9_BOOT_SOURCE
+const char *SourceRoleSetSHA();
+#endif
 #ifdef GRS_G9_BOOT_ONLY
 const char *BootRoleSetSHA();
 #endif

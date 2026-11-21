@@ -1,0 +1,190 @@
+{
+  "schema": "T752_RX_BOOT_SOURCE_COMPILE_V1",
+  "deviceUsed": false,
+  "signed": false,
+  "runtime": "NOT_RUN",
+  "t749": {
+    "pid": 53051,
+    "ownerTid": 53250,
+    "ticket": "1",
+    "processStartTick": "5620187",
+    "mappedBuildId": "f23b8bd61d2cfb3969eaf78e9e4ea988cbef5047",
+    "signedPackageSHA": "73027d13edfffb7ac295c15097d37a10eb08bda21edcbd49b113cb6fe720f2d3",
+    "bootWorkTail": [
+      0,
+      6559303
+    ],
+    "fenceWaitRaw": 37146,
+    "report": {
+      "path": "docs/test-report-T749-v1.md",
+      "sha256": "ab12a8ea60f923cda394093109d7fb614b22c8f1c939c26f74e5bb4b9c5a8e52",
+      "bytes": 1676
+    },
+    "bootEvents": {
+      "path": "test/reports/t491/t738/v6/g9boot-53051.jsonl",
+      "sha256": "e51dfcb9382b857d88f47849cbfe22f47ed2e8f56e471f0a5597529c3ceb7d6d",
+      "bytes": 9847
+    },
+    "signedReceipt": {
+      "path": "test/reports/t257/T738-rx.json",
+      "sha256": "a26dfc7fa5732c71f4d7ce28511c70342346cbbe4a1c1d3b54635f40b7df2557",
+      "bytes": 2274
+    }
+  },
+  "hvigorLog": {
+    "path": ".codex/local-test/t752-final.log",
+    "sha256": "6b184c65bd8f5562191b6f126ec2043919892a27bbaacd90b229d499d9a6c823",
+    "bytes": 23241
+  },
+  "unsignedHap": {
+    "path": ".codex/local-test/t752-final/entry/build/default/outputs/default/entry-default-unsigned.hap",
+    "sha256": "6cdcfc7d026fa6813c07bde91a440f53947dc93d1cd31949988e35b281c9f156",
+    "bytes": 7768280
+  },
+  "linkedElf": {
+    "path": ".codex/local-test/t752-final/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_g9rx.so",
+    "sha256": "186b6a77ae22bcae00b50af682934738a90dac077f185e5bf26291e3e2acae3c",
+    "bytes": 6047488,
+    "machine": "AARCH64",
+    "buildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+    "abiWords": [
+      1,
+      40960,
+      64,
+      96,
+      8,
+      65472,
+      17744,
+      96,
+      520,
+      0,
+      20480,
+      21504,
+      22528,
+      23552,
+      24576,
+      34304
+    ],
+    "nativeAppStaticBytes": 95552,
+    "nativeAppExcludingProtocolPayloadBytes": 54592
+  },
+  "packagedElf": {
+    "path": ".codex/local-test/t752-final/handoff/libgrs_g9rx.so",
+    "sha256": "d709d3f8689945213fada849142dc5f68e4593ea810d707f671d0a3f30aa27cf",
+    "bytes": 1406616,
+    "buildId": "7bd1cae40ac3e385074b123882290ee18cacfee8"
+  },
+  "abcSHA": "446f6ad8b21953db8a29fa9ace7139536d450858db558af5ab6359e339dba3fd",
+  "sourceManifest": {
+    "path": ".codex/local-test/t752-final/handoff/source_manifest.json",
+    "sha256": "f828877c3f5c8b785b4d101f7e39076b50690519902fc76940560a6439d84b59",
+    "bytes": 7340
+  },
+  "roleSetSHA": "b718fe047d7fdd88aadc603cc4ccc6ef7929cbbb0372f40fb5630bcc58395bf1",
+  "roles": {
+    "boot": {
+      "path": ".codex/local-test/t752-final/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g9rx/rx_assets/boot.comp",
+      "sha256": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+      "bytes": 22318
+    },
+    "source": {
+      "path": ".codex/local-test/t752-final/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g9rx/rx_assets/source.comp",
+      "sha256": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+      "bytes": 41767
+    },
+    "embeddedOnceEachInLinkedAndPackagedELF": true
+  },
+  "staticReflection": {
+    "uniforms": 40,
+    "blocks": {
+      "ReadState": 0,
+      "WriteState": 1,
+      "Workspace": 2,
+      "EventPath": 3
+    },
+    "localSize": [
+      64,
+      1,
+      1
+    ],
+    "glslang": {
+      "path": ".codex/local-test/g13-glslang/bin/glslang.exe",
+      "sha256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+      "bytes": 5178368
+    }
+  },
+  "sourceClaimOffline": {
+    "staticAssertions": 8,
+    "input": {
+      "path": "test/t752/source_claim.cpp",
+      "sha256": "808f712585403e2d1e7dd0f1b31852cfebbe4951515f05915f2464aff00bac4a",
+      "bytes": 817
+    },
+    "exit": 0
+  },
+  "compatibleBuilds": {
+    "boot": {
+      "log": {
+        "path": ".codex/local-test/t752-boot.log",
+        "sha256": "0dc19a14f3331b08166ab14feafd224c43197101d2b1f6fe58de044d38b1ab5b",
+        "bytes": 23166
+      },
+      "hap": {
+        "path": ".codex/local-test/t752-boot/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "sha256": "0206219e7388471106da3ed2e6d85912e6ba0f3d2bd1d7186e235e3e9a363b80",
+        "bytes": 7721968
+      },
+      "elfBuildId": "448c7b0a7ecd72ebe2efa7c08af7e2fe99a55fbe",
+      "abiWords": [
+        1,
+        40960,
+        64,
+        96,
+        8,
+        61632,
+        15832,
+        96,
+        520,
+        0,
+        20480,
+        21504,
+        22528,
+        23552,
+        24576,
+        34304
+      ]
+    },
+    "default": {
+      "log": {
+        "path": ".codex/local-test/t752-default.log",
+        "sha256": "04a3fee99e39397330a53e93d03737f09c447a39b84652087e0704c85b9759fb",
+        "bytes": 23395
+      },
+      "hap": {
+        "path": ".codex/local-test/t752-default/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "sha256": "315e2f727f225ff30947e27a9c18513894f90c78c8f88637d44f99dd7ca79db3",
+        "bytes": 7836248
+      },
+      "elfBuildId": "0f454fa79755ea745adbfd4f2fe088e1fd19e105",
+      "abiWords": [
+        1,
+        40960,
+        64,
+        96,
+        8,
+        61632,
+        15832,
+        96,
+        520,
+        0,
+        20480,
+        21504,
+        22528,
+        23552,
+        24576,
+        34304
+      ]
+    }
+  },
+  "dmSharedGeneratorPreservedT748RoleManifest": true
+}
