@@ -1,0 +1,511 @@
+{
+  "schema": "T753_G13_BINDING_VISIBILITY_ARCHITECTURE_V1",
+  "deviceUsed": false,
+  "dispatch": {
+    "authority": [
+      {
+        "path": "docs/architecture-T607-g13-dispatch-v1.json",
+        "bytes": 143062,
+        "sha256": "6d0cf08bf17389f3915cfb0bd5406327ab6cdd030aa1541db5e4e3dffa90f0af"
+      },
+      {
+        "path": "docs/architecture-T607-g13-layout-v1.json",
+        "bytes": 164808,
+        "sha256": "5e74048da7d40dae6c881a7ea8348fc28550a4b6cf6a9a7fa94595ad8fa9deaa"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g13flow/contract_generated.h",
+        "bytes": 218271,
+        "sha256": "31a31232bd97156a79e7be7a4910410d2486039f994fb1e231ba073b06e1b76e"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g13flow/transport.cpp",
+        "bytes": 30654,
+        "sha256": "18af3dd6da5d42f43a7f08aa72de90892a43c9157748c8a54077059704eb81eb"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g13flow/pipeline.comp",
+        "bytes": 21181,
+        "sha256": "531f95147f078870ede2df80919e42b8a3416e38d2c42865cc00d2b76a9a492f"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g13flow/trace.glsl",
+        "bytes": 3962,
+        "sha256": "4f1e54796f7b4b5784cc082a5c18545bd28ef74a7951f458bb6649221b20db1f"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g13flow/scene.cpp",
+        "bytes": 10030,
+        "sha256": "3d305bd4156a0f45ef60ed9df6d274b25536e8735c20be34385e433426b1dfd6"
+      }
+    ],
+    "t739BuildInputTransport": {
+      "path": ".codex/local-test/t739-split/entry/src/main/cpp/gpu_resident/g13flow/transport.cpp",
+      "bytes": 33422,
+      "sha256": "5a0dc47d595ba4abe6f9bd7bc6ffa6a7d71671e1f524859040bb51954a8a74b7"
+    },
+    "t739GeneratedHeader": {
+      "path": ".codex/local-test/t739-split/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g13flow/g13_assets/contract_generated.h",
+      "bytes": 218271,
+      "sha256": "31a31232bd97156a79e7be7a4910410d2486039f994fb1e231ba073b06e1b76e"
+    },
+    "plan": {
+      "QUANTUM": {
+        "count": 820,
+        "routes": [
+          {
+            "begin": 0,
+            "endExclusive": 5,
+            "route": {
+              "phase": "OUTER",
+              "shader_scope": 0,
+              "ssbo0": "CURRENT",
+              "ssbo1": "CANDIDATE"
+            }
+          },
+          {
+            "begin": 5,
+            "endExclusive": 409,
+            "route": {
+              "phase": "ACTUAL",
+              "shader_scope": 0,
+              "ssbo0": "CURRENT",
+              "ssbo1": "CANDIDATE"
+            }
+          },
+          {
+            "begin": 409,
+            "endExclusive": 410,
+            "route": {
+              "phase": "OUTER",
+              "shader_scope": 0,
+              "ssbo0": "CURRENT",
+              "ssbo1": "CANDIDATE"
+            }
+          },
+          {
+            "begin": 410,
+            "endExclusive": 814,
+            "route": {
+              "phase": "REPLAY",
+              "shader_scope": 1,
+              "ssbo0": "CURRENT",
+              "ssbo1": "REPLAY"
+            }
+          },
+          {
+            "begin": 814,
+            "endExclusive": 815,
+            "route": {
+              "phase": "COMPARE",
+              "shader_scope": 0,
+              "ssbo0": "CANDIDATE",
+              "ssbo1": "REPLAY"
+            }
+          },
+          {
+            "begin": 815,
+            "endExclusive": 817,
+            "route": {
+              "phase": "OUTER",
+              "shader_scope": 0,
+              "ssbo0": "CURRENT",
+              "ssbo1": "CANDIDATE"
+            }
+          },
+          {
+            "begin": 817,
+            "endExclusive": 819,
+            "route": {
+              "phase": "PACK",
+              "shader_scope": 0,
+              "ssbo0": "CANDIDATE",
+              "ssbo1": "PENDING_PACK"
+            }
+          },
+          {
+            "begin": 819,
+            "endExclusive": 820,
+            "route": {
+              "phase": "OUTER",
+              "shader_scope": 0,
+              "ssbo0": "CURRENT",
+              "ssbo1": "CANDIDATE"
+            }
+          }
+        ],
+        "countByPhase": {
+          "OUTER": 9,
+          "ACTUAL": 404,
+          "REPLAY": 404,
+          "COMPARE": 1,
+          "PACK": 2
+        },
+        "binding2": "WORK",
+        "binding3": "CONTROL"
+      },
+      "SOURCE": {
+        "count": 16,
+        "routes": [
+          {
+            "begin": 0,
+            "endExclusive": 4,
+            "route": {
+              "phase": "OUTER",
+              "shader_scope": 0,
+              "ssbo0": "CURRENT",
+              "ssbo1": "CANDIDATE"
+            }
+          },
+          {
+            "begin": 4,
+            "endExclusive": 7,
+            "route": {
+              "phase": "SOURCE_ACTUAL",
+              "shader_scope": 0,
+              "ssbo0": "CURRENT",
+              "ssbo1": "CANDIDATE"
+            }
+          },
+          {
+            "begin": 7,
+            "endExclusive": 10,
+            "route": {
+              "phase": "SOURCE_REPLAY",
+              "shader_scope": 0,
+              "ssbo0": "CURRENT",
+              "ssbo1": "REPLAY"
+            }
+          },
+          {
+            "begin": 10,
+            "endExclusive": 11,
+            "route": {
+              "phase": "COMPARE",
+              "shader_scope": 0,
+              "ssbo0": "CANDIDATE",
+              "ssbo1": "REPLAY"
+            }
+          },
+          {
+            "begin": 11,
+            "endExclusive": 13,
+            "route": {
+              "phase": "OUTER",
+              "shader_scope": 0,
+              "ssbo0": "CURRENT",
+              "ssbo1": "CANDIDATE"
+            }
+          },
+          {
+            "begin": 13,
+            "endExclusive": 15,
+            "route": {
+              "phase": "PACK",
+              "shader_scope": 0,
+              "ssbo0": "CANDIDATE",
+              "ssbo1": "PENDING_PACK"
+            }
+          },
+          {
+            "begin": 15,
+            "endExclusive": 16,
+            "route": {
+              "phase": "OUTER",
+              "shader_scope": 0,
+              "ssbo0": "CURRENT",
+              "ssbo1": "CANDIDATE"
+            }
+          }
+        ],
+        "countByPhase": {
+          "OUTER": 7,
+          "SOURCE_ACTUAL": 3,
+          "SOURCE_REPLAY": 3,
+          "COMPARE": 1,
+          "PACK": 2
+        },
+        "binding2": "WORK",
+        "binding3": "CONTROL"
+      }
+    },
+    "oldOp48Block0Addresses": [
+      11648,
+      12672,
+      13696,
+      14720,
+      15744,
+      16768,
+      17792,
+      11648,
+      12672,
+      13696,
+      14720,
+      15744,
+      16768,
+      17792
+    ],
+    "correctedOp48Block0Addresses": [
+      3456,
+      4480,
+      5504,
+      6528,
+      7552,
+      8576,
+      9600,
+      11648,
+      12672,
+      13696,
+      14720,
+      15744,
+      16768,
+      17792
+    ],
+    "oldReplayWritesSelectedToRootOpcodeWord": 520,
+    "scopeCompareWordsExcludedPerTrace": [
+      4,
+      1028,
+      2052,
+      3076,
+      4100,
+      5124,
+      6148,
+      7172
+    ]
+  },
+  "staticVisibility": {
+    "signedReceipt": {
+      "path": "test/reports/t257/T729-split-3ff632a03a1d.json",
+      "bytes": 2325,
+      "sha256": "9e8e5403cefa870c5db9d7a00652c0c11660016069de154ac2b8bc4fce35e313"
+    },
+    "manifest": {
+      "path": "test/reports/t739/SPLIT.json",
+      "bytes": 17727,
+      "sha256": "0bdac0974781b2349dee65869b932ee1eb137b4617d861f310eb7fcb5f957996"
+    },
+    "signedSHA": "9e35e801b0a855f37423a2e01e74c88064786fc3301bd1ab3cfd2343e12864f0",
+    "nativeBuildId": "16704862c820e6188d5b399a68ef39c186bcbcc5",
+    "nativeSHA": "1a7784f4eb4dd9a6d0406511c2d16cc43d184988608740ade33894b17adb18d7",
+    "compilerSHA": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+    "legacyQualificationPreserved": true,
+    "glesFlags": [
+      "-S",
+      "comp",
+      "-l",
+      "-q"
+    ],
+    "vulkanFlags": [
+      "-V",
+      "--target-env",
+      "vulkan1.1",
+      "--spirv-val",
+      "--spirv-dis"
+    ],
+    "fullGroups": [
+      {
+        "role": "BOOT",
+        "parentSourceSHA": "a93aecf86ddb1f782b337067f5b5c54fe7ac5676e2f9c24d8c25f8c8af4b24bb",
+        "glesBytes": 23861,
+        "glesSHA": "e18933691fc21846ae976557f18521de6450924e9095364b5b74d94d4367777a",
+        "glesActiveBlocks": {
+          "Control": 3,
+          "Candidate": 1,
+          "Base": 0,
+          "Work": 2
+        },
+        "vulkanGlslBytes": 24155,
+        "vulkanGlslSHA": "cc75e3abea0e7e3bc230cfc65e64124829b0aea45449910c5414f24deb576f7b",
+        "spirvBytes": 116676,
+        "spirvSHA": "e9e21192c8b47539ae09bfc20244e4f16f1d8b4a70c98fc65e820749197aa8e4",
+        "memoryModel": "Logical GLSL450",
+        "coherentMembers": [
+          "Candidate",
+          "Work",
+          "Control"
+        ],
+        "controlBarriers": [
+          "OpControlBarrier %uint_2 %uint_2 %uint_264"
+        ],
+        "memoryBarriers": [
+          "OpMemoryBarrier %uint_1 %uint_264",
+          "OpMemoryBarrier %uint_1 %uint_72"
+        ]
+      },
+      {
+        "role": "OP_00",
+        "parentSourceSHA": "617adf29a80f7fb7e8e3c8ca18df9f0604f7081ff1d319701ad73cb099cda7ea",
+        "glesBytes": 48786,
+        "glesSHA": "8c30360bbf49038a0155861e91354737b5bcc971d151553021d393fb710f24f3",
+        "glesActiveBlocks": {
+          "Control": 3,
+          "Candidate": 1,
+          "Base": 0,
+          "Work": 2
+        },
+        "vulkanGlslBytes": 49080,
+        "vulkanGlslSHA": "3720fd53084e814a097a65b73ad6fd0d7fd7d56abefb5cc68873282228686b17",
+        "spirvBytes": 261524,
+        "spirvSHA": "bb91b442e26d0a22477ac2bdc1964365cc1ee4320883e9a47e02448199145b00",
+        "memoryModel": "Logical GLSL450",
+        "coherentMembers": [
+          "Candidate",
+          "Work",
+          "Control"
+        ],
+        "controlBarriers": [
+          "OpControlBarrier %uint_2 %uint_2 %uint_264"
+        ],
+        "memoryBarriers": [
+          "OpMemoryBarrier %uint_1 %uint_264",
+          "OpMemoryBarrier %uint_1 %uint_72"
+        ]
+      },
+      {
+        "role": "OP_18",
+        "parentSourceSHA": "e9ff05a22fca32361ce24312f824d4c811e13ed08611c35d6ffa7b98d8e2e5eb",
+        "glesBytes": 48639,
+        "glesSHA": "04dc4b7f185b2784b23759016b3bce08b96ae4a15f45d88c50f5211d795ca258",
+        "glesActiveBlocks": {
+          "Control": 3,
+          "Candidate": 1,
+          "Base": 0,
+          "Work": 2
+        },
+        "vulkanGlslBytes": 48933,
+        "vulkanGlslSHA": "6bab3971118bfe1116350487842425bfb9485e13e5094bf5a7a7845d56b9834b",
+        "spirvBytes": 263192,
+        "spirvSHA": "f3e337c20f218d0386267eb270b50cfe3dcd65a72f3a23e0ea2f1a161aaf0da5",
+        "memoryModel": "Logical GLSL450",
+        "coherentMembers": [
+          "Candidate",
+          "Work",
+          "Control"
+        ],
+        "controlBarriers": [
+          "OpControlBarrier %uint_2 %uint_2 %uint_264"
+        ],
+        "memoryBarriers": [
+          "OpMemoryBarrier %uint_1 %uint_264",
+          "OpMemoryBarrier %uint_1 %uint_72"
+        ]
+      },
+      {
+        "role": "OP_37",
+        "parentSourceSHA": "fb0ff4fce8e3ad0ddc10fedb5f220088a1d480610dc8d7880d3e8f470e3ef516",
+        "glesBytes": 48472,
+        "glesSHA": "16fe19be491f8087d2ae04d7055e0260ea9b772686b9d5ad16e0c76fbbe4cb5d",
+        "glesActiveBlocks": {
+          "Control": 3,
+          "Candidate": 1,
+          "Base": 0,
+          "Work": 2
+        },
+        "vulkanGlslBytes": 48766,
+        "vulkanGlslSHA": "2ab64f53408e5b3c87debab17e69ab76f22727b4b671c1df9911927ea437f5e7",
+        "spirvBytes": 262044,
+        "spirvSHA": "eaf83c0ba7d8cd7c5d16d8951fdf180dc7fb442b69dba3128e1bc3dd943f9485",
+        "memoryModel": "Logical GLSL450",
+        "coherentMembers": [
+          "Candidate",
+          "Work",
+          "Control"
+        ],
+        "controlBarriers": [
+          "OpControlBarrier %uint_2 %uint_2 %uint_264"
+        ],
+        "memoryBarriers": [
+          "OpMemoryBarrier %uint_1 %uint_264",
+          "OpMemoryBarrier %uint_1 %uint_72"
+        ]
+      },
+      {
+        "role": "OP_48",
+        "parentSourceSHA": "840391626a47625a537dfad19d32887c78db88f2f6afd522f2c34f522791c974",
+        "glesBytes": 48604,
+        "glesSHA": "3dd835e2cf9b88b49d7f646eab9117cd3f3f4d5e9c59b816c33c8da584931fa8",
+        "glesActiveBlocks": {
+          "Control": 3,
+          "Candidate": 1,
+          "Base": 0,
+          "Work": 2
+        },
+        "vulkanGlslBytes": 48898,
+        "vulkanGlslSHA": "361b53ae86014ffce4359a65b408ab44e098a97d053e00c706aaf680cb38b69b",
+        "spirvBytes": 255972,
+        "spirvSHA": "8fc410ae3f9112550ab41b366331bd8a8bfa46737b57ce0d2ff181d742132b07",
+        "memoryModel": "Logical GLSL450",
+        "coherentMembers": [
+          "Candidate",
+          "Work",
+          "Control"
+        ],
+        "controlBarriers": [
+          "OpControlBarrier %uint_2 %uint_2 %uint_264"
+        ],
+        "memoryBarriers": [
+          "OpMemoryBarrier %uint_1 %uint_264",
+          "OpMemoryBarrier %uint_1 %uint_72"
+        ]
+      },
+      {
+        "role": "OP_62",
+        "parentSourceSHA": "0d4a77c880ec1fe2f140683032c2683aa56ae2ee266c43ff95dfce6e8b0bb340",
+        "glesBytes": 11485,
+        "glesSHA": "45b0ad9264173b2db535b86916fb490654466d8742bbe9f3e3246e2c97e70214",
+        "glesActiveBlocks": {
+          "Control": 3,
+          "Candidate": 1,
+          "Base": 0
+        },
+        "vulkanGlslBytes": 11779,
+        "vulkanGlslSHA": "9b2cf90c08b383bea077ea216c7854052a17f4ffecb9df52908d56c3994c0325",
+        "spirvBytes": 49772,
+        "spirvSHA": "53a7326c51eef2621bdf7af72f3ab6ce688868c118a8399dc0d6eda5e09bb7f7",
+        "memoryModel": "Logical GLSL450",
+        "coherentMembers": [
+          "Candidate",
+          "Work",
+          "Control"
+        ],
+        "controlBarriers": [
+          "OpControlBarrier %uint_2 %uint_2 %uint_264"
+        ],
+        "memoryBarriers": [
+          "OpMemoryBarrier %uint_1 %uint_264",
+          "OpMemoryBarrier %uint_1 %uint_72"
+        ]
+      }
+    ],
+    "isolatedViscosity": {
+      "role": "VISC_48",
+      "parentSourceSHA": "e626954530ffb668d31ac99e895e4031cf49f6fbb0fd7563b6e58775aea987c6",
+      "glesBytes": 15958,
+      "glesSHA": "17ae88e62023eebfd69de3a5523fcdb5a4cac17ee19281eec8e1ce850cb687d9",
+      "glesActiveBlocks": {
+        "Control": 3,
+        "Candidate": 1,
+        "Base": 0,
+        "Work": 2
+      },
+      "vulkanGlslBytes": 16252,
+      "vulkanGlslSHA": "6d829c978d8c1751426af165529a28d41a3cc3a01270b426aea638d6ff0ea097",
+      "spirvBytes": 71256,
+      "spirvSHA": "023db590d3c99d5fbcbc369cc6fd26c9cbc623f286730eb2c90c9753e674fe80",
+      "memoryModel": "Logical GLSL450",
+      "coherentMembers": [
+        "Candidate",
+        "Work",
+        "Control"
+      ],
+      "controlBarriers": [
+        "OpControlBarrier %uint_2 %uint_2 %uint_264"
+      ],
+      "memoryBarriers": [
+        "OpMemoryBarrier %uint_1 %uint_264",
+        "OpMemoryBarrier %uint_1 %uint_72"
+      ]
+    },
+    "runtimeResult": "NOT_RUN"
+  }
+}
