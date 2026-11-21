@@ -1,0 +1,27 @@
+{
+ "revision": "T766_V1_RX_REVISED_SOURCE_FIRST_REJECT_V1",
+ "date": "2026-11-21 19:58",
+ "package": {
+  "task": "T766-rx (T763 RX_SOURCE_GUARD_COMPILE revision)",
+  "inputSha": "376720d8 (receipt-identical)",
+  "signedSha": "0c980f70",
+  "sign": "PASS",
+  "linkedElf buildId": "4bdd76ddf02618f9 (hilog mapped verified)"
+ },
+ "run1": "full chain -> APPLIED -> PUMP_FAILED code=5 STALE (hilog ring evicted before capture)",
+ "run2 hilog-captured": {
+  "chain": "ENQUEUED->CACHE_PRELOAD->APPLY->SOURCE_BUILD_ENTER 41767B sha=ee66f5f2 (T736 frozen)->SHADER_COMPILE->PROGRAM_LINK->SOURCE_REFLECT_EXIT program=4 qualified->APPLIED->PUMP",
+  "terminal": "PUMP_FAILED code=6 = Result::DEADLINE (RX now matches DM T751/T762 DEADLINE family)"
+ },
+ "G9BootV1 originals": {
+  "pid": "927",
+  "mappedBuildId": "4bdd76ddf02618f9",
+  "events": "12 (BOOT_AUDIT_OK chain)",
+  "seal": "6559303 at UNMAP_EXIT/PREPARE_EXIT/BOOT_AUDIT_OK",
+  "fenceWaitRaw": "None in BOOT events (RX-side fence fields differ from DM)"
+ },
+ "crossFamily": "RX revised now also DEADLINE=6 \u2014 identical to DM T762 bracket family; first reject consistent across 3 families x multiple runs",
+ "run1vs2": "run1 STALE=5 vs run2 DEADLINE=6 \u2014 same Pump, different elapsed time vs 250ms window; same freshness-window family",
+ "T736ContractItems": "BOOT same-ticket YES; SOURCE input submitted YES (ee66f5f2 41767B); first pulse/fence/1024B/typed proof/Q20/commit/FIFO/cold-archive/valid-swap NOT_REACHED (Pump DEADLINE)",
+ "route": "architect: RX confirmed DEADLINE (matches DM); freshness-window decision input complete for both families"
+}
