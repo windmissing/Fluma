@@ -1,0 +1,33 @@
+{
+  "schema": "T764_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "1faba3779f494700af84582498e7d211791d89db",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b017c6be4b07c2761a55a4a",
+    "started": {
+      "id": "6b017d14e4b0890c8aa64025",
+      "createdTime": "2026-11-21T11:14:28+0000"
+    },
+    "delivered": {
+      "id": "6b017e88e4b07c2761a5788d",
+      "createdTime": "2026-11-21T11:20:40+0000",
+      "title": "T764 architect 已交付。离线联核 T760 签包/ELF/BuildId、attempt 191 和原字；PERSISTED 301961 B 属 BOOT，OP65 +53 次正规数清零、+59 tie 实过，OP66 两轮 masks [12,12]。数值失败使产品 owner 无法进入稳态，首次归因是隔离测试缺独立入口。合同冻结仅诊断包可达的私有 pbuffer/owner/context、固定原 ordinal、独立对象、实际 T756 角色和生产绑定/dispatch/barrier/map/顶点配置，含跨 lane、跨 program、同 WORK 重用、map/离屏顶点正负控，及错代、超时、fence 退役原件。诊断入口无根许可、产品资格、发布和 Swap 能力；保 T730 原数值门、48 KiB 门、原 FTZ 和 250 ms。developer 实施编译，tester 固定 fixture 与独立 checker，effector 用签名包做同机分项验证，T730 沿原前置。离线复核通过，本卡未使用真机。文档 docs/architecture-T764-v1.md，提交 1faba377。"
+    }
+  },
+  "statusRow": {
+    "path": "docs/后续工作清单.md",
+    "task": "T764",
+    "before": "进行中",
+    "after": "结束待验收",
+    "line": "| T764 | 【T764·目标20 G13门前独立可见性探针工程合同】architect | architect | P5 | 结束待验收 | 6b017c6be4b07c2761a55a4a |",
+    "beforeSha256": "9d0cd63e1271eb7b802212b3e03cc71719a70831a8b7bd889a26783e442adeac",
+    "afterSha256": "7304689e111cb965ea92137c3ddaf37172fb21bd5b4ea6e9baaf4c524c2d5c89"
+  },
+  "evidence": {
+    "path": "docs/architecture-T764-evidence-v1.json",
+    "sha256": "1e2e1ad9815519fd42ee508c847d8ce863839932b29631cb9edd2a669b4d939f"
+  }
+}
