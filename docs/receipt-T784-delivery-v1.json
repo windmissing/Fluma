@@ -1,0 +1,33 @@
+{
+  "schema": "T784_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "3dac0ffd49316012c5025d47108d73973122bf91",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b019c51e4b0c0fef85569aa",
+    "started": {
+      "id": "6b019ddbe4b0c0fef85580fa",
+      "createdTime": "2026-11-21T13:34:19+0000"
+    },
+    "delivered": {
+      "id": "6b019fc6e4b0c0fef8559cc6",
+      "createdTime": "2026-11-21T13:42:30+0000",
+      "title": "T784 architect 已交付。T773 实读 T775 的 A.jsonl/B.jsonl/C.jsonl 全部 arm=A、cadence=0、末批双 flush。三次 A 均到 cursor 12，执行 fence 未 signal，迟到同句柄 signal 只作退役，SOURCE 无 map/typed，commit=0、FIFO=1。第一笔 12.77 MB copy + 末批首次 flush 用 148.781–157.623 ms。B 文件的 controller 首拒在锁内时钟过线 782 ns，pulse age 1.800 ms。DM 先用实际 argv/部署字节/原生 arm 回显补 B/C，A→B 看 wake/poll/CPU，B→C 看提交至 fence 及整根墙时。RX 原 hilog 是 BOOT，UI code=6 联核 T763 支持 live Pump DEADLINE；报告所指 chain.txt 与 SOURCE sidecar 未归档，首拒位置和真实 pulse/receipt age 未知，编译/链接发生在 claim 前。T785 先导出同票侧车，实测后再分流。250 ms、33.333333 ms 真实 fresh pulse 和原同根 oracle 照旧。T773 三份原件与既有离线正负控已复跑。不使用真机。详见 docs/architecture-T784-v1.md，提交 3dac0ffd。"
+    }
+  },
+  "statusRow": {
+    "path": "docs/后续工作清单.md",
+    "task": "T784",
+    "before": "进行中",
+    "after": "结束待验收",
+    "line": "| T784 | 【T784·目标20 DM与RX SOURCE超期实证归因及修订路线】architect | architect | P5 | 结束待验收 | 6b019c51e4b0c0fef85569aa |",
+    "beforeSha256": "c6cb1c21901db7ee40896bfeaba65ab0af5adcdf456701f877a7ab709247ace4",
+    "afterSha256": "f3c49f416fc9a1f922af32d7407f626f24873b362006b9f51d2e656122fb5f93"
+  },
+  "evidence": {
+    "path": "docs/architecture-T784-evidence-v1.json",
+    "sha256": "b214a2eab80beaa923eb7f736d5cd6d901e567ce904942d83ab93040b7570e54"
+  }
+}
