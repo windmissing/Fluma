@@ -1,0 +1,27 @@
+{
+  "schema": "T753_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "e896cb355fecbe51b2cd7f36f4a059d9823def74",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b00e41ce4b011b710ba4602",
+    "started": {
+      "id": "6b00e493e4b0bdebdc78ff51",
+      "createdTime": "2026-11-21T00:23:47+0000"
+    },
+    "delivered": {
+      "id": "6b00e67ae4b0c0fef84a1c2d",
+      "createdTime": "2026-11-21T00:31:54+0000",
+      "title": "T753 离线架构已交（e896cb35，docs/architecture-T753-v1.md 与 architecture-T753-evidence-v1.json）。已核 T739 签包 9e35e801、实际角色和 836 原表。Q 原 scope 1/2 同绑 REPLAY/trace10240，旧 REPLAY 成功写 c[518+2]=c[520] 污染根 opcode。冻结 ACTUAL→CURRENT/CANDIDATE、uScope0、trace2048；REPLAY→CURRENT/REPLAY、uScope1、trace10240，保 SOURCE/BOOT 原特殊绑定及 820/16 顺序。GLES 分开组内 coherent、SSBO、map BUFFER_UPDATE 和 Scene vertex 可见性，Vulkan 分开 compute/range、transfer/host、vertex/WSI。六角色和隔离 OP48 双后端静态过门，最大 Vulkan GLSL 49080 B。已给提交/退役、原包追溯、反混绑/可见性/迟到负控。developer 可做确定的接线修订；原 T730 FP32 门保留，935F 继续按 T744/T747/T750 条件。无产品修改或真机结果。G20 4/12≈33%。"
+    }
+  },
+  "statusRow": {
+    "before": "| T753 | 【T753·目标20 G13 ACTUAL与REPLAY绑定和可见性工程合同】architect | architect | P5 | 进行中 | 6b00e41ce4b011b710ba4602 |",
+    "after": "| T753 | 【T753·目标20 G13 ACTUAL与REPLAY绑定和可见性工程合同】architect | architect | P5 | 结束待验收 | 6b00e41ce4b011b710ba4602 |"
+  },
+  "beforeSha256": "436b5c5cecf384acf3de0838674b3cfb821397be9c88d1271aad06335f74e5a4",
+  "afterSha256": "e3330032f528f6330971a4753dcf6e9ff4fdf8b33d6d3cc033a0d3d855fdb75b",
+  "evidenceSha256": "230091a5e2909f683e4b9f28caf66fe1a935431f087fe63c5b106185272fa142"
+}
