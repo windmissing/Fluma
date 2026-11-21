@@ -1,0 +1,27 @@
+{
+  "schema": "T754_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-21",
+  "commit": "010293f96770b7b6750a69044f1842710c2370f0",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b012548e4b011b710be5103",
+    "started": {
+      "id": "6b013307e4b07c2761a0be07",
+      "createdTime": "2026-11-21T05:58:31+0000"
+    },
+    "delivered": {
+      "id": "6b01350ee4b06b9ce605af57",
+      "createdTime": "2026-11-21T06:07:10+0000",
+      "title": "T754 离线首次归因已交（010293f9，docs/architecture-T754-v1.md、evidence，已修订 T736）。旧次 dm21-out PID4219/T745/BOOT_ONLY/1638。正式 dm21-out2 PID6695/start5882046，driver 0a496a94、DSO 63b69fe3 均为 T748，BOOT 原尾通过且 CONFIGURE_EXIT=0。设备 MD5 b99227cc 对应 1,353,304 B 剥离 HAP DSO，780cc7c1 对应 5,436,792 B 未剥离链接件，同 BuildId，比较对象混用已查明。SOURCE result6/controlFault9 均 DEADLINE，250 ms 门在 pass11 dispatch+barrier 已提交、执行 fence 前生效；具体为末 pass post-guard 或 Pump flush 前后哪处仍缺时间戳。无 GPU 1024 B 尾/typed/commit，退役 fence 在原事件后独立走，当前无原证，queueAfter=0 为未采默认。另有 BOOT→root 316.035 s 冷段，缺 SOURCE compile/link 原边。交 developer 编译有界逐调用、guard、heartbeat、执行/退役 fence 收据，再由 effector 同输入单次复测，保原门。G20 4/12≈33%。"
+    }
+  },
+  "statusRow": {
+    "before": "| T754 | 【T754·目标20 DM SOURCE拒绝与工件身份首次归因】architect | architect | P5 | 进行中 | 6b012548e4b011b710be5103 |",
+    "after": "| T754 | 【T754·目标20 DM SOURCE拒绝与工件身份首次归因】architect | architect | P5 | 结束待验收 | 6b012548e4b011b710be5103 |"
+  },
+  "beforeSha256": "9f692995de1c5f17797320c54e2a1ac717f598a9b8d3907229d52b3eb4a236bd",
+  "afterSha256": "7257eda7a00fc79d5dc3cce31b0171dcc37607a99383133db459f2be7af6ef39",
+  "evidenceSha256": "f2d73c78949a94be0118d315c7fcbb8ed81fafe285225dcf05a1e051816007de"
+}
