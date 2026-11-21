@@ -1,0 +1,463 @@
+{
+  "schema": "T759_RX_SOURCE_PULSE_ATTRIBUTION_V1",
+  "deviceUsed": false,
+  "artifact": {
+    "compileReceipt": {
+      "path": "test/reports/t752/compile.json",
+      "bytes": 5492,
+      "sha256": "428cdf643bb8cd3ad575b04efa6b6dd1c76eaecc966db6368c52be7723a5e825"
+    },
+    "signReceipt": {
+      "path": "test/reports/t257/T755-rx.json",
+      "bytes": 2277,
+      "sha256": "b3b5b250ffbc29d134eaede22d25f1e4c2a6c68f1c61f78aca05b23137ca9046"
+    },
+    "artifacts": {
+      "input": {
+        "path": ".codex/local-test/t752-final/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "bytes": 7768280,
+        "sha256": "6cdcfc7d026fa6813c07bde91a440f53947dc93d1cd31949988e35b281c9f156"
+      },
+      "signed": {
+        "path": ".codex/local-test/t257-sign/T755-rx/T755-rx-signed.hap",
+        "bytes": 7870390,
+        "sha256": "7f8a29002c6e89196dc6c3279281a5a68f5afe406d84ca7dce8daf66d716af28"
+      }
+    },
+    "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+    "elfSHA": "d709d3f8689945213fada849142dc5f68e4593ea810d707f671d0a3f30aa27cf",
+    "roles": {
+      "boot": {
+        "path": ".codex/local-test/t752-final/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g9rx/rx_assets/boot.comp",
+        "bytes": 22318,
+        "sha256": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef"
+      },
+      "source": {
+        "path": ".codex/local-test/t752-final/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g9rx/rx_assets/source.comp",
+        "bytes": 41767,
+        "sha256": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8"
+      }
+    },
+    "roleSetSHA": "b718fe047d7fdd88aadc603cc4ccc6ef7929cbbb0372f40fb5630bcc58395bf1",
+    "bootRoleSetSHA": "e33bdfca3e04b982fe72d61934d1d5fc94e9e33da647fe02b5fd9957af5ec42f"
+  },
+  "timeline": {
+    "raw": {
+      "path": "test/reports/t491/t755/h755.txt",
+      "bytes": 1259759,
+      "sha256": "63bc6708cb8eeca4debb66fe119f948f547bbb4d9f0e5427022771125ac272de"
+    },
+    "layoutTerminal": {
+      "path": "test/reports/t491/t755/l4.json",
+      "bytes": 40604,
+      "sha256": "efb05cb373b180528cbeb55a0e031ce5064e0a5b992dc10c97422cbb4a11a112"
+    },
+    "ticket": "1",
+    "pid": 31536,
+    "ownerTid": 31696,
+    "bootAbridged": [
+      {
+        "line": 1488,
+        "wall": "11-21 15:30:30.895",
+        "logPid": 31536,
+        "logTid": 31696,
+        "schema": "G9BootV1",
+        "family": "RX",
+        "role": "BOOT",
+        "stage": "FINISH_EXIT",
+        "pid": 31536,
+        "tid": 31696,
+        "run": "1",
+        "owner": "1",
+        "context": "1",
+        "ns": "84101328849687",
+        "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+        "roleSetSHA": "e33bdfca3e04b982fe72d61934d1d5fc94e9e33da647fe02b5fd9957af5ec42f",
+        "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+        "raw": 37146,
+        "gl": 0,
+        "egl": 12288,
+        "error": -1,
+        "seal": -1
+      },
+      {
+        "line": 1489,
+        "wall": "11-21 15:30:30.895",
+        "logPid": 31536,
+        "logTid": 31696,
+        "schema": "G9BootV1",
+        "family": "RX",
+        "role": "BOOT",
+        "stage": "MAP_ENTER",
+        "pid": 31536,
+        "tid": 31696,
+        "run": "1",
+        "owner": "1",
+        "context": "1",
+        "ns": "84101328936406",
+        "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+        "roleSetSHA": "e33bdfca3e04b982fe72d61934d1d5fc94e9e33da647fe02b5fd9957af5ec42f",
+        "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+        "raw": 1166976,
+        "gl": -1,
+        "egl": -1,
+        "error": -1,
+        "seal": -1
+      },
+      {
+        "line": 1490,
+        "wall": "11-21 15:30:30.895",
+        "logPid": 31536,
+        "logTid": 31696,
+        "schema": "G9BootV1",
+        "family": "RX",
+        "role": "BOOT",
+        "stage": "MAP_EXIT",
+        "pid": 31536,
+        "tid": 31696,
+        "run": "1",
+        "owner": "1",
+        "context": "1",
+        "ns": "84101328956875",
+        "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+        "roleSetSHA": "e33bdfca3e04b982fe72d61934d1d5fc94e9e33da647fe02b5fd9957af5ec42f",
+        "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": -1,
+        "seal": -1
+      },
+      {
+        "line": 1491,
+        "wall": "11-21 15:30:30.895",
+        "logPid": 31536,
+        "logTid": 31696,
+        "schema": "G9BootV1",
+        "family": "RX",
+        "role": "BOOT",
+        "stage": "UNMAP_EXIT",
+        "pid": 31536,
+        "tid": 31696,
+        "run": "1",
+        "owner": "1",
+        "context": "1",
+        "ns": "84101328966719",
+        "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+        "roleSetSHA": "e33bdfca3e04b982fe72d61934d1d5fc94e9e33da647fe02b5fd9957af5ec42f",
+        "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": 0,
+        "seal": 6559303
+      },
+      {
+        "line": 1493,
+        "wall": "11-21 15:30:30.896",
+        "logPid": 31536,
+        "logTid": 31696,
+        "schema": "G9BootV1",
+        "family": "RX",
+        "role": "BOOT",
+        "stage": "BOOT_AUDIT_OK",
+        "pid": 31536,
+        "tid": 31696,
+        "run": "1",
+        "owner": "1",
+        "context": "1",
+        "ns": "84101330326094",
+        "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+        "roleSetSHA": "e33bdfca3e04b982fe72d61934d1d5fc94e9e33da647fe02b5fd9957af5ec42f",
+        "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+        "raw": 1,
+        "gl": 0,
+        "egl": 12288,
+        "error": 0,
+        "seal": 6559303
+      }
+    ],
+    "enqueued": {
+      "line": 1466,
+      "wall": "11-21 15:30:30.202",
+      "logPid": 31536,
+      "logTid": 31536,
+      "ticket": "1",
+      "ns": "84100636318594",
+      "phase": "ENQUEUED",
+      "run": "0",
+      "context": "0",
+      "result": "-1",
+      "failure": "",
+      "egl": "12288",
+      "gl": "0",
+      "shader": "-1",
+      "link": "-1",
+      "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+      "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8"
+    },
+    "sourceBuild": {
+      "line": 1494,
+      "wall": "11-21 15:30:30.899",
+      "logPid": 31536,
+      "logTid": 31696,
+      "run": "1",
+      "bytes": "41767",
+      "sha": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+      "roles": "b718fe047d7fdd88aadc603cc4ccc6ef7929cbbb0372f40fb5630bcc58395bf1",
+      "stage": "SOURCE_BUILD_ENTER"
+    },
+    "sourceReflect": {
+      "line": 2413,
+      "wall": "11-21 15:35:51.594",
+      "logPid": 31536,
+      "logTid": 31696,
+      "program": "4",
+      "activeUniforms": "40",
+      "qualified": "1",
+      "stage": "SOURCE_REFLECT_EXIT"
+    },
+    "sourceConfigure": [
+      {
+        "line": 1495,
+        "wall": "11-21 15:30:30.906",
+        "logPid": 31536,
+        "logTid": 31696,
+        "ticket": "1",
+        "ns": "84101339652969",
+        "phase": "SHADER_COMPILE_ENTER",
+        "run": "1",
+        "context": "1",
+        "result": "-1",
+        "failure": "",
+        "egl": "12288",
+        "gl": "0",
+        "shader": "1",
+        "link": "1",
+        "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+        "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8"
+      },
+      {
+        "line": 1966,
+        "wall": "11-21 15:31:56.230",
+        "logPid": 31536,
+        "logTid": 31696,
+        "ticket": "1",
+        "ns": "84186663625156",
+        "phase": "SHADER_COMPILE_EXIT",
+        "run": "1",
+        "context": "1",
+        "result": "-1",
+        "failure": "",
+        "egl": "12288",
+        "gl": "0",
+        "shader": "1",
+        "link": "1",
+        "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+        "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8"
+      },
+      {
+        "line": 1967,
+        "wall": "11-21 15:31:56.230",
+        "logPid": 31536,
+        "logTid": 31696,
+        "ticket": "1",
+        "ns": "84186663671875",
+        "phase": "PROGRAM_LINK_ENTER",
+        "run": "1",
+        "context": "1",
+        "result": "-1",
+        "failure": "",
+        "egl": "12288",
+        "gl": "0",
+        "shader": "1",
+        "link": "1",
+        "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+        "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8"
+      },
+      {
+        "line": 2412,
+        "wall": "11-21 15:35:51.594",
+        "logPid": 31536,
+        "logTid": 31696,
+        "ticket": "1",
+        "ns": "84422027915312",
+        "phase": "PROGRAM_LINK_EXIT",
+        "run": "1",
+        "context": "1",
+        "result": "-1",
+        "failure": "",
+        "egl": "12288",
+        "gl": "0",
+        "shader": "1",
+        "link": "1",
+        "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+        "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8"
+      },
+      {
+        "line": 2414,
+        "wall": "11-21 15:35:51.596",
+        "logPid": 31536,
+        "logTid": 31696,
+        "ticket": "1",
+        "ns": "84422030339219",
+        "phase": "CONFIGURE_RESEARCH_EXIT",
+        "run": "1",
+        "context": "1",
+        "result": "0",
+        "failure": "",
+        "egl": "12288",
+        "gl": "0",
+        "shader": "1",
+        "link": "1",
+        "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+        "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8"
+      },
+      {
+        "line": 2415,
+        "wall": "11-21 15:35:51.669",
+        "logPid": 31536,
+        "logTid": 31696,
+        "ticket": "1",
+        "ns": "84422103143594",
+        "phase": "APPLIED",
+        "run": "1",
+        "context": "1",
+        "result": "0",
+        "failure": "",
+        "egl": "12288",
+        "gl": "0",
+        "shader": "1",
+        "link": "1",
+        "mappedBuildId": "7bd1cae40ac3e385074b123882290ee18cacfee8",
+        "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8"
+      }
+    ],
+    "durations": {
+      "shader_compileNs": 85323972187,
+      "program_linkNs": 235364243437,
+      "configureToAppliedNs": 321466825000,
+      "bootToAppliedNs": 320772817500
+    },
+    "uiTerminal": {
+      "phase": "PUMP_FAILED",
+      "result": 5,
+      "nativeNs": null,
+      "pumpIndex": null,
+      "firstFailedGuard": null,
+      "dispatchCount": null,
+      "fenceReached": null
+    }
+  },
+  "sourcePath": {
+    "files": [
+      {
+        "path": "entry/src/main/ets/pages/GpuResidentG9Rx.ets",
+        "bytes": 10751,
+        "sha256": "2971f0f27e524a1017a9c75944eca214ff04f82212261d7b720a424c1e4bb3d3"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9rx/bridge.cpp",
+        "bytes": 36517,
+        "sha256": "1d1543d712ecc7db165409b28e50509cb1a37980214491e4956baf0362bded70"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9rx/controller.cpp",
+        "bytes": 39340,
+        "sha256": "6b473cb4638ee640baa6918f9cc2200dfc75884c13147ca22591c23bc5042504"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9rx/transport.cpp",
+        "bytes": 35965,
+        "sha256": "79de1b6f75bfa2dc79c737a7b2ad8b0df7a3710bcd26614872e76388e3a12bbd"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9rx/progress_clock_v3.cpp",
+        "bytes": 10468,
+        "sha256": "d9410e45c997973851f575071a35817f67e0fb1f7a2b14bc2b05a3fea664722e"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9rx/rx_protocol.h",
+        "bytes": 17307,
+        "sha256": "9fc23b64f7cb9616be3af6f55954b70169004fd921be4f38042cbee7c046f612"
+      },
+      {
+        "path": "entry/src/main/cpp/gpu_resident/g9rx/research_config.h",
+        "bytes": 2802,
+        "sha256": "e00b85ed0661193ffe3db6210f768dd0bb0548db4f6ea85e9a1889953507153c"
+      }
+    ],
+    "enum": {
+      "STALE": 5,
+      "DEADLINE": 6
+    },
+    "inferredFromUiAndSource": [
+      "APPLIED",
+      "SOURCE_AT_FIFO_HEAD",
+      "BASELINE_AND_FRESH_AT_CLAIM",
+      "ROOT_FROZEN",
+      "TRANSPORT_BEGIN_SUCCEEDED",
+      "PUMP_STALE_BEFORE_TYPED_PROCESSING"
+    ],
+    "liveTransportStaleWindows": [
+      "PUMP_ENTER",
+      "DISPATCH_OR_COPY_GUARD",
+      "FLUSH_EDGE",
+      "FENCE_OR_PRE_MAP_GUARD"
+    ],
+    "unknown": [
+      "ACTUAL_FIRST_FALSE_PREDICATE",
+      "FRAME_CALLBACK_NS",
+      "PULSE_COUNT_AND_NS",
+      "PUMP_ORDINAL",
+      "DISPATCH_CURSOR",
+      "FENCE_OR_MAP_PROGRESS",
+      "RETIREMENT_ORIGINALS"
+    ]
+  },
+  "clockExamples": {
+    "origin": "OFFLINE_DETERMINISTIC_EXAMPLES",
+    "beginNs": 1000000000,
+    "deadlineNs": 1250000000,
+    "pulseWindowNs": 33333333,
+    "rootWindowNs": 250000000,
+    "cases": [
+      {
+        "case": "old_now_new_pulse",
+        "ownerNowNs": 1020000000,
+        "pulseReceiveNs": 1020000001,
+        "allowed": false
+      },
+      {
+        "case": "same_interleaving_resampled",
+        "ownerNowNs": 1020000002,
+        "pulseReceiveNs": 1020000001,
+        "allowed": true
+      },
+      {
+        "case": "last_eligible_pulse_age",
+        "ownerNowNs": 1033333333,
+        "pulseReceiveNs": 1000000000,
+        "allowed": true
+      },
+      {
+        "case": "first_late_pulse_age",
+        "ownerNowNs": 1033333334,
+        "pulseReceiveNs": 1000000000,
+        "allowed": false
+      },
+      {
+        "case": "root_exact_cutoff",
+        "ownerNowNs": 1250000000,
+        "pulseReceiveNs": 1249999999,
+        "allowed": true
+      },
+      {
+        "case": "fresh_pulse_cannot_extend_root",
+        "ownerNowNs": 1250000001,
+        "pulseReceiveNs": 1250000000,
+        "allowed": false
+      }
+    ]
+  }
+}

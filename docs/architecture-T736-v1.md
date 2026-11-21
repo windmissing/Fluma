@@ -2,6 +2,8 @@
 
 2026-11-20 · 目标20 · architect · 离线准备。
 
+> 2026-11-21 T759 补充（RX）。T755 已通过 `APPLIED → SOURCE Claim → Transport::Begin`，在 live Pump 返回 STALE。编译链接属于根前冷段。按 T759 修正新 pulse 与 owner 旧采样交错、旧采样误删新队首和持锁提交校验接线，冻结首次失败谓词；继续保持一个真实首脉冲触发首次 SOURCE、33,333,333 ns freshness 和固定 250 ms 根期限。现场具体首次失效边待原证。 [T759 归因与复测](architecture-T759-v1.md)
+
 > 2026-11-21 T754 补充（DM）。T751 正式次以 T748 打包 DSO 运行，`DEADLINE=6/9` 落在第 12 次 dispatch/barrier 提交后、执行 fence 创建前。修订诊断按最后 Dispatch post-guard、Pump flush 前后及 pre-fence 分段，保同根 `now/deadline`、last pulse、API 原边、原始退役 fence 与终态。未到 map 的数值默认值保未测。部署须对实际 `driver` 和 `pairedDsoFromHap` 的文件字节、完整摘要与映射 BuildId，`linkedDso` 保为独立未剥离工件。冷 SOURCE build/reflect 单列时长。250 ms、33,333,333 ns、真实 typed gate 和原 12-pass 规则保持。 [T754 首次归因与复测合同](architecture-T754-v1.md)
 
 在 T734 之后增加一个显式 `BOOT + SOURCE` 研究变体。每族独立验证一次原 12-pass 非零 SOURCE，以真实 GPU 尾、同根 typed proof 和正增量验收。新变体只允许 SOURCE，单体对照继续走同一族的原生产 math、布局和数值判据。RX 复用现存研究页和 XComponent，DM 首轮使用实际原生 Controller/Transport 入口。T736 未运行驱动或设备，以下输入和期望为实施合同。 [T733 拆分方案](architecture-T733-v1.md) · [机器合同与静态核对](architecture-T736-source-contract-v1.json)
