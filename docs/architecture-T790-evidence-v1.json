@@ -1,0 +1,331 @@
+{
+  "schema": "T790_G13_PROBE_BOOT_IDENTITY_V1",
+  "deviceUsed": false,
+  "T770v3": {
+    "unsigned": {
+      "path": "D:/hmprojects/HelloWorld-T767/.codex/local-test/t767-split-product/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "sha256": "1cf1bfbc3cac1a907addf79937cf9c99c1aca6ffdfce948e1ff14bc07503fb57",
+      "bytes": 7756127,
+      "bundle": "com.example.helloworld",
+      "srcEntry": "./ets/entryability/G13ResearchAbility.ets",
+      "relevantPages": [
+        "pages/GpuResidentG13"
+      ],
+      "module": "entry",
+      "versionCode": 1000000,
+      "elf": {
+        "file": "libs/arm64-v8a/libgrs_g13.so",
+        "sha256": "dcac1489cbc2b0495c275430cb3ac973dec59d5dae9de836e7a972b78ce1b9d2",
+        "buildId": "c9a8c0a52168868704f5a726f1358c4f1b9132b0",
+        "bytes": 1368104,
+        "trustedMarker": false
+      }
+    },
+    "signed": {
+      "path": "D:/hmprojects/HelloWorld-T767/.codex/local-test/t257-sign/T770-v3/T770-v3-signed.hap",
+      "sha256": "a44752df76e0f16288475fc0e0f8f501721f6db58aaa638a7cd71750931bb081",
+      "bytes": 7866842,
+      "bundle": "com.example.helloworld",
+      "srcEntry": "./ets/entryability/G13ResearchAbility.ets",
+      "relevantPages": [
+        "pages/GpuResidentG13"
+      ],
+      "module": "entry",
+      "versionCode": 1000000,
+      "elf": {
+        "file": "libs/arm64-v8a/libgrs_g13.so",
+        "sha256": "dcac1489cbc2b0495c275430cb3ac973dec59d5dae9de836e7a972b78ce1b9d2",
+        "buildId": "c9a8c0a52168868704f5a726f1358c4f1b9132b0",
+        "bytes": 1368104,
+        "trustedMarker": false
+      }
+    },
+    "signReceipt": {
+      "path": "D:/hmprojects/HelloWorld-T767/test/reports/t257/T770-v3.json",
+      "sha256": "b35e07998b522ab2cccddfb16526e3d666b7a584e888bec9a6e3c3efa68c72c2",
+      "bytes": 2295
+    },
+    "layout": {
+      "path": "test/reports/t491/t770b/l4.json",
+      "sha256": "6808984af692c9a8bb945639b6accae95066159ffa74eb50a5907afef60e1773",
+      "bytes": 55308
+    },
+    "bootQualification": {
+      "schema": "G13BootQualificationV2",
+      "effectiveRejectStage": "OP65",
+      "result": 27,
+      "scope": {
+        "boot": "4477937932657",
+        "attempt": "237",
+        "queue": "3",
+        "ns": "4712550644844",
+        "run": "1",
+        "context": "1",
+        "surface": "1",
+        "eglContext": "388518911104",
+        "pid": 47610,
+        "ownerTid": 47740,
+        "processStartTicks": "447774",
+        "mappedBuildId": "c9a8c0a52168868704f5a726f1358c4f1b9132b0",
+        "program": 2,
+        "ctrl": 7,
+        "work": 6,
+        "fenceHandle": "1",
+        "fence": 37146,
+        "firstGl": 0,
+        "rawEgl": 12288,
+        "configRawSHA": "35241d9f2d2baac8deaa84493787903c5ce7e064e5955971d16f7c5039255513",
+        "seedReceiptSHA": "62dfc01eb4a04ab8f89914202edbbea04622d61fb34c887b6e82c24ffa2e6638",
+        "effectiveRejectStage": "OP65",
+        "result": 27
+      },
+      "program": {
+        "boot": "4477937932657",
+        "attempt": "237",
+        "queue": "3",
+        "ns": "4712550644844",
+        "sourceSHA": "e18933691fc21846ae976557f18521de6450924e9095364b5b74d94d4367777a",
+        "route": "SOURCE_COMPILE",
+        "cacheKey": "bacbc9118da2e5c1e8c459602f8d78c0a05b20b95aca1afdf4a4f244435c8cb6",
+        "binarySHA": "",
+        "environmentSHA": "1338b161964299696eaa4a6c9c2c7b0f0bb5144bef61afded796983d1a613d72",
+        "loadedModule": {
+          "state": "LOADED_FILE_OBSERVED",
+          "sha256": "dcac1489cbc2b0495c275430cb3ac973dec59d5dae9de836e7a972b78ce1b9d2",
+          "bytes": "1368104",
+          "device": "66695",
+          "inode": "63737",
+          "BuildId": "c9a8c0a52168868704f5a726f1358c4f1b9132b0",
+          "memoryBuildIdMatched": true,
+          "path": "/data/storage/el1/bundle/libs/arm64/libgrs_g13.so"
+        }
+      },
+      "op65": {
+        "boot": "4477937932657",
+        "attempt": "237",
+        "queue": "3",
+        "ns": "4712550644844",
+        "state": "REJECTED",
+        "ctrl255": 3235779329,
+        "ctrl7": 27,
+        "ctrlTailByteOffset": 73728,
+        "workByteOffset": 583296,
+        "mathReadGl": 0,
+        "inputReadGl": 0,
+        "work35_41_47_53_59": [
+          0,
+          1065353216,
+          1065353216,
+          0,
+          1065353216
+        ],
+        "input744To747": [
+          1,
+          864026624,
+          1065353216,
+          0
+        ]
+      },
+      "op66": {
+        "boot": "4477937932657",
+        "attempt": "237",
+        "queue": "3",
+        "ns": "4712550644844",
+        "state": "REJECTED",
+        "qualified": false,
+        "presence": [
+          true,
+          true
+        ],
+        "inputReadGl": 0,
+        "mismatchMasks": [
+          12,
+          12
+        ],
+        "ctrl200To215": [
+          1065353217,
+          1065353216,
+          0,
+          0,
+          7,
+          0,
+          0,
+          1179661106,
+          1065353217,
+          1065353216,
+          0,
+          0,
+          7,
+          0,
+          0,
+          1179661106
+        ],
+        "input18648To18652": [
+          872415232,
+          8388608,
+          1056964608,
+          2139095040,
+          2143289344
+        ]
+      }
+    },
+    "T782ProbeReader": {
+      "rc": 2,
+      "stdout": "{\"status\": \"INVALID_EVIDENCE\", \"reason\": \"UNSIGNED_HAP_SHA\"}",
+      "lastError": []
+    }
+  },
+  "T778": {
+    "unsigned": {
+      "path": "D:/hmprojects/HelloWorld/.codex/local-test/t778-authorized-handoff/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "sha256": "fd24d289746215ef41d02a90157071e41774a4da3c7f99786263d638a7d91cd4",
+      "bytes": 6763477,
+      "bundle": "com.example.helloworld",
+      "srcEntry": "./ets/entryability/G13VisibilityAbility.ets",
+      "relevantPages": [
+        "pages/G13Visibility"
+      ],
+      "module": "entry",
+      "versionCode": 1000000,
+      "elf": {
+        "file": "libs/arm64-v8a/libgrs_g13_visibility.so",
+        "sha256": "25c5d8d9b216812a6cefc1e485941cf7302996f895fdc9ed131fb62d065ed527",
+        "buildId": "e4bc6faae76828c3a350d1a3d88eb6482ffb8fe1",
+        "bytes": 500688,
+        "trustedMarker": true
+      }
+    },
+    "compileReceipt": {
+      "path": "D:/hmprojects/HelloWorld-T778/docs/receipt-T778-compile-v1.json",
+      "sha256": "e176ed4681eb393d307e075a7e8d11c5aacdf53055b95e5a6bff81a0c1f31c94",
+      "bytes": 5268
+    },
+    "T782ProbeReader": {
+      "rc": 0,
+      "stdout": "{\"status\": \"ARTIFACT_ONLY\", \"buildId\": \"e4bc6faae76828c3a350d1a3d88eb6482ffb8fe1\"}",
+      "lastError": []
+    },
+    "signedProbeArtifact": "NOT_OBSERVED"
+  },
+  "T760": {
+    "signed": {
+      "path": "D:/hmprojects/HelloWorld/.codex/local-test/t257-sign/T760-split/T760-split-signed.hap",
+      "sha256": "868106e231b1b8362c3537c08bd812d75386ee45a2d4f98fa3292d112e027da9",
+      "bytes": 7852781,
+      "bundle": "com.example.helloworld",
+      "srcEntry": "./ets/entryability/G13ResearchAbility.ets",
+      "relevantPages": [
+        "pages/GpuResidentG13"
+      ],
+      "module": "entry",
+      "versionCode": 1000000,
+      "elf": {
+        "file": "libs/arm64-v8a/libgrs_g13.so",
+        "sha256": "369d5ee8f316adc3810cd8e9c6a3ff96ad8351bcee599d75ce77ec4784ba4d77",
+        "buildId": "e5ec50ff304bc372189b8ad210a24f0b82e24771",
+        "bytes": 1365792,
+        "trustedMarker": false
+      }
+    },
+    "coldBoot": {
+      "key": "bacbc9118da2e5c1e8c459602f8d78c0a05b20b95aca1afdf4a4f244435c8cb6",
+      "role": "G13_COMPUTE",
+      "route": "SOURCE_COMPILE",
+      "shaderSHA": "e18933691fc21846ae976557f18521de6450924e9095364b5b74d94d4367777a",
+      "layoutSHA": "34a397363d73a97df72d58c0795a5bec8cbb22b1480eb452e398b0177a5470d0",
+      "environmentSHA": "1338b161964299696eaa4a6c9c2c7b0f0bb5144bef61afded796983d1a613d72",
+      "linkConfigSHA": "6841f249566ce08e8ec085102ee73abcbc1f97190e468656f4599d07661791ae",
+      "binarySHA": "3368e1911fffcebfa8c95863406e3b0ffebee9801925475224fe5d96397b1b42",
+      "binaryBytes": 301961,
+      "binaryFormat": 38769,
+      "persistence": "PERSISTED"
+    }
+  },
+  "T786": {
+    "mappedRxElfMatchesSignedReference": {
+      "path": "D:/hmprojects/HelloWorld/.codex/local-test/t257-sign/T766-rx/T766-rx-signed.hap",
+      "sha256": "0c980f70aaae773c718b6e4c109c025a15dafdefe5f7fe35e18a43cb88c1c9cc",
+      "bytes": 7915137,
+      "bundle": "com.example.helloworld",
+      "srcEntry": "./ets/entryability/G9RxResearchAbility.ets",
+      "relevantPages": [
+        "pages/GpuResidentG9Rx"
+      ],
+      "module": "entry",
+      "versionCode": 1000000,
+      "elf": {
+        "file": "libs/arm64-v8a/libgrs_g9rx.so",
+        "sha256": "6f0690651b1173176c48c36b374b5c2c6b88eba8aa956c40b9c50f5a9164d479",
+        "buildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+        "bytes": 1434168,
+        "trustedMarker": false
+      }
+    },
+    "installedHapSHA256": "NOT_OBSERVED",
+    "raw": [
+      {
+        "path": "test/reports/t491/t786/warm-chain.txt",
+        "sha256": "3b7f2b1c8a97b2172657dd892062ffaf6ea82531a062ebe541b56b2b04bd3d7b",
+        "bytes": 1947
+      },
+      {
+        "path": "test/reports/t491/t786/warm-g9boot.jsonl",
+        "sha256": "e2eba9971edc4da73ba76bb8f8267642103efb2939ab210f82c71061ce858618",
+        "bytes": 5166
+      },
+      {
+        "path": "test/reports/t491/t786/cache/760d1593192e4ee27904b830b3b8881d98a92d1bb1f31fb95c1843c8711649bf.jsonl",
+        "sha256": "748c7b43b9fe37c211c70a5d168cc3462d556905daceaf1457401e198c9f070f",
+        "bytes": 10577
+      },
+      {
+        "path": "test/reports/t491/t786/cache/760d1593192e4ee27904b830b3b8881d98a92d1bb1f31fb95c1843c8711649bf.bin",
+        "sha256": "d9477978d12fe6da29568956f987fbe156d2d4d3ce637430573eaf18c638f0a9",
+        "bytes": 38109
+      }
+    ],
+    "bootTerminal": {
+      "schema": "G9BootV1",
+      "family": "RX",
+      "role": "BOOT",
+      "stage": "BOOT_AUDIT_OK",
+      "pid": 43232,
+      "tid": 43387,
+      "run": "1",
+      "owner": "1",
+      "context": "1",
+      "ns": "4083475704063",
+      "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+      "roleSetSHA": "35abefb8a8ec0214d1fece3aa3aa694901ebf13141bfb5d7de0d0431160387f1",
+      "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+      "raw": 1,
+      "gl": 0,
+      "egl": 12288,
+      "error": 0,
+      "seal": 6559303
+    },
+    "cache": {
+      "key": "760d1593192e4ee27904b830b3b8881d98a92d1bb1f31fb95c1843c8711649bf",
+      "role": "G9_BOOT",
+      "route": "SOURCE_COMPILE",
+      "shaderSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+      "layoutSHA": "759861f636ed37f8f9dbde216f10dbf854a7d79765ef8aadd8589b64fcdeabdc",
+      "environmentSHA": "1338b161964299696eaa4a6c9c2c7b0f0bb5144bef61afded796983d1a613d72",
+      "linkConfigSHA": "6841f249566ce08e8ec085102ee73abcbc1f97190e468656f4599d07661791ae",
+      "binarySHA": "6c916488e67bf46b5e431ef4354d35672aa85eb1f8330fdc5021b434dcf5bd60",
+      "binaryBytes": 37965,
+      "binaryFormat": 38769,
+      "persistence": "PERSISTED"
+    },
+    "cacheStages": [
+      "COMPILE_ENTER",
+      "LINK_ENTER",
+      "LINK_OK_REFLECTION_PENDING",
+      "REFLECT_OK",
+      "EXPORT_LENGTH_ENTER",
+      "EXPORT_ENTER",
+      "EXPORT_WRITE_SUBMITTED",
+      "WARMUP_OK"
+    ]
+  }
+}

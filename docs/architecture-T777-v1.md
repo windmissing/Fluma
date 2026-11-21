@@ -2,6 +2,8 @@
 
 2026-11-21 · G20 · P5 · architect · 离线归因和实施合同。
 
+> T790 复核。T770 v3 的签包装机成功，实际进入 G13 产品 `GpuResidentG13`，复现 OP65 结果 27。接续原 T770 时用 T778 独立诊断 HAP 和 T782 签包判定，装后实核 `G13Visibility`、映射 ELF 和侧车 variant。 [T790 工件身份与执行链](architecture-T790-v1.md)
+
 **T778 优先交付使用原授权 `com.example.helloworld` 的独立诊断构建，沿已有授权签包与覆盖安装链验证。** 该诊断包会和同名应用共享安装身份，设备只能在可恢复的串行窗口切换。诊断入口、GL owner 和资源仍按 T764 隔离。需要两应用并存或无法安全恢复时，使用为 `com.example.helloworld.g13visibility` 正式签发的 profile。 [T770 决策原件](test-report-T770-v1.md) · [T764 隔离合同](architecture-T764-v1.md)
 
 ## 首次归因
