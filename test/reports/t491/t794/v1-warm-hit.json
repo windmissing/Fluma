@@ -1,0 +1,26 @@
+{
+ "revision": "T794_V1_SAME_IDENTITY_BOOT_WARM_HIT_V1",
+ "date": "2026-11-21 23:25",
+ "prior": "T760 signed package 868106e2, mapped e5ec50ff, G13ResearchAbility, cache key bacbc911/301961B \u2014 cache was missing on device -> cold rebuild first per contract",
+ "coldRebuild": "T760-split-signed installed fresh, REST configure 420s -> bacbc911 cache rebuilt (2 entries)",
+ "warmRun": {
+  "freshProcess": "pid 28376, processStartTicks 1064684 in-flight",
+  "mappedBuildId": "e5ec50ff304bc372189b8ad210a24f0b82e24771 hilog verified",
+  "route": "BINARY_LOAD (G13BootProgram: cacheKey bacbc911, binarySHA 3368e191, LOADED_FILE_OBSERVED, memoryBuildIdMatched=true)",
+  "zeroCompile": "no source compile/link phase \u2014 binary load route",
+  "objects": "program 1 ctrl 7 work 6 fenceHandle 1",
+  "reflect": "REFLECT EXIT sourceSHA e1893369 (T756 dual-scope layout)"
+ },
+ "FP32Terminal": {
+  "effectiveRejectStage": "OP65 result=27 attempt 103",
+  "op65": "WORK [0,1065353216,1065353216,0,1065353216] +53 FTZ identical to 250/196/180",
+  "op66": "mismatchMasks [12,12] identical",
+  "fence": 37146,
+  "ctrl255": "0xc0de1301",
+  "ctrl7": 27,
+  "originals": "G13BootOp65+G13BootReadbackV1+G13BootScope captured hilog-side"
+ },
+ "noSubstitutions": "no RX substitute, no product probe, no old PID \u2014 G13ResearchAbility genuine warm path",
+ "T770ordering": "executed before any T770 overwrite (T760 package fresh; probe not on device)",
+ "route": "warm-hit evidence COMPLETE with same-identity originals; FP32 terminal unchanged (FTZ family)"
+}
