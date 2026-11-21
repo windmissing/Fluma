@@ -1,0 +1,20 @@
+{
+ "revision": "T770_V1_SIGN_BLOCKED_V1",
+ "date": "2026-11-21 20:30",
+ "status": "BLOCKED at signing \u2014 honest stop per card discipline",
+ "workDone": [
+  "T767 final receipt located+verified: probe unsigned hap bae482dc receipt-identical, buildId 88b370c7 per contract",
+  "probe copied to main-tree .codex for signing tooling",
+  "T769 offline judge verified (836 resolver rows, fixtureOnly=true deviceExecution=NOT_RUN)"
+ ],
+ "blocker": "T767 probe package bundleName=com.example.helloworld.g13visibility but the ONLY local signing profile (entry-default.p7b) authorizes com.example.helloworld \u2014 sign.py bundle check fails assert (profile/hap mismatch). No g13visibility profile exists on this machine.",
+ "attempts": [
+  "sign via main-tree sign.py (bundle assert fail)",
+  "mirror probe tree into main-tree .codex (same fail)",
+  "sign via T767 worktree sign.py (same fail \u2014 same profile)",
+  "confirmed p7b authorizes com.example.helloworld only"
+ ],
+ "needed": "developer/architect to provide a signing profile authorizing com.example.helloworld.g13visibility (or re-package probe under main bundleName)",
+ "doable-parts-done": "offline parts complete: receipt\u6838\u9a8c\u3001T769 judge verified\u3001signing blocked precisely identified",
+ "route": "developer: provide g13visibility signing profile OR re-bundle probe; then T770 device run is one install+configure away (all other evidence pipeline ready)"
+}
