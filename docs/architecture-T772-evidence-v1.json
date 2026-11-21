@@ -1,0 +1,426 @@
+{
+  "schema": "T772_RX_SOURCE_DEADLINE_ATTRIBUTION_V1",
+  "deviceUsed": false,
+  "artifact": {
+    "receipts": [
+      {
+        "path": "test/reports/t763/compile.json",
+        "bytes": 3742,
+        "sha256": "ef9ad9a389159d6eea0044b8e8ba598aad8375a111fa3c434485ca6c4cb85f8b"
+      },
+      {
+        "path": "test/reports/t257/T766-rx.json",
+        "bytes": 2277,
+        "sha256": "8449008983ca2f94e00f0c21b1db214532eaa66934eaa160715d5ea287c44898"
+      }
+    ],
+    "hap": {
+      "input": {
+        "path": ".codex/local-test/t763-final/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "bytes": 7798519,
+        "sha256": "376720d85d8d1fcb38addc7528a4ea58cab51596af840c0616995b66890eb042"
+      },
+      "signed": {
+        "path": ".codex/local-test/t257-sign/T766-rx/T766-rx-signed.hap",
+        "bytes": 7915137,
+        "sha256": "0c980f70aaae773c718b6e4c109c025a15dafdefe5f7fe35e18a43cb88c1c9cc"
+      }
+    },
+    "roles": {
+      "boot": {
+        "bytes": 22318,
+        "sha256": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef"
+      },
+      "source": {
+        "bytes": 41767,
+        "sha256": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8"
+      }
+    },
+    "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+    "packagedElfSHA": "6f0690651b1173176c48c36b374b5c2c6b88eba8aa956c40b9c50f5a9164d479",
+    "roleSetSHA": "3312d851b7d9ed037d6d7db387d15c1f8453c7c429d0417d7f5d544103206de6",
+    "bootRoleSetSHA": "35abefb8a8ec0214d1fece3aa3aa694901ebf13141bfb5d7de0d0431160387f1"
+  },
+  "t766Capture": {
+    "captureFiles": [
+      {
+        "path": "test/reports/t491/t766/v6/chain.txt",
+        "bytes": 3974,
+        "sha256": "a9a3c61283e50e31a358b4aff48b547b0bafe5e9ca3807ab2e2fba425cb6b6df"
+      },
+      {
+        "path": "test/reports/t491/t766/v6/boot.txt",
+        "bytes": 5885,
+        "sha256": "192d6a59e6719d03caea324a0242cfe11c482a1241472964301f1531d9565937"
+      },
+      {
+        "path": "test/reports/t491/t766/l2.json",
+        "bytes": 40562,
+        "sha256": "980193b60de6285918f5c557bea242a0a3c4954f796fb8fa92d4df8edf3187c2"
+      },
+      {
+        "path": "test/reports/t491/t766/l4.json",
+        "bytes": 40550,
+        "sha256": "3693ce0f0fda2f0d9ebcbae16459d0d56a1e34ccbda268c1a0c703f128b78bd3"
+      },
+      {
+        "path": "test/reports/t491/t766/l5.json",
+        "bytes": 40550,
+        "sha256": "8dc1dc16270602b4e7c610aa4f88c6e278d931674adf6357091442054b8e0ebd"
+      }
+    ],
+    "firstAttempt": {
+      "layoutTicket1Config": "PROGRAM_LINK_ENTER",
+      "layoutTerminal": 5,
+      "nativeScope": null
+    },
+    "secondAttempt": {
+      "pid": 927,
+      "ownerTid": 1129,
+      "processStartTick": null,
+      "ticket": "2",
+      "runOwnerContext": [
+        "2",
+        "1",
+        "1"
+      ],
+      "layoutTerminal": 6,
+      "sourceConfigure": [
+        {
+          "ticket": "2",
+          "ns": "99885642318594",
+          "phase": "ENQUEUED",
+          "run": "0",
+          "context": "0",
+          "result": "-1",
+          "failure": "",
+          "egl": "12288",
+          "gl": "0",
+          "shader": "-1",
+          "link": "-1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+          "wall": "11-21 19:53:35.138",
+          "tid": 927
+        },
+        {
+          "ticket": "2",
+          "ns": "99885643125000",
+          "phase": "OWNER_SEEN",
+          "run": "0",
+          "context": "0",
+          "result": "-1",
+          "failure": "",
+          "egl": "12288",
+          "gl": "0",
+          "shader": "-1",
+          "link": "-1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+          "wall": "11-21 19:53:35.138",
+          "tid": 1129
+        },
+        {
+          "ticket": "2",
+          "ns": "99885643249219",
+          "phase": "CACHE_PRELOAD_ENTER",
+          "run": "2",
+          "context": "1",
+          "result": "-1",
+          "failure": "",
+          "egl": "12288",
+          "gl": "0",
+          "shader": "-1",
+          "link": "-1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+          "wall": "11-21 19:53:35.138",
+          "tid": 1129
+        },
+        {
+          "ticket": "2",
+          "ns": "99885643393437",
+          "phase": "CACHE_PRELOAD_READY",
+          "run": "2",
+          "context": "1",
+          "result": "-1",
+          "failure": "",
+          "egl": "12288",
+          "gl": "0",
+          "shader": "-1",
+          "link": "-1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+          "wall": "11-21 19:53:35.139",
+          "tid": 1129
+        },
+        {
+          "ticket": "2",
+          "ns": "99885643420625",
+          "phase": "APPLY_ENTER",
+          "run": "2",
+          "context": "1",
+          "result": "-1",
+          "failure": "",
+          "egl": "12288",
+          "gl": "0",
+          "shader": "-1",
+          "link": "-1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+          "wall": "11-21 19:53:35.139",
+          "tid": 1129
+        },
+        {
+          "ticket": "2",
+          "ns": "99885830201094",
+          "phase": "SHADER_COMPILE_ENTER",
+          "run": "2",
+          "context": "1",
+          "result": "-1",
+          "failure": "",
+          "egl": "12288",
+          "gl": "0",
+          "shader": "-1",
+          "link": "-1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+          "wall": "11-21 19:53:35.325",
+          "tid": 1129
+        },
+        {
+          "ticket": "2",
+          "ns": "99968133127969",
+          "phase": "SHADER_COMPILE_EXIT",
+          "run": "2",
+          "context": "1",
+          "result": "-1",
+          "failure": "",
+          "egl": "12288",
+          "gl": "0",
+          "shader": "1",
+          "link": "-1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+          "wall": "11-21 19:54:57.628",
+          "tid": 1129
+        },
+        {
+          "ticket": "2",
+          "ns": "99968133177500",
+          "phase": "PROGRAM_LINK_ENTER",
+          "run": "2",
+          "context": "1",
+          "result": "-1",
+          "failure": "",
+          "egl": "12288",
+          "gl": "0",
+          "shader": "1",
+          "link": "-1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+          "wall": "11-21 19:54:57.628",
+          "tid": 1129
+        },
+        {
+          "ticket": "2",
+          "ns": "100066241005469",
+          "phase": "PROGRAM_LINK_EXIT",
+          "run": "2",
+          "context": "1",
+          "result": "-1",
+          "failure": "",
+          "egl": "12288",
+          "gl": "0",
+          "shader": "1",
+          "link": "1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+          "wall": "11-21 19:56:35.736",
+          "tid": 1129
+        },
+        {
+          "ticket": "2",
+          "ns": "100066243638437",
+          "phase": "CONFIGURE_RESEARCH_EXIT",
+          "run": "2",
+          "context": "1",
+          "result": "0",
+          "failure": "",
+          "egl": "12288",
+          "gl": "0",
+          "shader": "1",
+          "link": "1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+          "wall": "11-21 19:56:35.739",
+          "tid": 1129
+        },
+        {
+          "ticket": "2",
+          "ns": "100066243675000",
+          "phase": "APPLIED",
+          "run": "2",
+          "context": "1",
+          "result": "0",
+          "failure": "",
+          "egl": "12288",
+          "gl": "0",
+          "shader": "1",
+          "link": "1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+          "wall": "11-21 19:56:35.739",
+          "tid": 1129
+        }
+      ],
+      "sourceProgram": {
+        "program": "4",
+        "activeUniforms": "40",
+        "qualified": "1",
+        "wall": "11-21 19:56:35.737",
+        "tid": 1129,
+        "phase": "SOURCE_REFLECT_EXIT"
+      },
+      "durationsNs": {
+        "SHADER_COMPILE": 82302926875,
+        "PROGRAM_LINK": 98107827969,
+        "enqueueToApplied": 180601356406
+      },
+      "boot": [
+        {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "FINISH_EXIT",
+          "pid": 927,
+          "tid": 1129,
+          "run": "2",
+          "owner": "1",
+          "context": "1",
+          "ns": "99885821216875",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "35abefb8a8ec0214d1fece3aa3aa694901ebf13141bfb5d7de0d0431160387f1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "raw": 37146,
+          "gl": 0,
+          "egl": 12288,
+          "error": -1,
+          "seal": -1
+        },
+        {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "MAP_ENTER",
+          "pid": 927,
+          "tid": 1129,
+          "run": "2",
+          "owner": "1",
+          "context": "1",
+          "ns": "99885821277187",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "35abefb8a8ec0214d1fece3aa3aa694901ebf13141bfb5d7de0d0431160387f1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "raw": 1166976,
+          "gl": -1,
+          "egl": -1,
+          "error": -1,
+          "seal": -1
+        },
+        {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "MAP_EXIT",
+          "pid": 927,
+          "tid": 1129,
+          "run": "2",
+          "owner": "1",
+          "context": "1",
+          "ns": "99885821563906",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "35abefb8a8ec0214d1fece3aa3aa694901ebf13141bfb5d7de0d0431160387f1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "raw": 1,
+          "gl": 0,
+          "egl": 12288,
+          "error": -1,
+          "seal": -1
+        },
+        {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "UNMAP_EXIT",
+          "pid": 927,
+          "tid": 1129,
+          "run": "2",
+          "owner": "1",
+          "context": "1",
+          "ns": "99885821588125",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "35abefb8a8ec0214d1fece3aa3aa694901ebf13141bfb5d7de0d0431160387f1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "raw": 1,
+          "gl": 0,
+          "egl": 12288,
+          "error": 0,
+          "seal": 6559303
+        },
+        {
+          "schema": "G9BootV1",
+          "family": "RX",
+          "role": "BOOT",
+          "stage": "BOOT_AUDIT_OK",
+          "pid": 927,
+          "tid": 1129,
+          "run": "2",
+          "owner": "1",
+          "context": "1",
+          "ns": "99885821928281",
+          "sourceSHA": "8e0a89e6b2f3a105f61617e472eb7862b0497ff6e23263287214c3a091445aef",
+          "roleSetSHA": "35abefb8a8ec0214d1fece3aa3aa694901ebf13141bfb5d7de0d0431160387f1",
+          "mappedBuildId": "4bdd76ddf02618f9579836d437aeca99d9039f63",
+          "raw": 1,
+          "gl": 0,
+          "egl": 12288,
+          "error": 0,
+          "seal": 6559303
+        }
+      ]
+    },
+    "perAttemptExportArchived": false
+  },
+  "t763Boundary": {
+    "inferredForBothIfPaired": [
+      "FIRST_ACCEPTED_PAGE_PULSE",
+      "CLAIM",
+      "FREEZE",
+      "BEGIN_OK",
+      "PUMP_FAILED"
+    ],
+    "deadlineGuard": "nowNs > deadlineNs",
+    "observedSecondTerminalCode": 6,
+    "candidateGuardSites": [
+      "PUMP_ENTRY",
+      "DISPATCH_ENTRY",
+      "PRE_COPY",
+      "POST_COPY",
+      "PRE_DISPATCH",
+      "POST_DISPATCH",
+      "PRE_FLUSH",
+      "PRE_FENCE_CREATE",
+      "PRE_FENCE_WAIT",
+      "PRE_MAP"
+    ],
+    "missingDirectEvidence": [
+      "GUARD_SITE_ORIGINAL",
+      "ROOT_CLOCK_VALUES",
+      "PULSE_AND_RECEIPT_AGES",
+      "CURSOR_AND_SUBMITTED",
+      "EXECUTION_AND_RETIREMENT_FENCE",
+      "FROZEN_INPUT_WORDS"
+    ]
+  }
+}
