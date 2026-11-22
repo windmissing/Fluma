@@ -1,0 +1,49 @@
+{
+ "revision": "T835_V1_PC_WINDOW_DIAGNOSTIC_FRAME_V1",
+ "date": "2026-11-22 22:35",
+ "package": {
+  "task": "T830 handoff PE 43fed568 (receipt-identical verified)",
+  "run": "t830-pc-handoff.exe live window session"
+ },
+ "run1": {
+  "records": 17,
+  "stages": "WINDOW_AVAILABLE->HOST_IDENTITY->VULKAN_LOADER->INSTANCE_CREATE->WIN32_SURFACE->PHYSICAL_DEVICE_QUALIFICATION->DEVICE_CREATE->PIPELINE_LAYOUT->BOOT_SHADER_MODULE->BOOT_PIPELINE->BOOT_BUFFERS->RECORD_BOOT->QUEUE_SUBMIT->BOOT_FENCE->FENCED_READBACK->BOOT_DIAGNOSTIC_WSI",
+  "hwnd": "86117998 (real window)",
+  "geometry": "784x461 dpi96 60Hz",
+  "adapter": "Intel UHD 630 x2 ENUM (selected 0, queueFamily 0 flags 15 graphics+compute+present, surfaceSupport true)",
+  "floatControls": "Vulkan 1.2 core denormPreserve=1 RTE=1 signedZeroInfNanPreserve=1",
+  "extensions": "VK_KHR_surface+win32_surface+swapchain"
+ },
+ "diagnosticFrame": {
+  "kind": "BOOT_DIAGNOSTIC",
+  "acceptedRoot": "null (diagnostic-scope per card)",
+  "stage": "DIAGNOSTIC_PRESENT_QUEUED",
+  "acquire": 0,
+  "submit": 0,
+  "fence": 0,
+  "present": 0,
+  "imagePresent": 0,
+  "error": 0,
+  "stale": false,
+  "images": 2,
+  "format": 44,
+  "centerPixel": "0xff00ff00 (=4278255360, EXACT expected green probe from T830 receipt)",
+  "presentEnterQpc/ExitQpc": "15174067698520/15174067698655 (135us)"
+ },
+ "gpuCompute": {
+  "op65": "QUALIFIED tailSeal 3235779329 tailError 0",
+  "op66": "QUALIFIED",
+  "originalFirstReject": "NONE",
+  "originalError": 0,
+  "queueSubmitVkResult": 0,
+  "fenceWaitVkResult": 0,
+  "fencePollTimeouts": 0,
+  "stagingCoherent": true,
+  "ctrlTailByteOffset": 73728,
+  "work65ByteOffset": 583296,
+  "dispatches": "8 (op64x5+op65+op66x2 pattern)"
+ },
+ "independence": "acceptedRoot=null diagnostic scope CONFIRMED: this run validates window/surface/swapchain/pixel/present plumbing only, NOT business SOURCE frame (per card) \u2014 business first frame and sustained performance deferred to actual product artifacts",
+ "resizeClose": "run1 ended at PRESENT_QUEUED (45s window), run2 file empty (window alive until kill) \u2014 resize/close/retirement originals were in T830 receipt (geometry 2->3 verified there); this card independently verified the steady-state window+present path",
+ "verdict": "PC actual-window diagnostic frame INDEPENDENTLY VERIFIED: real HWND/Win32 surface/hardware adapter (UHD 630 Vulkan 1.2)/swapchain 2-image 60Hz/center pixel EXACT 0xff00ff00/zero-error present chain"
+}
