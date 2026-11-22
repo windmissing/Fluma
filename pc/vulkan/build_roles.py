@@ -7,6 +7,10 @@ from pathlib import Path
 import re
 import struct
 import subprocess
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools" / "architecture"))
+from analyze_t750 import split_group
 
 MODES = ("DenormPreserve", "SignedZeroInfNanPreserve", "RoundingModeRTE")
 DECLARATION = """#version 450
@@ -33,10 +37,18 @@ def build(out, compiler):
     assert [x["role"] for x in roles] == ["OP_00", "OP_18", "OP_37", "OP_48", "OP_61"]
     header = ["#pragma once", "#include <cstdint>", "#include <cstddef>", "namespace grs::pc {"]
     records = []
+    sources = []
     for role in roles:
-        name = role["role"]
         raw = (out / role["entry"]).read_bytes()
         assert sha(raw) == role["sha256"] and len(raw) == role["bytes"]
+        sources.append((role["role"], role["opcodes"], raw))
+    emit, opcodes = split_group(sources[0][2])
+    assert opcodes == tuple(range(18))
+    for first, last in ((0, 5), (6, 11), (12, 17), (6, 8), (9, 11), (7, 7)):
+        selection = tuple(range(first, last + 1))
+        raw, _ = emit(selection)
+        sources.append((f"OP_00_{first}_{last}", [*selection, 66], raw))
+    for name, opcodes, raw in sources:
         src = raw.decode()
         for a, b in (("#version 310 es", DECLARATION),
                      ("uniform uint uOp,uScope,uJ,uMicro,uBlock,uIndex;",
@@ -71,7 +83,7 @@ def build(out, compiler):
         assert "OpDecorate %_arr_uint_uint_80 ArrayStride 16" in asm
         raw_spv = module.read_bytes()
         records.append(dict(role=name, sourceSHA=sha(encoded), sourceBytes=len(encoded), moduleSHA=sha(raw_spv),
-                            moduleBytes=len(raw_spv), parentSHA=sha(raw), opcodes=role["opcodes"],
+                            moduleBytes=len(raw_spv), parentSHA=sha(raw), opcodes=opcodes,
                             bindings=[0,1,2,3,4], floatModes=MODES, noContraction=asm.count("NoContraction")))
         words = struct.unpack(f"<{len(raw_spv)//4}I", raw_spv)
         header.append(f"inline constexpr uint32_t k{name}[] = {{")

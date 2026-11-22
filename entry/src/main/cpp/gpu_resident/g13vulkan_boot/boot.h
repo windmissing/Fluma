@@ -20,6 +20,8 @@ struct Attempt {
   bool presentBoot = false;
   std::function<bool()> current;
   bool steadyQualification = false;
+  std::string steadyRole;
+  bool disableOptimization = false;
 #else
   NativeWindow *window;
 #endif

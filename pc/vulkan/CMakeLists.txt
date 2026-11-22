@@ -25,6 +25,7 @@ foreach(tool "${ROOT}/tools/g13/vulkan_boot_assets.py" "${CMAKE_CURRENT_SOURCE_D
                   COMMAND_ERROR_IS_FATAL ANY)
 endforeach()
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+    "${ROOT}/tools/architecture/analyze_t750.py"
     "${ROOT}/tools/g13/vulkan_boot_assets.py" "${CMAKE_CURRENT_SOURCE_DIR}/build_view.py"
     "${CMAKE_CURRENT_SOURCE_DIR}/build_roles.py"
     "${CMAKE_CURRENT_SOURCE_DIR}/boot_view.vert" "${CMAKE_CURRENT_SOURCE_DIR}/boot_view.frag")

@@ -734,7 +734,9 @@ void Boot::QualifySteady() {
   Require(reset != nullptr, "MISSING_vkResetCommandPool");
   // The original steady-role gate runs opcode 66 twice against the same
   // program and consumes only its independently committed 16 probe words.
+  size_t qualifiedCount = 0;
   for (const auto &role : pc::kSteadyModules) {
+    if (attempt.steadyRole.empty() ? qualifiedCount >= 5 : attempt.steadyRole != role.name) continue;
     Require(Hex(Hash(role.words, role.bytes).data()) == role.sha, "STEADY_MODULE_SHA_MISMATCH");
     if (shader) {
       vk.DestroyShaderModule(device, shader, nullptr);
@@ -749,24 +751,30 @@ void Boot::QualifySteady() {
     VkShaderModuleCreateInfo module{VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO};
     module.codeSize = role.bytes;
     module.pCode = role.words;
-    Check(vk.CreateShaderModule(device, &module, nullptr, &shader), "vkCreateShaderModule.STEADY");
     VkComputePipelineCreateInfo compute{VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO};
-    compute.stage = {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
-                     VK_SHADER_STAGE_COMPUTE_BIT, shader, "main", nullptr};
+    compute.flags = attempt.disableOptimization ? VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT : 0;
     compute.layout = pipelineLayout;
-    auto pipelineEdge = [&](const char *edge, const char *result) {
+    auto edge = [&](const char *call, const char *phase, const char *result) {
       std::ostringstream row;
-      row << "{\"schema\":\"PC_G13_PIPELINE_PROGRESS_V1\",\"call\":\"vkCreateComputePipelines\","
-             "\"edge\":" << Quote(edge) << ",\"role\":" << Quote(role.name) << ",\"moduleSHA\":" << Quote(role.sha)
+      row << "{\"schema\":\"PC_G13_PIPELINE_PROGRESS_V1\",\"call\":" << Quote(call)
+          << ",\"edge\":" << Quote(phase) << ",\"role\":" << Quote(role.name) << ",\"moduleSHA\":" << Quote(role.sha)
+          << ",\"layoutSHA\":" << Quote(kHash_layoutSHA) << ",\"flags\":" << compute.flags << ",\"pipelineCache\":null"
           << ",\"pid\":" << GetCurrentProcessId() << ",\"ownerTid\":" << GetCurrentThreadId()
+          << ",\"processStartTick\":" << Quote(ProcessStart()) << ",\"qpcFrequency\":\"" << pc::QpcFrequency() << "\""
           << ",\"qpc\":\"" << pc::QpcTicks() << "\",\"vkResult\":" << result << '}';
       return publish(row.str());
     };
-    Require(pipelineEdge("ENTER", "null"), "ATTEMPT_REVOKED");
+    Require(edge("vkCreateShaderModule", "ENTER", "null"), "ATTEMPT_REVOKED");
+    const auto loaded = vk.CreateShaderModule(device, &module, nullptr, &shader);
+    edge("vkCreateShaderModule", "EXIT", std::to_string(int(loaded)).c_str());
+    Check(loaded, "vkCreateShaderModule.STEADY");
+    compute.stage = {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
+                     VK_SHADER_STAGE_COMPUTE_BIT, shader, "main", nullptr};
+    Require(edge("vkCreateComputePipelines", "ENTER", "null"), "ATTEMPT_REVOKED");
     const auto buildStart = Now();
     const auto built = vk.CreateComputePipelines(device, VK_NULL_HANDLE, 1, &compute, nullptr, &pipeline);
     const auto buildNs = Now() - buildStart;
-    pipelineEdge("EXIT", std::to_string(int(built)).c_str());
+    edge("vkCreateComputePipelines", "EXIT", std::to_string(int(built)).c_str());
     Check(built, "vkCreateComputePipelines.STEADY");
     Require(publish(Receipt("ROLE_PIPELINE_CREATED", role.name)), "ATTEMPT_REVOKED");
 
@@ -797,10 +805,12 @@ void Boot::QualifySteady() {
     stage = "STEADY_OP66";
     Require(publish(Receipt("RUNNING", role.name)), "ATTEMPT_REVOKED");
     const auto queued = vk.QueueSubmit(queue, 1, &submit, fence);
+    edge("vkQueueSubmit", "EXIT", std::to_string(int(queued)).c_str());
     Check(queued, "vkQueueSubmit.STEADY");
     inFlight = true;
     const auto waited = vk.WaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
     if (waited == VK_SUCCESS || waited == VK_ERROR_DEVICE_LOST) inFlight = false;
+    edge("vkWaitForFences", "EXIT", std::to_string(int(waited)).c_str());
     Check(waited, "vkWaitForFences.STEADY");
 
     std::array<uint32_t, 16> words{};
@@ -828,8 +838,10 @@ void Boot::QualifySteady() {
            << ",\"mismatchMasks\":" << Words(mask) << ",\"acceptedRoot\":null}";
     Require(publish(sample.str()), "ATTEMPT_REVOKED");
     Require(QualifiedProbe(words.data()), "STEADY_FP32_REJECTED");
+    ++qualifiedCount;
   }
-  fields << ",\"steadyRoleCount\":" << std::size(pc::kSteadyModules)
+  Require(qualifiedCount != 0, "UNKNOWN_STEADY_ROLE");
+  fields << ",\"steadyRoleCount\":" << qualifiedCount
          << ",\"sourceRoot\":\"NOT_RUN\",\"quantumRoot\":\"NOT_RUN\"";
 }
 
@@ -924,7 +936,7 @@ std::string Boot::Run() {
 #ifdef _WIN32
   if (attempt.steadyQualification) {
     QualifySteady();
-    return Receipt("STEADY_ROLES_QUALIFIED", "");
+    return Receipt(attempt.steadyRole.empty() ? "STEADY_ROLES_QUALIFIED" : "STEADY_ROLE_QUALIFIED", "");
   }
   if (attempt.presentBoot) {
     Checkpoint("BOOT_DIAGNOSTIC_WSI");

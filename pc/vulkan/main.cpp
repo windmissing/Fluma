@@ -20,6 +20,8 @@ struct Window {
   UINT dpi = 96;
   bool closing = false;
   bool once = false, bootOnly = false, steady = false;
+  std::string steadyRole;
+  bool disableOptimization = false;
   int result = 1;
 
   void Emit(const std::string &json) {
@@ -82,7 +84,8 @@ struct Window {
            "\",\"width\":" + std::to_string(snapshotWidth) + ",\"height\":" +
            std::to_string(snapshotHeight) + ",\"dpi\":" + std::to_string(snapshotDpi) +
            ",\"modeHz\":" + (haveMode ? std::to_string(mode.dmDisplayFrequency) : "null") + "}");
-      const auto terminal = grs::g13vk::RunBoot({previous, 1, previous, hwnd, !bootOnly, current, steady},
+      const auto terminal = grs::g13vk::RunBoot({previous, 1, previous, hwnd, !bootOnly, current, steady,
+                                               steadyRole, disableOptimization},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos) {
@@ -92,7 +95,8 @@ struct Window {
             return current();
           });
       Emit(terminal);
-      const char *qualified = steady ? "\"state\":\"STEADY_ROLES_QUALIFIED\"" :
+      const char *qualified = !steadyRole.empty() ? "\"state\":\"STEADY_ROLE_QUALIFIED\"" :
+                              steady ? "\"state\":\"STEADY_ROLES_QUALIFIED\"" :
                                       "\"state\":\"BOOT_NUMERIC_QUALIFIED\"";
       if (bootOnly && terminal.find(qualified) != std::string::npos) result = 0;
       const bool failed = terminal.find("\"state\":\"FAILED\"") != std::string::npos ||
@@ -152,11 +156,21 @@ int wmain(int argc, wchar_t **argv) {
       window.bootOnly = true;
       window.steady = true;
     }
+    else if (!std::wcscmp(argv[i], L"--qualify-steady-role") && i+1 < argc) {
+      const std::wstring name(argv[++i]);
+      window.steadyRole.assign(name.begin(), name.end());
+      window.bootOnly = window.steady = true;
+    }
+    else if (!std::wcscmp(argv[i], L"--disable-optimization")) {
+      window.disableOptimization = true;
+    }
     else {
-      std::cerr << "usage: hello_world_pc [--once] [--boot-only | --qualify-steady]\n";
+      std::cerr << "usage: hello_world_pc [--once] [--boot-only | --qualify-steady | "
+                   "--qualify-steady-role NAME [--disable-optimization]]\n";
       return 2;
     }
   }
+  if (window.disableOptimization && window.steadyRole.empty()) return 2;
   SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
   HINSTANCE instance = GetModuleHandleW(nullptr);
   WNDCLASSW type{};
