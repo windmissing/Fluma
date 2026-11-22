@@ -1,0 +1,33 @@
+[
+ {
+  "tool": "t236_source_host.exe",
+  "mode": "PC_ANGLE hw",
+  "result": "GATE PASS_EXPECTED_UNSUPPORTED (sourceExecution NOT_RUN)",
+  "gpu": "ANGLE Intel UHD 630 D3D11 (hw)",
+  "scope": "cap gate only"
+ },
+ {
+  "tool": "t236_source_host --swiftshader",
+  "result": "EGL_INIT FAIL (Vulkan sw backend unavailable on this PC)",
+  "gpu": "N/A",
+  "scope": "software oracle NOT_RUN"
+ },
+ {
+  "tool": "foundation-O2.exe",
+  "result": "87/87 PASS (FOUNDATION_ONLY_NOT_M0_PRODUCT, GPU NOT_EXECUTED)",
+  "gpu": "CPU-only foundation",
+  "scope": "unit foundation"
+ },
+ {
+  "tool": "prepare_t279_quantum",
+  "result": "semanticCompile PASS sha 54946590 (T279_CANDIDATE_ONLY device NOT_RUN)",
+  "gpu": "N/A compile only",
+  "scope": "candidate compile"
+ },
+ {
+  "tool": "t280 replay artifacts",
+  "result": "test/reports/t280/full-192-64/128.txt etc (archived host outputs)",
+  "gpu": "host offline",
+  "scope": "replay fixtures"
+ }
+]
