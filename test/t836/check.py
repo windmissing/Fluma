@@ -60,8 +60,7 @@ def judge(e, synthetic=False):
         tick, mass = int(root["qpc"]), root["sourceQ"]
         if type(mass) is not int or mass < 0 or root.get("geometry") != (first if tick < ticks[4] else second):
             errors.append("source or root generation")
-        if mass and not (ticks[1] <= int(root["inputQpc"]) < ticks[3]
-                         and int(root["inputQpc"]) <= tick < ticks[4]):
+        if mass and not ticks[1] <= int(root["inputQpc"]) <= tick < ticks[3]:
             errors.append("source outside accepted held input")
 
     seen = set()
@@ -79,7 +78,7 @@ def judge(e, synthetic=False):
             continue
         seen.add(token)
         empty |= tick < ticks[1] and all(frame.get(k) == 0 for k in ("S", "F", "P"))
-        dual |= all(type(frame.get(k)) is int and frame[k] > 0 for k in ("bedPixels", "particlePixels"))
+        dual |= all(type(frame.get(k)) is int and frame[k] > 0 for k in ("S", "P", "bedPixels", "particlePixels"))
         released |= tick >= ticks[3] and root["sourceQ"] == 0
 
     for present, label in ((empty, "empty product frame"), (dual, "bed + particle pixels in same frame"),
@@ -127,7 +126,10 @@ def selftest():
     bad = copy.deepcopy(sample)
     bad["frames"].clear()
     assert judge(bad, True)["state"] == "MISSING_EVIDENCE"
-    return dict(state="SYNTHETIC_PASS", checks=7)
+    bad = copy.deepcopy(sample)
+    bad["roots"][3].update(inputQpc="1050", sourceQ=1)
+    assert judge(bad, True)["state"] == "INVALID"
+    return dict(state="SYNTHETIC_PASS", checks=8)
 
 
 def main():
