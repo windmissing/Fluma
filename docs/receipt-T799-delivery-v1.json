@@ -1,0 +1,32 @@
+{
+  "schema": "T799_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-22",
+  "commit": "7d04d1fa4fb34f9e55e1f3cb2d940d8db85235bf",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b026c56e4b0c0fef85e3102",
+    "started": {
+      "id": "6b026cb7e4b0572f6340490c",
+      "createdTime": "2026-11-22T04:16:55+0000"
+    },
+    "delivered": {
+      "id": "6b026dd2e4b0c0fef85e4592",
+      "createdTime": "2026-11-22T04:21:38+0000",
+      "title": "T799 architect 已交付。冻结 op9 后对 ACTIVE_EVENTS→SELECTED_EVENTS 与 AUTHORITY_EVENTS 两份完整原字的独立 GPU 复制，K192 每份 12,767,232B、K512 每份 23,334,912B。计划独立辅助 dispatch，保原 12 SOURCE 槽、BASE copy、具体绑定/屏障、真实分批、晚信号只退役及同根 typed/oracle。T797 至少五组交错有效样本区分前序排队、copy 专属成本及末批提交。仅在 copy 专属成本保守下界≥20ms 且≥2倍波动后进入候选实施，主要耗时若在 compare/replay 则先分流该 pass，当前候选待触发。复算双档全范围，主机逐字/别名/短范围复核通过，临时 GLES/Vulkan 样例反射通过。本卡无真实候选工件、无真机。保 250ms、真实 pulse 和原有效提交。docs/architecture-T799-v1.md，提交 7d04d1fa。"
+    }
+  },
+  "statusRow": {
+    "path": "docs/后续工作清单.md",
+    "before": "进行中",
+    "after": "结束待验收",
+    "line": "| T799 | 【T799·目标20 DM双目的GPU复制候选接线与等价性合同】architect | architect | P5 | 结束待验收 | 6b026c56e4b0c0fef85e3102 |",
+    "beforeSha256": "ff57931721c2b70f24973fe8d8f5a075d79250bcf4cee95c804b403dd8a62186",
+    "afterSha256": "e63d2fa4ac989241fb93b3cf3e47ac481fa03c66b06fe2a5bd2caad57da1a6ce"
+  },
+  "evidence": {
+    "path": "docs/architecture-T799-evidence-v1.json",
+    "sha256": "13e5be8cfc5c04a6e6e5df6836bebb107562d3667911d0dfabd051bcad46da84"
+  }
+}
