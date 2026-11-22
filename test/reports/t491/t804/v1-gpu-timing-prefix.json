@@ -1,0 +1,45 @@
+{
+ "revision": "T804_V1_GPU_TIMING_AND_PREFIX_FENCES_V1",
+ "date": "2026-11-22 17:40",
+ "package": "T797 driver unchanged (09befda4, argv --gpu-timing/--prefix accepted)",
+ "gpuTiming": {
+  "argv": "--gpu-timing passed and accepted",
+  "gpuClock": "UNOBSERVED",
+  "GPU_SEGMENTS": "None \u2014 no trusted GPU timestamp on this SoC; contract fallback to prefix fences VALIDATED"
+ },
+ "firstGroup": "G1 --gpu-timing: guard structure changed (DISPATCH_PRE_PASS @8 -> DISPATCH_POST DEADLINE @8 \u2014 different guard instrumentation under gpu-timing), exitCode=6, original deadline kept",
+ "prefixFences": {
+  "op8": {
+   "exitCode": 0,
+   "cursor": "9/12",
+   "submitted": 9,
+   "retireSig": true,
+   "retirePolls": 157
+  },
+  "op9": {
+   "exitCode": 0,
+   "cursor": "10/12",
+   "submitted": 10,
+   "retireSig": true,
+   "retirePolls": 189
+  },
+  "copies": {
+   "exitCode": 0,
+   "cursor": "10/12",
+   "submitted": 10,
+   "retireSig": true,
+   "retirePolls": 199
+  },
+  "op11": {
+   "exitCode": 0,
+   "cursor": "12/12",
+   "submitted": 12,
+   "retireSig": true,
+   "retirePolls": 148
+  }
+ },
+ "prefixSemantics": "all four prefixes exitCode=0 (independent-prefix mode success), cursors match contract (9/10/10/12), ZERO commit (prefix = no full-pipeline commit), retirement fence independently created and signaled with per-prefix poll counts \u2014 the four independent prefix fences are the timing evidence replacing absent GPU timestamps",
+ "copyAttribution": "copies prefix (cursor 10) vs op9 (cursor 10) poll deltas + per-event ns arrays now available for COPY_COST lower bound per T799",
+ "deadline": "original 250ms preserved (full-pipeline runs still DEADLINE @12; prefix runs exit before deadline applies)",
+ "route": "T773 reader on t804 originals; T799 copy-cost trigger now has the fence evidence it required"
+}
