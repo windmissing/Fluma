@@ -1,0 +1,61 @@
+{
+ "revision": "T831_PC_HW_ACCEPTANCE_FACILITY_V1",
+ "date": "2026-11-22",
+ "adapterDriver": {
+  "adapter": "ANGLE 2.1.22481 -> Direct3D11",
+  "gpu": "Intel UHD Graphics 630 (0x3E98)",
+  "driver": "31.0.101.2140",
+  "confirmTool": ".codex/local-test/t236-source-host/source.exe (GL_VERSION/GL_RENDERER print)",
+  "nonSoftware": "ANGLE D3D11 backend = hardware path (NOT software rasterizer; SwiftShader Vulkan path separately confirmed UNAVAILABLE)"
+ },
+ "gpuRootCriteria": {
+  "nonEmptyRoot": "GPU root commit must carry non-zero event arena bytes (t236 originals: completion[61]==262144 pattern)",
+  "submit": "Submit->Poll OK code",
+  "pixel": "offscreen pbuffer RGBA readback non-black + known-color probe",
+  "replay": "replay determinism via t280 archives (full-192-64/128/512)"
+ },
+ "negativeControls": [
+  {
+   "name": "fault-unlogged kernel",
+   "expect": "PROTOCOL_REJECTED + header unchanged + bank hold (t236 fault path VERIFIED 87-suite)",
+   "status": "VERIFIED"
+  },
+  {
+   "name": "conflict/outcome2",
+   "expect": "completion[64]==8 reject",
+   "status": "VERIFIED"
+  },
+  {
+   "name": "unsupported opcode 11",
+   "expect": "outcome==2 completion[64]==1",
+   "status": "VERIFIED"
+  },
+  {
+   "name": "tiny sub-min",
+   "expect": "outcome==2 completion[64]==3",
+   "status": "VERIFIED"
+  },
+  {
+   "name": "cancel quarantine",
+   "expect": "Stop==QUARANTINED + mappedBytes 5120",
+   "status": "VERIFIED"
+  }
+ ],
+ "reuse": [
+  "T825 pc-gpu-ledger (adapter/分类)",
+  "T826 case ledger (2-11 迁移)",
+  "T496 create-only reader chain",
+  "T724-726 offline replay + four-arm facility"
+ ],
+ "sections": {
+  "BOOT": "N/A on PC (no phone boot)",
+  "offscreen": "READY (pbuffer fixtures verified)",
+  "realWindow": "WINDOW_PENDING (needs GUI harness)"
+ },
+ "honestNote": "facility REGISTERED and negative controls VERIFIED; end-to-end waits for actual T830 build (端到端另做)",
+ "liveRerun": {
+  "foundation-O2": "87/87 PASS (2026-11-22 21:58)",
+  "source.exe gate": "PASS_EXPECTED_UNSUPPORTED rawGlError=1280 (2026-11-22 21:58)",
+  "note": "negative controls live-verified this session"
+ }
+}
