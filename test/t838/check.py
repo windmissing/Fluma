@@ -115,9 +115,16 @@ def judge(left, right, directory, synthetic=False):
                 arc = row.get("archive")
                 if not arc:
                     return dict(state="UNOBSERVED", eligiblePairs=0, missing=["original cold archive"])
-                decoded = G9.decode(directory/arc, directory/row["archiveSourceManifest"] if row.get("archiveSourceManifest") else None)
+                path = directory/arc
+                decoded = G9.decode(path, directory/row["archiveSourceManifest"] if row.get("archiveSourceManifest") else None)
                 demand(decoded["archiveSHA"] == row["archiveSHA"] and decoded["acceptedStreamReplay"],
                        "archive SHA/replay")
+                with path.open("rb") as archive:
+                    tail = json.loads(archive.readline(16385))["words"][256:512]
+                demand(tail[6] in (1,3) and all(str(G9.u64(tail, idx)) == row[key] for key, idx in
+                       (("nonce",8), ("run",10), ("geometry",18), ("commit",30), ("tick",54))),
+                       "archive accepted identity")
+                demand(G9.file_sha(path) == decoded["archiveSHA"], "archive changed during read")
                 archives.append(decoded["archiveSHA"])
             demand(archives[0] != archives[1], "same archive used twice")
         metrics = {}
