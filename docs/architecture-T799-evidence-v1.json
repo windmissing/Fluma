@@ -1,0 +1,169 @@
+{
+  "schema": "T799_DM_GPU_COPY_CONTRACT_CHECK_V1",
+  "date": "2026-11-22",
+  "deviceUsed": false,
+  "candidateReleased": false,
+  "candidateRuntime": "NOT_RUN",
+  "sourceOfRanges": {
+    "worktreeCommit": "0e51f24d",
+    "schemaSHA256": "2b3fd57894150ef1d5da834b5e06e40d8402bcfab6e94f8db1970ab5297275f4",
+    "transportSHA256": "3b9b836dbea46ba00fd92be8a08335b94a9c5ebc0afd8ac9ba21ca59aa40af46",
+    "t792EvidenceSHA256": "c8ca621676d685d87ae4331e5d8acf8c8a62eab6c9e19c8d3d122c9a95e160da"
+  },
+  "profiles": {
+    "192": {
+      "stateBytes": 591872,
+      "arenaBytesPerDestination": 12767232,
+      "arenaWordCount": 3191808,
+      "vectorCount": 797952,
+      "dispatchGroupsX": 12468,
+      "candidateLogicalReadBytes": 12767232,
+      "candidateLogicalWriteBytes": 25534464,
+      "fullRangeHostCoverage": "PASS",
+      "aliasAndRangeFixtureRejects": [
+        "dstDstAlias",
+        "srcDstAlias",
+        "shortRange",
+        "offset"
+      ]
+    },
+    "512": {
+      "stateBytes": 673792,
+      "arenaBytesPerDestination": 23334912,
+      "arenaWordCount": 5833728,
+      "vectorCount": 1458432,
+      "dispatchGroupsX": 22788,
+      "candidateLogicalReadBytes": 23334912,
+      "candidateLogicalWriteBytes": 46669824,
+      "fullRangeHostCoverage": "PASS",
+      "aliasAndRangeFixtureRejects": [
+        "dstDstAlias",
+        "srcDstAlias",
+        "shortRange",
+        "offset"
+      ]
+    }
+  },
+  "baselineB": {
+    "identity": {
+      "pid": 58688,
+      "processStartTick": "612068",
+      "scope": "6120844332032",
+      "driverBuildId": "71b03f560e78806ca43c29eea161ab50a6ec73c1",
+      "dsoBuildId": "86e14c1a342d257ab3ddbaa87662332be4d782ea",
+      "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+      "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+      "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356"
+    },
+    "copies": [
+      {
+        "pass": 0,
+        "bytes": 591872,
+        "from": 1,
+        "to": 2,
+        "mask": 8704,
+        "api": {
+          "beginOffsetNs": 258594,
+          "endOffsetNs": 423594,
+          "wallNs": 165000,
+          "ownerCpuNs": 166094
+        },
+        "barrier": {
+          "beginOffsetNs": 427031,
+          "endOffsetNs": 429688,
+          "wallNs": 2657,
+          "ownerCpuNs": 2500
+        },
+        "bind": {
+          "beginOffsetNs": 252813,
+          "endOffsetNs": 256563,
+          "wallNs": 3750,
+          "ownerCpuNs": 3750
+        }
+      },
+      {
+        "pass": 9,
+        "bytes": 12767232,
+        "from": 7,
+        "to": 8,
+        "mask": 8704,
+        "api": {
+          "beginOffsetNs": 1102344,
+          "endOffsetNs": 77981719,
+          "wallNs": 76879375,
+          "ownerCpuNs": 76805937
+        },
+        "barrier": {
+          "beginOffsetNs": 77987969,
+          "endOffsetNs": 77991875,
+          "wallNs": 3906,
+          "ownerCpuNs": 3906
+        },
+        "bind": {
+          "beginOffsetNs": 1098125,
+          "endOffsetNs": 1100469,
+          "wallNs": 2344,
+          "ownerCpuNs": 2500
+        }
+      },
+      {
+        "pass": 9,
+        "bytes": 12767232,
+        "from": 7,
+        "to": 9,
+        "mask": 8704,
+        "api": {
+          "beginOffsetNs": 78030469,
+          "endOffsetNs": 78060625,
+          "wallNs": 30156,
+          "ownerCpuNs": 30625
+        },
+        "barrier": {
+          "beginOffsetNs": 78063438,
+          "endOffsetNs": 78065313,
+          "wallNs": 1875,
+          "ownerCpuNs": 1875
+        },
+        "bind": {
+          "beginOffsetNs": 78023906,
+          "endOffsetNs": 78028125,
+          "wallNs": 4219,
+          "ownerCpuNs": 4375
+        }
+      }
+    ],
+    "rootWallNs": 250175469,
+    "fence": "UNSIGNALED",
+    "firstObservedRetirementSignalSinceRootNs": 336186875,
+    "gpuTime": "UNOBSERVED"
+  },
+  "staticCopyFixture": {
+    "compiler": "Glslang Version: 11:16.6.0",
+    "backends": {
+      "gles": {
+        "fixtureOnly": true,
+        "sourceBytes": 493,
+        "sourceSHA256": "51035b386a51257386db8c0826e9bf6573d001c37edb4984a1b1c9fbb811c00b",
+        "exit": 0,
+        "reflectedStorageBindings": [
+          0,
+          1,
+          2
+        ],
+        "localSizeX": 64
+      },
+      "vulkan": {
+        "fixtureOnly": true,
+        "sourceBytes": 493,
+        "sourceSHA256": "61e35cf5c8e79263bced0d7a1b0e297cc0ef9f242ff5e13dd618332271577959",
+        "exit": 0,
+        "reflectedStorageBindings": [
+          0,
+          1,
+          2
+        ],
+        "localSizeX": 64
+      }
+    }
+  }
+}

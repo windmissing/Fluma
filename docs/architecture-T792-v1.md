@@ -2,6 +2,8 @@
 
 2026-11-21 · 目标 20 · P5 · architect · 离线原件复核。
 
+> 2026-11-22 T799 补充。双目的 GPU 复制候选已冻结接线、范围、等价性和收益量测合同。T797 先区分 copy 专属成本与 compare/replay 排队，达到明确门槛后才走复制研究臂。 [T799 候选合同](architecture-T799-v1.md)
+
 **B 的定时轮询减少约 70.5 ms owner CPU，C 将约 74 ms 的提交开销移进了 fence 创建。** 三个研究根均在原 250 ms 内没有观察到可供准入的执行 signal，且未进入 map 或 typed commit。下一轮沿 B 的低 CPU 轮询取证，定位第一笔 arena copy 和末批提交的时间归属。 [逐阶段复核数据](architecture-T792-evidence-v1.json)
 
 ## 原件及实际路径
