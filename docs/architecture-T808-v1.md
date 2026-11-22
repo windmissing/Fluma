@@ -2,6 +2,8 @@
 
 2026-11-22 · 目标20 · P5 · architect · 离线归因
 
+> T813 补充。先读 T811 原 RESET 的逐调用进度。能定位时直接按原调用分流。仍无法区分 `Open` 与角色准备时，按 T813 选择同签包、同逻辑 owner 的 EGL-only 或单角色对照。 [T813 触发与对照合同](architecture-T813-v1.md)
+
 **已证 RESET 的 owner 在 CPU 上持续活跃，能读到的快照始终为 `CREATED`。现有发布边无法定位精确调用。** 签包源码在 `CREATED` 后把 `CONTEXT` 和部分错误先留在线程内，RESET 直到角色都准备好才发布 `ROLES_LINKED`。因此下一步先补逐调用进度和取消收据。凭报告无法裁定为 EGL 阻塞、着色器编译/link 停滞或应用忙循环。 [T770 v7 原报告](../test/reports/t491/t770b/v7-probe-exec-blocked.json) · [逐项证据](architecture-T808-evidence-v1.json)
 
 ## 实际签包和 CPU 原证
