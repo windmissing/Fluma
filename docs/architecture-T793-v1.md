@@ -2,6 +2,8 @@
 
 2026-11-21 · 目标 20 · P5 · architect · 离线原件复核。
 
+> 2026-11-22 T805 复核。T802 的签名输入实际是 T798 `default` 单体工件，正式侧车应使用 T798 `bootSource`。独立应用沙箱 writer 验证和正确拆分包的低干扰冷启可并行准备，各自取实际原件。 [T805 工件复核与两条执行线](architecture-T805-v1.md)
+
 **T789 已运行 T785 侧车导出，应用保存时返回 `Invalid argument`。** 已识别一处与原错吻合的代码缺陷，`fs.mkdtempSync` 的目录模板少了末尾六个 `X`。先修模板并加逐步回执，再由同一应用入口验证实际保存与 HDC 取件。旧构建只记了聚合异常，T789 的具体抛错阶段仍缺原始回执。 [T789 原 hilog](../test/reports/t491/t789/chain.txt) · [工件与原值](architecture-T793-evidence-v1.json)
 
 ## 产物、入口、触发与取件

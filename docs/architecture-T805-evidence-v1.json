@@ -1,0 +1,395 @@
+{
+  "schema": "T805_RX_COLD_AND_WRITER_EVIDENCE_V1",
+  "date": "2026-11-22",
+  "deviceUsed": false,
+  "compileReceipt": {
+    "path": "D:/hmprojects/HelloWorld-T771/docs/receipt-T798-compile-v1.json",
+    "bytes": 4807,
+    "sha256": "f9f3a58bea763db9e7bd4f449e385b9520f9abc6d17da6b98b2541506cf60977"
+  },
+  "signReceipt": {
+    "path": "D:/hmprojects/HelloWorld/test/reports/t257/T802-rx.json",
+    "bytes": 2279,
+    "sha256": "7e2c7e96c0f3e55db23d7b9010ad9c8da833684f53e05e40efabf6c9aeda23c4"
+  },
+  "T802SignedReference": {
+    "unsigned": {
+      "path": "D:/hmprojects/HelloWorld/.codex/local-test/t798-default/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "bytes": 7885461,
+      "sha256": "9c9097d3a8a505a9ae557a61e5fd260a331cb6d66205f8347bc325a82578196b"
+    },
+    "signed": {
+      "path": "D:/hmprojects/HelloWorld/.codex/local-test/t257-sign/T802-rx/T802-rx-signed.hap",
+      "bytes": 7989235,
+      "sha256": "6eedc7fcb678ee0d9f39650b350229b57582305204226a2abf6cfa9065086a6d"
+    },
+    "variant": "DEFAULT_MONOLITH",
+    "abi": {
+      "name": "libs/arm64-v8a/libgrs_g9rx.so",
+      "sha256": "27a36d48cf2cfbaebeb001fce932fffdab48ecc6fdd323672a71f38c1cf21e6a",
+      "buildId": "775c7116dd30f1a8675962e4b06862166d6422e6",
+      "bytes": 1476760
+    },
+    "abcSHA256": "8a1b8b432a606691ab092389523b7b83a10fd7a9e4c4e64691ccd2e7592e3421",
+    "entry": "./ets/entryability/G9RxResearchAbility.ets",
+    "page": "pages/GpuResidentG9Rx",
+    "embeddedRoles": [
+      "default"
+    ],
+    "nativeMarkers": {
+      "RX_SOURCE_EXPORT_V1": false,
+      "SOURCE_BUILD_ENTER": false
+    }
+  },
+  "T798CorrectUnsignedReference": {
+    "unsigned": {
+      "path": "D:/hmprojects/HelloWorld-T771/.codex/local-test/t798-source/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "bytes": 7848837,
+      "sha256": "da5ec9b492f7c3b6b50b88e06fd1e62ac8f47bfd42d64c41a3edb898aee1ba27"
+    },
+    "variant": "BOOT_SOURCE",
+    "abi": {
+      "name": "libs/arm64-v8a/libgrs_g9rx.so",
+      "sha256": "3891c1e177c9eb8826197da61360b39162bbf4c3918645e1a6c579777126e11a",
+      "buildId": "f96d365d162691cdfd7ebfc86d1be291b635d6cc",
+      "bytes": 1440136
+    },
+    "abcSHA256": "8a1b8b432a606691ab092389523b7b83a10fd7a9e4c4e64691ccd2e7592e3421",
+    "entry": "./ets/entryability/G9RxResearchAbility.ets",
+    "page": "pages/GpuResidentG9Rx",
+    "embeddedRoles": [
+      "boot",
+      "source"
+    ],
+    "nativeMarkers": {
+      "RX_SOURCE_EXPORT_V1": true,
+      "SOURCE_BUILD_ENTER": true
+    }
+  },
+  "confirmedT802RuntimeMappedBuildId": null,
+  "T802LayoutObservations": {
+    "l1.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/l1.json",
+        "bytes": 38358,
+        "sha256": "6b0fe110609f14eaa35eac0ae856a4eead47f293dd953115bf1ed4b44ed20e3d"
+      },
+      "messages": [
+        "RX #1 SHADER_COMPILE_ENTER"
+      ]
+    },
+    "l3.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/l3.json",
+        "bytes": 38370,
+        "sha256": "36c4a6eaf312eba82e3584caa983eaf73600feaea4a7b1d502d5b6be8101b460"
+      },
+      "messages": [
+        "{\"state\":\"CANCEL_REQUESTED\"}"
+      ]
+    },
+    "l5.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/l5.json",
+        "bytes": 38370,
+        "sha256": "a564d90c1ab94b743a80a0a8f8533a56329529311155df480540cb64aa8b540e"
+      },
+      "messages": [
+        "{\"state\":\"CANCEL_REQUESTED\"}"
+      ]
+    },
+    "l7.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/l7.json",
+        "bytes": 38370,
+        "sha256": "b3a7aaa5c264e27423de7b347aa64abe7a9a4b948e852f7c694820ec637e4c36"
+      },
+      "messages": [
+        "{\"state\":\"CANCEL_REQUESTED\"}"
+      ]
+    },
+    "l9.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/l9.json",
+        "bytes": 38370,
+        "sha256": "99f33e941279df02b7f3cca604f3641c7b620e2dd6b4f20f0a7f2c95d7829345"
+      },
+      "messages": [
+        "{\"state\":\"CANCEL_REQUESTED\"}"
+      ]
+    },
+    "lf.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/lf.json",
+        "bytes": 38444,
+        "sha256": "42e8fc327cc473f7274355a2e8731d6e3ff056ba63daaa4f5f1cff98d051bbe5"
+      },
+      "messages": [
+        "RX #1 SHADER_COMPILE_ENTER"
+      ]
+    },
+    "lg.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/lg.json",
+        "bytes": 38444,
+        "sha256": "70977f5115ec6a0a2a4a16c78fcb69852a43dd39079609497c3ca1e65b906f0d"
+      },
+      "messages": [
+        "RX #1 SHADER_COMPILE_ENTER"
+      ]
+    },
+    "lh.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/lh.json",
+        "bytes": 38444,
+        "sha256": "e9406eaee83ef0f60feb3de0690d9f695b282cb7bde8fa455cd0ad227ade21ab"
+      },
+      "messages": [
+        "RX #1 SHADER_COMPILE_ENTER"
+      ]
+    },
+    "li.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/li.json",
+        "bytes": 38444,
+        "sha256": "47759c0e6f34c732e01140d7c182ec5d14970994602566c5487941136f21dd06"
+      },
+      "messages": [
+        "RX #1 SHADER_COMPILE_ENTER"
+      ]
+    },
+    "lj.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/lj.json",
+        "bytes": 38444,
+        "sha256": "a9535b3aaf49ce74c1a9d60f7ca044743fa99ce4bcf58941327e76c62fd53100"
+      },
+      "messages": [
+        "RX #1 SHADER_COMPILE_ENTER"
+      ]
+    },
+    "lk.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/lk.json",
+        "bytes": 38444,
+        "sha256": "543625c33b87dbe4a3deb4d951e3c5279e8903920a19a9434fda0072765876cd"
+      },
+      "messages": [
+        "RX #1 SHADER_COMPILE_ENTER"
+      ]
+    },
+    "ll.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/ll.json",
+        "bytes": 38444,
+        "sha256": "68dde877c211f2a6c003d099fd603134662c8496b7c6a5f0f936bd900e237aa0"
+      },
+      "messages": [
+        "RX #1 SHADER_COMPILE_ENTER"
+      ]
+    },
+    "lm.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/lm.json",
+        "bytes": 38444,
+        "sha256": "4a402b80e097f5061df391611c1b5419f575d8878e9f62142a8b1e4ec74de78e"
+      },
+      "messages": [
+        "RX #1 SHADER_COMPILE_ENTER"
+      ]
+    },
+    "ln.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/ln.json",
+        "bytes": 38444,
+        "sha256": "a2a46d3951d29e2ea8e1fd6774fbe0c53f14cef11f495ed5414fb0ad8d101ec2"
+      },
+      "messages": [
+        "RX #1 SHADER_COMPILE_ENTER"
+      ]
+    },
+    "lo.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/lo.json",
+        "bytes": 38444,
+        "sha256": "8cb2f6a3ecf81616412852a006117ec1b1a1cd12e0490425dcc32123279a31f5"
+      },
+      "messages": [
+        "RX #1 SHADER_COMPILE_ENTER"
+      ]
+    },
+    "lp.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/lp.json",
+        "bytes": 38444,
+        "sha256": "cb2df130e49e721faa4d3c54f33c61d5868049f97c3b388c81071b48a2c59cb9"
+      },
+      "messages": [
+        "RX #1 SHADER_COMPILE_ENTER"
+      ]
+    },
+    "lr.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/lr.json",
+        "bytes": 38456,
+        "sha256": "2e4d6a80bfea8888e63dae63f7167105786b2cf200936f539c46fc2cc30c4990"
+      },
+      "messages": [
+        "{\"state\":\"CANCEL_REQUESTED\"}"
+      ]
+    },
+    "lt.json": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/lt.json",
+        "bytes": 38456,
+        "sha256": "f65b604f827ab468c37542e14d51d96e78361ba71b5c53364f69470d9f4a77db"
+      },
+      "messages": [
+        "{\"state\":\"CANCEL_REQUESTED\"}"
+      ]
+    }
+  },
+  "T802LogObservations": {
+    "app-domain.txt": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/app-domain.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "highLoadCount": 0,
+      "highLoadFirstLast": [],
+      "background": [],
+      "doze": []
+    },
+    "chain.txt": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/chain.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "highLoadCount": 0,
+      "highLoadFirstLast": [],
+      "background": [],
+      "doze": []
+    },
+    "chain2.txt": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/chain2.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "highLoadCount": 0,
+      "highLoadFirstLast": [],
+      "background": [],
+      "doze": []
+    },
+    "chain3.txt": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/chain3.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "highLoadCount": 0,
+      "highLoadFirstLast": [],
+      "background": [],
+      "doze": []
+    },
+    "hl.txt": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/hl.txt",
+        "bytes": 1238004,
+        "sha256": "4bcc52efbea96bca21e695cd36526bb92f0ae0110c5890d73bee14bcd59c086b"
+      },
+      "highLoadCount": 0,
+      "highLoadFirstLast": [],
+      "background": [
+        "11-22 14:09:38.953  4518  4857 I A01A00/com.ohos.sceneboard/SYS_UI_SW: AppLifeCycleManager: Ability state changed, uid: 20020235, key: com.example.helloworld_entry_EntryAbility_29672, isForeground: false, state 4"
+      ],
+      "doze": [
+        "11-22 14:09:40.077  1045  1256 I C01713/resource_schedule_service/SUSPEND_MANAGER: [a92ab6872312bd2 0 0]Doze 20020235_com.example.helloworld, C_[(0,0,0,0,0,0,1,0,1)], T_0, R_0_0, S_1, pT_0, eT_[255], cC_0, [29672_0_0][], DOZE_AFTER_ENTER_BG"
+      ]
+    },
+    "hl2.txt": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/hl2.txt",
+        "bytes": 1269888,
+        "sha256": "0cf119c09b375e1e91f3ab34c812e426b0ed911df8e97bea073ee77e78a68324"
+      },
+      "highLoadCount": 16,
+      "highLoadFirstLast": [
+        "11-22 14:56:19.965   657 59974 I C02D15/hiview/XPower: [task_191]#HighLoadTask: sending: com.example.helloworld, mple.helloworld, 51412",
+        "11-22 14:57:35.013   657 59974 I C02D15/hiview/XPower: [task_191]#HighLoadTask: sending: com.example.helloworld, mple.helloworld, 51412"
+      ],
+      "background": [],
+      "doze": []
+    },
+    "hl3.txt": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/hl3.txt",
+        "bytes": 1253872,
+        "sha256": "3cbc88815c8a1968119ddc478a42ec8cd5c62cc284b3820da409db5ba3fe51f5"
+      },
+      "highLoadCount": 20,
+      "highLoadFirstLast": [
+        "11-22 14:56:24.965   657 59493 I C02D15/hiview/XPower: [task_191]#HighLoadTask: sending: com.example.helloworld, mple.helloworld, 51412",
+        "11-22 14:58:00.026   657 60301 I C02D15/hiview/XPower: [task_191]#HighLoadTask: sending: com.example.helloworld, mple.helloworld, 51412"
+      ],
+      "background": [],
+      "doze": []
+    },
+    "hl4.txt": {
+      "file": {
+        "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/hl4.txt",
+        "bytes": 1241925,
+        "sha256": "53fe02e54fe671ff349789a3d404ebbad16be6aaf9d837510672f828ee25bd0e"
+      },
+      "highLoadCount": 3,
+      "highLoadFirstLast": [
+        "11-22 15:38:46.767   657  6461 I C02D15/hiview/XPower: [task_191]#HighLoadTask: sending: com.example.helloworld, mple.helloworld, 51412",
+        "11-22 15:38:56.769   657  9013 I C02D15/hiview/XPower: [task_191]#HighLoadTask: sending: com.example.helloworld, mple.helloworld, 51412"
+      ],
+      "background": [],
+      "doze": []
+    }
+  },
+  "T802v2ReportOriginal": {
+    "path": "D:/hmprojects/HelloWorld/test/reports/t491/t802/v2-wake-keepalive.json",
+    "bytes": 1569,
+    "sha256": "1e2b9d7fb037c9db276efdcc03a81e61b1ec7ef6a092163fbd0dbaa055fc05fd"
+  },
+  "T802v2ProcTicks": {
+    "reported": [
+      159600,
+      367764
+    ],
+    "delta": 208164,
+    "clkTckObserved": null,
+    "exactRoleOrApiObserved": false
+  },
+  "T789IndependentSplitHistory": {
+    "file": {
+      "path": "D:/hmprojects/HelloWorld/test/reports/t491/t789/chain.txt",
+      "bytes": 5400,
+      "sha256": "09eb54674f946ebca44aff6b87395372985e77d713c9eef265993c88b2f3fc94"
+    },
+    "compileNs": 87036934219,
+    "linkNs": 234839004688
+  },
+  "T805ShortWriterProbeDeviceResult": "NOT_RUN",
+  "T802ActualSourceTerminalAndWriterResult": "UNOBSERVED",
+  "offlineChecks": {
+    "t800": {
+      "cases": 13,
+      "result": "PASS"
+    },
+    "t785": {
+      "newCases": 6,
+      "legacy": "PASS"
+    },
+    "writerProbeEnvelopeToT765": {
+      "exit": 1,
+      "firstObservedError": "KeyError: 'status'",
+      "acceptedAsSource": false
+    }
+  }
+}
