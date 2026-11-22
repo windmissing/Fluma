@@ -2,6 +2,8 @@
 
 2026-11-22 · 目标20 · P5 · architect · 离线复核
 
+> T815 补充。T809 补到一轮 B 和四前缀。原始 copy 夹逼仍低于 20 ms，复制候选专用补组可停。下文精确命令保留给实际证据再次触发时使用。 [T815 裁定](architecture-T815-v1.md)
+
 T804 交了 **一组四个独立前缀**。同组 `COPIES−OP9` 的原始 fence 完成时间差夹逼为 **6.108–8.592 ms**，尚未扣跨进程与截点提交偏差。第一笔 arena copy 的约 91 ms owner 开销，在没有提交 arena copy 的 OP9 前缀出现在新建退役 fence。**T799 保持 `COPY_COST_UNCONFIRMED`，暂不触发双目的 GPU 复制实施。** [原报告](../test/reports/t491/t804/v1-gpu-timing-prefix.json) · [逐次原值](architecture-T806-evidence-v1.json) · [T799 实施门槛](architecture-T799-v1.md)
 
 ## 原件与时序

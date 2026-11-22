@@ -1,0 +1,1474 @@
+{
+  "unit": "ns",
+  "scope": "T809 raw archived evidence; T804 historical sensitivity only",
+  "compileReceipt": {
+    "path": "D:/hmprojects/HelloWorld-T771/docs/receipt-T797-compile-v1.json",
+    "bytes": 4153,
+    "sha256": "192007b1c7d54eda7ea0edc853dcf4126f08f30a1bd39ee512d5b07d4a1eec0c"
+  },
+  "localArtifacts": {
+    "driver": {
+      "path": "D:/hmprojects/HelloWorld-T771/.codex/local-test/t797-source/handoff/g9_dm_differential",
+      "bytes": 1121576,
+      "sha256": "653c7997a80679f32ced922fef0457ee752dd5977c4e34f4df2bbd0d3ef55ac4",
+      "buildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057"
+    },
+    "bootSourceDso": {
+      "path": "D:/hmprojects/HelloWorld-T771/.codex/local-test/t797-source/handoff/libgrs_dm_t647.so",
+      "bytes": 1378872,
+      "sha256": "83b7db14fcd752bfd0b28d0d5006fdc9fec4bfccaba8e58643e800dbf65a9b69",
+      "buildId": "962b06ec8d6a673e99d6dbcbf760e576748a3d99"
+    },
+    "pairedCpp": {
+      "path": "D:/hmprojects/HelloWorld-T771/.codex/local-test/t797-source/handoff/libc++_shared.so",
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274"
+    },
+    "unsignedHap": {
+      "path": "D:/hmprojects/HelloWorld-T771/.codex/local-test/t797-source/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "bytes": 7682642,
+      "sha256": "cf916b37271ffc0910ed803f14748cc58a062c0760c70229b1fe7ac396e40994"
+    }
+  },
+  "runs": {
+    "B": {
+      "archive": {
+        "path": "test/reports/t491/t809/x-B.jsonl",
+        "bytes": 70752,
+        "sha256": "fb5ee5f22fc58a9a245adceb9d38ab2d4af3aa24c61aa106342be88fd161b703"
+      },
+      "identity": {
+        "schema": "DM_BOOT_ATTEMPT_V1",
+        "stage": "ATTEMPT_IDENTITY",
+        "ticket": "1",
+        "pid": 29008,
+        "processStartTick": "8159014",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "81590310409063",
+        "owner": "1",
+        "context": "81590310409063"
+      },
+      "sameProfile": {
+        "renderer": "Maleoon 935F",
+        "k": 192,
+        "cacheConfigured": false,
+        "roleSetSHA": "4ee2acde35367c7aa6901582ed17a9da49820ace4cb16b48334c01dc709fc01a",
+        "inputSHA": "4f254940fae50d35421d09b53350c2b17be41aadb854c0498b0c4db698aa84c9",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+        "seedSHA": "eca3d19363ee138a8361561f62ce6de403ab1b3009d62362139e538ce40b39f9"
+      },
+      "dispatches": 12,
+      "copyBarriers": 3,
+      "rootResult": 6,
+      "exitCode": 6,
+      "rootBeginNs": 81909644750469,
+      "deadlineNs": 81909894750469,
+      "firstGuardFailure": [
+        "PUMP_ENTRY_GUARD",
+        "DEADLINE",
+        "81909894903125",
+        12,
+        null,
+        null
+      ],
+      "lastGuardSuccess": [
+        "PRE_EXEC_POLL_GUARD",
+        "PASS",
+        "81909894587813",
+        12,
+        48,
+        81909893333438
+      ],
+      "rootTiming": {
+        "wall": 250189062,
+        "ownerCpu": 188449850,
+        "stamps": [
+          81909644745313,
+          81909894934375,
+          319221659237,
+          319410109087
+        ]
+      },
+      "executionFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 208,
+        "lastWaitRaw": 37147,
+        "lastPollNs": "81909894644688",
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": true,
+        "handle": "1",
+        "polls": 78,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "81909994608125",
+        "signaled": true
+      },
+      "drainWallNs": 89618125,
+      "rootUntilSignalBracketNs": [
+        348454688,
+        349850625
+      ],
+      "lastTimeout": {
+        "api": [
+          "81909993205157",
+          "81909993220469",
+          "319417450493",
+          "319417464712"
+        ],
+        "handle": "1",
+        "raw": 37147,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "firstSignal": {
+        "api": [
+          "81909994584219",
+          "81909994601094",
+          "319417516118",
+          "319417531274"
+        ],
+        "handle": "1",
+        "raw": 37146,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "execCreate": {
+        "wall": 20156,
+        "ownerCpu": 20312,
+        "stamps": [
+          81909818853282,
+          81909818873438,
+          319395681893,
+          319395702205
+        ]
+      },
+      "retireCreate": null,
+      "prefixFlush": null,
+      "rootFlush": [
+        {
+          "kind": "SUBMIT_FLUSH",
+          "wall": 3438,
+          "ownerCpu": 3594,
+          "stamps": [
+            81909739161250,
+            81909739164688,
+            319315989861,
+            319315993455
+          ]
+        },
+        {
+          "kind": "SUBMIT_FLUSH",
+          "wall": 79539531,
+          "ownerCpu": 79540625,
+          "stamps": [
+            81909739288594,
+            81909818828125,
+            319316117205,
+            319395657830
+          ]
+        },
+        {
+          "kind": "EXEC_FLUSH",
+          "wall": 2032,
+          "ownerCpu": 2032,
+          "stamps": [
+            81909818876250,
+            81909818878282,
+            319395704861,
+            319395706893
+          ]
+        }
+      ],
+      "copies": [
+        {
+          "passIndex": 0,
+          "fromObject": 1,
+          "toObject": 2,
+          "bytes": 591872,
+          "api": {
+            "wall": 184531,
+            "ownerCpu": 185469,
+            "stamps": [
+              81909645025782,
+              81909645210313,
+              319221938143,
+              319222123612
+            ]
+          },
+          "barrier": {
+            "wall": 2969,
+            "ownerCpu": 2969,
+            "stamps": [
+              81909645213750,
+              81909645216719,
+              319222125955,
+              319222128924
+            ]
+          }
+        },
+        {
+          "passIndex": 9,
+          "fromObject": 7,
+          "toObject": 8,
+          "bytes": 12767232,
+          "api": {
+            "wall": 93113438,
+            "ownerCpu": 93031875,
+            "stamps": [
+              81909645946719,
+              81909739060157,
+              319222858924,
+              319315890799
+            ]
+          },
+          "barrier": {
+            "wall": 3750,
+            "ownerCpu": 3594,
+            "stamps": [
+              81909739065782,
+              81909739069532,
+              319315894549,
+              319315898143
+            ]
+          }
+        },
+        {
+          "passIndex": 9,
+          "fromObject": 7,
+          "toObject": 9,
+          "bytes": 12767232,
+          "api": {
+            "wall": 29687,
+            "ownerCpu": 30156,
+            "stamps": [
+              81909739107032,
+              81909739136719,
+              319315935643,
+              319315965799
+            ]
+          },
+          "barrier": {
+            "wall": 1719,
+            "ownerCpu": 1719,
+            "stamps": [
+              81909739139219,
+              81909739140938,
+              319315967830,
+              319315969549
+            ]
+          }
+        }
+      ],
+      "dispatch": {
+        "8": {
+          "api": {
+            "wall": 6719,
+            "ownerCpu": 6875,
+            "stamps": [
+              81909645883750,
+              81909645890469,
+              319222795955,
+              319222802830
+            ]
+          },
+          "barrier": {
+            "wall": 1719,
+            "ownerCpu": 1719,
+            "stamps": [
+              81909645892500,
+              81909645894219,
+              319222804705,
+              319222806424
+            ]
+          }
+        },
+        "9": {
+          "api": {
+            "wall": 9218,
+            "ownerCpu": 10156,
+            "stamps": [
+              81909645915157,
+              81909645924375,
+              319222827362,
+              319222837518
+            ]
+          },
+          "barrier": {
+            "wall": 1875,
+            "ownerCpu": 1875,
+            "stamps": [
+              81909645927657,
+              81909645929532,
+              319222839862,
+              319222841737
+            ]
+          }
+        },
+        "10": {
+          "api": {
+            "wall": 33594,
+            "ownerCpu": 33906,
+            "stamps": [
+              81909739203594,
+              81909739237188,
+              319316032205,
+              319316066111
+            ]
+          },
+          "barrier": {
+            "wall": 1875,
+            "ownerCpu": 1875,
+            "stamps": [
+              81909739239688,
+              81909739241563,
+              319316068299,
+              319316070174
+            ]
+          }
+        },
+        "11": {
+          "api": {
+            "wall": 7344,
+            "ownerCpu": 7500,
+            "stamps": [
+              81909739263750,
+              81909739271094,
+              319316092361,
+              319316099861
+            ]
+          },
+          "barrier": {
+            "wall": 1718,
+            "ownerCpu": 1718,
+            "stamps": [
+              81909739273282,
+              81909739275000,
+              319316101893,
+              319316103611
+            ]
+          }
+        }
+      },
+      "reader": {
+        "state": "DEADLINE",
+        "executionFence": "UNSIGNALED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "B",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 250183906,
+        "ownerCpuNs": 188449850,
+        "executionPollCount": 208,
+        "retirementPollCount": 78,
+        "wakeCount": 208,
+        "wakeOvershootMaxObservedNs": 226094,
+        "copyWallNs": [
+          184531,
+          93113438,
+          29687
+        ],
+        "pollTailWindow": 32,
+        "pulsesDropped": 0
+      }
+    },
+    "op8": {
+      "archive": {
+        "path": "test/reports/t491/t809/x-op8.jsonl",
+        "bytes": 55596,
+        "sha256": "7f78b350a6bab39e3ec8041c9f8d6b1572c7979994832b94302f5478330d6360"
+      },
+      "identity": {
+        "schema": "DM_BOOT_ATTEMPT_V1",
+        "stage": "ATTEMPT_IDENTITY",
+        "ticket": "1",
+        "pid": 32008,
+        "processStartTick": "8212679",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "82126942118907",
+        "owner": "1",
+        "context": "82126942118907"
+      },
+      "sameProfile": {
+        "renderer": "Maleoon 935F",
+        "k": 192,
+        "cacheConfigured": false,
+        "roleSetSHA": "4ee2acde35367c7aa6901582ed17a9da49820ace4cb16b48334c01dc709fc01a",
+        "inputSHA": "bcba33d973aaecf245fcb28310b347d1b60b5d86b87e3529d1281075bf003657",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+        "seedSHA": "636df05b3f6e1f2c5bb0166f498659adcc2bb01792f4e9b4a50bb94e9055a8f2"
+      },
+      "dispatches": 9,
+      "copyBarriers": 1,
+      "rootResult": 2,
+      "exitCode": 0,
+      "rootBeginNs": 82447267613750,
+      "deadlineNs": 82447517613750,
+      "firstGuardFailure": null,
+      "lastGuardSuccess": [
+        "DISPATCH_POST_GUARD",
+        "PASS",
+        "82447268964219",
+        8,
+        1,
+        82447267597500
+      ],
+      "rootTiming": {
+        "wall": 1367188,
+        "ownerCpu": 1312813,
+        "stamps": [
+          82447267606250,
+          82447268973438,
+          320189061674,
+          320190374487
+        ]
+      },
+      "executionFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": false,
+        "handle": null,
+        "polls": 0,
+        "lastWaitRaw": null,
+        "lastPollNs": null,
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 159,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "82447551324688",
+        "signaled": true
+      },
+      "drainWallNs": 278066094,
+      "rootUntilSignalBracketNs": [
+        282503907,
+        283700157
+      ],
+      "lastTimeout": {
+        "api": [
+          "82447550117657",
+          "82447550137032",
+          "320298207458",
+          "320298225896"
+        ],
+        "handle": "1",
+        "raw": 37147,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "firstSignal": {
+        "api": [
+          "82447551286719",
+          "82447551313907",
+          "320298299021",
+          "320298321208"
+        ],
+        "handle": "1",
+        "raw": 37146,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "execCreate": null,
+      "retireCreate": {
+        "wall": 97158906,
+        "ownerCpu": 96625626,
+        "stamps": [
+          82447273288282,
+          82447370447188,
+          320190417456,
+          320287043082
+        ]
+      },
+      "prefixFlush": {
+        "wall": 3281,
+        "ownerCpu": 3437,
+        "stamps": [
+          82447370453907,
+          82447370457188,
+          320287047457,
+          320287050894
+        ]
+      },
+      "rootFlush": [],
+      "copies": [
+        {
+          "passIndex": 0,
+          "fromObject": 1,
+          "toObject": 2,
+          "bytes": 591872,
+          "api": {
+            "wall": 308438,
+            "ownerCpu": 259531,
+            "stamps": [
+              82447267875469,
+              82447268183907,
+              320189327143,
+              320189586674
+            ]
+          },
+          "barrier": {
+            "wall": 2969,
+            "ownerCpu": 2812,
+            "stamps": [
+              82447268188750,
+              82447268191719,
+              320189589956,
+              320189592768
+            ]
+          }
+        }
+      ],
+      "dispatch": {
+        "8": {
+          "api": {
+            "wall": 6562,
+            "ownerCpu": 6718,
+            "stamps": [
+              82447268951407,
+              82447268957969,
+              320190352456,
+              320190359174
+            ]
+          },
+          "barrier": {
+            "wall": 1563,
+            "ownerCpu": 1563,
+            "stamps": [
+              82447268960000,
+              82447268961563,
+              320190361049,
+              320190362612
+            ]
+          }
+        }
+      },
+      "reader": {
+        "state": "REJECTED",
+        "executionFence": "NOT_ATTEMPTED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "B",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 1359688,
+        "ownerCpuNs": 1312813,
+        "executionPollCount": 0,
+        "retirementPollCount": 159,
+        "wakeCount": 0,
+        "wakeOvershootMaxObservedNs": null,
+        "copyWallNs": [
+          308438
+        ],
+        "pollTailWindow": 0,
+        "pulsesDropped": 0
+      }
+    },
+    "op9": {
+      "archive": {
+        "path": "test/reports/t491/t809/x-op9.jsonl",
+        "bytes": 60114,
+        "sha256": "2bec97003304dceb66adf6045333cb85e40415212b65c0a7e9af745909f374be"
+      },
+      "identity": {
+        "schema": "DM_BOOT_ATTEMPT_V1",
+        "stage": "ATTEMPT_IDENTITY",
+        "ticket": "1",
+        "pid": 35460,
+        "processStartTick": "8269614",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "82696310510157",
+        "owner": "1",
+        "context": "82696310510157"
+      },
+      "sameProfile": {
+        "renderer": "Maleoon 935F",
+        "k": 192,
+        "cacheConfigured": false,
+        "roleSetSHA": "4ee2acde35367c7aa6901582ed17a9da49820ace4cb16b48334c01dc709fc01a",
+        "inputSHA": "595872bc4292294ff1930dc8d967e16e27d908563356ded02ed5d6dee929f224",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+        "seedSHA": "f1c30e1f403b946c768a16bfd6b2dae1e3d18cf575df9a6d12ebd130606c0192"
+      },
+      "dispatches": 10,
+      "copyBarriers": 1,
+      "rootResult": 2,
+      "exitCode": 0,
+      "rootBeginNs": 83014412402813,
+      "deadlineNs": 83014662402813,
+      "firstGuardFailure": null,
+      "lastGuardSuccess": [
+        "DISPATCH_POST_GUARD",
+        "PASS",
+        "83014413569063",
+        9,
+        1,
+        83014412388907
+      ],
+      "rootTiming": {
+        "wall": 1180468,
+        "ownerCpu": 1178750,
+        "stamps": [
+          83014412397657,
+          83014413578125,
+          317966497794,
+          317967676544
+        ]
+      },
+      "executionFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": false,
+        "handle": null,
+        "polls": 0,
+        "lastWaitRaw": null,
+        "lastPollNs": null,
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 189,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "83014733709219",
+        "signaled": true
+      },
+      "drainWallNs": 315610157,
+      "rootUntilSignalBracketNs": [
+        320099687,
+        321297656
+      ],
+      "lastTimeout": {
+        "api": [
+          "83014732502500",
+          "83014732521875",
+          "318080496853",
+          "318080515447"
+        ],
+        "handle": "1",
+        "raw": 37147,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "firstSignal": {
+        "api": [
+          "83014733678438",
+          "83014733700469",
+          "318080605916",
+          "318080626854"
+        ],
+        "handle": "1",
+        "raw": 37146,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "execCreate": null,
+      "retireCreate": {
+        "wall": 98118594,
+        "ownerCpu": 97969688,
+        "stamps": [
+          83014418131094,
+          83014516249688,
+          317967728732,
+          318065698420
+        ]
+      },
+      "prefixFlush": {
+        "wall": 3438,
+        "ownerCpu": 3594,
+        "stamps": [
+          83014516257344,
+          83014516260782,
+          318065703732,
+          318065707326
+        ]
+      },
+      "rootFlush": [],
+      "copies": [
+        {
+          "passIndex": 0,
+          "fromObject": 1,
+          "toObject": 2,
+          "bytes": 591872,
+          "api": {
+            "wall": 178438,
+            "ownerCpu": 179375,
+            "stamps": [
+              83014412689844,
+              83014412868282,
+              317966788262,
+              317966967637
+            ]
+          },
+          "barrier": {
+            "wall": 2812,
+            "ownerCpu": 2656,
+            "stamps": [
+              83014412872032,
+              83014412874844,
+              317966970450,
+              317966973106
+            ]
+          }
+        }
+      ],
+      "dispatch": {
+        "8": {
+          "api": {
+            "wall": 6719,
+            "ownerCpu": 6719,
+            "stamps": [
+              83014413524375,
+              83014413531094,
+              317967622637,
+              317967629356
+            ]
+          },
+          "barrier": {
+            "wall": 1563,
+            "ownerCpu": 1563,
+            "stamps": [
+              83014413533125,
+              83014413534688,
+              317967631387,
+              317967632950
+            ]
+          }
+        },
+        "9": {
+          "api": {
+            "wall": 6719,
+            "ownerCpu": 6875,
+            "stamps": [
+              83014413555938,
+              83014413562657,
+              317967654200,
+              317967661075
+            ]
+          },
+          "barrier": {
+            "wall": 1563,
+            "ownerCpu": 1563,
+            "stamps": [
+              83014413564844,
+              83014413566407,
+              317967663106,
+              317967664669
+            ]
+          }
+        }
+      },
+      "reader": {
+        "state": "REJECTED",
+        "executionFence": "NOT_ATTEMPTED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "B",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 1175312,
+        "ownerCpuNs": 1178750,
+        "executionPollCount": 0,
+        "retirementPollCount": 189,
+        "wakeCount": 0,
+        "wakeOvershootMaxObservedNs": null,
+        "copyWallNs": [
+          178438
+        ],
+        "pollTailWindow": 0,
+        "pulsesDropped": 0
+      }
+    },
+    "copies": {
+      "archive": {
+        "path": "test/reports/t491/t809/x-copies.jsonl",
+        "bytes": 63712,
+        "sha256": "0c3e1ea21e4eb90fa92e3e1c630e3ba2bfa204fcee1953569af2faedc316e390"
+      },
+      "identity": {
+        "schema": "DM_BOOT_ATTEMPT_V1",
+        "stage": "ATTEMPT_IDENTITY",
+        "ticket": "1",
+        "pid": 39012,
+        "processStartTick": "8322804",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "83228194261407",
+        "owner": "1",
+        "context": "83228194261407"
+      },
+      "sameProfile": {
+        "renderer": "Maleoon 935F",
+        "k": 192,
+        "cacheConfigured": false,
+        "roleSetSHA": "4ee2acde35367c7aa6901582ed17a9da49820ace4cb16b48334c01dc709fc01a",
+        "inputSHA": "66e9a8eb7af3a368c35be28fc0ed09aca7ee86983998a210db31f39e93be49f1",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+        "seedSHA": "7ae5c9d1b4bb2a5033efd61bc26919738d73022ac65c0255db027be316febba5"
+      },
+      "dispatches": 10,
+      "copyBarriers": 3,
+      "rootResult": 2,
+      "exitCode": 0,
+      "rootBeginNs": 83546760786094,
+      "deadlineNs": 83547010786094,
+      "firstGuardFailure": null,
+      "lastGuardSuccess": [
+        "DISPATCH_POST_GUARD",
+        "PASS",
+        "83546852595000",
+        9,
+        18,
+        83546850016875
+      ],
+      "rootTiming": {
+        "wall": 91826563,
+        "ownerCpu": 91791563,
+        "stamps": [
+          83546760780625,
+          83546852607188,
+          318415587005,
+          318507378568
+        ]
+      },
+      "executionFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": false,
+        "handle": null,
+        "polls": 0,
+        "lastWaitRaw": null,
+        "lastPollNs": null,
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 201,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "83547087724063",
+        "signaled": true
+      },
+      "drainWallNs": 231179844,
+      "rootUntilSignalBracketNs": [
+        325722188,
+        326928750
+      ],
+      "lastTimeout": {
+        "api": [
+          "83547086508282",
+          "83547086535157",
+          "318523558413",
+          "318523581694"
+        ],
+        "handle": "1",
+        "raw": 37147,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "firstSignal": {
+        "api": [
+          "83547087692032",
+          "83547087714844",
+          "318523678570",
+          "318523699976"
+        ],
+        "handle": "1",
+        "raw": 37146,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "execCreate": null,
+      "retireCreate": {
+        "wall": 35469,
+        "ownerCpu": 34687,
+        "stamps": [
+          83546856572500,
+          83546856607969,
+          318507467474,
+          318507502161
+        ]
+      },
+      "prefixFlush": {
+        "wall": 2500,
+        "ownerCpu": 2343,
+        "stamps": [
+          83546856610625,
+          83546856613125,
+          318507504349,
+          318507506692
+        ]
+      },
+      "rootFlush": [],
+      "copies": [
+        {
+          "passIndex": 0,
+          "fromObject": 1,
+          "toObject": 2,
+          "bytes": 591872,
+          "api": {
+            "wall": 178750,
+            "ownerCpu": 179844,
+            "stamps": [
+              83546761032188,
+              83546761210938,
+              318415836693,
+              318416016537
+            ]
+          },
+          "barrier": {
+            "wall": 2657,
+            "ownerCpu": 2500,
+            "stamps": [
+              83546761214375,
+              83546761217032,
+              318416018880,
+              318416021380
+            ]
+          }
+        },
+        {
+          "passIndex": 9,
+          "fromObject": 7,
+          "toObject": 8,
+          "bytes": 12767232,
+          "api": {
+            "wall": 90454062,
+            "ownerCpu": 90423437,
+            "stamps": [
+              83546762045313,
+              83546852499375,
+              318416849818,
+              318507273255
+            ]
+          },
+          "barrier": {
+            "wall": 3594,
+            "ownerCpu": 3594,
+            "stamps": [
+              83546852506250,
+              83546852509844,
+              318507277630,
+              318507281224
+            ]
+          }
+        },
+        {
+          "passIndex": 9,
+          "fromObject": 7,
+          "toObject": 9,
+          "bytes": 12767232,
+          "api": {
+            "wall": 30469,
+            "ownerCpu": 30937,
+            "stamps": [
+              83546852551563,
+              83546852582032,
+              318507322943,
+              318507353880
+            ]
+          },
+          "barrier": {
+            "wall": 1719,
+            "ownerCpu": 1719,
+            "stamps": [
+              83546852584375,
+              83546852586094,
+              318507355755,
+              318507357474
+            ]
+          }
+        }
+      ],
+      "dispatch": {
+        "8": {
+          "api": {
+            "wall": 7031,
+            "ownerCpu": 7031,
+            "stamps": [
+              83546761980157,
+              83546761987188,
+              318416784818,
+              318416791849
+            ]
+          },
+          "barrier": {
+            "wall": 2188,
+            "ownerCpu": 3750,
+            "stamps": [
+              83546761989219,
+              83546761991407,
+              318416793724,
+              318416797474
+            ]
+          }
+        },
+        "9": {
+          "api": {
+            "wall": 7812,
+            "ownerCpu": 7812,
+            "stamps": [
+              83546762020938,
+              83546762028750,
+              318416825443,
+              318416833255
+            ]
+          },
+          "barrier": {
+            "wall": 1719,
+            "ownerCpu": 1562,
+            "stamps": [
+              83546762030625,
+              83546762032344,
+              318416835287,
+              318416836849
+            ]
+          }
+        }
+      },
+      "reader": {
+        "state": "REJECTED",
+        "executionFence": "NOT_ATTEMPTED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "B",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 91821094,
+        "ownerCpuNs": 91791563,
+        "executionPollCount": 0,
+        "retirementPollCount": 201,
+        "wakeCount": 0,
+        "wakeOvershootMaxObservedNs": null,
+        "copyWallNs": [
+          178750,
+          90454062,
+          30469
+        ],
+        "pollTailWindow": 0,
+        "pulsesDropped": 0
+      }
+    },
+    "op11": {
+      "archive": {
+        "path": "test/reports/t491/t809/x-op11.jsonl",
+        "bytes": 59151,
+        "sha256": "93562561765ab31e807f0c731f9ceeb2eb36078aa7635bbb25d529f16065f870"
+      },
+      "identity": {
+        "schema": "DM_BOOT_ATTEMPT_V1",
+        "stage": "ATTEMPT_IDENTITY",
+        "ticket": "1",
+        "pid": 42328,
+        "processStartTick": "8376165",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "83761826020313",
+        "owner": "1",
+        "context": "83761826020313"
+      },
+      "sameProfile": {
+        "renderer": "Maleoon 935F",
+        "k": 192,
+        "cacheConfigured": false,
+        "roleSetSHA": "4ee2acde35367c7aa6901582ed17a9da49820ace4cb16b48334c01dc709fc01a",
+        "inputSHA": "7601e194f49314601a423502d40adf431f8b8f3df873f3f134e8d8869ddba663",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+        "seedSHA": "8589144e412cbfb993efc5e9a22067cb4f1e2427d4a088b5e9d49aa8a3e92d07"
+      },
+      "dispatches": 12,
+      "copyBarriers": 3,
+      "rootResult": 2,
+      "exitCode": 0,
+      "rootBeginNs": 84079040940469,
+      "deadlineNs": 84079290940469,
+      "firstGuardFailure": null,
+      "lastGuardSuccess": [
+        "DISPATCH_POST_GUARD",
+        "PASS",
+        "84079136868282",
+        11,
+        19,
+        84079136597657
+      ],
+      "rootTiming": {
+        "wall": 95942656,
+        "ownerCpu": 95892343,
+        "stamps": [
+          84079040935469,
+          84079136878125,
+          317076687008,
+          317172579351
+        ]
+      },
+      "executionFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": false,
+        "handle": null,
+        "polls": 0,
+        "lastWaitRaw": null,
+        "lastPollNs": null,
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 137,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "84079390372969",
+        "signaled": true
+      },
+      "drainWallNs": 247382500,
+      "rootUntilSignalBracketNs": [
+        348277813,
+        349424375
+      ],
+      "lastTimeout": {
+        "api": [
+          "84079389218282",
+          "84079389232500",
+          "317273309672",
+          "317273323265"
+        ],
+        "handle": "1",
+        "raw": 37147,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "firstSignal": {
+        "api": [
+          "84079390349688",
+          "84079390364844",
+          "317273382484",
+          "317273396859"
+        ],
+        "handle": "1",
+        "raw": 37146,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "execCreate": null,
+      "retireCreate": {
+        "wall": 90412343,
+        "ownerCpu": 90350312,
+        "stamps": [
+          84079143024532,
+          84079233436875,
+          317172698726,
+          317263049038
+        ]
+      },
+      "prefixFlush": {
+        "wall": 3750,
+        "ownerCpu": 3594,
+        "stamps": [
+          84079233444063,
+          84079233447813,
+          317263052788,
+          317263056382
+        ]
+      },
+      "rootFlush": [
+        {
+          "kind": "SUBMIT_FLUSH",
+          "wall": 3438,
+          "ownerCpu": 3438,
+          "stamps": [
+            84079136752500,
+            84079136755938,
+            317172453726,
+            317172457164
+          ]
+        }
+      ],
+      "copies": [
+        {
+          "passIndex": 0,
+          "fromObject": 1,
+          "toObject": 2,
+          "bytes": 591872,
+          "api": {
+            "wall": 166719,
+            "ownerCpu": 167812,
+            "stamps": [
+              84079041229688,
+              84079041396407,
+              317076979508,
+              317077147320
+            ]
+          },
+          "barrier": {
+            "wall": 2657,
+            "ownerCpu": 2657,
+            "stamps": [
+              84079041400000,
+              84079041402657,
+              317077149820,
+              317077152477
+            ]
+          }
+        },
+        {
+          "passIndex": 9,
+          "fromObject": 7,
+          "toObject": 8,
+          "bytes": 12767232,
+          "api": {
+            "wall": 94562031,
+            "ownerCpu": 94515625,
+            "stamps": [
+              84079042090938,
+              84079136652969,
+              317077840758,
+              317172356383
+            ]
+          },
+          "barrier": {
+            "wall": 2656,
+            "ownerCpu": 2500,
+            "stamps": [
+              84079136659532,
+              84079136662188,
+              317172360914,
+              317172363414
+            ]
+          }
+        },
+        {
+          "passIndex": 9,
+          "fromObject": 7,
+          "toObject": 9,
+          "bytes": 12767232,
+          "api": {
+            "wall": 28437,
+            "ownerCpu": 28906,
+            "stamps": [
+              84079136699688,
+              84079136728125,
+              317172400914,
+              317172429820
+            ]
+          },
+          "barrier": {
+            "wall": 1563,
+            "ownerCpu": 1563,
+            "stamps": [
+              84079136730625,
+              84079136732188,
+              317172431851,
+              317172433414
+            ]
+          }
+        }
+      ],
+      "dispatch": {
+        "8": {
+          "api": {
+            "wall": 6719,
+            "ownerCpu": 6563,
+            "stamps": [
+              84079042036719,
+              84079042043438,
+              317077786695,
+              317077793258
+            ]
+          },
+          "barrier": {
+            "wall": 1563,
+            "ownerCpu": 1563,
+            "stamps": [
+              84079042045469,
+              84079042047032,
+              317077795289,
+              317077796852
+            ]
+          }
+        },
+        "9": {
+          "api": {
+            "wall": 6563,
+            "ownerCpu": 6719,
+            "stamps": [
+              84079042068125,
+              84079042074688,
+              317077817945,
+              317077824664
+            ]
+          },
+          "barrier": {
+            "wall": 1719,
+            "ownerCpu": 1719,
+            "stamps": [
+              84079042076875,
+              84079042078594,
+              317077826695,
+              317077828414
+            ]
+          }
+        },
+        "10": {
+          "api": {
+            "wall": 33750,
+            "ownerCpu": 33906,
+            "stamps": [
+              84079136794219,
+              84079136827969,
+              317172495445,
+              317172529351
+            ]
+          },
+          "barrier": {
+            "wall": 1875,
+            "ownerCpu": 1875,
+            "stamps": [
+              84079136830000,
+              84079136831875,
+              317172531383,
+              317172533258
+            ]
+          }
+        },
+        "11": {
+          "api": {
+            "wall": 7656,
+            "ownerCpu": 7812,
+            "stamps": [
+              84079136854063,
+              84079136861719,
+              317172555289,
+              317172563101
+            ]
+          },
+          "barrier": {
+            "wall": 1719,
+            "ownerCpu": 1719,
+            "stamps": [
+              84079136863750,
+              84079136865469,
+              317172564976,
+              317172566695
+            ]
+          }
+        }
+      },
+      "reader": {
+        "state": "REJECTED",
+        "executionFence": "NOT_ATTEMPTED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "B",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 95937656,
+        "ownerCpuNs": 95892343,
+        "executionPollCount": 0,
+        "retirementPollCount": 137,
+        "wakeCount": 0,
+        "wakeOvershootMaxObservedNs": null,
+        "copyWallNs": [
+          166719,
+          94562031,
+          28437
+        ],
+        "pollTailWindow": 0,
+        "pulsesDropped": 0
+      }
+    }
+  },
+  "rawModeCount": 5,
+  "completeArchivedModeCycles": 1,
+  "fullyQualifiedT799Groups": 0,
+  "possibleT809GroupsAfterProvenanceRecovery": 1,
+  "verifiedCrossGroupRangeNs": null,
+  "intervalDeltasNs": {
+    "op9-op8": [
+      36399530,
+      38793749
+    ],
+    "copies-op9": [
+      4424532,
+      6829063
+    ],
+    "op11-copies": [
+      21349063,
+      23702187
+    ],
+    "B-op11": [
+      -969687,
+      1572812
+    ]
+  },
+  "historicalT804CopiesMinusOp9Ns": [
+    6107813,
+    8592031
+  ],
+  "historicalNonMatchedTwoIntervalEnvelopeNs": [
+    4424532,
+    8592031
+  ],
+  "verdict": "COPY_COST_UNCONFIRMED"
+}
