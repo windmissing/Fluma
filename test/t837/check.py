@@ -58,6 +58,11 @@ def tail_from_archive(path, receipt):
         enforce(header[4] == 2, "FULL capture required for GridView")
         profile = next(p for p in LAYOUT["profiles"] if (p["Nx"], p["Ny"]) == tuple(header[96:98]))
         ctrl = next(d["byteOffset"] for d in profile["FULLColdDirectory"] if d["name"] == "CTRL")
+        candidate = next(d["byteOffset"] for d in profile["FULLColdDirectory"] if d["name"] == "CANDIDATE")
+        raw_fields = {f["name"]: bytearray() for f in profile["state"] if f["name"] in ("u","v","piQ32")}
+        spans = [(ctrl,512,config), (ctrl+73728,1024,tail)]
+        spans.extend((candidate+f["byteStart"], f["bytes"], raw_fields[f["name"]])
+                     for f in profile["state"] if f["name"] in raw_fields)
         checksum.update(first)
         for line in source:
             checksum.update(line)
@@ -66,13 +71,15 @@ def tail_from_archive(path, receipt):
                 continue
             at = exact_id(page["rawByteOffset"])
             data = struct.pack(f"<{len(page['words'])}I", *page["words"])
-            for start, size, target in ((ctrl, 512, config), (ctrl+73728, 1024, tail)):
+            for start, size, target in spans:
                 lo, hi = max(start, at), min(start+size, at+len(data))
                 if lo < hi:
                     target.extend(data[lo-at:hi-at])
     enforce(checksum.hexdigest() == result["fileSHA256"], "archive changed")
-    enforce(len(config) == 512 and len(tail) == 1024, "archive field range")
-    return bytes(config), bytes(tail), result["fileSHA256"]
+    enforce(all(len(target) == size for _, size, target in spans), "archive field range")
+    fields = {name: [item[0] for item in struct.iter_unpack("<q" if name == "piQ32" else "<I", values)]
+              for name, values in raw_fields.items()}
+    return bytes(config), bytes(tail), result["fileSHA256"], fields
 
 
 def units(config, view):
@@ -199,10 +206,13 @@ if __name__ == "__main__":
                           revisions=T721.load(ROOT/"test/t606/coverage-table.json")["rulings_applied"])
         else:
             manifest = T721.load(args.manifest)
-            config, raw, archive_sha = tail_from_archive(args.archive, args.receipt)
+            config, raw, archive_sha, fields = tail_from_archive(args.archive, args.receipt)
             enforce(manifest["archiveSHA"] == archive_sha, "manifest archive SHA")
+            view = manifest["view"]
+            enforce(all(view[dest] == fields[src] for dest, src in
+                        (("u32","u"), ("v32","v"), ("piQ32","piQ32"))), "GridView raw field mismatch")
             result = inspect(manifest, config, raw)
-    except (ValueError, TypeError, OSError, KeyError, IndexError, struct.error) as error:
+    except (ValueError, TypeError, OSError, KeyError, IndexError, StopIteration, struct.error) as error:
         result = dict(state="INVALID", error=str(error))
     print(json.dumps(result, indent=2))
     sys.exit(int(result["state"] not in ("SYNTHETIC_PASS", "SPEC_ONLY")))
