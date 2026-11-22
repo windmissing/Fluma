@@ -263,6 +263,9 @@ if __name__ == "__main__":
     commands = parser.add_subparsers(dest="cmd", required=True)
     commands.add_parser("selftest")
     commands.add_parser("cases")
+    archive = commands.add_parser("archive", help="verify native ROOT or FULL structure only")
+    archive.add_argument("archive", type=Path)
+    archive.add_argument("receipt", type=Path)
     check = commands.add_parser("check")
     for name in ("manifest", "archive", "receipt"):
         check.add_argument(name, type=Path)
@@ -273,6 +276,8 @@ if __name__ == "__main__":
         elif args.cmd == "cases":
             result = dict(state="SPEC_ONLY", cases=CASES,
                           revisions=T721.load(ROOT/"test/t606/coverage-table.json")["rulings_applied"])
+        elif args.cmd == "archive":
+            result = read(args.archive, args.receipt)
         else:
             manifest = T721.load(args.manifest)
             config, raw, archive_sha, fields = tail_from_archive(args.archive, args.receipt)
@@ -284,4 +289,4 @@ if __name__ == "__main__":
     except (ValueError, TypeError, OSError, KeyError, IndexError, StopIteration, struct.error) as error:
         result = dict(state="INVALID", error=str(error))
     print(json.dumps(result, indent=2))
-    sys.exit(int(result["state"] not in ("SYNTHETIC_PASS", "SPEC_ONLY")))
+    sys.exit(int(result["state"] not in ("SYNTHETIC_PASS", "SPEC_ONLY", "STRUCTURALLY_COMPLETE")))
