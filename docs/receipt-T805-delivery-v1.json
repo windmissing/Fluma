@@ -1,0 +1,32 @@
+{
+  "schema": "T805_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-22",
+  "commit": "3a1c760312fe4b5fbc135fadca71d0693f30f6d3",
+  "queueStaged": false,
+  "sameNameDidaListUpdated": false,
+  "comments": {
+    "projectId": "6ac8a7e3e9adb60000000419",
+    "taskId": "6b02ab75e4b0c0fef86305c7",
+    "started": {
+      "id": "6b02ad87e4b0d058eaf2bdf2",
+      "createdTime": "2026-11-22T08:53:27+0000"
+    },
+    "delivered": {
+      "id": "6b02aebbe4b07c2761b44123",
+      "createdTime": "2026-11-22T08:58:35+0000",
+      "title": "T805 architect 已交付。实物重算：T802 签名输入 9c9097d3…→6eedc7fc…是 T798 default 单体，ELF 775c7116…含 146301B GLSL、无 native SOURCE export marker。正确 BOOT_SOURCE 是未签 da5ec9b4…、ELF f96d365d…、22318B BOOT+41767B SOURCE；两包 ABC/入口相同。T802 v1 有后台/Doze与取消请求，v2 有长时间停在编译状态和高负载，缺 EXIT、本次映射和原 proc 时钟，热/争用及进程死亡均未证。T802 可用正确包按正常签名另取低干扰冷轮，先验设备映射；并行准备独立 probe 页，实际复用 T798 文件 writer 与平台适配，真实沙箱落盘/HDC，探针结果与 SOURCE 同票、有效根及 Swap 独立。保原250ms和freshness。T800 13组及 T785 reader离线复跑通过；本卡未上机。docs/architecture-T805-v1.md，提交 3a1c7603。"
+    }
+  },
+  "statusRow": {
+    "path": "docs/后续工作清单.md",
+    "before": "进行中",
+    "after": "结束待验收",
+    "line": "| T805 | 【T805·目标20 RX长冷编译与侧车独立验证工程方案】architect | architect | P5 | 结束待验收 | 6b02ab75e4b0c0fef86305c7 |",
+    "beforeSha256": "d4775f93342730e92050d0b2fcffd8ea9a90605b6a798c674f4da58bf6426cad",
+    "afterSha256": "77667469a20dcd9f8712c46de7d311c38cb3d5ecd7aeb85ddf66156bd9ccc019"
+  },
+  "evidence": {
+    "path": "docs/architecture-T805-evidence-v1.json",
+    "sha256": "806bb6d324eccba81a0f7442766ba2e036926e53ef362f8894aeff641ad85c18"
+  }
+}
