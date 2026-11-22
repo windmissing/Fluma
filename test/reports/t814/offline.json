@@ -1,0 +1,647 @@
+{
+  "schema": "T814_G10_MIRROR_OFFLINE_V1",
+  "device": "NOT_RUN",
+  "product": "NOT_OBSERVED",
+  "eligiblePairs": 0,
+  "observedTotalQ": null,
+  "observedOriginQ": null,
+  "observedImage": null,
+  "inputs": [
+    {
+      "file": "algorithm-G10-anisotropy-analysis-v1.md",
+      "checkedOutSHA256": "30f44f09d57723b345ceb7d74666505f7adce8b102c4bf55980aab21ad3548f6",
+      "frozenSHA256": "30f44f09d57723b345ceb7d74666505f7adce8b102c4bf55980aab21ad3548f6",
+      "match": "RAW"
+    },
+    {
+      "file": "retro-T557-T558-v1.md",
+      "checkedOutSHA256": "977434c18f50b6edc5d0d6b9325216d038c9486a9bafb9405cf035834c7738fd",
+      "frozenSHA256": "977434c18f50b6edc5d0d6b9325216d038c9486a9bafb9405cf035834c7738fd",
+      "match": "RAW"
+    },
+    {
+      "file": "design-T557-T558-checks-v1.py",
+      "checkedOutSHA256": "83ca5ced6fedaa6ffdcd389469abd78c0579299ddfefb151428caaa2e5711aba",
+      "frozenSHA256": "83ca5ced6fedaa6ffdcd389469abd78c0579299ddfefb151428caaa2e5711aba",
+      "match": "RAW"
+    },
+    {
+      "file": "design-T557-T558-fixtures-v1.json",
+      "checkedOutSHA256": "2a035fe1abfe3bcbb46fad3bc9d12a5c24a6860e82b67dc4637697b507046d8e",
+      "frozenSHA256": "2a035fe1abfe3bcbb46fad3bc9d12a5c24a6860e82b67dc4637697b507046d8e",
+      "match": "RAW"
+    }
+  ],
+  "sourceReferences": [
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/surface_flux.glsl",
+      "sha256LF": "54fd5ebe8591fed0a4cc2139e6810f61c2245fbae9478142eb2c53cecb9f7840"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/origin_map.glsl",
+      "sha256LF": "0c1c3039d6f304a0c5e3e8a6349127b3ba0274a1754b51367059c0bbc33c1a41"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/touch_launch.glsl",
+      "sha256LF": "067e28e9547d8a944a6e72706e24cd7ce7fc3eba578794d669f6d811762c8cee"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/scene.frag",
+      "sha256LF": "d123f70a02f57a40a147c8f1f649d02e825c2b009779339af1f125a1e453e225"
+    }
+  ],
+  "candidates": [
+    {
+      "path": "test/reports/t670/fixtures.json",
+      "sha256": "62c1b0f0705f700ac49cd5633a8beca76382c9a4488fcd126f64615ec9ca75a7",
+      "family": "G9_R1_AND_DM_V2",
+      "qualifies": false,
+      "exclusion": "INPUT_FIXTURES_ONLY",
+      "inputs": [
+        {
+          "family": "dm",
+          "K": 192,
+          "angleIndex": 7680,
+          "seedSHA": "cd62ff4d9963146ec22c8eaeac848784fb2ad500ef684a9f82ff4ae55633c02d"
+        },
+        {
+          "family": "spf",
+          "K": 512,
+          "angleIndex": 0,
+          "seedSHA": "7e5f8c7164f10678250405678563262f96e4bba030bb2635cb031ae3d7c61aa1"
+        },
+        {
+          "family": "dm",
+          "K": 192,
+          "angleIndex": 7680,
+          "seedSHA": "cd62ff4d9963146ec22c8eaeac848784fb2ad500ef684a9f82ff4ae55633c02d"
+        },
+        {
+          "family": "dm",
+          "K": 512,
+          "angleIndex": 7680,
+          "seedSHA": "33aadbd3d4be9b99d2e890c4181abd146ffebd6508bae0ae2d8e492c7f1abe9e"
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t491/t712b/v4-t718.json",
+      "sha256": "0d09b3a945b3dd705bbbf0e918d4c1510d5171633e6101b6249aec568e17a8f5",
+      "family": "G9_DM_V2",
+      "qualifies": false,
+      "exclusion": "CREATE_PENDING",
+      "observed": "pending \u2014 execution.jsonl 0 bytes during compile"
+    },
+    {
+      "path": "test/reports/t491/t809/x-B.jsonl",
+      "sha256": "fb5ee5f22fc58a9a245adceb9d38ab2d4af3aa24c61aa106342be88fd161b703",
+      "family": "G9_DM_V2",
+      "qualifies": false,
+      "exclusion": "TIMING_OR_PREFIX_WITHOUT_ACCEPT",
+      "root": {
+        "pid": 29008,
+        "scope": "81590310409063",
+        "inputSHA": "4f254940fae50d35421d09b53350c2b17be41aadb854c0498b0c4db698aa84c9",
+        "seedSHA": "eca3d19363ee138a8361561f62ce6de403ab1b3009d62362139e538ce40b39f9",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802"
+      },
+      "terminal": {
+        "exitCode": 6,
+        "submitted": 12,
+        "commit": 0,
+        "quanta": 0
+      }
+    },
+    {
+      "path": "test/reports/t491/t809/x-copies.jsonl",
+      "sha256": "0c3e1ea21e4eb90fa92e3e1c630e3ba2bfa204fcee1953569af2faedc316e390",
+      "family": "G9_DM_V2",
+      "qualifies": false,
+      "exclusion": "TIMING_OR_PREFIX_WITHOUT_ACCEPT",
+      "root": {
+        "pid": 39012,
+        "scope": "83228194261407",
+        "inputSHA": "66e9a8eb7af3a368c35be28fc0ed09aca7ee86983998a210db31f39e93be49f1",
+        "seedSHA": "7ae5c9d1b4bb2a5033efd61bc26919738d73022ac65c0255db027be316febba5",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802"
+      },
+      "terminal": {
+        "exitCode": 0,
+        "submitted": 10,
+        "commit": 0,
+        "quanta": 0
+      }
+    },
+    {
+      "path": "test/reports/t491/t809/x-op11.jsonl",
+      "sha256": "93562561765ab31e807f0c731f9ceeb2eb36078aa7635bbb25d529f16065f870",
+      "family": "G9_DM_V2",
+      "qualifies": false,
+      "exclusion": "TIMING_OR_PREFIX_WITHOUT_ACCEPT",
+      "root": {
+        "pid": 42328,
+        "scope": "83761826020313",
+        "inputSHA": "7601e194f49314601a423502d40adf431f8b8f3df873f3f134e8d8869ddba663",
+        "seedSHA": "8589144e412cbfb993efc5e9a22067cb4f1e2427d4a088b5e9d49aa8a3e92d07",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802"
+      },
+      "terminal": {
+        "exitCode": 0,
+        "submitted": 12,
+        "commit": 0,
+        "quanta": 0
+      }
+    },
+    {
+      "path": "test/reports/t491/t809/x-op8.jsonl",
+      "sha256": "7f78b350a6bab39e3ec8041c9f8d6b1572c7979994832b94302f5478330d6360",
+      "family": "G9_DM_V2",
+      "qualifies": false,
+      "exclusion": "TIMING_OR_PREFIX_WITHOUT_ACCEPT",
+      "root": {
+        "pid": 32008,
+        "scope": "82126942118907",
+        "inputSHA": "bcba33d973aaecf245fcb28310b347d1b60b5d86b87e3529d1281075bf003657",
+        "seedSHA": "636df05b3f6e1f2c5bb0166f498659adcc2bb01792f4e9b4a50bb94e9055a8f2",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802"
+      },
+      "terminal": {
+        "exitCode": 0,
+        "submitted": 9,
+        "commit": 0,
+        "quanta": 0
+      }
+    },
+    {
+      "path": "test/reports/t491/t809/x-op9.jsonl",
+      "sha256": "2bec97003304dceb66adf6045333cb85e40415212b65c0a7e9af745909f374be",
+      "family": "G9_DM_V2",
+      "qualifies": false,
+      "exclusion": "TIMING_OR_PREFIX_WITHOUT_ACCEPT",
+      "root": {
+        "pid": 35460,
+        "scope": "82696310510157",
+        "inputSHA": "595872bc4292294ff1930dc8d967e16e27d908563356ded02ed5d6dee929f224",
+        "seedSHA": "f1c30e1f403b946c768a16bfd6b2dae1e3d18cf575df9a6d12ebd130606c0192",
+        "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+        "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+        "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802"
+      },
+      "terminal": {
+        "exitCode": 0,
+        "submitted": 10,
+        "commit": 0,
+        "quanta": 0
+      }
+    },
+    {
+      "path": "test/reports/t491/t802/sidecar-terminal.json",
+      "sha256": "c8a61f0eaa7a72404fdf08d12380487c1dfbfa9a175088b57a28277e193006a6",
+      "family": "RX_SOURCE",
+      "qualifies": false,
+      "exclusion": "UNCOMMITTED_SOURCE_AND_NO_PROVEN_MIRROR",
+      "pid": 57798,
+      "processStartTick": "7635555",
+      "facts": {
+        "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+        "parameterSHA": "f7c133d23a49587c9905c6e5ac2e1d4739fe1271421446c9fd12a7791e62a858",
+        "seedSHA": "32ef8747f20b129fdbe678a14466b2d55e3cf3e0e909fe9facf0b131ad8fa4b2",
+        "inputSHA": "ff20fb91775aa057cda5d638f58a0ce8fe2d0508577e4aa98b484dcbc22ab299",
+        "fault": 6,
+        "committed": false
+      }
+    },
+    {
+      "path": "test/reports/t491/t816/sidecar-terminal.json",
+      "sha256": "29a759a21f5e645b87ed7bc841fadb78fe1df3154f45bfd2c1be990bab6c14b9",
+      "family": "RX_SOURCE",
+      "qualifies": false,
+      "exclusion": "UNCOMMITTED_SOURCE_AND_NO_PROVEN_MIRROR",
+      "pid": 58229,
+      "processStartTick": "8593780",
+      "facts": {
+        "sourceSHA": "ee66f5f27e4a2bfcd8b9cd22fb1518f65105892830f807b76d7a7f115896cbe8",
+        "parameterSHA": "f7c133d23a49587c9905c6e5ac2e1d4739fe1271421446c9fd12a7791e62a858",
+        "seedSHA": "32ef8747f20b129fdbe678a14466b2d55e3cf3e0e909fe9facf0b131ad8fa4b2",
+        "inputSHA": "bdb8b0380c4326eaf740e668bf6387e3254acf1ba885d39f5d62c799db8c0c51",
+        "fault": 5,
+        "committed": false
+      }
+    },
+    {
+      "path": "test/reports/t491/t711b/v2-fourarm.json",
+      "sha256": "a96369f3bfe3ede8c9c7423cc159cfe6161d131bdfb3e6d6a642d36daa1c4ef8",
+      "family": "M1_M2",
+      "qualifies": false,
+      "exclusion": "FEATURE_SWITCH_ARMS_NO_MIRROR",
+      "arms": [
+        "M1-THREE_OFF",
+        "M1-TWO_ON",
+        "M2-TWO_ON",
+        "M2-THREE_OFF"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t711b/m1to.jpeg",
+      "sha256": "367125f7b28ae337baad168f50178cc572b276f58f88c9193ea22a9346af5ad5",
+      "family": "M1_IMAGE",
+      "qualifies": false,
+      "exclusion": "SINGLE_ARCHIVED_FRAME_NO_MIRROR_SIDECAR"
+    },
+    {
+      "path": "test/reports/t485/pixels.json",
+      "sha256": "1f12dc1b47f6b97e7967108e93b3946ec7510e24e6677e49bc45e7c60414a842",
+      "family": "M1_M2_IMAGE",
+      "qualifies": false,
+      "exclusion": "COLD_WARM_OFF_COMPARISON_NO_MIRROR",
+      "modes": [
+        "cold",
+        "off",
+        "warm"
+      ]
+    },
+    {
+      "path": "test/reports/t722/fixture.json",
+      "sha256": "683970fe8b6b233c3c172a124a8f21aa89f20317ae18706ceb9f78fe9f8ad548",
+      "family": "GOAL_11_ARCHIVE",
+      "qualifies": false,
+      "exclusion": "OUT_OF_SCOPE_FIXTURE_ONLY"
+    }
+  ],
+  "cases": [
+    {
+      "id": "A01",
+      "designExpectation": "stationary under supported REST conditions",
+      "finite": {
+        "result": "EXACT_IDENTITY",
+        "expected": "supplied zero field keeps zero denominator",
+        "observed": {
+          "l1": 0,
+          "max": 0,
+          "rawDenominator": 0
+        }
+      },
+      "runtime": "NOT_OBSERVED",
+      "missing": "matched accepted REST and raw mass/fields"
+    },
+    {
+      "id": "A02",
+      "designExpectation": "measure residual after full input transform; no invented tolerance",
+      "finite": {
+        "result": "EXACT_IDENTITY",
+        "expected": "cell/face/signed field and distinct field/packet moments reflect",
+        "observed": {
+          "positionSamples": 640,
+          "interiorFaces": 127,
+          "faceQ": {
+            "l1": 0,
+            "max": 0,
+            "rawDenominator": 5
+          },
+          "fieldMoments": [
+            503316480,
+            4596957184
+          ]
+        }
+      },
+      "runtime": "NOT_OBSERVED",
+      "missing": "mirrored slope/gx roots and actual signed q/p"
+    },
+    {
+      "id": "A03",
+      "designExpectation": "compare within identical route and accepted duration",
+      "finite": null,
+      "runtime": "NOT_OBSERVED",
+      "missing": "separate route-matched tilt roots"
+    },
+    {
+      "id": "A04",
+      "designExpectation": "u-squared shear closure unchanged by sign under mirrored geometry",
+      "finite": {
+        "result": "EXACT_IDENTITY",
+        "expected": "local u squared is even",
+        "observed": [
+          "25/144",
+          "25/144"
+        ]
+      },
+      "runtime": "NOT_OBSERVED",
+      "missing": "actual predictor/corrector q and capacity"
+    },
+    {
+      "id": "A05",
+      "designExpectation": "known left-first tie: totals symmetric, origins can fail mirror",
+      "finite": {
+        "result": "KNOWN_INTEGER_TIE",
+        "expected": {
+          "sharesEachRun": [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "totalQResidual": 0,
+          "originL1": 4
+        },
+        "observed": {
+          "sharesEachRun": [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "totalQResidual": 0,
+          "originL1": 4,
+          "originMax": 1,
+          "originDenominator": 2,
+          "symmetricAllocations": []
+        }
+      },
+      "runtime": "NOT_OBSERVED",
+      "missing": "accepted per-face origin shares"
+    },
+    {
+      "id": "A06",
+      "designExpectation": "remove odd-share tie before assessing other origin bias",
+      "finite": {
+        "result": "EXACT_IDENTITY",
+        "expected": {
+          "sharesEachRun": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "totalQResidual": 0,
+          "originL1": 0
+        },
+        "observed": {
+          "sharesEachRun": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "totalQResidual": 0,
+          "originL1": 0,
+          "originMax": 0,
+          "originDenominator": 4,
+          "symmetricAllocations": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              0
+            ]
+          ]
+        }
+      },
+      "runtime": "NOT_OBSERVED",
+      "missing": "accepted per-face origin shares"
+    },
+    {
+      "id": "A07",
+      "designExpectation": "isolate adapter from model and rendering",
+      "finite": {
+        "result": "EXACT_IDENTITY",
+        "expected": "strict capsule input keeps source key, tick and vertical component",
+        "observed": {
+          "x": 126353407,
+          "jx": -6,
+          "jy": -7,
+          "tick": 4,
+          "mass": 2,
+          "radius": 1048576,
+          "dedup": "A:4",
+          "source": "A"
+        }
+      },
+      "runtime": "NOT_OBSERVED",
+      "missing": "raw UI event/tick association and resulting impulse"
+    },
+    {
+      "id": "A08",
+      "designExpectation": "identify capacity-conditioned scan policy, not infer from IDs alone",
+      "finite": {
+        "result": "POLICY_COUNTEREXAMPLE",
+        "expected": "equal requests, ample slots mirror; one slot favors smaller column",
+        "observed": {
+          "2": {
+            "servedL": [
+              20,
+              100
+            ],
+            "servedR": [
+              27,
+              107
+            ],
+            "mirrorL": [
+              107,
+              27
+            ],
+            "deniedMassEach": 0,
+            "packetMassMapL1": 0
+          },
+          "1": {
+            "servedL": [
+              20
+            ],
+            "servedR": [
+              27
+            ],
+            "mirrorL": [
+              107
+            ],
+            "deniedMassEach": 3,
+            "packetMassMapL1": 6
+          }
+        }
+      },
+      "runtime": "NOT_OBSERVED",
+      "missing": "actual launch/denied mass rows and independent ID bijection"
+    },
+    {
+      "id": "A09",
+      "designExpectation": "record one-position-quantum construction difference explicitly",
+      "finite": {
+        "result": "EXACT_IDENTITY",
+        "expected": "strict mirror is one position quantum below independent center",
+        "observed": {
+          "strictX": 126353407,
+          "centerX": 126353408,
+          "delta": -1
+        }
+      },
+      "runtime": "NOT_OBSERVED",
+      "missing": "wall and no-wall contact roots and captures"
+    },
+    {
+      "id": "A10",
+      "designExpectation": "wait does not count as transported requested mass",
+      "finite": null,
+      "runtime": "NOT_OBSERVED",
+      "missing": "same-profile 64/65-origin WAIT and inventories"
+    },
+    {
+      "id": "A11",
+      "designExpectation": "accepted duration matched; wall time reported separately",
+      "finite": {
+        "result": "COMPARISON_GATE",
+        "expected": "qualify reflected input and same accepted interval before comparing",
+        "observed": {
+          "rejections": {
+            "tick": [
+              "tick"
+            ],
+            "serial": [
+              "serial"
+            ],
+            "J": [
+              "J"
+            ],
+            "accepted": [
+              "acceptedProof"
+            ],
+            "run": [
+              "independentRun"
+            ],
+            "input": [
+              "mirrorInput"
+            ],
+            "profile": [
+              "profile"
+            ],
+            "seedSHA": [
+              "seedSHA"
+            ]
+          },
+          "pair": [
+            {
+              "profile": "FIXTURE",
+              "algorithm": "synthetic",
+              "parameters": "synthetic",
+              "layout": "synthetic",
+              "K": 192,
+              "coordinates": "L-1-x",
+              "accepted": true,
+              "startTick": 0,
+              "startSerial": 0,
+              "tick": 6,
+              "serial": 2,
+              "J": 3,
+              "run": "L",
+              "seedSHA": "2957bf383dd222e892779f6e71af38f0d0fc7be0175f25122e197297a83c3bc9",
+              "inputSHA": "38cc17ca576f8a04bebfa2b3ed5ac039fc4e31924f0238a54dd76f7d70c4ceb2"
+            },
+            {
+              "profile": "FIXTURE",
+              "algorithm": "synthetic",
+              "parameters": "synthetic",
+              "layout": "synthetic",
+              "K": 192,
+              "coordinates": "L-1-x",
+              "accepted": true,
+              "startTick": 0,
+              "startSerial": 0,
+              "tick": 6,
+              "serial": 2,
+              "J": 3,
+              "run": "R",
+              "seedSHA": "1f5e9072e23822292e4d12bab159add0210159ed0db210f1b393b62f8f58a996",
+              "inputSHA": "284905ea0d5807082c1736ca18bd0ac7b6695afa56de06ce0ea6e357afcc7a80"
+            }
+          ]
+        }
+      },
+      "runtime": "NOT_OBSERVED",
+      "missing": "long equal accepted interval and per-J raw q"
+    },
+    {
+      "id": "A12",
+      "designExpectation": "separate schedule phase from persistent direction bias",
+      "finite": null,
+      "runtime": "NOT_OBSERVED",
+      "missing": "paired M1 full-cycle/phase fields"
+    },
+    {
+      "id": "A13",
+      "designExpectation": "track policy-equivalent IDs and do not confuse ID order with physical symmetry",
+      "finite": {
+        "result": "KNOWN_INTEGER_TIE",
+        "expected": "signed RNE is odd while an odd reflection intercept need not commute",
+        "observed": {
+          "rounded": [
+            -2,
+            -2,
+            0,
+            0,
+            2,
+            2
+          ],
+          "coordinateResidual": -1
+        }
+      },
+      "runtime": "NOT_OBSERVED",
+      "missing": "M2 merge and subsequent contact originals"
+    },
+    {
+      "id": "A14",
+      "designExpectation": "separate observation artifact from physical state",
+      "finite": {
+        "result": "EXPRESSION_COUNTEREXAMPLE",
+        "expected": "binary32 high/low-word addition need not preserve sign",
+        "observed": {
+          "decoded": {
+            "-129": -256.0,
+            "-128": 0.0,
+            "-1": 0.0,
+            "0": 0.0,
+            "1": 1.0,
+            "128": 128.0,
+            "129": 129.0
+          },
+          "imageResidual": null
+        }
+      },
+      "runtime": "NOT_OBSERVED",
+      "missing": "same-token mirrored viewports and real pixels"
+    },
+    {
+      "id": "A15",
+      "designExpectation": "no callback-driven time advancement",
+      "finite": null,
+      "runtime": "NOT_OBSERVED",
+      "missing": "paired repeat/stale/reject/cancel scene and accepted receipts"
+    }
+  ]
+}
