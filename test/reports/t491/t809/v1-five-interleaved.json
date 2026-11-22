@@ -1,0 +1,43 @@
+{
+ "revision": "T809_V1_FIVE_INTERLEAVED_PREFIX_COSTS_V1",
+ "date": "2026-11-22 19:35",
+ "design": "five interleaved arms B/OP8/OP9/COPIES/OP11, one fresh process each, same K192/S40 input, --timing=B explicit all arms (T784 lesson)",
+ "arms": {
+  "B": {
+   "exitCode": 6,
+   "cursor": "12/12",
+   "retirePolls": 78,
+   "records": 28
+  },
+  "OP8": {
+   "exitCode": 0,
+   "cursor": "9/12",
+   "retirePolls": 159,
+   "records": 29
+  },
+  "OP9": {
+   "exitCode": 0,
+   "cursor": "10/12",
+   "retirePolls": 189,
+   "records": 29
+  },
+  "COPIES": {
+   "exitCode": 0,
+   "cursor": "10/12",
+   "retirePolls": 201,
+   "records": 29
+  },
+  "OP11": {
+   "exitCode": 0,
+   "cursor": "12/12",
+   "retirePolls": 137,
+   "records": 29
+  }
+ },
+ "effectiveDenominator": "all 5 arms valid (exitCode pattern + cursor match T804/T788 baselines) \u2014 denominator = 5",
+ "conservativeLowerBound": "COPIES-OP9 fence completion time delta re-measured interleaved: poll deltas 201 vs 189; per-event ns arrays in originals (drain windows per arm) \u2014 cost attribution kept conservative (no poll-count extrapolation per card \"\u4e0d\u4ee5 poll \u6570\u63a8\u6210\u672c\"); raw fence wait values + intervals in originals",
+ "ownerCpu": "worker utime tracked per arm in originals",
+ "deadline": "250ms preserved; B arm DEADLINE @12 consistent; prefix arms exit before deadline applies",
+ "prefixZeroCommit": "all prefix arms commit=0 quanta=0",
+ "route": "T773 reader on t809 originals; conservative COPY_COST lower bound now has 5-arm interleaved denominator"
+}
