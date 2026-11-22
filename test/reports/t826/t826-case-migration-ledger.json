@@ -1,0 +1,70 @@
+{
+ "revision": "T826_CASE_MIGRATION_LEDGER_V1",
+ "date": "2026-11-22",
+ "targets": [
+  {
+   "target": 2,
+   "case": "gesture inject+settle",
+   "input": "pointer trajectory",
+   "judge": "settle layer pixels",
+   "pcState": "WINDOW_PENDING"
+  },
+  {
+   "target": 3,
+   "case": "sand/water mode switch",
+   "input": "click mode toggle",
+   "judge": "state flag+render domain",
+   "pcState": "WINDOW_PENDING"
+  },
+  {
+   "target": 4,
+   "case": "dual-state same-frame",
+   "input": "dual-source same frame",
+   "judge": "interface line pixels",
+   "pcState": "WINDOW_PENDING"
+  },
+  {
+   "target": 5,
+   "case": "water lateral spread",
+   "input": "continuous water inject",
+   "judge": "spread boundary pixel seq",
+   "pcState": "WINDOW_PENDING"
+  },
+  {
+   "target": 7,
+   "case": "surface transport",
+   "input": "drag gesture",
+   "judge": "heightfield delta",
+   "pcState": "WINDOW_PENDING"
+  },
+  {
+   "target": 8,
+   "case": "conservation invariant",
+   "input": "any op sequence",
+   "judge": "total mass invariant (MUST-PASS)",
+   "pcState": "FIXTURE_READY"
+  },
+  {
+   "target": 11,
+   "case": "ROOT/FULL receipt",
+   "input": "root commands",
+   "judge": "receipt fields",
+   "pcState": "T80_GATE_PROVEN"
+  }
+ ],
+ "windows": {
+  "actualWindowTargets": [
+   2,
+   3,
+   4,
+   5,
+   7
+  ],
+  "offscreenReady": [
+   8,
+   11
+  ]
+ },
+ "thresholds": "unchanged (no unauthorized edits)",
+ "dependency": "PC baseline GPU interface (T825: NOT_RUN)"
+}
