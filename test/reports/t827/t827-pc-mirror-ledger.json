@@ -1,0 +1,43 @@
+{
+ "revision": "T827_PC_MIRROR_LEDGER_V1",
+ "date": "2026-11-22",
+ "target9": {
+  "sources": [
+   "T779",
+   "T796"
+  ],
+  "criteria": [
+   "totalQ",
+   "originQ",
+   "image"
+  ],
+  "pcState": "UNOBSERVED"
+ },
+ "target10": {
+  "sources": [
+   "T557",
+   "T814"
+  ],
+  "criteria": [
+   "eligiblePairs differential"
+  ],
+  "t814Status": {
+   "eligiblePairs": 0,
+   "observedTotalQ": null,
+   "observedOriginQ": null,
+   "observedImage": null,
+   "device": "NOT_RUN",
+   "product": "NOT_OBSERVED"
+  }
+ },
+ "threeOriginals": [
+  "totalQ same-window accounting",
+  "originQ per-source",
+  "image pixel differential (same backend/config/accepted-time)"
+ ],
+ "reusedFixtures": [
+  "t280 replay archives",
+  "t814 offline audit skeleton"
+ ],
+ "honestNote": "missing actual PC originals -> preserved as UNOBSERVED per contract; dependency = PC baseline GPU interface (T825)"
+}
