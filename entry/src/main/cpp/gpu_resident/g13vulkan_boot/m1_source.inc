@@ -196,7 +196,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   if (waited == VK_SUCCESS || waited == VK_ERROR_DEVICE_LOST) inFlight = false;
   const bool fresh = refresh();
   fields << ",\"m1FenceVkResult\":" << int(waited) << ",\"m1FenceNs\":\"" << fenceNs
-         << "\",\"m1PulseCount\":" << clock.pulses << ",\"m1PulseFault\":" << Quote(clock.fault);
+         << "\",\"m1PulseCount\":" << clock.pulses << ",\"m1PulseFault\":"
+         << (clock.open ? "null" : Quote(clock.fault));
   if (waited != VK_SUCCESS || fenceNs > deadline || !fresh) {
     root.Stop();
     return Receipt("FAILED", !fresh ? "M1_SOURCE_PERMIT_REVOKED" :
