@@ -1,0 +1,571 @@
+{
+  "schema": "T803_DM_SEGMENT_EVIDENCE_V1",
+  "date": "2026-11-22",
+  "deviceUsed": false,
+  "sourceCommit": "c9e30acd",
+  "compileReceipt": {
+    "path": "D:/hmprojects/HelloWorld-T771/docs/receipt-T797-compile-v1.json",
+    "sha256": "192007b1c7d54eda7ea0edc853dcf4126f08f30a1bd39ee512d5b07d4a1eec0c",
+    "bytes": 4153
+  },
+  "localObjects": {
+    "driver": {
+      "path": "D:/hmprojects/HelloWorld-T771/.codex/local-test/t797-source/handoff/g9_dm_differential",
+      "sha256": "653c7997a80679f32ced922fef0457ee752dd5977c4e34f4df2bbd0d3ef55ac4",
+      "bytes": 1121576,
+      "localMd5": "2855f567e4ea926d44fb9a02aa31d6bd",
+      "buildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057"
+    },
+    "pairedDsoFromHap": {
+      "path": "D:/hmprojects/HelloWorld-T771/.codex/local-test/t797-source/handoff/libgrs_dm_t647.so",
+      "sha256": "83b7db14fcd752bfd0b28d0d5006fdc9fec4bfccaba8e58643e800dbf65a9b69",
+      "bytes": 1378872,
+      "localMd5": "b0df4529850ffde2b532e823001164d8",
+      "buildId": "962b06ec8d6a673e99d6dbcbf760e576748a3d99"
+    },
+    "pairedCpp": {
+      "path": "D:/hmprojects/HelloWorld-T771/.codex/local-test/t797-source/handoff/libc++_shared.so",
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "bytes": 1262248,
+      "localMd5": "2ff981dce07a3014960ca49c5dc145f7"
+    }
+  },
+  "localPackagedHap": {
+    "path": "D:/hmprojects/HelloWorld-T771/.codex/local-test/t797-source/entry/build/default/outputs/default/entry-default-unsigned.hap",
+    "sha256": "cf916b37271ffc0910ed803f14748cc58a062c0760c70229b1fe7ac396e40994",
+    "bytes": 7682642
+  },
+  "compiledDiagnosticStrings": [
+    "--gpu-timing",
+    "--prefix=op8",
+    "--prefix=op9",
+    "--prefix=copies",
+    "--prefix=op11",
+    "GPU_SEGMENTS",
+    "T797_DM_SOURCE_GPU_V1"
+  ],
+  "samples": {
+    "s1": {
+      "file": {
+        "path": "test/reports/t491/t801/s1.jsonl",
+        "sha256": "53aa82c6249cb6020fa6b88b1ecf6b2d05c568602dabbf9b4e273c8b89c13289",
+        "bytes": 68969
+      },
+      "rows": 28,
+      "identity": {
+        "pid": 2097,
+        "processStartTick": "5900718",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "59007344378125",
+        "owner": "1",
+        "context": "59007344378125"
+      },
+      "mappedDsoBuildId": "962b06ec8d6a673e99d6dbcbf760e576748a3d99",
+      "roleSetSHA": "4ee2acde35367c7aa6901582ed17a9da49820ace4cb16b48334c01dc709fc01a",
+      "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+      "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+      "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+      "sourceModeRecordObserved": false,
+      "actualArgvObserved": false,
+      "distinctPrefixFenceObserved": false,
+      "reader": {
+        "state": "DEADLINE",
+        "executionFence": "UNSIGNALED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "B",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 250164375,
+        "ownerCpuNs": 174456561,
+        "executionPollCount": 256,
+        "retirementPollCount": 63,
+        "wakeCount": 256,
+        "wakeOvershootMaxObservedNs": 151875,
+        "copyWallNs": [
+          190468,
+          74660469,
+          36407
+        ],
+        "pollTailWindow": 32,
+        "pulsesDropped": 0
+      },
+      "dispatches": 12,
+      "barriers": 12,
+      "copyBarriers": 3,
+      "advancedCursor": 12,
+      "firstGuardFailure": [
+        "PUMP_ENTRY_GUARD",
+        "DEADLINE",
+        "59327927894375",
+        12,
+        null,
+        null
+      ],
+      "lastGuardSuccess": [
+        "PRE_EXEC_POLL_GUARD",
+        "PASS",
+        "59327927453282",
+        12,
+        48,
+        59327924148438
+      ],
+      "ageAtLastGuardNs": 3304844,
+      "executionFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 256,
+        "lastWaitRaw": 37147,
+        "lastPollNs": "59327927510625",
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": true,
+        "handle": "1",
+        "polls": 63,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "59328010403594",
+        "signaled": true
+      },
+      "heavyFlushNs": 74942500,
+      "arenaCopy1CPU": 74276718,
+      "rootBeginToFenceCreateReturnNs": 151089844,
+      "drainWindowNs": 72380625,
+      "retireFenceConservativeBoundsRelativeToRootNs": [
+        331457969,
+        332630156
+      ],
+      "retireSignalSinceDeadlineNs": 82630156,
+      "guardSinceDeadlineNs": 129687,
+      "terminalFenceCreateBeforeRetire": null,
+      "unmappedUncommitted": true
+    },
+    "s2": {
+      "file": {
+        "path": "test/reports/t491/t801/s2.jsonl",
+        "sha256": "3b7611a8730e93af87d8076f444c4de9cf370b85d4774cdfe90853a6a718389f",
+        "bytes": 69897
+      },
+      "rows": 28,
+      "identity": {
+        "pid": 5932,
+        "processStartTick": "5954140",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "59541564339844",
+        "owner": "1",
+        "context": "59541564339844"
+      },
+      "mappedDsoBuildId": "962b06ec8d6a673e99d6dbcbf760e576748a3d99",
+      "roleSetSHA": "4ee2acde35367c7aa6901582ed17a9da49820ace4cb16b48334c01dc709fc01a",
+      "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+      "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+      "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+      "sourceModeRecordObserved": false,
+      "actualArgvObserved": false,
+      "distinctPrefixFenceObserved": false,
+      "reader": {
+        "state": "DEADLINE",
+        "executionFence": "UNSIGNALED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "B",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 250153281,
+        "ownerCpuNs": 175496256,
+        "executionPollCount": 245,
+        "retirementPollCount": 71,
+        "wakeCount": 245,
+        "wakeOvershootMaxObservedNs": 2180156,
+        "copyWallNs": [
+          184062,
+          80728438,
+          28750
+        ],
+        "pollTailWindow": 32,
+        "pulsesDropped": 0
+      },
+      "dispatches": 12,
+      "barriers": 12,
+      "copyBarriers": 3,
+      "advancedCursor": 12,
+      "firstGuardFailure": [
+        "PUMP_ENTRY_GUARD",
+        "DEADLINE",
+        "59860129038282",
+        12,
+        null,
+        null
+      ],
+      "lastGuardSuccess": [
+        "PRE_EXEC_POLL_GUARD",
+        "PASS",
+        "59860128701094",
+        12,
+        48,
+        59860124206094
+      ],
+      "ageAtLastGuardNs": 4495000,
+      "executionFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 245,
+        "lastWaitRaw": 37147,
+        "lastPollNs": "59860128745313",
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": true,
+        "handle": "1",
+        "polls": 71,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "59860217441875",
+        "signaled": true
+      },
+      "heavyFlushNs": 73599063,
+      "arenaCopy1CPU": 80692032,
+      "rootBeginToFenceCreateReturnNs": 155809063,
+      "drainWindowNs": 81599844,
+      "retireFenceConservativeBoundsRelativeToRootNs": [
+        337352031,
+        338525313
+      ],
+      "retireSignalSinceDeadlineNs": 88525313,
+      "guardSinceDeadlineNs": 128438,
+      "terminalFenceCreateBeforeRetire": null,
+      "unmappedUncommitted": true
+    },
+    "s3": {
+      "file": {
+        "path": "test/reports/t491/t801/s3.jsonl",
+        "sha256": "e77dd291d73cf7d64fb65269e46acac9914a1fa22022dec87f161a6781a36e16",
+        "bytes": 69897
+      },
+      "rows": 28,
+      "identity": {
+        "pid": 9406,
+        "processStartTick": "6006142",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "60061581434219",
+        "owner": "1",
+        "context": "60061581434219"
+      },
+      "mappedDsoBuildId": "962b06ec8d6a673e99d6dbcbf760e576748a3d99",
+      "roleSetSHA": "4ee2acde35367c7aa6901582ed17a9da49820ace4cb16b48334c01dc709fc01a",
+      "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+      "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+      "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+      "sourceModeRecordObserved": false,
+      "actualArgvObserved": false,
+      "distinctPrefixFenceObserved": false,
+      "reader": {
+        "state": "DEADLINE",
+        "executionFence": "UNSIGNALED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "B",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 250119687,
+        "ownerCpuNs": 177215936,
+        "executionPollCount": 246,
+        "retirementPollCount": 71,
+        "wakeCount": 246,
+        "wakeOvershootMaxObservedNs": 139218,
+        "copyWallNs": [
+          172812,
+          84451875,
+          30938
+        ],
+        "pollTailWindow": 32,
+        "pulsesDropped": 0
+      },
+      "dispatches": 12,
+      "barriers": 12,
+      "copyBarriers": 3,
+      "advancedCursor": 12,
+      "firstGuardFailure": [
+        "PUMP_ENTRY_GUARD",
+        "DEADLINE",
+        "60382807692500",
+        12,
+        null,
+        null
+      ],
+      "lastGuardSuccess": [
+        "PRE_EXEC_POLL_GUARD",
+        "PASS",
+        "60382807310782",
+        12,
+        48,
+        60382805127032
+      ],
+      "ageAtLastGuardNs": 2183750,
+      "executionFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 246,
+        "lastWaitRaw": 37147,
+        "lastPollNs": "60382807342188",
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": true,
+        "handle": "1",
+        "polls": 71,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "60382896103125",
+        "signaled": true
+      },
+      "heavyFlushNs": 73027969,
+      "arenaCopy1CPU": 84314689,
+      "rootBeginToFenceCreateReturnNs": 158965625,
+      "drainWindowNs": 80422813,
+      "retireFenceConservativeBoundsRelativeToRootNs": [
+        337354843,
+        338503750
+      ],
+      "retireSignalSinceDeadlineNs": 88503750,
+      "guardSinceDeadlineNs": 99843,
+      "terminalFenceCreateBeforeRetire": null,
+      "unmappedUncommitted": true
+    },
+    "s4": {
+      "file": {
+        "path": "test/reports/t491/t801/s4.jsonl",
+        "sha256": "982739bbb1119476b0a58cfe1a520251c49c128e2b935b5c9d769ddb1af51b9f",
+        "bytes": 69244
+      },
+      "rows": 28,
+      "identity": {
+        "pid": 12246,
+        "processStartTick": "6059178",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "60591950829375",
+        "owner": "1",
+        "context": "60591950829375"
+      },
+      "mappedDsoBuildId": "962b06ec8d6a673e99d6dbcbf760e576748a3d99",
+      "roleSetSHA": "4ee2acde35367c7aa6901582ed17a9da49820ace4cb16b48334c01dc709fc01a",
+      "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+      "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+      "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+      "sourceModeRecordObserved": false,
+      "actualArgvObserved": false,
+      "distinctPrefixFenceObserved": false,
+      "reader": {
+        "state": "DEADLINE",
+        "executionFence": "UNSIGNALED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "B",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 250108906,
+        "ownerCpuNs": 176704683,
+        "executionPollCount": 244,
+        "retirementPollCount": 65,
+        "wakeCount": 244,
+        "wakeOvershootMaxObservedNs": 187812,
+        "copyWallNs": [
+          180000,
+          81257500,
+          31719
+        ],
+        "pollTailWindow": 32,
+        "pulsesDropped": 0
+      },
+      "dispatches": 12,
+      "barriers": 12,
+      "copyBarriers": 3,
+      "advancedCursor": 12,
+      "firstGuardFailure": [
+        "PUMP_ENTRY_GUARD",
+        "DEADLINE",
+        "60913066955938",
+        12,
+        null,
+        null
+      ],
+      "lastGuardSuccess": [
+        "PRE_EXEC_POLL_GUARD",
+        "PASS",
+        "60913066517813",
+        12,
+        48,
+        60913064067032
+      ],
+      "ageAtLastGuardNs": 2450781,
+      "executionFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 244,
+        "lastWaitRaw": 37147,
+        "lastPollNs": "60913066572344",
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": true,
+        "handle": "1",
+        "polls": 65,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "60913155514063",
+        "signaled": true
+      },
+      "heavyFlushNs": 72967188,
+      "arenaCopy1CPU": 80965156,
+      "rootBeginToFenceCreateReturnNs": 155670312,
+      "drainWindowNs": 77333750,
+      "retireFenceConservativeBoundsRelativeToRootNs": [
+        337225469,
+        338634219
+      ],
+      "retireSignalSinceDeadlineNs": 88634219,
+      "guardSinceDeadlineNs": 83750,
+      "terminalFenceCreateBeforeRetire": null,
+      "unmappedUncommitted": true
+    },
+    "s5": {
+      "file": {
+        "path": "test/reports/t491/t801/s5.jsonl",
+        "sha256": "0b9dafcf91ed22a5e409e27cf36c65bc13b5add5d4a62c2246dbe11489cd91cc",
+        "bytes": 69476
+      },
+      "rows": 28,
+      "identity": {
+        "pid": 15278,
+        "processStartTick": "6113412",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "61134284800782",
+        "owner": "1",
+        "context": "61134284800782"
+      },
+      "mappedDsoBuildId": "962b06ec8d6a673e99d6dbcbf760e576748a3d99",
+      "roleSetSHA": "4ee2acde35367c7aa6901582ed17a9da49820ace4cb16b48334c01dc709fc01a",
+      "sourceSHA": "fcb0fe5c0561e3d2ad9e62730e9c9b13f30903c82c40bb724a320ca86d7b3802",
+      "parameterSHA": "9b9160f4ed901ecca70dea223f5c90b98daad4ef25cca97c0d5479906358ee18",
+      "layoutSHA": "ae83a41874d3da015428ba22e5a3950ebbfa7dc6be38d274fc4fc94f144bd356",
+      "sourceModeRecordObserved": false,
+      "actualArgvObserved": false,
+      "distinctPrefixFenceObserved": false,
+      "reader": {
+        "state": "DEADLINE",
+        "executionFence": "UNSIGNALED",
+        "retirementFence": "SIGNALED",
+        "admittedQ20": null,
+        "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+        "traceTruncated": false,
+        "deviceQualified": false,
+        "arm": "B",
+        "timing": "OBSERVED",
+        "gpuTime": "UNOBSERVED",
+        "rootWallNs": 250051563,
+        "ownerCpuNs": 176257817,
+        "executionPollCount": 250,
+        "retirementPollCount": 67,
+        "wakeCount": 250,
+        "wakeOvershootMaxObservedNs": 158438,
+        "copyWallNs": [
+          176250,
+          80329843,
+          30312
+        ],
+        "pollTailWindow": 32,
+        "pulsesDropped": 0
+      },
+      "dispatches": 12,
+      "barriers": 12,
+      "copyBarriers": 3,
+      "advancedCursor": 12,
+      "firstGuardFailure": [
+        "PUMP_ENTRY_GUARD",
+        "DEADLINE",
+        "61452574813594",
+        12,
+        null,
+        null
+      ],
+      "lastGuardSuccess": [
+        "PRE_EXEC_POLL_GUARD",
+        "PASS",
+        "61452574738125",
+        12,
+        48,
+        61452572478125
+      ],
+      "ageAtLastGuardNs": 2260000,
+      "executionFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 250,
+        "lastWaitRaw": 37147,
+        "lastPollNs": "61452574778750",
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": true,
+        "handle": "1",
+        "polls": 67,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "61452661739532",
+        "signaled": true
+      },
+      "heavyFlushNs": 73184219,
+      "arenaCopy1CPU": 80265781,
+      "rootBeginToFenceCreateReturnNs": 154997656,
+      "drainWindowNs": 76345625,
+      "retireFenceConservativeBoundsRelativeToRootNs": [
+        335693125,
+        336947031
+      ],
+      "retireSignalSinceDeadlineNs": 86947031,
+      "guardSinceDeadlineNs": 28125,
+      "terminalFenceCreateBeforeRetire": null,
+      "unmappedUncommitted": true
+    }
+  },
+  "decisions": {
+    "fullBDeadlineRuns": 5,
+    "timestampModeEvidence": 0,
+    "distinctPrefixEvidence": 0,
+    "copySpecificLowerBoundNs": null,
+    "T799": "COPY_COST_UNCONFIRMED"
+  }
+}

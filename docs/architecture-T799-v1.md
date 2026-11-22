@@ -2,6 +2,8 @@
 
 2026-11-22 · 目标 20 · P5 · architect · 离线工程合同。
 
+> T803 复核。T801 五次是完整 B，均复用执行 fence 退役，独立 prefix 和 GPU timestamp 原件为 0。先按 T803 用现有 T797 实物补采，前缀成本下界使用最后 TIMEOUT 的 API 入口。 [T803 归因与补采合同](architecture-T803-v1.md)
+
 **候选等待 T797 实测触发。** 显式研究臂拟用一个独立 GPU dispatch 替换 op9 后的两笔 arena copy，保留两份完整、可独立读取的副本。现有 B 中第一笔 arena copy 耗时 76.879 ms，末批首次 flush 耗时 74.366 ms，执行 fence 首次在退役观察到信号为根起后 336.187 ms。C 中重开销转到 fence 创建。GPU 分段时间仍未知。 [T792 数据与归因](architecture-T792-v1.md) · [本卡离线核对](architecture-T799-evidence-v1.json)
 
 ## T797 实施触发及排队分流
