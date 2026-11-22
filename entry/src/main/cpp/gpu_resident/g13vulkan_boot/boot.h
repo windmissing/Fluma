@@ -19,6 +19,7 @@ struct Attempt {
   HWND window;
   bool presentBoot = false;
   std::function<bool()> current;
+  bool steadyQualification = false;
 #else
   NativeWindow *window;
 #endif

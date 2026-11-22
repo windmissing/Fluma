@@ -4,6 +4,7 @@
 #include "vulkan_api.h"
 #ifdef _WIN32
 #include "wsi.h"
+#include "root_plan.h"
 #else
 #include "../program_cache/mapped_build_id.h"
 #include <dlfcn.h>
@@ -221,6 +222,9 @@ private:
   }
   void Dispatch(size_t set, uint32_t op, uint32_t scope);
   std::string Read(const std::array<uint32_t, 18688> &control);
+#ifdef _WIN32
+  void QualifySteady();
+#endif
 };
 
 void Boot::Open() {
@@ -375,6 +379,12 @@ Candidate Boot::Select(const Profile &profile) {
       continue;
     }
     const auto &limits = properties.limits;
+#ifdef _WIN32
+    if (attempt.steadyQualification && limits.maxStorageBufferRange < 2331392u) {
+      diagnostics << ",\"qualification\":\"FIVE_PROFILE_STORAGE_RANGE_UNSUPPORTED\"}";
+      continue;
+    }
+#endif
     if (limits.maxComputeWorkGroupInvocations < 64 || limits.maxComputeWorkGroupSize[0] < 64 ||
         limits.maxComputeSharedMemorySize < 4096 || limits.maxPerStageDescriptorStorageBuffers < 4 ||
         limits.maxDescriptorSetStorageBuffers < 4 || limits.maxUniformBufferRange < kLayoutBytes ||
@@ -717,6 +727,114 @@ std::string Boot::Read(const std::array<uint32_t, 18688> &control) {
   return Receipt("BOOT_NUMERIC_QUALIFIED", "");
 }
 
+#ifdef _WIN32
+void Boot::QualifySteady() {
+  const auto reset = reinterpret_cast<PFN_vkResetCommandPool>(
+      vk.GetDeviceProcAddr(device, "vkResetCommandPool"));
+  Require(reset != nullptr, "MISSING_vkResetCommandPool");
+  // The original steady-role gate runs opcode 66 twice against the same
+  // program and consumes only its independently committed 16 probe words.
+  for (const auto &role : pc::kSteadyModules) {
+    Require(Hex(Hash(role.words, role.bytes).data()) == role.sha, "STEADY_MODULE_SHA_MISMATCH");
+    if (shader) {
+      vk.DestroyShaderModule(device, shader, nullptr);
+      shader = VK_NULL_HANDLE;
+    }
+    if (pipeline) {
+      vk.DestroyPipeline(device, pipeline, nullptr);
+      pipeline = VK_NULL_HANDLE;
+    }
+    stage = "STEADY_PIPELINE";
+    Require(publish(Receipt("RUNNING", role.name)), "ATTEMPT_REVOKED");
+    VkShaderModuleCreateInfo module{VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO};
+    module.codeSize = role.bytes;
+    module.pCode = role.words;
+    Check(vk.CreateShaderModule(device, &module, nullptr, &shader), "vkCreateShaderModule.STEADY");
+    VkComputePipelineCreateInfo compute{VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO};
+    compute.stage = {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
+                     VK_SHADER_STAGE_COMPUTE_BIT, shader, "main", nullptr};
+    compute.layout = pipelineLayout;
+    auto pipelineEdge = [&](const char *edge, const char *result) {
+      std::ostringstream row;
+      row << "{\"schema\":\"PC_G13_PIPELINE_PROGRESS_V1\",\"call\":\"vkCreateComputePipelines\","
+             "\"edge\":" << Quote(edge) << ",\"role\":" << Quote(role.name) << ",\"moduleSHA\":" << Quote(role.sha)
+          << ",\"pid\":" << GetCurrentProcessId() << ",\"ownerTid\":" << GetCurrentThreadId()
+          << ",\"qpc\":\"" << pc::QpcTicks() << "\",\"vkResult\":" << result << '}';
+      return publish(row.str());
+    };
+    Require(pipelineEdge("ENTER", "null"), "ATTEMPT_REVOKED");
+    const auto buildStart = Now();
+    const auto built = vk.CreateComputePipelines(device, VK_NULL_HANDLE, 1, &compute, nullptr, &pipeline);
+    const auto buildNs = Now() - buildStart;
+    pipelineEdge("EXIT", std::to_string(int(built)).c_str());
+    Check(built, "vkCreateComputePipelines.STEADY");
+    Require(publish(Receipt("ROLE_PIPELINE_CREATED", role.name)), "ATTEMPT_REVOKED");
+
+    vk.DestroyFence(device, fence, nullptr);
+    fence = VK_NULL_HANDLE;
+    Check(reset(device, commandPool, 0), "vkResetCommandPool");
+    VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+    begin.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    Check(vk.BeginCommandBuffer(command, &begin), "vkBeginCommandBuffer.STEADY");
+    constexpr std::array<uint32_t, 16> clear{};
+    vk.CmdUpdateBuffer(command, buffers[kControl].handle, kProbeWordOffset * sizeof(uint32_t),
+                       sizeof(clear), clear.data());
+    Barrier(kTransfer, VK_ACCESS_TRANSFER_WRITE_BIT, kCompute, kShaderRW);
+    vk.CmdBindPipeline(command, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+    Dispatch(0, 66, 0);
+    Barrier(kCompute, VK_ACCESS_SHADER_WRITE_BIT, kCompute, kShaderRW);
+    Dispatch(0, 66, 1);
+    Barrier(kCompute, VK_ACCESS_SHADER_WRITE_BIT, kTransfer, VK_ACCESS_TRANSFER_READ_BIT);
+    const VkBufferCopy output{kProbeWordOffset * sizeof(uint32_t), 0, sizeof(clear)};
+    vk.CmdCopyBuffer(command, buffers[kControl].handle, buffers[kStaging].handle, 1, &output);
+    Barrier(kTransfer, VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_HOST_BIT, VK_ACCESS_HOST_READ_BIT);
+    Check(vk.EndCommandBuffer(command), "vkEndCommandBuffer.STEADY");
+    VkFenceCreateInfo fenceInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
+    Check(vk.CreateFence(device, &fenceInfo, nullptr, &fence), "vkCreateFence.STEADY");
+    VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+    submit.commandBufferCount = 1;
+    submit.pCommandBuffers = &command;
+    stage = "STEADY_OP66";
+    Require(publish(Receipt("RUNNING", role.name)), "ATTEMPT_REVOKED");
+    const auto queued = vk.QueueSubmit(queue, 1, &submit, fence);
+    Check(queued, "vkQueueSubmit.STEADY");
+    inFlight = true;
+    const auto waited = vk.WaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
+    if (waited == VK_SUCCESS || waited == VK_ERROR_DEVICE_LOST) inFlight = false;
+    Check(waited, "vkWaitForFences.STEADY");
+
+    std::array<uint32_t, 16> words{};
+    const auto &staging = buffers[kStaging];
+    void *mapped = nullptr;
+    Check(vk.MapMemory(device, staging.memory, 0, VK_WHOLE_SIZE, 0, &mapped), "vkMapMemory.STEADY");
+    VkResult invalidation = VK_SUCCESS;
+    if (!(staging.flags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+      VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE, nullptr, staging.memory, 0, VK_WHOLE_SIZE};
+      invalidation = vk.InvalidateMappedMemoryRanges(device, 1, &range);
+    }
+    if (invalidation == VK_SUCCESS) std::memcpy(words.data(), mapped, sizeof(words));
+    vk.UnmapMemory(device, staging.memory);
+    Check(invalidation, "vkInvalidateMappedMemoryRanges.STEADY");
+
+    std::array<uint32_t, 2> mask{};
+    for (size_t i = 0; i < words.size(); ++i)
+      if (words[i] != kExpectedFp32[i % 8]) mask[i / 8] |= 1u << (i % 8);
+    std::ostringstream sample;
+    sample << "{\"schema\":\"PC_G13_STEADY_OP66_V1\",\"role\":" << Quote(role.name)
+           << ",\"moduleSHA\":" << Quote(role.sha) << ",\"pid\":" << GetCurrentProcessId()
+           << ",\"processStartTick\":" << Quote(ProcessStart()) << ",\"ownerTid\":" << GetCurrentThreadId()
+           << ",\"pipelineNs\":\"" << buildNs << "\",\"queueSubmit\":" << int(queued)
+           << ",\"wait\":" << int(waited) << ",\"probeWords\":" << Words(words)
+           << ",\"mismatchMasks\":" << Words(mask) << ",\"acceptedRoot\":null}";
+    Require(publish(sample.str()), "ATTEMPT_REVOKED");
+    Require(QualifiedProbe(words.data()), "STEADY_FP32_REJECTED");
+  }
+  fields << ",\"steadyRoleCount\":" << std::size(pc::kSteadyModules)
+         << ",\"sourceRoot\":\"NOT_RUN\",\"quantumRoot\":\"NOT_RUN\"";
+}
+
+#endif
+
 std::string Boot::Run() {
 #ifdef _WIN32
   Checkpoint("HOST_IDENTITY");
@@ -804,6 +922,10 @@ std::string Boot::Run() {
   Checkpoint("FENCED_READBACK");
   const auto numeric = Read(control);
 #ifdef _WIN32
+  if (attempt.steadyQualification) {
+    QualifySteady();
+    return Receipt("STEADY_ROLES_QUALIFIED", "");
+  }
   if (attempt.presentBoot) {
     Checkpoint("BOOT_DIAGNOSTIC_WSI");
     const auto writeFrame = [&](const pc::Frame &frame) {

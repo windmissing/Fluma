@@ -19,12 +19,14 @@ set(ROOT "${CMAKE_CURRENT_LIST_DIR}/../..")
 set(GPU "${ROOT}/entry/src/main/cpp/gpu_resident")
 set(GRS_G13_SPLIT ON)
 include("${GPU}/g13flow/kernels.cmake")
-foreach(tool "${ROOT}/tools/g13/vulkan_boot_assets.py" "${CMAKE_CURRENT_SOURCE_DIR}/build_view.py")
+foreach(tool "${ROOT}/tools/g13/vulkan_boot_assets.py" "${CMAKE_CURRENT_SOURCE_DIR}/build_view.py"
+    "${CMAKE_CURRENT_SOURCE_DIR}/build_roles.py")
   execute_process(COMMAND "${G13_PYTHON}" "${tool}" --compiler "${G13_GLSLANG}" --out "${G13_ASSET_DIR}"
                   COMMAND_ERROR_IS_FATAL ANY)
 endforeach()
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
     "${ROOT}/tools/g13/vulkan_boot_assets.py" "${CMAKE_CURRENT_SOURCE_DIR}/build_view.py"
+    "${CMAKE_CURRENT_SOURCE_DIR}/build_roles.py"
     "${CMAKE_CURRENT_SOURCE_DIR}/boot_view.vert" "${CMAKE_CURRENT_SOURCE_DIR}/boot_view.frag")
 add_executable(hello_world_pc main.cpp wsi.cpp "${GPU}/g13vulkan_boot/boot.cpp")
 target_compile_features(hello_world_pc PRIVATE cxx_std_17)

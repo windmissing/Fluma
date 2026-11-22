@@ -19,7 +19,7 @@ struct Window {
   int width = 0, height = 0;
   UINT dpi = 96;
   bool closing = false;
-  bool once = false, bootOnly = false;
+  bool once = false, bootOnly = false, steady = false;
   int result = 1;
 
   void Emit(const std::string &json) {
@@ -82,7 +82,7 @@ struct Window {
            "\",\"width\":" + std::to_string(snapshotWidth) + ",\"height\":" +
            std::to_string(snapshotHeight) + ",\"dpi\":" + std::to_string(snapshotDpi) +
            ",\"modeHz\":" + (haveMode ? std::to_string(mode.dmDisplayFrequency) : "null") + "}");
-      const auto terminal = grs::g13vk::RunBoot({previous, 1, previous, hwnd, !bootOnly, current},
+      const auto terminal = grs::g13vk::RunBoot({previous, 1, previous, hwnd, !bootOnly, current, steady},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos) {
@@ -92,8 +92,9 @@ struct Window {
             return current();
           });
       Emit(terminal);
-      if (bootOnly && terminal.find("\"state\":\"BOOT_NUMERIC_QUALIFIED\"") != std::string::npos)
-        result = 0;
+      const char *qualified = steady ? "\"state\":\"STEADY_ROLES_QUALIFIED\"" :
+                                      "\"state\":\"BOOT_NUMERIC_QUALIFIED\"";
+      if (bootOnly && terminal.find(qualified) != std::string::npos) result = 0;
       const bool failed = terminal.find("\"state\":\"FAILED\"") != std::string::npos ||
                           terminal.find("\"state\":\"WSI_FAILED\"") != std::string::npos;
       if (bootOnly || (once && failed)) break;
@@ -147,8 +148,12 @@ int wmain(int argc, wchar_t **argv) {
   for (int i = 1; i < argc; ++i) {
     if (!std::wcscmp(argv[i], L"--once")) window.once = true;
     else if (!std::wcscmp(argv[i], L"--boot-only")) window.bootOnly = true;
+    else if (!std::wcscmp(argv[i], L"--qualify-steady")) {
+      window.bootOnly = true;
+      window.steady = true;
+    }
     else {
-      std::cerr << "usage: hello_world_pc [--once] [--boot-only]\n";
+      std::cerr << "usage: hello_world_pc [--once] [--boot-only | --qualify-steady]\n";
       return 2;
     }
   }
