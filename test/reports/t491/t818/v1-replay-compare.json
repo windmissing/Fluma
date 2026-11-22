@@ -1,0 +1,36 @@
+{
+ "revision": "T818_V1_DM_REPLAY_COMPARE_V1",
+ "date": "2026-11-22 21:15",
+ "package": {
+  "task": "T818 (T797 driver 09befda4 device md5 2855f567 verified, T815 contract)",
+  "inputSHA": "dm20-input/config.u32 device md5 2549e70e",
+  "argv": "full in originals"
+ },
+ "replayVsCompare": {
+  "replay OP8": {
+   "exitCode": 0,
+   "cursor": "9/12",
+   "retireSig": true,
+   "retirePolls": 159
+  },
+  "replay OP9": {
+   "exitCode": 0,
+   "cursor": "10/12",
+   "retireSig": true,
+   "retirePolls": 189
+  },
+  "compare B": {
+   "exitCode": 6,
+   "cursor": "12/12",
+   "retireSig": true,
+   "retirePolls": 67
+  }
+ },
+ "gpuClock": "UNOBSERVED all arms -> independent prefix fences used (replay arms ARE the prefix runs; B root->fence span in per-event ns arrays)",
+ "fenceIntervals": "original wait values + intervals per arm (execution/retirement fence objects complete)",
+ "wallThreadCpu": "both clocks in TIMING/originals",
+ "commonSubmit": "B root->fence wall span computable from originals",
+ "deadline": "250ms preserved; B DEADLINE @12 consistent; prefix zero commit",
+ "pollCountNote": "per card \"\u4e0d\u4ee5 poll \u6570\u63a8\u6210\u672c\" \u2014 no extrapolation, raw waits/intervals only",
+ "route": "T773 reader on t818 originals; copy-dedicated supplementary group NOT run per card (\u6682\u4e0d\u8dd1\u590d\u5236\u4e13\u7528\u8865\u7ec4)"
+}
