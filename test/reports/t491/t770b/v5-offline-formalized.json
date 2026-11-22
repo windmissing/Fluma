@@ -1,0 +1,13 @@
+{
+ "revision": "T770_V5_OFFLINE_COVERAGE_FORMALIZED_V1",
+ "date": "2026-11-22 12:25",
+ "status": "no new unblock (no g13visibility profile, no main-bundle probe entry, T793 fix package not yet delivered) \u2014 incremental value: offline coverage FORMALIZED as evidence per option (c)",
+ "offlineCoverage": {
+  "T769 judge": "836 resolver rows, 28 T757 controls verified (QUANTUM_TRACE/ROOT_OPCODE_POLLUTED/ROOT_TRACE_SCOPE/NONCE/SEAL/MICRO_* /SOURCE_TRACE/CAPTURE_FENCE/MISSING_CONSUMER_BARRIER/INCOMPLETE_DISPATCH_PLAN/OVERLAPPING_BINDINGS/DISJOINT_RANGES/IDENTICAL_BANK_RANGE/FULL_BANK/ROOT_MISSING_REPLAY/LEGACY_ALIAS/IDENTITY_* x6)",
+  "fixtureOnly": true,
+  "deviceExecution": "NOT_RUN (honest)"
+ },
+ "deviceState": "T760-split installed (installTime 1795274010677, T794 era), bacbc911 cache 2 entries intact \u2014 product data preserved",
+ "v5Conclusion": "probe cases remain blocked on signing trust; offline coverage now formally recorded as interim evidence (option c of T770 v4); device probe execution will follow immediately once (a) trusted profile or (b) merged build lands",
+ "route": "unchanged: developer/architect decision on (a)/(b); T793 sidecar fix package also pending (separate card line)"
+}

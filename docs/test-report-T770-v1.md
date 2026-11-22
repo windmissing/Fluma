@@ -89,3 +89,21 @@ reader 836 rows fixtureOnly）作为覆盖证据。
 
 **归 developer/architect：选 (a) 或 (b)；探针入口可安装后 tester 立即
 可执行全部用例。**
+
+
+## v5 追加（2026-11-22 12:25，effector；离线覆盖正式入档——选项 (c) 执行）
+
+本轮无新解锁（无 g13visibility profile、无主 bundle 探针入口、T793
+sidecar 修订包未交）。**增量：选项 (c) 执行——T769 离线覆盖正式入档**：
+
+- T769 判定器：**836 resolver rows**，**28 项 T757 控制**全核
+  （QUANTUM_TRACE/ROOT_OPCODE_POLLUTED/ROOT_TRACE_SCOPE/NONCE/SEAL/
+  MICRO_*/SOURCE_TRACE/CAPTURE_FENCE/MISSING_CONSUMER_BARRIER/
+  INCOMPLETE_DISPATCH_PLAN/OVERLAPPING_BINDINGS/DISJOINT_RANGES/
+  IDENTICAL_BANK_RANGE/FULL_BANK/ROOT_MISSING_REPLAY/LEGACY_ALIAS/
+  IDENTITY_*×6）
+- fixtureOnly=true，deviceExecution=NOT_RUN（如实）
+- 设备现况：T760-split 在位（T794 时代），bacbc911 cache 2 条目完好
+
+**结论**：探针真机执行仍阻塞于签名信任；离线覆盖已作为过渡证据正式
+记录（T770 v4 选项 c）。(a)/(b) 决策落地后真机探针立即执行。
