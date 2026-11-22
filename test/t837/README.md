@@ -1,0 +1,5 @@
+# T837 independent PC fluid evidence gate
+
+Run `python test/t837/check.py selftest` for synthetic boundary cases. Run `python test/t837/check.py cases` for the F01–F16 declarations and T631 revisions. Run `python test/t837/check.py check manifest.json archive.jsonl archive.jsonl.receipt.json` for an actual FULL physical QUANTUM receipt. Structure, native tail, independent numerical caps and GridView units gate separately. A ROOT-only capture cannot supply full GridView. The original reader can inspect its structure independently.
+
+The manifest carries the archive and Completion256 SHA-256, native wide IDs as decimal strings, the actual OP66 receipts and active role-to-module digests, and the joined GridView. See the self-test for the joined schema. PC Quantitative PASS also needs source-bound field sampling, independent per-case oracle comparisons and case-specific controls. The current command reports these as pending. The accepted-root receipt alone does not cover PRIVATE_PROJECT, rejection cases or rendering.
