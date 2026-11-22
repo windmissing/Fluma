@@ -22,6 +22,8 @@ struct Attempt {
   bool steadyQualification = false;
   std::string steadyRole;
   bool disableOptimization = false;
+  std::wstring m1SourceModule;
+  std::function<uint64_t()> sourcePulse;
 #else
   NativeWindow *window;
 #endif

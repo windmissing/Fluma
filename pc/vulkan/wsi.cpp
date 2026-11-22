@@ -75,7 +75,8 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
                   VkQueue queue, uint32_t family, VkSurfaceKHR surface, VkBuffer control, VkBuffer staging,
                   VkDeviceMemory stagingMemory, VkMemoryPropertyFlags memoryFlags,
                   HWND window, const std::function<bool()> &current,
-                  const std::function<void(const Frame &)> &published) {
+                  const std::function<void(const Frame &)> &published,
+                  VkDeviceSize m1PublicationBytes) {
   Frame frame;
   Presentation wsi{vk, device};
   try {
@@ -171,7 +172,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     setInfo.descriptorSetCount = 1;
     setInfo.pSetLayouts = &wsi.descriptors;
     Check(vk.AllocateDescriptorSets(device, &setInfo, &set), "vkAllocateDescriptorSets.FRAGMENT");
-    VkDescriptorBufferInfo range{control, 0, 18688 * sizeof(uint32_t)};
+    VkDescriptorBufferInfo range{control, 0, m1PublicationBytes ? m1PublicationBytes : 18688 * sizeof(uint32_t)};
     VkWriteDescriptorSet write{VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET};
     write.dstSet = set;
     write.descriptorCount = 1;
@@ -190,7 +191,10 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       Check(vk.CreateShaderModule(device, &info, nullptr, &module), "vkCreateShaderModule.GRAPHICS");
     };
     shader(kBootViewVertex, wsi.vertex);
-    shader(kBootViewFragment, wsi.fragment);
+    if (m1PublicationBytes)
+      shader(kM1SourceViewFragment, wsi.fragment);
+    else
+      shader(kBootViewFragment, wsi.fragment);
     VkPipelineShaderStageCreateInfo stages[]{
       {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0, VK_SHADER_STAGE_VERTEX_BIT, wsi.vertex, "main"},
       {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0, VK_SHADER_STAGE_FRAGMENT_BIT, wsi.fragment, "main"}};
@@ -291,7 +295,8 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
                           0, 0, nullptr, 0, nullptr, 1, &imageBarrier);
     VkBufferImageCopy pixel{};
     pixel.imageSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
-    pixel.imageOffset = {int32_t(extent.width / 2), int32_t(extent.height / 2), 0};
+    pixel.imageOffset = {int32_t(m1PublicationBytes ? uint64_t(extent.width)*129/256 : extent.width/2),
+                         int32_t(m1PublicationBytes ? extent.height-1 : extent.height/2), 0};
     pixel.imageExtent = {1,1,1};
     wsi.CmdCopyImageToBuffer(command, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, staging, 1, &pixel);
     imageBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
@@ -327,7 +332,8 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     vk.UnmapMemory(device, stagingMemory);
     Check(invalidation, "vkInvalidateMappedMemoryRanges.PIXEL");
     frame.pixelRead = true;
-    if (frame.pixel != 0xff00ff00u) throw Stop{"BOOT_FRAGMENT_PIXEL_MISMATCH", VK_ERROR_UNKNOWN};
+    if (frame.pixel != 0xff00ff00u)
+      throw Stop{m1PublicationBytes ? "M1_SOURCE_PIXEL_MISMATCH" : "BOOT_FRAGMENT_PIXEL_MISMATCH", VK_ERROR_UNKNOWN};
     if (!current()) {
       frame.stale = true;
       throw Stop{"WINDOW_CHANGED_BEFORE_PRESENT", VK_ERROR_OUT_OF_DATE_KHR};

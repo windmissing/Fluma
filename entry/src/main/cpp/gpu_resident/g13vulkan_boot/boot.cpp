@@ -5,6 +5,10 @@
 #ifdef _WIN32
 #include "wsi.h"
 #include "root_plan.h"
+#include "../angles_generated.h"
+#include "../m1/progress_clock_v2.h"
+#include "../m1/source_owner.h"
+#include <filesystem>
 #else
 #include "../program_cache/mapped_build_id.h"
 #include <dlfcn.h>
@@ -25,7 +29,13 @@ constexpr size_t kTailWords = 256, kInputs65 = 744, kInputs66 = 18648;
 constexpr size_t kMathWords = 60, kMathProbeOffset = 512;
 constexpr size_t kStagingWords = kTailWords + 4 + 5 + kMathWords;
 constexpr size_t kLayoutBytes = 80 * 16, kPushBytes = 6 * 4;
-constexpr size_t kBufferCount = 9, kWork = 5, kControl = 6, kLayout = 7, kStaging = 8;
+constexpr size_t kWork = 5, kControl = 6, kLayout = 7, kStaging = 8;
+#ifdef _WIN32
+constexpr size_t kM1Base = 9, kM1Candidate = 10, kM1Work = 11, kM1Events = 12, kM1Pub = 13,
+                 kM1Tail = 14, kM1Uniform = 15, kBufferCount = 16;
+#else
+constexpr size_t kBufferCount = 9;
+#endif
 constexpr auto kCompute = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
 constexpr auto kTransfer = VK_PIPELINE_STAGE_TRANSFER_BIT;
 constexpr auto kShaderRW = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
@@ -224,6 +234,7 @@ private:
   std::string Read(const std::array<uint32_t, 18688> &control);
 #ifdef _WIN32
   void QualifySteady();
+  std::string ProbeM1Source(const Candidate &);
 #endif
 };
 
@@ -635,7 +646,7 @@ void Boot::Record(const Profile &profile, const Config &config,
     Dispatch(i, 64, scopes[i]);
     Barrier(kCompute, VK_ACCESS_SHADER_WRITE_BIT, kCompute, kShaderRW);
   }
-  const auto header = BootHeader(profile, config, Identity{attempt.ticket, attempt.ticket,
+  const auto header = BootHeader(profile, config, g13::Identity{attempt.ticket, attempt.ticket,
       attempt.ticket, attempt.surface, attempt.geometry});
   Barrier(kCompute, VK_ACCESS_SHADER_WRITE_BIT, kTransfer, VK_ACCESS_TRANSFER_WRITE_BIT);
   vk.CmdUpdateBuffer(command, buffers[0].handle, 0, sizeof(header), header.data());
@@ -728,6 +739,8 @@ std::string Boot::Read(const std::array<uint32_t, 18688> &control) {
 }
 
 #ifdef _WIN32
+#include "m1_source.inc"
+
 void Boot::QualifySteady() {
   const auto reset = reinterpret_cast<PFN_vkResetCommandPool>(
       vk.GetDeviceProcAddr(device, "vkResetCommandPool"));
@@ -938,6 +951,7 @@ std::string Boot::Run() {
     QualifySteady();
     return Receipt(attempt.steadyRole.empty() ? "STEADY_ROLES_QUALIFIED" : "STEADY_ROLE_QUALIFIED", "");
   }
+  if (!attempt.m1SourceModule.empty()) return ProbeM1Source(candidate);
   if (attempt.presentBoot) {
     Checkpoint("BOOT_DIAGNOSTIC_WSI");
     const auto writeFrame = [&](const pc::Frame &frame) {

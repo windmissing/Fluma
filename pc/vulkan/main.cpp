@@ -11,6 +11,7 @@
 namespace {
 constexpr UINT kOwnerFinished = WM_APP + 1;
 constexpr UINT kFirstPresent = WM_APP + 2;
+constexpr UINT_PTR kSourceProbeTimer = 2;
 struct Window {
   HWND hwnd = nullptr;
   std::mutex mutex, output;
@@ -22,6 +23,9 @@ struct Window {
   bool once = false, bootOnly = false, steady = false;
   std::string steadyRole;
   bool disableOptimization = false;
+  std::wstring m1SourceModule;
+  bool m1Present = false;
+  std::atomic<uint64_t> sourcePulse{0};
   int result = 1;
 
   void Emit(const std::string &json) {
@@ -84,18 +88,22 @@ struct Window {
            "\",\"width\":" + std::to_string(snapshotWidth) + ",\"height\":" +
            std::to_string(snapshotHeight) + ",\"dpi\":" + std::to_string(snapshotDpi) +
            ",\"modeHz\":" + (haveMode ? std::to_string(mode.dmDisplayFrequency) : "null") + "}");
-      const auto terminal = grs::g13vk::RunBoot({previous, 1, previous, hwnd, !bootOnly, current, steady,
-                                               steadyRole, disableOptimization},
+      const auto terminal = grs::g13vk::RunBoot({previous, 1, previous, hwnd, !bootOnly || m1Present, current, steady,
+                                               steadyRole, disableOptimization, m1SourceModule,
+                                               [&] { return sourcePulse.load(std::memory_order_relaxed); }},
           [&](const std::string &report) {
             Emit(report);
-            if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos) {
+            if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos ||
+                report.find("\"state\":\"M1_DRY_SOURCE_PRESENT_QUEUED\"") != std::string::npos) {
               result = 0;
               PostMessageW(hwnd, kFirstPresent, 0, 0);
             }
             return current();
           });
       Emit(terminal);
-      const char *qualified = !steadyRole.empty() ? "\"state\":\"STEADY_ROLE_QUALIFIED\"" :
+      const char *qualified = m1Present ? "\"state\":\"M1_DRY_SOURCE_PRESENT_RETIRED\"" :
+                              !m1SourceModule.empty() ? "\"state\":\"M1_DRY_SOURCE_ACCEPTED\"" :
+                              !steadyRole.empty() ? "\"state\":\"STEADY_ROLE_QUALIFIED\"" :
                               steady ? "\"state\":\"STEADY_ROLES_QUALIFIED\"" :
                                       "\"state\":\"BOOT_NUMERIC_QUALIFIED\"";
       if (bootOnly && terminal.find(qualified) != std::string::npos) result = 0;
@@ -137,6 +145,10 @@ LRESULT CALLBACK Dispatch(HWND hwnd, UINT message, WPARAM w, LPARAM l) {
     if (window->once) SetTimer(hwnd, 1, 700, nullptr);
     return 0;
   case WM_TIMER:
+    if (w == kSourceProbeTimer) {
+      window->sourcePulse.store(grs::pc::TimeNs(), std::memory_order_relaxed);
+      return 0;
+    }
     KillTimer(hwnd, 1);
     window->Close();
     return 0;
@@ -164,13 +176,21 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--disable-optimization")) {
       window.disableOptimization = true;
     }
+    else if ((!std::wcscmp(argv[i], L"--probe-m1-source") ||
+              !std::wcscmp(argv[i], L"--present-m1-source")) && i+1 < argc) {
+      window.m1Present = !std::wcscmp(argv[i], L"--present-m1-source");
+      window.m1SourceModule = argv[++i];
+      window.bootOnly = true;
+    }
     else {
       std::cerr << "usage: hello_world_pc [--once] [--boot-only | --qualify-steady | "
-                   "--qualify-steady-role NAME [--disable-optimization]]\n";
+                   "--qualify-steady-role NAME [--disable-optimization] | --probe-m1-source SPV | "
+                   "--present-m1-source SPV]\n";
       return 2;
     }
   }
   if (window.disableOptimization && window.steadyRole.empty()) return 2;
+  if (window.steady && !window.m1SourceModule.empty()) return 2;
   SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
   HINSTANCE instance = GetModuleHandleW(nullptr);
   WNDCLASSW type{};
@@ -182,7 +202,8 @@ int wmain(int argc, wchar_t **argv) {
   HWND hwnd = CreateWindowExW(0, type.lpszClassName, L"HelloWorld Vulkan BOOT diagnostic",
       WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 800, 500, nullptr, nullptr, instance, &window);
   if (!hwnd) return 4;
-  if (!window.bootOnly) ShowWindow(hwnd, SW_SHOW);
+  if (!window.m1SourceModule.empty() && !SetTimer(hwnd, kSourceProbeTimer, 10, nullptr)) return 5;
+  if (!window.bootOnly || window.m1Present) ShowWindow(hwnd, SW_SHOW);
   window.Size();
   std::thread owner([&] { window.Owner(); });
   MSG message{};
