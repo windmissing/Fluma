@@ -1,0 +1,16 @@
+{
+ "revision": "T802_V2_WAKE_KEEPALIVE_RETRY_V1",
+ "date": "2026-11-22 15:45",
+ "package": "T802-rx unchanged (6eedc7fc, T798 writerRevision)",
+ "wakePolicy": "periodic swipe/click every 60-90s across compile window (v1 lesson applied)",
+ "observed": {
+  "install": "OK",
+  "configure": "SOURCE SHADER_COMPILE entered; state line persisted SHADER_COMPILE_ENTER; worker thread 51412 CPU-active continuously (utime 159600->367764 ticks = ~35min CPU by run end) \u2014 compile genuinely running (NOT sleep-killed this time)",
+  "duration": "compile exceeded 15+ min wall (previous rounds: 84s+235s), worker still R (running) at cancellation attempt",
+  "cancelAttempt": "CANCEL_REQUESTED published by page but worker kept running (compile not interruptible)",
+  "hilog": "app domain G9Rx events rolled repeatedly despite periodic capture (long run, 1MB ring)"
+ },
+ "sidecar": "still NOT in files domain \u2014 run never reached completion (compile wall-time this run far exceeded previous 5.5min pattern; environment CPU contention with periodic wakes)",
+ "analysis": "wake-policy workaround kept the APP alive (progress: CANCEL_REQUESTED published, worker running 35min CPU) but the compile itself took abnormally long this run \u2014 likely thermal/host contention from periodic wake interference; sidecar evidence still NOT obtained",
+ "route": "needs: either reduced-interference run (single wake at start, longer screen timeout via settings change) or developer-side compile-time shortening; T798 writer fix remains untested \u2014 not a fix failure"
+}
