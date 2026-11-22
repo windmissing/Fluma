@@ -2,6 +2,8 @@
 
 2026-11-22 · 目标20 · P5 · architect · 离线归因
 
+> T819 复核。T816 经过原双阶段提交，首拒变为 `PUMP_ENTRY / COMMAND_EXPIRED`，执行 fence 直到退役才到位。receipt 有效窗和原 250 ms 根期限均保持。按真实 wall/owner CPU 优先比较提交与排队，节拍轮询留作辅助。 [T819 裁定](architecture-T819-v1.md)
+
 **第一笔 arena copy 与末批首次 `glFlush` 合计 287.861 ms，超过整根 250 ms。** 最后一次通过 guard 是 `PRE_FLUSH`，排在重 flush 出口之后的 `PRE_FENCE_CREATE` 首拒 `DEADLINE`。没有创建执行 fence，T768 的 wait 轮询优化触及不到这一根。下一步用 RX 自身工件把 driver 提交与 copy 依赖分开，T792 的改序仅作有条件的配对研究。 [原报告](../test/reports/t491/t802/v3-bootsource-sidecar.json) · [完整复算值](architecture-T807-evidence-v1.json)
 
 ## 工件与原件

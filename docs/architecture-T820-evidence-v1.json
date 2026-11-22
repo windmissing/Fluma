@@ -1,0 +1,915 @@
+{
+  "identity": {
+    "pid": 53577,
+    "processStartTicks": "8535146",
+    "ownerTid": 54453,
+    "attempt": 1,
+    "generation": 1,
+    "mappedBuildId": "25e750c83d9e3991842c08dd5a9b6fae8d6c42e4"
+  },
+  "compileReceipt": {
+    "path": "D:/hmprojects/HelloWorld-T811/docs/receipt-T811-compile-v1.json",
+    "sha256": "a6afdb0e4cbeb4c22ea335ed35e8abf2b06fc61049b542840a5358896f4e3d5c",
+    "bytes": 5678
+  },
+  "signReceipt": {
+    "path": "test/reports/t257/T817-probe.json",
+    "sha256": "6294f2b7cd7daf983da76c0b7747689d33f63ef383aece53992e44ed5a5eae9c",
+    "bytes": 2285
+  },
+  "artifacts": [
+    {
+      "path": "D:/hmprojects/HelloWorld/.codex/local-test/t811-probe/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "sha256": "0ba9bf20825321a848345dd06d9755c9f2321fed6cf2240f8c8079353105d2e2",
+      "bytes": 6799717
+    },
+    {
+      "path": "D:/hmprojects/HelloWorld/.codex/local-test/t257-sign/T817-probe/T817-probe-signed.hap",
+      "sha256": "d42401c2eb260364a4edd8657ba9642ac0e987ea5ba2b932609724b6bfcd431b",
+      "bytes": 6887715
+    }
+  ],
+  "unchangedPayloadCount": 13,
+  "elf": {
+    "member": "libs/arm64-v8a/libgrs_g13_visibility.so",
+    "sha256": "070c5452ed71064f81b7b5711211263c8120d2fcae6439219d5a7fc9bd0e264f",
+    "bytes": 533104,
+    "buildId": "25e750c83d9e3991842c08dd5a9b6fae8d6c42e4"
+  },
+  "snapshots": {
+    "probe-reset-t812.json": {
+      "input": {
+        "path": "test/reports/t491/t817/probe-reset-t812.json",
+        "sha256": "96b46adeb86e6ba40df56660a49c05fb7ad875fc9792c0272229874a79c2758d",
+        "bytes": 6828
+      },
+      "reader": {
+        "observation": "PROGRESS_OBSERVED",
+        "leaseHeld": true,
+        "retirement": "UNOBSERVED",
+        "cancel": "UNOBSERVED",
+        "last": {
+          "seq": 44,
+          "call": 0,
+          "stage": "glCompileShader",
+          "edge": "ENTER",
+          "actorTid": 54453,
+          "wallNs": "85401378425000",
+          "threadCpuNs": "34598907",
+          "result": null
+        },
+        "lastOpen": {
+          "seq": 44,
+          "call": 0,
+          "stage": "glCompileShader",
+          "edge": "ENTER",
+          "actorTid": 54453,
+          "wallNs": "85401378425000",
+          "threadCpuNs": "34598907",
+          "result": null
+        },
+        "firstError": null,
+        "dropped": 0,
+        "earlierOpenCallsUnobserved": false,
+        "exitWithoutRetainedEnter": []
+      }
+    },
+    "probe-progress.json": {
+      "input": {
+        "path": "test/reports/t491/t817/probe-progress.json",
+        "sha256": "96b46adeb86e6ba40df56660a49c05fb7ad875fc9792c0272229874a79c2758d",
+        "bytes": 6828
+      },
+      "reader": {
+        "observation": "PROGRESS_OBSERVED",
+        "leaseHeld": true,
+        "retirement": "UNOBSERVED",
+        "cancel": "UNOBSERVED",
+        "last": {
+          "seq": 44,
+          "call": 0,
+          "stage": "glCompileShader",
+          "edge": "ENTER",
+          "actorTid": 54453,
+          "wallNs": "85401378425000",
+          "threadCpuNs": "34598907",
+          "result": null
+        },
+        "lastOpen": {
+          "seq": 44,
+          "call": 0,
+          "stage": "glCompileShader",
+          "edge": "ENTER",
+          "actorTid": 54453,
+          "wallNs": "85401378425000",
+          "threadCpuNs": "34598907",
+          "result": null
+        },
+        "firstError": null,
+        "dropped": 0,
+        "earlierOpenCallsUnobserved": false,
+        "exitWithoutRetainedEnter": []
+      }
+    },
+    "probe-progress2.json": {
+      "input": {
+        "path": "test/reports/t491/t817/probe-progress2.json",
+        "sha256": "96b46adeb86e6ba40df56660a49c05fb7ad875fc9792c0272229874a79c2758d",
+        "bytes": 6828
+      },
+      "reader": {
+        "observation": "PROGRESS_OBSERVED",
+        "leaseHeld": true,
+        "retirement": "UNOBSERVED",
+        "cancel": "UNOBSERVED",
+        "last": {
+          "seq": 44,
+          "call": 0,
+          "stage": "glCompileShader",
+          "edge": "ENTER",
+          "actorTid": 54453,
+          "wallNs": "85401378425000",
+          "threadCpuNs": "34598907",
+          "result": null
+        },
+        "lastOpen": {
+          "seq": 44,
+          "call": 0,
+          "stage": "glCompileShader",
+          "edge": "ENTER",
+          "actorTid": 54453,
+          "wallNs": "85401378425000",
+          "threadCpuNs": "34598907",
+          "result": null
+        },
+        "firstError": null,
+        "dropped": 0,
+        "earlierOpenCallsUnobserved": false,
+        "exitWithoutRetainedEnter": []
+      }
+    },
+    "probe-cancelled.json": {
+      "input": {
+        "path": "test/reports/t491/t817/probe-cancelled.json",
+        "sha256": "8c16111f1228bd7ff5f3796aae4cc6e81e01437df8010f5e4df1f0e9d68a7a23",
+        "bytes": 7115
+      },
+      "reader": {
+        "observation": "PROGRESS_OBSERVED",
+        "leaseHeld": true,
+        "retirement": "UNOBSERVED",
+        "cancel": "REQUESTED_UNACKNOWLEDGED",
+        "last": {
+          "seq": 45,
+          "call": 0,
+          "stage": "CANCEL_REQUESTED",
+          "edge": "STATE",
+          "actorTid": 53577,
+          "wallNs": "85686247620782",
+          "threadCpuNs": "4057927033",
+          "result": null
+        },
+        "lastOpen": {
+          "seq": 44,
+          "call": 0,
+          "stage": "glCompileShader",
+          "edge": "ENTER",
+          "actorTid": 54453,
+          "wallNs": "85401378425000",
+          "threadCpuNs": "34598907",
+          "result": null
+        },
+        "firstError": null,
+        "dropped": 0,
+        "earlierOpenCallsUnobserved": false,
+        "exitWithoutRetainedEnter": []
+      }
+    },
+    "probe-final.json": {
+      "input": {
+        "path": "test/reports/t491/t817/probe-final.json",
+        "sha256": "8c16111f1228bd7ff5f3796aae4cc6e81e01437df8010f5e4df1f0e9d68a7a23",
+        "bytes": 7115
+      },
+      "reader": {
+        "observation": "PROGRESS_OBSERVED",
+        "leaseHeld": true,
+        "retirement": "UNOBSERVED",
+        "cancel": "REQUESTED_UNACKNOWLEDGED",
+        "last": {
+          "seq": 45,
+          "call": 0,
+          "stage": "CANCEL_REQUESTED",
+          "edge": "STATE",
+          "actorTid": 53577,
+          "wallNs": "85686247620782",
+          "threadCpuNs": "4057927033",
+          "result": null
+        },
+        "lastOpen": {
+          "seq": 44,
+          "call": 0,
+          "stage": "glCompileShader",
+          "edge": "ENTER",
+          "actorTid": 54453,
+          "wallNs": "85401378425000",
+          "threadCpuNs": "34598907",
+          "result": null
+        },
+        "firstError": null,
+        "dropped": 0,
+        "earlierOpenCallsUnobserved": false,
+        "exitWithoutRetainedEnter": []
+      }
+    },
+    "probe-final2.json": {
+      "input": {
+        "path": "test/reports/t491/t817/probe-final2.json",
+        "sha256": "8c16111f1228bd7ff5f3796aae4cc6e81e01437df8010f5e4df1f0e9d68a7a23",
+        "bytes": 7115
+      },
+      "reader": {
+        "observation": "PROGRESS_OBSERVED",
+        "leaseHeld": true,
+        "retirement": "UNOBSERVED",
+        "cancel": "REQUESTED_UNACKNOWLEDGED",
+        "last": {
+          "seq": 45,
+          "call": 0,
+          "stage": "CANCEL_REQUESTED",
+          "edge": "STATE",
+          "actorTid": 53577,
+          "wallNs": "85686247620782",
+          "threadCpuNs": "4057927033",
+          "result": null
+        },
+        "lastOpen": {
+          "seq": 44,
+          "call": 0,
+          "stage": "glCompileShader",
+          "edge": "ENTER",
+          "actorTid": 54453,
+          "wallNs": "85401378425000",
+          "threadCpuNs": "34598907",
+          "result": null
+        },
+        "firstError": null,
+        "dropped": 0,
+        "earlierOpenCallsUnobserved": false,
+        "exitWithoutRetainedEnter": []
+      }
+    }
+  },
+  "selectedProgress": [
+    {
+      "seq": 31,
+      "call": 4,
+      "stage": "Open",
+      "edge": "EXIT",
+      "actorTid": 54453,
+      "wallNs": "85401374429688",
+      "threadCpuNs": "30603595",
+      "result": "1"
+    },
+    {
+      "seq": 32,
+      "call": 0,
+      "stage": "CheckCancel",
+      "edge": "ENTER",
+      "actorTid": 54453,
+      "wallNs": "85401374431563",
+      "threadCpuNs": "30605470",
+      "result": null
+    },
+    {
+      "seq": 33,
+      "call": 32,
+      "stage": "CheckCancel",
+      "edge": "EXIT",
+      "actorTid": 54453,
+      "wallNs": "85401374433438",
+      "threadCpuNs": "30607345",
+      "result": "1"
+    },
+    {
+      "seq": 34,
+      "call": 0,
+      "stage": "ROLE_SHA",
+      "edge": "ENTER",
+      "actorTid": 54453,
+      "wallNs": "85401374435625",
+      "threadCpuNs": "30609532",
+      "result": null
+    },
+    {
+      "seq": 35,
+      "call": 34,
+      "stage": "ROLE_SHA",
+      "edge": "EXIT",
+      "actorTid": 54453,
+      "wallNs": "85401376433438",
+      "threadCpuNs": "32608907",
+      "result": "1"
+    },
+    {
+      "seq": 36,
+      "call": 0,
+      "stage": "glCreateProgram",
+      "edge": "ENTER",
+      "actorTid": 54453,
+      "wallNs": "85401376437188",
+      "threadCpuNs": "32611095",
+      "result": null
+    },
+    {
+      "seq": 37,
+      "call": 36,
+      "stage": "glCreateProgram",
+      "edge": "EXIT",
+      "actorTid": 54453,
+      "wallNs": "85401376441719",
+      "threadCpuNs": "32615626",
+      "result": "1"
+    },
+    {
+      "seq": 38,
+      "call": 0,
+      "stage": "CheckCancel",
+      "edge": "ENTER",
+      "actorTid": 54453,
+      "wallNs": "85401376445782",
+      "threadCpuNs": "32619688",
+      "result": null
+    },
+    {
+      "seq": 39,
+      "call": 38,
+      "stage": "CheckCancel",
+      "edge": "EXIT",
+      "actorTid": 54453,
+      "wallNs": "85401376447344",
+      "threadCpuNs": "32621407",
+      "result": "1"
+    },
+    {
+      "seq": 40,
+      "call": 0,
+      "stage": "glCreateShader",
+      "edge": "ENTER",
+      "actorTid": 54453,
+      "wallNs": "85401378384532",
+      "threadCpuNs": "34559376",
+      "result": null
+    },
+    {
+      "seq": 41,
+      "call": 40,
+      "stage": "glCreateShader",
+      "edge": "EXIT",
+      "actorTid": 54453,
+      "wallNs": "85401378388750",
+      "threadCpuNs": "34562657",
+      "result": "2"
+    },
+    {
+      "seq": 42,
+      "call": 0,
+      "stage": "glShaderSource",
+      "edge": "ENTER",
+      "actorTid": 54453,
+      "wallNs": "85401378390313",
+      "threadCpuNs": "34564220",
+      "result": null
+    },
+    {
+      "seq": 43,
+      "call": 42,
+      "stage": "glShaderSource",
+      "edge": "EXIT",
+      "actorTid": 54453,
+      "wallNs": "85401378423125",
+      "threadCpuNs": "34597345",
+      "result": "0"
+    },
+    {
+      "seq": 44,
+      "call": 0,
+      "stage": "glCompileShader",
+      "edge": "ENTER",
+      "actorTid": 54453,
+      "wallNs": "85401378425000",
+      "threadCpuNs": "34598907",
+      "result": null
+    },
+    {
+      "seq": 45,
+      "call": 0,
+      "stage": "CANCEL_REQUESTED",
+      "edge": "STATE",
+      "actorTid": 53577,
+      "wallNs": "85686247620782",
+      "threadCpuNs": "4057927033",
+      "result": null
+    }
+  ],
+  "compileEnterToCancelRequestWallNs": 284869195782,
+  "resetPlan": {
+    "5": 12,
+    "6": 13,
+    "410": 12,
+    "411": 13
+  },
+  "resetOriginalShader": {
+    "role": "OP_00",
+    "entry": "role_OP_00.comp",
+    "bytes": 48695,
+    "sha256": "1b8ce7f6cb7fc077e728dda15102f95d4125efb9cc21a6d95b434ee7146ed2a4",
+    "opcodes": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "qualificationOpcode": 66,
+    "dependencies": [
+      "acceptedTime",
+      "activeFace",
+      "audit",
+      "baseIdentityAudit",
+      "checkVelocity",
+      "coldFP32Probe",
+      "completion",
+      "copyBase",
+      "drive",
+      "entryCopy",
+      "entryLedger",
+      "faceIndex",
+      "fail",
+      "failDetail",
+      "failMath",
+      "fieldAudit",
+      "fieldRead",
+      "gpuSha",
+      "h",
+      "integerReduce",
+      "kinetic",
+      "linearRead",
+      "loadQ",
+      "mathDomain",
+      "mathRaw",
+      "microBase",
+      "microHeader",
+      "nc",
+      "nf",
+      "nuFaces",
+      "nx",
+      "ny",
+      "packCell",
+      "packHeader",
+      "pairAdd",
+      "pairSub",
+      "periodicX",
+      "periodicY",
+      "reducePair",
+      "renderAudit",
+      "renderPack",
+      "resetFault",
+      "rootInit",
+      "rootInputAudit",
+      "rotr",
+      "s64",
+      "sabs",
+      "sfloat",
+      "shaInputWord",
+      "sneg",
+      "softAdd",
+      "softCos",
+      "softDiv",
+      "softExp",
+      "softF32",
+      "softFloat",
+      "softHalf",
+      "softInt",
+      "softMul",
+      "softNeg",
+      "softNormalize",
+      "softPack",
+      "softPolynomial",
+      "softReduce",
+      "softSin",
+      "softU64",
+      "softUnpack",
+      "softZero",
+      "swap32",
+      "syncAll",
+      "timePrepare",
+      "traceBase",
+      "traceStage",
+      "wadd",
+      "wbit",
+      "wlow",
+      "wlt",
+      "wmul",
+      "wneg",
+      "work",
+      "wrapIndex",
+      "wrne",
+      "wshl",
+      "wshr",
+      "wsub",
+      "wtop",
+      "wzero"
+    ],
+    "requiredUniforms": [
+      "uOp",
+      "uScope",
+      "uIndex"
+    ],
+    "optionalUniforms": [
+      "uBlock",
+      "uJ",
+      "uL",
+      "uMicro",
+      "uTestHook"
+    ],
+    "ssboBindings": {
+      "Base": 0,
+      "Candidate": 1,
+      "Work": 2,
+      "Control": 3
+    }
+  },
+  "splitter": {
+    "path": "D:/hmprojects/HelloWorld-T811/tools/g13/split_shader.py",
+    "sha256": "7d3963d8052431c15b1fd63e56864a971725fd407c1a01d30bae0bcb302bd451",
+    "bytes": 9372
+  },
+  "assembledInput": {
+    "path": "D:/hmprojects/HelloWorld-T811/.codex/local-test/t811-probe/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g13_visibility/g13_assets/pipeline_assembled.comp",
+    "sha256": "eebd59189e3eb302fa1f1dbbd8bda28463c61be55c9ce2cb85f507f8429fde35",
+    "bytes": 259208
+  },
+  "glslang": {
+    "path": "D:/hmprojects/HelloWorld/.codex/local-test/g13-glslang/bin/glslang.exe",
+    "sha256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+    "bytes": 5178368
+  },
+  "offlineGeneratedClosures": {
+    "RESET_12_13": {
+      "opcodes": [
+        12,
+        13
+      ],
+      "qualificationOpcode": 66,
+      "bytes": 7381,
+      "sha256": "e270a9c7fed536adab57dac71ab9ef6e4ffd5c177298c8bbb2b47ac0d821d325",
+      "dependencies": [
+        "coldFP32Probe",
+        "copyBase",
+        "resetFault",
+        "syncAll",
+        "traceBase"
+      ],
+      "glesOfflineReflection": [
+        "Uniform reflection:",
+        "c: offset 0, type 1405, size 18653, index 0, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "uScope: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uL: offset -1, type 1405, size 5, index -1, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "outState: offset 0, type 1405, size 0, index 1, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "baseState: offset 0, type 1405, size 0, index 2, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "uOp: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uIndex: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uJ: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "Uniform block reflection:",
+        "Control: offset -1, type ffffffff, size 4, index 0, binding 3, stages 32, numMembers 1",
+        "Candidate: offset -1, type ffffffff, size 4, index 1, binding 1, stages 32, numMembers 1",
+        "Base: offset -1, type ffffffff, size 4, index 2, binding 0, stages 32, numMembers 1",
+        "Buffer variable reflection:",
+        "Buffer block reflection:",
+        "Pipeline input reflection:",
+        "Pipeline output reflection:",
+        "Local size X: 64"
+      ],
+      "vulkanStatic": {
+        "sourceBytes": 7699,
+        "sourceSHA": "cfc1068f72b86325c0431226446e05fc815581a0158a2e38ba99833123fb8f76",
+        "moduleBytes": 22008,
+        "moduleSHA": "2f77aeb621896a1c4f7f45e79ebae167169bee7dff5ddca4e5a34356564ab6a9",
+        "entry": "%main",
+        "localSize": [
+          64,
+          1,
+          1
+        ],
+        "bindings": {
+          "%_": "3",
+          "%__1": "4",
+          "%__2": "1",
+          "%__3": "0",
+          "%__4": "2"
+        },
+        "uboStride": 16,
+        "fp32Modes": [
+          "DenormPreserve",
+          "SignedZeroInfNanPreserve",
+          "RoundingModeRTE"
+        ],
+        "noContraction": 10
+      }
+    },
+    "RESET_GATE_12": {
+      "opcodes": [
+        12
+      ],
+      "qualificationOpcode": 66,
+      "bytes": 6571,
+      "sha256": "d5d000436350482d65eab489b4dc4d4f81abf8317066191ffac1a2828cab03d0",
+      "dependencies": [
+        "coldFP32Probe",
+        "resetFault",
+        "syncAll",
+        "traceBase"
+      ],
+      "glesOfflineReflection": [
+        "Uniform reflection:",
+        "c: offset 0, type 1405, size 18653, index 0, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "uScope: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uOp: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uIndex: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uJ: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "Uniform block reflection:",
+        "Control: offset -1, type ffffffff, size 4, index 0, binding 3, stages 32, numMembers 1",
+        "Buffer variable reflection:",
+        "Buffer block reflection:",
+        "Pipeline input reflection:",
+        "Pipeline output reflection:",
+        "Local size X: 64"
+      ],
+      "vulkanStatic": {
+        "sourceBytes": 6889,
+        "sourceSHA": "b1bdf593776a1de690fb5bb86febc66ac15677bbbb90780a8fd6757d410af114",
+        "moduleBytes": 17064,
+        "moduleSHA": "0cbfe6914ae143a6ad0761f3638c400ab38a2f100740ca65e2c426ed613e286a",
+        "entry": "%main",
+        "localSize": [
+          64,
+          1,
+          1
+        ],
+        "bindings": {
+          "%_": "3",
+          "%__1": "0",
+          "%__2": "1",
+          "%__3": "2",
+          "%__4": "4"
+        },
+        "uboStride": 16,
+        "fp32Modes": [
+          "DenormPreserve",
+          "SignedZeroInfNanPreserve",
+          "RoundingModeRTE"
+        ],
+        "noContraction": 7
+      }
+    },
+    "RESET_COPY_13": {
+      "opcodes": [
+        13
+      ],
+      "qualificationOpcode": 66,
+      "bytes": 6364,
+      "sha256": "f050c649ab7752ebced1b0f4d50107c4b05bcbc643dbe44acf37da1c5d716d70",
+      "dependencies": [
+        "coldFP32Probe",
+        "copyBase",
+        "syncAll",
+        "traceBase"
+      ],
+      "glesOfflineReflection": [
+        "Uniform reflection:",
+        "uScope: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uL: offset -1, type 1405, size 5, index -1, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "outState: offset 0, type 1405, size 0, index 0, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "baseState: offset 0, type 1405, size 0, index 1, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "c: offset 0, type 1405, size 18653, index 2, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "uOp: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uIndex: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uJ: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "Uniform block reflection:",
+        "Candidate: offset -1, type ffffffff, size 4, index 0, binding 1, stages 32, numMembers 1",
+        "Base: offset -1, type ffffffff, size 4, index 1, binding 0, stages 32, numMembers 1",
+        "Control: offset -1, type ffffffff, size 4, index 2, binding 3, stages 32, numMembers 1",
+        "Buffer variable reflection:",
+        "Buffer block reflection:",
+        "Pipeline input reflection:",
+        "Pipeline output reflection:",
+        "Local size X: 64"
+      ],
+      "vulkanStatic": {
+        "sourceBytes": 6682,
+        "sourceSHA": "a982de3b64d592c9eab5914d9955075f20b898ec2adbea25394aba48b8742470",
+        "moduleBytes": 15968,
+        "moduleSHA": "d6f30bcdf7937e8c225a7e3cbcdcad526b0fdc3b28b33458eabf33f405d7d502",
+        "entry": "%main",
+        "localSize": [
+          64,
+          1,
+          1
+        ],
+        "bindings": {
+          "%__0": "4",
+          "%__1": "1",
+          "%__2": "0",
+          "%__3": "3",
+          "%__4": "2"
+        },
+        "uboStride": 16,
+        "fp32Modes": [
+          "DenormPreserve",
+          "SignedZeroInfNanPreserve",
+          "RoundingModeRTE"
+        ],
+        "noContraction": 7
+      }
+    },
+    "OP_00_REMAINDER": {
+      "opcodes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15,
+        16,
+        17
+      ],
+      "qualificationOpcode": 66,
+      "bytes": 46928,
+      "sha256": "e1a72d7ff5079735b5473e1e7cc8318d33510f83fdeddea0267c67480689e7da",
+      "dependencies": [
+        "acceptedTime",
+        "activeFace",
+        "audit",
+        "baseIdentityAudit",
+        "checkVelocity",
+        "coldFP32Probe",
+        "completion",
+        "drive",
+        "entryCopy",
+        "entryLedger",
+        "faceIndex",
+        "fail",
+        "failDetail",
+        "failMath",
+        "fieldAudit",
+        "fieldRead",
+        "gpuSha",
+        "h",
+        "integerReduce",
+        "kinetic",
+        "linearRead",
+        "loadQ",
+        "mathDomain",
+        "mathRaw",
+        "microBase",
+        "microHeader",
+        "nc",
+        "nf",
+        "nuFaces",
+        "nx",
+        "ny",
+        "packCell",
+        "packHeader",
+        "pairAdd",
+        "pairSub",
+        "periodicX",
+        "periodicY",
+        "reducePair",
+        "renderAudit",
+        "renderPack",
+        "resetFault",
+        "rootInit",
+        "rootInputAudit",
+        "rotr",
+        "s64",
+        "sabs",
+        "sfloat",
+        "shaInputWord",
+        "sneg",
+        "softAdd",
+        "softCos",
+        "softDiv",
+        "softExp",
+        "softF32",
+        "softFloat",
+        "softHalf",
+        "softInt",
+        "softMul",
+        "softNeg",
+        "softNormalize",
+        "softPack",
+        "softPolynomial",
+        "softReduce",
+        "softSin",
+        "softU64",
+        "softUnpack",
+        "softZero",
+        "swap32",
+        "syncAll",
+        "timePrepare",
+        "traceBase",
+        "traceStage",
+        "wadd",
+        "wbit",
+        "wlow",
+        "wlt",
+        "wmul",
+        "wneg",
+        "work",
+        "wrapIndex",
+        "wrne",
+        "wshl",
+        "wshr",
+        "wsub",
+        "wtop",
+        "wzero"
+      ],
+      "glesOfflineReflection": [
+        "Uniform reflection:",
+        "c: offset 0, type 1405, size 18653, index 0, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "uOp: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uScope: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uJ: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uMicro: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uL: offset -1, type 1405, size 80, index -1, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "outState: offset 0, type 1405, size 207, index 1, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "baseState: offset 0, type 1405, size 194, index 2, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "w: offset 0, type 1405, size 0, index 3, binding -1, stages 32, arrayStride 4, topLevelArrayStride 4",
+        "uIndex: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "uBlock: offset -1, type 1405, size 1, index -1, binding -1, stages 32",
+        "Uniform block reflection:",
+        "Control: offset -1, type ffffffff, size 4, index 0, binding 3, stages 32, numMembers 1",
+        "Candidate: offset -1, type ffffffff, size 4, index 1, binding 1, stages 32, numMembers 1",
+        "Base: offset -1, type ffffffff, size 4, index 2, binding 0, stages 32, numMembers 1",
+        "Work: offset -1, type ffffffff, size 4, index 3, binding 2, stages 32, numMembers 1",
+        "Buffer variable reflection:",
+        "Buffer block reflection:",
+        "Pipeline input reflection:",
+        "Pipeline output reflection:",
+        "Local size X: 64"
+      ],
+      "vulkanStatic": {
+        "sourceBytes": 47246,
+        "sourceSHA": "b15e100928229ebff7bd71f0aa84d4e3744d16d1186dc261bb3c682b7498e070",
+        "moduleBytes": 252484,
+        "moduleSHA": "5f97298ae04701f33893c60dbbaa667577efd5879fbc2e33c5d23647ea5c3555",
+        "entry": "%main",
+        "localSize": [
+          64,
+          1,
+          1
+        ],
+        "bindings": {
+          "%_": "3",
+          "%__1": "4",
+          "%__2": "1",
+          "%__3": "0",
+          "%__4": "2"
+        },
+        "uboStride": 16,
+        "fp32Modes": [
+          "DenormPreserve",
+          "SignedZeroInfNanPreserve",
+          "RoundingModeRTE"
+        ],
+        "noContraction": 89
+      }
+    }
+  },
+  "cpuReport": "worker 54453 R-state spinning (utime 13402->36524 over ~90s) while progress seq frozen at 44 : glCompileShader internal spin/deadloop confirmed (consistent with T770 v7, now with per-call stoppoint)",
+  "rawProcCountersHzAndPcArchived": false,
+  "genuineCompileExit": false,
+  "verdict": "GL_COMPILE_SHADER_CALL_OPEN_NO_DRIVER_INTERNAL_ATTRIBUTION"
+}
