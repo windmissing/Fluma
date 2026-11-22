@@ -1,0 +1,21 @@
+{
+ "revision": "T801_V1_GPU_SEGMENT_COST_FIVE_SAMPLES_V1",
+ "date": "2026-11-22 13:20",
+ "package": {
+  "task": "T797 driver (buildId 09befda4, device md5 2855f567 verified)",
+  "so": "libgrs_dm_t647 b0df4529",
+  "cpp": "paired"
+ },
+ "FIVE_SAMPLES": {
+  "s1..s5 all": "arm=B real (argv explicit), 28 records each, exitCode=6 DEADLINE @dispatch 12",
+  "gpuTimestamp": "UNOBSERVED (per receipt gpuClock UNOBSERVED) \u2014 per contract fallback to prefix fences",
+  "executionFence": "created but unsignaled all 5 samples",
+  "retirementFence": "reuse-execution signaled all 5",
+  "firstGuardFailure": "PUMP_ENTRY_GUARD DEADLINE @12 consistent 5/5",
+  "lastGuardSuccess": "PRE_EXEC_POLL_GUARD PASS consistent 5/5"
+ },
+ "segmentation": "originals include dispatch api/barrier ns arrays + drainBegin/End (drain window ~72ms per sample) + events array (SOURCE_BUILD->CACHE_LOOKUP->SHADER_COMPILE->PROGRAM_LINK->REFLECT->BEGIN_ROOT->CONTROLLER_CHECK...) \u2014 dedicated copy vs preceding-queue attribution available in per-event ns",
+ "prefixZeroCommit": "yes (all exitCode=6, commit=0, quanta=0)",
+ "deadline": "original 250ms preserved all samples",
+ "route": "T773 reader adjudication on t801/s1..s5.jsonl; architect: five-sample consistency locks the DEADLINE@12 determination with per-segment timing"
+}
