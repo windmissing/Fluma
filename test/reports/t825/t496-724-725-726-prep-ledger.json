@@ -1,0 +1,29 @@
+{
+ "revision": "T496_T724_T725_T726_PC_PREP_V1",
+ "date": "2026-11-22",
+ "T496": {
+  "latest": "v7 (glDispatchCompute x=1 hard-crash precise original, D1/D2 differential + 32cycle NOT_MEASURED)",
+  "pcState": "fixture domain ready (crash originals archived)",
+  "reader": "create-only reader chain v7"
+ },
+ "T724": {
+  "scope": "M3/G9 same-request deadline offline prep",
+  "sources": [
+   "design-T497-gpu-M3-fixtures-v1.json",
+   "design-T497-gpu-M3-checks-v1.py",
+   "design-T497-gpu-M3-manifest-v1.json"
+  ],
+  "pcState": "fixtures+checks+manifest present — offline replay ready"
+ },
+ "T725": {
+  "scope": "provenance chain + same-window negative controls offline replay",
+  "pcState": "same fixture family as T724 (offline replay)",
+  "ready": true
+ },
+ "T726": {
+  "scope": "four-arm first-frame receipt offline comparison facility",
+  "pcState": "four-arm prefix facility exists (t804/t809/x-* + t818/y-* originals); comparison facility ready",
+  "ready": true
+ },
+ "honestNote": "all four are offline-prep cards — facilities and fixtures verified present; actual device GPU evidence NOT in scope for PC (matches T825)"
+}
