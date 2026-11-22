@@ -1,0 +1,32 @@
+{
+ "revision": "T816_V1_RX_SOURCE_SEGMENTS_SIDECAR_V1",
+ "date": "2026-11-22 20:35",
+ "package": {
+  "task": "T816-rx (T810 bootSource 80ac0d6e receipt-identical, signed 52bc48e1)",
+  "pid": "58229"
+ },
+ "run": {
+  "entry": "single Configure pid 58229 completed ~5.5min uninterrupted -> PUMP_FAILED code=5",
+  "sidecar": "terminal 25829B sha 29a759a2 + retirement 34337B sha d36dba45 both captured"
+ },
+ "T810SEGMENTS": {
+  "schema": "T810_RX_SOURCE_SEGMENTS_V1",
+  "clocks": "wall CLOCK_MONOTONIC + cpu CLOCK_THREAD_CPUTIME_ID + gpu null",
+  "dispatch8to11": "4 dispatches with per-dispatch guard/pulseSeq/guardNs/cursor (opcode 8-11 order)",
+  "dispatchBarriers8to11": "4 barriers",
+  "copies": "arena copy cursor 0 bytes=591872"
+ },
+ "firstReject": {
+  "phase": "PUMP_ENTRY",
+  "reason": "COMMAND_EXPIRED",
+  "code": 5,
+  "deadlineNs": "86279627241875",
+  "nowNs": "86279626444219",
+  "pulseNs": "86279621864375",
+  "pulseAge": "~4.6ms (now-pulse)",
+  "budget": "deadline-begin = 250ms; now was 28.2ms before deadline"
+ },
+ "wallThreadCpu": "both clocks in per-event rows (T810 fixed slots)",
+ "deadline": "250ms preserved; oracle untouched",
+ "route": "T765/T785 reader on sidecar JSONs; T807 original-order comparison has T810 segment originals"
+}
