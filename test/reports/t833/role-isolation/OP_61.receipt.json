@@ -1,0 +1,109 @@
+{
+  "attemptId": "4ae83e84-340e-424b-97e3-bcecf537a661",
+  "role": "OP_61",
+  "pid": 36268,
+  "reason": "CHILD_EXIT",
+  "lastPipeline": {
+    "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+    "call": "vkCreateComputePipelines",
+    "edge": "EXIT",
+    "role": "OP_61",
+    "moduleSHA": "bf0e2f1eecc3d50f1b605f17c8d77971ecb1315abd100383fac7f4fae2cebdca",
+    "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+    "flags": 0,
+    "pipelineCache": null,
+    "pid": 36268,
+    "ownerTid": 92408,
+    "processStartTick": "134398341355135027",
+    "qpcFrequency": "10000000",
+    "qpc": "15203811120006",
+    "vkResult": 0
+  },
+  "exeSHA": "dbd5bb4f7cc79e81f276fefbb672d2660f166c37a86f29a079dec4e4d37ae8c7",
+  "stdoutSHA": "5f0b2026fd214121da694af2cbdaf88f96c8c803048bffc0580ce063117776d6",
+  "samples": [
+    {
+      "elapsed": 0.125,
+      "ownerTid": null,
+      "alive": true,
+      "processTimes": [
+        "134398341355135027",
+        "0",
+        "0",
+        "0"
+      ],
+      "ownerTimes": null
+    },
+    {
+      "elapsed": 5.156999999890104,
+      "ownerTid": 92408,
+      "alive": true,
+      "processTimes": [
+        "134398341355135027",
+        "0",
+        "1250000",
+        "47812500"
+      ],
+      "ownerTimes": [
+        "134398341356694513",
+        "0",
+        "937500",
+        "47812500"
+      ]
+    },
+    {
+      "elapsed": 10.187999999849126,
+      "ownerTid": 92408,
+      "alive": true,
+      "processTimes": [
+        "134398341355135027",
+        "0",
+        "2031250",
+        "96250000"
+      ],
+      "ownerTimes": [
+        "134398341356694513",
+        "0",
+        "1718750",
+        "96250000"
+      ]
+    }
+  ],
+  "probe": {
+    "schema": "PC_G13_STEADY_OP66_V1",
+    "role": "OP_61",
+    "moduleSHA": "bf0e2f1eecc3d50f1b605f17c8d77971ecb1315abd100383fac7f4fae2cebdca",
+    "pid": 36268,
+    "processStartTick": "134398341355135027",
+    "ownerTid": 92408,
+    "pipelineNs": "640898100",
+    "queueSubmit": 0,
+    "wait": 0,
+    "probeWords": [
+      1065353217,
+      1065353216,
+      1,
+      4194304,
+      7,
+      0,
+      0,
+      1179661106,
+      1065353217,
+      1065353216,
+      1,
+      4194304,
+      7,
+      0,
+      0,
+      1179661106
+    ],
+    "mismatchMasks": [
+      0,
+      0
+    ],
+    "acceptedRoot": null
+  },
+  "forced": false,
+  "exitCode": 0,
+  "ownerRetired": true
+}

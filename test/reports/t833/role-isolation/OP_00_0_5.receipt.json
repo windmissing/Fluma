@@ -1,0 +1,109 @@
+{
+  "attemptId": "372da8ab-d5f1-401a-a2db-ca809e5888b0",
+  "role": "OP_00_0_5",
+  "pid": 97700,
+  "reason": "CHILD_EXIT",
+  "lastPipeline": {
+    "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+    "call": "vkCreateComputePipelines",
+    "edge": "EXIT",
+    "role": "OP_00_0_5",
+    "moduleSHA": "a42bb063c6ccb0402291d6bdb6bfe863cf6324771ba0f558c1a3666862cd6ea4",
+    "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+    "flags": 0,
+    "pipelineCache": null,
+    "pid": 97700,
+    "ownerTid": 35912,
+    "processStartTick": "134398341491300493",
+    "qpcFrequency": "10000000",
+    "qpc": "15203949643344",
+    "vkResult": 0
+  },
+  "exeSHA": "dbd5bb4f7cc79e81f276fefbb672d2660f166c37a86f29a079dec4e4d37ae8c7",
+  "stdoutSHA": "b65507b4b77dbecd72615d36b68784608f152a1721b46659d6b62c6df71dda72",
+  "samples": [
+    {
+      "elapsed": 0.125,
+      "ownerTid": null,
+      "alive": true,
+      "processTimes": [
+        "134398341491300493",
+        "0",
+        "0",
+        "0"
+      ],
+      "ownerTimes": null
+    },
+    {
+      "elapsed": 5.155999999959022,
+      "ownerTid": 35912,
+      "alive": true,
+      "processTimes": [
+        "134398341491300493",
+        "0",
+        "1562500",
+        "47031250"
+      ],
+      "ownerTimes": [
+        "134398341492702716",
+        "0",
+        "1562500",
+        "46875000"
+      ]
+    },
+    {
+      "elapsed": 10.186999999918044,
+      "ownerTid": 35912,
+      "alive": true,
+      "processTimes": [
+        "134398341491300493",
+        "0",
+        "2031250",
+        "94843750"
+      ],
+      "ownerTimes": [
+        "134398341492702716",
+        "0",
+        "2031250",
+        "94687500"
+      ]
+    }
+  ],
+  "probe": {
+    "schema": "PC_G13_STEADY_OP66_V1",
+    "role": "OP_00_0_5",
+    "moduleSHA": "a42bb063c6ccb0402291d6bdb6bfe863cf6324771ba0f558c1a3666862cd6ea4",
+    "pid": 97700,
+    "processStartTick": "134398341491300493",
+    "ownerTid": 35912,
+    "pipelineNs": "800134300",
+    "queueSubmit": 0,
+    "wait": 0,
+    "probeWords": [
+      1065353217,
+      1065353216,
+      1,
+      4194304,
+      7,
+      0,
+      0,
+      1179661106,
+      1065353217,
+      1065353216,
+      1,
+      4194304,
+      7,
+      0,
+      0,
+      1179661106
+    ],
+    "mismatchMasks": [
+      0,
+      0
+    ],
+    "acceptedRoot": null
+  },
+  "forced": false,
+  "exitCode": 0,
+  "ownerRetired": true
+}

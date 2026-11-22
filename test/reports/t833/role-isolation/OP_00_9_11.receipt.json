@@ -1,0 +1,126 @@
+{
+  "attemptId": "6bce7795-0dba-4239-99e2-5f470acdc07c",
+  "role": "OP_00_9_11",
+  "pid": 96816,
+  "reason": "CHILD_EXIT",
+  "lastPipeline": {
+    "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+    "call": "vkCreateComputePipelines",
+    "edge": "EXIT",
+    "role": "OP_00_9_11",
+    "moduleSHA": "aea0b1d38cab41f2f4e92eefd598b2c39e18dbb67554c5a53cda2db9cc0d265b",
+    "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+    "flags": 0,
+    "pipelineCache": null,
+    "pid": 96816,
+    "ownerTid": 67400,
+    "processStartTick": "134398343888998715",
+    "qpcFrequency": "10000000",
+    "qpc": "15206372167889",
+    "vkResult": 0
+  },
+  "exeSHA": "dbd5bb4f7cc79e81f276fefbb672d2660f166c37a86f29a079dec4e4d37ae8c7",
+  "stdoutSHA": "b9c24f383f5b26db03677368ac6808ee9e71d46f930b04c5b8b3a76e92b641a1",
+  "samples": [
+    {
+      "elapsed": 0.0779999999795109,
+      "ownerTid": null,
+      "alive": true,
+      "processTimes": [
+        "134398343888998715",
+        "0",
+        "0",
+        "0"
+      ],
+      "ownerTimes": null
+    },
+    {
+      "elapsed": 5.109999999869615,
+      "ownerTid": 67400,
+      "alive": true,
+      "processTimes": [
+        "134398343888998715",
+        "0",
+        "1406250",
+        "46250000"
+      ],
+      "ownerTimes": [
+        "134398343889822302",
+        "0",
+        "1406250",
+        "46250000"
+      ]
+    },
+    {
+      "elapsed": 10.140999999828637,
+      "ownerTid": 67400,
+      "alive": true,
+      "processTimes": [
+        "134398343888998715",
+        "0",
+        "2031250",
+        "92968750"
+      ],
+      "ownerTimes": [
+        "134398343889822302",
+        "0",
+        "2031250",
+        "92968750"
+      ]
+    },
+    {
+      "elapsed": 15.171999999787658,
+      "ownerTid": 67400,
+      "alive": true,
+      "processTimes": [
+        "134398343888998715",
+        "0",
+        "3437500",
+        "139062500"
+      ],
+      "ownerTimes": [
+        "134398343889822302",
+        "0",
+        "3437500",
+        "139062500"
+      ]
+    }
+  ],
+  "probe": {
+    "schema": "PC_G13_STEADY_OP66_V1",
+    "role": "OP_00_9_11",
+    "moduleSHA": "aea0b1d38cab41f2f4e92eefd598b2c39e18dbb67554c5a53cda2db9cc0d265b",
+    "pid": 96816,
+    "processStartTick": "134398343888998715",
+    "ownerTid": 67400,
+    "pipelineNs": "2132253400",
+    "queueSubmit": 0,
+    "wait": 0,
+    "probeWords": [
+      1065353217,
+      1065353216,
+      1,
+      4194304,
+      7,
+      0,
+      0,
+      1179661106,
+      1065353217,
+      1065353216,
+      1,
+      4194304,
+      7,
+      0,
+      0,
+      1179661106
+    ],
+    "mismatchMasks": [
+      0,
+      0
+    ],
+    "acceptedRoot": null
+  },
+  "forced": false,
+  "exitCode": 0,
+  "ownerRetired": true
+}
