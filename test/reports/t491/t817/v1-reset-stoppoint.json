@@ -1,0 +1,30 @@
+{
+ "revision": "T817_V1_RESET_PERCALL_STOPPOINT_V1",
+ "date": "2026-11-22 20:15",
+ "package": {
+  "task": "T817-probe (T811 probe receipt 0ba9bf20 receipt-identical, signed d42401c2, main bundle, mapped 25e750c8)",
+  "pid": 53577,
+  "startTick": "8535146"
+ },
+ "progressSequence": {
+  "schema": "G13_VISIBILITY_PROGRESS_V1 (T812 reader format)",
+  "capacity": 192,
+  "lastSeq": 44,
+  "rows": 44,
+  "dropped": 0,
+  "leaseHeld": true,
+  "wallClock": "CLOCK_MONOTONIC",
+  "cpuClock": "CLOCK_THREAD_CPUTIME_ID"
+ },
+ "perCallTrace": "44 rows: CREATED_PUBLISHED -> CheckCancel ENTER/EXIT -> glCreateShader(call 40 ENTER/EXIT result=2) -> glShaderSource(call 42 ENTER/EXIT result=0) -> glCompileShader(call 44 ENTER, NO EXIT) : FIRST UNCLOSED CALL = glCompileShader entered seq 44 never returned",
+ "spinConfirmed": "worker 54453 R-state spinning (utime 13402->36524 over ~90s) while progress seq frozen at 44 : glCompileShader internal spin/deadloop confirmed (consistent with T770 v7, now with per-call stoppoint)",
+ "cancelRetirement": {
+  "cancelRequest": "seq 45 CANCEL_REQUESTED published",
+  "cancelAck": null,
+  "retirement": null,
+  "leaseHeld": true,
+  "note": "worker stuck inside glCompileShader cannot reach cancellation checkpoint"
+ },
+ "T813": "not claimed : probe spin is the real stoppoint, isolation variant not triggered",
+ "route": "developer: glCompileShader-internal spin root cause (T811 probe binary); cancel path also blocked (worker never checks cancel flag inside compile)"
+}
