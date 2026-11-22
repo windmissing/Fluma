@@ -107,3 +107,22 @@ sidecar 修订包未交）。**增量：选项 (c) 执行——T769 离线覆盖
 
 **结论**：探针真机执行仍阻塞于签名信任；离线覆盖已作为过渡证据正式
 记录（T770 v4 选项 c）。(a)/(b) 决策落地后真机探针立即执行。
+
+
+## v7 追加（2026-11-22 18:40，effector；主 bundle 探针页打通——native 探针自旋阻塞如实）
+
+**突破**：探针包重构建为主 bundleName 成功（ecc5c815→signed 141773f5），
+**G13Visibility 用例页真机可达**（EntryAbility 路由）——RESET 用例
+CREATED，快照 g13-visibility-1.json 落盘（G13_VISIBILITY_PROBE_V1：
+pid 12312/startTick 7904132/mapped 30a1c65f/layoutSHA b9390359/planSHA
+acf260e7/variant=DEPENDENCY_SPLIT）。Select 用例切换正常（16 用例可见）。
+
+**探针执行阻塞（如实）**：RESET 卡 `state=CREATED`（唯一事件 CREATED），
+worker 线程 13692 **R 态自旋**（30s 内 utime 55780→58489，累计 8min+
+CPU），无事件推进、无 Fail() 发布（firstFailure 空）——`Probe::Execute`
+在 Phase(CREATED) 之后、EGL CONTEXT 事件之前自旋（CheckCancel/Open 边
+界）。后续 Start 返回 OWNER_BUSY（首个 worker 未退役），无法启动新
+attempt。
+
+**归 developer**：修 Probe::Execute post-CREATED 自旋（疑似 EGL 初始化
+前缺 yield 或无条件循环）。修后 16 用例立即可执行。

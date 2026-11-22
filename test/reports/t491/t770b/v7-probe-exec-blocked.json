@@ -1,0 +1,14 @@
+{
+ "revision": "T770_V7_PROBE_EXEC_BLOCKED_V1",
+ "date": "2026-11-22 18:40",
+ "breakthrough": "main-bundle re-build SUCCEEDED (ecc5c815 \u2192 signed 141773f5, G13Visibility page reachable via EntryAbility route): probe case page LIVE on device, RESET case CREATED, snapshot g13-visibility-1.json saved (G13_VISIBILITY_PROBE_V1 schema with identity/layoutSHA/planSHA/variant=DEPENDENCY_SPLIT)",
+ "probeExecution": "BLOCKED inside native probe: Reset case state stays CREATED (only event CREATED ns 79139164043750), worker thread 13692 spins R-state consuming CPU (8min+ cumulative) with no event progression \u2014 Probe::Execute hung after Phase(CREATED), before Open() EGL init or inside it (no CONTEXT event emitted, no Fail() reason published)",
+ "diagnosis": "probe native thread stuck in unbounded busy path post-CREATED \u2014 pre-EGL loop in CheckCancel/Open boundary spins (wchan=0, syscall running, stack=running); also Select-case switch worked (COMPARE selected) but Start returns OWNER_BUSY (first worker never retired) so no new attempt can start",
+ "evidence": {
+  "snapshot": "t770b/snapshot-1.json",
+  "workerStat": "R 55780->58489 utime in 30s (spinning)",
+  "selectCases": "RESET/COMPARE/LANE63/LANE0 visible in Select"
+ },
+ "verdict": "probe infrastructure LIVE (page+identity+snapshot writer all work) but native Probe::Execute spin bug blocks case execution \u2014 firstFailure empty means Fail() never published; needs developer fix on the post-CREATED spin (likely a missing yield or an unconditional loop before EGL init)",
+ "route": "developer: fix Probe::Execute spin after CREATED (worker burns CPU without publishing any event); all 16 cases ready to run once fixed"
+}
