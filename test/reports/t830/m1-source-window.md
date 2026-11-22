@@ -1,6 +1,6 @@
 # T830 Windows Vulkan dry SOURCE and shader Present
 
-The Windows x64 Release build passed. The Intel UHD 630 diagnostic admitted a dry SOURCE of 131072 Q20 in one event. The same-generation Vulkan submit and fence returned VK_SUCCESS. The original M1 owner accepted the 256-word GPU Completion before publication. The fence arrived 74.598 ms after permit grant, within the frozen 250 ms deadline. The Win32 diagnostic pulse timer supplied six observed pulses.
+The Windows x64 Release build passed. The Intel UHD 630 diagnostic admitted a dry SOURCE of 131072 Q20 in one event. The same-generation Vulkan submit and fence returned VK_SUCCESS. The original M1 owner accepted the 256-word GPU Completion before publication. The fence arrived 74.596 ms after permit grant, within the frozen 250 ms deadline. The Win32 diagnostic pulse timer supplied six observed pulses.
 
 The acquired publication lease fed the fragment shader directly on the same device. The 784×461 window's acquired image passed shader readback at the diagnostic particle position. Queue Present and per-image results were VK_SUCCESS, and the lease retired normally. The frame's accepted root matches the Completion nonce. The unchanged BOOT entry point also passed on the same executable.
 
