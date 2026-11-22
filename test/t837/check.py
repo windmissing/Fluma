@@ -112,9 +112,73 @@ def field_view(view, config):
     pressure = [(p + phi - phi_mean + view["pRef"])*pscale
                 for p, phi in zip(values["piQ32"], values["phi"], strict=True)]
     enforce(all(map(math.isfinite, pressure)), "nonfinite SI pressure")
-    return dict(nu=nu, velocityScale=uscale, pressureScale=pscale,
-                maxVelocitySI=max(map(abs, values["u32"]+values["v32"]))*uscale,
-                pressureRangeSI=[min(pressure), max(pressure)])
+    summary = dict(nu=nu, velocityScale=uscale, pressureScale=pscale,
+                   maxVelocitySI=max(map(abs, values["u32"]+values["v32"]))*uscale,
+                   pressureRangeSI=[min(pressure), max(pressure)])
+    return values, summary
+
+
+def relative_errors(observed, expected):
+    residuals = [v-w for v,w in zip(observed, expected, strict=True)]
+    peak = max(map(abs, expected))
+    square = math.fsum(x*x for x in expected)
+    enforce(peak > 0 and square > 0, "zero reference normalization")
+    return (math.sqrt(math.fsum(x*x for x in residuals)/square),
+            max(map(abs,residuals))/peak)
+
+
+def field_reference(case, fields, view, nu, accepted_quantum):
+    nx, ny = view["shape"]
+    if case == "F10":
+        enforce(all(w == .25 for w in fields["u32"]) and all(w == -.125 for w in fields["v32"])
+                and not any(fields["piQ32"]), "F10 uniform periodic field")
+        return dict(uniformField=True)
+    if case not in ("F04", "F05", "F07") or nx != ny:
+        return {}
+    # T605/T631 normalizes the reference on the fixed unit square. Restrict
+    # these comparisons to the frozen fixtures and their terminal time.
+    if (nx not in (32, 64, 128) or accepted_quantum != 30 or nu != 1/64):
+        return {}
+    h = 1/nx
+    if case == "F07":
+        def expected(y):
+            return y*(1-y)
+        max_error = max(abs(u-expected((j+.5)*h)) for j in range(ny)
+                        for u in fields["u32"][j*(nx+1):(j+1)*(nx+1)])
+        flux = h*math.fsum(fields["u32"][j*(nx+1)+nx//2] for j in range(ny))
+        return dict(velocityMaxError=max_error, flux=flux,
+                    velocityPass=max_error <= h*h/4+2**-12, fluxPass=abs(flux-1/6)/(1/6) <= 1/32)
+    sin, cos, exp = math.sin, math.cos, math.exp
+    if case == "F04":
+        k = 2*math.pi
+        a = .25*exp(-2*nu*k*k*.25)
+        def u_ref(x,y):
+            return a*sin(k*x)*cos(k*y)
+        def v_ref(x,y):
+            return -a*cos(k*x)*sin(k*y)
+        def p_ref(x,y):
+            return a*a/4*(cos(2*k*x)+cos(2*k*y))
+    else:
+        k = math.pi
+        a = .25*exp(-.25)
+        def u_ref(x,y):
+            return a*sin(k*x)**2*sin(2*k*y)
+        def v_ref(x,y):
+            return -a*sin(2*k*x)*sin(k*y)**2
+        def p_ref(x,y):
+            return .125*exp(-.5)*cos(k*x)*cos(k*y)
+
+    # Remove the duplicate periodic face only in the declared periodic case.
+    periodic = case == "F04"
+    u = [fields["u32"][j*(nx+1)+i] for j in range(ny) for i in range(nx+int(not periodic))]
+    v = fields["v32"][:nx*(ny+int(not periodic))]
+    expected_u = [u_ref(i*h,(j+.5)*h) for j in range(ny) for i in range(nx+int(not periodic))]
+    expected_v = [v_ref((i+.5)*h,j*h) for j in range(ny+int(not periodic)) for i in range(nx)]
+    expected_p = [p_ref((i+.5)*h,(j+.5)*h) for j in range(ny) for i in range(nx)]
+    vrms, vmax = relative_errors(u+v, expected_u+expected_v)
+    prms, _ = relative_errors(fields["piQ32"], expected_p)
+    return dict(velocityRelRMS=vrms, velocityRelMax=vmax, pressureRelRMS=prms,
+                finestThresholdsSatisfied=(vrms <= 1/32 and vmax <= 1/16 and prms <= 1/16) if nx == 128 else None)
 
 
 def inspect(e, config, raw, synthetic=False):
@@ -151,11 +215,12 @@ def inspect(e, config, raw, synthetic=False):
     numeric = T721.numerical_gates(tail[36], dict(zip(SLOTS, map(float_word, tail[104:110]), strict=True)))
     if numeric != "THRESHOLDS_SATISFIED":
         return dict(state=numeric)
-    result = field_view(view, config)
+    fields, result = field_view(view, config)
     if case in ("F01", "F09"):
         enforce(not any(view["u32"] + view["v32"] + view["piQ32"]), "sealed rest exact zero words")
+    reference = field_reference(case, fields, view, result["nu"], identity(tail,34))
     return dict(state="SYNTHETIC_PASS" if synthetic else "CASE_REFERENCE_PENDING", numerical=numeric,
-                units=result, expected=CASES[case]["expected"])
+                units=result, reference=reference, expected=CASES[case]["expected"])
 
 
 def selftest():
@@ -186,7 +251,11 @@ def selftest():
         except ValueError:
             continue
         raise AssertionError(change)
-    return dict(state="SYNTHETIC_PASS", checks=5, cases=sorted(CASES))
+    n = 32
+    poisson = [(y+.5)/n*(1-(y+.5)/n) for y in range(n) for _ in range(n+1)]
+    result = field_reference("F07", dict(u32=poisson), dict(shape=[n,n]), 1/64, 30)
+    assert result["velocityPass"] and result["fluxPass"]
+    return dict(state="SYNTHETIC_PASS", checks=6, cases=sorted(CASES))
 
 
 if __name__ == "__main__":
