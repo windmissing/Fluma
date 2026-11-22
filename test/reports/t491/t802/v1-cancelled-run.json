@@ -1,0 +1,17 @@
+{
+ "revision": "T802_V1_RX_SIDECAR_WRITE_FIX_V1",
+ "date": "2026-11-22 14:15",
+ "package": {
+  "task": "T802-rx (T798 receipt 9c9097d3 receipt-identical, signed 6eedc7fc PASS, writerRevision T798)",
+  "note": "T798 = T793 mkdtempSync template fix delivery"
+ },
+ "run": {
+  "installLaunch": "OK",
+  "firstConfigure": "SHADER_COMPILE then hilog ring rolled before terminal",
+  "secondConfigure": "CANCEL_REQUESTED state after unlock, process 29672 alive \u2014 cancel path taken (lock-screen interruptions twice during 5.5min SOURCE compile)",
+  "sidecarFile": "NOT in files domain"
+ },
+ "problem": "SOURCE compile wall-time ~5.5min exceeds device lock-screen behavior even with 600s wake set; swipe wake insufficient during long compile; CANCEL_REQUESTED = configure attempt cancelled by sleep policy, not writer failure",
+ "missing": "sidecar SAVED evidence NOT obtained \u2014 execution environment interruption, fix itself untested",
+ "route": "retry with wake-policy workaround (periodic swipe/click every ~60s across compile window); tester pipeline ready"
+}
