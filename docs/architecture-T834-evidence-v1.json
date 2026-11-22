@@ -1,0 +1,510 @@
+{
+  "schema": "T834_PC_G13_OFFLINE_ATTRIBUTION_V1",
+  "runs": [
+    {
+      "pe": {
+        "path": ".codex/local-test/t833-pc-handoff.exe",
+        "bytes": 1373184,
+        "sha256": "c3ec8563c204bb42c4d6a252ed34fed9821a73d63e5c69275073b3928cebf9ce"
+      },
+      "raw": {
+        "path": "test/reports/t833/steady-initial.jsonl",
+        "bytes": 31706,
+        "sha256": "4c2cfed08b12575e04a1acd837b88efeb5a3fc2f930c13ae386e10d2d535b092"
+      },
+      "embeddedBootAndFiveModulesEachExactlyOnce": true,
+      "pid": 20752,
+      "ownerTid": 78476,
+      "processStartTick": "134398297023150140",
+      "qpcFrequency": "10000000",
+      "selectedDevice": {
+        "vendorId": 32902,
+        "deviceId": 16024,
+        "driverVersion": 1656924,
+        "deviceName": "Intel(R) UHD Graphics 630",
+        "deviceApi": 4206807,
+        "effectiveApi": 4202496,
+        "deviceLUIDValid": true,
+        "shaderDenormPreserveFloat32": 1,
+        "shaderRoundingModeRTEFloat32": 1,
+        "shaderSignedZeroInfNanPreserveFloat32": 1,
+        "denormIndependence": 1,
+        "roundingIndependence": 2,
+        "qualification": "ELIGIBLE",
+        "deviceUUID": "8680983e020000000000000000000000",
+        "driverUUID": "33312e302e3130312e32313430000000",
+        "deviceLUID": "3cda000000000000",
+        "cacheUUID": "6d3c693169315a32653f663161356301",
+        "driverVersionTextFromUUID": "31.0.101.2140"
+      },
+      "queueFamily": 0,
+      "environmentSHA": "ad77d90c4a347e5ec47ff165b9be745ee527777a0958405dc008ed8bc02553af",
+      "bootPipelineNs": "13641990100",
+      "op65": {
+        "state": "QUALIFIED",
+        "tailSeal": 3235779329,
+        "tailError": 0
+      },
+      "op66": {
+        "state": "QUALIFIED",
+        "presence": [
+          1,
+          1
+        ],
+        "mismatchMasks": [
+          0,
+          0
+        ]
+      },
+      "edges": [],
+      "lastStage": "STEADY_PIPELINE"
+    },
+    {
+      "pe": {
+        "path": ".codex/local-test/t833-pc-progress.exe",
+        "bytes": 1375232,
+        "sha256": "cd82962b7f46988e7007d71f9aa93543f7ba133ba3450f121e21f0105c6a6946"
+      },
+      "raw": {
+        "path": "test/reports/t833/steady-progress.jsonl",
+        "bytes": 31945,
+        "sha256": "cafb1d2fbae5f2a04f8d671152458398af269cc74ae1c9d1bc9b1a21ce33747a"
+      },
+      "embeddedBootAndFiveModulesEachExactlyOnce": true,
+      "pid": 37668,
+      "ownerTid": 7672,
+      "processStartTick": "134398300404890453",
+      "qpcFrequency": "10000000",
+      "selectedDevice": {
+        "vendorId": 32902,
+        "deviceId": 16024,
+        "driverVersion": 1656924,
+        "deviceName": "Intel(R) UHD Graphics 630",
+        "deviceApi": 4206807,
+        "effectiveApi": 4202496,
+        "deviceLUIDValid": true,
+        "shaderDenormPreserveFloat32": 1,
+        "shaderRoundingModeRTEFloat32": 1,
+        "shaderSignedZeroInfNanPreserveFloat32": 1,
+        "denormIndependence": 1,
+        "roundingIndependence": 2,
+        "qualification": "ELIGIBLE",
+        "deviceUUID": "8680983e020000000000000000000000",
+        "driverUUID": "33312e302e3130312e32313430000000",
+        "deviceLUID": "3cda000000000000",
+        "cacheUUID": "6d3c693169315a32653f663161356301",
+        "driverVersionTextFromUUID": "31.0.101.2140"
+      },
+      "queueFamily": 0,
+      "environmentSHA": "ad77d90c4a347e5ec47ff165b9be745ee527777a0958405dc008ed8bc02553af",
+      "bootPipelineNs": "13384497300",
+      "op65": {
+        "state": "QUALIFIED",
+        "tailSeal": 3235779329,
+        "tailError": 0
+      },
+      "op66": {
+        "state": "QUALIFIED",
+        "presence": [
+          1,
+          1
+        ],
+        "mismatchMasks": [
+          0,
+          0
+        ]
+      },
+      "edges": [
+        {
+          "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+          "call": "vkCreateComputePipelines",
+          "edge": "ENTER",
+          "role": "OP_00",
+          "moduleSHA": "ce59f3ea110c44d0f89cb816e32a47df9fb5e1b185ef1269b03e47796cf65b8a",
+          "pid": 37668,
+          "ownerTid": 7672,
+          "qpc": "15162861922343",
+          "vkResult": null
+        }
+      ],
+      "lastStage": "ENTER"
+    }
+  ],
+  "firstRunCpuSamples": [
+    {
+      "at": "2026-11-22T22:06:13.8729332+08:00",
+      "pid": 20752,
+      "elapsedSec": 271.5645885,
+      "cpuSec": 261.9375,
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t833-pc-handoff.exe",
+      "thread": {
+        "tid": 78476,
+        "cpuSec": 261.9375,
+        "state": "Running"
+      }
+    },
+    {
+      "at": "2026-11-22T22:06:48.2088109+08:00",
+      "pid": 20752,
+      "elapsedSec": 305.8987847,
+      "cpuSec": 294.546875,
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t833-pc-handoff.exe",
+      "thread": {
+        "tid": 78476,
+        "cpuSec": 294.53125,
+        "state": "Running"
+      }
+    }
+  ],
+  "firstRunSampleDeltas": {
+    "threadCpuSec": 32.59375,
+    "wallSec": 34.33419620000001
+  },
+  "firstCleanup": {
+    "pid": 20752,
+    "cleanup": "TEST_PROCESS_TERMINATED_NO_OWNER_RETIRE_RECEIPT"
+  },
+  "secondSupervisor": {
+    "pid": 37668,
+    "exit": 1,
+    "forced": true
+  },
+  "compiler": {
+    "file": {
+      "path": ".codex/local-test/g13-glslang/bin/glslang.exe",
+      "bytes": 5178368,
+      "sha256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d"
+    },
+    "version": "Glslang Version: 11:16.6.0",
+    "argv": [
+      "-V",
+      "--target-env",
+      "vulkan1.1",
+      "--spirv-val",
+      "--spirv-dis"
+    ]
+  },
+  "staticBoot": {
+    "bytes": 116772,
+    "sha256": "87980ac5ec4148ef8680d7e46fc331d1681be73a7a402c51610abe662894e9a3",
+    "counts": {
+      "instructions": 7652,
+      "OpFunction": 66,
+      "OpFunctionCall": 269,
+      "OpLabel": 742,
+      "OpLoopMerge": 45,
+      "OpSelectionMerge": 208,
+      "OpControlBarrier": 1,
+      "OpMemoryBarrier": 5
+    }
+  },
+  "baselineOtherRoles": [
+    {
+      "role": "OP_18",
+      "sourceBytes": 48957,
+      "moduleBytes": 264896,
+      "counts": {
+        "instructions": 17332,
+        "OpFunction": 67,
+        "OpFunctionCall": 485,
+        "OpLabel": 2082,
+        "OpLoopMerge": 61,
+        "OpSelectionMerge": 782,
+        "OpControlBarrier": 1,
+        "OpMemoryBarrier": 4
+      }
+    },
+    {
+      "role": "OP_37",
+      "sourceBytes": 49026,
+      "moduleBytes": 265648,
+      "counts": {
+        "instructions": 17372,
+        "OpFunction": 76,
+        "OpFunctionCall": 537,
+        "OpLabel": 1972,
+        "OpLoopMerge": 93,
+        "OpSelectionMerge": 647,
+        "OpControlBarrier": 1,
+        "OpMemoryBarrier": 4
+      }
+    },
+    {
+      "role": "OP_48",
+      "sourceBytes": 49073,
+      "moduleBytes": 261304,
+      "counts": {
+        "instructions": 17093,
+        "OpFunction": 95,
+        "OpFunctionCall": 692,
+        "OpLabel": 1706,
+        "OpLoopMerge": 78,
+        "OpSelectionMerge": 553,
+        "OpControlBarrier": 1,
+        "OpMemoryBarrier": 4
+      }
+    },
+    {
+      "role": "OP_61",
+      "sourceBytes": 12196,
+      "moduleBytes": 51112,
+      "counts": {
+        "instructions": 3142,
+        "OpFunction": 13,
+        "OpFunctionCall": 27,
+        "OpLabel": 232,
+        "OpLoopMerge": 15,
+        "OpSelectionMerge": 65,
+        "OpControlBarrier": 1,
+        "OpMemoryBarrier": 4
+      }
+    }
+  ],
+  "verifiedBaselineBitIdentical": true,
+  "variants": [
+    {
+      "role": "OP_00_FULL",
+      "opcodes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "privateProbeOpcode": 66,
+      "glesClosureBytes": 48695,
+      "sourceBytes": 49013,
+      "sourceSHA": "9fc91906490a6704bffe2eba196d7e7eb2b7e43c0ba26c97cfa68deeb4e28c5f",
+      "moduleBytes": 262996,
+      "moduleSHA": "ce59f3ea110c44d0f89cb816e32a47df9fb5e1b185ef1269b03e47796cf65b8a",
+      "noContraction": 95,
+      "staticCounts": {
+        "instructions": 17049,
+        "OpFunction": 88,
+        "OpFunctionCall": 498,
+        "OpLabel": 1853,
+        "OpLoopMerge": 94,
+        "OpSelectionMerge": 604,
+        "OpControlBarrier": 1,
+        "OpMemoryBarrier": 6
+      }
+    },
+    {
+      "role": "OP_00_0_5",
+      "opcodes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "privateProbeOpcode": 66,
+      "glesClosureBytes": 12683,
+      "sourceBytes": 13001,
+      "sourceSHA": "7790aaa5421d665335c4a175ca5806da7c27d8d3cfa4ef6f183e0bc46b13e5b8",
+      "moduleBytes": 56552,
+      "moduleSHA": "a42bb063c6ccb0402291d6bdb6bfe863cf6324771ba0f558c1a3666862cd6ea4",
+      "noContraction": 20,
+      "staticCounts": {
+        "instructions": 3598,
+        "OpFunction": 18,
+        "OpFunctionCall": 47,
+        "OpLabel": 389,
+        "OpLoopMerge": 19,
+        "OpSelectionMerge": 129,
+        "OpControlBarrier": 1,
+        "OpMemoryBarrier": 4
+      }
+    },
+    {
+      "role": "OP_00_6_11",
+      "opcodes": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "privateProbeOpcode": 66,
+      "glesClosureBytes": 35366,
+      "sourceBytes": 35684,
+      "sourceSHA": "6ac25487b8cefa69544dacd749ee61f9ad43db8088ed0c0981b235d3bbb6b1d5",
+      "moduleBytes": 183172,
+      "moduleSHA": "8e62c28be9da3d98e990a72fabf5c2e0d5597a028c1d3e51fd93ba4a294ab187",
+      "noContraction": 48,
+      "staticCounts": {
+        "instructions": 11846,
+        "OpFunction": 76,
+        "OpFunctionCall": 413,
+        "OpLabel": 1117,
+        "OpLoopMerge": 61,
+        "OpSelectionMerge": 341,
+        "OpControlBarrier": 1,
+        "OpMemoryBarrier": 6
+      }
+    },
+    {
+      "role": "OP_00_12_17",
+      "opcodes": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "privateProbeOpcode": 66,
+      "glesClosureBytes": 30242,
+      "sourceBytes": 30560,
+      "sourceSHA": "944d43934875a5e901c37f141388ce22b0454bbb9a07e2df62cbdce76145416b",
+      "moduleBytes": 154368,
+      "moduleSHA": "498b52f7ab8840a510f68a8427ec3394f2d0d5fe9f44481faa4d19b16948478f",
+      "noContraction": 40,
+      "staticCounts": {
+        "instructions": 10101,
+        "OpFunction": 71,
+        "OpFunctionCall": 355,
+        "OpLabel": 1067,
+        "OpLoopMerge": 55,
+        "OpSelectionMerge": 336,
+        "OpControlBarrier": 1,
+        "OpMemoryBarrier": 4
+      }
+    },
+    {
+      "role": "OP_00_6_8",
+      "opcodes": [
+        6,
+        7,
+        8
+      ],
+      "privateProbeOpcode": 66,
+      "glesClosureBytes": 25705,
+      "sourceBytes": 26023,
+      "sourceSHA": "2ac9a07c6eaa51535859f27efefe0ca6f1283449113c6b29fc1fb414a4f26a69",
+      "moduleBytes": 126476,
+      "moduleSHA": "0dbe6d536e14ef2410269152f2bae3d65db9eadf20441965b651ed3dd8cfd144",
+      "noContraction": 32,
+      "staticCounts": {
+        "instructions": 8246,
+        "OpFunction": 63,
+        "OpFunctionCall": 319,
+        "OpLabel": 798,
+        "OpLoopMerge": 40,
+        "OpSelectionMerge": 250,
+        "OpControlBarrier": 1,
+        "OpMemoryBarrier": 4
+      }
+    },
+    {
+      "role": "OP_00_9_11",
+      "opcodes": [
+        9,
+        10,
+        11
+      ],
+      "privateProbeOpcode": 66,
+      "glesClosureBytes": 18623,
+      "sourceBytes": 18941,
+      "sourceSHA": "fa303ac834b0c815a204c2e59c4d3d085c8c197025f4a26a4ab4df8c05bfc439",
+      "moduleBytes": 88944,
+      "moduleSHA": "aea0b1d38cab41f2f4e92eefd598b2c39e18dbb67554c5a53cda2db9cc0d265b",
+      "noContraction": 20,
+      "staticCounts": {
+        "instructions": 5670,
+        "OpFunction": 44,
+        "OpFunctionCall": 129,
+        "OpLabel": 504,
+        "OpLoopMerge": 27,
+        "OpSelectionMerge": 149,
+        "OpControlBarrier": 1,
+        "OpMemoryBarrier": 6
+      }
+    },
+    {
+      "role": "OP_00_OPCODE_7",
+      "opcodes": [
+        7
+      ],
+      "privateProbeOpcode": 66,
+      "glesClosureBytes": 22510,
+      "sourceBytes": 22828,
+      "sourceSHA": "53ca4a1c96050ade8987c4c2cf0b9a820adf634131d731f1f82f26e571c69477",
+      "moduleBytes": 108832,
+      "moduleSHA": "3d8817dc9ee484e7be0f24a0cc1fe9f16ffbfe49838579be11b2a72cfd81b8e9",
+      "noContraction": 12,
+      "staticCounts": {
+        "instructions": 7129,
+        "OpFunction": 60,
+        "OpFunctionCall": 307,
+        "OpLabel": 662,
+        "OpLoopMerge": 36,
+        "OpSelectionMerge": 197,
+        "OpControlBarrier": 1,
+        "OpMemoryBarrier": 4
+      }
+    }
+  ],
+  "plans": {
+    "source": {
+      "passes": 16,
+      "oldRoleUses": 8,
+      "splitRoleUses": 8,
+      "touchedPasses": 2
+    },
+    "quantum": {
+      "passes": 820,
+      "oldRoleUses": 99,
+      "splitRoleUses": 101,
+      "touchedPasses": 64
+    }
+  },
+  "live": "NOT_RUN_T834",
+  "staticValidation": {
+    "target": "vulkan1.1",
+    "sourceLimitBytes": 49152,
+    "descriptorSet": 0,
+    "bindings": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "layoutArrayStride": 16,
+    "localSize": [
+      64,
+      1,
+      1
+    ],
+    "pushOffsets": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20
+    ],
+    "floatModes": [
+      "DenormPreserve",
+      "SignedZeroInfNanPreserve",
+      "RoundingModeRTE"
+    ],
+    "includesOriginalPrivateProbe66": true
+  }
+}
