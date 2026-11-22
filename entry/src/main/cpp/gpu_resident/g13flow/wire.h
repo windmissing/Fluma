@@ -9,6 +9,9 @@
 #include <limits>
 #include <sstream>
 #include <string>
+#ifdef _WIN32
+#include "platform.h"
+#endif
 #include <time.h>
 namespace grs::g13 {
 using Config = std::array<uint32_t, 128>;
@@ -16,10 +19,14 @@ using Input = Config;
 using Permit = Config;
 using Completion = std::array<uint32_t, 256>;
 inline uint64_t Now() {
+#ifdef _WIN32
+  return ::grs::pc::TimeNs();
+#else
   timespec t{};
   return clock_gettime(CLOCK_MONOTONIC, &t) == 0
              ? uint64_t(t.tv_sec) * 1000000000ull + t.tv_nsec
              : 0;
+#endif
 }
 inline const uint64_t kBoot = Now();
 inline std::atomic<uint64_t> gGeneration{0};

@@ -1,10 +1,16 @@
 #pragma once
+#ifdef _WIN32
+#include "platform.h"
+#define GRS_CREATE_SURFACE(F) F(CreateWin32SurfaceKHR)
+#else
 #include <vulkan/vulkan.h>
+#define GRS_CREATE_SURFACE(F) F(CreateSurfaceOHOS)
+#endif
 
 // Resolved from the actual device loader so that missing entry points are
 // reported by the isolated probe instead of preventing the N-API module load.
 #define T742_INSTANCE_API(F)                                                    \
-  F(DestroyInstance) F(CreateSurfaceOHOS) F(DestroySurfaceKHR)                    \
+  F(DestroyInstance) GRS_CREATE_SURFACE(F) F(DestroySurfaceKHR)                    \
   F(EnumeratePhysicalDevices) F(GetPhysicalDeviceProperties)                     \
   F(GetPhysicalDeviceProperties2) F(EnumerateDeviceExtensionProperties)           \
   F(GetPhysicalDeviceQueueFamilyProperties) F(GetPhysicalDeviceSurfaceSupportKHR) \

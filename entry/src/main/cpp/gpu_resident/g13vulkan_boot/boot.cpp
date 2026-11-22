@@ -2,14 +2,18 @@
 #include "boot_contract.h"
 #include "vk_boot_spirv.h"
 #include "vulkan_api.h"
+#ifdef _WIN32
+#include "wsi.h"
+#else
 #include "../program_cache/mapped_build_id.h"
+#include <dlfcn.h>
+#include <hilog/log.h>
+#include <unistd.h>
+#endif
 
 #include <chrono>
-#include <dlfcn.h>
 #include <fstream>
-#include <hilog/log.h>
 #include <thread>
-#include <unistd.h>
 #include <vector>
 
 namespace grs::g13vk {
@@ -69,6 +73,11 @@ bool Has(const std::vector<VkExtensionProperties> &items, const char *name) {
   });
 }
 std::string ProcessStart() {
+#ifdef _WIN32
+  FILETIME start{}, exit{}, kernel{}, user{};
+  if (!GetProcessTimes(GetCurrentProcess(), &start, &exit, &kernel, &user)) return {};
+  return std::to_string((uint64_t(start.dwHighDateTime) << 32) | start.dwLowDateTime);
+#else
   std::ifstream stat("/proc/self/stat");
   std::string line, value;
   std::getline(stat, line);
@@ -80,6 +89,7 @@ std::string ProcessStart() {
     if (!(fields >> value))
       return "";
   return value;
+#endif
 }
 
 struct Buffer {
@@ -133,8 +143,13 @@ public:
       vk.DestroySurfaceKHR(instance, surface, nullptr);
     if (instance && vk.DestroyInstance)
       vk.DestroyInstance(instance, nullptr);
-    if (loader)
+    if (loader) {
+#ifdef _WIN32
+      FreeLibrary(loader);
+#else
       dlclose(loader);
+#endif
+    }
   }
   std::string Run();
   std::string Failed(const Failure &error) {
@@ -149,7 +164,11 @@ private:
   const Attempt &attempt;
   const Publish &publish;
   VulkanApi vk{};
+#ifdef _WIN32
+  HMODULE loader = nullptr;
+#else
   void *loader = nullptr;
+#endif
   uint32_t instanceApi = 0;
   VkInstance instance = VK_NULL_HANDLE;
   VkSurfaceKHR surface = VK_NULL_HANDLE;
@@ -173,8 +192,10 @@ private:
   void Checkpoint(const char *next) {
     stage = next;
     Require(publish(Receipt("RUNNING", "")), "ATTEMPT_REVOKED");
+#ifndef _WIN32
     OH_LOG_Print(LOG_APP, LOG_INFO, 0x0D00143, kTag, "ticket=%{public}llu stage=%{public}s",
                  static_cast<unsigned long long>(attempt.ticket), stage);
+#endif
   }
   std::string Receipt(const char *state, const std::string &detail) {
     std::ostringstream json;
@@ -204,6 +225,12 @@ private:
 
 void Boot::Open() {
   Checkpoint("VULKAN_LOADER");
+#ifdef _WIN32
+  loader = LoadLibraryExW(L"vulkan-1.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+  Require(loader != nullptr, "LOAD_SYSTEM_VULKAN_FAILED");
+  auto proc = GetProcAddress(loader, "vkGetInstanceProcAddr");
+  Require(proc != nullptr, "MISSING_vkGetInstanceProcAddr");
+#else
   loader = dlopen("libvulkan.so", RTLD_NOW | RTLD_LOCAL);
   if (!loader) {
     const char *error = dlerror();
@@ -219,6 +246,7 @@ void Boot::Open() {
     if (grs::MappedBuildId(where.dli_fbase, loaderId))
       fields << ",\"loaderBuildId\":" << Quote(loaderId);
   }
+#endif
   vk.GetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(proc);
   vk.EnumerateInstanceVersion = reinterpret_cast<PFN_vkEnumerateInstanceVersion>(
       vk.GetInstanceProcAddr(nullptr, "vkEnumerateInstanceVersion"));
@@ -238,9 +266,13 @@ void Boot::Open() {
       [&](uint32_t *n, VkExtensionProperties *p) {
         return vk.EnumerateInstanceExtensionProperties(nullptr, n, p);
       }, "vkEnumerateInstanceExtensionProperties");
+#ifdef _WIN32
+  const std::array<const char *, 2> names{VK_KHR_SURFACE_EXTENSION_NAME, "VK_KHR_win32_surface"};
+#else
   const std::array<const char *, 2> names{VK_KHR_SURFACE_EXTENSION_NAME, VK_OHOS_SURFACE_EXTENSION_NAME};
+#endif
   Require(Has(extensions, names[0]), "MISSING_VK_KHR_surface");
-  Require(Has(extensions, names[1]), "MISSING_VK_OHOS_surface");
+  Require(Has(extensions, names[1]), "MISSING_PLATFORM_SURFACE");
   Checkpoint("INSTANCE_CREATE");
   VkApplicationInfo app{VK_STRUCTURE_TYPE_APPLICATION_INFO};
   app.pApplicationName = "G13 Vulkan BOOT";
@@ -251,16 +283,23 @@ void Boot::Open() {
   info.ppEnabledExtensionNames = names.data();
   Check(vk.CreateInstance(&info, nullptr, &instance), "vkCreateInstance");
   fields << ",\"instanceApi\":" << instanceApi
-         << ",\"instanceExtensions\":[\"VK_KHR_surface\",\"VK_OHOS_surface\"]";
+         << ",\"instanceExtensions\":[" << Quote(names[0]) << ',' << Quote(names[1]) << ']';
 #define T742_LOAD(name)                                                           \
   vk.name = reinterpret_cast<PFN_vk##name>(vk.GetInstanceProcAddr(instance, "vk" #name)); \
   Require(vk.name != nullptr, "MISSING_vk" #name);
   T742_INSTANCE_API(T742_LOAD)
 #undef T742_LOAD
+#ifdef _WIN32
+  Checkpoint("WIN32_SURFACE");
+  VkWin32SurfaceCreateInfoKHR win32{VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR, nullptr, 0,
+                                   GetModuleHandleW(nullptr), attempt.window};
+  Check(vk.CreateWin32SurfaceKHR(instance, &win32, nullptr, &surface), "vkCreateWin32SurfaceKHR");
+#else
   Checkpoint("XCOMPONENT_SURFACE");
   VkSurfaceCreateInfoOHOS infoSurface{VK_STRUCTURE_TYPE_SURFACE_CREATE_INFO_OHOS};
   infoSurface.window = attempt.window;
   Check(vk.CreateSurfaceOHOS(instance, &infoSurface, nullptr, &surface), "vkCreateSurfaceOHOS");
+#endif
   fields << ",\"surfaceCreated\":true";
 }
 
@@ -279,6 +318,14 @@ Candidate Boot::Select(const Profile &profile) {
     candidate.physical = devices[index];
     auto &properties = candidate.properties;
     vk.GetPhysicalDeviceProperties(candidate.physical, &properties);
+#ifdef _WIN32
+    if (properties.deviceType != VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU &&
+        properties.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+      if (index) diagnostics << ',';
+      diagnostics << "{\"qualification\":\"NON_HARDWARE_DEVICE\",\"deviceName\":" << Quote(properties.deviceName) << '}';
+      continue;
+    }
+#endif
     const uint32_t api = std::min(properties.apiVersion, instanceApi);
     candidate.useExtension = api < VK_API_VERSION_1_2;
     bool extension = false;
@@ -305,8 +352,18 @@ Candidate Boot::Select(const Profile &profile) {
       continue;
     }
     VkPhysicalDeviceFloatControlsProperties floats{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES};
+#ifdef _WIN32
+    VkPhysicalDeviceIDProperties ids{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES};
+    floats.pNext = &ids;
+#endif
     VkPhysicalDeviceProperties2 properties2{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2, &floats};
     vk.GetPhysicalDeviceProperties2(candidate.physical, &properties2);
+#ifdef _WIN32
+    diagnostics << ",\"deviceUUIDBytes\":" << Words(ids.deviceUUID)
+                << ",\"driverUUIDBytes\":" << Words(ids.driverUUID)
+                << ",\"deviceLUIDValid\":" << (ids.deviceLUIDValid ? "true" : "false")
+                << ",\"deviceLUIDBytes\":" << Words(ids.deviceLUID);
+#endif
     diagnostics << ",\"shaderDenormPreserveFloat32\":" << floats.shaderDenormPreserveFloat32
                 << ",\"shaderRoundingModeRTEFloat32\":" << floats.shaderRoundingModeRTEFloat32
                 << ",\"shaderSignedZeroInfNanPreserveFloat32\":" << floats.shaderSignedZeroInfNanPreserveFloat32
@@ -372,6 +429,9 @@ Candidate Boot::Select(const Profile &profile) {
                     surfaceQueryFailed ? "SURFACE_SUPPORT_QUERY_FAILED" : "NO_COMPUTE_QUEUE") << "\"}";
     bool candidateCombined = candidate.present && (candidate.queueFlags & VK_QUEUE_GRAPHICS_BIT);
     bool choiceCombined = choice.present && (choice.queueFlags & VK_QUEUE_GRAPHICS_BIT);
+#ifdef _WIN32
+    if (!candidateCombined) continue;
+#endif
     if (candidate.family != UINT32_MAX && (!choice.physical || (candidateCombined && !choiceCombined))) {
       choice = candidate;
       chosenIndex = index;
@@ -393,16 +453,31 @@ void Boot::OpenDevice(const Candidate &candidate) {
   queueInfo.queueFamilyIndex = candidate.family;
   queueInfo.queueCount = 1;
   queueInfo.pQueuePriorities = &priority;
-  const char *name = VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME;
+  std::array<const char *, 2> names{};
+  uint32_t nameCount = 0;
+  if (candidate.useExtension) names[nameCount++] = VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME;
+#ifdef _WIN32
+  if (attempt.presentBoot) {
+    const auto extensions = Enumerated<VkExtensionProperties>(
+        [&](uint32_t *n, VkExtensionProperties *p) {
+          return vk.EnumerateDeviceExtensionProperties(candidate.physical, nullptr, n, p);
+        }, "vkEnumerateDeviceExtensionProperties");
+    Require(Has(extensions, VK_KHR_SWAPCHAIN_EXTENSION_NAME), "MISSING_VK_KHR_swapchain");
+    names[nameCount++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+  }
+#endif
   VkDeviceCreateInfo info{VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO};
   info.queueCreateInfoCount = 1;
   info.pQueueCreateInfos = &queueInfo;
-  if (candidate.useExtension) {
-    info.enabledExtensionCount = 1;
-    info.ppEnabledExtensionNames = &name;
-  }
+  info.enabledExtensionCount = nameCount;
+  info.ppEnabledExtensionNames = names.data();
   Check(vk.CreateDevice(candidate.physical, &info, nullptr, &device), "vkCreateDevice");
-  fields << ",\"deviceExtensions\":" << (candidate.useExtension ? "[\"VK_KHR_shader_float_controls\"]" : "[]");
+  fields << ",\"deviceExtensions\":[";
+  for (uint32_t i = 0; i < nameCount; ++i) {
+    if (i) fields << ',';
+    fields << Quote(names[i]);
+  }
+  fields << ']';
 #define T742_LOAD(name)                                                           \
   vk.name = reinterpret_cast<PFN_vk##name>(vk.GetDeviceProcAddr(device, "vk" #name)); \
   Require(vk.name != nullptr, "MISSING_vk" #name);
@@ -643,6 +718,14 @@ std::string Boot::Read(const std::array<uint32_t, 18688> &control) {
 }
 
 std::string Boot::Run() {
+#ifdef _WIN32
+  Checkpoint("HOST_IDENTITY");
+  const std::string start = ProcessStart();
+  Require(!start.empty(), "PROCESS_START_TICK_UNAVAILABLE");
+  fields << ",\"platform\":\"WIN32\",\"pid\":" << GetCurrentProcessId()
+         << ",\"processStartTick\":" << Quote(start) << ",\"ownerTid\":" << GetCurrentThreadId()
+         << ",\"qpcFrequency\":\"" << pc::QpcFrequency() << "\",\"moduleSHA\":" << Quote(kModuleSHA);
+#else
   char buildId[129]{};
   Dl_info module{};
   Checkpoint("HOST_IDENTITY");
@@ -652,8 +735,9 @@ std::string Boot::Run() {
   Require(!start.empty(), "PROCESS_START_TICK_UNAVAILABLE");
   fields << ",\"pid\":" << getpid() << ",\"processStartTick\":" << Quote(start)
          << ",\"ownerTid\":" << gettid() << ",\"mappedBuildId\":" << Quote(buildId)
-         << ",\"mappedElf\":" << Quote(module.dli_fname) << ",\"moduleSHA\":" << Quote(kModuleSHA)
-         << ",\"sourceSHA\":" << Quote(kSourceSHA) << ",\"parentSourceSHA\":" << Quote(kParentSHA)
+         << ",\"mappedElf\":" << Quote(module.dli_fname) << ",\"moduleSHA\":" << Quote(kModuleSHA);
+#endif
+  fields << ",\"sourceSHA\":" << Quote(kSourceSHA) << ",\"parentSourceSHA\":" << Quote(kParentSHA)
          << ",\"configSHA\":" << Quote(kConfigSHA) << ",\"seedSHA\":" << Quote(kSeedReceiptSHA)
          << ",\"layoutSHA\":" << Quote(kHash_layoutSHA) << ",\"mathSHA\":" << Quote(kHash_mathSHA);
   Config config{};
@@ -718,7 +802,35 @@ std::string Boot::Run() {
   fields << ",\"fenceWaitVkResult\":" << int(wait) << ",\"fencePollTimeouts\":" << timeouts;
   Check(wait, "vkWaitForFences");
   Checkpoint("FENCED_READBACK");
-  return Read(control);
+  const auto numeric = Read(control);
+#ifdef _WIN32
+  if (attempt.presentBoot) {
+    Checkpoint("BOOT_DIAGNOSTIC_WSI");
+    const auto writeFrame = [&](const pc::Frame &frame) {
+      fields << ",\"windowFrame\":{\"kind\":\"BOOT_DIAGNOSTIC\",\"acceptedRoot\":null,\"stage\":" << Quote(frame.stage)
+             << ",\"width\":" << frame.width << ",\"height\":" << frame.height << ",\"format\":" << frame.format
+             << ",\"images\":" << frame.images << ",\"imageIndex\":" << frame.imageIndex
+             << ",\"acquire\":" << int(frame.acquire) << ",\"submit\":" << int(frame.submit)
+             << ",\"fence\":" << int(frame.fence) << ",\"present\":" << int(frame.present)
+             << ",\"imagePresent\":" << int(frame.imagePresent) << ",\"error\":" << int(frame.error)
+             << ",\"stale\":" << (frame.stale ? "true" : "false")
+             << ",\"presentEnterQpc\":\"" << frame.presentEnter << "\",\"presentExitQpc\":\"" << frame.presentExit
+             << "\",\"pixel\":" << (frame.pixelRead ? std::to_string(frame.pixel) : "null") << '}';
+    };
+    const auto frame = pc::PresentBoot(vk, instance, candidate.physical, device, queue, candidate.family,
+        surface, buffers[kControl].handle, buffers[kStaging].handle, buffers[kStaging].memory,
+        buffers[kStaging].flags, attempt.window, attempt.current, [&](const pc::Frame &visible) {
+          writeFrame(visible);
+          publish(Receipt("BOOT_DIAGNOSTIC_PRESENT_QUEUED", ""));
+        });
+    if (frame.error != VK_SUCCESS) {
+      writeFrame(frame);
+      return Receipt(frame.stale ? "WINDOW_STALE" : "WSI_FAILED", frame.stage);
+    }
+    return Receipt("BOOT_DIAGNOSTIC_RETIRED", "");
+  }
+#endif
+  return numeric;
 }
 } // namespace
 
