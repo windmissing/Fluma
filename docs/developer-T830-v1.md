@@ -2,7 +2,7 @@
 
 Windows x64 PE 已接通真实 HWND、硬件 surface、graphics/compute/present 同队列、swapchain 和 QPC。UI 线程处理 resize、DPI、最小化、撤权与退出，owner 完成处理后 UI 销毁窗口。指针事件记录原像素、DPI、几何代和 receipt，尚未进入业务 SOURCE。
 
-自测在 Intel UHD Graphics 630 上以原 G13 BOOT SPIR-V 执行。片元着色器直接读 BOOT 的 GPU CTRL 封印，swapchain 中心像素经 transfer 和 fence 回读为 0xff00ff00。784×461、两个交换链图像，acquire、graphics submit、fence、Present 和该 image 返回均为 0。当前桌面模式是 60 Hz。单帧诊断先等 graphics fence 再调用 Present，不把 gpu fence 解释为真实扫描输出。 [原始 JSONL](../test/reports/t830/window.jsonl) · [工件和设备收据](../test/reports/t830/receipt.json)
+自测在 Intel UHD Graphics 630 上以原 G13 BOOT SPIR-V 执行。片元着色器直接读 BOOT 的 GPU CTRL 封印，swapchain 中心像素经 transfer 和 fence 回读为 0xff00ff00。784×461、两个交换链图像，acquire、graphics submit、fence、Present 和该 image 返回均为 0。当前桌面模式是 60 Hz。调整窗口尺寸后，几何代 2→3 的两次诊断呈现和最终关闭均有回执。单帧诊断先等 graphics fence 再调用 Present，不把 gpu fence 解释为真实扫描输出。 [原始 JSONL](../test/reports/t830/window.jsonl) · [工件和设备收据](../test/reports/t830/receipt.json) · [窗口重建复核](../test/reports/t830/resize.json)
 
 在 MSVC x64 开发者环境中复现。G13_GLSLANG 指向 glslang，VULKAN_HEADERS 指向包含 vulkan 目录的 SDK include 路径。
 

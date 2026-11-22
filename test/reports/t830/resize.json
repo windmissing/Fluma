@@ -1,0 +1,58 @@
+{
+  "schema": "T830_WIN32_RESIZE_SMOKE_V1",
+  "source": ".codex/local-test/t830-resize.jsonl",
+  "sourceSHA": "b3d6999db186d686849490b207cf33ca43216909d27b10e2b8e895d870eee666",
+  "present": [
+    {
+      "geometry": "2",
+      "frame": {
+        "kind": "BOOT_DIAGNOSTIC",
+        "acceptedRoot": null,
+        "stage": "DIAGNOSTIC_PRESENT_QUEUED",
+        "width": 784,
+        "height": 461,
+        "format": 44,
+        "images": 2,
+        "imageIndex": 0,
+        "acquire": 0,
+        "submit": 0,
+        "fence": 0,
+        "present": 0,
+        "imagePresent": 0,
+        "error": 0,
+        "stale": false,
+        "presentEnterQpc": "15162463289189",
+        "presentExitQpc": "15162463289329",
+        "pixel": 4278255360
+      },
+      "pid": 20968,
+      "ownerTid": 80184
+    },
+    {
+      "geometry": "3",
+      "frame": {
+        "kind": "BOOT_DIAGNOSTIC",
+        "acceptedRoot": null,
+        "stage": "DIAGNOSTIC_PRESENT_QUEUED",
+        "width": 904,
+        "height": 501,
+        "format": 44,
+        "images": 2,
+        "imageIndex": 0,
+        "acquire": 0,
+        "submit": 0,
+        "fence": 0,
+        "present": 0,
+        "imagePresent": 0,
+        "error": 0,
+        "stale": false,
+        "presentEnterQpc": "15162613060575",
+        "presentExitQpc": "15162613060707",
+        "pixel": 4278255360
+      },
+      "pid": 20968,
+      "ownerTid": 80184
+    }
+  ],
+  "terminal": "BOOT_DIAGNOSTIC_RETIRED"
+}
