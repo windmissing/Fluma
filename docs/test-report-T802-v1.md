@@ -43,3 +43,25 @@ utime 159600→367764 ticks ≈ **35 分钟 CPU**）——编译真实执行（�
 **结论**：T798 writer 修复仍未测到（两次环境中断：v1 休眠杀、v2 编译
 异常延长）。**前置（二选一）**：低干扰运行（起始单次唤醒+改设置延长
 亮屏）或 developer 缩短编译时长。按卡面"缺证按原失败报告"如实记。
+
+
+## v3 追加（2026-11-22 17:55，effector；T805 工件纠正后 sidecar 完整采获——writer 修复验证通过）
+
+**T805 归因吸收**：v1/v2 错用 T798 default 包（无 SOURCE 导出标记）——
+正确目标是 T798 **bootSource** 包（da5ec9b4，DSO f96d365d，内嵌 BOOT
+22318B+SOURCE 41767B）。
+
+T802-v3：bootSource 包签 PASS（f39bcb3a）→ 安装 → 单次 Configure
+（pid 57798）**5.5 分钟完整跑完无中断** → PUMP code=6 DEADLINE。
+
+**sidecar 完整采获（writer 修复验证通过）**：
+- `g9rx-source-terminal.json`（12641B，sha c8a61f0e）——SAVED 日志行：
+  G9RxSourceExport revision=T798 ticket=1 pid=57798 kind=terminal
+- `g9rx-source-retirement.json`（sha 18cba1eb）——退役后自动写入
+- schema=`RX_SOURCE_EXPORT_V1`，trace 含 firstReject（**PRE_FENCE_CREATE
+  DEADLINE code=6**，deadlineNs 76698760560938/nowNs 76698804642500）、
+  recentPass（PRE_FLUSH）、fences（execution null=deadline 在 fence 创建
+  前；retirement create+wait EXIT）
+
+**T793 mkdtempSync 修复 VERIFIED**。RX 首拒结构化原件齐备（T765/T785
+reader 适用）。pulse age 可计算。

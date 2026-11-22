@@ -1,0 +1,36 @@
+{
+ "revision": "T802_V3_BOOT_SOURCE_SIDECAR_CAPTURED_V1",
+ "date": "2026-11-22 17:55",
+ "package": {
+  "task": "T802-v3 (T805-corrected: T798 BOOT_SOURCE package da5ec9b4)",
+  "signedSha": "f39bcb3a",
+  "mappedBuildId": "f96d365d hilog verified"
+ },
+ "run": {
+  "entry": "single real Configure pid 57798 ticket 1",
+  "chain": "complete to SOURCE_REFLECT qualified -> PUMP_FAILED code=6 DEADLINE",
+  "duration": "~5.5min completed WITHOUT interruption"
+ },
+ "sidecarCaptured": {
+  "terminal": "g9rx-source-terminal.json 12641B sha c8a61f0e (SAVED log: G9RxSourceExport revision=T798 ticket=1 pid=57798 kind=terminal)",
+  "retirement": "g9rx-source-retirement.json sha 18cba1eb (auto-written after retirement)",
+  "schema": "RX_SOURCE_EXPORT_V1 full trace"
+ },
+ "trace": {
+  "firstReject": {
+   "phase": "PRE_FENCE_CREATE",
+   "reason": "DEADLINE",
+   "code": 6,
+   "deadlineNs": "76698760560938",
+   "nowNs": "76698804642500"
+  },
+  "recentPass": {
+   "phase": "PRE_FLUSH",
+   "code": 0
+  },
+  "fences": "execution null (deadline before fence create), retirement create+wait EXIT handle 1",
+  "status": "firstFailure=6 commit=0 quanta=0"
+ },
+ "T793Fix": "VERIFIED \u2014 mkdtempSync template fix works, RX_SOURCE_EXPORT_V1 emitted, files persisted with path+sha in log",
+ "route": "T765/T785 reader on sidecar JSONs; RX first-reject structured originals complete"
+}
