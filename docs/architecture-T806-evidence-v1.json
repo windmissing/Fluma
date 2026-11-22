@@ -1,0 +1,880 @@
+{
+  "unit": "ns",
+  "runs": {
+    "p8": {
+      "archive": {
+        "path": "test/reports/t491/t804/p8.jsonl",
+        "bytes": 55364,
+        "sha256": "d4bba0430ce7781bb62eb12394c8947423157bd43e264141820045539e576e19"
+      },
+      "identity": {
+        "schema": "DM_BOOT_ATTEMPT_V1",
+        "stage": "ATTEMPT_IDENTITY",
+        "ticket": "1",
+        "pid": 42993,
+        "processStartTick": "7405900",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "74059174391094",
+        "owner": "1",
+        "context": "74059174391094"
+      },
+      "beginNs": 74377525046719,
+      "deadlineNs": 74377775046719,
+      "cursor": 9,
+      "dispatches": 9,
+      "barriers": 9,
+      "copyBarriers": 1,
+      "rootResult": 2,
+      "root": {
+        "wall": 1178750,
+        "cpu": 1176562
+      },
+      "typed": false,
+      "committed": false,
+      "commit": 0,
+      "quanta": 0,
+      "fifo": 1,
+      "exitCode": 0,
+      "executionFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": false,
+        "handle": null,
+        "polls": 0,
+        "lastWaitRaw": null,
+        "lastPollNs": null,
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 157,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "74377810427500",
+        "signaled": true
+      },
+      "retirementState": "DRAINED",
+      "lastTimeout": {
+        "api": [
+          "74377809230313",
+          "74377809249375",
+          "318340340624",
+          "318340358905"
+        ],
+        "handle": "1",
+        "raw": 37147,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "signal": {
+        "api": [
+          "74377810394219",
+          "74377810417500",
+          "318340426249",
+          "318340447811"
+        ],
+        "handle": "1",
+        "raw": 37146,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "retirementBracketNs": [
+        284183594,
+        285370781
+      ],
+      "retirementCreate": {
+        "wall": 96218125,
+        "cpu": 95892500
+      },
+      "copy": [
+        {
+          "bytes": 591872,
+          "api": {
+            "wall": 182343,
+            "cpu": 183437
+          },
+          "barrier": {
+            "wall": 2656,
+            "cpu": 2656
+          }
+        }
+      ],
+      "firstReject": null,
+      "gpu": {
+        "domain": "GL_TIMESTAMP_EXT",
+        "units": "ns",
+        "status": "NOT_REQUESTED",
+        "counterBits": 0,
+        "initialDisjoint": null,
+        "finalDisjoint": null,
+        "gl": 0,
+        "markers": {
+          "op8.begin": null,
+          "op8.end": null,
+          "op9.begin": null,
+          "op9.end": null,
+          "arena1.begin": null,
+          "arena1.end": null,
+          "arena2.begin": null,
+          "arena2.end": null,
+          "op11.begin": null,
+          "op11.end": null
+        }
+      },
+      "stopEvent": [
+        "DIAGNOSTIC_PREFIX",
+        "STOP",
+        "74377526215157",
+        9,
+        null,
+        null
+      ],
+      "prefixFlush": {
+        "wall": 4063,
+        "cpu": 3906
+      }
+    },
+    "p9": {
+      "archive": {
+        "path": "test/reports/t491/t804/p9.jsonl",
+        "bytes": 60114,
+        "sha256": "a9df503635b4b14203de52142e38ef8ab658ab1fd57cb4f0780a499e3460edca"
+      },
+      "identity": {
+        "schema": "DM_BOOT_ATTEMPT_V1",
+        "stage": "ATTEMPT_IDENTITY",
+        "ticket": "1",
+        "pid": 46290,
+        "processStartTick": "7462216",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "74622315928125",
+        "owner": "1",
+        "context": "74622315928125"
+      },
+      "beginNs": 74942228773438,
+      "deadlineNs": 74942478773438,
+      "cursor": 10,
+      "dispatches": 10,
+      "barriers": 10,
+      "copyBarriers": 1,
+      "rootResult": 2,
+      "root": {
+        "wall": 1182656,
+        "cpu": 1180937
+      },
+      "typed": false,
+      "committed": false,
+      "commit": 0,
+      "quanta": 0,
+      "fifo": 1,
+      "exitCode": 0,
+      "executionFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": false,
+        "handle": null,
+        "polls": 0,
+        "lastWaitRaw": null,
+        "lastPollNs": null,
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 189,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "74942545662657",
+        "signaled": true
+      },
+      "retirementState": "DRAINED",
+      "lastTimeout": {
+        "api": [
+          "74942544444844",
+          "74942544472969",
+          "319882782222",
+          "319882806753"
+        ],
+        "handle": "1",
+        "raw": 37147,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "signal": {
+        "api": [
+          "74942545630157",
+          "74942545652969",
+          "319882899253",
+          "319882921284"
+        ],
+        "handle": "1",
+        "raw": 37146,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "retirementBracketNs": [
+        315671406,
+        316879531
+      ],
+      "retirementCreate": {
+        "wall": 92181406,
+        "cpu": 92044843
+      },
+      "copy": [
+        {
+          "bytes": 591872,
+          "api": {
+            "wall": 182500,
+            "cpu": 183438
+          },
+          "barrier": {
+            "wall": 2656,
+            "cpu": 2656
+          }
+        }
+      ],
+      "firstReject": null,
+      "gpu": {
+        "domain": "GL_TIMESTAMP_EXT",
+        "units": "ns",
+        "status": "NOT_REQUESTED",
+        "counterBits": 0,
+        "initialDisjoint": null,
+        "finalDisjoint": null,
+        "gl": 0,
+        "markers": {
+          "op8.begin": null,
+          "op8.end": null,
+          "op9.begin": null,
+          "op9.end": null,
+          "arena1.begin": null,
+          "arena1.end": null,
+          "arena2.begin": null,
+          "arena2.end": null,
+          "op11.begin": null,
+          "op11.end": null
+        }
+      },
+      "stopEvent": [
+        "DIAGNOSTIC_PREFIX",
+        "STOP",
+        "74942229946563",
+        10,
+        null,
+        null
+      ],
+      "prefixFlush": {
+        "wall": 3750,
+        "cpu": 3750
+      }
+    },
+    "pcopies": {
+      "archive": {
+        "path": "test/reports/t491/t804/pcopies.jsonl",
+        "bytes": 63480,
+        "sha256": "85a588c3e7f264c02260239d759ddfdf60f5907bc6f7eb60de74effd74a99f43"
+      },
+      "identity": {
+        "schema": "DM_BOOT_ATTEMPT_V1",
+        "stage": "ATTEMPT_IDENTITY",
+        "ticket": "1",
+        "pid": 49131,
+        "processStartTick": "7516994",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "75170103432969",
+        "owner": "1",
+        "context": "75170103432969"
+      },
+      "beginNs": 75489535979688,
+      "deadlineNs": 75489785979688,
+      "cursor": 10,
+      "dispatches": 10,
+      "barriers": 10,
+      "copyBarriers": 3,
+      "rootResult": 2,
+      "root": {
+        "wall": 92247812,
+        "cpu": 92075781
+      },
+      "typed": false,
+      "committed": false,
+      "commit": 0,
+      "quanta": 0,
+      "fifo": 1,
+      "exitCode": 0,
+      "executionFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": false,
+        "handle": null,
+        "polls": 0,
+        "lastWaitRaw": null,
+        "lastPollNs": null,
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 199,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "75489860253125",
+        "signaled": true
+      },
+      "retirementState": "DRAINED",
+      "lastTimeout": {
+        "api": [
+          "75489858967032",
+          "75489858985938",
+          "319414439686",
+          "319414457811"
+        ],
+        "handle": "1",
+        "raw": 37147,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "signal": {
+        "api": [
+          "75489860217500",
+          "75489860243125",
+          "319414566875",
+          "319414589218"
+        ],
+        "handle": "1",
+        "raw": 37146,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "retirementBracketNs": [
+        322987344,
+        324263437
+      ],
+      "retirementCreate": {
+        "wall": 25782,
+        "cpu": 25937
+      },
+      "copy": [
+        {
+          "bytes": 591872,
+          "api": {
+            "wall": 167969,
+            "cpu": 168906
+          },
+          "barrier": {
+            "wall": 2813,
+            "cpu": 2813
+          }
+        },
+        {
+          "bytes": 12767232,
+          "api": {
+            "wall": 91032812,
+            "cpu": 90865000
+          },
+          "barrier": {
+            "wall": 4063,
+            "cpu": 3906
+          }
+        },
+        {
+          "bytes": 12767232,
+          "api": {
+            "wall": 29688,
+            "cpu": 29844
+          },
+          "barrier": {
+            "wall": 1718,
+            "cpu": 1718
+          }
+        }
+      ],
+      "firstReject": null,
+      "gpu": {
+        "domain": "GL_TIMESTAMP_EXT",
+        "units": "ns",
+        "status": "NOT_REQUESTED",
+        "counterBits": 0,
+        "initialDisjoint": null,
+        "finalDisjoint": null,
+        "gl": 0,
+        "markers": {
+          "op8.begin": null,
+          "op8.end": null,
+          "op9.begin": null,
+          "op9.end": null,
+          "arena1.begin": null,
+          "arena1.end": null,
+          "arena2.begin": null,
+          "arena2.end": null,
+          "op11.begin": null,
+          "op11.end": null
+        }
+      },
+      "stopEvent": [
+        "DIAGNOSTIC_PREFIX",
+        "STOP",
+        "75489628214063",
+        10,
+        null,
+        null
+      ],
+      "prefixFlush": {
+        "wall": 2500,
+        "cpu": 2344
+      }
+    },
+    "p11": {
+      "archive": {
+        "path": "test/reports/t491/t804/p11.jsonl",
+        "bytes": 60427,
+        "sha256": "9b930e04bc983418236ab2d7a9856eca061fe27ca716c82b3463c3f40fe069b4"
+      },
+      "identity": {
+        "schema": "DM_BOOT_ATTEMPT_V1",
+        "stage": "ATTEMPT_IDENTITY",
+        "ticket": "1",
+        "pid": 52496,
+        "processStartTick": "7570131",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "75701477869532",
+        "owner": "1",
+        "context": "75701477869532"
+      },
+      "beginNs": 76018652057969,
+      "deadlineNs": 76018902057969,
+      "cursor": 12,
+      "dispatches": 12,
+      "barriers": 12,
+      "copyBarriers": 3,
+      "rootResult": 2,
+      "root": {
+        "wall": 96947500,
+        "cpu": 96894531
+      },
+      "typed": false,
+      "committed": false,
+      "commit": 0,
+      "quanta": 0,
+      "fifo": 1,
+      "exitCode": 0,
+      "executionFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": false,
+        "handle": null,
+        "polls": 0,
+        "lastWaitRaw": null,
+        "lastPollNs": null,
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 148,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "76019001243750",
+        "signaled": true
+      },
+      "retirementState": "DRAINED",
+      "lastTimeout": {
+        "api": [
+          "76018999931719",
+          "76018999945625",
+          "317246727055",
+          "317246740336"
+        ],
+        "handle": "1",
+        "raw": 37147,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "signal": {
+        "api": [
+          "76019001223594",
+          "76019001237657",
+          "317246781274",
+          "317246794555"
+        ],
+        "handle": "1",
+        "raw": 37146,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "retirementBracketNs": [
+        347873750,
+        349179688
+      ],
+      "retirementCreate": {
+        "wall": 78095937,
+        "cpu": 78097813
+      },
+      "copy": [
+        {
+          "bytes": 591872,
+          "api": {
+            "wall": 163750,
+            "cpu": 164687
+          },
+          "barrier": {
+            "wall": 2813,
+            "cpu": 2813
+          }
+        },
+        {
+          "bytes": 12767232,
+          "api": {
+            "wall": 95621562,
+            "cpu": 95572812
+          },
+          "barrier": {
+            "wall": 4062,
+            "cpu": 3906
+          }
+        },
+        {
+          "bytes": 12767232,
+          "api": {
+            "wall": 28907,
+            "cpu": 29219
+          },
+          "barrier": {
+            "wall": 1719,
+            "cpu": 1719
+          }
+        }
+      ],
+      "firstReject": null,
+      "gpu": {
+        "domain": "GL_TIMESTAMP_EXT",
+        "units": "ns",
+        "status": "NOT_REQUESTED",
+        "counterBits": 0,
+        "initialDisjoint": null,
+        "finalDisjoint": null,
+        "gl": 0,
+        "markers": {
+          "op8.begin": null,
+          "op8.end": null,
+          "op9.begin": null,
+          "op9.end": null,
+          "arena1.begin": null,
+          "arena1.end": null,
+          "arena2.begin": null,
+          "arena2.end": null,
+          "op11.begin": null,
+          "op11.end": null
+        }
+      },
+      "stopEvent": [
+        "DIAGNOSTIC_PREFIX",
+        "STOP",
+        "76018748994844",
+        12,
+        null,
+        null
+      ],
+      "prefixFlush": {
+        "wall": 3282,
+        "cpu": 3125
+      }
+    },
+    "g1-gpu-timing": {
+      "archive": {
+        "path": "test/reports/t491/t804/g1-gpu-timing.jsonl",
+        "bytes": 44223,
+        "sha256": "aab7ed6cc1af757d922368c0affced63a0d3792f96bb20330baa54caf4b115ba"
+      },
+      "identity": {
+        "schema": "DM_BOOT_ATTEMPT_V1",
+        "stage": "ATTEMPT_IDENTITY",
+        "ticket": "1",
+        "pid": 39879,
+        "processStartTick": "7350434",
+        "driverMappedBuildId": "09befda4647ef0d3b440ac5b880587d8a5c9e057",
+        "driverMappedPath": "/data/local/tmp/t801bin/g9_dm_differential",
+        "run": "73504503212969",
+        "owner": "1",
+        "context": "73504503212969"
+      },
+      "beginNs": 73823619980625,
+      "deadlineNs": 73823869980625,
+      "cursor": 8,
+      "dispatches": 9,
+      "barriers": 9,
+      "copyBarriers": 1,
+      "rootResult": 6,
+      "root": {
+        "wall": 263926094,
+        "cpu": 248195480
+      },
+      "typed": false,
+      "committed": false,
+      "commit": 0,
+      "quanta": 0,
+      "fifo": 1,
+      "exitCode": 6,
+      "executionFence": {
+        "attempted": false,
+        "created": false,
+        "reusedExecution": false,
+        "handle": null,
+        "polls": 0,
+        "lastWaitRaw": null,
+        "lastPollNs": null,
+        "signaled": false
+      },
+      "retirementFence": {
+        "attempted": true,
+        "created": true,
+        "reusedExecution": false,
+        "handle": "1",
+        "polls": 49,
+        "lastWaitRaw": 37146,
+        "lastPollNs": "73823944032657",
+        "signaled": true
+      },
+      "retirementState": "DRAINED",
+      "lastTimeout": {
+        "api": [
+          "73823942900625",
+          "73823942909063",
+          "319223987848",
+          "319223995661"
+        ],
+        "handle": "1",
+        "raw": 37147,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "signal": {
+        "api": [
+          "73823944019375",
+          "73823944029063",
+          "319224049566",
+          "319224058629"
+        ],
+        "handle": "1",
+        "raw": 37146,
+        "pulseSeq": "0",
+        "pulseReceiptNs": null,
+        "guardNs": null,
+        "plannedNs": null
+      },
+      "retirementBracketNs": [
+        322920000,
+        324048438
+      ],
+      "retirementCreate": {
+        "wall": 142969,
+        "cpu": 139844
+      },
+      "copy": [
+        {
+          "bytes": 591872,
+          "api": {
+            "wall": 170781,
+            "cpu": 171250
+          },
+          "barrier": {
+            "wall": 2656,
+            "cpu": 2500
+          }
+        }
+      ],
+      "firstReject": {
+        "stage": "DISPATCH_POST_GUARD",
+        "reason": "DEADLINE",
+        "raw": 6,
+        "ns": "73823883877657"
+      },
+      "gpu": {
+        "domain": "GL_TIMESTAMP_EXT",
+        "units": "ns",
+        "status": "INCOMPLETE",
+        "counterBits": 64,
+        "initialDisjoint": 0,
+        "finalDisjoint": 0,
+        "gl": 0,
+        "markers": {
+          "op8.begin": "1795337668737216874",
+          "op8.end": "1795337668737222968",
+          "op9.begin": null,
+          "op9.end": null,
+          "arena1.begin": null,
+          "arena1.end": null,
+          "arena2.begin": null,
+          "arena2.end": null,
+          "op11.begin": null,
+          "op11.end": null
+        }
+      },
+      "timestampOp8Ns": 6094,
+      "op8Dispatch": {
+        "wall": 49062,
+        "cpu": 47031
+      },
+      "op8Barrier": {
+        "wall": 2656,
+        "cpu": 2656
+      },
+      "op8BarrierExitToRejectNs": 196135782
+    }
+  },
+  "grossCrossProcessCopiesMinusOp9BracketNs": [
+    6107813,
+    8592031
+  ],
+  "distinctModeSets": 1,
+  "matchedFiveGroupGate": "NOT_MET",
+  "verdict": "COPY_COST_UNCONFIRMED",
+  "offlineReader": {
+    "p8": {
+      "state": "REJECTED",
+      "executionFence": "NOT_ATTEMPTED",
+      "retirementFence": "SIGNALED",
+      "admittedQ20": null,
+      "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+      "traceTruncated": false,
+      "deviceQualified": false,
+      "arm": "B",
+      "timing": "OBSERVED",
+      "gpuTime": "UNOBSERVED",
+      "rootWallNs": 1173125,
+      "ownerCpuNs": 1176562,
+      "executionPollCount": 0,
+      "retirementPollCount": 157,
+      "wakeCount": 0,
+      "wakeOvershootMaxObservedNs": null,
+      "copyWallNs": [
+        182343
+      ],
+      "pollTailWindow": 0,
+      "pulsesDropped": 0
+    },
+    "p9": {
+      "state": "REJECTED",
+      "executionFence": "NOT_ATTEMPTED",
+      "retirementFence": "SIGNALED",
+      "admittedQ20": null,
+      "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+      "traceTruncated": false,
+      "deviceQualified": false,
+      "arm": "B",
+      "timing": "OBSERVED",
+      "gpuTime": "UNOBSERVED",
+      "rootWallNs": 1176875,
+      "ownerCpuNs": 1180937,
+      "executionPollCount": 0,
+      "retirementPollCount": 189,
+      "wakeCount": 0,
+      "wakeOvershootMaxObservedNs": null,
+      "copyWallNs": [
+        182500
+      ],
+      "pollTailWindow": 0,
+      "pulsesDropped": 0
+    },
+    "pcopies": {
+      "state": "REJECTED",
+      "executionFence": "NOT_ATTEMPTED",
+      "retirementFence": "SIGNALED",
+      "admittedQ20": null,
+      "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+      "traceTruncated": false,
+      "deviceQualified": false,
+      "arm": "B",
+      "timing": "OBSERVED",
+      "gpuTime": "UNOBSERVED",
+      "rootWallNs": 92240937,
+      "ownerCpuNs": 92075781,
+      "executionPollCount": 0,
+      "retirementPollCount": 199,
+      "wakeCount": 0,
+      "wakeOvershootMaxObservedNs": null,
+      "copyWallNs": [
+        167969,
+        91032812,
+        29688
+      ],
+      "pollTailWindow": 0,
+      "pulsesDropped": 0
+    },
+    "p11": {
+      "state": "REJECTED",
+      "executionFence": "NOT_ATTEMPTED",
+      "retirementFence": "SIGNALED",
+      "admittedQ20": null,
+      "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+      "traceTruncated": false,
+      "deviceQualified": false,
+      "arm": "B",
+      "timing": "OBSERVED",
+      "gpuTime": "UNOBSERVED",
+      "rootWallNs": 96941875,
+      "ownerCpuNs": 96894531,
+      "executionPollCount": 0,
+      "retirementPollCount": 148,
+      "wakeCount": 0,
+      "wakeOvershootMaxObservedNs": null,
+      "copyWallNs": [
+        163750,
+        95621562,
+        28907
+      ],
+      "pollTailWindow": 0,
+      "pulsesDropped": 0
+    },
+    "g1-gpu-timing": {
+      "state": "DEADLINE",
+      "executionFence": "NOT_ATTEMPTED",
+      "retirementFence": "SIGNALED",
+      "admittedQ20": null,
+      "deployment": "DEPLOYED_BYTES_UNOBSERVED",
+      "traceTruncated": false,
+      "deviceQualified": false,
+      "arm": "B",
+      "timing": "OBSERVED",
+      "gpuTime": "UNOBSERVED",
+      "rootWallNs": 263919532,
+      "ownerCpuNs": 248195480,
+      "executionPollCount": 0,
+      "retirementPollCount": 49,
+      "wakeCount": 0,
+      "wakeOvershootMaxObservedNs": null,
+      "copyWallNs": [
+        170781
+      ],
+      "pollTailWindow": 0,
+      "pulsesDropped": 0
+    }
+  }
+}

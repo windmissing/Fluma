@@ -1,0 +1,470 @@
+{
+  "unit": "ns",
+  "artifact": {
+    "receipt": {
+      "path": "test/reports/t257/T802-v3.json",
+      "bytes": 2278,
+      "sha256": "742d43201c49352923731b3dc19ef1140b830e444c4f06b456a4363ab4679aef"
+    },
+    "archives": [
+      {
+        "path": "D:/hmprojects/HelloWorld/.codex/local-test/t798-source/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "bytes": 7848837,
+        "sha256": "da5ec9b492f7c3b6b50b88e06fd1e62ac8f47bfd42d64c41a3edb898aee1ba27"
+      },
+      {
+        "path": "D:/hmprojects/HelloWorld/.codex/local-test/t257-sign/T802-v3/T802-v3-signed.hap",
+        "bytes": 7952127,
+        "sha256": "f39bcb3a6e1d8ec953c9ab06c765059fb61157a3f9db5a02106c110c8c8c28aa"
+      }
+    ],
+    "payloadEntries": 14,
+    "module": "libgrs_g9rx.so",
+    "moduleSha256": "3891c1e177c9eb8826197da61360b39162bbf4c3918645e1a6c579777126e11a",
+    "moduleBytes": 1440136,
+    "buildId": "f96d365d162691cdfd7ebfc86d1be291b635d6cc"
+  },
+  "sidecars": {
+    "terminal": {
+      "archive": {
+        "path": "test/reports/t491/t802/sidecar-terminal.json",
+        "bytes": 12642,
+        "sha256": "c8a61f0eaa7a72404fdf08d12380487c1dfbfa9a175088b57a28277e193006a6"
+      },
+      "writerLog": "11-22 17:42:23.635 57798 57798 I A0E734/com.example.helloworld/G9RxSourceExport: SAVED revision=T798 ticket=1 pid=57798 start=7635555 kind=terminal run=1 context=1 nonce=1 bytes=12641 retirement=PENDING path=/data/storage/el2/base/haps/entry/files/g9rx-source-1-LGHACo/g9rx-source-terminal.json sha256=a6e0e3316f93dc499bcc74c273e1996cf306530a127265475c4f921212cae7bb",
+      "deviceSha256": "a6e0e3316f93dc499bcc74c273e1996cf306530a127265475c4f921212cae7bb",
+      "deviceBytes": 12641,
+      "firstReject": {
+        "phase": "PRE_FENCE_CREATE",
+        "reason": "DEADLINE",
+        "code": 6,
+        "nowNs": "76698804642500",
+        "pulseNs": "76698791295938",
+        "receiptNs": "76698509129063",
+        "beginNs": "76698510560938",
+        "deadlineNs": "76698760560938",
+        "nonce": "1",
+        "plan": "1",
+        "pulseSeq": "18",
+        "clockGeneration": "1",
+        "lifecycleGeneration": "5",
+        "actualClockGeneration": "1",
+        "actualLifecycleGeneration": "5",
+        "actualNonce": "1",
+        "actualPlan": "1",
+        "clockOk": 1,
+        "hasPagePulse": 1,
+        "active": 1,
+        "rootLive": 1,
+        "rawClockErrno": 0,
+        "pending": 4,
+        "cursor": 12,
+        "dispatches": 12,
+        "expectedScope": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "actualScope": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ]
+      },
+      "recentPass": {
+        "phase": "PRE_FLUSH",
+        "reason": "NONE",
+        "code": 0,
+        "nowNs": "76698693228907",
+        "pulseNs": "76698690883907",
+        "receiptNs": "76698509129063",
+        "beginNs": "76698510560938",
+        "deadlineNs": "76698760560938",
+        "nonce": "1",
+        "plan": "1",
+        "pulseSeq": "12",
+        "clockGeneration": "1",
+        "lifecycleGeneration": "5",
+        "actualClockGeneration": "1",
+        "actualLifecycleGeneration": "5",
+        "actualNonce": "1",
+        "actualPlan": "1",
+        "clockOk": 1,
+        "hasPagePulse": 1,
+        "active": 1,
+        "rootLive": 1,
+        "rawClockErrno": 0,
+        "pending": 4,
+        "cursor": 12,
+        "dispatches": 12,
+        "expectedScope": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "actualScope": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ]
+      },
+      "fences": {
+        "executionCreate": null,
+        "executionWait": null,
+        "retirementCreate": [
+          "RETIRE_FENCE_CREATE_EXIT",
+          "76698804694532",
+          "1",
+          "0",
+          12,
+          12
+        ],
+        "retirementWait": [
+          "RETIRE_FENCE_WAIT_EXIT",
+          "76698807525157",
+          "1",
+          "37147",
+          12,
+          12
+        ],
+        "retirementComplete": null,
+        "retirementPolls": 1,
+        "retirementReusedExecution": false
+      }
+    },
+    "retirement": {
+      "archive": {
+        "path": "test/reports/t491/t802/sidecar-retirement.json",
+        "bytes": 20598,
+        "sha256": "18cba1ebb3d66e8fe7a612be1ff9d852d9688f5e08606bdb22582d2a3aee4227"
+      },
+      "writerLog": "11-22 17:42:23.909 57798 57798 I A0E734/com.example.helloworld/G9RxSourceExport: SAVED revision=T798 ticket=1 pid=57798 start=7635555 kind=retirement run=1 context=1 nonce=1 bytes=20597 retirement=RETIRED path=/data/storage/el2/base/haps/entry/files/g9rx-source-1-IDMKlF/g9rx-source-retirement.json sha256=e47474568e00458c03cb8f1860c56c08b612285a2f3f3dfa6001069c64886f60",
+      "deviceSha256": "e47474568e00458c03cb8f1860c56c08b612285a2f3f3dfa6001069c64886f60",
+      "deviceBytes": 20597,
+      "firstReject": {
+        "phase": "PRE_FENCE_CREATE",
+        "reason": "DEADLINE",
+        "code": 6,
+        "nowNs": "76698804642500",
+        "pulseNs": "76698791295938",
+        "receiptNs": "76698509129063",
+        "beginNs": "76698510560938",
+        "deadlineNs": "76698760560938",
+        "nonce": "1",
+        "plan": "1",
+        "pulseSeq": "18",
+        "clockGeneration": "1",
+        "lifecycleGeneration": "5",
+        "actualClockGeneration": "1",
+        "actualLifecycleGeneration": "5",
+        "actualNonce": "1",
+        "actualPlan": "1",
+        "clockOk": 1,
+        "hasPagePulse": 1,
+        "active": 1,
+        "rootLive": 1,
+        "rawClockErrno": 0,
+        "pending": 4,
+        "cursor": 12,
+        "dispatches": 12,
+        "expectedScope": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "actualScope": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ]
+      },
+      "recentPass": {
+        "phase": "PRE_FLUSH",
+        "reason": "NONE",
+        "code": 0,
+        "nowNs": "76698693228907",
+        "pulseNs": "76698690883907",
+        "receiptNs": "76698509129063",
+        "beginNs": "76698510560938",
+        "deadlineNs": "76698760560938",
+        "nonce": "1",
+        "plan": "1",
+        "pulseSeq": "12",
+        "clockGeneration": "1",
+        "lifecycleGeneration": "5",
+        "actualClockGeneration": "1",
+        "actualLifecycleGeneration": "5",
+        "actualNonce": "1",
+        "actualPlan": "1",
+        "clockOk": 1,
+        "hasPagePulse": 1,
+        "active": 1,
+        "rootLive": 1,
+        "rawClockErrno": 0,
+        "pending": 4,
+        "cursor": 12,
+        "dispatches": 12,
+        "expectedScope": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "actualScope": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ]
+      },
+      "fences": {
+        "executionCreate": null,
+        "executionWait": null,
+        "retirementCreate": [
+          "RETIRE_FENCE_CREATE_EXIT",
+          "76698804694532",
+          "1",
+          "0",
+          12,
+          12
+        ],
+        "retirementWait": [
+          "RETIRE_FENCE_WAIT_EXIT",
+          "76698944215000",
+          "1",
+          "37146",
+          12,
+          12
+        ],
+        "retirementComplete": [
+          "RETIRE_COMPLETE",
+          "76698944224375",
+          "0",
+          "0",
+          12,
+          12
+        ],
+        "retirementPolls": 63,
+        "retirementReusedExecution": false
+      }
+    }
+  },
+  "apiEdges": [
+    [
+      "COPY_ENTER",
+      "76698513303125",
+      "1",
+      "2",
+      0,
+      0
+    ],
+    [
+      "COPY_EXIT",
+      "76698513985157",
+      "1",
+      "2",
+      0,
+      0
+    ],
+    [
+      "COPY_ENTER",
+      "76698516322032",
+      "7",
+      "8",
+      9,
+      10
+    ],
+    [
+      "COPY_EXIT",
+      "76698692782969",
+      "7",
+      "8",
+      9,
+      10
+    ],
+    [
+      "COPY_ENTER",
+      "76698692810313",
+      "7",
+      "9",
+      9,
+      10
+    ],
+    [
+      "COPY_EXIT",
+      "76698692866719",
+      "7",
+      "9",
+      9,
+      10
+    ],
+    [
+      "FLUSH_ENTER",
+      "76698692874219",
+      "0",
+      "0",
+      10,
+      10
+    ],
+    [
+      "FLUSH_EXIT",
+      "76698692876563",
+      "0",
+      "0",
+      10,
+      10
+    ],
+    [
+      "FLUSH_ENTER",
+      "76698693229844",
+      "0",
+      "0",
+      12,
+      12
+    ],
+    [
+      "FLUSH_EXIT",
+      "76698804629688",
+      "0",
+      "0",
+      12,
+      12
+    ],
+    [
+      "RETIRE_FENCE_CREATE_ENTER",
+      "76698804669219",
+      "0",
+      "0",
+      12,
+      12
+    ],
+    [
+      "RETIRE_FENCE_CREATE_EXIT",
+      "76698804694532",
+      "1",
+      "0",
+      12,
+      12
+    ]
+  ],
+  "configurePhaseNs": {
+    "OWNER_SEEN": [
+      76380337363594
+    ],
+    "CACHE_PRELOAD_ENTER": [
+      76380337387032
+    ],
+    "CACHE_PRELOAD_READY": [
+      76380338708282
+    ],
+    "APPLY_ENTER": [
+      76380338719688
+    ],
+    "SHADER_COMPILE_ENTER": [
+      76380392131250,
+      76380989816407
+    ],
+    "SHADER_COMPILE_EXIT": [
+      76380575021250,
+      76466092247500
+    ],
+    "PROGRAM_LINK_ENTER": [
+      76380575035313,
+      76466092292657
+    ],
+    "PROGRAM_LINK_EXIT": [
+      76380884782188,
+      76698371163438
+    ],
+    "CONFIGURE_RESEARCH_EXIT": [
+      76698373701407
+    ],
+    "APPLIED": [
+      76698506229063
+    ]
+  },
+  "appliedOriginal": [
+    "APPLIED",
+    "76698506227500",
+    "1",
+    "1",
+    0,
+    0
+  ],
+  "firstRejectAfterDeadlineNs": 44081562,
+  "firstRejectPulseAgeNs": 13346562,
+  "lastPassPulseAgeNs": 2345000,
+  "firstRejectReceiptAgeNs": 295513437,
+  "nativePulseMaxGapNs": 18397343,
+  "pulseCount": 18,
+  "deadlineToRetirementSignalBracketNs": [
+    181427969,
+    183654062
+  ],
+  "status": {
+    "commit": "0",
+    "quanta": "0",
+    "queue": 1,
+    "firstFailure": 6
+  },
+  "offlineReader": {
+    "terminal": {
+      "observation": "REJECT_OBSERVED",
+      "reason": "DEADLINE",
+      "phase": "PRE_FENCE_CREATE",
+      "truncated": false
+    },
+    "retirement": {
+      "observation": "REJECT_RETIRED",
+      "reason": "DEADLINE",
+      "phase": "PRE_FENCE_CREATE",
+      "truncated": false
+    }
+  }
+}

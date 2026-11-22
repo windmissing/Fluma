@@ -2,6 +2,8 @@
 
 2026-11-21 · 目标 20 · P5 · architect · 离线复核。
 
+> T808 复核。T770 v7 的主 bundle 探针入口已达，实际 RESET 已发布 `CREATED`。现有 `CONTEXT` 事件暂存到下一次状态发布，CPU 活跃尚无法定位具体调用。先补同代逐调用进度和取消/退役证据，再执行原探针用例。 [T808 首次归因](architecture-T808-v1.md)
+
 **T770 v3 启动了 G13 产品页，T786 启动了 RX。** 前者仅复现 G13 产品 OP65 的 `INIT_ERROR_27`。后者留下 RX BOOT 成功和缓存落盘原件。G13 隔离探针已有 T778 专属工件，G13 BOOT 暖启动仍沿 T760 产品工件取证。 [证据与完整摘要](architecture-T790-evidence-v1.json)
 
 ## 实际测到的工件

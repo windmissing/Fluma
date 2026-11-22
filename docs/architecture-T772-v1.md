@@ -2,6 +2,8 @@
 
 2026-11-21 · G20 · P5 · architect · 离线交付。
 
+> T807 复核。T802 v3 双侧车已定位 `PRE_FLUSH→PRE_FENCE_CREATE DEADLINE`。首笔 arena copy 与末批重 flush 合计 287.861 ms，执行 fence 未创建，退役独立 fence 最终到位。先测 RX 分段 wall/owner CPU，T768 轮询和 T792 改序按实证触发。 [T807 首次归因](architecture-T807-v1.md)
+
 **T766 第二轮的 RX 已进入 live Pump，并有一次 guard 判定超过 250 ms 根期限。** 保留原 250 ms、33,333,333 ns PagePulse 新鲜度与命令 receipt 时限。现有证据足以区分根前编译和根内拒绝。须先取 T763 已有的阶段 JSON，才能定位超期落在 owner 回调、copy/dispatch、flush、执行 fence 等待或回读前哪一段。 [T766 原报告](test-report-T766-v1.md) · [T772 原件联核](architecture-T772-evidence-v1.json)
 
 ## 两轮原件与身份

@@ -1,0 +1,142 @@
+{
+  "artifact": {
+    "receipt": {
+      "path": "test/reports/t257/T770-v6.json",
+      "bytes": 2287,
+      "sha256": "decea499007b7b539c15871faf18f8fdbb8c0130622371b2c5a681f315d293a3"
+    },
+    "archives": [
+      {
+        "path": "D:/hmprojects/HelloWorld/.codex/local-test/t767-visibility-final/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "bytes": 6763016,
+        "sha256": "ecc5c815777a3f92849bfba9e36142339f98349765ed1a740e69cfa2b34fb99d"
+      },
+      {
+        "path": "D:/hmprojects/HelloWorld/.codex/local-test/t257-sign/T770-v6/T770-v6-signed.hap",
+        "bytes": 6857481,
+        "sha256": "141773f546576b2ad1cab5fc76737d34aac083c262893cb86ecb09a7a8f66976"
+      }
+    ],
+    "payloadEntries": 13,
+    "module": "libgrs_g13_visibility.so",
+    "moduleSha256": "2369bba033891e61ce5580b9d74ca6ff92cb037d19f2da328c2351520d1615a5",
+    "moduleBytes": 500496,
+    "buildId": "30a1c65fa27c45eeebef73aa0542bdc42d0a4a08"
+  },
+  "report": {
+    "path": "test/reports/t491/t770b/v7-probe-exec-blocked.json",
+    "bytes": 1710,
+    "sha256": "e4915e1ca31c19082bfff2d12acc3981a7a2d31f3e23b2f091f2ff0057d60f6b"
+  },
+  "snapshot": {
+    "schema": "G13_VISIBILITY_PROBE_V1",
+    "case": "RESET",
+    "attempt": 1,
+    "generation": 1,
+    "pid": 12312,
+    "ownerTid": 13692,
+    "processStartTicks": "7904132",
+    "mappedBuildId": "30a1c65fa27c45eeebef73aa0542bdc42d0a4a08",
+    "module": "/data/storage/el1/bundle/libs/arm64/libgrs_g13_visibility.so",
+    "profile": [
+      64,
+      64
+    ],
+    "nonce": [
+      1,
+      1413953334
+    ],
+    "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+    "planSHA": "acf260e78955db2aea0bded3806556801ba125515502911cdb0690213ef3b858",
+    "variant": "DEPENDENCY_SPLIT",
+    "state": "CREATED",
+    "firstFailure": "",
+    "lastSuccess": "",
+    "lastOrdinal": -1,
+    "incomplete": false,
+    "rawBytes": 0,
+    "events": [
+      {
+        "event": "CREATED",
+        "ns": "79139164043750"
+      }
+    ]
+  },
+  "samples": [
+    {
+      "path": "test/reports/t491/t770b/snapshot-1.json",
+      "bytes": 649,
+      "sha256": "d0269ce648187a4e0a1098e562541be5a085d55320aa5486378c419520e41e3c"
+    },
+    {
+      "path": "test/reports/t491/t770b/snapshot-2.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/reports/t491/t770b/probe-compare.json",
+      "bytes": 649,
+      "sha256": "d0269ce648187a4e0a1098e562541be5a085d55320aa5486378c419520e41e3c"
+    },
+    {
+      "path": "test/reports/t491/t770b/probe-latest.json",
+      "bytes": 649,
+      "sha256": "d0269ce648187a4e0a1098e562541be5a085d55320aa5486378c419520e41e3c"
+    },
+    {
+      "path": "test/reports/t491/t770b/probe-reset-a2.json",
+      "bytes": 649,
+      "sha256": "d0269ce648187a4e0a1098e562541be5a085d55320aa5486378c419520e41e3c"
+    },
+    {
+      "path": "test/reports/t491/t770b/probe-reset-latest.json",
+      "bytes": 649,
+      "sha256": "d0269ce648187a4e0a1098e562541be5a085d55320aa5486378c419520e41e3c"
+    },
+    {
+      "path": "test/reports/t491/t770b/probe-reset.json",
+      "bytes": 649,
+      "sha256": "d0269ce648187a4e0a1098e562541be5a085d55320aa5486378c419520e41e3c"
+    }
+  ],
+  "cpuReport": "R 55780->58489 utime in 30s (spinning)",
+  "cpuRawProcCountersArchived": false,
+  "highLoad": {
+    "hl7.txt": {
+      "archive": {
+        "path": "test/reports/t491/t770b/hl7.txt",
+        "bytes": 1241673,
+        "sha256": "645345778164d54243b7f1b4f97c809fc3b414b3b4ee8a717c65cab23c1946e3"
+      },
+      "hits": 12,
+      "first": "11-22 18:26:01.456   657 14563 I C02D15/hiview/XPower: [task_191]#HighLoadTask: sending: com.example.helloworld, mple.helloworld, 13692",
+      "last": "11-22 18:26:56.586   657 13443 I C02D15/hiview/XPower: [task_191]#HighLoadTask: sending: com.example.helloworld, mple.helloworld, 13692"
+    },
+    "hl8.txt": {
+      "archive": {
+        "path": "test/reports/t491/t770b/hl8.txt",
+        "bytes": 779707,
+        "sha256": "94c695d08c9f5063535a9ec03f526d5a2b7e47c08447f83d76838aeae64c5eef"
+      },
+      "hits": 17,
+      "first": "11-22 18:30:16.716   657 16749 I C02D15/hiview/XPower: [task_191]#HighLoadTask: sending: com.example.helloworld, mple.helloworld, 13692",
+      "last": "11-22 18:31:36.736   657 13559 I C02D15/hiview/XPower: [task_191]#HighLoadTask: sending: com.example.helloworld, mple.helloworld, 13692"
+    }
+  },
+  "shader": {
+    "path": ".codex/local-test/t767-visibility-final/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g13_visibility/g13_assets/role_OP_00.comp",
+    "bytes": 48695,
+    "sha256": "1b8ce7f6cb7fc077e728dda15102f95d4125efb9cc21a6d95b434ee7146ed2a4"
+  },
+  "probeSource": {
+    "path": ".codex/local-test/t767-visibility-final/entry/src/main/cpp/gpu_resident/g13_visibility/probe.cpp",
+    "bytes": 34655,
+    "sha256": "854e385fcb7e8ffef054750f1f73250dcac2db1ae6115a1c12e51e197e013764"
+  },
+  "ownerSource": {
+    "path": ".codex/local-test/t767-visibility-final/entry/src/main/cpp/gpu_resident/g13_visibility/bridge.cpp",
+    "bytes": 4979,
+    "sha256": "2c77ff670b51a6f57fee116f7401b922abbd1f303f7baefb601defa360c97a87"
+  },
+  "verdict": "OWNER_CPU_ACTIVE_EXACT_STOP_UNOBSERVED"
+}

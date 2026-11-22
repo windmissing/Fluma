@@ -2,6 +2,8 @@
 
 2026-11-22 · 目标 20 · P5 · architect · 离线工程合同。
 
+> T806 复核。T804 已补一组四个独立前缀。COPIES−OP9 的原始 fence 区间差为 6.108–8.592 ms，约 90 ms owner 开销会从首笔 copy 移到无 copy 的前缀 fence。timestamp 只有 op8 一对端点。保持 `COPY_COST_UNCONFIRMED`，按 T806 的精确命令续采交错组。 [T806 裁定](architecture-T806-v1.md)
+
 > T803 复核。T801 五次是完整 B，均复用执行 fence 退役，独立 prefix 和 GPU timestamp 原件为 0。先按 T803 用现有 T797 实物补采，前缀成本下界使用最后 TIMEOUT 的 API 入口。 [T803 归因与补采合同](architecture-T803-v1.md)
 
 **候选等待 T797 实测触发。** 显式研究臂拟用一个独立 GPU dispatch 替换 op9 后的两笔 arena copy，保留两份完整、可独立读取的副本。现有 B 中第一笔 arena copy 耗时 76.879 ms，末批首次 flush 耗时 74.366 ms，执行 fence 首次在退役观察到信号为根起后 336.187 ms。C 中重开销转到 fence 创建。GPU 分段时间仍未知。 [T792 数据与归因](architecture-T792-v1.md) · [本卡离线核对](architecture-T799-evidence-v1.json)
