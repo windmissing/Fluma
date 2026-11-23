@@ -128,7 +128,7 @@ struct Window {
                                                    return false;
                                                  accept();
                                                  return true;
-                                               }},
+                                               }, once},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos ||

@@ -24,5 +24,6 @@ Frame PresentBoot(g13vk::VulkanApi &, VkInstance, VkPhysicalDevice, VkDevice, Vk
                   VkDeviceMemory stagingMemory, VkMemoryPropertyFlags,
                   HWND window, const std::function<bool()> &current,
                   const std::function<void(const Frame &)> &published,
-                  VkDeviceSize m1PublicationBytes = 0, bool requireDiagnosticPixel = true);
+                  VkDeviceSize m1PublicationBytes = 0, bool requireDiagnosticPixel = true,
+                  const std::function<VkBuffer()> &nextPublication = {});
 }

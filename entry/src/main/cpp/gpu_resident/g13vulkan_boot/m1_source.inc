@@ -73,44 +73,43 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
 
   vk.DestroyDescriptorPool(device, descriptorPool, nullptr);
   descriptorPool = VK_NULL_HANDLE;
-  const VkDescriptorPoolSize counts[] = {{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, passes*4},
-                                         {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, passes}};
+  const VkDescriptorPoolSize counts[] = {{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, passes*8},
+                                         {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, passes*2}};
   VkDescriptorPoolCreateInfo pool{VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
-  pool.maxSets = passes;
+  pool.maxSets = passes*2;
   pool.poolSizeCount = 2;
   pool.pPoolSizes = counts;
   Check(vk.CreateDescriptorPool(device, &pool, nullptr, &descriptorPool), "vkCreateDescriptorPool.M1_SOURCE");
-  std::array<VkDescriptorSetLayout, passes> layouts;
+  std::array<VkDescriptorSetLayout, passes*2> layouts;
   layouts.fill(descriptorLayout);
-  std::array<VkDescriptorSet, passes> bindings{};
+  std::array<VkDescriptorSet, passes*2> bindings{};
   VkDescriptorSetAllocateInfo setInfo{VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
   setInfo.descriptorPool = descriptorPool;
   setInfo.descriptorSetCount = passes;
   setInfo.pSetLayouts = layouts.data();
   Check(vk.AllocateDescriptorSets(device, &setInfo, bindings.data()), "vkAllocateDescriptorSets.M1_SOURCE");
-  for (uint32_t pass = 0; pass < passes; ++pass) {
-    const size_t output = pass < 5 ? kM1Events : pass < 7 ? kM1Pub : kM1Tail;
-    const size_t slots[] = {kM1Base, kM1Candidate, kM1Work, output, kM1Uniform};
-    std::array<VkDescriptorBufferInfo, 5> ranges{};
-    std::array<VkWriteDescriptorSet, 5> writes{};
-    for (uint32_t binding = 0; binding < 5; ++binding) {
-      const auto &b = buffers[slots[binding]];
-      ranges[binding] = {b.handle, binding == 4 ? stride*pass : 0, binding == 4 ? block : b.bytes};
-      writes[binding] = {VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr, bindings[pass], binding, 0, 1,
-                         binding == 4 ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-                         nullptr, &ranges[binding], nullptr};
+  constexpr size_t banks[]{kM1Base,kM1Candidate};
+  for (size_t base=0; base<2; ++base) {
+    for (uint32_t pass = 0; pass < passes; ++pass) {
+      const size_t output = pass < 5 ? kM1Events : pass < 7 ? kM1Pub : kM1Tail;
+      const size_t slots[] = {banks[base], banks[1-base], kM1Work, output, kM1Uniform};
+      std::array<VkDescriptorBufferInfo, 5> ranges{};
+      std::array<VkWriteDescriptorSet, 5> writes{};
+      for (uint32_t binding = 0; binding < 5; ++binding) {
+        const auto &b = buffers[slots[binding]];
+        ranges[binding] = {b.handle, binding == 4 ? stride*pass : 0, binding == 4 ? block : b.bytes};
+        writes[binding] = {VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr, bindings[base*passes+pass], binding, 0, 1,
+                           binding == 4 ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                           nullptr, &ranges[binding], nullptr};
+      }
+      vk.UpdateDescriptorSets(device, uint32_t(writes.size()), writes.data(), 0, nullptr);
     }
-    vk.UpdateDescriptorSets(device, uint32_t(writes.size()), writes.data(), 0, nullptr);
   }
 
   auto reset = reinterpret_cast<PFN_vkResetCommandPool>(vk.GetDeviceProcAddr(device, "vkResetCommandPool"));
   auto fill = reinterpret_cast<PFN_vkCmdFillBuffer>(vk.GetDeviceProcAddr(device, "vkCmdFillBuffer"));
   Require(reset && fill, "M1_SOURCE_VULKAN_FUNCTIONS");
-  Check(reset(device, commandPool, 0), "vkResetCommandPool.M1_SOURCE");
-  vk.DestroyFence(device, fence, nullptr);
-  fence = VK_NULL_HANDLE;
   VkFenceCreateInfo fenceInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
-  Check(vk.CreateFence(device, &fenceInfo, nullptr, &fence), "vkCreateFence.M1_SOURCE");
   grs::Identity identity{};
   identity.run = narrow(pc::QpcTicks());
   identity.owner = narrow(GetCurrentThreadId());
@@ -131,6 +130,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   m1::ProgressClockV2 clock;
   Require(clock.BeginSession(), "M1_SOURCE_SESSION");
   clock.ready = true;
+  const auto setupFields=fields.str();
   PointerSample inputSample{};
   uint64_t pulse = attempt.sourcePulse();
   uint64_t delta = 0;
@@ -175,129 +175,235 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     return attempt.current() && clock.Identity(clock.active.id, clock.session) && clock.Fresh(now);
   };
   m1::PlanGrantV2 permit;
-  Require(clock.Claim(pc::TimeNs(), 0, 1, true, permit), "M1_SOURCE_PERMIT");
-  RootRequest request;
-  request.kind = 1;
-  request.nonce = narrow(pc::QpcTicks());
-  request.control = narrow(permit.id);
-  request.frame = {1,0};
-  request.eventArena = request.publicationSlot = 1;
-  request.eventCapacity = K+1;
-  request.dispatchCount = passes;
-  request.barrierCount = 9;
-  request.uploadedBytes = 128+12*4+3*8+8*4;
-  request.carry = uint32_t(permit.carry);
+  Require(clock.Claim(pc::TimeNs(),0,interactive ? inputSample.hold : 1,true,permit),"M1_SOURCE_PERMIT");
+  uint64_t frameSerial=1;
+  uint32_t sourceSerial=0;
   std::array<uint32_t,32> cmd{};
-  cmd[0] = 1129534023;
-  cmd[1] = 2;
-  cmd[4] = identity.run.lo; cmd[5] = identity.run.hi;
-  cmd[6] = cmd[8] = cmd[10] = cmd[14] = cmd[15] = 1;
-  cmd[12] = identity.geometry.lo; cmd[13] = identity.geometry.hi;
-  cmd[24] = uint32_t(pulse); cmd[25] = uint32_t(pulse >> 32);
-  cmd[27] = 1;
-  if (interactive) {
-    // Original producer: UI ns, sample sequence, diagnostic-position flags.
-    cmd[22] = uint32_t(pulse);
-    cmd[23] = uint32_t(pulse >> 32);
-    cmd[24] = 1;
-    cmd[25] = 0;
-    cmd[26] = 1;
-  }
-  cmd[28] = identity.config.lo; cmd[29] = identity.config.hi;
-  const double source[] = {interactive ? inputSample.x : 64.5, interactive ? inputSample.y : 0.0,
-                           interactive ? 8.0*double(delta)/1000000000.0 : 0.125};
-  std::memcpy(cmd.data()+16, source, sizeof(source));
-  Require(root.Begin(request, cmd) == ControlCode::OK, "M1_SOURCE_OWNER_BEGIN");
-  const auto deadline = permit.grantedNs+m1::ProgressClockV2::JobNs;
-  VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
-  begin.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-  Check(vk.BeginCommandBuffer(command, &begin), "vkBeginCommandBuffer.M1_SOURCE");
-  fill(command, buffers[kM1Base].handle, 0, headerAt*4, 0);
-  vk.CmdUpdateBuffer(command, buffers[kM1Base].handle, headerAt*4, 1024, root.Header().data());
-  fill(command, buffers[kM1Work].handle, 128, VK_WHOLE_SIZE, 0);
-  vk.CmdUpdateBuffer(command, buffers[kM1Work].handle, 0, sizeof(cmd), cmd.data());
-  for (uint32_t pass = 0; pass < passes; ++pass) {
-    const std::array<uint32_t,20> uniforms{
-      K,Kw,16*K,kColumn,headerAt,stateWords,pass,1048576,request.nonce.lo,request.nonce.hi,
-      request.frame.lo,request.frame.hi,request.control.lo,request.control.hi,root.Bank(),
-      request.publicationSlot,request.eventArena,request.carry,request.uploadedBytes,0};
-    vk.CmdUpdateBuffer(command, buffers[kM1Uniform].handle, stride*pass, block, uniforms.data());
-  }
-  Barrier(kTransfer, VK_ACCESS_TRANSFER_WRITE_BIT, kCompute, kShaderRW | VK_ACCESS_UNIFORM_READ_BIT);
-  vk.CmdBindPipeline(command, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
-  for (uint32_t pass = 0; pass < passes; ++pass) {
-    vk.CmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, 1, &bindings[pass], 0, nullptr);
-    vk.CmdDispatch(command, (stateWords+63)/64, 1, 1);
-    if (pass+1 < passes) Barrier(kCompute, VK_ACCESS_SHADER_WRITE_BIT, kCompute, kShaderRW);
-  }
-  Barrier(kCompute, VK_ACCESS_SHADER_WRITE_BIT, kTransfer, VK_ACCESS_TRANSFER_READ_BIT);
-  const VkBufferCopy copy{0,0,1024};
-  vk.CmdCopyBuffer(command, buffers[kM1Tail].handle, buffers[kStaging].handle, 1, &copy);
-  Barrier(kTransfer, VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_HOST_BIT, VK_ACCESS_HOST_READ_BIT);
-  Check(vk.EndCommandBuffer(command), "vkEndCommandBuffer.M1_SOURCE");
-  Checkpoint("M1_SOURCE_SUBMIT");
-  const auto sourceCurrent = [&] {
-    return refresh() && (!interactive || attempt.pointer().hold == inputSample.hold);
-  };
-  Require(sourceCurrent() && pc::TimeNs() < deadline, "M1_SOURCE_EXPIRED_BEFORE_SUBMIT");
-  VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
-  submit.commandBufferCount = 1;
-  submit.pCommandBuffers = &command;
-  Check(vk.QueueSubmit(queue, 1, &submit, fence), "vkQueueSubmit.M1_SOURCE");
-  inFlight = true;
-  fields << ",\"m1QueueVkResult\":0,\"m1Nonce\":\"" << ((uint64_t(request.nonce.hi)<<32) | request.nonce.lo)
-         << "\",\"m1DeadlineNs\":\"" << deadline << "\",\"m1PulseNs\":\"" << pulse << "\"";
-  VkResult waited = VK_NOT_READY;
-  uint64_t fenceNs = pc::TimeNs();
-  while (fenceNs < deadline && sourceCurrent()) {
-    waited = vk.WaitForFences(device, 1, &fence, VK_TRUE, std::min<uint64_t>(deadline-fenceNs, 2000000));
-    fenceNs = pc::TimeNs();
-    if (waited != VK_TIMEOUT) break;
-  }
-  if (waited == VK_SUCCESS || waited == VK_ERROR_DEVICE_LOST) inFlight = false;
-  const bool fresh = sourceCurrent();
-  fields << ",\"m1FenceVkResult\":" << int(waited) << ",\"m1FenceNs\":\"" << fenceNs
-         << "\",\"m1PulseCount\":" << clock.pulses << ",\"m1PulseFault\":"
-         << (clock.open ? "null" : Quote(clock.fault));
-  if (waited != VK_SUCCESS || fenceNs > deadline || !fresh) {
-    root.Stop();
-    return Receipt("FAILED", !fresh ? "M1_SOURCE_PERMIT_REVOKED" :
-                   waited == VK_TIMEOUT || fenceNs > deadline ? "M1_SOURCE_DEADLINE_EXPIRED" : "M1_SOURCE_FENCE_FAILED");
-  }
-  Checkpoint("M1_SOURCE_FENCED_READBACK");
-  const auto &staging = buffers[kStaging];
-  void *mapped = nullptr;
-  Check(vk.MapMemory(device, staging.memory, 0, VK_WHOLE_SIZE, 0, &mapped), "vkMapMemory.M1_SOURCE");
-  VkResult invalidation = VK_SUCCESS;
-  if (!(staging.flags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
-    VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE, nullptr, staging.memory, 0, VK_WHOLE_SIZE};
-    invalidation = vk.InvalidateMappedMemoryRanges(device, 1, &range);
-  }
   Words256 tail{};
-  if (invalidation == VK_SUCCESS) std::memcpy(tail.data(), mapped, sizeof(tail));
-  vk.UnmapMemory(device, staging.memory);
-  Check(invalidation, "vkInvalidateMappedMemoryRanges.M1_SOURCE");
-  Require(pc::TimeNs() <= deadline && sourceCurrent(), "M1_SOURCE_REVOKED_AT_ACCEPT");
   AcceptedRoot accepted;
-  auto result = ControlCode::STALE;
-  const auto accept = [&] {
-    if (pc::TimeNs() <= deadline)
-      result = root.Poll(FenceState::Signaled, tail.data(), tail.size(), 0, accepted);
+  const auto &staging=buffers[kStaging];
+  const auto runSource=[&](const PointerSample &inputSample,uint64_t pulse,uint64_t delta) {
+    Require(sourceSerial!=UINT32_MAX,"M1_SOURCE_SEQUENCE_EXHAUSTED");
+    Check(reset(device,commandPool,0),"vkResetCommandPool.M1_SOURCE");
+    vk.DestroyFence(device,fence,nullptr);
+    fence=VK_NULL_HANDLE;
+    Check(vk.CreateFence(device,&fenceInfo,nullptr,&fence),"vkCreateFence.M1_SOURCE");
+    RootRequest request;
+    request.kind = 1;
+    request.nonce = narrow(pc::QpcTicks());
+    request.control = narrow(permit.id);
+    request.frame = narrow(frameSerial);
+    request.eventArena = request.frame.lo&1u;
+    request.publicationSlot = 1-root.Bank();
+    request.eventCapacity = K+1;
+    request.dispatchCount = passes;
+    request.barrierCount = 9;
+    request.uploadedBytes = 128+12*4+3*8+8*4;
+    request.carry = uint32_t(permit.carry);
+    cmd = {};
+    cmd[0] = 1129534023;
+    cmd[1] = 2;
+    cmd[4] = identity.run.lo; cmd[5] = identity.run.hi;
+    cmd[8] = cmd[14] = 1;
+    cmd[6] = cmd[15] = ++sourceSerial;
+    cmd[10] = interactive ? uint32_t(inputSample.hold) : 1;
+    cmd[11] = interactive ? uint32_t(inputSample.hold>>32) : 0;
+    cmd[12] = identity.geometry.lo; cmd[13] = identity.geometry.hi;
+    cmd[24] = uint32_t(pulse); cmd[25] = uint32_t(pulse >> 32);
+    cmd[27] = 1;
+    if (interactive) {
+      // Original producer: UI ns, sample sequence, diagnostic-position flags.
+      cmd[22] = uint32_t(pulse);
+      cmd[23] = uint32_t(pulse >> 32);
+      cmd[24] = sourceSerial;
+      cmd[25] = 0;
+      cmd[26] = 1;
+    }
+    cmd[28] = identity.config.lo; cmd[29] = identity.config.hi;
+    const double source[] = {interactive ? inputSample.x : 64.5, interactive ? inputSample.y : 0.0,
+                             interactive ? 8.0*double(delta)/1000000000.0 : 0.125};
+    std::memcpy(cmd.data()+16, source, sizeof(source));
+    Require(root.Begin(request, cmd) == ControlCode::OK, "M1_SOURCE_OWNER_BEGIN");
+    const auto deadline = permit.grantedNs+m1::ProgressClockV2::JobNs;
+    VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+    begin.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    Check(vk.BeginCommandBuffer(command, &begin), "vkBeginCommandBuffer.M1_SOURCE");
+    if (!root.AcceptedCount()) {
+      fill(command, buffers[kM1Base].handle, 0, headerAt*4, 0);
+      vk.CmdUpdateBuffer(command, buffers[kM1Base].handle, headerAt*4, 1024, root.Header().data());
+      fill(command, buffers[kM1Work].handle, 128, VK_WHOLE_SIZE, 0);
+    }
+    vk.CmdUpdateBuffer(command, buffers[kM1Work].handle, 0, sizeof(cmd), cmd.data());
+    for (uint32_t pass = 0; pass < passes; ++pass) {
+      const std::array<uint32_t,20> uniforms{
+        K,Kw,16*K,kColumn,headerAt,stateWords,pass,1048576,request.nonce.lo,request.nonce.hi,
+        request.frame.lo,request.frame.hi,request.control.lo,request.control.hi,root.Bank(),
+        request.publicationSlot,request.eventArena,request.carry,request.uploadedBytes,0};
+      vk.CmdUpdateBuffer(command, buffers[kM1Uniform].handle, stride*pass, block, uniforms.data());
+    }
+    Barrier(kTransfer, VK_ACCESS_TRANSFER_WRITE_BIT, kCompute, kShaderRW | VK_ACCESS_UNIFORM_READ_BIT);
+    Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kCompute,kShaderRW);
+    vk.CmdBindPipeline(command, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+    for (uint32_t pass = 0; pass < passes; ++pass) {
+      vk.CmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, 1, &bindings[root.Bank()*passes+pass], 0, nullptr);
+      vk.CmdDispatch(command, (stateWords+63)/64, 1, 1);
+      if (pass+1 < passes) Barrier(kCompute, VK_ACCESS_SHADER_WRITE_BIT, kCompute, kShaderRW);
+    }
+    Barrier(kCompute, VK_ACCESS_SHADER_WRITE_BIT, kTransfer, VK_ACCESS_TRANSFER_READ_BIT);
+    const VkBufferCopy copy{0,0,1024};
+    vk.CmdCopyBuffer(command, buffers[kM1Tail].handle, buffers[kStaging].handle, 1, &copy);
+    Barrier(kTransfer, VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_HOST_BIT, VK_ACCESS_HOST_READ_BIT);
+    Check(vk.EndCommandBuffer(command), "vkEndCommandBuffer.M1_SOURCE");
+    Checkpoint("M1_SOURCE_SUBMIT");
+    const auto sourceCurrent = [&] {
+      return refresh() && (!interactive || attempt.pointer().hold == inputSample.hold);
+    };
+    if (!sourceCurrent() || pc::TimeNs()>=deadline) {
+      root.Stop();
+      AcceptedRoot discarded;
+      root.Poll(FenceState::Signaled,nullptr,0,0,discarded);
+      fields << ",\"m1SourceReject\":\"STALE_OR_LATE_BEFORE_SUBMIT\"";
+      return false;
+    }
+    VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+    submit.commandBufferCount = 1;
+    submit.pCommandBuffers = &command;
+    Check(vk.QueueSubmit(queue, 1, &submit, fence), "vkQueueSubmit.M1_SOURCE");
+    inFlight = true;
+    fields << ",\"m1QueueVkResult\":0,\"m1Nonce\":\"" << ((uint64_t(request.nonce.hi)<<32) | request.nonce.lo)
+           << "\",\"m1DeadlineNs\":\"" << deadline << "\",\"m1PulseNs\":\"" << pulse << "\"";
+    VkResult waited = VK_NOT_READY;
+    uint64_t fenceNs = pc::TimeNs();
+    while (fenceNs < deadline && sourceCurrent()) {
+      waited = vk.WaitForFences(device, 1, &fence, VK_TRUE, std::min<uint64_t>(deadline-fenceNs, 2000000));
+      fenceNs = pc::TimeNs();
+      if (waited != VK_TIMEOUT) break;
+    }
+    if (waited == VK_SUCCESS || waited == VK_ERROR_DEVICE_LOST) inFlight = false;
+    const bool fresh = sourceCurrent();
+    fields << ",\"m1FenceVkResult\":" << int(waited) << ",\"m1FenceNs\":\"" << fenceNs
+           << "\",\"m1PulseCount\":" << clock.pulses << ",\"m1PulseFault\":"
+           << (clock.open ? "null" : Quote(clock.fault));
+    if (waited != VK_SUCCESS || fenceNs > deadline || !fresh) {
+      root.Stop();
+      if (inFlight) {
+        const auto drained=vk.WaitForFences(device,1,&fence,VK_TRUE,m1::ProgressClockV2::JobNs);
+        if (drained==VK_SUCCESS || drained==VK_ERROR_DEVICE_LOST) inFlight=false;
+        Check(drained,"vkWaitForFences.M1_SOURCE_RETIRE");
+      }
+      if (waited==VK_ERROR_DEVICE_LOST) Check(waited,"vkWaitForFences.M1_SOURCE");
+      AcceptedRoot discarded;
+      root.Poll(FenceState::Signaled,nullptr,0,0,discarded);
+      fields << ",\"m1SourceReject\":" << Quote(!fresh ? "PERMIT_REVOKED" : "FENCE_OR_DEADLINE");
+      return false;
+    }
+    Checkpoint("M1_SOURCE_FENCED_READBACK");
+    void *mapped = nullptr;
+    Check(vk.MapMemory(device, staging.memory, 0, VK_WHOLE_SIZE, 0, &mapped), "vkMapMemory.M1_SOURCE");
+    VkResult invalidation = VK_SUCCESS;
+    if (!(staging.flags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+      VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE, nullptr, staging.memory, 0, VK_WHOLE_SIZE};
+      invalidation = vk.InvalidateMappedMemoryRanges(device, 1, &range);
+    }
+    tail = {};
+    if (invalidation == VK_SUCCESS) std::memcpy(tail.data(), mapped, sizeof(tail));
+    vk.UnmapMemory(device, staging.memory);
+    Check(invalidation, "vkInvalidateMappedMemoryRanges.M1_SOURCE");
+    auto result = ControlCode::STALE;
+    const auto accept = [&] {
+      if (pc::TimeNs() <= deadline)
+        result = root.Poll(FenceState::Signaled, tail.data(), tail.size(), 0, accepted);
+    };
+    if (pc::TimeNs()>deadline || !sourceCurrent() || !attempt.acceptPointer(inputSample.hold,accept)
+        || result==ControlCode::STALE) {
+      root.Stop();
+      AcceptedRoot discarded;
+      root.Poll(FenceState::Signaled,nullptr,0,0,discarded);
+      fields << ",\"m1SourceReject\":\"STALE_OR_LATE_AT_ACCEPT\"";
+      return false;
+    }
+    fields << ",\"m1Completion\":" << Words(tail) << ",\"m1OwnerCode\":" << int(result);
+    Require(result == ControlCode::OK,"M1_SOURCE_COMPLETION_INVALID");
+    fields << ",\"m1AdmittedQ\":" << tail[61] << ",\"m1PublicationGeneration\":" << accepted.publicationGeneration.lo;
+    return true;
   };
-  if (!attempt.acceptPointer(inputSample.hold, accept)) root.Stop();
-  fields << ",\"m1Completion\":" << Words(tail) << ",\"m1OwnerCode\":" << int(result);
-  Require(result == ControlCode::OK && accepted.sourceSuccess && tail[61] != 0, "M1_SOURCE_NOT_ADMITTED");
-  fields << ",\"m1AdmittedQ\":" << tail[61] << ",\"m1PublicationGeneration\":" << accepted.publicationGeneration.lo;
-  if (interactive && !RunM1Quantum(candidate, root, clock, permit, refresh, accepted, cmd))
+  Require(runSource(inputSample,pulse,delta) && accepted.sourceSuccess && tail[61],
+          "M1_SOURCE_NOT_ADMITTED");
+  uint32_t ordinal=0;
+  if (interactive && !RunM1Quantum(candidate, root, clock, permit, refresh, accepted, frameSerial, ordinal))
     return Receipt("FAILED", "M1_QUANTUM_NOT_ACCEPTED");
+  if (interactive && !attempt.m1ColdFile.empty()) CaptureM1Quantum(root, accepted, tail, stateWords, cmd);
   if (!attempt.presentBoot) return Receipt("M1_DRY_SOURCE_ACCEPTED", "");
 
   Checkpoint("M1_SOURCE_WSI");
   PublicationLease lease;
   Require(root.Acquire(accepted.publication, accepted.publicationGeneration, lease) == ControlCode::OK,
           "M1_SOURCE_PUBLICATION_ACQUIRE");
+  bool leased=true;
+  bool nextRootFailed=false;
+  bool coldPresent=true;
+  uint64_t anchor=pulse, anchorHold=inputSample.hold, expiredHold=0;
+  const auto publicationBuffer=[&] {
+    return buffers[!interactive ? kM1Pub : accepted.publication ? kM1QPubAlt : kM1QPub].handle;
+  };
+  std::function<VkBuffer()> nextPublication;
+  if (interactive && !attempt.m1SinglePresent && attempt.m1ColdFile.empty()) {
+    nextPublication=[&]() -> VkBuffer {
+      Require(root.Release(accepted.publication,accepted.publicationGeneration,true)==ControlCode::OK,
+              "M1_QUANTUM_FRAME_RELEASE");
+      leased=false;
+      fields.str(setupFields);
+      fields.seekp(0,std::ios::end);
+      if (coldPresent) {
+        // The first graphics pipeline is cold work. Resume with a new
+        // anchor instead of turning its elapsed time into physics debt.
+        Require(clock.BeginSession(),"M1_PRESENT_SESSION");
+        clock.ready=true;
+        coldPresent=false;
+        fields << ",\"m1ClockReanchoredAfterColdPresent\":true";
+      }
+      if (!clock.activeRemaining && refresh()) {
+        const auto pointer=attempt.pointer();
+        const auto ui=attempt.sourcePulse();
+        if (pointer.hold!=anchorHold) {
+          anchorHold=pointer.hold;
+          anchor=0;
+        }
+        if (pointer.hold && pointer.hold!=expiredHold && ui>pointer.timeNs) {
+          if (anchor && ui!=anchor) {
+            if (ui<anchor || ui-anchor>m1::ProgressClockV2::GapNs) {
+              expiredHold=pointer.hold;
+            } else if (clock.Claim(pc::TimeNs(),0,pointer.hold,true,permit)) {
+              ++frameSerial;
+              ordinal=0;
+              fields << ",\"m1Hold\":\"" << pointer.hold << "\",\"m1PointerSeq\":\"" << pointer.sequence
+                     << "\",\"m1PointerNs\":\"" << pointer.timeNs << "\",\"m1SourceDeltaNs\":\"" << ui-anchor << "\"";
+              if (!runSource(pointer,ui,ui-anchor)) {
+                // A revoked SOURCE appended no accepted prefix to this frame.
+                // Leave its granted quanta in the plan and start with prefix zero.
+                publish(Receipt("M1_SOURCE_REVOKED",""));
+              }
+            }
+          }
+          anchor=ui;
+        }
+      }
+      if (!RunM1Quantum(candidate,root,clock,permit,refresh,accepted,frameSerial,ordinal)) {
+        nextRootFailed=attempt.current();
+        if (nextRootFailed) {
+          publish(Receipt("FAILED","M1_QUANTUM_CONTINUATION_FAILED"));
+          while (attempt.current()) Sleep(16);
+        }
+        return VK_NULL_HANDLE;
+      }
+      Require(root.Acquire(accepted.publication,accepted.publicationGeneration,lease)==ControlCode::OK,
+              "M1_QUANTUM_FRAME_ACQUIRE");
+      leased=true;
+      return publicationBuffer();
+    };
+  }
   const auto frame = pc::PresentBoot(vk, instance, candidate.physical, device, queue, candidate.family,
-      surface, buffers[interactive ? kM1QPub : kM1Pub].handle, staging.handle, staging.memory, staging.flags, attempt.window,
+      surface, publicationBuffer(), staging.handle, staging.memory, staging.flags, attempt.window,
       attempt.current, [&](const pc::Frame &visible) {
         const auto wide = [](grs::U64 value) { return (uint64_t(value.hi)<<32) | value.lo; };
         fields << ",\"windowFrame\":{\"kind\":" << Quote(interactive ? "M1_QUANTUM_WINDOW" : "M1_DRY_SOURCE_DIAGNOSTIC")
@@ -313,15 +419,16 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
                << ",\"presentEnterQpc\":\"" << visible.presentEnter << "\",\"presentExitQpc\":\""
                << visible.presentExit << "\"}";
         publish(Receipt(interactive ? "M1_QUANTUM_PRESENT_QUEUED" : "M1_DRY_SOURCE_PRESENT_QUEUED", ""));
-      }, buffers[kM1Pub].bytes, !interactive);
+      }, buffers[kM1Pub].bytes, !interactive, nextPublication);
   const bool usable = frame.retire != VK_ERROR_DEVICE_LOST && frame.error != VK_ERROR_DEVICE_LOST;
-  if (usable)
+  if (usable && leased)
     Require(root.Release(accepted.publication, accepted.publicationGeneration, true) == ControlCode::OK,
             "M1_SOURCE_PUBLICATION_RELEASE");
-  else
+  else if (!usable)
     root.ContextLost();
   fields << ",\"m1PublicationReleased\":" << (usable ? "true" : "false") << ",\"m1WsiResult\":" << int(frame.error)
          << ",\"m1WsiRetireVkResult\":" << int(frame.retire) << ",\"m1WsiStage\":" << Quote(frame.stage);
+  if (nextRootFailed) return Receipt("FAILED","M1_QUANTUM_CONTINUATION_FAILED");
   return frame.error == VK_SUCCESS ? Receipt(interactive ? "M1_QUANTUM_PRESENT_RETIRED" : "M1_DRY_SOURCE_PRESENT_RETIRED", "") :
                                     Receipt("WSI_FAILED", frame.stage);
 }

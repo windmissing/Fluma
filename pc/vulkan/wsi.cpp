@@ -24,9 +24,9 @@ struct Presentation {
   g13vk::VulkanApi &vk;
   VkDevice device;
   VkSwapchainKHR swapchain = VK_NULL_HANDLE;
-  VkImageView view = VK_NULL_HANDLE;
+  std::vector<VkImageView> views;
   VkRenderPass pass = VK_NULL_HANDLE;
-  VkFramebuffer framebuffer = VK_NULL_HANDLE;
+  std::vector<VkFramebuffer> framebuffers;
   VkDescriptorSetLayout descriptors = VK_NULL_HANDLE;
   VkDescriptorPool descriptorPool = VK_NULL_HANDLE;
   VkPipelineLayout layout = VK_NULL_HANDLE;
@@ -63,9 +63,11 @@ struct Presentation {
     if (layout) vk.DestroyPipelineLayout(device, layout, nullptr);
     if (descriptorPool) vk.DestroyDescriptorPool(device, descriptorPool, nullptr);
     if (descriptors) vk.DestroyDescriptorSetLayout(device, descriptors, nullptr);
-    if (framebuffer) DestroyFramebuffer(device, framebuffer, nullptr);
+    for (auto framebuffer : framebuffers)
+      if (framebuffer) DestroyFramebuffer(device, framebuffer, nullptr);
     if (pass) DestroyRenderPass(device, pass, nullptr);
-    if (view) DestroyImageView(device, view, nullptr);
+    for (auto view : views)
+      if (view) DestroyImageView(device, view, nullptr);
     if (swapchain) DestroySwapchainKHR(device, swapchain, nullptr);
   }
 };
@@ -76,7 +78,8 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
                   VkDeviceMemory stagingMemory, VkMemoryPropertyFlags memoryFlags,
                   HWND window, const std::function<bool()> &current,
                   const std::function<void(const Frame &)> &published,
-                  VkDeviceSize m1PublicationBytes, bool requireDiagnosticPixel) {
+                  VkDeviceSize m1PublicationBytes, bool requireDiagnosticPixel,
+                  const std::function<VkBuffer()> &nextPublication) {
   Frame frame;
   const bool dryScene=m1PublicationBytes && !requireDiagnosticPixel;
   Presentation wsi{vk, device};
@@ -238,33 +241,28 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     graphics.renderPass = wsi.pass;
     Check(wsi.CreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &graphics, nullptr, &wsi.pipeline), "vkCreateGraphicsPipelines");
 
-    if (!current()) {
-      frame.stale = true;
-      throw Stop{"WINDOW_CHANGED_BEFORE_ACQUIRE", VK_ERROR_OUT_OF_DATE_KHR};
+    const VkImageSubresourceRange subresource{VK_IMAGE_ASPECT_COLOR_BIT,0,1,0,1};
+    wsi.views.resize(images.size());
+    wsi.framebuffers.resize(images.size());
+    for (size_t i=0; i<images.size(); ++i) {
+      VkImageViewCreateInfo imageView{VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
+      imageView.image = images[i];
+      imageView.viewType = VK_IMAGE_VIEW_TYPE_2D;
+      imageView.format = found->format;
+      imageView.subresourceRange = subresource;
+      Check(wsi.CreateImageView(device,&imageView,nullptr,&wsi.views[i]),"vkCreateImageView");
+      VkFramebufferCreateInfo fb{VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
+      fb.renderPass = wsi.pass;
+      fb.attachmentCount = 1;
+      fb.pAttachments = &wsi.views[i];
+      fb.width = extent.width;
+      fb.height = extent.height;
+      fb.layers = 1;
+      Check(wsi.CreateFramebuffer(device,&fb,nullptr,&wsi.framebuffers[i]),"vkCreateFramebuffer");
     }
     VkFenceCreateInfo fence{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
-    Check(vk.CreateFence(device, &fence, nullptr, &wsi.acquired), "vkCreateFence.ACQUIRE");
-    Check(vk.CreateFence(device, &fence, nullptr, &wsi.submitted), "vkCreateFence.GRAPHICS");
-    frame.acquire = wsi.AcquireNextImageKHR(device, wsi.swapchain, 1000000000, VK_NULL_HANDLE,
-                                          wsi.acquired, &frame.imageIndex);
-    if (frame.acquire != VK_SUBOPTIMAL_KHR) Check(frame.acquire, "vkAcquireNextImageKHR");
-    Check(vk.WaitForFences(device, 1, &wsi.acquired, VK_TRUE, UINT64_MAX), "vkWaitForFences.ACQUIRE");
-    const VkImage image = images.at(frame.imageIndex);
-    VkImageViewCreateInfo imageView{VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
-    imageView.image = image;
-    imageView.viewType = VK_IMAGE_VIEW_TYPE_2D;
-    imageView.format = found->format;
-    imageView.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
-    Check(wsi.CreateImageView(device, &imageView, nullptr, &wsi.view), "vkCreateImageView");
-    VkFramebufferCreateInfo fb{VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
-    fb.renderPass = wsi.pass;
-    fb.attachmentCount = 1;
-    fb.pAttachments = &wsi.view;
-    fb.width = extent.width;
-    fb.height = extent.height;
-    fb.layers = 1;
-    Check(wsi.CreateFramebuffer(device, &fb, nullptr, &wsi.framebuffer), "vkCreateFramebuffer");
-
+    Check(vk.CreateFence(device,&fence,nullptr,&wsi.acquired),"vkCreateFence.ACQUIRE");
+    Check(vk.CreateFence(device,&fence,nullptr,&wsi.submitted),"vkCreateFence.GRAPHICS");
     VkCommandPoolCreateInfo pool{VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO};
     pool.queueFamilyIndex = family;
     Check(vk.CreateCommandPool(device, &pool, nullptr, &wsi.commandPool), "vkCreateCommandPool.GRAPHICS");
@@ -274,102 +272,126 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     allocation.commandBufferCount = 1;
     VkCommandBuffer command{};
     Check(vk.AllocateCommandBuffers(device, &allocation, &command), "vkAllocateCommandBuffers.GRAPHICS");
-    VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
-    begin.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    Check(vk.BeginCommandBuffer(command, &begin), "vkBeginCommandBuffer.GRAPHICS");
-    VkMemoryBarrier compute{VK_STRUCTURE_TYPE_MEMORY_BARRIER, nullptr,
-                            VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT};
-    vk.CmdPipelineBarrier(command, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                          0, 1, &compute, 0, nullptr, 0, nullptr);
-    VkRenderPassBeginInfo draw{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
-    draw.renderPass = wsi.pass;
-    draw.framebuffer = wsi.framebuffer;
-    draw.renderArea = scissor;
-    wsi.CmdBeginRenderPass(command, &draw, VK_SUBPASS_CONTENTS_INLINE);
-    vk.CmdBindPipeline(command, VK_PIPELINE_BIND_POINT_GRAPHICS, wsi.pipeline);
-    vk.CmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, wsi.layout, 0, 1, &set, 0, nullptr);
-    if (dryScene) {
-      const bool unorm=found->format==VK_FORMAT_B8G8R8A8_UNORM || found->format==VK_FORMAT_R8G8B8A8_UNORM;
-      struct FramePush { float width,height; uint32_t encode; };
-      const FramePush values{float(extent.width),float(extent.height),uint32_t(unorm)};
-      static_assert(sizeof(values)==12);
-      vk.CmdPushConstants(command,wsi.layout,VK_SHADER_STAGE_FRAGMENT_BIT,0,sizeof(values),&values);
-    }
-    wsi.CmdDraw(command, 3, 1, 0, 0);
-    wsi.CmdEndRenderPass(command);
+    auto resetPool = reinterpret_cast<PFN_vkResetCommandPool>(vk.GetDeviceProcAddr(device,"vkResetCommandPool"));
+    auto resetFences = reinterpret_cast<PFN_vkResetFences>(vk.GetDeviceProcAddr(device,"vkResetFences"));
+    if (nextPublication && (!resetPool || !resetFences))
+      throw Stop{"MISSING_WSI_RESET_FUNCTIONS",VK_ERROR_INITIALIZATION_FAILED};
+    for (;;) {
+      if (!current()) {
+        frame.stale = true;
+        throw Stop{"WINDOW_CHANGED_BEFORE_ACQUIRE",VK_ERROR_OUT_OF_DATE_KHR};
+      }
+      frame.acquire = wsi.AcquireNextImageKHR(device,wsi.swapchain,1000000000,VK_NULL_HANDLE,
+                                             wsi.acquired,&frame.imageIndex);
+      if (frame.acquire!=VK_SUBOPTIMAL_KHR) Check(frame.acquire,"vkAcquireNextImageKHR");
+      Check(vk.WaitForFences(device,1,&wsi.acquired,VK_TRUE,UINT64_MAX),"vkWaitForFences.ACQUIRE");
+      const VkImage image=images.at(frame.imageIndex);
+      VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+      begin.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+      Check(vk.BeginCommandBuffer(command, &begin), "vkBeginCommandBuffer.GRAPHICS");
+      VkMemoryBarrier compute{VK_STRUCTURE_TYPE_MEMORY_BARRIER, nullptr,
+                              VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT};
+      vk.CmdPipelineBarrier(command, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                            0, 1, &compute, 0, nullptr, 0, nullptr);
+      VkRenderPassBeginInfo draw{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
+      draw.renderPass = wsi.pass;
+      draw.framebuffer = wsi.framebuffers[frame.imageIndex];
+      draw.renderArea = scissor;
+      wsi.CmdBeginRenderPass(command, &draw, VK_SUBPASS_CONTENTS_INLINE);
+      vk.CmdBindPipeline(command, VK_PIPELINE_BIND_POINT_GRAPHICS, wsi.pipeline);
+      vk.CmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, wsi.layout, 0, 1, &set, 0, nullptr);
+      if (dryScene) {
+        const bool unorm=found->format==VK_FORMAT_B8G8R8A8_UNORM || found->format==VK_FORMAT_R8G8B8A8_UNORM;
+        struct FramePush { float width,height; uint32_t encode; };
+        const FramePush values{float(extent.width),float(extent.height),uint32_t(unorm)};
+        static_assert(sizeof(values)==12);
+        vk.CmdPushConstants(command,wsi.layout,VK_SHADER_STAGE_FRAGMENT_BIT,0,sizeof(values),&values);
+      }
+      wsi.CmdDraw(command, 3, 1, 0, 0);
+      wsi.CmdEndRenderPass(command);
 
-    VkImageMemoryBarrier imageBarrier{VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER};
-    imageBarrier.srcQueueFamilyIndex = imageBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    imageBarrier.image = image;
-    imageBarrier.subresourceRange = imageView.subresourceRange;
-    imageBarrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    imageBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-    imageBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-    imageBarrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-    vk.CmdPipelineBarrier(command, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
-                          0, 0, nullptr, 0, nullptr, 1, &imageBarrier);
-    VkBufferImageCopy pixel{};
-    pixel.imageSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
-    pixel.imageOffset = {int32_t(m1PublicationBytes ? uint64_t(extent.width)*129/256 : extent.width/2),
-                         int32_t(m1PublicationBytes ? extent.height-1 : extent.height/2), 0};
-    pixel.imageExtent = {1,1,1};
-    wsi.CmdCopyImageToBuffer(command, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, staging, 1, &pixel);
-    imageBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-    imageBarrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-    imageBarrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-    imageBarrier.dstAccessMask = 0;
-    VkMemoryBarrier host{VK_STRUCTURE_TYPE_MEMORY_BARRIER, nullptr, VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_HOST_READ_BIT};
-    vk.CmdPipelineBarrier(command, VK_PIPELINE_STAGE_TRANSFER_BIT,
-                          VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-                          0, 1, &host, 0, nullptr, 1, &imageBarrier);
-    Check(vk.EndCommandBuffer(command), "vkEndCommandBuffer.GRAPHICS");
-    if (!current()) {
-      frame.stale = true;
-      throw Stop{"WINDOW_CHANGED_BEFORE_SUBMIT", VK_ERROR_OUT_OF_DATE_KHR};
+      VkImageMemoryBarrier imageBarrier{VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER};
+      imageBarrier.srcQueueFamilyIndex = imageBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+      imageBarrier.image = image;
+      imageBarrier.subresourceRange = subresource;
+      imageBarrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+      imageBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+      imageBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+      imageBarrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+      vk.CmdPipelineBarrier(command, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+                            0, 0, nullptr, 0, nullptr, 1, &imageBarrier);
+      VkBufferImageCopy pixel{};
+      pixel.imageSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
+      pixel.imageOffset = {int32_t(m1PublicationBytes ? uint64_t(extent.width)*129/256 : extent.width/2),
+                           int32_t(m1PublicationBytes ? extent.height-1 : extent.height/2), 0};
+      pixel.imageExtent = {1,1,1};
+      wsi.CmdCopyImageToBuffer(command, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, staging, 1, &pixel);
+      imageBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+      imageBarrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+      imageBarrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+      imageBarrier.dstAccessMask = 0;
+      VkMemoryBarrier host{VK_STRUCTURE_TYPE_MEMORY_BARRIER, nullptr, VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_HOST_READ_BIT};
+      vk.CmdPipelineBarrier(command, VK_PIPELINE_STAGE_TRANSFER_BIT,
+                            VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                            0, 1, &host, 0, nullptr, 1, &imageBarrier);
+      Check(vk.EndCommandBuffer(command), "vkEndCommandBuffer.GRAPHICS");
+      if (!current()) {
+        frame.stale = true;
+        throw Stop{"WINDOW_CHANGED_BEFORE_SUBMIT", VK_ERROR_OUT_OF_DATE_KHR};
+      }
+      VkSubmitInfo submission{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+      submission.commandBufferCount = 1;
+      submission.pCommandBuffers = &command;
+      frame.submit = vk.QueueSubmit(queue, 1, &submission, wsi.submitted);
+      Check(frame.submit, "vkQueueSubmit.GRAPHICS");
+      wsi.inFlight = true;
+      frame.fence = vk.WaitForFences(device, 1, &wsi.submitted, VK_TRUE, UINT64_MAX);
+      Check(frame.fence, "vkWaitForFences.GRAPHICS");
+      void *mapped = nullptr;
+      Check(vk.MapMemory(device, stagingMemory, 0, VK_WHOLE_SIZE, 0, &mapped), "vkMapMemory.PIXEL");
+      VkResult invalidation = VK_SUCCESS;
+      if (!(memoryFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+        VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE, nullptr, stagingMemory, 0, VK_WHOLE_SIZE};
+        invalidation = vk.InvalidateMappedMemoryRanges(device, 1, &range);
+      }
+      if (invalidation == VK_SUCCESS) std::memcpy(&frame.pixel, mapped, sizeof(frame.pixel));
+      vk.UnmapMemory(device, stagingMemory);
+      Check(invalidation, "vkInvalidateMappedMemoryRanges.PIXEL");
+      frame.pixelRead = true;
+      if (requireDiagnosticPixel && frame.pixel != 0xff00ff00u)
+        throw Stop{m1PublicationBytes ? "M1_SOURCE_PIXEL_MISMATCH" : "BOOT_FRAGMENT_PIXEL_MISMATCH", VK_ERROR_UNKNOWN};
+      if (!current()) {
+        frame.stale = true;
+        throw Stop{"WINDOW_CHANGED_BEFORE_PRESENT", VK_ERROR_OUT_OF_DATE_KHR};
+      }
+      // This diagnostic submits once per generation. The host waits for the
+      // graphics fence before present, so the WSI owns no application semaphore.
+      VkPresentInfoKHR present{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
+      present.swapchainCount = 1;
+      present.pSwapchains = &wsi.swapchain;
+      present.pImageIndices = &frame.imageIndex;
+      present.pResults = &frame.imagePresent;
+      frame.presentEnter = QpcTicks();
+      frame.present = wsi.QueuePresentKHR(queue, &present);
+      frame.presentExit = QpcTicks();
+      wsi.inFlight = wsi.inFlight || frame.present == VK_SUCCESS || frame.present == VK_SUBOPTIMAL_KHR;
+      if (frame.present != VK_SUBOPTIMAL_KHR) Check(frame.present, "vkQueuePresentKHR");
+      if (frame.imagePresent != VK_SUBOPTIMAL_KHR) Check(frame.imagePresent, "PRESENT_IMAGE_RESULT");
+      frame.stage = nextPublication ? "M1_PRESENT_QUEUED" : "DIAGNOSTIC_PRESENT_QUEUED";
+      published(frame);
+      if (!nextPublication) {
+        while (current()) Sleep(16);
+        break;
+      }
+      if (!current()) break;
+      const auto next=nextPublication();
+      if (!next || !current()) break;
+      Check(resetPool(device,wsi.commandPool,0),"vkResetCommandPool.GRAPHICS");
+      const VkFence fences[]={wsi.acquired,wsi.submitted};
+      Check(resetFences(device,2,fences),"vkResetFences.GRAPHICS");
+      range.buffer=next;
+      vk.UpdateDescriptorSets(device,1,&write,0,nullptr);
     }
-    VkSubmitInfo submission{VK_STRUCTURE_TYPE_SUBMIT_INFO};
-    submission.commandBufferCount = 1;
-    submission.pCommandBuffers = &command;
-    frame.submit = vk.QueueSubmit(queue, 1, &submission, wsi.submitted);
-    Check(frame.submit, "vkQueueSubmit.GRAPHICS");
-    wsi.inFlight = true;
-    frame.fence = vk.WaitForFences(device, 1, &wsi.submitted, VK_TRUE, UINT64_MAX);
-    Check(frame.fence, "vkWaitForFences.GRAPHICS");
-    wsi.inFlight = false;
-    void *mapped = nullptr;
-    Check(vk.MapMemory(device, stagingMemory, 0, VK_WHOLE_SIZE, 0, &mapped), "vkMapMemory.PIXEL");
-    VkResult invalidation = VK_SUCCESS;
-    if (!(memoryFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
-      VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE, nullptr, stagingMemory, 0, VK_WHOLE_SIZE};
-      invalidation = vk.InvalidateMappedMemoryRanges(device, 1, &range);
-    }
-    if (invalidation == VK_SUCCESS) std::memcpy(&frame.pixel, mapped, sizeof(frame.pixel));
-    vk.UnmapMemory(device, stagingMemory);
-    Check(invalidation, "vkInvalidateMappedMemoryRanges.PIXEL");
-    frame.pixelRead = true;
-    if (requireDiagnosticPixel && frame.pixel != 0xff00ff00u)
-      throw Stop{m1PublicationBytes ? "M1_SOURCE_PIXEL_MISMATCH" : "BOOT_FRAGMENT_PIXEL_MISMATCH", VK_ERROR_UNKNOWN};
-    if (!current()) {
-      frame.stale = true;
-      throw Stop{"WINDOW_CHANGED_BEFORE_PRESENT", VK_ERROR_OUT_OF_DATE_KHR};
-    }
-    // This diagnostic submits once per generation. The host waits for the
-    // graphics fence before present, so the WSI owns no application semaphore.
-    VkPresentInfoKHR present{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
-    present.swapchainCount = 1;
-    present.pSwapchains = &wsi.swapchain;
-    present.pImageIndices = &frame.imageIndex;
-    present.pResults = &frame.imagePresent;
-    frame.presentEnter = QpcTicks();
-    frame.present = wsi.QueuePresentKHR(queue, &present);
-    frame.presentExit = QpcTicks();
-    wsi.inFlight = frame.present == VK_SUCCESS || frame.present == VK_SUBOPTIMAL_KHR;
-    if (frame.present != VK_SUBOPTIMAL_KHR) Check(frame.present, "vkQueuePresentKHR");
-    if (frame.imagePresent != VK_SUBOPTIMAL_KHR) Check(frame.imagePresent, "PRESENT_IMAGE_RESULT");
-    frame.stage = "DIAGNOSTIC_PRESENT_QUEUED";
-    published(frame);
-    // Keep the one-shot swapchain alive until the UI revokes this generation.
-    while (current()) Sleep(16);
     frame.retire = vk.DeviceWaitIdle(device);
     if (frame.retire == VK_SUCCESS || frame.retire == VK_ERROR_DEVICE_LOST) wsi.inFlight = false;
     Check(frame.retire, "vkDeviceWaitIdle.PRESENT_RETIRE");

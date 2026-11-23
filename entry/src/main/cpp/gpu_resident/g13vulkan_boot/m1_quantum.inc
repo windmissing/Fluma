@@ -23,6 +23,8 @@ VkPipeline Boot::M1Pipeline(const std::wstring &path, const char *sha) {
 }
 
 namespace m1pc {
+constexpr size_t banks[]{kM1Base,kM1Candidate};
+constexpr size_t pubs[]{kM1QPub,kM1QPubAlt};
 constexpr uint32_t k = 192, kw = 128, pad = 256, water = 16*k, column = water+16*kw;
 constexpr uint32_t header = column+2048, stateWords = header+256;
 constexpr uint32_t sandIndex=32, waterIndex=sandIndex+pad, arrival=waterIndex+kw, edges=arrival+kw;
@@ -50,45 +52,48 @@ void Boot::PrepareM1Quantum(const Candidate &candidate) {
   Allocate(kM1QEvents, capacity*256ull, storage | transferDst | copyOut);
   Allocate(kM1QUniform, stride*passes.size(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | transferDst);
   Allocate(kM1QPub, pubBytes, storage | copyOut);
+  Allocate(kM1QPubAlt, pubBytes, storage | copyOut);
 
   const uint32_t count = uint32_t(passes.size());
-  const VkDescriptorPoolSize sizes[] = {{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,count*4},
-                                        {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,count}};
+  const VkDescriptorPoolSize sizes[] = {{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,count*8},
+                                        {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,count*2}};
   VkDescriptorPoolCreateInfo pool{VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
-  pool.maxSets = count;
+  pool.maxSets = count*2;
   pool.poolSizeCount = 2;
   pool.pPoolSizes = sizes;
   Check(vk.CreateDescriptorPool(device, &pool, nullptr, &m1QuantumDescriptorPool), "vkCreateDescriptorPool.M1_QUANTUM");
-  std::vector<VkDescriptorSetLayout> layouts(count, descriptorLayout);
+  std::vector<VkDescriptorSetLayout> layouts(count*2, descriptorLayout);
   auto &sets=m1QuantumSets;
-  sets.resize(count);
+  sets.resize(count*2);
   VkDescriptorSetAllocateInfo setInfo{VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
   setInfo.descriptorPool = m1QuantumDescriptorPool;
-  setInfo.descriptorSetCount = count;
+  setInfo.descriptorSetCount = count*2;
   setInfo.pSetLayouts = layouts.data();
   Check(vk.AllocateDescriptorSets(device, &setInfo, sets.data()), "vkAllocateDescriptorSets.M1_QUANTUM");
-  constexpr size_t outputs[] = {kM1QEvents,kM1Base,kM1QPub,kM1Tail};
-  uint32_t channel = 0;
+  for (size_t base=0;base<2;++base) {
+  const size_t outputs[] = {kM1QEvents,banks[1-base],pubs[1-base],kM1Tail};
+  uint32_t channel=0;
   for (uint32_t i=0;i<count;++i) {
     if (passes[i].bind3) channel=passes[i].bind3;
-    const size_t slots[] = {kM1Candidate,kM1QScratch,kM1QWork,outputs[channel],kM1QUniform};
+    const size_t slots[] = {banks[base],kM1QScratch,kM1QWork,outputs[channel],kM1QUniform};
     std::array<VkDescriptorBufferInfo,5> ranges{};
     std::array<VkWriteDescriptorSet,5> writes{};
     for (uint32_t b=0;b<5;++b) {
       const auto &buffer = buffers[slots[b]];
       ranges[b] = {buffer.handle,b==4 ? stride*i : 0,b==4 ? block : buffer.bytes};
-      writes[b] = {VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,nullptr,sets[i],b,0,1,
+      writes[b] = {VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,nullptr,sets[base*count+i],b,0,1,
                    b==4 ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
                    nullptr,&ranges[b],nullptr};
     }
     vk.UpdateDescriptorSets(device,uint32_t(writes.size()),writes.data(),0,nullptr);
   }
+  }
 }
 
 bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
-                        m1::ProgressClockV2 &clock, m1::PlanGrantV2 permit,
+                        m1::ProgressClockV2 &clock, m1::PlanGrantV2 &permit,
                         const std::function<bool()> &refresh, grs::AcceptedRoot &accepted,
-                        const std::array<uint32_t,32> &sourceCommand) {
+                        uint64_t &frameSerial, uint32_t &ordinal) {
   using namespace m1pc;
   const m1::QuantumParameters p;
   const auto &passes=m1QuantumPasses;
@@ -97,8 +102,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   const auto align=candidate.properties.limits.minUniformBufferOffsetAlignment;
   const auto stride=(block+align-1)/align*align;
   const auto baseBank=root.Bank();
-  Require(baseBank==1,"M1_QUANTUM_FIRST_SOURCE_BANK");
-  const Words256 sourceCompletion=accepted.completion;
+  const auto previous=accepted.completion;
   auto reset = reinterpret_cast<PFN_vkResetCommandPool>(vk.GetDeviceProcAddr(device,"vkResetCommandPool"));
   Require(reset != nullptr,"M1_QUANTUM_RESET_FUNCTION");
   Check(reset(device,commandPool,0),"vkResetCommandPool.M1_QUANTUM");
@@ -109,25 +113,30 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
 
   // A grant with no physics slot can authorize SOURCE alone.
   // Only same-frame roots can carry the SOURCE event prefix.
-  const bool sameFrame = permit.quanta != 0;
+  const bool sameFrame = clock.activeRemaining != 0;
   while (!sameFrame) {
     if (!refresh()) {
       fields << ",\"m1QuantumReject\":\"CLOCK_OR_WINDOW_REVOKED_BEFORE_GRANT\"";
       return false;
     }
-    if (clock.Claim(pc::TimeNs(),p.requestedAngle,0,false,permit)) break;
+    if (clock.Claim(pc::TimeNs(),p.requestedAngle,0,false,permit)) {
+      ++frameSerial;
+      ordinal=0;
+      break;
+    }
     Sleep(1);
   }
   RootRequest r;
   r.kind=2;
-  r.quantumOrdinal=1;
+  r.quantumOrdinal=++ordinal;
   const auto nonce=pc::QpcTicks();
   r.nonce={uint32_t(nonce),uint32_t(nonce>>32)};
   r.control={uint32_t(permit.id),uint32_t(permit.id>>32)};
-  r.frame={sameFrame ? 1u : 2u,0};
+  r.frame={uint32_t(frameSerial),uint32_t(frameSerial>>32)};
   r.eventArena=r.frame.lo&1u;
-  r.publicationSlot=1-accepted.publication;
-  r.eventStart=sameFrame ? accepted.completion[53] : 0;
+  r.publicationSlot=1-baseBank;
+  const uint64_t previousFrame=uint64_t(previous[24])|(uint64_t(previous[25])<<32);
+  r.eventStart=sameFrame && frameSerial==previousFrame ? previous[53] : 0;
   r.eventCapacity=capacity;
   r.dispatchCount=r.barrierCount=count;
   r.carry=uint32_t(permit.carry);
@@ -147,7 +156,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_READ_BIT);
   const VkBufferCopy ledger{(96+4096*64+stateWords)*4,sourceEvents*4,4096*64};
   vk.CmdCopyBuffer(command,buffers[kM1Work].handle,work,1,&ledger);
-  if (r.eventStart) {
+  if (r.eventStart && previous[27]==1) {
     const VkBufferCopy prefix{0,0,r.eventStart*256ull};
     vk.CmdCopyBuffer(command,buffers[kM1Events].handle,buffers[kM1QEvents].handle,1,&prefix);
   }
@@ -171,7 +180,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
       vk.CmdBindPipeline(cmd,VK_PIPELINE_BIND_POINT_COMPUTE,next);
       bound=next;
     }
-    vk.CmdBindDescriptorSets(cmd,VK_PIPELINE_BIND_POINT_COMPUTE,pipelineLayout,0,1,&sets[i],0,nullptr);
+    vk.CmdBindDescriptorSets(cmd,VK_PIPELINE_BIND_POINT_COMPUTE,pipelineLayout,0,1,&sets[baseBank*count+i],0,nullptr);
     vk.CmdDispatch(cmd,(passes[i].n+63)/64,1,1);
     if (i+1<count) Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kCompute,kShaderRW);
   }
@@ -235,7 +244,6 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
     root.Stop();
     return false;
   }
-  if (!attempt.m1ColdFile.empty()) CaptureM1Quantum(root, accepted, sourceCompletion, stateWords, sourceCommand);
   return true;
 }
 

@@ -34,7 +34,7 @@ constexpr size_t kWork = 5, kControl = 6, kLayout = 7, kStaging = 8;
 #ifdef _WIN32
 constexpr size_t kM1Base = 9, kM1Candidate = 10, kM1Work = 11, kM1Events = 12, kM1Pub = 13,
                  kM1Tail = 14, kM1Uniform = 15, kM1QScratch = 16, kM1QWork = 17, kM1QEvents = 18,
-                 kM1QUniform = 19, kM1QPub = 20, kM1ColdStaging = 21, kBufferCount = 22;
+                 kM1QUniform = 19, kM1QPub = 20, kM1ColdStaging = 21, kM1QPubAlt = 22, kBufferCount = 23;
 #else
 constexpr size_t kBufferCount = 9;
 #endif
@@ -249,8 +249,8 @@ private:
   VkPipeline M1Pipeline(const std::wstring &, const char *);
   void PrepareM1Quantum(const Candidate &);
   bool RunM1Quantum(const Candidate &, grs::m1::SourceRootOwner &, grs::m1::ProgressClockV2 &,
-                   grs::m1::PlanGrantV2, const std::function<bool()> &, grs::AcceptedRoot &,
-                   const std::array<uint32_t,32> &);
+                   grs::m1::PlanGrantV2 &, const std::function<bool()> &, grs::AcceptedRoot &,
+                   uint64_t &, uint32_t &);
   void CaptureM1Quantum(grs::m1::SourceRootOwner &, const grs::AcceptedRoot &, const grs::Words256 &,
                         uint32_t, const std::array<uint32_t,32> &);
 #endif
