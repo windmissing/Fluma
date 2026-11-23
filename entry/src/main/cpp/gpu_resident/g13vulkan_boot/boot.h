@@ -38,6 +38,12 @@ struct Attempt {
   M1HotCapture *hotCapture = nullptr;
   bool m1DualSource = false;
   bool m1ColdOnBusy = false;
+  std::wstring t833CandidateFile;
+  std::string t833RevokeAt;
+  std::function<void()> t833Revoke;
+  std::string t833Case;
+  std::wstring t833ConfigFile,t833SeedFile;
+  uint32_t t833ForcedJ=0;
 #else
   NativeWindow *window;
 #endif

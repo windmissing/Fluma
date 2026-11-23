@@ -31,6 +31,12 @@ struct Window {
   uint32_t material=0;
   std::wstring t849WriteFile;
   bool t854PrivateWrites = false;
+  std::wstring t833CandidateFile;
+  std::string t833RevokeAt;
+  std::string t833Case;
+  std::wstring t833ConfigFile,t833SeedFile;
+  uint32_t t833ForcedJ=0;
+  bool t833Allowed=true;
   std::atomic<uint64_t> sourcePulse{0};
   bool pointerReady = false;
   grs::g13vk::PointerSample held;
@@ -227,7 +233,7 @@ struct Window {
       lock.unlock();
       auto current = [&] {
         std::lock_guard guard(mutex);
-        return !closing && generation == previous;
+        return !closing && generation == previous && t833Allowed;
       };
       MONITORINFOEXW display{};
       display.cbSize = sizeof(display);
@@ -262,7 +268,8 @@ struct Window {
                                                },
                                                [&](uint64_t hold, const std::function<void()> &accept) {
                                                  std::lock_guard guard(mutex);
-                                                 if (closing || generation != previous || (hold && held.hold != hold))
+                                                 if (closing || generation != previous || !t833Allowed ||
+                                                     (hold && held.hold != hold))
                                                    return false;
                                                  accept();
                                                  return true;
@@ -274,7 +281,10 @@ struct Window {
                                                  ingress.Authorize(scope,0);
                                                  hotCapture.Authorize(next);
                                                }, &ingress, (captureHot || captureCold) ? &hotCapture : nullptr,
-                                               dualSource,captureCold},
+                                               dualSource,captureCold,t833CandidateFile,t833RevokeAt,[&] {
+                                                 std::lock_guard guard(mutex);
+                                                 t833Allowed=false;
+                                               },t833Case,t833ConfigFile,t833SeedFile,t833ForcedJ},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos ||
@@ -295,7 +305,12 @@ struct Window {
           hotCapture.Authorize({});
         }
       }
-      const char *qualified = t854PrivateWrites ? "\"state\":\"T854_PRIVATE_WRITES_CAPTURED\"" :
+      const char *qualified = !t833CandidateFile.empty() ?
+                              (t833RevokeAt.empty() ? (t833Case=="F02" ?
+                               "\"state\":\"T833_PRIVATE_PROJECT_CAPTURED\"" :
+                               "\"state\":\"T833_CANDIDATE_CAPTURED\"") :
+                               "\"state\":\"T833_CANDIDATE_REVOKED\"") :
+                              t854PrivateWrites ? "\"state\":\"T854_PRIVATE_WRITES_CAPTURED\"" :
                               !t849WriteFile.empty() ? "\"state\":\"T849_PRIVATE_WRITES_CAPTURED\"" :
                               m1Present ? "\"state\":\"M1_DRY_SOURCE_PRESENT_RETIRED\"" :
                               !m1SourceModule.empty() ? "\"state\":\"M1_DRY_SOURCE_ACCEPTED\"" :
@@ -388,6 +403,24 @@ int wmain(int argc, wchar_t **argv) {
       window.t854PrivateWrites = true;
       window.bootOnly = window.steady = true;
     }
+    else if (!std::wcscmp(argv[i],L"--g13-candidate") && i+1 < argc) {
+      window.t833CandidateFile=argv[++i];
+      window.bootOnly=true;
+    }
+    else if (!std::wcscmp(argv[i],L"--g13-revoke-before")) window.t833RevokeAt="before";
+    else if (!std::wcscmp(argv[i],L"--g13-revoke-after")) window.t833RevokeAt="after";
+    else if (!std::wcscmp(argv[i],L"--g13-fixture") && i+3 < argc) {
+      const std::wstring name=argv[++i];
+      if (name!=L"F02" && name!=L"F03" && name!=L"F05") return 2;
+      window.t833Case.assign(name.begin(),name.end());
+      window.t833ConfigFile=argv[++i];
+      window.t833SeedFile=argv[++i];
+    }
+    else if (!std::wcscmp(argv[i],L"--g13-trial") && i+1 < argc) {
+      const std::wstring trial=argv[++i];
+      if (trial!=L"1" && trial!=L"2" && trial!=L"4") return 2;
+      window.t833ForcedJ=uint32_t(trial[0]-L'0');
+    }
     else if (!std::wcscmp(argv[i], L"--m1-window") && i+3 < argc) {
       window.m1SourceModule = argv[++i];
       window.m1QuantumCandidate = argv[++i];
@@ -412,7 +445,9 @@ int wmain(int argc, wchar_t **argv) {
                    "--qualify-steady-role NAME [--disable-optimization] | --probe-m1-source SPV | "
                    "--present-m1-source SPV | --m1-window SOURCE_SPV CANDIDATE_SPV COMMIT_SPV "
                    "[--m1-cold FILE | --m1-cold-on-busy FILE] [--m1-capture-hot] [--m1-source-trace] "
-                   "[--m1-dual-source] | --qualify-t849-writes FILE]\n";
+                   "[--m1-dual-source] | --qualify-t849-writes FILE | --g13-candidate FILE "
+                   "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] "
+                   "[--g13-revoke-before | --g13-revoke-after]]\n";
       return 2;
     }
   }
@@ -421,6 +456,10 @@ int wmain(int argc, wchar_t **argv) {
   if (window.steady && !window.m1SourceModule.empty()) return 2;
   if (window.captureHot && window.m1QuantumCandidate.empty()) return 2;
   if (window.captureHot && window.captureCold) return 2;
+  if (!window.t833RevokeAt.empty() && window.t833CandidateFile.empty()) return 2;
+  if (!window.t833Case.empty() && window.t833CandidateFile.empty()) return 2;
+  if (window.t833ForcedJ && window.t833Case!="F03") return 2;
+  if (!window.t833CandidateFile.empty() && (window.steady || !window.m1SourceModule.empty())) return 2;
   if (window.sourceTrace) window.ingress.EnableTrace();
   if (window.dualSource && (window.m1QuantumCandidate.empty() || !window.m1ColdFile.empty())) return 2;
   if ((!window.m1ColdFile.empty() && window.m1QuantumCandidate.empty()) ||
@@ -437,7 +476,8 @@ int wmain(int argc, wchar_t **argv) {
       window.m1QuantumCandidate.empty() ? L"HelloWorld Vulkan BOOT diagnostic" : L"HelloWorld Vulkan M1",
       WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 800, 500, nullptr, nullptr, instance, &window);
   if (!hwnd) return 4;
-  if (!window.m1SourceModule.empty() && !SetTimer(hwnd, kSourceProbeTimer, 10, nullptr)) return 5;
+  if ((!window.m1SourceModule.empty() || !window.t833CandidateFile.empty()) &&
+      !SetTimer(hwnd,kSourceProbeTimer,10,nullptr)) return 5;
   if (!window.bootOnly || window.m1Present) ShowWindow(hwnd, SW_SHOW);
   window.Size();
   std::thread owner([&] { window.Owner(); });

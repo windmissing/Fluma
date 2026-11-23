@@ -164,6 +164,8 @@ public:
       if (p) vk.DestroyPipeline(device, p, nullptr);
     for (auto p : t854Pipelines)
       if (p) vk.DestroyPipeline(device, p, nullptr);
+    for (const auto &role : t833Pipelines)
+      if (role.second) vk.DestroyPipeline(device,role.second,nullptr);
     if (m1QuantumDescriptorPool) vk.DestroyDescriptorPool(device, m1QuantumDescriptorPool, nullptr);
 #endif
     if (pipelineLayout)
@@ -209,6 +211,8 @@ private:
   HMODULE loader = nullptr;
   std::array<VkPipeline,2> m1QuantumPipelines{};
   std::array<VkPipeline,3> t854Pipelines{};
+  std::vector<std::pair<std::string_view,VkPipeline>> t833Pipelines;
+  std::vector<uint32_t> t833Seed;
   VkDescriptorPool m1QuantumDescriptorPool = VK_NULL_HANDLE;
   std::vector<VkDescriptorSet> m1QuantumSets;
   std::vector<m1::QuantumPassOp> m1QuantumPasses;
@@ -269,6 +273,7 @@ private:
   std::string Read(const std::array<uint32_t, 18688> &control);
 #ifdef _WIN32
   void QualifySteady(const std::string &roleName);
+  std::string RunT833Candidate(const Profile &,const Config &);
   void ObserveT849Reduction(const char *,PFN_vkResetCommandPool);
   void ObserveT849Writes();
   void ObserveT854Writes(const Profile &);
@@ -694,6 +699,13 @@ void Boot::Record(const Profile &profile, const Config &config,
   const auto header = BootHeader(profile, config, g13::Identity{attempt.ticket, attempt.ticket,
       attempt.ticket, attempt.surface, attempt.geometry});
   Barrier(kCompute, VK_ACCESS_SHADER_WRITE_BIT, kTransfer, VK_ACCESS_TRANSFER_WRITE_BIT);
+#ifdef _WIN32
+  for (size_t at=sizeof(header)/4;at<t833Seed.size();) {
+    const auto words=std::min(kUpdateLimit/4,t833Seed.size()-at);
+    vk.CmdUpdateBuffer(command,buffers[0].handle,at*4,words*4,t833Seed.data()+at);
+    at+=words;
+  }
+#endif
   vk.CmdUpdateBuffer(command, buffers[0].handle, 0, sizeof(header), header.data());
   Barrier(kTransfer, VK_ACCESS_TRANSFER_WRITE_BIT, kCompute, kShaderRW);
   Dispatch(0, 65, scopes.back());
@@ -901,13 +913,14 @@ void Boot::QualifySteady(const std::string &roleName) {
     ++qualifiedCount;
   }
   Require(qualifiedCount != 0, "UNKNOWN_STEADY_ROLE");
-  if (attempt.t849WriteFile.empty())
+  if (attempt.t849WriteFile.empty() && attempt.t833CandidateFile.empty())
     fields << ",\"steadyRoleCount\":" << qualifiedCount
            << ",\"sourceRoot\":\"NOT_RUN\",\"quantumRoot\":\"NOT_RUN\"";
 }
 
 #include "t849_writes.inc"
 #include "t854_writes.inc"
+#include "t833_candidate.inc"
 
 void Boot::ObserveT849Reduction(const char *moduleSHA, PFN_vkResetCommandPool reset) {
   Checkpoint("T849_PRIVATE_REDUCE");
@@ -996,11 +1009,44 @@ std::string Boot::Run() {
   Config config{};
   static_assert(std::size(kRestConfig) == std::tuple_size<Config>::value);
   std::copy(std::begin(kRestConfig), std::end(kRestConfig), config.begin());
+#ifdef _WIN32
+  if (!attempt.t833Case.empty()) {
+    std::ifstream input(std::filesystem::path(attempt.t833ConfigFile),std::ios::binary|std::ios::ate);
+    Require(input && input.tellg()==sizeof(config),"T833_FIXTURE_CONFIG_SIZE");
+    input.seekg(0);
+    Require(bool(input.read(reinterpret_cast<char *>(config.data()),sizeof(config))),"T833_FIXTURE_CONFIG_READ");
+    const auto *layout=FindProfile(config[4],config[5]);
+    const bool project=attempt.t833Case=="F02";
+    Require(layout && (config[7]==1 || (project && config[7]==3)) && ValidateConfig(config,true)==0,
+            "T833_FIXTURE_CONFIG_INVALID");
+    Require(config[6]==(attempt.t833Case=="F03" ? 2u : 1u),"T833_FIXTURE_BOUNDARY_INVALID");
+    if (attempt.t833Case=="F03")
+      Require(F32(config[18])==.0625f || F32(config[18])==.125f,"T833_F03_VISCOSITY_INVALID");
+    std::ifstream seed(std::filesystem::path(attempt.t833SeedFile),std::ios::binary|std::ios::ate);
+    Require(seed && seed.tellg()==std::streamoff(layout->sw*4ull),"T833_FIXTURE_STATE_SIZE");
+    t833Seed.resize(layout->sw);
+    seed.seekg(0);
+    Require(bool(seed.read(reinterpret_cast<char *>(t833Seed.data()),layout->sw*4ull)),
+            "T833_FIXTURE_STATE_READ");
+    const auto *raw=t833Seed.data();
+    Require(Hex(Hash(raw,layout->sw*4ull).data())==Hex(config.data()+60) &&
+            raw[0]==kMagic_state && raw[1]==1 && raw[2]==kMagic_profile &&
+            raw[3]==layout->sw && raw[4]==layout->nx && raw[5]==layout->ny && raw[6]==config[6] &&
+            std::all_of(raw+223,raw+256,[](uint32_t word) { return !word; }),"T833_FIXTURE_STATE_INVALID");
+    for (size_t i=167;i<192;i+=8) Require(!raw[i],"T833_FIXTURE_RESERVED_STATE");
+    fields << ",\"fixtureCase\":" << Quote(attempt.t833Case)
+           << ",\"fixtureConfigSHA\":" << Quote(Hex(config.data()+76))
+           << ",\"fixtureStateSHA\":" << Quote(Hex(config.data()+60));
+  } else
+#endif
   Require(ValidateConfig(config, false) == 0 && Hex(Hash(config.data(), sizeof(config)).data()) == kConfigSHA &&
           Hex(config.data() + 60) == kSeedReceiptSHA, "REST_CONFIG_128_INVALID");
   const auto *profile = FindProfile(config[4], config[5]);
-  Require(profile && profile->work[19].words >= kMathProbeOffset + kMathWords &&
-          (profile->work[19].offset + kMathProbeOffset) * 4 == 583296, "REST_WORK_LAYOUT_MISMATCH");
+  Require(profile && profile->work[19].words >= kMathProbeOffset + kMathWords,"BOOT_WORK_LAYOUT_MISMATCH");
+#ifdef _WIN32
+  if (attempt.t833Case.empty())
+#endif
+    Require((profile->work[19].offset+kMathProbeOffset)*4==583296,"REST_WORK_LAYOUT_MISMATCH");
   Open();
   const auto candidate = Select(*profile);
   OpenDevice(candidate);
@@ -1008,9 +1054,10 @@ std::string Boot::Run() {
   Checkpoint("BOOT_BUFFERS");
   const auto storage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 #ifdef _WIN32
-  const auto stateTransferRead=attempt.t849WriteFile.empty() ? 0 : VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-  const VkDeviceSize privateWorkBytes=attempt.t854PrivateWrites ? 128 : 0;
-  const VkDeviceSize privateLayoutBytes=attempt.t854PrivateWrites ? 16 : 0;
+  const bool t833=!attempt.t833CandidateFile.empty();
+  const auto stateTransferRead=attempt.t849WriteFile.empty() && !t833 ? 0 : VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+  const VkDeviceSize privateWorkBytes=attempt.t854PrivateWrites || t833 ? 128 : 0;
+  const VkDeviceSize privateLayoutBytes=attempt.t854PrivateWrites || t833 ? 16 : 0;
 #else
   constexpr auto stateTransferRead=0;
   constexpr VkDeviceSize privateWorkBytes=0, privateLayoutBytes=0;
@@ -1018,7 +1065,7 @@ std::string Boot::Run() {
   for (size_t i = 0; i < 3; ++i)
     Allocate(i, profile->sw * 4, storage | VK_BUFFER_USAGE_TRANSFER_DST_BIT | stateTransferRead);
   for (size_t i = 3; i < 5; ++i)
-    Allocate(i, profile->pw * 4, storage);
+    Allocate(i, profile->pw * 4, storage | stateTransferRead);
   Allocate(kWork, profile->ww * 4 + privateWorkBytes, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT |
            (privateWorkBytes ? VK_BUFFER_USAGE_TRANSFER_DST_BIT : 0));
   Allocate(kControl, 18688 * 4, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
@@ -1066,6 +1113,10 @@ std::string Boot::Run() {
   Checkpoint("FENCED_READBACK");
   const auto numeric = Read(control);
 #ifdef _WIN32
+  if (!attempt.t833CandidateFile.empty()) {
+    if (numeric.find("\"state\":\"BOOT_NUMERIC_QUALIFIED\"")==std::string::npos) return numeric;
+    return RunT833Candidate(*profile,config);
+  }
   if (attempt.steadyQualification) {
     if (numeric.find("\"state\":\"BOOT_NUMERIC_QUALIFIED\"")==std::string::npos)
       return numeric;
