@@ -1,0 +1,143 @@
+{
+  "schema": "T863_COLD_RECAPTURE_V1",
+  "pc": "Intel UHD Graphics 630, Vulkan 1.2 core, Windows x64",
+  "pe": {
+    "path": ".codex/local-test/t859-release.exe",
+    "sha256": "4898a30ed3206628b49a73819893533fa40c6b0ca2ebaabbaac0464e3b32d11a",
+    "note": "T859 fixed-digest build (WriteM1Cold envelope 72B, full 32B digest); t859-cold.exe is the offline format self-test binary (exit 0)."
+  },
+  "spirv": {
+    "full_source": "1912af9ed97e30d9eb158f0af2d6d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162",
+    "quantum_candidate": "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c",
+    "quantum_commit": "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce"
+  },
+  "run": {
+    "rows": 36,
+    "pointerEvents": [
+      [
+        "FOCUS_LOST",
+        "0"
+      ],
+      [
+        "DOWN",
+        "2"
+      ],
+      [
+        "UP",
+        "0"
+      ],
+      [
+        "CAPTURE_LOST",
+        "0"
+      ]
+    ],
+    "hold": "2",
+    "admittedQ": 135414,
+    "descriptorAllocation": {
+      "expectedSets": 16,
+      "requestedSets": 16,
+      "nonNullSets": 16,
+      "firstNullIndex": null,
+      "vkResult": 0
+    },
+    "descriptorUpdates": 16,
+    "angleFence": 0,
+    "sourceOwnerCode": 0,
+    "quantumOwnerCode": 0,
+    "presentQueued": true,
+    "presentRetired": true,
+    "publicationReleased": true,
+    "wsiResult": 0,
+    "wsiRetireVkResult": 0
+  },
+  "archive": {
+    "path": "test/reports/t863/m1pcold1.bin",
+    "fileBytes": 94408,
+    "envelopeBytes": 72,
+    "layout": "magic(8)+sizes(32)+digest32+raw — unmodified original file, no rewriting",
+    "storedDigest": "a2ca440b3f9a30670ee2bd98b09ccb0f7f25f932374bbbf62539ee6a8426fbee",
+    "computedSha256": "a2ca440b3f9a30670ee2bd98b09ccb0f7f25f932374bbbf62539ee6a8426fbee",
+    "digestMatch": true,
+    "sizes": [
+      1024,
+      29696,
+      512,
+      31744,
+      29696,
+      512,
+      1024,
+      128
+    ],
+    "sizesSum": 94336,
+    "fileSizeEqualsEnvelopePlusSizes": true,
+    "jsonlColdPayloadSHA": "a2ca440b3f9a30670ee2bd98b09ccb0f7f25f932374bbbf62539ee6a8426fbee",
+    "jsonlColdBytes": 94408,
+    "jsonlMatchesFile": true
+  },
+  "t848Join": {
+    "root": {
+      "acceptedRoot": 15700005297258,
+      "run": 15700003181043,
+      "config": 2,
+      "sourceCommit": 1,
+      "physicsCommit": 2,
+      "generation": 2,
+      "publicationSlot": 0
+    },
+    "scope": {
+      "pid": 6804,
+      "processStartTick": "134398837280197850",
+      "ticket": "2",
+      "ownerTid": 87884,
+      "surface": "1",
+      "geometry": "2",
+      "m1SourceModuleSHA": "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162"
+    },
+    "payloadSHA256": "a2ca440b3f9a30670ee2bd98b09ccb0f7f25f932374bbbf62539ee6a8426fbee",
+    "lineage": "NEXT_FRAME",
+    "sourceFrame": 1,
+    "quantumFrame": 2,
+    "sourcePermit": 1,
+    "quantumPermit": 2,
+    "sourceEventEnd": 2,
+    "quantumEventStart": 0,
+    "quantumEventEnd": 2,
+    "container": "FULL_SHA256",
+    "receiptBytes": 94408,
+    "decodedBytes": 94408,
+    "sections": {
+      "quantum_completion": {
+        "bytes": 1024,
+        "sha256": "de1b2e8717524ec859f88cc2796bb33c3409ffb46586c32e1fd0d09322843519"
+      },
+      "quantum_bank": {
+        "bytes": 29696,
+        "sha256": "c315db0771afcb55ab3be0472b6430cca79bbad9b7790ab32704d355bcfc4c45"
+      },
+      "quantum_events": {
+        "bytes": 512,
+        "sha256": "415af3d17876e430aa4234822be253da79498c0a151c95088c58449c5382f2a2"
+      },
+      "quantum_publication": {
+        "bytes": 31744,
+        "sha256": "ee1722f4b8fda3926eba46f9d27f4ef384743280eee1d13e6ac1f2101bdbf4c4"
+      },
+      "source_bank": {
+        "bytes": 29696,
+        "sha256": "c7ed6d209bc9a6d8a57d5769a779c5358e8273d27d4c0f8bf13d50bab5febc53"
+      },
+      "source_events": {
+        "bytes": 512,
+        "sha256": "bfa00cfaad5dcee979f56421525d14c339df686ae0235dba01aa4f1a764c2aa4"
+      },
+      "source_completion": {
+        "bytes": 1024,
+        "sha256": "35af73027cab86cf19cbe9de445b8d776ae57d1171cbd8cfcffc659ef7af049f"
+      },
+      "source_command": {
+        "bytes": 128,
+        "sha256": "153286b059625408720bc7def5c8daeb1d0589f20b9d64bc066f62826f7b8151"
+      }
+    }
+  }
+}
