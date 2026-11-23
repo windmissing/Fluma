@@ -132,6 +132,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   const auto stride=(block+align-1)/align*align;
   const auto baseBank=root.Bank();
   const auto previous=accepted.completion;
+  Require(!inFlight,"M1_QUANTUM_RETIRE_PENDING");
   auto reset = reinterpret_cast<PFN_vkResetCommandPool>(vk.GetDeviceProcAddr(device,"vkResetCommandPool"));
   Require(reset != nullptr,"M1_QUANTUM_RESET_FUNCTION");
   Check(reset(device,commandPool,0),"vkResetCommandPool.M1_QUANTUM");
@@ -144,8 +145,10 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   // Only same-frame roots can carry the SOURCE event prefix.
   const bool sameFrame = clock.activeRemaining != 0;
   while (!sameFrame) {
-    if (!refresh()) {
-      fields << ",\"m1QuantumReject\":\"CLOCK_OR_WINDOW_REVOKED_BEFORE_GRANT\"";
+    m1Reject=!attempt.current() ? "WINDOW_REVOKED" : !refresh() ? clock.fault : nullptr;
+    if (m1Reject) {
+      fields << ",\"m1QuantumReject\":" << Quote(m1Reject);
+      M1RootTrace("Quantum",0,clock,{},accepted,{});
       return false;
     }
     if (clock.Claim(pc::TimeNs(),p.requestedAngle,0,false,permit)) {
@@ -220,34 +223,37 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   fields << ",\"m1QuantumNonce\":\"" << nonce << "\",\"m1QuantumDispatches\":" << count
          << ",\"m1QuantumUiNs\":\"" << clock.uiNs << "\""
          << ",\"m1QuantumEventStart\":" << r.eventStart << ",\"m1QuantumDeadlineNs\":\"" << deadline << "\"";
-  const auto current = [&] { return refresh() && clock.Identity(permit.id,permit.session); };
-  if (!current() || pc::TimeNs()>=deadline) {
-    fields << ",\"m1QuantumReject\":\"STALE_OR_LATE_BEFORE_SUBMIT\"";
-    root.Stop();
+  const auto guard = [&]() -> const char * {
+    if (!attempt.current()) return "WINDOW_REVOKED";
+    if (!refresh()) return clock.fault;
+    if (!clock.Identity(permit.id,permit.session) || !clock.activeRemaining) return "PLAN_SESSION_MISMATCH";
+    return nullptr;
+  };
+  M1WaitLog log;
+  const auto reject=[&] {
+    attempt.disarmM1Input();
+    RetireM1Root(root,log);
+    fields << ",\"m1QuantumReject\":" << Quote(m1Reject);
+    M1RootTrace("Quantum",nonce,clock,permit,accepted,log);
     return false;
-  }
+  };
+  m1Reject=pc::TimeNs()>=deadline ? "ROOT_DEADLINE" : guard();
+  if (m1Reject) return reject();
   VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
   submit.commandBufferCount=1;
   submit.pCommandBuffers=&cmd;
-  Check(vk.QueueSubmit(queue,1,&submit,fence),"vkQueueSubmit.M1_QUANTUM");
+  log.submit=vk.QueueSubmit(queue,1,&submit,fence);
+  if (log.submit!=VK_SUCCESS) {
+    m1Reject=log.submit==VK_ERROR_DEVICE_LOST ? "DEVICE_LOST" : "SUBMIT_VK_ERROR";
+    return reject();
+  }
   inFlight=true;
   M1BusyFence busy{attempt.hotCapture,M1HotCapture::Phase::QuantumFence,nonce};
-  VkResult waited=VK_NOT_READY;
-  uint64_t now=pc::TimeNs();
-  while (now<deadline && current()) {
-    waited=vk.WaitForFences(device,1,&fence,VK_TRUE,std::min<uint64_t>(deadline-now,2000000));
-    now=pc::TimeNs();
-    if (waited!=VK_TIMEOUT) break;
-  }
+  m1Reject=AwaitM1Fence(deadline,guard,log);
   if (attempt.hotCapture) attempt.hotCapture->StopBusy();
-  if (waited==VK_SUCCESS || waited==VK_ERROR_DEVICE_LOST) inFlight=false;
-  fields << ",\"m1QuantumFenceVkResult\":" << int(waited)
-         << ",\"m1QuantumFenceNs\":\"" << now << "\"";
-  if (waited!=VK_SUCCESS || now>deadline || !current()) {
-    fields << ",\"m1QuantumReject\":\"FENCE_OR_PERMIT_FAILED\"";
-    root.Stop();
-    return false;
-  }
+  fields << ",\"m1QuantumFenceVkResult\":" << int(log.last)
+         << ",\"m1QuantumFenceNs\":\"" << log.fenceNs << "\"";
+  if (m1Reject) return reject();
   void *mapped=nullptr;
   Check(vk.MapMemory(device,staging.memory,0,VK_WHOLE_SIZE,0,&mapped),"vkMapMemory.M1_QUANTUM");
   VkResult invalidation=VK_SUCCESS;
@@ -260,20 +266,27 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   vk.UnmapMemory(device,staging.memory);
   Check(invalidation,"vkInvalidateMappedMemoryRanges.M1_QUANTUM");
   ControlCode result=ControlCode::STALE;
-  if (current() && clock.activeRemaining && pc::TimeNs()<=deadline) {
-    attempt.acceptPointer(0,[&] {
-      if (pc::TimeNs()>deadline) return;
-      result=root.Poll(FenceState::Signaled,tail.data(),tail.size(),0,accepted);
-      if (result==ControlCode::OK) clock.AcceptQuantum(permit.id);
+  m1Reject=guard();
+  if (!m1Reject && !attempt.acceptPointer(0,[&] {
+      if (pc::TimeNs()>deadline) { m1Reject="ACCEPT_DEADLINE"; return; }
+      if (!refresh()) { m1Reject=clock.fault; return; }
+      if (!clock.Identity(permit.id,permit.session) || !clock.activeRemaining) {
+        m1Reject="PLAN_SESSION_MISMATCH"; return;
+      }
+      if (pc::TimeNs()>deadline) { m1Reject="ACCEPT_DEADLINE"; return; }
+      grs::AcceptedRoot candidate;
+      result=root.Poll(FenceState::Signaled,tail.data(),tail.size(),0,candidate);
+      if (result==ControlCode::OK) {
+        clock.AcceptQuantum(permit.id);
+        accepted=candidate;
+      }
       busy.Complete(result==ControlCode::OK ? &tail : nullptr);
-    });
-  }
+    }))
+    m1Reject="WINDOW_REVOKED";
   fields << ",\"m1QuantumCompletion\":" << Words(tail) << ",\"m1QuantumOwnerCode\":" << int(result);
-  if (result!=ControlCode::OK) {
-    fields << ",\"m1QuantumReject\":\"OWNER_REJECTED_OR_REVOKED\"";
-    root.Stop();
-    return false;
-  }
+  if (!m1Reject && result!=ControlCode::OK) m1Reject="TAIL_REJECTED";
+  if (m1Reject) return reject();
+  M1RootTrace("Quantum",nonce,clock,permit,accepted,log);
   return true;
 }
 

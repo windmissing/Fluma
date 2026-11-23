@@ -8,6 +8,7 @@
 #include <mutex>
 #include <sstream>
 #include <thread>
+#include <utility>
 #include <windowsx.h>
 
 namespace {
@@ -47,6 +48,12 @@ struct Window {
   grs::g13vk::SourceScope scope;
   grs::g13vk::M1Ingress ingress;
   grs::g13vk::M1HotCapture hotCapture;
+  grs::g13vk::M1PulseQueue m1Pulses;
+  std::condition_variable outputReady;
+  std::array<std::string,128> outputRows;
+  size_t outputRead=0,outputSize=0;
+  uint64_t outputDropped=0;
+  bool outputDone=false;
   bool captureHot=false, captureCold=false, sourceTrace=false;
   bool rootCapture=false;
   std::wstring d1Mode,d1ReplayPrefix;
@@ -59,7 +66,31 @@ struct Window {
 
   void Emit(const std::string &json) {
     std::lock_guard lock(output);
-    std::cout << json << std::endl;
+    if (outputSize==outputRows.size() || json.size()>64*1024) ++outputDropped;
+    else outputRows[(outputRead+outputSize++)%outputRows.size()]=json;
+    outputReady.notify_one();
+  }
+  void WriteLogs() {
+    for (;;) {
+      std::unique_lock lock(output);
+      outputReady.wait(lock,[&] { return outputDone || outputSize || outputDropped; });
+      if (!outputSize && !outputDropped) return;
+      std::string row;
+      if (outputSize) {
+        row=std::move(outputRows[outputRead]);
+        outputRead=(outputRead+1)%outputRows.size();
+        --outputSize;
+      }
+      const auto dropped=std::exchange(outputDropped,0);
+      lock.unlock();
+      if (dropped) std::cout << "{\"stage\":\"PC_TRACE_INCOMPLETE\",\"dropped\":" << dropped << "}\n";
+      if (!row.empty()) std::cout << row << '\n';
+      std::cout.flush();
+    }
+  }
+  void ReceiveM1Pulse(uint64_t ticks,uint64_t ns,uint64_t hz) {
+    const auto receipt=grs::pc::QpcTicks();
+    m1Pulses.Receive(generation,{0,ticks,receipt,ns,grs::pc::QpcNs(receipt,hz)});
   }
   bool D1CaptureEnabled() const { return d1Mode==L"ON" || d1Mode==L"REPLAY_ON"; }
   void DrainSourceTrace() {
@@ -114,7 +145,8 @@ struct Window {
          "\",\"waitMs\":"+std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(anchor-begin).count())+"}");
     for (const auto &action:M1D1Plan()) {
       std::this_thread::sleep_until(anchor+std::chrono::nanoseconds(action.ns));
-      const auto ticks=grs::pc::QpcTicks(),ns=grs::pc::TimeNs();
+      const auto ticks=grs::pc::QpcTicks(),hz=grs::pc::QpcFrequency();
+      const auto ns=grs::pc::QpcNs(ticks,hz);
       SourceOffer offer;
       bool current;
       {
@@ -127,6 +159,7 @@ struct Window {
         }
         if (current && action.kind==D1Kind::Pulse) {
           sourcePulse.store(ns,std::memory_order_relaxed);
+          ReceiveM1Pulse(ticks,ns,hz);
           if (pending.id) {
             const auto serial=++eventSeq;
             held={serial,serial,createdNs,64.5,pending.y,int(64.5*width/128.),
@@ -191,6 +224,7 @@ struct Window {
     held = {};
     ingress.Authorize({},0);
     hotCapture.Authorize({});
+    m1Pulses.Close();
     wake.notify_one();
   }
 
@@ -249,7 +283,8 @@ struct Window {
   }
 
   void Pulse() {
-    const auto ticks=grs::pc::QpcTicks(), ns=grs::pc::TimeNs();
+    const auto ticks=grs::pc::QpcTicks(), hz=grs::pc::QpcFrequency();
+    const auto ns=grs::pc::QpcNs(ticks,hz);
     sourcePulse.store(ns,std::memory_order_relaxed);
     if (!t833CandidateFile.empty()) {
       std::lock_guard lock(mutex);
@@ -259,6 +294,7 @@ struct Window {
     grs::g13vk::SourceOffer offer;
     {
       std::lock_guard lock(mutex);
+      if (!closing && !m1SourceModule.empty()) ReceiveM1Pulse(ticks,ns,hz);
       if (closing || !pointerReady) return;
       offer.scope=scope;
       if (held.hold)
@@ -321,6 +357,7 @@ struct Window {
     held = {};
     ingress.Authorize({},0);
     hotCapture.Authorize({});
+    m1Pulses.Close();
     wake.notify_one();
     d1Ready.notify_all();
   }
@@ -357,14 +394,13 @@ struct Window {
                                                [&] { return sourcePulse.load(std::memory_order_relaxed); },
                                                m1QuantumCandidate, m1QuantumCommit, m1ColdFile,
                                                [&](const std::string &readyReceipt) {
-                                                 std::lock_guard sink(output);
                                                  {
                                                    std::lock_guard guard(mutex);
                                                    if (closing || generation != previous) return false;
+                                                   Emit(readyReceipt);
                                                    pointerReady = true;
                                                    d1Ready.notify_one();
                                                  }
-                                                 std::cout << readyReceipt << std::endl;
                                                  return true;
                                                },
                                                [&] {
@@ -400,7 +436,14 @@ struct Window {
                                                    if (ns>after) samples.push_back(ns);
                                                  }
                                                  return samples;
-                                               },t833F05Rest},
+                                               },t833F05Rest,&m1Pulses,[&] {
+                                                 std::lock_guard guard(mutex);
+                                                 if (generation!=previous) return;
+                                                 pointerReady=false;
+                                                 held={};
+                                                 scope.permission=0;
+                                                 ingress.Authorize(scope,0);
+                                               },sourceTrace},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
@@ -413,16 +456,17 @@ struct Window {
             }
             return current();
           });
-      Emit(terminal);
-      if (!m1QuantumCandidate.empty()) {
+      if (!m1SourceModule.empty()) {
         std::lock_guard guard(mutex);
         if (generation == previous) {
           pointerReady = false;
           held = {};
           ingress.Authorize({},0);
           hotCapture.Authorize({});
+          m1Pulses.Close();
         }
       }
+      Emit(terminal);
       const char *qualified = !t833CandidateFile.empty() ?
                               (t833RevokeAt.empty() ? (t833Case=="F02" ?
                                "\"state\":\"T833_PRIVATE_PROJECT_CAPTURED\"" :
@@ -617,6 +661,7 @@ int wmain(int argc, wchar_t **argv) {
       !SetTimer(hwnd,kSourceProbeTimer,10,nullptr)) return 5;
   if (!window.bootOnly || window.m1Present) ShowWindow(hwnd, SW_SHOW);
   window.Size();
+  std::thread logger([&] { window.WriteLogs(); });
   std::thread owner([&] { window.Owner(); });
   std::thread d1;
   if (!window.d1Mode.empty()) d1=std::thread([&] { window.RunD1(); });
@@ -628,5 +673,11 @@ int wmain(int argc, wchar_t **argv) {
   window.Close();
   owner.join();
   if (d1.joinable()) d1.join();
+  {
+    std::lock_guard lock(window.output);
+    window.outputDone=true;
+    window.outputReady.notify_one();
+  }
+  logger.join();
   return window.result;
 }

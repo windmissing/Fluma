@@ -27,10 +27,9 @@ inline uint64_t QpcFrequency() {
   LARGE_INTEGER value{};
   return QueryPerformanceFrequency(&value) ? uint64_t(value.QuadPart) : 0;
 }
-inline uint64_t TimeNs() {
-  const auto ticks = QpcTicks();
-  const auto hz = QpcFrequency();
+inline uint64_t QpcNs(uint64_t ticks,uint64_t hz) {
   return hz && hz <= UINT64_MAX / 1000000000ull
       ? ticks / hz * 1000000000ull + ticks % hz * 1000000000ull / hz : 0;
 }
+inline uint64_t TimeNs() { return QpcNs(QpcTicks(),QpcFrequency()); }
 }

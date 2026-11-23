@@ -45,6 +45,15 @@ struct M1BusyFence {
     capture=nullptr;
   }
 };
+struct M1WaitLog {
+  struct Wait { uint64_t timeout=0, enter=0, exit=0; VkResult result=VK_NOT_READY; };
+  std::array<Wait,128> rows{};
+  size_t calls=0;
+  VkResult submit=VK_NOT_READY, last=VK_NOT_READY, retire=VK_NOT_READY;
+  uint64_t fenceNs=0;
+  uint64_t retireEnter=0,retireExit=0;
+  Wait lastWait;
+};
 #endif
 constexpr uint32_t kSeal = 0xc0de1301u;
 constexpr size_t kTailWords = 256, kInputs65 = 744, kInputs66 = 18648;
@@ -279,6 +288,13 @@ private:
   void ObserveT849Writes();
   void ObserveT854Writes(const Profile &);
   std::string ProbeM1Source(const Candidate &);
+  M1Pulse m1Latest,m1Consumed;
+  uint64_t m1Run=0;
+  const char *m1Reject=nullptr;
+  const char *AwaitM1Fence(uint64_t,const std::function<const char *()> &,M1WaitLog &);
+  void M1RootTrace(const char *,uint64_t,const m1::ProgressClockV2 &,const m1::PlanGrantV2 &,
+                   const grs::AcceptedRoot &,const M1WaitLog &);
+  void RetireM1Root(m1::SourceRootOwner &,M1WaitLog &);
   VkPipeline M1Pipeline(const std::wstring &, const char *);
   void PrepareM1Quantum(const Candidate &);
   bool RunM1Quantum(const Candidate &, grs::m1::SourceRootOwner &, grs::m1::ProgressClockV2 &,
