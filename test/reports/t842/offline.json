@@ -1,0 +1,44 @@
+{
+  "sourceSHA256": "80c9dfc88a9cbd0bbba407e6aee8b6bb8fca87460b5408a0f3e78272dc579eff",
+  "receiptPE": "9699313cd5fd3f7ca92fb930145c1e053910c71b1de0668707c4d9e823571067",
+  "observedDrySource": {
+    "nonce": "15212809590207",
+    "completionSHA256": "3ef843ac316ba7834384fec5f1553cf5f991df4acfe9813e0d559bc6e846ece9",
+    "admittedQ20": 131072,
+    "scope": {
+      "pid": 93548,
+      "processStartTick": "134398350333242743",
+      "ticket": "2",
+      "ownerTid": 19500,
+      "surface": "1",
+      "geometry": "2",
+      "m1SourceModuleSHA": "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162"
+    }
+  },
+  "negatives": [
+    "STALE_SCOPE",
+    "NONCE_MISMATCH",
+    "UNACCEPTED_OR_EMPTY",
+    "PRESENT_OR_RETIRE",
+    "PRESENT_IDENTITY"
+  ],
+  "badArchive": "COLD_HEADER",
+  "t838Regression": {
+    "state": "SYNTHETIC_PASS",
+    "checks": 5,
+    "historicalArithmeticReplayed": true
+  },
+  "nativeCold": "NOT_OBSERVED",
+  "quantum": "NOT_OBSERVED",
+  "D1D2": "T496_SEPARATE",
+  "historicalReplayRegression": {
+    "rootCount": 92,
+    "replayByteMatch": true,
+    "correlatedWithMain": [
+      92,
+      92
+    ],
+    "requiresMainArmCorrelation": true,
+    "productPASS": false
+  }
+}
