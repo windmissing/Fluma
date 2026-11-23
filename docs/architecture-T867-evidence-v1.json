@@ -1,0 +1,308 @@
+{
+  "schema": "T867_T864_OFFLINE_ATTRIBUTION_V1",
+  "pinnedTestCommit": "3090a5bd",
+  "pinnedSource": "d32f564c",
+  "pe": {
+    "path": ".codex/local-test/t860-paged-release.exe",
+    "sha256": "b02294dcdd5daa88c434cb444f0ce48882a21bd44a51908fcf9ad89f96e8c7e4",
+    "note": "newest PE with --m1-dual-source + --m1-source-trace (T862 dual features merged into T860-paged build); t862-release.exe lacks --m1-source-trace"
+  },
+  "sourceModules": {
+    "full_source": {
+      "path": ".codex/local-test/t830-m1-20261123/full_source.spv",
+      "sha256": "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162"
+    },
+    "quantum_candidate": {
+      "path": ".codex/local-test/t830-m1-20261123/quantum_candidate.spv",
+      "sha256": "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c"
+    },
+    "quantum_commit": {
+      "path": ".codex/local-test/t830-m1-20261123/quantum_commit.spv",
+      "sha256": "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce"
+    }
+  },
+  "sceneShader": {
+    "path": ".codex/local-test/t860-paged-ninja/g13_assets/m1_full_scene.frag.spv",
+    "sha256": "d7d73a46ac11532bc04cb63ea08c80c1cbb98b7b90e8db446b6d3a4c6a88a151",
+    "bytes": 9004,
+    "peOccurrences": 1
+  },
+  "rootDeadlineNs": 250000000,
+  "clockGapNs": 33333333,
+  "pollSliceRequestedMaxNs": 2000000,
+  "runs": [
+    {
+      "path": "test/reports/t864/run1.jsonl",
+      "sha256GitLF": "ced80991fa06289d40c5db07ea6ade8aac7e57428ad4e3316906ef42b1f25b1d",
+      "rows": 746,
+      "firstFailureRow": 178,
+      "failureRows": [
+        178
+      ],
+      "reason": "M1_QUANTUM_CONTINUATION_FAILED",
+      "firstUpRow": 277,
+      "firstUpNs": 1570493098080700,
+      "afterAcceptModeRows": [
+        {
+          "row": 283,
+          "material": 1
+        },
+        {
+          "row": 542,
+          "material": 0
+        }
+      ],
+      "qpcFrequency": 10000000,
+      "ticket": "2",
+      "geometry": "2",
+      "source": {
+        "row": 38,
+        "run": "15704900363630",
+        "hold": "1",
+        "offer": "2",
+        "material": 0,
+        "nonce": "15704901335891",
+        "admittedQ20": 124585
+      },
+      "presentCount": 25,
+      "firstOrContinuation": "CONTINUATION",
+      "quantumNonce": "15704914958934",
+      "grantNs": 1570491407352100,
+      "fenceSampleNs": 1570491535373000,
+      "deadlineNs": 1570491657352100,
+      "nsLeftAtLastPoll": 121979100,
+      "nonceToLastPollNs": 39479600,
+      "fenceLastVkResult": 2,
+      "closestProducerPulseNs": 1570491520719600,
+      "maxProducerGapAroundRootNs": 31202800,
+      "relevantFirstOffer": 90,
+      "relevantLastOffer": 93,
+      "producerPulseSequenceGap": false,
+      "consumerPulseReceipt": "NOT_RECORDED",
+      "windowGeometryContinuous": true,
+      "wsiRetireVkResults": [],
+      "switchWhileRootWasLive": "NOT_OBSERVED",
+      "bothSourcesSameScene": false
+    },
+    {
+      "path": "test/reports/t864/run2-water.jsonl",
+      "sha256GitLF": "65e90c135a3b0192dc240674deafaf86586d7f021b8832d1eb01cbaa5c54c697",
+      "rows": 259,
+      "firstFailureRow": 116,
+      "failureRows": [
+        116,
+        259
+      ],
+      "reason": "M1_QUANTUM_CONTINUATION_FAILED",
+      "firstUpRow": 253,
+      "firstUpNs": 1571139838084700,
+      "afterAcceptModeRows": [],
+      "qpcFrequency": 10000000,
+      "ticket": "2",
+      "geometry": "2",
+      "source": {
+        "row": 39,
+        "run": "15711366140102",
+        "hold": "1",
+        "offer": "2",
+        "material": 1,
+        "nonce": "15711368697287",
+        "admittedQ20": 129635
+      },
+      "presentCount": 11,
+      "firstOrContinuation": "CONTINUATION",
+      "quantumNonce": "15711376692818",
+      "grantNs": 1571137669281700,
+      "fenceSampleNs": 1571137689980000,
+      "deadlineNs": 1571137919281700,
+      "nsLeftAtLastPoll": 229301700,
+      "nonceToLastPollNs": 20698200,
+      "fenceLastVkResult": 2,
+      "closestProducerPulseNs": 1571137680982600,
+      "maxProducerGapAroundRootNs": 29518500,
+      "relevantFirstOffer": 53,
+      "relevantLastOffer": 56,
+      "producerPulseSequenceGap": false,
+      "consumerPulseReceipt": "NOT_RECORDED",
+      "windowGeometryContinuous": true,
+      "wsiRetireVkResults": [
+        0
+      ],
+      "switchWhileRootWasLive": "NOT_OBSERVED",
+      "bothSourcesSameScene": false
+    },
+    {
+      "path": "test/reports/t864/run3-sand-then-water.jsonl",
+      "sha256GitLF": "8fd91462169b4e2ecfc71bee765696d9a56cd12c5c6a7fd06411cd7508db1ffa",
+      "rows": 440,
+      "firstFailureRow": 93,
+      "failureRows": [
+        93,
+        440
+      ],
+      "reason": "M1_QUANTUM_CONTINUATION_FAILED",
+      "firstUpRow": 239,
+      "firstUpNs": 1571158936616400,
+      "afterAcceptModeRows": [],
+      "qpcFrequency": 10000000,
+      "ticket": "2",
+      "geometry": "2",
+      "source": {
+        "row": 40,
+        "run": "15711559266970",
+        "hold": "1",
+        "offer": "2",
+        "material": 0,
+        "nonce": "15711559826637",
+        "admittedQ20": 134668
+      },
+      "presentCount": 7,
+      "firstOrContinuation": "CONTINUATION",
+      "quantumNonce": "15711566246409",
+      "grantNs": 1571156460094500,
+      "fenceSampleNs": 1571156660616500,
+      "deadlineNs": 1571156710094500,
+      "nsLeftAtLastPoll": 49478000,
+      "nonceToLastPollNs": 35975600,
+      "fenceLastVkResult": 2,
+      "closestProducerPulseNs": 1571156646066700,
+      "maxProducerGapAroundRootNs": 30956700,
+      "relevantFirstOffer": 44,
+      "relevantLastOffer": 46,
+      "producerPulseSequenceGap": false,
+      "consumerPulseReceipt": "NOT_RECORDED",
+      "windowGeometryContinuous": true,
+      "wsiRetireVkResults": [
+        0
+      ],
+      "switchWhileRootWasLive": "NOT_OBSERVED",
+      "bothSourcesSameScene": false
+    },
+    {
+      "path": "test/reports/t864/run4-dual.jsonl",
+      "sha256GitLF": "ef26dd1c1615ce69ae55789d56ca4bf20dd70262d8ab3a0569188701386f2f9e",
+      "rows": 64,
+      "firstFailureRow": 50,
+      "failureRows": [
+        50
+      ],
+      "reason": "M1_QUANTUM_NOT_ACCEPTED",
+      "firstUpRow": 55,
+      "firstUpNs": 1571181619865600,
+      "afterAcceptModeRows": [
+        {
+          "row": 57,
+          "material": 1
+        },
+        {
+          "row": 61,
+          "material": 0
+        }
+      ],
+      "qpcFrequency": 10000000,
+      "ticket": "2",
+      "geometry": "2",
+      "source": {
+        "row": 40,
+        "run": "15711790984324",
+        "hold": "1",
+        "offer": "2",
+        "material": 0,
+        "nonce": "15711791568710",
+        "admittedQ20": 135076
+      },
+      "presentCount": 0,
+      "firstOrContinuation": "FIRST_QUANTUM",
+      "quantumNonce": "15711792475168",
+      "grantNs": 1571179247516800,
+      "fenceSampleNs": 1571179329259300,
+      "deadlineNs": 1571179497516800,
+      "nsLeftAtLastPoll": 168257500,
+      "nonceToLastPollNs": 81742500,
+      "fenceLastVkResult": 2,
+      "closestProducerPulseNs": 1571179324674900,
+      "maxProducerGapAroundRootNs": 22600800,
+      "relevantFirstOffer": 9,
+      "relevantLastOffer": 15,
+      "producerPulseSequenceGap": false,
+      "consumerPulseReceipt": "NOT_RECORDED",
+      "windowGeometryContinuous": true,
+      "wsiRetireVkResults": [],
+      "switchWhileRootWasLive": "NOT_OBSERVED",
+      "bothSourcesSameScene": false
+    },
+    {
+      "path": "test/reports/t864/run5-dual.jsonl",
+      "sha256GitLF": "a2f046b93efaa1810b9458433c8a05633890d87a33b9d0a36285aea028bff37a",
+      "rows": 208,
+      "firstFailureRow": 62,
+      "failureRows": [
+        62,
+        208
+      ],
+      "reason": "M1_QUANTUM_CONTINUATION_FAILED",
+      "firstUpRow": 117,
+      "firstUpNs": 1571228918925000,
+      "afterAcceptModeRows": [
+        {
+          "row": 123,
+          "material": 1
+        }
+      ],
+      "qpcFrequency": 10000000,
+      "ticket": "2",
+      "geometry": "2",
+      "source": {
+        "row": 40,
+        "run": "15712277092830",
+        "hold": "1",
+        "offer": "2",
+        "material": 0,
+        "nonce": "15712277504595",
+        "admittedQ20": 126391
+      },
+      "presentCount": 1,
+      "firstOrContinuation": "CONTINUATION",
+      "quantumNonce": "15712280148703",
+      "grantNs": 1571228014870100,
+      "fenceSampleNs": 1571228078561800,
+      "deadlineNs": 1571228264870100,
+      "nsLeftAtLastPoll": 186308300,
+      "nonceToLastPollNs": 63691500,
+      "fenceLastVkResult": 2,
+      "closestProducerPulseNs": 1571228070432800,
+      "maxProducerGapAroundRootNs": 26568500,
+      "relevantFirstOffer": 19,
+      "relevantLastOffer": 25,
+      "producerPulseSequenceGap": false,
+      "consumerPulseReceipt": "NOT_RECORDED",
+      "windowGeometryContinuous": true,
+      "wsiRetireVkResults": [
+        0
+      ],
+      "switchWhileRootWasLive": "NOT_OBSERVED",
+      "bothSourcesSameScene": false
+    }
+  ],
+  "clockGuardOffline": {
+    "schema": "T867_OFFLINE_CLOCK_GUARD_V1",
+    "storeLatest": "CLOCK_GAP",
+    "producerGapNs": 16000000,
+    "ownerObservationGapNs": 35000000,
+    "uiGapSeenByOwnerNs": 32000000,
+    "rootBudgetRemainingNs": 216000000,
+    "orderedActualReceipt": "PERMIT_REMAINS_VALID",
+    "actualMissingPulse": "CLOCK_GAP",
+    "quotaBalanced": true
+  },
+  "t852Offline": {
+    "fixtures": 4,
+    "negativeControls": 15,
+    "pcVulkanFullM1": "PENDING_PRODUCT_EVIDENCE"
+  },
+  "standaloneT862": {
+    "path": ".codex/local-test/t862-release.exe",
+    "sha256": "9fc0985c6e03984f29275da1deb9ecc1469a0b87e02283c64ce9c27bcc185877",
+    "usedInT864": false
+  }
+}
