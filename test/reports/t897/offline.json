@@ -1,0 +1,230 @@
+{
+  "emptyGravity": {
+    "empty": "NULL_ROOT_FENCED_BEFORE_READY",
+    "run": "15943340188795",
+    "inputs": [
+      {
+        "stage": "M1_GRAVITY_INPUT",
+        "geometry": "2",
+        "seq": "2",
+        "qpc": "15944420240492",
+        "requestedAngle256": 3840,
+        "result": "ACCEPTED_INPUT"
+      },
+      {
+        "stage": "M1_GRAVITY_INPUT",
+        "geometry": "2",
+        "seq": "3",
+        "qpc": "15944430244212",
+        "requestedAngle256": 3840,
+        "result": "ACCEPTED_INPUT"
+      },
+      {
+        "stage": "M1_GRAVITY_INPUT",
+        "geometry": "2",
+        "seq": "4",
+        "qpc": "15944445251776",
+        "requestedAngle256": 3840,
+        "result": "ACCEPTED_INPUT"
+      }
+    ],
+    "grants": [
+      {
+        "root": "15944411374190",
+        "seq": 0,
+        "requested": 0,
+        "accepted": 0
+      },
+      {
+        "root": "15944412496560",
+        "seq": 0,
+        "requested": 0,
+        "accepted": 0
+      }
+    ],
+    "geometryChange": "NOT_OBSERVED",
+    "failures": [
+      "M1_QUANTUM_CONTINUATION_FAILED"
+    ]
+  },
+  "gravityLimit": {
+    "empty": "NULL_ROOT_FENCED_BEFORE_READY",
+    "run": "15947254810664",
+    "inputs": [
+      {
+        "stage": "M1_GRAVITY_INPUT",
+        "geometry": "2",
+        "seq": "1",
+        "qpc": "15947263941232",
+        "requestedAngle256": 3840,
+        "result": "ACCEPTED_INPUT"
+      },
+      {
+        "stage": "M1_GRAVITY_INPUT",
+        "geometry": "2",
+        "seq": "2",
+        "qpc": "15947268946413",
+        "requestedAngle256": 7680,
+        "result": "ACCEPTED_INPUT"
+      },
+      {
+        "stage": "M1_GRAVITY_INPUT",
+        "geometry": "2",
+        "seq": "3",
+        "qpc": "15947273960336",
+        "requestedAngle256": 9999,
+        "result": "ANGLE_OUT_OF_RANGE"
+      },
+      {
+        "stage": "M1_GRAVITY_INPUT",
+        "geometry": "2",
+        "seq": "4",
+        "qpc": "15947278961730",
+        "requestedAngle256": -7680,
+        "result": "ACCEPTED_INPUT"
+      },
+      {
+        "stage": "M1_GRAVITY_INPUT",
+        "geometry": "2",
+        "seq": "5",
+        "qpc": "15947283964660",
+        "requestedAngle256": -10023,
+        "result": "ANGLE_OUT_OF_RANGE"
+      }
+    ],
+    "grants": [
+      {
+        "root": "15947289964653",
+        "seq": 4,
+        "requested": -7680,
+        "accepted": -7679
+      },
+      {
+        "root": "15947290861052",
+        "seq": 4,
+        "requested": -7680,
+        "accepted": -7679
+      },
+      {
+        "root": "15947291529335",
+        "seq": 4,
+        "requested": -7680,
+        "accepted": -7679
+      }
+    ],
+    "geometryChange": "NOT_OBSERVED",
+    "failures": [
+      "M1_QUANTUM_CONTINUATION_FAILED"
+    ]
+  },
+  "pixels": {
+    "archive": {
+      "kind": "QUANTUM",
+      "nonce": "15944411374190",
+      "scope": [
+        82720,
+        "134399080564500883",
+        "2",
+        18612,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "df37b51b031e2ab6acfed50a2b7084673c19b0200ebac6186bcea49cde3a6c87",
+      "bytes": 62976,
+      "sectionSHA": [
+        "9267065d6d808187e76f6279dea8cd4047dad591e877619fcd9bdb7a1eb7298b",
+        "0e6996d96a3a2c764f907251ac0e61d4dcac68a77cb2f0541ec147aebb452828",
+        "13080498a4c193310afc6a0b730c5236e16c1a0af7ce35749261e849f0f914bc",
+        "c11c06c6b5876c7ad166b27b6e026e155457731b947d7bc4485bd8c41002ffb4"
+      ],
+      "fileSHA": "884f34558fe30d7bc6b0944eedaf4dc0f97d3bb5d7ab172a90d00a5f676a698c"
+    },
+    "pixelsSHA": "2992b53d2009d64c1bef2fa2913f2eddff01265b0694a0a633668de941f80675",
+    "rects": [
+      [
+        64,
+        380,
+        8,
+        8
+      ],
+      [
+        64,
+        380,
+        8,
+        8
+      ],
+      [
+        16,
+        16,
+        8,
+        8
+      ]
+    ],
+    "layerState": "ROI_OVERLAP",
+    "bedEventCount": 0,
+    "landState": "MISSING_EVIDENCE"
+  },
+  "g13": {
+    "full": {
+      "roles": 16,
+      "root": null,
+      "firstStop": "GRANT_DEADLINE",
+      "originalRetireResult": 2,
+      "lateDiagnostic": true,
+      "queryPoints": 18,
+      "gpuRootNs": 1699334619.3009999,
+      "hostSubmitToStopNs": 252275300.0,
+      "flowAcceptance": "NOT_REACHED"
+    },
+    "hot": {
+      "roles": 16,
+      "root": null,
+      "firstStop": "GRANT_DEADLINE",
+      "originalRetireResult": 2,
+      "lateDiagnostic": true,
+      "queryPoints": 18,
+      "gpuRootNs": 1523317156.707,
+      "hostSubmitToStopNs": 250939900.0,
+      "flowAcceptance": "NOT_REACHED"
+    }
+  },
+  "syntheticD1": {
+    "sessionCoverage": {
+      "1": {
+        "session": "1",
+        "queued": 24,
+        "accepted": 23,
+        "rejected": 0,
+        "revoked": 1,
+        "queuedMask": "16777215",
+        "terminalMask": "16777215"
+      },
+      "2": {
+        "session": "2",
+        "queued": 24,
+        "accepted": 24,
+        "rejected": 0,
+        "revoked": 0,
+        "queuedMask": "16777215",
+        "terminalMask": "16777215"
+      }
+    },
+    "negatives": [
+      "D1_OWNER_UNIQUE_SCOPE",
+      "D1_OWNER_TERMINALS",
+      "D1_OWNER_UNIQUE_SCOPE",
+      "D1_DUAL_CLOCK_JOIN",
+      "D1_SESSION_MASKS",
+      "ROI_PRESENT_JOIN",
+      "G13_RETIRED_JOIN"
+    ],
+    "firstClockDiffAction": 1
+  },
+  "originalSHA256": {
+    "a-empty-gravity.jsonl": "504759921b178f58c2b92121cf89868ed343be52624aa30a2bb4115d8bb4b86b",
+    "a-gravity-limit.jsonl": "37200a3c0a0f6f2189cef5e6ea2c71add23c0238d3a803e03c5a8bd61610fb1a",
+    "b-full.jsonl": "9b8bdddd89ce1fa4cb9edb50690f6450d367b22beccca1782718ab9da1064501",
+    "b-hot.jsonl": "ebebb8f47efecfa92db33c86ae962be0282407c8dedd55e7ce6610828445c87f"
+  },
+  "actualOff": "PENDING_T496_ORIGINALS"
+}
