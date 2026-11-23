@@ -1,0 +1,1479 @@
+{
+  "schema": "T846_PC_REFERENCE_FIXTURES_V1",
+  "order": [
+    18,
+    19
+  ],
+  "sources": {
+    "docs/design-T673-research-cases-v1.json": "85022fe65a37de96cac436c95cd886950fc529b966685e13fcd0cf332ba91075",
+    "docs/architecture-T679-constraints-v1.json": "328c8a090fdd9ed24efc712b1b0d543a5fea6b72488599e74e4e38cebebb7326",
+    "docs/architecture-T829-v1.md": "28c902dcb498bd2042450800859730963c8ae7a5465d29aa7fc101853ede5b1c",
+    "docs/design-G15-G19-display-scenario-v1.md": "a162ad51cb335a56ba86202f251879ef5df07daa8e75a10facdf4de7a8c8c6e7"
+  },
+  "caseContracts": {
+    "C17": {
+      "id": "C17",
+      "goals": [
+        18
+      ],
+      "kind": "same_mean_different_profile",
+      "input": "Unit thickness/density profiles u=1, u=2z, and lower half 0 upper half 2",
+      "observe": [
+        "mass",
+        "mean momentum",
+        "kinetic energy",
+        "advective second moment",
+        "top and basal speed"
+      ],
+      "criterion": "All have mass=1 and momentum=1 but different energies/fluxes; chosen representation must distinguish target observables",
+      "negativeControl": "Assume the mean velocity uniquely determines top and basal response",
+      "reference": "Exact profile integrals",
+      "productStatus": "NOT_RUN"
+    },
+    "C18": {
+      "id": "C18",
+      "goals": [
+        18
+      ],
+      "kind": "counterflow_and_layer_order",
+      "input": "Equal half-mass layers with velocities -1,+1 and their vertically swapped state",
+      "observe": [
+        "net momentum",
+        "each-layer velocity",
+        "energy",
+        "basal response",
+        "rest flags"
+      ],
+      "criterion": "Net momentum=0 does not mean rest; equal variance does not fix basal velocity or layer ordering",
+      "negativeControl": "Deposit both counterflowing layers because total momentum is zero",
+      "reference": "Exact two-mass algebra",
+      "productStatus": "NOT_RUN"
+    },
+    "C19": {
+      "id": "C19",
+      "goals": [
+        18
+      ],
+      "kind": "layer_exchange_and_load",
+      "input": "Paired interlayer friction, donor-momentum mass transfer, top versus basal load and stop/restart",
+      "observe": [
+        "each-layer mass/origin/momentum",
+        "interface impulse",
+        "potential and kinetic energy",
+        "actual loading response"
+      ],
+      "criterion": "Paired internal force and nonnegative friction loss; no repeated full-bed friction or forced equal-velocity remix; full spatial closure still required",
+      "negativeControl": "Apply basal friction independently twice; add at-rest bed mass at unchanged flow speed",
+      "reference": "Finite impulse identity and REFERENCE_REQUIRED for actual shear law",
+      "productStatus": "NOT_RUN"
+    },
+    "C20": {
+      "id": "C20",
+      "goals": [
+        18
+      ],
+      "kind": "two_four_layer_or_volume_selection",
+      "input": "Same physical reference/scenes using single mean, prescribed profile, variance, two/four layers and selected volumetric model",
+      "observe": [
+        "top/basal speed",
+        "flux",
+        "shear/load response",
+        "errors versus uncertainty",
+        "complete GPU cost"
+      ],
+      "criterion": "Choose sufficient representation by target-observable error and cost; two layers are not frozen in advance; no duplicated mass if volume model resolves profile",
+      "negativeControl": "Compare only one fitted steady flow rate; stack an additional physical F on the same continuum mass",
+      "reference": "REFERENCE_REQUIRED plus resolution/error-budget comparison",
+      "productStatus": "NOT_RUN"
+    },
+    "C21": {
+      "id": "C21",
+      "goals": [
+        19
+      ],
+      "kind": "finite_gap_water_channel",
+      "input": "Periodic-x, y-invariant parallel plates at z=0,b, no-slip, known nu>0, rho and constant x-acceleration",
+      "observe": [
+        "u(z)",
+        "mean flux",
+        "front/back wall shear",
+        "wall-normal flow"
+      ],
+      "criterion": "Compare u=f*z*(b-z)/(2nu), mean=f*b^2/(12nu), wall shear magnitude=rho*f*b/2; refine Nz and time independently",
+      "negativeControl": "Only multiply 2D velocity/volume by thickness; compare flow rate while ignoring incorrect wall stress",
+      "reference": "Analytic fully developed laminar channel, not a closed-box circulating-flow solution",
+      "productStatus": "NOT_RUN"
+    },
+    "C22": {
+      "id": "C22",
+      "goals": [
+        19
+      ],
+      "kind": "true_transverse_motion",
+      "input": "Localized front/back forcing and out-of-plane gravity with finite-thickness sand/water seed",
+      "observe": [
+        "w velocity",
+        "z origin centroid and distribution",
+        "six-wall impulses",
+        "cross-sectional geometry"
+      ],
+      "criterion": "Independent physical depth motion/response present and conservative; observe cross-sections and oblique view, not only the front image",
+      "negativeControl": "Extrude rendering or use two sand-height F layers as container-depth freedom",
+      "reference": "Manufactured transverse subproblem plus material/flow references as applicable",
+      "productStatus": "NOT_RUN"
+    },
+    "C23": {
+      "id": "C23",
+      "goals": [
+        19
+      ],
+      "kind": "gap_and_wall_scaling",
+      "input": "Vary b, b/d, wall friction and Nz at fixed physical dimensions/mass/material; compare depth-averaged and volumetric candidates",
+      "observe": [
+        "cross-gap profiles",
+        "sand contact/support",
+        "water drag and shear",
+        "refinement differences",
+        "runtime and memory"
+      ],
+      "criterion": "Separate thin-gap closure assumptions from true 3D degrees of freedom; explicitly test boundary resolution and time-scale validity",
+      "negativeControl": "Use water Hele-Shaw friction for grains; hold numerical particle count while silently changing physical grain diameter",
+      "reference": "Known laminar scale and REFERENCE_REQUIRED for granular wall law",
+      "productStatus": "NOT_RUN"
+    },
+    "C24": {
+      "id": "C24",
+      "goals": [
+        19
+      ],
+      "kind": "three_dimensional_water_sand_feedback",
+      "input": "Finite-depth sand/water, actual solid occupancy/porosity definition, erosion/lift/transport/redeposit and contour feedback",
+      "observe": [
+        "water/sand inventories",
+        "interface geometry",
+        "paired loads and work",
+        "suspension/settling",
+        "new sand shape",
+        "3D solver residuals"
+      ],
+      "criterion": "Both sand and water use qualified depth dynamics/boundaries and validated interactions; preserve G13/G14/G12 domain-specific evidence and revalidate 3D",
+      "negativeControl": "Declare goal19 complete after only 3D sand, or extrapolate 2D pressure/gauge/spectral bounds to arbitrary 3D cut cells",
+      "reference": "Actual valid G14/G12 interfaces plus independent 3D geometry/solver/material evidence",
+      "productStatus": "NOT_RUN"
+    }
+  },
+  "engineeringConstraints": [
+    {
+      "id": "E01",
+      "area": "SSBO/block/binding/shared/checked arithmetic",
+      "class": "DEVICE_QUERY_PLUS_NEW_LAYOUT_UNKNOWN",
+      "required": "per-pass actual arrays/buffer/range/offset/stage-active count; observed limits scoped to driver/context, padded bytes and overflow checked"
+    },
+    {
+      "id": "E02",
+      "area": "shader/source/cache identity and program scale",
+      "class": "EXISTING_ENGINEERING_PATTERN_NOT_SIZE_LIMIT",
+      "required": "canonical source/ELF actual bytes, target compile/link/program identity, fatal dependency checks; no inferred KB threshold"
+    },
+    {
+      "id": "E03",
+      "area": "dispatch/global synchronization/full work",
+      "class": "DESIGN_REQUIRED",
+      "required": "all clear/transfer/sort/contact/solver/audit/replay/scene passes and barriers; no cross-workgroup barrier assumption or hidden per-step CPU readback"
+    },
+    {
+      "id": "E04",
+      "area": "determinism/atomic/order/wide arithmetic",
+      "class": "DESIGN_AND_TARGET_EVIDENCE_REQUIRED",
+      "required": "fixed order or proven finite exact accumulation, range/rounding/collision and full state replay, no assumed float atomics"
+    },
+    {
+      "id": "E05",
+      "area": "contact/search/history/capacity",
+      "class": "CANDIDATE_UNKNOWN",
+      "required": "Nd/Ccap/Zcap/Bmax, stable pair+generation key/history; overflow rejects candidate, no truncation"
+    },
+    {
+      "id": "E06",
+      "area": "state banks/trial/reject/replay/transaction",
+      "class": "DESIGN_REQUIRED",
+      "required": "complete physical/source/tensor/contact/geometry/water state, all failed+successful micro work, private proof/atomic commit pattern without reusing old ABI"
+    },
+    {
+      "id": "E07",
+      "area": "origin/source ownership",
+      "class": "DESIGN_REQUIRED",
+      "required": "per-point/mixed-grid source representation and bounds; one owner per actual mass; no silent loss/duplicate mass"
+    },
+    {
+      "id": "E08",
+      "area": "topology/dimensionality/geometry/migration",
+      "class": "NOT_IN_EXISTING_HEIGHT_STATE",
+      "required": "true free-volume/support/position/stress/holes, explicit seed or reconstruction assumption, actual old-new overlap"
+    },
+    {
+      "id": "E09",
+      "area": "water geometry/load/interface",
+      "class": "HIGHER_PRIORITY_REAL_PREREQUISITES",
+      "required": "13 then14 then12 trusted interfaces, GCL/volume/face and total traction/impulse/work; no rectangle-spectrum transfer to 3D/cutcell"
+    },
+    {
+      "id": "E10",
+      "area": "scene/shader/accepted token",
+      "class": "NEW_REPRESENTATION_DESIGN_REQUIRED",
+      "required": "full volume/surface visibility and layer/3D consumers, GPU packing/barriers/fences/lease/fragment cost; no stretch as physics"
+    },
+    {
+      "id": "E11",
+      "area": "cold/credit/real retirement",
+      "class": "REUSE_PATTERN_NEW_BUDGET_REQUIRED",
+      "required": "all new source/history/geometry/water archives, fixed page/builder/reader/TTL bounds, physical freeing and GL retirement before credit return"
+    },
+    {
+      "id": "E12",
+      "area": "peak memory/old-new overlap",
+      "class": "UNMEASURED",
+      "required": "max over actual lifetime, GPU/native/FBO/driver separated; single block limit is not total memory; no net-delta-only budget"
+    },
+    {
+      "id": "E13",
+      "area": "rotation input/time/lifetime",
+      "class": "DESIGN_AND_INPUT_QUALIFICATION_REQUIRED",
+      "required": "unwrapped theta/Omega/alpha/accepted interval/source and overflow, pause/reverse/3D axis; callback receive time not real hand speed"
+    },
+    {
+      "id": "E14",
+      "area": "performance/30fps/real-time/thermal",
+      "class": "COST_NOT_MEASURED",
+      "required": "new accepted frames distinct from STALE repeats, acceptedSimTime/wallTime, root p95/p99/worst/all-trial GPU and submission/thermal costs; no120fps render requirement"
+    },
+    {
+      "id": "E15",
+      "area": "reference/cases/provenance/role",
+      "class": "REFERENCE_REQUIRED_OR_NOT_RUN",
+      "required": "same observable/reference uncertainty and dimension/domain, C01-C24 preserved, tester offline/effector device; planning not physical PASS"
+    }
+  ],
+  "fixtures": {
+    "C17": {
+      "u=1": {
+        "momentum": "1",
+        "energy": "1/2",
+        "secondMoment": "1",
+        "basal": "1",
+        "top": "1"
+      },
+      "u=2z": {
+        "momentum": "1",
+        "energy": "2/3",
+        "secondMoment": "4/3",
+        "basal": "0",
+        "top": "2"
+      },
+      "halves": {
+        "mass": "1",
+        "momentum": "1",
+        "energy": "1",
+        "secondMoment": "2",
+        "basal": "0",
+        "top": "2",
+        "atRest": false
+      }
+    },
+    "C18": {
+      "massPerLayer": [
+        "1/2",
+        "1/2"
+      ],
+      "velocities": [
+        [
+          "-1",
+          "1"
+        ],
+        [
+          "1",
+          "-1"
+        ]
+      ],
+      "runs": [
+        {
+          "mass": "1",
+          "momentum": "0",
+          "energy": "1/2",
+          "secondMoment": "1",
+          "basal": "-1",
+          "top": "1",
+          "atRest": false
+        },
+        {
+          "mass": "1",
+          "momentum": "0",
+          "energy": "1/2",
+          "secondMoment": "1",
+          "basal": "1",
+          "top": "-1",
+          "atRest": false
+        }
+      ]
+    },
+    "C19": {
+      "massPerLayer": [
+        "1/2",
+        "1/2"
+      ],
+      "initialSpeeds": [
+        "0",
+        "2"
+      ],
+      "impulse": "1/4",
+      "friction": {
+        "before": {
+          "mass": "1",
+          "momentum": "1",
+          "energy": "1",
+          "secondMoment": "2",
+          "basal": "0",
+          "top": "2",
+          "atRest": false
+        },
+        "after": {
+          "mass": "1",
+          "momentum": "1",
+          "energy": "5/8",
+          "secondMoment": "5/4",
+          "basal": "1/2",
+          "top": "3/2",
+          "atRest": false
+        },
+        "dissipated": "3/8",
+        "pairImpulse": [
+          "1/4",
+          "-1/4"
+        ]
+      },
+      "donorTransfer": {
+        "beforeMasses": [
+          "1/2",
+          "1/2"
+        ],
+        "beforeMomentum": [
+          "0",
+          "1"
+        ],
+        "massTransferred": "1/4",
+        "afterMasses": [
+          "3/4",
+          "1/4"
+        ],
+        "afterMomentum": [
+          "1/2",
+          "1/2"
+        ]
+      }
+    },
+    "C20": {
+      "reference": "REQUIRED",
+      "candidateCountFrozen": false
+    },
+    "C21": {
+      "boundary": "periodic-x, no-slip z plates",
+      "profiles": [
+        {
+          "b_m": "1/500",
+          "Nz": 8,
+          "rho": "1000",
+          "mu": "1/100",
+          "nu": "1/100000",
+          "force_m_s2": "3/2",
+          "z_m": [
+            "1/8000",
+            "3/8000",
+            "1/1600",
+            "7/8000",
+            "9/8000",
+            "11/8000",
+            "13/8000",
+            "3/1600"
+          ],
+          "u_m_s": [
+            "9/512",
+            "117/2560",
+            "33/512",
+            "189/2560",
+            "189/2560",
+            "33/512",
+            "117/2560",
+            "9/512"
+          ],
+          "wallNormalVelocity": [
+            "0",
+            "0"
+          ],
+          "exactMean_m_s": "1/20",
+          "midpointMean_m_s": "129/2560",
+          "fluxPerWidth_m2_s": "1/10000",
+          "wallOnFluidShear_Pa": [
+            "-3/2",
+            "-3/2"
+          ],
+          "wallVelocities": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "b_m": "1/500",
+          "Nz": 16,
+          "rho": "1000",
+          "mu": "1/100",
+          "nu": "1/100000",
+          "force_m_s2": "3/2",
+          "z_m": [
+            "1/16000",
+            "3/16000",
+            "1/3200",
+            "7/16000",
+            "9/16000",
+            "11/16000",
+            "13/16000",
+            "3/3200",
+            "17/16000",
+            "19/16000",
+            "21/16000",
+            "23/16000",
+            "1/640",
+            "27/16000",
+            "29/16000",
+            "31/16000"
+          ],
+          "u_m_s": [
+            "93/10240",
+            "261/10240",
+            "81/2048",
+            "105/2048",
+            "621/10240",
+            "693/10240",
+            "741/10240",
+            "153/2048",
+            "153/2048",
+            "741/10240",
+            "693/10240",
+            "621/10240",
+            "105/2048",
+            "81/2048",
+            "261/10240",
+            "93/10240"
+          ],
+          "wallNormalVelocity": [
+            "0",
+            "0"
+          ],
+          "exactMean_m_s": "1/20",
+          "midpointMean_m_s": "513/10240",
+          "fluxPerWidth_m2_s": "1/10000",
+          "wallOnFluidShear_Pa": [
+            "-3/2",
+            "-3/2"
+          ],
+          "wallVelocities": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "b_m": "1/500",
+          "Nz": 32,
+          "rho": "1000",
+          "mu": "1/100",
+          "nu": "1/100000",
+          "force_m_s2": "3/2",
+          "z_m": [
+            "1/32000",
+            "3/32000",
+            "1/6400",
+            "7/32000",
+            "9/32000",
+            "11/32000",
+            "13/32000",
+            "3/6400",
+            "17/32000",
+            "19/32000",
+            "21/32000",
+            "23/32000",
+            "1/1280",
+            "27/32000",
+            "29/32000",
+            "31/32000",
+            "33/32000",
+            "7/6400",
+            "37/32000",
+            "39/32000",
+            "41/32000",
+            "43/32000",
+            "9/6400",
+            "47/32000",
+            "49/32000",
+            "51/32000",
+            "53/32000",
+            "11/6400",
+            "57/32000",
+            "59/32000",
+            "61/32000",
+            "63/32000"
+          ],
+          "u_m_s": [
+            "189/40960",
+            "549/40960",
+            "177/8192",
+            "1197/40960",
+            "297/8192",
+            "1749/40960",
+            "1989/40960",
+            "441/8192",
+            "2397/40960",
+            "513/8192",
+            "2709/40960",
+            "2829/40960",
+            "585/8192",
+            "2997/40960",
+            "609/8192",
+            "3069/40960",
+            "3069/40960",
+            "609/8192",
+            "2997/40960",
+            "585/8192",
+            "2829/40960",
+            "2709/40960",
+            "513/8192",
+            "2397/40960",
+            "441/8192",
+            "1989/40960",
+            "1749/40960",
+            "297/8192",
+            "1197/40960",
+            "177/8192",
+            "549/40960",
+            "189/40960"
+          ],
+          "wallNormalVelocity": [
+            "0",
+            "0"
+          ],
+          "exactMean_m_s": "1/20",
+          "midpointMean_m_s": "2049/40960",
+          "fluxPerWidth_m2_s": "1/10000",
+          "wallOnFluidShear_Pa": [
+            "-3/2",
+            "-3/2"
+          ],
+          "wallVelocities": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "b_m": "1/500",
+          "Nz": 64,
+          "rho": "1000",
+          "mu": "1/100",
+          "nu": "1/100000",
+          "force_m_s2": "3/2",
+          "z_m": [
+            "1/64000",
+            "3/64000",
+            "1/12800",
+            "7/64000",
+            "9/64000",
+            "11/64000",
+            "13/64000",
+            "3/12800",
+            "17/64000",
+            "19/64000",
+            "21/64000",
+            "23/64000",
+            "1/2560",
+            "27/64000",
+            "29/64000",
+            "31/64000",
+            "33/64000",
+            "7/12800",
+            "37/64000",
+            "39/64000",
+            "41/64000",
+            "43/64000",
+            "9/12800",
+            "47/64000",
+            "49/64000",
+            "51/64000",
+            "53/64000",
+            "11/12800",
+            "57/64000",
+            "59/64000",
+            "61/64000",
+            "63/64000",
+            "13/12800",
+            "67/64000",
+            "69/64000",
+            "71/64000",
+            "73/64000",
+            "3/2560",
+            "77/64000",
+            "79/64000",
+            "81/64000",
+            "83/64000",
+            "17/12800",
+            "87/64000",
+            "89/64000",
+            "91/64000",
+            "93/64000",
+            "19/12800",
+            "97/64000",
+            "99/64000",
+            "101/64000",
+            "103/64000",
+            "21/12800",
+            "107/64000",
+            "109/64000",
+            "111/64000",
+            "113/64000",
+            "23/12800",
+            "117/64000",
+            "119/64000",
+            "121/64000",
+            "123/64000",
+            "1/512",
+            "127/64000"
+          ],
+          "u_m_s": [
+            "381/163840",
+            "225/32768",
+            "369/32768",
+            "2541/163840",
+            "3213/163840",
+            "3861/163840",
+            "897/32768",
+            "1017/32768",
+            "5661/163840",
+            "6213/163840",
+            "6741/163840",
+            "1449/32768",
+            "1545/32768",
+            "8181/163840",
+            "8613/163840",
+            "9021/163840",
+            "1881/32768",
+            "1953/32768",
+            "10101/163840",
+            "10413/163840",
+            "10701/163840",
+            "2193/32768",
+            "2241/32768",
+            "11421/163840",
+            "11613/163840",
+            "11781/163840",
+            "2385/32768",
+            "2409/32768",
+            "12141/163840",
+            "12213/163840",
+            "12261/163840",
+            "2457/32768",
+            "2457/32768",
+            "12261/163840",
+            "12213/163840",
+            "12141/163840",
+            "2409/32768",
+            "2385/32768",
+            "11781/163840",
+            "11613/163840",
+            "11421/163840",
+            "2241/32768",
+            "2193/32768",
+            "10701/163840",
+            "10413/163840",
+            "10101/163840",
+            "1953/32768",
+            "1881/32768",
+            "9021/163840",
+            "8613/163840",
+            "8181/163840",
+            "1545/32768",
+            "1449/32768",
+            "6741/163840",
+            "6213/163840",
+            "5661/163840",
+            "1017/32768",
+            "897/32768",
+            "3861/163840",
+            "3213/163840",
+            "2541/163840",
+            "369/32768",
+            "225/32768",
+            "381/163840"
+          ],
+          "wallNormalVelocity": [
+            "0",
+            "0"
+          ],
+          "exactMean_m_s": "1/20",
+          "midpointMean_m_s": "8193/163840",
+          "fluxPerWidth_m2_s": "1/10000",
+          "wallOnFluidShear_Pa": [
+            "-3/2",
+            "-3/2"
+          ],
+          "wallVelocities": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "b_m": "1/250",
+          "Nz": 8,
+          "rho": "1000",
+          "mu": "1/100",
+          "nu": "1/100000",
+          "force_m_s2": "3/2",
+          "z_m": [
+            "1/4000",
+            "3/4000",
+            "1/800",
+            "7/4000",
+            "9/4000",
+            "11/4000",
+            "13/4000",
+            "3/800"
+          ],
+          "u_m_s": [
+            "9/128",
+            "117/640",
+            "33/128",
+            "189/640",
+            "189/640",
+            "33/128",
+            "117/640",
+            "9/128"
+          ],
+          "wallNormalVelocity": [
+            "0",
+            "0"
+          ],
+          "exactMean_m_s": "1/5",
+          "midpointMean_m_s": "129/640",
+          "fluxPerWidth_m2_s": "1/1250",
+          "wallOnFluidShear_Pa": [
+            "-3",
+            "-3"
+          ],
+          "wallVelocities": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "b_m": "1/250",
+          "Nz": 16,
+          "rho": "1000",
+          "mu": "1/100",
+          "nu": "1/100000",
+          "force_m_s2": "3/2",
+          "z_m": [
+            "1/8000",
+            "3/8000",
+            "1/1600",
+            "7/8000",
+            "9/8000",
+            "11/8000",
+            "13/8000",
+            "3/1600",
+            "17/8000",
+            "19/8000",
+            "21/8000",
+            "23/8000",
+            "1/320",
+            "27/8000",
+            "29/8000",
+            "31/8000"
+          ],
+          "u_m_s": [
+            "93/2560",
+            "261/2560",
+            "81/512",
+            "105/512",
+            "621/2560",
+            "693/2560",
+            "741/2560",
+            "153/512",
+            "153/512",
+            "741/2560",
+            "693/2560",
+            "621/2560",
+            "105/512",
+            "81/512",
+            "261/2560",
+            "93/2560"
+          ],
+          "wallNormalVelocity": [
+            "0",
+            "0"
+          ],
+          "exactMean_m_s": "1/5",
+          "midpointMean_m_s": "513/2560",
+          "fluxPerWidth_m2_s": "1/1250",
+          "wallOnFluidShear_Pa": [
+            "-3",
+            "-3"
+          ],
+          "wallVelocities": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "b_m": "1/250",
+          "Nz": 32,
+          "rho": "1000",
+          "mu": "1/100",
+          "nu": "1/100000",
+          "force_m_s2": "3/2",
+          "z_m": [
+            "1/16000",
+            "3/16000",
+            "1/3200",
+            "7/16000",
+            "9/16000",
+            "11/16000",
+            "13/16000",
+            "3/3200",
+            "17/16000",
+            "19/16000",
+            "21/16000",
+            "23/16000",
+            "1/640",
+            "27/16000",
+            "29/16000",
+            "31/16000",
+            "33/16000",
+            "7/3200",
+            "37/16000",
+            "39/16000",
+            "41/16000",
+            "43/16000",
+            "9/3200",
+            "47/16000",
+            "49/16000",
+            "51/16000",
+            "53/16000",
+            "11/3200",
+            "57/16000",
+            "59/16000",
+            "61/16000",
+            "63/16000"
+          ],
+          "u_m_s": [
+            "189/10240",
+            "549/10240",
+            "177/2048",
+            "1197/10240",
+            "297/2048",
+            "1749/10240",
+            "1989/10240",
+            "441/2048",
+            "2397/10240",
+            "513/2048",
+            "2709/10240",
+            "2829/10240",
+            "585/2048",
+            "2997/10240",
+            "609/2048",
+            "3069/10240",
+            "3069/10240",
+            "609/2048",
+            "2997/10240",
+            "585/2048",
+            "2829/10240",
+            "2709/10240",
+            "513/2048",
+            "2397/10240",
+            "441/2048",
+            "1989/10240",
+            "1749/10240",
+            "297/2048",
+            "1197/10240",
+            "177/2048",
+            "549/10240",
+            "189/10240"
+          ],
+          "wallNormalVelocity": [
+            "0",
+            "0"
+          ],
+          "exactMean_m_s": "1/5",
+          "midpointMean_m_s": "2049/10240",
+          "fluxPerWidth_m2_s": "1/1250",
+          "wallOnFluidShear_Pa": [
+            "-3",
+            "-3"
+          ],
+          "wallVelocities": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "b_m": "1/250",
+          "Nz": 64,
+          "rho": "1000",
+          "mu": "1/100",
+          "nu": "1/100000",
+          "force_m_s2": "3/2",
+          "z_m": [
+            "1/32000",
+            "3/32000",
+            "1/6400",
+            "7/32000",
+            "9/32000",
+            "11/32000",
+            "13/32000",
+            "3/6400",
+            "17/32000",
+            "19/32000",
+            "21/32000",
+            "23/32000",
+            "1/1280",
+            "27/32000",
+            "29/32000",
+            "31/32000",
+            "33/32000",
+            "7/6400",
+            "37/32000",
+            "39/32000",
+            "41/32000",
+            "43/32000",
+            "9/6400",
+            "47/32000",
+            "49/32000",
+            "51/32000",
+            "53/32000",
+            "11/6400",
+            "57/32000",
+            "59/32000",
+            "61/32000",
+            "63/32000",
+            "13/6400",
+            "67/32000",
+            "69/32000",
+            "71/32000",
+            "73/32000",
+            "3/1280",
+            "77/32000",
+            "79/32000",
+            "81/32000",
+            "83/32000",
+            "17/6400",
+            "87/32000",
+            "89/32000",
+            "91/32000",
+            "93/32000",
+            "19/6400",
+            "97/32000",
+            "99/32000",
+            "101/32000",
+            "103/32000",
+            "21/6400",
+            "107/32000",
+            "109/32000",
+            "111/32000",
+            "113/32000",
+            "23/6400",
+            "117/32000",
+            "119/32000",
+            "121/32000",
+            "123/32000",
+            "1/256",
+            "127/32000"
+          ],
+          "u_m_s": [
+            "381/40960",
+            "225/8192",
+            "369/8192",
+            "2541/40960",
+            "3213/40960",
+            "3861/40960",
+            "897/8192",
+            "1017/8192",
+            "5661/40960",
+            "6213/40960",
+            "6741/40960",
+            "1449/8192",
+            "1545/8192",
+            "8181/40960",
+            "8613/40960",
+            "9021/40960",
+            "1881/8192",
+            "1953/8192",
+            "10101/40960",
+            "10413/40960",
+            "10701/40960",
+            "2193/8192",
+            "2241/8192",
+            "11421/40960",
+            "11613/40960",
+            "11781/40960",
+            "2385/8192",
+            "2409/8192",
+            "12141/40960",
+            "12213/40960",
+            "12261/40960",
+            "2457/8192",
+            "2457/8192",
+            "12261/40960",
+            "12213/40960",
+            "12141/40960",
+            "2409/8192",
+            "2385/8192",
+            "11781/40960",
+            "11613/40960",
+            "11421/40960",
+            "2241/8192",
+            "2193/8192",
+            "10701/40960",
+            "10413/40960",
+            "10101/40960",
+            "1953/8192",
+            "1881/8192",
+            "9021/40960",
+            "8613/40960",
+            "8181/40960",
+            "1545/8192",
+            "1449/8192",
+            "6741/40960",
+            "6213/40960",
+            "5661/40960",
+            "1017/8192",
+            "897/8192",
+            "3861/40960",
+            "3213/40960",
+            "2541/40960",
+            "369/8192",
+            "225/8192",
+            "381/40960"
+          ],
+          "wallNormalVelocity": [
+            "0",
+            "0"
+          ],
+          "exactMean_m_s": "1/5",
+          "midpointMean_m_s": "8193/40960",
+          "fluxPerWidth_m2_s": "1/1250",
+          "wallOnFluidShear_Pa": [
+            "-3",
+            "-3"
+          ],
+          "wallVelocities": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "b_m": "1/125",
+          "Nz": 8,
+          "rho": "1000",
+          "mu": "1/100",
+          "nu": "1/100000",
+          "force_m_s2": "3/2",
+          "z_m": [
+            "1/2000",
+            "3/2000",
+            "1/400",
+            "7/2000",
+            "9/2000",
+            "11/2000",
+            "13/2000",
+            "3/400"
+          ],
+          "u_m_s": [
+            "9/32",
+            "117/160",
+            "33/32",
+            "189/160",
+            "189/160",
+            "33/32",
+            "117/160",
+            "9/32"
+          ],
+          "wallNormalVelocity": [
+            "0",
+            "0"
+          ],
+          "exactMean_m_s": "4/5",
+          "midpointMean_m_s": "129/160",
+          "fluxPerWidth_m2_s": "4/625",
+          "wallOnFluidShear_Pa": [
+            "-6",
+            "-6"
+          ],
+          "wallVelocities": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "b_m": "1/125",
+          "Nz": 16,
+          "rho": "1000",
+          "mu": "1/100",
+          "nu": "1/100000",
+          "force_m_s2": "3/2",
+          "z_m": [
+            "1/4000",
+            "3/4000",
+            "1/800",
+            "7/4000",
+            "9/4000",
+            "11/4000",
+            "13/4000",
+            "3/800",
+            "17/4000",
+            "19/4000",
+            "21/4000",
+            "23/4000",
+            "1/160",
+            "27/4000",
+            "29/4000",
+            "31/4000"
+          ],
+          "u_m_s": [
+            "93/640",
+            "261/640",
+            "81/128",
+            "105/128",
+            "621/640",
+            "693/640",
+            "741/640",
+            "153/128",
+            "153/128",
+            "741/640",
+            "693/640",
+            "621/640",
+            "105/128",
+            "81/128",
+            "261/640",
+            "93/640"
+          ],
+          "wallNormalVelocity": [
+            "0",
+            "0"
+          ],
+          "exactMean_m_s": "4/5",
+          "midpointMean_m_s": "513/640",
+          "fluxPerWidth_m2_s": "4/625",
+          "wallOnFluidShear_Pa": [
+            "-6",
+            "-6"
+          ],
+          "wallVelocities": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "b_m": "1/125",
+          "Nz": 32,
+          "rho": "1000",
+          "mu": "1/100",
+          "nu": "1/100000",
+          "force_m_s2": "3/2",
+          "z_m": [
+            "1/8000",
+            "3/8000",
+            "1/1600",
+            "7/8000",
+            "9/8000",
+            "11/8000",
+            "13/8000",
+            "3/1600",
+            "17/8000",
+            "19/8000",
+            "21/8000",
+            "23/8000",
+            "1/320",
+            "27/8000",
+            "29/8000",
+            "31/8000",
+            "33/8000",
+            "7/1600",
+            "37/8000",
+            "39/8000",
+            "41/8000",
+            "43/8000",
+            "9/1600",
+            "47/8000",
+            "49/8000",
+            "51/8000",
+            "53/8000",
+            "11/1600",
+            "57/8000",
+            "59/8000",
+            "61/8000",
+            "63/8000"
+          ],
+          "u_m_s": [
+            "189/2560",
+            "549/2560",
+            "177/512",
+            "1197/2560",
+            "297/512",
+            "1749/2560",
+            "1989/2560",
+            "441/512",
+            "2397/2560",
+            "513/512",
+            "2709/2560",
+            "2829/2560",
+            "585/512",
+            "2997/2560",
+            "609/512",
+            "3069/2560",
+            "3069/2560",
+            "609/512",
+            "2997/2560",
+            "585/512",
+            "2829/2560",
+            "2709/2560",
+            "513/512",
+            "2397/2560",
+            "441/512",
+            "1989/2560",
+            "1749/2560",
+            "297/512",
+            "1197/2560",
+            "177/512",
+            "549/2560",
+            "189/2560"
+          ],
+          "wallNormalVelocity": [
+            "0",
+            "0"
+          ],
+          "exactMean_m_s": "4/5",
+          "midpointMean_m_s": "2049/2560",
+          "fluxPerWidth_m2_s": "4/625",
+          "wallOnFluidShear_Pa": [
+            "-6",
+            "-6"
+          ],
+          "wallVelocities": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "b_m": "1/125",
+          "Nz": 64,
+          "rho": "1000",
+          "mu": "1/100",
+          "nu": "1/100000",
+          "force_m_s2": "3/2",
+          "z_m": [
+            "1/16000",
+            "3/16000",
+            "1/3200",
+            "7/16000",
+            "9/16000",
+            "11/16000",
+            "13/16000",
+            "3/3200",
+            "17/16000",
+            "19/16000",
+            "21/16000",
+            "23/16000",
+            "1/640",
+            "27/16000",
+            "29/16000",
+            "31/16000",
+            "33/16000",
+            "7/3200",
+            "37/16000",
+            "39/16000",
+            "41/16000",
+            "43/16000",
+            "9/3200",
+            "47/16000",
+            "49/16000",
+            "51/16000",
+            "53/16000",
+            "11/3200",
+            "57/16000",
+            "59/16000",
+            "61/16000",
+            "63/16000",
+            "13/3200",
+            "67/16000",
+            "69/16000",
+            "71/16000",
+            "73/16000",
+            "3/640",
+            "77/16000",
+            "79/16000",
+            "81/16000",
+            "83/16000",
+            "17/3200",
+            "87/16000",
+            "89/16000",
+            "91/16000",
+            "93/16000",
+            "19/3200",
+            "97/16000",
+            "99/16000",
+            "101/16000",
+            "103/16000",
+            "21/3200",
+            "107/16000",
+            "109/16000",
+            "111/16000",
+            "113/16000",
+            "23/3200",
+            "117/16000",
+            "119/16000",
+            "121/16000",
+            "123/16000",
+            "1/128",
+            "127/16000"
+          ],
+          "u_m_s": [
+            "381/10240",
+            "225/2048",
+            "369/2048",
+            "2541/10240",
+            "3213/10240",
+            "3861/10240",
+            "897/2048",
+            "1017/2048",
+            "5661/10240",
+            "6213/10240",
+            "6741/10240",
+            "1449/2048",
+            "1545/2048",
+            "8181/10240",
+            "8613/10240",
+            "9021/10240",
+            "1881/2048",
+            "1953/2048",
+            "10101/10240",
+            "10413/10240",
+            "10701/10240",
+            "2193/2048",
+            "2241/2048",
+            "11421/10240",
+            "11613/10240",
+            "11781/10240",
+            "2385/2048",
+            "2409/2048",
+            "12141/10240",
+            "12213/10240",
+            "12261/10240",
+            "2457/2048",
+            "2457/2048",
+            "12261/10240",
+            "12213/10240",
+            "12141/10240",
+            "2409/2048",
+            "2385/2048",
+            "11781/10240",
+            "11613/10240",
+            "11421/10240",
+            "2241/2048",
+            "2193/2048",
+            "10701/10240",
+            "10413/10240",
+            "10101/10240",
+            "1953/2048",
+            "1881/2048",
+            "9021/10240",
+            "8613/10240",
+            "8181/10240",
+            "1545/2048",
+            "1449/2048",
+            "6741/10240",
+            "6213/10240",
+            "5661/10240",
+            "1017/2048",
+            "897/2048",
+            "3861/10240",
+            "3213/10240",
+            "2541/10240",
+            "369/2048",
+            "225/2048",
+            "381/10240"
+          ],
+          "wallNormalVelocity": [
+            "0",
+            "0"
+          ],
+          "exactMean_m_s": "4/5",
+          "midpointMean_m_s": "8193/10240",
+          "fluxPerWidth_m2_s": "4/625",
+          "wallOnFluidShear_Pa": [
+            "-6",
+            "-6"
+          ],
+          "wallVelocities": [
+            "0",
+            "0"
+          ]
+        }
+      ]
+    },
+    "C22": {
+      "scope": "manufactured reflection of a depth snapshot",
+      "sample": {
+        "zOverB": [
+          "0",
+          "1/4",
+          "1/2",
+          "3/4",
+          "1"
+        ],
+        "w": [
+          "0",
+          "3/4",
+          "0",
+          "-3/4",
+          "0"
+        ]
+      }
+    },
+    "C23": {
+      "comparison": "fixed rho/mu/f, vary b and Nz independently",
+      "wallLawForGrains": "REFERENCE_REQUIRED",
+      "b_over_d": [
+        "10/3",
+        "20/3",
+        "40/3"
+      ],
+      "doubleGapSpeedFactor": "4",
+      "doubleGapShearFactor": "2"
+    },
+    "C24": {
+      "scope": "closed-box occupancy and load budget",
+      "sand": "1/5",
+      "water": "4/5",
+      "pairedXImpulse": [
+        "1/8",
+        "-1/8"
+      ],
+      "geometryAndCoupledSolver": "REFERENCE_REQUIRED"
+    }
+  },
+  "negativeControls": [
+    "C17_REFERENCE_DIFF",
+    "C18_REFERENCE_DIFF",
+    "C19_REFERENCE_DIFF",
+    "C20_REFERENCE_DIFF",
+    "C21_REFERENCE_DIFF",
+    "C22_REFERENCE_DIFF",
+    "C23_REFERENCE_DIFF",
+    "C24_REFERENCE_DIFF"
+  ],
+  "productExecution": "NOT_RUN"
+}
