@@ -1,0 +1,156 @@
+{
+  "schema": "T895_EMPTY_GRAVITY_ROI_DIAGNOSTIC_V1",
+  "pe": {
+    "path": ".codex/local-test/t890-observation-timing-release.exe",
+    "sha256": "1e49f2a6f7aadef3bd9b047c647ba21cccf57de23a5fd8809dd01f771c69671c"
+  },
+  "subA": {
+    "empty": {
+      "EMPTY_READY_frame": {
+        "acceptedRoot": null,
+        "sourceCommit": "0",
+        "physicsCommit": "0",
+        "sandStockQ": "0",
+        "waterStockQ": "0",
+        "particles": 0,
+        "initFenceVkResult": 0,
+        "initFenceEnterQpc": "15943340222741",
+        "initFenceExitQpc": "15943340233519",
+        "hwnd": "16975930"
+      },
+      "verdict": "null root + zero inventory + real init fence (vk=0) + QPC timestamps",
+      "t893EmptyCheck": "PASS (EMPTY_PREVIEW_JOINED)"
+    },
+    "gravity": {
+      "boundaryRun": "test/reports/t895/a-gravity-limit.jsonl",
+      "results": [
+        {
+          "angle256": 3840,
+          "result": "ACCEPTED_INPUT"
+        },
+        {
+          "angle256": 7680,
+          "result": "ACCEPTED_INPUT"
+        },
+        {
+          "angle256": 9999,
+          "result": "ANGLE_OUT_OF_RANGE"
+        },
+        {
+          "angle256": -7680,
+          "result": "ACCEPTED_INPUT"
+        },
+        {
+          "angle256": -10023,
+          "result": "ANGLE_OUT_OF_RANGE"
+        }
+      ],
+      "verdict": "±30° (±7680/256) constraint enforced: boundaries accepted, out-of-range rejected (both signs)"
+    },
+    "observation": {
+      "m1Observation": {
+        "state": "FENCED_READBACK",
+        "root": "15944411374190",
+        "slot": 0,
+        "generation": "2",
+        "imageIndex": 1,
+        "graphicsFence": "2871469751496",
+        "graphicsSerial": "2",
+        "format": 44,
+        "pixelEncoding": "SHADER_SRGB_UNORM",
+        "rowOrder": "TOP_DOWN",
+        "dataBytes": 768,
+        "rects": [
+          [
+            64,
+            380,
+            8,
+            8
+          ],
+          [
+            64,
+            380,
+            8,
+            8
+          ],
+          [
+            16,
+            16,
+            8,
+            8
+          ]
+        ],
+        "sha256": "2992b53d2009d64c1bef2fa2913f2eddff01265b0694a0a633668de941f80675"
+      },
+      "m1root": {
+        "file": "a-obs-15944411374190.m1root",
+        "bytes": 63048,
+        "digestOK": true
+      },
+      "verdict": "same-root (nonce match) ROI fenced readback with real pixels + SHA + cold original"
+    },
+    "land_gap": "逐笔 LAND 仍缺证（同 T892：bedEventCount=0，交互路径未记录逐笔落地事件）——单列"
+  },
+  "subB": {
+    "b-full": {
+      "firstStop": "GRANT_DEADLINE",
+      "retireWaitVk": 2,
+      "drainMs": 1191.6,
+      "lateRetiredDiagnostic": {
+        "businessRejected": true,
+        "acceptedRoot": null,
+        "fenceVkResult": 0,
+        "drainVkResult": 0,
+        "queryState": "AVAILABLE_POINTS",
+        "writtenMask": "393215",
+        "validBits": 36,
+        "periodNs": 83.333,
+        "spansNs": {
+          "root": 1699330000.0,
+          "actual": 729764000.0,
+          "replay": 509258000.0,
+          "comparePack": 2726570.0,
+          "businessCopies": 252249,
+          "independentColdCopy": null
+        },
+        "retireConfirmQpc": [
+          "15961476095565",
+          "15961476121380"
+        ],
+        "pointsAvailable": "18/18 (non-blocking read after fence confirm)"
+      }
+    },
+    "b-hot": {
+      "firstStop": "GRANT_DEADLINE",
+      "retireWaitVk": 2,
+      "drainMs": 1023.3,
+      "lateRetiredDiagnostic": {
+        "businessRejected": true,
+        "acceptedRoot": null,
+        "fenceVkResult": 0,
+        "drainVkResult": 0,
+        "queryState": "AVAILABLE_POINTS",
+        "writtenMask": "393215",
+        "validBits": 36,
+        "periodNs": 83.333,
+        "spansNs": {
+          "root": 1523320000.0,
+          "actual": 541968000.0,
+          "replay": 516217000.0,
+          "comparePack": 2728410.0,
+          "businessCopies": 9499.96,
+          "independentColdCopy": null
+        },
+        "retireConfirmQpc": [
+          "15961497139761",
+          "15961497139875"
+        ],
+        "pointsAvailable": "18/18 (non-blocking read after fence confirm)"
+      }
+    },
+    "verdict": "G13 拒绝根同 fence 真正退役（fenceVk=0）后非阻塞读时间戳成功：queryState=AVAILABLE_POINTS、18/18 点位、writtenMask 保留、full/hot 两臂一致；businessRejected=true/acceptedRoot=null 无错误接受；GPU 分段实测（root ~1.5-1.7s、actual 0.54-0.73s、replay ~0.51s、comparePack ~2.7ms）"
+  },
+  "handoff": {
+    "DM2_R1": "T890 交付的 DM2 (pc_sand_dm2.lib)/R1 (pc_sand_r1.lib) 独立 native owner 需角色宿主程序（提供真实 device/queue/buffer 与 typed gate）——本卡 PC 侧无宿主工程，留交接（接手角色：developer/effector 按 owner.h 接口搭建样机宿主）"
+  }
+}
