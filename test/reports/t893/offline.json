@@ -1,0 +1,72 @@
+{
+  "sceneFixtures": {
+    "empty": "EMPTY_PREVIEW_JOINED",
+    "gravity": "M1_ANGLE_GENERATION_JOINED",
+    "roi": {
+      "state": "DUAL_ROI_JOINED",
+      "S": 50,
+      "P": 100
+    },
+    "land": {
+      "state": "LAND_AFTER_UP_JOINED",
+      "movedQ20": 40
+    }
+  },
+  "roleFixtures": {
+    "static": {
+      "dm2": {
+        "compute": 45,
+        "graphics": 0,
+        "roleSetSHA": "3639e57f834308bab001ca783f321b6a503c232caa924e04b1d8f1d7e3333ca6",
+        "runtime": "NOT_EXECUTED"
+      },
+      "r1": {
+        "compute": 49,
+        "graphics": 6,
+        "roleSetSHA": "f7d812d64eba3c932fcfc41d70fbed48835349819f235b6d9d61fb58216641f3",
+        "runtime": "NOT_EXECUTED"
+      }
+    },
+    "syntheticRoleCreation": {
+      "dm2": "ROLE_CREATION_EVIDENCE",
+      "r1": "ROLE_CREATION_EVIDENCE"
+    },
+    "syntheticCold": [
+      "COLD_RANGE_EVIDENCE",
+      "COLD_RANGE_EVIDENCE",
+      "COLD_RANGE_EVIDENCE",
+      "COLD_RANGE_EVIDENCE"
+    ],
+    "syntheticR1": "R1_WITNESS_AND_LEASE_EVIDENCE"
+  },
+  "negatives": [
+    "EMPTY_NULL_ROOT",
+    "EMPTY_EPOCH",
+    "GRAVITY_INPUT_REJECT",
+    "GRAVITY_QUANTUM",
+    "ROI_FRAME_IDENTITY",
+    "ROI_RECT",
+    "ROI_GPU_JOIN",
+    "LAND_AFTER_UP_ROOT",
+    "LAND_EVENT_RANGE",
+    "RUNTIME_ROLE_FAMILY",
+    "RUNTIME_ROLE_CREATION",
+    "FULL_DISCOVERY_NOT_RESERVED",
+    "COLD_BACKING",
+    "COLD_BACKING",
+    "R1_LEASE_SCOPE",
+    "R1_WITNESS_SLOTS",
+    "R1_PRESENT_LEASE"
+  ],
+  "originalT884": {
+    "emptyFrames": 0,
+    "LAND": "MISSING_EVIDENCE",
+    "ROI": "MISSING_EVIDENCE"
+  },
+  "regressions": [
+    "T836",
+    "T883",
+    "T888"
+  ],
+  "actualRoles": "PENDING_T890"
+}
