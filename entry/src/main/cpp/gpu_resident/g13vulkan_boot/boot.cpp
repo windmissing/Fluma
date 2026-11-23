@@ -269,6 +269,7 @@ private:
     float period=0;
     const char *firstStop=nullptr;
     bool source=false,cold=false;
+    uint32_t slotCount=0;
   } t877Late;
   uint64_t t877FenceGeneration=0;
   void ReportLateCandidate(VkResult,VkResult,uint64_t,uint64_t);
@@ -1141,17 +1142,18 @@ std::string Boot::Run() {
 #ifdef _WIN32
   const bool t833=!attempt.t833CandidateFile.empty();
   const auto stateTransferRead=attempt.t849WriteFile.empty() && !t833 ? 0 : VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-  const VkDeviceSize privateWorkBytes=attempt.t854PrivateWrites || t833 ? 128 : 0;
+  const VkDeviceSize privateWorkBytes=attempt.t854PrivateWrites || t833 ? kCandidateLatchBytes : 0;
+  const VkDeviceSize snapshotBytes=t833 && attempt.t899SlotSnapshot ? kCandidateSlotRegion : 0;
   const VkDeviceSize privateLayoutBytes=attempt.t854PrivateWrites || t833 ? 16 : 0;
 #else
   constexpr auto stateTransferRead=0;
-  constexpr VkDeviceSize privateWorkBytes=0, privateLayoutBytes=0;
+  constexpr VkDeviceSize privateWorkBytes=0, privateLayoutBytes=0, snapshotBytes=0;
 #endif
   for (size_t i = 0; i < 3; ++i)
     Allocate(i, profile->sw * 4, storage | VK_BUFFER_USAGE_TRANSFER_DST_BIT | stateTransferRead);
   for (size_t i = 3; i < 5; ++i)
     Allocate(i, profile->pw * 4, storage | stateTransferRead);
-  Allocate(kWork, profile->ww * 4 + privateWorkBytes, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT |
+  Allocate(kWork, profile->ww * 4 + privateWorkBytes + snapshotBytes, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT |
            (privateWorkBytes ? VK_BUFFER_USAGE_TRANSFER_DST_BIT : 0));
   Allocate(kControl, 18688 * 4, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
   Allocate(kLayout, kLayoutBytes + privateLayoutBytes, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);

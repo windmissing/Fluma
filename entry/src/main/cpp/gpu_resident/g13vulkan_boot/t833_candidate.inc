@@ -4,6 +4,19 @@ using pc::kCandidateJobNs;
 constexpr size_t kCandidateSlotCount=14;
 constexpr size_t kCandidateLatchWords=32;
 constexpr size_t kCandidateErrorWords=10;
+constexpr size_t kCandidateLatchBytes=kCandidateLatchWords*sizeof(uint32_t);
+constexpr size_t kCandidateSlotBytes=(kCandidateLatchWords+kCandidateErrorWords)*sizeof(uint32_t);
+constexpr size_t kCandidateSlotRegion=kCandidateSlotCount*kCandidateSlotBytes;
+constexpr bool CandidateSnapshotOrdinalsMatch() {
+  size_t slot=0;
+  for (size_t i=0;i<std::size(k_quantum);++i) {
+    if (k_quantum[i].op!=17) continue;
+    if (slot>=std::size(pc::kT899SlotOrdinals) || pc::kT899SlotOrdinals[slot++]!=i) return false;
+  }
+  for (auto &pass:k_source) if (pass.op==17) return false;
+  return slot==kCandidateSlotCount && slot==std::size(pc::kT899SlotOrdinals);
+}
+static_assert(CandidateSnapshotOrdinalsMatch());
 enum T877Point {
   Upload, ActualBegin, ActualEnd, ReplayBegin, ReplayEnd,
   ActualPressureBegin, ActualPressureEnd, ActualViscosityBegin, ActualViscosityEnd,
@@ -124,6 +137,35 @@ void Boot::ReportLateCandidate(VkResult confirmed,VkResult drained,uint64_t ente
   span("businessCopies",BeforeTail,BusinessCopiesEnd);
   span("independentColdCopy",ColdCopiesBegin,ColdCopiesEnd);
   publish(row.str()+"}}");
+  if (!d.slotCount) return;
+  const auto &staging=buffers[kM1ColdStaging];
+  std::array<uint32_t,kCandidateSlotRegion/sizeof(uint32_t)> slots{};
+  VkResult slotRead=confirmed;
+  if (confirmed==VK_SUCCESS) {
+    void *mapped=nullptr;
+    slotRead=vk.MapMemory(device,staging.memory,0,VK_WHOLE_SIZE,0,&mapped);
+    if (slotRead==VK_SUCCESS) {
+      const VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,nullptr,staging.memory,0,VK_WHOLE_SIZE};
+      if (!(staging.flags&VK_MEMORY_PROPERTY_HOST_COHERENT_BIT))
+        slotRead=vk.InvalidateMappedMemoryRanges(device,1,&range);
+      if (slotRead==VK_SUCCESS)
+        std::memcpy(slots.data(),static_cast<const uint8_t *>(mapped)+sizeof(Completion),d.slotCount*kCandidateSlotBytes);
+      vk.UnmapMemory(device,staging.memory);
+    }
+  }
+  std::ostringstream evidenceRow;
+  evidenceRow << "{\"stage\":\"T899_SLOT_EVIDENCE\",\"state\":\"LATE_RETIRED_DIAGNOSTIC\",\"acceptedRoot\":null"
+              << ",\"run\":\"" << d.run << "\",\"nonce\":\"" << d.nonce
+              << "\",\"fenceGeneration\":\"" << d.generation << "\",\"slotCount\":" << d.slotCount
+              << ",\"fenceVkResult\":" << int(confirmed) << ",\"readVkResult\":" << int(slotRead)
+              << ",\"snapshot\":" << (attempt.t899SlotSnapshot ? "true" : "false") << ",\"slotWords\":";
+  if (slotRead==VK_SUCCESS) {
+    evidenceRow << '[';
+    for (size_t i=0;i<d.slotCount*kCandidateSlotBytes/sizeof(uint32_t);++i)
+      evidenceRow << (i ? "," : "") << slots[i];
+    evidenceRow << ']';
+  } else evidenceRow << "null";
+  publish(evidenceRow.str()+"}");
 }
 
 std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,const Candidate &hardware) {
@@ -131,15 +173,20 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
   const bool sourceFirst=attempt.t833Case!="F02" && attempt.t833Case!="F03" && !attempt.t833F05Rest;
   const uint32_t diagnostic=privateProject ? 1u : attempt.t833Case.empty() ? 0u : 2u;
   const bool t877=!attempt.t877Mode.empty(),hot=attempt.t877Mode=="hot";
+  const bool snapshot=attempt.t899SlotSnapshot;
+  const auto evidenceRole=[snapshot](std::string_view role) {
+    return snapshot && role=="OP17_PRIVATE_LEDGER" ? std::string_view("OP17_PRIVATE_LEDGER_SNAPSHOT") : role;
+  };
   fields << ",\"oldMonolithicPCReference\":\"MISSING_PC_REFERENCE\""
          << ",\"candidateInput\":" << Quote(attempt.t833Case.empty() ? "REST_BOOT_RAMP_SOURCE" : attempt.t833Case)
-         << ",\"candidateRoute\":" << Quote(privateProject ? "PRIVATE_PROJECT" : "PC_SPLIT_CANDIDATE");
+         << ",\"candidateRoute\":" << Quote(privateProject ? "PRIVATE_PROJECT" : "PC_SPLIT_CANDIDATE")
+         << ",\"t899SlotSnapshot\":" << (snapshot ? "true" : "false");
   const auto prepare=[&](bool source,const auto &plan) {
     for (size_t i=0;i<std::size(plan);++i) {
       pc::CandidatePass pass{};
       Require(pc::PlanSplitCandidate(source,i,plan[i],pass),"T833_SPLIT_PLAN");
       for (size_t k=0;k<pass.count;++k) {
-        const auto name=pass.roles[k];
+        const auto name=evidenceRole(pass.roles[k]);
         const auto found=std::find_if(t833Pipelines.begin(),t833Pipelines.end(),
                                      [&](const auto &role) { return role.first==name; });
         if (found!=t833Pipelines.end()) continue;
@@ -181,10 +228,10 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
                    << hardware.timestampBits << ",\"t877TimestampPeriodNs\":" << hardware.properties.limits.timestampPeriod
                    << ",\"t877TimestampCreateVkResult\":" << (queryAttempted ? std::to_string(int(queryCreate)) : "null");
 
-  const VkDeviceSize slotBytes=(kCandidateLatchWords+kCandidateErrorWords)*sizeof(uint32_t);
-  const VkDeviceSize slotRegion=kCandidateSlotCount*slotBytes;
-  const VkDeviceSize coldBytes=sizeof(Completion)+slotRegion+3*profile.sw*4ull+
-                              buffers[kWork].bytes+buffers[kControl].bytes+2*profile.pw*4ull;
+  const auto archiveWorkBytes=buffers[kWork].bytes-(snapshot ? kCandidateSlotRegion : 0);
+  const auto slotBytes=kCandidateSlotBytes;
+  const VkDeviceSize coldBytes=sizeof(Completion)+kCandidateSlotRegion+3*profile.sw*4ull+
+                              archiveWorkBytes+buffers[kControl].bytes+2*profile.pw*4ull;
   Require(coldBytes<=16*1024*1024 && profile.ww%4==0,"T833_CAPTURE_RANGE");
   Allocate(kM1ColdStaging,coldBytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
   const auto &staging=buffers[kM1ColdStaging];
@@ -427,8 +474,9 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
       vk.CmdPushConstants(command,pipelineLayout,VK_SHADER_STAGE_COMPUTE_BIT,0,
                           sizeof(binding.push),binding.push.data());
       for (size_t i=0;i<pass.count;++i) {
+        const auto name=evidenceRole(pass.roles[i]);
         const auto role=std::find_if(t833Pipelines.begin(),t833Pipelines.end(),
-                                     [&](const auto &item) { return item.first==pass.roles[i]; });
+                                     [&](const auto &item) { return item.first==name; });
         Require(role!=t833Pipelines.end(),"T833_ROLE_NOT_QUALIFIED");
         if (!t877 || boundPipeline!=role->second) {
           boundPipeline=role->second;
@@ -443,22 +491,26 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
       for (auto point:afterPoints) if (positions[point]==ordinal) mark(point,kCompute);
       if (plan[ordinal].op==17) {
         Require(slotIndex<kCandidateSlotCount,"T833_SLOT_RANGE");
-        Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_READ_BIT);
         const auto where=sizeof(Completion)+slotIndex++*slotBytes;
-        copy(kWork,uint64_t(profile.ww)*4,where,kCandidateLatchWords*4);
-        copy(kControl,513*4,where+kCandidateLatchWords*4,kCandidateErrorWords*4);
-        Barrier(kTransfer,VK_ACCESS_TRANSFER_READ_BIT,kCompute,kShaderRW);
+        if (!snapshot) {
+          Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_READ_BIT);
+          copy(kWork,uint64_t(profile.ww)*4,where,kCandidateLatchBytes);
+          copy(kControl,513*4,where+kCandidateLatchBytes,kCandidateErrorWords*4);
+          Barrier(kTransfer,VK_ACCESS_TRANSFER_READ_BIT,kCompute,kShaderRW);
+        }
       }
     }
     Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_READ_BIT);
     mark(BeforeTail,kCompute);
     copy(kControl,kColdTailWordOffset*4,0,sizeof(Completion));
+    if (snapshot && slotIndex)
+      copy(kWork,uint64_t(profile.ww)*4+kCandidateLatchBytes,sizeof(Completion),slotIndex*slotBytes);
     const auto fieldsAt=sizeof(Completion)+slotIndex*slotBytes;
     VkDeviceSize offset=fieldsAt;
     const std::array<size_t,7> captured{base,candidate,2,kWork,kControl,3,4};
     std::array<uint32_t,7> bytes{};
     for (size_t i=0;i<captured.size();++i) {
-      bytes[i]=uint32_t(buffers[captured[i]].bytes);
+      bytes[i]=uint32_t(captured[i]==kWork ? archiveWorkBytes : buffers[captured[i]].bytes);
       if (!hot) copy(captured[i],0,offset,bytes[i]);
       offset+=bytes[i];
     }
@@ -583,7 +635,7 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
     if (t877 && !timely) {
       t877Late={device,queue,fence,t877Queries,readQueries,nonce,id.run,t877FenceGeneration,
                 writtenMask(),timing.stopQpc,hardware.timestampBits,
-                hardware.properties.limits.timestampPeriod,timing.stop,source};
+                hardware.properties.limits.timestampPeriod,timing.stop,source,false,inFlight ? slotIndex : 0};
       if (!inFlight) {
         ReportLateCandidate(waited,VK_NOT_READY,0,pc::QpcTicks());
         t877Late={};

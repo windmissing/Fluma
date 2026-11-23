@@ -48,6 +48,7 @@ struct Window {
   bool t833F05Rest=false;
   std::array<grs::pc::CandidatePulse,32> g13PulseHistory{};
   std::string t877Mode;
+  bool t899SlotSnapshot=false;
   size_t g13PulseWrite=0;
   bool t833Allowed=true;
   std::atomic<uint64_t> sourcePulse{0};
@@ -621,7 +622,7 @@ struct Window {
                                                  std::lock_guard guard(mutex);
                                                  return m1GravityEnabled && !closing && previous==generation ?
                                                      gravity : grs::pc::M1Gravity{};
-                                               },observation,m1OneQuantumGrant},
+                                               },observation,m1OneQuantumGrant,t899SlotSnapshot},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
@@ -806,6 +807,7 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--m1-empty-preview")) window.m1Preview=true;
     else if (!std::wcscmp(argv[i], L"--m1-manual-gravity")) window.m1GravityEnabled=true;
     else if (!std::wcscmp(argv[i], L"--m1-one-quantum-grant")) window.m1OneQuantumGrant=true;
+    else if (!std::wcscmp(argv[i], L"--g13-slot-snapshot")) window.t899SlotSnapshot=true;
     else if (!std::wcscmp(argv[i], L"--m1-observe") && i+2<argc) {
       if (window.observation.frame) return 2;
       std::ifstream request{std::filesystem::path(argv[++i])};
@@ -842,7 +844,7 @@ int wmain(int argc, wchar_t **argv) {
                    "[--m1-empty-preview] [--m1-manual-gravity] [--m1-observe REQUEST PREFIX] "
                    "[--m1-one-quantum-grant] "
                    "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] [--g13-f05-rest] "
-                   "[--g13-revoke-before | --g13-revoke-after] [--g13-diagnostics full|hot]]\n";
+                   "[--g13-revoke-before | --g13-revoke-after] [--g13-diagnostics full|hot] [--g13-slot-snapshot]]\n";
       return 2;
     }
   }
@@ -865,6 +867,7 @@ int wmain(int argc, wchar_t **argv) {
   if (window.t833ForcedJ && window.t833Case!="F03") return 2;
   if (window.t833F05Rest && window.t833Case!="F05") return 2;
   if (!window.t877Mode.empty() && window.t833CandidateFile.empty()) return 2;
+  if (window.t899SlotSnapshot && window.t877Mode.empty()) return 2;
   if (!window.t833CandidateFile.empty() && (window.steady || !window.m1SourceModule.empty())) return 2;
   if (window.sourceTrace) window.ingress.EnableTrace();
   if (window.d1ColdReanchor && window.d1Mode.empty()) return 2;

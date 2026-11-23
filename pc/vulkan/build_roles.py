@@ -129,7 +129,7 @@ void t854MotionLatch(bool isActive){
 """
 
 
-def t854_private_arms(emit):
+def t854_private_arms(emit, slot_ordinals):
     def drive_part(name, body, motion):
         if name != "drive" or body == "void drive();":
             return body
@@ -151,12 +151,32 @@ def t854_private_arms(emit):
     ledger = """if(uOp==17u){lane=gl_LocalInvocationID.x;if(!t854Previous(2u))return;
  if(w[uPrivateWord+10u]==1u){entryLedger();traceStage(false);}
  if(lane==0u)t854Stage(3u);return;}"""
+    cases = "".join(f"case {ordinal}u:slot={slot}u;break;" for slot, ordinal in enumerate(slot_ordinals))
+    snapshot_protocol = f"""
+void t899Snapshot(){{
+ if(lane!=0u||!t854Range()||w.length()-uPrivateWord<32u+{len(slot_ordinals)}u*42u)return;
+ uint slot;
+ switch(uIndex){{{cases}default:return;}}
+ uint dst=uPrivateWord+32u+slot*42u;
+ for(uint i=0u;i<32u;++i)w[dst+i]=w[uPrivateWord+i];
+ for(uint i=0u;i<10u;++i)w[dst+32u+i]=c[513u+i];
+}}
+"""
+    def snapshot_ledger(_):
+        arm = substitute(ledger, "if(!t854Previous(2u))return;",
+                         "if(!t854Previous(2u)){t899Snapshot();return;}", "T899 rejected slot")
+        return substitute(arm, "if(lane==0u)t854Stage(3u);return;",
+                          "if(lane==0u){t854Stage(3u);memoryBarrierBuffer();t899Snapshot();}return;",
+                          "T899 completed slot")
+
     for name, arm, rewrite in (
             ("OP17_PRIVATE_MOTION", motion, lambda fn, body: drive_part(fn, body, True)),
             ("OP17_PRIVATE_MMS", lambda _: mms, lambda fn, body: drive_part(fn, body, False)),
-            ("OP17_PRIVATE_LEDGER", lambda _: ledger, None)):
+            ("OP17_PRIVATE_LEDGER", lambda _: ledger, None),
+            ("OP17_PRIVATE_LEDGER_SNAPSHOT", snapshot_ledger, None)):
         raw, _ = emit((17,), lambda op, old: arm(old) if op == 17 else old, rewrite)
-        src = substitute(raw.decode(), "void main(){", OP17_PROTOCOL+"\nvoid main(){", name)
+        protocol = OP17_PROTOCOL + (snapshot_protocol if arm is snapshot_ledger else "")
+        src = substitute(raw.decode(), "void main(){", protocol+"\nvoid main(){", name)
         yield name, [17,66], src.encode()
 
 
@@ -180,7 +200,13 @@ def build(out, compiler):
         sources.append((f"OP_00_{first}_{last}", [*selection, 66], raw))
     sources.extend(t841_arms(emit))
     sources.extend(t849_arms(emit))
-    sources.extend(t854_private_arms(emit))
+    dispatch = Path(__file__).resolve().parents[2] / "docs" / "architecture-T607-g13-dispatch-v1.json"
+    plan = json.loads(dispatch.read_bytes())
+    slot_ordinals = tuple(i for i, row in enumerate(plan["quantum"]) if row["opcode"] == 17)
+    assert len(slot_ordinals) == 14 and all(row["opcode"] != 17 for row in plan["source"])
+    header.append("inline constexpr size_t kT899SlotOrdinals[] = {"+
+                  ",".join(map(str, slot_ordinals))+"};")
+    sources.extend(t854_private_arms(emit, slot_ordinals))
     for name, opcodes, raw in sources:
         src = raw.decode()
         for a, b in (("#version 310 es", DECLARATION),

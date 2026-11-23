@@ -65,6 +65,7 @@ struct Attempt {
   std::function<pc::M1Gravity()> m1Gravity;
   pc::M1Observation m1Observation;
   bool m1OneQuantumGrant=false;
+  bool t899SlotSnapshot=false;
 #else
   NativeWindow *window;
 #endif
