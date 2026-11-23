@@ -1,0 +1,27 @@
+{
+  "scenarios": {
+    "G15-positive": {
+      "sha256": "05fdbbb9e77511f62ec2189d14684569765a3ed9468a75743b933839446c8486",
+      "samples": 301
+    },
+    "G15-negative": {
+      "sha256": "9d3c3f29c6c8c3090c505d8145653d279df36a754d78475d33a14a8c9a117786",
+      "samples": 301
+    },
+    "G16-invert": {
+      "sha256": "417142f7c2f523f99641a6d7a5c8e42b26b28f0c436d8142d2af16e6263c2b29",
+      "samples": 401
+    },
+    "G17-turns": {
+      "sha256": "90b6ce62a4049fe13a58ad235423062a2641cfe87ce1bb38a96861f3cf1b182a",
+      "samples": 1501
+    }
+  },
+  "negativeControls": [
+    "AXIS_OR_MODE",
+    "TIME_GAP_OR_ORDER",
+    "KINEMATICS_OR_WRAPPED_PHASE",
+    "KINEMATICS_OR_WRAPPED_PHASE"
+  ],
+  "physicalExecution": "NOT_RUN"
+}
