@@ -80,9 +80,10 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
                   const std::function<void(const Frame &)> &published,
                   VkDeviceSize m1PublicationBytes, bool requireDiagnosticPixel,
                   const std::function<VkBuffer()> &nextPublication, bool fullM1,
-                  const PresentBusy &captureBusy) {
+                  const PresentBusy &captureBusy,const PresentObservations &observation) {
   using BusyPhase=g13vk::M1HotCapture::Phase;
   Frame frame;
+  frame.empty=observation.emptyFirst;
   const bool dryScene=m1PublicationBytes && !requireDiagnosticPixel;
   Presentation wsi{vk, device};
   try {
@@ -188,7 +189,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     VkPipelineLayoutCreateInfo layout{VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO};
     layout.setLayoutCount = 1;
     layout.pSetLayouts = &wsi.descriptors;
-    const VkPushConstantRange extentPush{VK_SHADER_STAGE_FRAGMENT_BIT,0,12};
+    const VkPushConstantRange extentPush{VK_SHADER_STAGE_FRAGMENT_BIT,0,16};
     if (dryScene) {
       layout.pushConstantRangeCount = 1;
       layout.pPushConstantRanges = &extentPush;
@@ -305,9 +306,9 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       vk.CmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, wsi.layout, 0, 1, &set, 0, nullptr);
       if (dryScene) {
         const bool unorm=found->format==VK_FORMAT_B8G8R8A8_UNORM || found->format==VK_FORMAT_R8G8B8A8_UNORM;
-        struct FramePush { float width,height; uint32_t encode; };
-        const FramePush values{float(extent.width),float(extent.height),uint32_t(unorm)};
-        static_assert(sizeof(values)==12);
+        struct FramePush { float width,height; uint32_t encode,empty; };
+        const FramePush values{float(extent.width),float(extent.height),uint32_t(unorm),uint32_t(frame.empty)};
+        static_assert(sizeof(values)==16);
         vk.CmdPushConstants(command,wsi.layout,VK_SHADER_STAGE_FRAGMENT_BIT,0,sizeof(values),&values);
       }
       wsi.CmdDraw(command, 3, 1, 0, 0);
@@ -329,6 +330,29 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
                            int32_t(m1PublicationBytes ? extent.height-1 : extent.height/2), 0};
       pixel.imageExtent = {1,1,1};
       wsi.CmdCopyImageToBuffer(command, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, staging, 1, &pixel);
+      ++frame.serial;
+      frame.graphicsFence=reinterpret_cast<uintptr_t>(wsi.submitted);
+      frame.roi={};
+      const auto *regions=!frame.empty && observation.requestedRoi ? observation.requestedRoi() : nullptr;
+      if (regions) {
+        frame.roi.regions=*regions;
+        bool fits=observation.roiStride>=1024 && observation.roiStride%4==0;
+        for (const auto &r:*regions) fits=fits && Fits(r,extent.width,extent.height);
+        if (!fits) frame.roi.state="ROI_OUT_OF_BOUNDS";
+        else {
+          std::array<VkBufferImageCopy,3> copies{};
+          for (size_t i=0;i<copies.size();++i) {
+            const auto &r=(*regions)[i];
+            copies[i].bufferOffset=(i+1)*observation.roiStride;
+            copies[i].imageSubresource=pixel.imageSubresource;
+            copies[i].imageOffset={int32_t(r.x),int32_t(r.y),0};
+            copies[i].imageExtent={r.width,r.height,1};
+          }
+          wsi.CmdCopyImageToBuffer(command,image,VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,staging,
+                                  uint32_t(copies.size()),copies.data());
+          frame.roi.state="RECORDED";
+        }
+      }
       imageBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
       imageBarrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
       imageBarrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
@@ -359,7 +383,19 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
         VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE, nullptr, stagingMemory, 0, VK_WHOLE_SIZE};
         invalidation = vk.InvalidateMappedMemoryRanges(device, 1, &range);
       }
-      if (invalidation == VK_SUCCESS) std::memcpy(&frame.pixel, mapped, sizeof(frame.pixel));
+      if (invalidation == VK_SUCCESS) {
+        std::memcpy(&frame.pixel,mapped,sizeof(frame.pixel));
+        if (frame.roi.state && std::strcmp(frame.roi.state,"RECORDED")==0) {
+          for (size_t i=0;i<frame.roi.regions.size();++i) {
+            const auto &r=frame.roi.regions[i];
+            const size_t bytes=size_t(r.width)*r.height*4;
+            const auto *first=static_cast<const uint8_t*>(mapped)+(i+1)*observation.roiStride;
+            std::memcpy(frame.roi.bytes.data()+frame.roi.size,first,bytes);
+            frame.roi.size+=bytes;
+          }
+          frame.roi.state="FENCED_READBACK";
+        }
+      }
       vk.UnmapMemory(device, stagingMemory);
       Check(invalidation, "vkInvalidateMappedMemoryRanges.PIXEL");
       frame.pixelRead = true;
@@ -396,6 +432,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       if (!current()) break;
       const auto next=nextPublication();
       if (!next || !current()) break;
+      frame.empty=false;
       Check(resetPool(device,wsi.commandPool,0),"vkResetCommandPool.GRAPHICS");
       const VkFence fences[]={wsi.acquired,wsi.submitted};
       Check(resetFences(device,2,fences),"vkResetFences.GRAPHICS");

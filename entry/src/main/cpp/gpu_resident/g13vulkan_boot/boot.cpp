@@ -64,7 +64,8 @@ constexpr size_t kWork = 5, kControl = 6, kLayout = 7, kStaging = 8;
 #ifdef _WIN32
 constexpr size_t kM1Base = 9, kM1Candidate = 10, kM1Work = 11, kM1Events = 12, kM1Pub = 13,
                  kM1Tail = 14, kM1Uniform = 15, kM1QScratch = 16, kM1QWork = 17, kM1QEvents = 18,
-                 kM1QUniform = 19, kM1QPub = 20, kM1ColdStaging = 21, kM1QPubAlt = 22, kBufferCount = 23;
+                 kM1QUniform = 19, kM1QPub = 20, kM1ColdStaging = 21, kM1QPubAlt = 22,
+                 kM1PixelStaging = 23, kBufferCount = 24;
 #else
 constexpr size_t kBufferCount = 9;
 #endif
@@ -155,12 +156,16 @@ class Boot {
 public:
   Boot(const Attempt &a, const Publish &p) : attempt(a), publish(p) {}
   ~Boot() {
+#ifdef _WIN32
+    VkResult finalDrain=VK_NOT_READY;
+#endif
     while (inFlight) {
 #ifdef _WIN32
       const auto entered=pc::QpcTicks();
 #endif
       const VkResult drained = vk.DeviceWaitIdle(device);
 #ifdef _WIN32
+      finalDrain=drained;
       if (t877PendingNonce) {
         std::ostringstream row;
         row << "{\"stage\":\"T877_DEVICE_DRAIN\",\"nonce\":\"" << t877PendingNonce
@@ -176,6 +181,17 @@ public:
         break;
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
+#ifdef _WIN32
+    if (t877Late.nonce) {
+      const auto before=pc::QpcTicks();
+      const auto same=t877Late.fence==fence && t877Late.pool==t877Queries &&
+                      t877Late.device==device && t877Late.queue==queue &&
+                      t877Late.generation==t877FenceGeneration;
+      const auto confirmed=finalDrain==VK_SUCCESS && same ?
+          vk.WaitForFences(device,1,&fence,VK_TRUE,0) : VK_NOT_READY;
+      ReportLateCandidate(confirmed,finalDrain,before,pc::QpcTicks());
+    }
+#endif
     if (fence)
       vk.DestroyFence(device, fence, nullptr);
     if (commandPool)
@@ -241,6 +257,20 @@ private:
   VkQueryPool t877Queries=VK_NULL_HANDLE;
   PFN_vkDestroyQueryPool t877DestroyQueries=nullptr;
   uint64_t t877PendingNonce=0;
+  struct LateCandidate {
+    VkDevice device=VK_NULL_HANDLE;
+    VkQueue queue=VK_NULL_HANDLE;
+    VkFence fence=VK_NULL_HANDLE;
+    VkQueryPool pool=VK_NULL_HANDLE;
+    PFN_vkGetQueryPoolResults read=nullptr;
+    uint64_t nonce=0,run=0,generation=0,written=0,stopQpc=0;
+    uint32_t bits=0;
+    float period=0;
+    const char *firstStop=nullptr;
+    bool source=false,cold=false;
+  } t877Late;
+  uint64_t t877FenceGeneration=0;
+  void ReportLateCandidate(VkResult,VkResult,uint64_t,uint64_t);
   std::vector<uint32_t> t833Seed;
   size_t m1ReplayBytes=0;
   VkDescriptorPool m1QuantumDescriptorPool = VK_NULL_HANDLE;
@@ -311,6 +341,8 @@ private:
   M1Pulse m1Latest,m1Consumed;
   uint64_t m1Run=0;
   const char *m1Reject=nullptr;
+  pc::M1Gravity m1GrantGravity{};
+  bool ClaimM1(m1::ProgressClockV2 &,uint64_t,bool,m1::PlanGrantV2 &);
   const char *AwaitM1Fence(uint64_t,const std::function<const char *()> &,M1WaitLog &);
   void M1RootTrace(const char *,uint64_t,const m1::ProgressClockV2 &,const m1::PlanGrantV2 &,
                    const grs::AcceptedRoot &,const M1WaitLog &);
@@ -331,7 +363,8 @@ private:
                    grs::m1::PlanGrantV2 &, const std::function<bool()> &, grs::AcceptedRoot &,
                    uint64_t &, uint32_t &);
   std::future<M1ColdResult> CaptureM1Quantum(grs::m1::SourceRootOwner &, const grs::AcceptedRoot &, const grs::Words256 &,
-                       uint32_t, const std::array<uint32_t,32> &, std::optional<M1HotCapture::Page>);
+                            uint32_t, const std::array<uint32_t,32> &, std::optional<M1HotCapture::Page>,
+                            const std::wstring &observationPrefix={});
 #endif
 };
 

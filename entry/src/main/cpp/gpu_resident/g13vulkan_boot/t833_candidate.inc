@@ -8,13 +8,13 @@ enum T877Point {
   Upload, ActualBegin, ActualEnd, ReplayBegin, ReplayEnd,
   ActualPressureBegin, ActualPressureEnd, ActualViscosityBegin, ActualViscosityEnd,
   ReplayPressureBegin, ReplayPressureEnd, ReplayViscosityBegin, ReplayViscosityEnd,
-  CompareEnd, PackEnd, BeforeTail, BusinessCopiesEnd, ColdCopiesEnd, PointCount
+  CompareEnd, PackEnd, BeforeTail, BusinessCopiesEnd, ColdCopiesEnd, RootBegin, ColdCopiesBegin, PointCount
 };
 constexpr const char *kT877PointNames[]{
     "UPLOAD_DONE","ACTUAL_BEGIN","ACTUAL_END","REPLAY_BEGIN","REPLAY_END",
     "ACTUAL_PRESSURE_SPAN_BEGIN","ACTUAL_PRESSURE_SPAN_END","ACTUAL_VISCOSITY_SPAN_BEGIN","ACTUAL_VISCOSITY_SPAN_END",
     "REPLAY_PRESSURE_SPAN_BEGIN","REPLAY_PRESSURE_SPAN_END","REPLAY_VISCOSITY_SPAN_BEGIN","REPLAY_VISCOSITY_SPAN_END",
-    "COMPARE_DONE","PACK_DONE","BEFORE_TAIL","BUSINESS_COPIES_DONE","COLD_COPIES_DONE"};
+    "COMPARE_DONE","PACK_DONE","BEFORE_TAIL","BUSINESS_COPIES_DONE","COLD_COPIES_DONE","ROOT_BEGIN","COLD_COPIES_BEGIN"};
 static_assert(std::size(kT877PointNames)==PointCount);
 
 bool T833TailMatches(const Completion &tail,const Permit &permit,uint64_t quantum,uint64_t sourceSeq) {
@@ -72,6 +72,59 @@ std::array<uint32_t,1024> T833Capsule(const Config &config,const Input &original
   return capsule;
 }
 } // namespace
+
+void Boot::ReportLateCandidate(VkResult confirmed,VkResult drained,uint64_t entered,uint64_t exited) {
+  const auto &d=t877Late;
+  struct Point { uint64_t tick=0,available=0; };
+  std::array<Point,PointCount> points{};
+  const bool readable=confirmed==VK_SUCCESS && d.pool && d.read && d.bits && d.bits<=64;
+  const auto mask=d.bits==64 ? UINT64_MAX : d.bits && d.bits<64 ? (uint64_t{1}<<d.bits)-1 : 0;
+  std::ostringstream row;
+  row << "{\"stage\":\"T877_GPU_TIMESTAMPS\",\"state\":"
+      << Quote(d.cold ? "LATE_COLD_COPY_DIAGNOSTIC" : "LATE_RETIRED_DIAGNOSTIC")
+      << ",\"businessRejected\":" << (d.cold ? "null" : "true")
+      << ",\"acceptedRoot\":null,\"rootKind\":" << Quote(d.source ? "SOURCE" : "QUANTUM")
+      << ",\"run\":\"" << d.run << "\",\"nonce\":\"" << d.nonce
+      << "\",\"ticket\":\"" << attempt.ticket << "\",\"geometry\":\"" << attempt.geometry
+      << "\",\"device\":\"" << reinterpret_cast<uintptr_t>(d.device)
+      << "\",\"queue\":\"" << reinterpret_cast<uintptr_t>(d.queue)
+      << "\",\"fence\":\"" << reinterpret_cast<uintptr_t>(d.fence)
+      << "\",\"fenceGeneration\":\"" << d.generation
+      << "\",\"queryPool\":\"" << reinterpret_cast<uintptr_t>(d.pool)
+      << "\",\"writtenMask\":\"" << d.written << "\",\"firstStop\":" << Quote(d.firstStop)
+      << ",\"stopQpc\":\"" << d.stopQpc << "\",\"retireConfirmEnterQpc\":\"" << entered
+      << "\",\"retireConfirmExitQpc\":\"" << exited << "\",\"fenceVkResult\":" << int(confirmed)
+      << ",\"drainVkResult\":" << int(drained) << ",\"validBits\":" << d.bits
+      << ",\"periodNs\":" << d.period << ",\"points\":[";
+  bool comma=false,any=false;
+  for (uint32_t i=0;i<PointCount;++i) {
+    if (!(d.written&(uint64_t{1}<<i))) continue;
+    auto &p=points[i];
+    const auto status=readable ? d.read(d.device,d.pool,i,1,sizeof(p),&p,sizeof(p),
+                                      VK_QUERY_RESULT_64_BIT|VK_QUERY_RESULT_WITH_AVAILABILITY_BIT) : VK_NOT_READY;
+    if (status!=VK_SUCCESS) p.available=0;
+    any=any || p.available;
+    if (comma) row << ',';
+    comma=true;
+    row << "{\"point\":" << Quote(kT877PointNames[i]) << ",\"vkResult\":" << int(status)
+        << ",\"available\":" << (p.available ? "true" : "false") << ",\"tick\":"
+        << (p.available ? Quote(std::to_string(p.tick&mask)) : "null") << "}";
+  }
+  row << "],\"queryState\":" << Quote(any ? "AVAILABLE_POINTS" : "UNAVAILABLE") << ",\"spansNs\":{";
+  const auto span=[&](const char *name,T877Point a,T877Point b,bool separator=true) {
+    row << (separator ? "," : "") << Quote(name) << ':';
+    if (points[a].available && points[b].available)
+      row << pc::TimestampDelta(points[a].tick,points[b].tick,d.bits)*double(d.period);
+    else row << "null";
+  };
+  span("root",RootBegin,BusinessCopiesEnd,false);
+  span("actual",ActualBegin,ActualEnd);
+  span("replay",ReplayBegin,ReplayEnd);
+  span("comparePack",ReplayEnd,PackEnd);
+  span("businessCopies",BeforeTail,BusinessCopiesEnd);
+  span("independentColdCopy",ColdCopiesBegin,ColdCopiesEnd);
+  publish(row.str()+"}}");
+}
 
 std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,const Candidate &hardware) {
   const bool privateProject=attempt.t833Case=="F02";
@@ -270,6 +323,7 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
     fence=VK_NULL_HANDLE;
     VkFenceCreateInfo fenceInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
     Check(vk.CreateFence(device,&fenceInfo,nullptr,&fence),"vkCreateFence.T833");
+    ++t877FenceGeneration;
     VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
     begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     Check(vk.BeginCommandBuffer(command,&begin),"vkBeginCommandBuffer.T833");
@@ -280,18 +334,26 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
       written[point]=true;
     };
     if (t877Queries) resetQueries(command,t877Queries,0,PointCount);
+    mark(RootBegin,VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
+    const auto writtenMask=[&] {
+      uint64_t mask=0;
+      for (size_t i=0;i<written.size();++i) if (written[i]) mask|=uint64_t{1}<<i;
+      return mask;
+    };
     const auto reportGpu=[&](bool safe,bool coldSafe=false) {
       if (!t877) return;
       std::ostringstream row;
       row << "{\"stage\":\"T877_GPU_TIMESTAMPS\",\"nonce\":\"" << nonce
           << "\",\"ticket\":\"" << attempt.ticket << "\",\"validBits\":" << hardware.timestampBits
           << ",\"periodNs\":" << hardware.properties.limits.timestampPeriod
+          << ",\"queryPool\":\"" << reinterpret_cast<uintptr_t>(t877Queries)
+          << "\",\"writtenMask\":\"" << writtenMask() << "\""
           << ",\"state\":" << Quote(!t877Queries ? "UNAVAILABLE" : !safe ? "FENCE_NOT_SIGNALED" : "READ_AFTER_FENCE")
           << ",\"points\":[";
       bool comma=false;
       for (uint32_t i=0;i<PointCount;++i) if (written[i]) {
         std::array<uint64_t,2> values{}; // value, availability
-        const bool readable=safe && (i!=ColdCopiesEnd || coldSafe);
+        const bool readable=safe && ((i!=ColdCopiesEnd && i!=ColdCopiesBegin) || coldSafe);
         const auto status=readable ? readQueries(device,t877Queries,i,1,sizeof(values),values.data(),
                                               sizeof(values),VK_QUERY_RESULT_64_BIT|VK_QUERY_RESULT_WITH_AVAILABILITY_BIT)
                                : VK_NOT_READY;
@@ -434,6 +496,9 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
           << "\",\"geometry\":\"" << attempt.geometry << "\",\"queue\":\"" << reinterpret_cast<uintptr_t>(queue)
           << "\",\"device\":\"" << reinterpret_cast<uintptr_t>(device)
           << "\",\"fence\":\"" << reinterpret_cast<uintptr_t>(fence)
+          << "\",\"fenceGeneration\":\"" << t877FenceGeneration
+          << "\",\"queryPool\":\"" << reinterpret_cast<uintptr_t>(t877Queries)
+          << "\",\"writtenMask\":\"" << writtenMask()
           << "\",\"grantNs\":\"" << grant << "\",\"deadlineNs\":\"" << deadline
           << "\",\"recordBeginQpc\":\"" << recordBegin << "\",\"recordEndQpc\":\"" << recordEnd
           << "\",\"submitEnterQpc\":\"" << submittedQpc << "\",\"submitExitQpc\":\"" << submitExit
@@ -515,6 +580,15 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
            << ",\"" << prefix << "SubmitQpc\":\"" << submittedQpc << "\""
            << ",\"" << prefix << "FenceQpc\":\"" << pc::QpcTicks() << "\""
            << ",\"" << prefix << "FenceObject\":\"" << reinterpret_cast<uintptr_t>(fence) << "\"";
+    if (t877 && !timely) {
+      t877Late={device,queue,fence,t877Queries,readQueries,nonce,id.run,t877FenceGeneration,
+                writtenMask(),timing.stopQpc,hardware.timestampBits,
+                hardware.properties.limits.timestampPeriod,timing.stop,source};
+      if (!inFlight) {
+        ReportLateCandidate(waited,VK_NOT_READY,0,pc::QpcTicks());
+        t877Late={};
+      }
+    }
     if (waited!=VK_SUCCESS) {
       if (t877 && inFlight) t877PendingNonce=nonce;
       reportWaits();
@@ -591,6 +665,13 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
           << ",\"latchOK\":" << (latchOK ? "true" : "false") << ",\"nativeError\":" << nativeError << '}';
       publish(row.str());
     }
+    if (t877 && timely && !matched) {
+      t877Late={device,queue,fence,t877Queries,readQueries,nonce,id.run,t877FenceGeneration,
+                writtenMask(),timing.stopQpc,hardware.timestampBits,
+                hardware.properties.limits.timestampPeriod,timing.stop,source};
+      ReportLateCandidate(waited,VK_NOT_READY,0,pc::QpcTicks());
+      t877Late={};
+    }
     if (hot) {
       const auto evidenceIndex=source ? 0 : 1;
       evidence[evidenceIndex]=std::move(raw);
@@ -612,9 +693,11 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
       vk.DestroyFence(device,fence,nullptr);
       fence=VK_NULL_HANDLE;
       Check(vk.CreateFence(device,&fenceInfo,nullptr,&fence),"vkCreateFence.T877_COLD");
+      ++t877FenceGeneration;
       Check(vk.BeginCommandBuffer(command,&begin),"vkBeginCommandBuffer.T877_COLD");
       Barrier(kCompute|kTransfer,VK_ACCESS_SHADER_WRITE_BIT|VK_ACCESS_TRANSFER_WRITE_BIT,
               kTransfer,VK_ACCESS_TRANSFER_READ_BIT|VK_ACCESS_TRANSFER_WRITE_BIT);
+      mark(ColdCopiesBegin,VK_PIPELINE_STAGE_TRANSFER_BIT);
       VkDeviceSize at=fieldsAt;
       for (size_t j=0;j<captured.size();++j) {
         const VkBufferCopy region{0,at,bytes[j]};
@@ -627,7 +710,7 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
       if (!attempt.current()) {
         fields << ",\"" << prefix << "ColdCapture\":\"NO_SAFE_READ_WINDOW\"";
         // ColdCopiesEnd was recorded, but the cold command buffer was not submitted.
-        written[ColdCopiesEnd]=false;
+        written[ColdCopiesBegin]=written[ColdCopiesEnd]=false;
         reportGpu(true);
         coldFailure=true;
         return false;
@@ -644,7 +727,7 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
         coldWaitExit=pc::QpcTicks();
         if (retired==VK_SUCCESS || retired==VK_ERROR_DEVICE_LOST) inFlight=false;
       } else {
-        written[ColdCopiesEnd]=false;
+        written[ColdCopiesBegin]=written[ColdCopiesEnd]=false;
       }
       std::ostringstream cold;
       cold << "{\"stage\":\"T877_COLD_COPY\",\"nonce\":\"" << nonce
@@ -656,7 +739,13 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
            << ",\"fenceVkResult\":" << int(retired) << '}';
       publish(cold.str());
       if (queued!=VK_SUCCESS || retired!=VK_SUCCESS) {
-        if (inFlight) t877PendingNonce=nonce;
+        if (inFlight) {
+          t877PendingNonce=nonce;
+          const uint64_t coldMask=(uint64_t{1}<<ColdCopiesBegin)|(uint64_t{1}<<ColdCopiesEnd);
+          t877Late={device,queue,fence,t877Queries,readQueries,nonce,id.run,t877FenceGeneration,
+                    writtenMask()&coldMask,coldWaitExit,hardware.timestampBits,
+                    hardware.properties.limits.timestampPeriod,"COLD_COPY_FENCE",source,true};
+        }
         reportGpu(queued!=VK_ERROR_DEVICE_LOST && retired!=VK_ERROR_DEVICE_LOST);
         coldFailure=true;
         return false;

@@ -12,6 +12,7 @@
 #include "m1_pulse_queue.h"
 #include "g13_candidate_timing.h"
 #include "m1_d1_drain.h"
+#include "m1_observation.h"
 #else
 struct NativeWindow;
 #endif
@@ -60,6 +61,9 @@ struct Attempt {
   M1D1Intake *d1Intake=nullptr;
   std::function<void(const std::string &,bool)> d1Report;
   std::function<void(const std::string &)> d1PulseTrace;
+  bool m1Preview=false;
+  std::function<pc::M1Gravity()> m1Gravity;
+  pc::M1Observation m1Observation;
 #else
   NativeWindow *window;
 #endif

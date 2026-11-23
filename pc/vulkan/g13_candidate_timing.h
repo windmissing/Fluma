@@ -11,6 +11,12 @@ struct CandidatePulse {
 
 inline constexpr uint64_t kCandidateGapNs=33333333, kCandidateJobNs=250000000, kPollNs=2000000;
 
+inline uint64_t TimestampDelta(uint64_t first,uint64_t last,uint32_t bits) {
+  if (!bits || bits>64) return 0;
+  const auto mask=bits==64 ? UINT64_MAX : (uint64_t{1}<<bits)-1;
+  return (last-first)&mask;
+}
+
 inline uint64_t CandidatePollNs(uint64_t now,uint64_t deadline) {
   return now<deadline ? std::min(kPollNs,deadline-now) : 0;
 }

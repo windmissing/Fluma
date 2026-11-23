@@ -6,6 +6,7 @@
 #include <thread>
 namespace grs::g9dm {class Transport;}
 namespace grs::g11vis {class VisualTransport;}
+namespace grs::pc::sand {class VulkanOwner;}
 namespace grs::accept647 {
 using Digest=std::array<uint32_t,8>;using Tail=std::array<uint32_t,256>;
 enum class Family:uint32_t {R1_DEFAULT=1,DM_DEFAULT=2,G11_R1=3,G11_DM=4,G9_RX=5};
@@ -44,6 +45,7 @@ class ActiveProgramIdentity {
  static ActiveProgramIdentity ForDefaultDm(const ProgramFacts& facts){return ActiveProgramIdentity(facts,Family::DM_DEFAULT);}
  static ActiveProgramIdentity ForComposite(const ProgramFacts& facts,uint32_t parentKind){return ActiveProgramIdentity(facts,parentKind==1?Family::G11_R1:Family::G11_DM);}
  friend class grs::g9dm::Transport;friend class grs::g11vis::VisualTransport;
+ friend class grs::pc::sand::VulkanOwner;
  friend class ExpectedContract;friend class NativeMappedObservation;friend class SemanticCore;
  friend std::optional<class ExpectedContract> ExpectedForActivePipeline(const ActiveProgramIdentity&,PermitView,uint32_t);
 public:
@@ -71,6 +73,7 @@ class NativeMappedObservation {
  const ActiveProgramIdentity* active_;const Tail* tail_;ActualEvidence evidence_;
  NativeMappedObservation(const ActiveProgramIdentity& active,const Tail& tail,const ActualEvidence& evidence):active_(&active),tail_(&tail),evidence_(evidence){}
  friend class grs::g9dm::Transport;friend class grs::g11vis::VisualTransport;friend class SemanticCore;friend class ValidatedAccepted;friend class ValidatedBlocked;
+ friend class grs::pc::sand::VulkanOwner;
 };
 class ValidatedAccepted {
  Tail tail_;Digest expected_;const void* producer_;

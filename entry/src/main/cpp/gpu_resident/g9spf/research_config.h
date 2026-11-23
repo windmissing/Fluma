@@ -1,5 +1,15 @@
 #pragma once
+#ifdef _WIN32
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#pragma push_macro("OVERFLOW")
+#undef OVERFLOW
+#endif
 #include "schema_generated.h"
+#ifdef _WIN32
+#pragma pop_macro("OVERFLOW")
+#endif
 #include "control_types.h"
 #include "../program_cache/sha256.h"
 #include <array>

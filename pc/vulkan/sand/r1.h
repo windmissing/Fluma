@@ -1,9 +1,6 @@
 #pragma once
 #include "pass.h"
-#pragma push_macro("OVERFLOW")
-#undef OVERFLOW
 #include "../../../entry/src/main/cpp/gpu_resident/g11vis/composite_gate.h"
-#pragma pop_macro("OVERFLOW")
 #include "../../../entry/src/main/cpp/gpu_resident/g11vis/generated_contract.h"
 
 namespace grs::pc::sand {

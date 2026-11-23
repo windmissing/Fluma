@@ -124,7 +124,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
                         const std::function<bool()> &refresh, grs::AcceptedRoot &accepted,
                         uint64_t &frameSerial, uint32_t &ordinal) {
   using namespace m1pc;
-  const m1::QuantumParameters p;
+  m1::QuantumParameters p;
   const auto &passes=m1QuantumPasses;
   const auto &sets=m1QuantumSets;
   const uint32_t count=uint32_t(passes.size());
@@ -151,13 +151,14 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
       M1RootTrace("Quantum",0,clock,{},accepted,{});
       return false;
     }
-    if (clock.Claim(pc::TimeNs(),p.requestedAngle,0,false,permit)) {
+    if (ClaimM1(clock,0,false,permit)) {
       ++frameSerial;
       ordinal=0;
       break;
     }
     Sleep(1);
   }
+  p.requestedAngle=permit.angle;
   RootRequest r;
   r.kind=2;
   r.quantumOrdinal=++ordinal;
@@ -293,13 +294,15 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
 
 std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, const grs::AcceptedRoot &accepted,
                             const grs::Words256 &sourceCompletion, uint32_t stateWords,
-                            const std::array<uint32_t,32> &sourceCommand,std::optional<M1HotCapture::Page> ticket) {
+                            const std::array<uint32_t,32> &sourceCommand,std::optional<M1HotCapture::Page> ticket,
+                            const std::wstring &observationPrefix) {
   const auto noCapture=[] { return std::async(std::launch::deferred,[] { return M1ColdResult{}; }); };
   if (D1Ended()) return noCapture();
   Checkpoint("M1_QUANTUM_COLD_CAPTURE");
   const uint32_t eventCount=accepted.completion[53];
   const auto &stored=accepted.completion;
-  const bool replay=!attempt.m1ReplayPrefix.empty();
+  const auto &replayPrefix=observationPrefix.empty() ? attempt.m1ReplayPrefix : observationPrefix;
+  const bool replay=!replayPrefix.empty();
   const bool rootOnly=attempt.m1RootCapture || replay;
   const bool sourceRoot=stored[27]==1;
   const size_t bank=accepted.bank ? kM1Candidate : kM1Base;
@@ -376,6 +379,7 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
   inFlight=true;
   const auto waitEnter=pc::QpcTicks();
   const auto wait=vk.WaitForFences(device,1,&fence,VK_TRUE,m1::ProgressClockV2::JobNs);
+  const auto waitExit=pc::QpcTicks();
   if (wait==VK_SUCCESS || wait==VK_ERROR_DEVICE_LOST) inFlight=false;
   if (attempt.m1D1) {
     d1FenceObject=reinterpret_cast<uintptr_t>(fence);
@@ -383,7 +387,7 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
     d1OwnerPoll.reset();
     d1FenceResult=wait;
     d1FenceEnter=waitEnter;
-    d1FenceExit=pc::QpcTicks();
+    d1FenceExit=waitExit;
     if (wait==VK_ERROR_DEVICE_LOST) {
       root.ContextLost();
       return noCapture();
@@ -419,11 +423,15 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
          << ",\"bankBuffer\":\"" << reinterpret_cast<uintptr_t>(buffers[bank].handle)
          << "\",\"eventBuffer\":\"" << reinterpret_cast<uintptr_t>(buffers[events].handle)
          << "\",\"publicationBuffer\":\"" << reinterpret_cast<uintptr_t>(buffers[publication].handle)
-         << "\",\"fence\":" << int(wait) << ",\"invalidate\":" << int(invalidation) << '}';
+         << "\",\"fence\":" << int(wait) << ",\"invalidate\":" << int(invalidation);
+  if (!observationPrefix.empty())
+    fields << ",\"copyFence\":\"" << reinterpret_cast<uintptr_t>(fence) << "\",\"waitEnterQpc\":\""
+           << waitEnter << "\",\"waitExitQpc\":\"" << waitExit << '"';
+  fields << '}';
   // The worker owns only sealed CPU bytes and the destination path.
   if (replay) m1ReplayBytes+=size_t(payload);
   const auto nonce=(uint64_t(accepted.nonce.hi)<<32)|accepted.nonce.lo;
-  const auto outputPath=replay ? attempt.m1ReplayPrefix+L"-"+std::to_wstring(nonce)+L".m1root" : attempt.m1ColdFile;
+  const auto outputPath=replay ? replayPrefix+L"-"+std::to_wstring(nonce)+L".m1root" : attempt.m1ColdFile;
   return std::async(std::launch::async,[path=outputPath,sizes,raw=std::move(raw),
                                        capture=attempt.hotCapture,ticket,rootOnly]() mutable {
     try {

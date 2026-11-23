@@ -1,6 +1,6 @@
 #version 450
 layout(set=0,binding=0,std430) readonly buffer Publication { uint P[]; };
-layout(push_constant) uniform WindowFrame { vec2 extent; uint encode; };
+layout(push_constant) uniform WindowFrame { vec2 extent; uint encode; uint empty; };
 layout(location=0) in vec2 uv;
 layout(location=0) out vec4 color;
 
@@ -24,7 +24,10 @@ void main() {
     const uint header = columnBase + 16u*128u;
     const vec3 background = vec3(.006,.008,.014);
     vec3 rgb = background;
-    if (P[header] == 1347637831u && P[header+1u] == 2u && P[header+3u] == 3235823838u) {
+    if (empty!=0u) {
+        vec2 edge = abs(uv*extent-extent*.5)-extent*.5;
+        if (abs(max(edge.x,edge.y))<=1.) rgb = vec3(.08)+rgb*.8;
+    } else if (P[header] == 1347637831u && P[header+1u] == 2u && P[header+3u] == 3235823838u) {
         const vec3 sandColor = vec3(.72,.57,.35);
         vec2 point = vec2(uv.x,1.0-uv.y)*vec2(128,256);
         uint column = min(uint(point.x),127u);

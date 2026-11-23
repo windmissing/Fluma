@@ -82,7 +82,7 @@ static bool Valid(const Slice &slice) {
 
 bool WriteDescriptors(PFN_vkUpdateDescriptorSets update,VkDevice device,VkDescriptorSet descriptors,
                       const Command &command,const StorageSlots &storage,const Slice &uniform,
-                      const VkPhysicalDeviceLimits &limits) {
+                      const VkPhysicalDeviceLimits &limits,bool initialAudit) {
   if (!update || !device || !descriptors || !Valid(uniform) || uniform.bytes!=kCommonBytes ||
       kCommonBytes>limits.maxUniformBufferRange || !limits.minUniformBufferOffsetAlignment ||
       uniform.offset%limits.minUniformBufferOffsetAlignment || !limits.minStorageBufferOffsetAlignment)
@@ -101,7 +101,7 @@ bool WriteDescriptors(PFN_vkUpdateDescriptorSets update,VkDevice device,VkDescri
   for (uint32_t i=0;i<writes.size();++i) {
     const auto &slice=slices[i];
     for (uint32_t j=0;j<i;++j)
-      if (slice.buffer==slices[j].buffer &&
+      if (!(initialAudit && i==1 && j==0) && slice.buffer==slices[j].buffer &&
           slice.offset<slices[j].offset+slices[j].bytes && slices[j].offset<slice.offset+slice.bytes)
         return false;
     buffers[i]={slice.buffer,slice.offset,slice.bytes};

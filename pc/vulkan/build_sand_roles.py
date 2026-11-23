@@ -199,6 +199,11 @@ def build(family, compiler, out):
             header.write("};\n")
         for name, _, offset in common:
             header.write(f"inline constexpr unsigned k_{name}={offset};\n")
+        header.write("inline constexpr ModuleFile kModules[]={\n")
+        for role in roles:
+            if role["state"] == "STATIC_SPIRV":
+                header.write(f'  {{{role["op"]},{role["spvBytes"]},"{role["spv"]}","{role["spvSHA"]}"}},\n')
+        header.write("};\n")
         header.write(f'inline constexpr unsigned kCommonBytes={data["commonBytes"]};\n')
         header.write(f'inline constexpr char kRoleSetSHA[]="{data["roleSetSHA"]}";\n}}\n')
     print(f"{family}: {len(usable)}/{len(roles)} static roles, {data['complete']}")

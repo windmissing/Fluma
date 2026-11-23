@@ -40,6 +40,7 @@ public:
 };
 class CompletionGate {
  friend class Transport;
+ friend class grs::pc::sand::VulkanOwner;
  static std::optional<ValidatedRecord> Accepted(const Permit&,const accept647::ExpectedContract&,const accept647::NativeMappedObservation&);
  static std::optional<ValidatedBlockedControlRecord> Blocked(const Permit&,const accept647::ExpectedContract&,const accept647::NativeMappedObservation&);
 public:

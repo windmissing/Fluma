@@ -1,6 +1,14 @@
 constexpr char kM1CandidateSHA[] = "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c";
 constexpr char kM1CommitSHA[] = "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce";
 
+bool Boot::ClaimM1(m1::ProgressClockV2 &clock,uint64_t hold,bool source,m1::PlanGrantV2 &grant) {
+  auto sample=attempt.m1Gravity ? attempt.m1Gravity() : pc::M1Gravity{};
+  if (sample.geometry!=attempt.geometry || !pc::ValidM1Angle(sample.angle)) sample={};
+  if (!clock.Claim(pc::TimeNs(),sample.angle,hold,source,grant)) return false;
+  m1GrantGravity=sample;
+  return true;
+}
+
 void Boot::SubmitM1Root(const VkSubmitInfo &submit,uint64_t hold,uint64_t deadline,uint64_t nonce,M1WaitLog &log) {
   if (!attempt.m1D1) {
     log.submit=vk.QueueSubmit(queue,1,&submit,fence);
@@ -128,6 +136,16 @@ void Boot::M1RootTrace(const char *kind,uint64_t nonce,const m1::ProgressClockV2
     writeWait(log.rows[i]);
   }
   fields << "]}";
+  if (grant.id && m1GrantGravity.geometry==attempt.geometry) {
+    using namespace m1::completion256;
+    const bool valid=m1Reject==nullptr && kind[0]=='Q';
+    const auto angle=int32_t(accepted.completion[angleAcceptedIndex]);
+    fields << ",\"m1GravityGrant\":{\"nonce\":\"" << nonce << "\",\"plan\":\"" << grant.id
+           << "\",\"inputSequence\":\"" << m1GrantGravity.sequence << "\",\"inputQpc\":\"" << m1GrantGravity.qpc
+           << "\",\"requestedAngle256\":" << m1GrantGravity.angle << ",\"grantedAngle256\":" << grant.angle
+           << ",\"angleAcceptedIndex\":" << (valid ? std::to_string(angle) : "null")
+           << ",\"constrained\":" << (valid ? angle==grant.angle ? "false" : "true" : "null") << '}';
+  }
 }
 
 constexpr bool SourceDescriptorsReady(VkResult allocated, size_t expected, size_t requested,
@@ -214,7 +232,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   Allocate(kM1Candidate, stateWords*4, storage | copyOut);
   Allocate(kM1Work, workWords*4, storage | upload | copyOut);
   Allocate(kM1Events, (K+1)*64*4, storage | copyOut);
-  Allocate(kM1Pub, pubWords*4, storage | (attempt.m1ReplayPrefix.empty() ? 0 : copyOut));
+  Allocate(kM1Pub, pubWords*4, storage | (attempt.m1ReplayPrefix.empty() ? 0 : copyOut) |
+           (attempt.m1Preview ? upload : 0));
   Allocate(kM1Tail, 1024, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
   Allocate(kM1Uniform, stride*passes, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | upload);
   if (interactive) PrepareM1Quantum(candidate);
@@ -329,7 +348,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     clock.Revoke("CLOCK_GAP");
     return false;
   };
-  beginClock(false);
+  if (!attempt.m1Preview) beginClock(false);
   using IngressCode=M1Ingress::Code;
   if (interactive) {
     Require(attempt.ingress && attempt.sourceScope,"M1_INGRESS_MISSING");
@@ -476,22 +495,41 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     }
     return Receipt("FAILED",why);
   };
-  if (interactive && !awaitSource()) {
-    if (attempt.m1D1) return finishWithoutWsi("ATTEMPT_REVOKED");
-    Require(false,"ATTEMPT_REVOKED");
-  }
-  if (!primeClock()) {
-    finishOffer(firstOffer,IngressCode::Rejected,0,"M1_SOURCE_UI_PULSE_ABSENT",pc::TimeNs());
-    if (attempt.m1D1) return finishWithoutWsi("M1_SOURCE_UI_PULSE_ABSENT");
-    Require(false,"M1_SOURCE_UI_PULSE_ABSENT");
-  }
-  if (!interactive) pulse=clock.uiNs;
-  clock.ready=clock.baseline=true;
   m1::PlanGrantV2 permit;
-  if (!clock.Claim(pc::TimeNs(),0,interactive ? inputSample.hold : 1,true,permit)) {
-    finishOffer(firstOffer,IngressCode::Rejected,0,"M1_SOURCE_PERMIT",pc::TimeNs());
-    if (attempt.m1D1) return finishWithoutWsi("M1_SOURCE_PERMIT");
-    Require(false,"M1_SOURCE_PERMIT");
+  bool baseInitialized=false;
+  const auto recordColdBase=[&] {
+    fill(command,buffers[kM1Base].handle,0,headerAt*4,0);
+    vk.CmdUpdateBuffer(command,buffers[kM1Base].handle,headerAt*4,1024,root.Header().data());
+    fill(command,buffers[kM1Work].handle,128,VK_WHOLE_SIZE,0);
+  };
+  uint64_t previewFenceEnter=0,previewFenceExit=0;
+  uintptr_t previewFenceObject=0;
+  if (attempt.m1Preview) {
+    Check(reset(device,commandPool,0),"vkResetCommandPool.M1_EMPTY_PREVIEW");
+    vk.DestroyFence(device,fence,nullptr);
+    fence=VK_NULL_HANDLE;
+    Check(vk.CreateFence(device,&fenceInfo,nullptr,&fence),"vkCreateFence.M1_EMPTY_PREVIEW");
+    VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+    begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    Check(vk.BeginCommandBuffer(command,&begin),"vkBeginCommandBuffer.M1_EMPTY_PREVIEW");
+    recordColdBase();
+    fill(command,buffers[kM1Pub].handle,0,VK_WHOLE_SIZE,0);
+    Barrier(kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT,kCompute|VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+            VK_ACCESS_SHADER_READ_BIT|VK_ACCESS_SHADER_WRITE_BIT);
+    Check(vk.EndCommandBuffer(command),"vkEndCommandBuffer.M1_EMPTY_PREVIEW");
+    VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+    submit.commandBufferCount=1;
+    submit.pCommandBuffers=&command;
+    Checkpoint("M1_EMPTY_PREVIEW_SUBMIT");
+    Check(vk.QueueSubmit(queue,1,&submit,fence),"vkQueueSubmit.M1_EMPTY_PREVIEW");
+    inFlight=true;
+    previewFenceObject=reinterpret_cast<uintptr_t>(fence);
+    previewFenceEnter=pc::QpcTicks();
+    const auto waited=vk.WaitForFences(device,1,&fence,VK_TRUE,m1::ProgressClockV2::JobNs);
+    previewFenceExit=pc::QpcTicks();
+    if (waited==VK_SUCCESS || waited==VK_ERROR_DEVICE_LOST) inFlight=false;
+    Check(waited,"vkWaitForFences.M1_EMPTY_PREVIEW");
+    baseInitialized=true;
   }
   uint64_t frameSerial=1;
   uint32_t sourceSerial=0;
@@ -570,11 +608,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
     begin.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     Check(vk.BeginCommandBuffer(command, &begin), "vkBeginCommandBuffer.M1_SOURCE");
-    if (!root.AcceptedCount()) {
-      fill(command, buffers[kM1Base].handle, 0, headerAt*4, 0);
-      vk.CmdUpdateBuffer(command, buffers[kM1Base].handle, headerAt*4, 1024, root.Header().data());
-      fill(command, buffers[kM1Work].handle, 128, VK_WHOLE_SIZE, 0);
-    }
+    if (!baseInitialized && !root.AcceptedCount()) recordColdBase();
     vk.CmdUpdateBuffer(command, buffers[kM1Work].handle, 0, sizeof(cmd), cmd.data());
     for (uint32_t pass = 0; pass < passes; ++pass) {
       const std::array<uint32_t,20> uniforms{
@@ -691,10 +725,6 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       throw;
     }
   };
-  if (!(consumeSource(inputSample,pulse,delta,firstOffer) && accepted.sourceSuccess && tail[61])) {
-    if (attempt.m1D1) return finishWithoutWsi("M1_SOURCE_NOT_ADMITTED");
-    Require(false,"M1_SOURCE_NOT_ADMITTED");
-  }
   uint32_t ordinal=0;
   const auto recoverableClock=[&] {
     return !clock.open && m1Reject &&
@@ -712,7 +742,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       beginClock(false);
       if (!awaitSource() || !primeClock()) return false;
       clock.ready=clock.baseline=true;
-      if (!clock.Claim(pc::TimeNs(),0,inputSample.hold,true,permit)) return false;
+      if (!ClaimM1(clock,inputSample.hold,true,permit)) return false;
       ++frameSerial;
       ordinal=0;
       stage="M1_RECOVERED_SOURCE";
@@ -720,8 +750,30 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     }
     return true;
   };
-  if (interactive && !advanceQuantum(false))
-    return finishWithoutWsi("M1_QUANTUM_NOT_ACCEPTED");
+  const auto startBusiness=[&]() -> const char * {
+    if (attempt.m1Preview) beginClock(false);
+    if (interactive && !awaitSource()) return "ATTEMPT_REVOKED";
+    if (!primeClock()) {
+      finishOffer(firstOffer,IngressCode::Rejected,0,"M1_SOURCE_UI_PULSE_ABSENT",pc::TimeNs());
+      return "M1_SOURCE_UI_PULSE_ABSENT";
+    }
+    if (!interactive) pulse=clock.uiNs;
+    clock.ready=clock.baseline=true;
+    if (!ClaimM1(clock,interactive ? inputSample.hold : 1,true,permit)) {
+      finishOffer(firstOffer,IngressCode::Rejected,0,"M1_SOURCE_PERMIT",pc::TimeNs());
+      return "M1_SOURCE_PERMIT";
+    }
+    if (!(consumeSource(inputSample,pulse,delta,firstOffer) && accepted.sourceSuccess && tail[61]))
+      return "M1_SOURCE_NOT_ADMITTED";
+    if (interactive && !advanceQuantum(false)) return "M1_QUANTUM_NOT_ACCEPTED";
+    return nullptr;
+  };
+  if (!attempt.m1Preview) {
+    if (const auto failure=startBusiness()) {
+      if (!attempt.m1D1 && std::strcmp(failure,"M1_QUANTUM_NOT_ACCEPTED")!=0) Require(false,failure);
+      return finishWithoutWsi(failure);
+    }
+  }
   std::future<M1ColdResult> coldWriter;
   const auto captureAccepted=[&] {
     if (!interactive) return;
@@ -761,20 +813,67 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
 
   Checkpoint("M1_SOURCE_WSI");
   PublicationLease lease;
-  Require(root.Acquire(accepted.publication, accepted.publicationGeneration, lease) == ControlCode::OK,
-          "M1_SOURCE_PUBLICATION_ACQUIRE");
-  bool leased=true;
+  bool leased=false;
+  bool preview=attempt.m1Preview;
+  if (!preview) {
+    Require(root.Acquire(accepted.publication, accepted.publicationGeneration, lease) == ControlCode::OK,
+            "M1_SOURCE_PUBLICATION_ACQUIRE");
+    leased=true;
+  }
   bool nextRootFailed=false;
-  bool coldPresent=true;
+  bool coldPresent=!preview;
   const auto publicationBuffer=[&] {
-    return buffers[!interactive ? kM1Pub : accepted.publication ? kM1QPubAlt : kM1QPub].handle;
+    return buffers[preview || !interactive ? kM1Pub : accepted.publication ? kM1QPubAlt : kM1QPub].handle;
   };
+  uint64_t businessPresents=0;
+  bool roiPending=false,roiTerminal=false;
+  const auto roiWanted=[&] { return attempt.m1Observation.frame==businessPresents+1; };
+  pc::PresentObservations wsiObservation{preview};
+  if (attempt.m1Observation.frame) {
+    const auto align=std::max<VkDeviceSize>(4,candidate.properties.limits.optimalBufferCopyOffsetAlignment);
+    wsiObservation.roiStride=(1024+align-1)/align*align;
+    Allocate(kM1PixelStaging,4*wsiObservation.roiStride,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
+    wsiObservation.requestedRoi=[&]() -> const std::array<pc::M1Rect,3>* {
+      return roiWanted() && leased ? &attempt.m1Observation.regions : nullptr;
+    };
+    fields << ",\"m1ObservationRequestedFrame\":\"" << attempt.m1Observation.frame << "\"";
+    publish(Receipt("M1_OBSERVATION_ARMED",""));
+  }
+  const auto &pixels=attempt.m1Observation.frame ? buffers[kM1PixelStaging] : staging;
   std::function<VkBuffer()> nextPublication;
   if (interactive && !attempt.m1SinglePresent && (attempt.m1ColdFile.empty() || attempt.m1RootCapture)) {
     nextPublication=[&]() -> VkBuffer {
+      if (preview) {
+        fields.str(setupFields);
+        fields.seekp(0,std::ios::end);
+        if (const auto failure=startBusiness()) {
+          nextRootFailed=attempt.current();
+          if (nextRootFailed) publish(Receipt("FAILED",failure));
+          return VK_NULL_HANDLE;
+        }
+        preview=false;
+        Require(root.Acquire(accepted.publication,accepted.publicationGeneration,lease)==ControlCode::OK,
+                "M1_QUANTUM_FRAME_ACQUIRE");
+        leased=true;
+        return publicationBuffer();
+      }
       Require(root.Release(accepted.publication,accepted.publicationGeneration,true)==ControlCode::OK,
               "M1_QUANTUM_FRAME_RELEASE");
       leased=false;
+      if (roiPending) {
+        roiPending=false;
+        M1ColdResult written;
+        try {
+          written=CaptureM1Quantum(root,accepted,tail,stateWords,cmd,{},attempt.m1Observation.archivePrefix).get();
+        } catch (...) {
+          publish(Receipt("M1_OBSERVATION_NOT_CAPTURED","COLD_COPY_OR_WRITE_FAILED"));
+          throw;
+        }
+        fields << ",\"m1ObservedColdSHA\":" << Quote(written.sha)
+               << ",\"m1ObservedColdBytes\":" << written.bytes;
+        roiTerminal=true;
+        publish(Receipt(written.bytes ? "M1_OBSERVATION_COMPLETE" : "M1_OBSERVATION_NOT_CAPTURED",""));
+      }
       fields.str(setupFields);
       fields.seekp(0,std::ios::end);
        if (D1Ended()) return VK_NULL_HANDLE;
@@ -800,7 +899,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
                << "\",\"currentPulse\":\"" << offer.current.seq << "\",\"deltaNs\":\"" << offer.deltaNs
                << "\",\"ageNs\":\"" << (offer.seq && observed>=offer.pulseNs ? observed-offer.pulseNs : 0) << "\"}";
         if (offer.seq) {
-          if (clock.Claim(pc::TimeNs(),0,offer.sample.hold,true,permit)) {
+          if (ClaimM1(clock,offer.sample.hold,true,permit)) {
             ++frameSerial;
             ordinal=0;
             if (!consumeSource(offer.sample,offer.pulseNs,offer.deltaNs,offer)) reportSourceReject();
@@ -851,9 +950,48 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     }
   };
   const auto frame = pc::PresentBoot(vk, instance, candidate.physical, device, queue, candidate.family,
-      surface, publicationBuffer(), staging.handle, staging.memory, staging.flags, attempt.window,
+      surface, publicationBuffer(), pixels.handle, pixels.memory, pixels.flags, attempt.window,
       attempt.current, [&](const pc::Frame &visible) {
+        if (visible.empty) {
+          fields << ",\"windowFrame\":{\"kind\":\"EMPTY_READY\",\"acceptedRoot\":null,\"sourceCommit\":\"0\","
+                 << "\"physicsCommit\":\"0\",\"sandStockQ\":\"0\",\"waterStockQ\":\"0\",\"particles\":0,"
+                 << "\"run\":\"" << m1Run << "\",\"geometry\":\"" << attempt.geometry
+                 << "\",\"surface\":\"" << attempt.surface << "\",\"hwnd\":\""
+                 << reinterpret_cast<uintptr_t>(attempt.window) << "\",\"width\":" << visible.width
+                 << ",\"height\":" << visible.height << ",\"format\":" << visible.format
+                 << ",\"initFence\":\"" << previewFenceObject << "\",\"initFenceEnterQpc\":\"" << previewFenceEnter
+                 << "\",\"initFenceExitQpc\":\"" << previewFenceExit << "\",\"initFenceVkResult\":0"
+                 << ",\"acquire\":" << int(visible.acquire) << ",\"submit\":" << int(visible.submit)
+                 << ",\"fence\":" << int(visible.fence) << ",\"present\":" << int(visible.present)
+                 << ",\"imagePresent\":" << int(visible.imagePresent) << ",\"imageIndex\":" << visible.imageIndex
+                 << ",\"graphicsFence\":\"" << visible.graphicsFence << "\",\"presentExitQpc\":\""
+                 << visible.presentExit << "\",\"pixel\":" << visible.pixel << '}';
+          publish(Receipt("M1_EMPTY_PRESENT_QUEUED",""));
+          return;
+        }
         reportCold();
+        if (roiWanted() && visible.roi.state) {
+          const auto &r=visible.roi;
+          fields << ",\"m1Observation\":{\"state\":" << Quote(r.state)
+                 << ",\"root\":\"" << wide(lease.nonce) << "\",\"slot\":" << accepted.publication
+                 << ",\"generation\":\"" << wide(lease.generation) << "\",\"geometry\":\"" << attempt.geometry
+                 << "\",\"imageIndex\":" << visible.imageIndex << ",\"graphicsFence\":\"" << visible.graphicsFence
+                 << "\",\"graphicsSerial\":\"" << visible.serial << "\",\"format\":" << visible.format
+                 << ",\"rowOrder\":\"TOP_DOWN\",\"pixelEncoding\":"
+                 << Quote(visible.format==VK_FORMAT_B8G8R8A8_SRGB || visible.format==VK_FORMAT_R8G8B8A8_SRGB ?
+                              "ATTACHMENT_SRGB" : "SHADER_SRGB_UNORM")
+                 << ",\"data\":" << Words(std::vector<uint32_t>(r.bytes.begin(),r.bytes.begin()+r.size))
+                 << ",\"sha256\":" << (r.size ? Quote(Hex(Hash(r.bytes.data(),r.size).data())) : "null") << ",\"rects\":[";
+          for (size_t i=0;i<r.regions.size();++i) {
+            const auto &rect=r.regions[i];
+            if (i) fields << ',';
+            fields << '[' << rect.x << ',' << rect.y << ',' << rect.width << ',' << rect.height << ']';
+          }
+          fields << "]}";
+          roiPending=r.size!=0;
+          roiTerminal=!roiPending;
+        }
+        ++businessPresents;
         const auto &completion=accepted.completion;
         const auto q64=[&](size_t lo) { return wide({completion[lo],completion[lo+1]}); };
         if (fullM1) {
@@ -881,7 +1019,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
                << ",\"presentEnterQpc\":\"" << visible.presentEnter << "\",\"presentExitQpc\":\""
                << visible.presentExit << "\"}";
         publish(Receipt(interactive ? "M1_QUANTUM_PRESENT_QUEUED" : "M1_DRY_SOURCE_PRESENT_QUEUED", ""));
-      }, buffers[kM1Pub].bytes, !interactive, nextPublication, fullM1, captureBusy);
+      }, buffers[kM1Pub].bytes, !interactive, nextPublication, fullM1, captureBusy,wsiObservation);
   reportCold();
   const bool usable = frame.retire != VK_ERROR_DEVICE_LOST && frame.error != VK_ERROR_DEVICE_LOST &&
                       root.State()!=FlightState::StateLost;
@@ -893,6 +1031,10 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   fields << ",\"m1PublicationReleased\":" << (usable ? "true" : "false") << ",\"m1WsiResult\":" << int(frame.error)
          << ",\"m1WsiRetireVkResult\":" << int(frame.retire) << ",\"m1WsiStage\":" << Quote(frame.stage);
   if (attempt.m1D1) reportDrain(attempt.d1Intake->Await(),&frame);
+  if (attempt.m1Observation.frame && !roiTerminal)
+    publish(Receipt("M1_OBSERVATION_NOT_CAPTURED",roiPending ? "COLD_COPY_NOT_RETIRED" : "FRAME_NOT_REACHED"));
+  if (preview && frame.error==VK_SUCCESS && !nextRootFailed)
+    return Receipt("M1_EMPTY_PRESENT_RETIRED","");
   if (nextRootFailed) return Receipt("FAILED","M1_QUANTUM_CONTINUATION_FAILED");
   return frame.error == VK_SUCCESS ? Receipt(interactive ? "M1_QUANTUM_PRESENT_RETIRED" : "M1_DRY_SOURCE_PRESENT_RETIRED", "") :
                                     Receipt("WSI_FAILED", frame.stage);

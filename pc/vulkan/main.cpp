@@ -4,6 +4,8 @@
 #include <chrono>
 #include <condition_variable>
 #include <cwchar>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <mutex>
 #include <sstream>
@@ -14,6 +16,7 @@
 namespace {
 constexpr UINT kOwnerFinished = WM_APP + 1;
 constexpr UINT kFirstPresent = WM_APP + 2;
+constexpr UINT kSetM1Gravity = WM_APP + 3;
 constexpr UINT_PTR kSourceProbeTimer = 2;
 struct Window {
   HWND hwnd = nullptr;
@@ -30,6 +33,9 @@ struct Window {
   std::wstring m1QuantumCandidate, m1QuantumCommit, m1ColdFile;
   bool m1Present = false;
   bool dualSource = false;
+  bool m1Preview=false, m1GravityEnabled=false;
+  grs::pc::M1Gravity gravity;
+  grs::pc::M1Observation observation;
   uint32_t material=0;
   std::wstring t849WriteFile;
   bool t854PrivateWrites = false;
@@ -291,6 +297,7 @@ struct Window {
     if (IsIconic(hwnd)) width = height = 0;
     dpi = GetDpiForWindow(hwnd);
     ++generation;
+    gravity={generation};
     pointerReady = false;
     held = {};
     ingress.Authorize({},0);
@@ -307,6 +314,8 @@ struct Window {
     const bool inside = x >= 0 && y >= 0 && x < width && y < height;
     const std::string action(kind);
     if (!d1Mode.empty() && (action=="DOWN" || action=="MOVE" || action=="UP")) return;
+    if (action=="FOCUS_LOST" && m1GravityEnabled)
+      gravity={generation,sequence,ticks,0};
     if (action == "DOWN") {
       held = {};
       if (pointerReady && inside) {
@@ -351,6 +360,20 @@ struct Window {
     }
     Emit("{\"stage\":\"M1_SOURCE_MODE\",\"geometry\":\""+std::to_string(geometry)+
          "\",\"material\":"+std::to_string(next)+"}");
+  }
+
+  void SetGravity(int32_t angle,uint64_t expectedGeometry,bool relative=false) {
+    std::lock_guard lock(mutex);
+    const auto seq=++eventSeq;
+    const auto ticks=grs::pc::QpcTicks();
+    if (relative) angle=std::clamp(gravity.angle+angle,-grs::pc::kM1AngleLimit,grs::pc::kM1AngleLimit);
+    const char *result=!m1GravityEnabled ? "GRAVITY_DISABLED" :
+        closing || (expectedGeometry && expectedGeometry!=generation) ? "STALE_GEOMETRY" :
+        !grs::pc::ValidM1Angle(angle) ? "ANGLE_OUT_OF_RANGE" : "ACCEPTED_INPUT";
+    if (std::string_view(result)=="ACCEPTED_INPUT") gravity={generation,seq,ticks,angle};
+    Emit("{\"stage\":\"M1_GRAVITY_INPUT\",\"geometry\":\""+std::to_string(generation)+
+         "\",\"seq\":\""+std::to_string(seq)+"\",\"qpc\":\""+std::to_string(ticks)+
+         "\",\"requestedAngle256\":"+std::to_string(angle)+",\"result\":\""+result+"\"}");
   }
 
   void Pulse() {
@@ -529,7 +552,11 @@ struct Window {
                                                  ingress.Authorize(scope,0);
                                                },sourceTrace,t877Mode,&d1Intake,[&](const std::string &details,bool healthy) {
                                                  ReportD1(details,healthy);
-                                               },[&](const std::string &row) { Emit(row); }},
+                                               },[&](const std::string &row) { Emit(row); },m1Preview,[&] {
+                                                 std::lock_guard guard(mutex);
+                                                 return m1GravityEnabled && !closing && previous==generation ?
+                                                     gravity : grs::pc::M1Gravity{};
+                                               },observation},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
@@ -604,11 +631,19 @@ LRESULT CALLBACK Dispatch(HWND hwnd, UINT message, WPARAM w, LPARAM l) {
     return 0;
   case WM_LBUTTONUP: window->Input("UP", GET_X_LPARAM(l), GET_Y_LPARAM(l)); ReleaseCapture(); return 0;
   case WM_KEYDOWN:
+    if (window->m1GravityEnabled && (w==VK_LEFT || w==VK_RIGHT || w==VK_HOME)) {
+      window->SetGravity(w==VK_LEFT ? -grs::pc::kM1AngleStep : w==VK_RIGHT ? grs::pc::kM1AngleStep : 0,
+                         0,w!=VK_HOME);
+      return 0;
+    }
     if (window->dualSource && (w=='1' || w=='2')) {
       window->SelectMaterial(w=='2' ? 1u : 0u);
       return 0;
     }
     break;
+  case kSetM1Gravity:
+    window->SetGravity(static_cast<int32_t>(w),static_cast<uint64_t>(l));
+    return 0;
   case WM_CANCELMODE: window->Input("CANCEL", 0, 0); if (GetCapture() == hwnd) ReleaseCapture(); return 0;
   case WM_CAPTURECHANGED: window->Input("CAPTURE_LOST", 0, 0); return 0;
   case WM_KILLFOCUS: window->Input("FOCUS_LOST", 0, 0); if (GetCapture() == hwnd) ReleaseCapture(); return 0;
@@ -703,6 +738,20 @@ int wmain(int argc, wchar_t **argv) {
     }
     else if (!std::wcscmp(argv[i], L"--m1-capture-hot")) window.captureHot=true;
     else if (!std::wcscmp(argv[i], L"--m1-dual-source")) window.dualSource=true;
+    else if (!std::wcscmp(argv[i], L"--m1-empty-preview")) window.m1Preview=true;
+    else if (!std::wcscmp(argv[i], L"--m1-manual-gravity")) window.m1GravityEnabled=true;
+    else if (!std::wcscmp(argv[i], L"--m1-observe") && i+2<argc) {
+      if (window.observation.frame) return 2;
+      std::ifstream request{std::filesystem::path(argv[++i])};
+      if (!(request >> window.observation.frame) || !window.observation.frame ||
+          window.observation.frame>1000000) return 2;
+      for (auto &r:window.observation.regions)
+        if (!(request >> r.x >> r.y >> r.width >> r.height) || !grs::pc::Fits(r,INT_MAX,INT_MAX)) return 2;
+      std::string extra;
+      if (request >> extra) return 2;
+      window.observation.archivePrefix=argv[++i];
+      if (window.observation.archivePrefix.empty()) return 2;
+    }
     else if (!std::wcscmp(argv[i], L"--m1-source-trace")) window.sourceTrace=true;
     else if (!std::wcscmp(argv[i],L"--m1-d1") && i+1<argc) {
       window.d1Mode=argv[++i];
@@ -723,6 +772,7 @@ int wmain(int argc, wchar_t **argv) {
                    "[--m1-capture-hot] [--m1-source-trace] [--m1-d1 OFF|ON|REPLAY_OFF|REPLAY_ON] "
                    "[--m1-d1-replay-prefix PATH] "
                    "[--m1-dual-source] | --qualify-t849-writes FILE | --g13-candidate FILE "
+                   "[--m1-empty-preview] [--m1-manual-gravity] [--m1-observe REQUEST PREFIX] "
                    "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] [--g13-f05-rest] "
                    "[--g13-revoke-before | --g13-revoke-after] [--g13-diagnostics full|hot]]\n";
       return 2;
@@ -734,6 +784,9 @@ int wmain(int argc, wchar_t **argv) {
   if (window.captureHot && window.m1QuantumCandidate.empty()) return 2;
   if (window.captureHot && window.captureCold) return 2;
   if (window.rootCapture && window.once) return 2;
+  if ((window.m1Preview || window.m1GravityEnabled || window.observation.frame) &&
+      (window.m1QuantumCandidate.empty() || !window.d1Mode.empty() || !window.m1ColdFile.empty() || window.once))
+    return 2;
   const bool d1Replay=window.d1Mode==L"REPLAY_OFF" || window.d1Mode==L"REPLAY_ON";
   if (d1Replay!=!window.d1ReplayPrefix.empty()) return 2;
   if (!window.d1Mode.empty() && ((!d1Replay && window.d1Mode!=L"OFF" && window.d1Mode!=L"ON") ||

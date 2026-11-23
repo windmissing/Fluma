@@ -13,6 +13,7 @@ struct Pass {
   uint32_t visual, phase;
   bool hasModule;
 };
+struct ModuleFile { uint32_t opcode, bytes; const char *name, *sha; };
 }
 #include "sand_passes.h"
 
@@ -50,7 +51,8 @@ struct Slice {
 };
 using StorageSlots = std::array<Slice,10>;
 bool WriteDescriptors(PFN_vkUpdateDescriptorSets, VkDevice, VkDescriptorSet, const Command &,
-                      const StorageSlots &, const Slice &common, const VkPhysicalDeviceLimits &);
+                      const StorageSlots &, const Slice &common, const VkPhysicalDeviceLimits &,
+                      bool initialAudit=false);
 bool RecordParentCopies(PFN_vkCmdPipelineBarrier, PFN_vkCmdCopyBuffer, VkCommandBuffer,
                         const Command &, const StorageSlots &, VkDeviceSize stateBytes, VkDeviceSize arenaBytes);
 struct CopySpan {
