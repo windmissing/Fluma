@@ -1,0 +1,543 @@
+{
+  "schema": "T875_D1_FOUR_ARM_V1",
+  "pe": {
+    "path": ".codex/local-test/t860-d1-release.exe",
+    "sha256": "f41be707566830dfb13ab126b0e47b1ddea4175f67669ccbd7dd9086dfd20cd6"
+  },
+  "arms": {
+    "OFF": {
+      "file": "test/reports/t875/off2.jsonl",
+      "rows": 90,
+      "actions": 52,
+      "actionStates": {
+        "DELIVERED": 48,
+        "AWAIT_PULSE": 2,
+        "OFF_NOOP": 2
+      },
+      "actionKinds": {
+        "0": 48,
+        "1": 2,
+        "2": 1,
+        "3": 1
+      },
+      "uniqueTerminals": 52,
+      "actualNsMonotonic": true,
+      "scriptTable": "identical to T865 plan() (52 actions, 17ms..769ms, kinds/ids exact; scriptNs string-vs-int type only)",
+      "presentRetired": true,
+      "sourceAccepted": true
+    },
+    "ON": {
+      "file": "test/reports/t875/on2.jsonl",
+      "rows": 96,
+      "actions": 52,
+      "actionStates": {
+        "DELIVERED": 48,
+        "AWAIT_PULSE": 2,
+        "RESERVED": 1,
+        "ENDED": 1
+      },
+      "actionKinds": {
+        "0": 48,
+        "1": 2,
+        "2": 1,
+        "3": 1
+      },
+      "uniqueTerminals": 52,
+      "actualNsMonotonic": true,
+      "scriptTable": "identical to T865 plan() (52 actions, 17ms..769ms, kinds/ids exact; scriptNs string-vs-int type only)",
+      "presentRetired": true,
+      "sourceAccepted": true,
+      "hotPage": {
+        "root": "15832683861715",
+        "safePoint": "5",
+        "completionWords": 256
+      }
+    },
+    "REPLAY_OFF": {
+      "file": "test/reports/t875/replay-off2.jsonl",
+      "rows": 101,
+      "actions": 52,
+      "actionStates": {
+        "DELIVERED": 48,
+        "AWAIT_PULSE": 2,
+        "OFF_NOOP": 2
+      },
+      "actionKinds": {
+        "0": 48,
+        "1": 2,
+        "2": 1,
+        "3": 1
+      },
+      "uniqueTerminals": 52,
+      "actualNsMonotonic": true,
+      "scriptTable": "identical to T865 plan() (52 actions, 17ms..769ms, kinds/ids exact; scriptNs string-vs-int type only)",
+      "presentRetired": true,
+      "sourceAccepted": true
+    },
+    "REPLAY_ON": {
+      "file": "test/reports/t875/replay-on2.jsonl",
+      "rows": 100,
+      "actions": 52,
+      "actionStates": {
+        "DELIVERED": 48,
+        "AWAIT_PULSE": 2,
+        "NOT_BUSY": 1,
+        "NO_PAGE": 1
+      },
+      "actionKinds": {
+        "0": 48,
+        "1": 2,
+        "2": 1,
+        "3": 1
+      },
+      "uniqueTerminals": 52,
+      "actualNsMonotonic": true,
+      "scriptTable": "identical to T865 plan() (52 actions, 17ms..769ms, kinds/ids exact; scriptNs string-vs-int type only)",
+      "presentRetired": true,
+      "sourceAccepted": true
+    }
+  },
+  "replayRoots": {
+    "test/reports/t875\\replay-prefix-15832038019920.m1root": {
+      "bytes": 62792,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        256,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\replay-prefix-15832038933790.m1root": {
+      "bytes": 62792,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        256,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\replay-prefix-15832040670511.m1root": {
+      "bytes": 62792,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        256,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\replay-on-prefix-15832287403737.m1root": {
+      "bytes": 62792,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        256,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\replay-on-prefix-15832288701596.m1root": {
+      "bytes": 62792,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        256,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\replay-on-prefix-15832290358580.m1root": {
+      "bytes": 62792,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        256,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\replay-on-prefix-15832291339176.m1root": {
+      "bytes": 63048,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        512,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\replay-on-prefix-15832292323122.m1root": {
+      "bytes": 62792,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        256,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ro2-prefix-15832693820756.m1root": {
+      "bytes": 63048,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        512,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ro2-prefix-15832694301411.m1root": {
+      "bytes": 63048,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        512,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ro2-prefix-15832695253677.m1root": {
+      "bytes": 63048,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        512,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ro2-prefix-15832695811925.m1root": {
+      "bytes": 63048,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        512,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ro2-prefix-15832696455507.m1root": {
+      "bytes": 63560,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        1024,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ro2-prefix-15832697076337.m1root": {
+      "bytes": 64072,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        1536,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ro2-prefix-15832697665388.m1root": {
+      "bytes": 64584,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        2048,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ro2-prefix-15832698282132.m1root": {
+      "bytes": 63048,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        512,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ro2-prefix-15832698931164.m1root": {
+      "bytes": 63560,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        1024,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ro2-prefix-15832699606581.m1root": {
+      "bytes": 64072,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        1536,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ron2-prefix-15832705284059.m1root": {
+      "bytes": 63048,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        512,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ron2-prefix-15832705748490.m1root": {
+      "bytes": 63048,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        512,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ron2-prefix-15832706868008.m1root": {
+      "bytes": 63048,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        512,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ron2-prefix-15832707490515.m1root": {
+      "bytes": 63048,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        512,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ron2-prefix-15832708134896.m1root": {
+      "bytes": 63560,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        1024,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ron2-prefix-15832708783376.m1root": {
+      "bytes": 64072,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        1536,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ron2-prefix-15832709414741.m1root": {
+      "bytes": 64584,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        2048,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ron2-prefix-15832710087986.m1root": {
+      "bytes": 63048,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        512,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    },
+    "test/reports/t875\\ron2-prefix-15832710745145.m1root": {
+      "bytes": 63560,
+      "magic": "M1PROOT1",
+      "sizes": [
+        1024,
+        29696,
+        1024,
+        31744,
+        0,
+        0,
+        0,
+        0
+      ],
+      "digestOK": true
+    }
+  },
+  "negative": {
+    "on_arm_first_run": {
+      "file": "test/reports/t875/on.jsonl",
+      "observed": "First ON run: SOURCE failed PERMIT_REVOKED (m1PulseFault=CLOCK_GAP) at action ~21, 32 actions REVOKED afterwards; retry succeeded with identical PE and args. Scheduling flake under back-to-back load; documented as negative evidence."
+    },
+    "replay_off_first_run": {
+      "observed": "REPLAY_OFF first run: 3 roots captured, 2 presents, then continuation quantum FENCE_OR_PERMIT_FAILED (known iGPU 250ms continuation limit); the replay-on2 re-run retired fully. Root captures themselves complete."
+    },
+    "ingress_offers": {
+      "observed": "D1 producer offers are not terminal-drained as M1_OFFER rows in these runs (owner consumes them; trace drain shows none) — T865 ingress/compare full four-arm join needs the pending external adapter (declared pending in T865 handoff). Static plan + per-arm action identity + hot-page + replay-original checks all passed standalone."
+    }
+  },
+  "replayRootDetail": {
+    "count": 27,
+    "allDigestOK": true,
+    "allSealOK": true,
+    "ron2Mapping": "9 files = 1 SOURCE root (m1Nonce on M1_SOURCE_FENCED_READBACK) + 8 QUANTUM roots (m1QuantumNonce on COLD_CAPTURE rows), all nonce-matched to same-process log rows",
+    "armPrefixes": {
+      "replay-off(replay-prefix)": "3 roots",
+      "replay-on(replay-on-prefix)": "5 roots",
+      "replay-off2(ro2-prefix)": "? roots",
+      "replay-on2(ron2-prefix)": "9 roots",
+      "replay-prefix-": {
+        "files": 3
+      },
+      "replay-on-prefix-": {
+        "files": 5
+      },
+      "ro2-prefix-": {
+        "files": 10
+      },
+      "ron2-prefix-": {
+        "files": 9
+      }
+    }
+  }
+}
