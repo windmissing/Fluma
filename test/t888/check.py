@@ -150,7 +150,7 @@ def actual_build():
     return {'sha256':digest,'windowsX64':True,'bytes':p.stat().st_size}
 
 
-def d1_drain(seal, drain, close, hz, authority=()):
+def d1_drain(seal, drain, close, hz, authority=(), cold_waits=()):
     need(seal['run']==drain['run'] and seal['geometry']==drain['generation']
          and all(drain[k]==seal[k] for k in ('endNs','lastPulseSeq','lastOffer'))
          and seal['lastAction']==52 and int(close['qpc'])*1_000_000_000>=int(drain['drainNs'])*hz,
@@ -160,7 +160,16 @@ def d1_drain(seal, drain, close, hz, authority=()):
          and all(drain[k]==0 for k in ('offers','inFlight','leases','pending','permits','captureRequests',
                                      'writer','reader','pin','traceLoss','ownerState')),'DRAIN_INCOMPLETE')
     need(drain['wsiUsed'] is True and drain['retireVkResult']==0,'DRAIN_WSI')
-    if drain.get('ownerFenceKind')=='BUSINESS_SIGNALED':
+    if drain.get('ownerFenceKind')=='COLD_COPY_SIGNALED':
+        enter, exit = (drain[k] for k in ('ownerFenceEnterQpc','ownerFenceExitQpc'))
+        need(int(drain['ownerFence'])>0 and drain['ownerFenceVkResult']==0
+             and 0<int(enter)<=int(exit)
+             and any(w['nonce']==drain['ownerFenceNonce'] and w['copyFence']==drain['ownerFence']
+                     and w['run']==drain['run'] and w['geometry']==drain['generation']
+                     and w['waitEnterQpc']==enter and w['waitExitQpc']==exit and w['waitVkResult']==0
+                     for w in cold_waits), 'DRAIN_COLD_FENCE')
+        fence_state='COLD_COPY_SIGNALED'
+    elif drain.get('ownerFenceKind')=='BUSINESS_SIGNALED':
         enter, exit = (drain[k] for k in ('ownerFenceEnterQpc','ownerFenceExitQpc'))
         need(int(drain['ownerFence'])>0 and drain['ownerFenceVkResult']==0
              and 0<int(enter)<=int(exit) and drain['ownerProbeVkResult']==1 and drain['ownerProbeQpc']=='0'
