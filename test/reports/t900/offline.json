@@ -1,0 +1,203 @@
+{
+  "t892": {
+    "source": [
+      {
+        "nonce": "15922198714255",
+        "mass": 121460,
+        "deltaNs": 14479200,
+        "sourceCommit": 1,
+        "session": 1,
+        "pulseSeq": 14,
+        "commandSHA": "20f0aa994f853c057949801a7ebeadf0c80d1fc35ad90a42718b4516d132775d",
+        "observedTerminal": true
+      }
+    ],
+    "postUpRoots": 119,
+    "firstZeroMs": 3542.104,
+    "stock": [
+      121460
+    ],
+    "coldBytes": 94408,
+    "coldLineage": "NEXT_FRAME",
+    "land": "MISSING_EVIDENCE"
+  },
+  "t895": {
+    "roi": "ROI_OVERLAP",
+    "land": "MISSING_EVIDENCE"
+  },
+  "tests": {
+    "positive": {
+      "land": {
+        "state": "AUTONOMOUS_LAND_JOINED",
+        "movedQ20": 40
+      },
+      "released": "RECOVERY_WITHOUT_NEW_SOURCE",
+      "held": "RECOVERY_WITHOUT_NEW_SOURCE"
+    },
+    "negatives": [
+      "POST_UP_INPUT",
+      "POST_UP_SOURCE",
+      "LAND_COUNT_MISSING",
+      "LAND_EVENT_RANGE",
+      "AUTONOMOUS_FRAME",
+      "RECOVERY_SAME_FENCE_IDLE",
+      "RECOVERY_SAME_FENCE_IDLE",
+      "RECOVERY_SAME_FENCE_IDLE",
+      "RECOVERY_FAILED_ROOT",
+      "RECOVERY_FAILED_ROOT",
+      "RECOVERY_FRESH_FRAME",
+      "RECOVERY_COMPLETION",
+      "RECOVERY_REAL_BASELINE",
+      "RECOVERY_CREDIT",
+      "RECOVERY_NEW_INPUT",
+      "RECOVERY_NEW_SOURCE",
+      "SUSTAINED_SOURCE_OR_TERMINAL_MISSING"
+    ],
+    "syntheticTerminalPositive": true
+  },
+  "t899": "PENDING_ORIGINALS",
+  "t898": {
+    "sha256": "219a6a7c286f3a6ce2e23e4c6595cfc502065abbbbff9a55486e1aa9918bd11e",
+    "lines": 2110,
+    "offerQuoteRepairLines": [],
+    "hold": "83",
+    "durationMs": 629.8098,
+    "sources": [
+      {
+        "nonce": "15963478439767",
+        "mass": 129602,
+        "deltaNs": 15449800,
+        "sourceCommit": 2,
+        "session": 2,
+        "pulseSeq": 50,
+        "commandSHA": "3632f63c6c59d6a261c87b5959dd7757c7716f498259222ed7731a8e52cb912c",
+        "observedTerminal": false
+      },
+      {
+        "nonce": "15963481067535",
+        "mass": 127272,
+        "deltaNs": 15172100,
+        "sourceCommit": 3,
+        "session": 2,
+        "pulseSeq": 67,
+        "commandSHA": "c2d1b636cce60d079dcb23eb1747aca7edcbd3a116a453b529d7fdb2a5e0d51c",
+        "observedTerminal": false
+      },
+      {
+        "nonce": "15963483161753",
+        "mass": 131757,
+        "deltaNs": 15706700,
+        "sourceCommit": 4,
+        "session": 2,
+        "pulseSeq": 81,
+        "commandSHA": "d8b7bb433ea80a8d80cb92a1a26b54cd8cebb6da563d264979748e377ac7538f",
+        "observedTerminal": false
+      }
+    ],
+    "sustained": "PARTIAL_EVIDENCE",
+    "postUp": {
+      "15963484372277": {
+        "active": 5,
+        "stock": 516254,
+        "sourceCommit": 4,
+        "bedEvents": 0,
+        "presentBeforeNextDown": true
+      },
+      "15963484854305": {
+        "active": 5,
+        "stock": 516254,
+        "sourceCommit": 4,
+        "bedEvents": 0,
+        "presentBeforeNextDown": true
+      },
+      "15963485342195": {
+        "active": 5,
+        "stock": 516254,
+        "sourceCommit": 4,
+        "bedEvents": 0,
+        "presentBeforeNextDown": true
+      },
+      "15963485824440": {
+        "active": 5,
+        "stock": 516254,
+        "sourceCommit": 4,
+        "bedEvents": 0,
+        "presentBeforeNextDown": true
+      },
+      "15963486308045": {
+        "active": 5,
+        "stock": 516254,
+        "sourceCommit": 4,
+        "bedEvents": 0,
+        "presentBeforeNextDown": true
+      },
+      "15963486781008": {
+        "active": 5,
+        "stock": 516254,
+        "sourceCommit": 4,
+        "bedEvents": 0,
+        "presentBeforeNextDown": true
+      },
+      "15963487262873": {
+        "active": 5,
+        "stock": 516254,
+        "sourceCommit": 4,
+        "bedEvents": 0,
+        "presentBeforeNextDown": true
+      },
+      "15963487739005": {
+        "active": 5,
+        "stock": 516254,
+        "sourceCommit": 4,
+        "bedEvents": 0,
+        "presentBeforeNextDown": false
+      }
+    },
+    "deadlineRetireNonces": [
+      "15963469991789",
+      "15963510303480",
+      "15963521203159",
+      "15963549344109",
+      "15963562246515",
+      "15963575608348",
+      "15963587549909",
+      "15963599829396",
+      "15963610167261",
+      "15963632297158",
+      "15963639026820",
+      "15963645698580",
+      "15963651952844",
+      "15963659176170",
+      "15963669574907",
+      "15963679472290",
+      "15963690608044",
+      "15963699765571",
+      "15963709382509",
+      "15963714840595",
+      "15963722252792",
+      "15963732856457",
+      "15963742459505",
+      "15964162060127",
+      "15964173004086",
+      "15964214540424",
+      "15964222929966",
+      "15964237691112",
+      "15964245072059",
+      "15964252412057",
+      "15964259403058",
+      "15964267626119",
+      "15964274498706",
+      "15964290566697",
+      "15964296988567",
+      "15964304672227",
+      "15964312733814",
+      "15964321261723",
+      "15964340231779",
+      "15964346839888",
+      "15964353855429",
+      "15965933532104",
+      "15965982659941"
+    ],
+    "autonomousRecovery": "MISSING_NEW_BASELINE_TO_CURRENT_JOIN"
+  }
+}
