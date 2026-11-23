@@ -34,6 +34,7 @@ struct Window {
   bool m1Present = false;
   bool dualSource = false;
   bool m1Preview=false, m1GravityEnabled=false;
+  bool m1OneQuantumGrant=false;
   grs::pc::M1Gravity gravity;
   grs::pc::M1Observation observation;
   uint32_t material=0;
@@ -620,7 +621,7 @@ struct Window {
                                                  std::lock_guard guard(mutex);
                                                  return m1GravityEnabled && !closing && previous==generation ?
                                                      gravity : grs::pc::M1Gravity{};
-                                               },observation},
+                                               },observation,m1OneQuantumGrant},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
@@ -804,6 +805,7 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--m1-dual-source")) window.dualSource=true;
     else if (!std::wcscmp(argv[i], L"--m1-empty-preview")) window.m1Preview=true;
     else if (!std::wcscmp(argv[i], L"--m1-manual-gravity")) window.m1GravityEnabled=true;
+    else if (!std::wcscmp(argv[i], L"--m1-one-quantum-grant")) window.m1OneQuantumGrant=true;
     else if (!std::wcscmp(argv[i], L"--m1-observe") && i+2<argc) {
       if (window.observation.frame) return 2;
       std::ifstream request{std::filesystem::path(argv[++i])};
@@ -838,6 +840,7 @@ int wmain(int argc, wchar_t **argv) {
                    "[--m1-d1-replay-prefix PATH] "
                    "[--m1-dual-source] | --qualify-t849-writes FILE | --g13-candidate FILE "
                    "[--m1-empty-preview] [--m1-manual-gravity] [--m1-observe REQUEST PREFIX] "
+                   "[--m1-one-quantum-grant] "
                    "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] [--g13-f05-rest] "
                    "[--g13-revoke-before | --g13-revoke-after] [--g13-diagnostics full|hot]]\n";
       return 2;
@@ -849,7 +852,7 @@ int wmain(int argc, wchar_t **argv) {
   if (window.captureHot && window.m1QuantumCandidate.empty()) return 2;
   if (window.captureHot && window.captureCold) return 2;
   if (window.rootCapture && window.once) return 2;
-  if ((window.m1Preview || window.m1GravityEnabled || window.observation.frame) &&
+  if ((window.m1Preview || window.m1GravityEnabled || window.observation.frame || window.m1OneQuantumGrant) &&
       (window.m1QuantumCandidate.empty() || !window.d1Mode.empty() || !window.m1ColdFile.empty() || window.once))
     return 2;
   const bool d1Replay=window.d1Mode==L"REPLAY_OFF" || window.d1Mode==L"REPLAY_ON";

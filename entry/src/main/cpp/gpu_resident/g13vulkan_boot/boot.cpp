@@ -52,6 +52,7 @@ struct M1WaitLog {
   VkResult submit=VK_NOT_READY, last=VK_NOT_READY, retire=VK_NOT_READY;
   uint64_t fenceNs=0;
   uint64_t retireEnter=0,retireExit=0;
+  uint64_t recordBegin=0,recordEnd=0,submitEnter=0,submitExit=0,stopQpc=0;
   Wait lastWait;
 };
 #endif

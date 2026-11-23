@@ -4,21 +4,26 @@ constexpr char kM1CommitSHA[] = "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce
 bool Boot::ClaimM1(m1::ProgressClockV2 &clock,uint64_t hold,bool source,m1::PlanGrantV2 &grant) {
   auto sample=attempt.m1Gravity ? attempt.m1Gravity() : pc::M1Gravity{};
   if (sample.geometry!=attempt.geometry || !pc::ValidM1Angle(sample.angle)) sample={};
-  if (!clock.Claim(pc::TimeNs(),sample.angle,hold,source,grant)) return false;
+  if (!clock.Claim(pc::TimeNs(),sample.angle,hold,source,grant,attempt.m1OneQuantumGrant ? 1u : 4u)) return false;
   m1GrantGravity=sample;
   return true;
 }
 
 void Boot::SubmitM1Root(const VkSubmitInfo &submit,uint64_t hold,uint64_t deadline,uint64_t nonce,M1WaitLog &log) {
-  if (!attempt.m1D1) {
+  const auto queueSubmit=[&] {
+    log.submitEnter=pc::QpcTicks();
     log.submit=vk.QueueSubmit(queue,1,&submit,fence);
+    log.submitExit=pc::QpcTicks();
+  };
+  if (!attempt.m1D1) {
+    queueSubmit();
     return;
   }
   if (!attempt.acceptPointer(hold,[&] {
         if (D1Ended()) m1Reject="D1_END_INTAKE";
         else if (pc::TimeNs()>=deadline) m1Reject="ROOT_DEADLINE";
         else {
-          log.submit=vk.QueueSubmit(queue,1,&submit,fence);
+          queueSubmit();
           if (log.submit==VK_SUCCESS) {
             d1FenceObject=reinterpret_cast<uintptr_t>(fence);
             d1FenceNonce=nonce;
@@ -111,13 +116,15 @@ void Boot::RetireM1Root(m1::SourceRootOwner &root,uint64_t nonce,M1WaitLog &log)
 void Boot::M1RootTrace(const char *kind,uint64_t nonce,const m1::ProgressClockV2 &clock,
                        const m1::PlanGrantV2 &grant,const grs::AcceptedRoot &accepted,
                        const M1WaitLog &log) {
+  const uint64_t deadline=grant.id ? grant.grantedNs+m1::ProgressClockV2::JobNs : 0;
+  const uint64_t firstWaitNs=log.calls ? pc::QpcNs(log.rows.front().enter,pc::QpcFrequency()) : 0;
   fields << ",\"m1" << kind << "Authority\":{\"reason\":" << (m1Reject ? Quote(m1Reject) : "null")
          << ",\"nonce\":\"" << nonce << "\",\"windowCurrent\":" << (attempt.current() ? "true" : "false")
          << ",\"run\":\"" << m1Run << "\",\"geometry\":\"" << attempt.geometry
          << "\",\"session\":\"" << grant.session << "\",\"clockSession\":\"" << clock.session
          << "\",\"plan\":\"" << grant.id << "\",\"activePlan\":\"" << clock.active.id
          << "\",\"grantNs\":\"" << grant.grantedNs << "\",\"deadlineNs\":\""
-         << (grant.id ? grant.grantedNs+m1::ProgressClockV2::JobNs : 0)
+         << deadline
          << "\",\"clockOpen\":" << (clock.open ? "true" : "false")
          << ",\"clockReady\":" << (clock.ready ? "true" : "false") << ",\"clockFault\":" << Quote(clock.fault)
          << ",\"producerSeq\":\"" << m1Latest.seq << "\",\"producerTick\":\"" << m1Latest.callbackTicks
@@ -127,6 +134,14 @@ void Boot::M1RootTrace(const char *kind,uint64_t nonce,const m1::ProgressClockV2
          << "\",\"receiptNs\":\"" << clock.receiveNs << "\",\"maxUiGapNs\":\"" << clock.maxUiGap
          << "\",\"maxNativeGapNs\":\"" << clock.maxNativeGap << "\",\"pending\":" << clock.pending
          << ",\"active\":" << clock.activeRemaining << ",\"carry\":" << clock.carry
+         << ",\"grantQuanta\":" << grant.quanta << ",\"grantCap\":" << (attempt.m1OneQuantumGrant ? 1 : 4)
+         << ",\"generated\":" << clock.generated << ",\"quantaAccepted\":" << clock.accepted
+         << ",\"revoked\":" << clock.revoked << ",\"overload\":" << clock.overload
+         << ",\"balanced\":" << (clock.Balanced() ? "true" : "false")
+         << ",\"recordBeginQpc\":\"" << log.recordBegin << "\",\"recordEndQpc\":\"" << log.recordEnd
+         << "\",\"submitEnterQpc\":\"" << log.submitEnter << "\",\"submitExitQpc\":\"" << log.submitExit
+         << "\",\"businessStopQpc\":\"" << log.stopQpc << "\""
+         << ",\"firstWaitBudgetNs\":" << (firstWaitNs ? std::to_string(deadline>firstWaitNs ? deadline-firstWaitNs : 0) : "null")
          << ",\"acceptedRoot\":\"" << ((uint64_t(accepted.nonce.hi)<<32)|accepted.nonce.lo)
          << "\",\"submitVkResult\":" << int(log.submit) << ",\"retireVkResult\":" << int(log.retire)
          << ",\"retireEnterQpc\":\"" << log.retireEnter << "\",\"retireExitQpc\":\"" << log.retireExit << "\""
@@ -383,21 +398,30 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   SourceOffer firstOffer;
   uint64_t pulse = 0;
   uint64_t delta = 0;
+  const auto openInput=[&](bool recovering,bool autonomous) {
+    stage="M1_POINTER_READY";
+    if (recovering) {
+      bool waitingReported=false;
+      while (attempt.current() && !primeClock()) {
+        if (!waitingReported && attempt.current()) {
+          publish(Receipt("M1_WAIT_REAL_PULSE",clock.fault));
+          waitingReported=true;
+        }
+        beginClock(false);
+      }
+      if (!attempt.current()) return false;
+      fields << ",\"m1RecoveryReadySession\":\"" << clock.session
+             << "\",\"m1RecoveryBaselineSeq\":\"" << m1Consumed.seq
+             << "\",\"m1RecoveryBaselineCallbackQpc\":\"" << m1Consumed.callbackTicks
+             << "\",\"m1RecoveryBaselineReceiptQpc\":\"" << m1Consumed.receiptTicks << '"';
+    }
+    if (autonomous) clock.ready=clock.baseline=true;
+    return attempt.pointerReady(Receipt(autonomous ? "M1_READY_PHYSICS" : "RUNNING",""));
+  };
   const auto awaitSource=[&](bool recovering=false) {
     inputSample={};
     firstOffer={};
-    stage="M1_POINTER_READY";
-    const auto openInput=[&] {
-      if (recovering) {
-        while (attempt.current() && !primeClock()) beginClock(false);
-        if (!attempt.current()) return false;
-        fields << ",\"m1RecoveryReadySession\":\"" << clock.session
-               << "\",\"m1RecoveryBaselineSeq\":\"" << m1Consumed.seq
-               << "\",\"m1RecoveryBaselineReceiptQpc\":\"" << m1Consumed.receiptTicks << '"';
-      }
-      return attempt.pointerReady(Receipt("RUNNING",""));
-    };
-    const bool opened=openInput();
+    const bool opened=openInput(recovering,false);
     stage="M1_POINTER_WAIT";
     if (!opened) return false;
     while (attempt.current() && !D1Ended()) {
@@ -407,7 +431,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         fields << ",\"m1IdlePulseFault\":" << Quote(clock.fault);
         publish(Receipt("M1_WAIT_NEW_INPUT",""));
         beginClock(false);
-        if (!openInput()) break;
+        if (!openInput(recovering,false)) break;
         continue;
       }
       if (!fresh) { Sleep(1); continue; }
@@ -554,6 +578,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   const auto &staging=buffers[kStaging];
   const auto runSource=[&](const PointerSample &inputSample,uint64_t pulse,uint64_t delta,
                            const SourceOffer &offer) {
+    M1WaitLog log;
     namespace sourceWire=grs::m1::sourceCommand32;
     Require(sourceSerial!=UINT32_MAX,"M1_SOURCE_SEQUENCE_EXHAUSTED");
     Require(!inFlight,"M1_SOURCE_RETIRE_PENDING");
@@ -620,6 +645,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     }
     Require(root.Begin(request, cmd) == ControlCode::OK, "M1_SOURCE_OWNER_BEGIN");
     const auto deadline = permit.grantedNs+m1::ProgressClockV2::JobNs;
+    log.recordBegin=pc::QpcTicks();
     VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
     begin.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     Check(vk.BeginCommandBuffer(command, &begin), "vkBeginCommandBuffer.M1_SOURCE");
@@ -654,8 +680,9 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       const auto held=attempt.pointer();
       return held.hold==inputSample.hold && held.material==inputSample.material ? nullptr : "SOURCE_HOLD_REVOKED";
     };
-    M1WaitLog log;
+    log.recordEnd=pc::QpcTicks();
     const auto reject=[&] {
+      log.stopQpc=pc::QpcTicks();
       if (!clock.open || std::strcmp(m1Reject,"SOURCE_HOLD_REVOKED")!=0) attempt.disarmM1Input();
       RetireM1Root(root,wide(request.nonce),log);
       if (root.State()!=FlightState::Idle) attempt.disarmM1Input();
@@ -718,6 +745,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       m1Reject=attempt.current() ? "SOURCE_HOLD_REVOKED" : "WINDOW_REVOKED";
     if (!m1Reject && result!=ControlCode::OK) m1Reject="TAIL_REJECTED";
     if (m1Reject) return reject();
+    log.stopQpc=pc::QpcTicks();
     M1RootTrace("Source",wide(request.nonce),clock,permit,accepted,log);
     fields << ",\"m1Completion\":" << Words(tail) << ",\"m1OwnerCode\":" << int(result);
     fields << ",\"m1AdmittedQ\":" << tail[61] << ",\"m1PublicationGeneration\":" << accepted.publicationGeneration.lo
@@ -759,11 +787,24 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
              << ",\"balanced\":" << (clock.Balanced() ? "true" : "false")
              << ",\"lastAcceptedRoot\":\"" << wide(accepted.nonce)
              << "\",\"lastPresentedRoot\":\"" << lastPresentedRoot << "\"}";
-      if (!publish(Receipt(lastPresentedRoot ? "M1_STALE_WAIT_NEW_INPUT" : "M1_FAULT_WAIT_NEW_INPUT",m1Reject)))
+      const bool hasAcceptedBase=root.AcceptedCount()!=0;
+      const auto state=hasAcceptedBase ?
+          (lastPresentedRoot ? "M1_STALE_WAIT_REAL_PULSE" : "M1_FAULT_WAIT_REAL_PULSE") :
+          (lastPresentedRoot ? "M1_STALE_WAIT_NEW_INPUT" : "M1_FAULT_WAIT_NEW_INPUT");
+      if (!publish(Receipt(state,m1Reject)))
         return false;
       fields.str(setupFields);
       fields.seekp(0,std::ios::end);
       beginClock(false);
+      if (hasAcceptedBase) {
+        // No old SOURCE authority survives the session change. The next root
+        // claims a fresh QUANTUM grant directly from newly earned pulses.
+        inputSample={};
+        firstOffer={};
+        permit={};
+        ordinal=0;
+        return openInput(true,true);
+      }
       if (!awaitSource(true) || !primeClock()) return false;
       clock.ready=clock.baseline=true;
       if (!ClaimM1(clock,inputSample.hold,true,permit)) return false;
@@ -859,6 +900,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   bool roiPending=false,roiTerminal=false;
   const auto roiWanted=[&] { return attempt.m1Observation.frame==businessPresents+1; };
   pc::PresentObservations wsiObservation{preview};
+  wsiObservation.timing=attempt.m1Trace || attempt.m1OneQuantumGrant;
   if (attempt.m1Observation.frame) {
     const auto align=std::max<VkDeviceSize>(4,candidate.properties.limits.optimalBufferCopyOffsetAlignment);
     wsiObservation.roiStride=(1024+align-1)/align*align;
@@ -918,7 +960,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       bool sourceFatal=false;
       const auto reportSourceReject=[&] {
         publish(Receipt("M1_SOURCE_REVOKED",""));
-        sourceFatal=clock.open && m1Reject && std::strcmp(m1Reject,"SOURCE_HOLD_REVOKED")!=0;
+        sourceFatal=(clock.open || !attempt.m1D1) && m1Reject &&
+                    std::strcmp(m1Reject,"SOURCE_HOLD_REVOKED")!=0;
       };
       if (!clock.activeRemaining && !inFlight && root.State()==FlightState::Idle && attempt.current() && refresh()) {
         const auto observed=pc::TimeNs();
@@ -1049,7 +1092,12 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
                << ",\"fence\":" << int(visible.fence) << ",\"present\":" << int(visible.present)
                << ",\"imagePresent\":" << int(visible.imagePresent) << ",\"pixel\":" << visible.pixel
                << ",\"presentEnterQpc\":\"" << visible.presentEnter << "\",\"presentExitQpc\":\""
-               << visible.presentExit << "\"}";
+                << visible.presentExit << '"';
+         if (wsiObservation.timing)
+           fields << ",\"graphicsSubmitEnterQpc\":\"" << visible.graphicsSubmitEnter
+                  << "\",\"graphicsSubmitExitQpc\":\"" << visible.graphicsSubmitExit
+                  << "\",\"graphicsFenceExitQpc\":\"" << visible.graphicsFenceExit << '"';
+         fields << "}";
         publish(Receipt(interactive ? "M1_QUANTUM_PRESENT_QUEUED" : "M1_DRY_SOURCE_PRESENT_QUEUED", ""));
       }, buffers[kM1Pub].bytes, !interactive, nextPublication, fullM1, captureBusy,wsiObservation);
   reportCold();

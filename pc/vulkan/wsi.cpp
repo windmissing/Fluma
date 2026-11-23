@@ -369,11 +369,14 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       VkSubmitInfo submission{VK_STRUCTURE_TYPE_SUBMIT_INFO};
       submission.commandBufferCount = 1;
       submission.pCommandBuffers = &command;
+      if (observation.timing) frame.graphicsSubmitEnter=QpcTicks();
       frame.submit = vk.QueueSubmit(queue, 1, &submission, wsi.submitted);
+      if (observation.timing) frame.graphicsSubmitExit=QpcTicks();
       Check(frame.submit, "vkQueueSubmit.GRAPHICS");
       wsi.inFlight = true;
       if (captureBusy) captureBusy(BusyPhase::GraphicsFence,true,false);
       frame.fence = vk.WaitForFences(device, 1, &wsi.submitted, VK_TRUE, UINT64_MAX);
+      if (observation.timing) frame.graphicsFenceExit=QpcTicks();
       if (captureBusy) captureBusy(BusyPhase::GraphicsFence,false,frame.fence==VK_SUCCESS && current());
       Check(frame.fence, "vkWaitForFences.GRAPHICS");
       void *mapped = nullptr;

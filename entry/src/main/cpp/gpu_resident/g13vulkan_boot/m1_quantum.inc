@@ -180,6 +180,8 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
     r.uploadedBytes+=4+(op.color!=UINT32_MAX ? 4 : 0)+(op.sortK ? 8 : 0);
   Require(root.BeginQuantum(r,p.requestedAngle)==ControlCode::OK,"M1_QUANTUM_OWNER_BEGIN");
   const uint64_t deadline=permit.grantedNs+m1::ProgressClockV2::JobNs;
+  M1WaitLog log;
+  log.recordBegin=pc::QpcTicks();
   VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
   begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
   Check(vk.BeginCommandBuffer(command,&begin),"vkBeginCommandBuffer.M1_QUANTUM");
@@ -231,8 +233,9 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
     if (!clock.Identity(permit.id,permit.session) || !clock.activeRemaining) return "PLAN_SESSION_MISMATCH";
     return nullptr;
   };
-  M1WaitLog log;
+  log.recordEnd=pc::QpcTicks();
   const auto reject=[&] {
+    log.stopQpc=pc::QpcTicks();
     attempt.disarmM1Input();
     RetireM1Root(root,nonce,log);
     fields << ",\"m1QuantumReject\":" << Quote(m1Reject);
@@ -289,6 +292,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   fields << ",\"m1QuantumCompletion\":" << Words(tail) << ",\"m1QuantumOwnerCode\":" << int(result);
   if (!m1Reject && result!=ControlCode::OK) m1Reject="TAIL_REJECTED";
   if (m1Reject) return reject();
+  log.stopQpc=pc::QpcTicks();
   M1RootTrace("Quantum",nonce,clock,permit,accepted,log);
   return true;
 }

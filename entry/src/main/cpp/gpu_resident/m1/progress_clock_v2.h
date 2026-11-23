@@ -61,10 +61,11 @@ public:
   sequence=seq;uiNs=callback;receiveNs=now;hasPulse=true;++pulses;
   return "PAGE_PULSE_ACCEPTED";
  }
- bool Claim(uint64_t now,int angle,uint64_t boundary,bool source,PlanGrantV2& out){
-  if(!ready||!Fresh(now)||activeRemaining||(!pending&&!source)||planSerial==UINT64_MAX)return false;
-  active={++planSerial,now,carry,session,boundary,pending,angle};
-  activeRemaining=pending;pending=0;out=active;return true;
+ bool Claim(uint64_t now,int angle,uint64_t boundary,bool source,PlanGrantV2& out,uint32_t cap=4){
+  if(!cap||!ready||!Fresh(now)||activeRemaining||(!pending&&!source)||planSerial==UINT64_MAX)return false;
+  const uint32_t granted=pending<cap?pending:cap;
+  active={++planSerial,now,carry,session,boundary,granted,angle};
+  activeRemaining=granted;pending-=granted;out=active;return true;
  }
  bool AcceptQuantum(uint64_t plan){
   if(plan!=active.id||activeRemaining==0||accepted==UINT64_MAX)return false;

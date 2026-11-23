@@ -16,6 +16,7 @@ struct Frame {
   VkResult retire = VK_NOT_READY;
   uint32_t width = 0, height = 0, format = 0, images = 0, imageIndex = UINT32_MAX;
   uint64_t presentEnter = 0, presentExit = 0;
+  uint64_t graphicsSubmitEnter=0,graphicsSubmitExit=0,graphicsFenceExit=0;
   uint32_t pixel = 0;
   bool pixelRead = false, stale = false;
   bool empty=false;
@@ -33,6 +34,7 @@ struct Frame {
 using PresentBusy = std::function<void(g13vk::M1HotCapture::Phase,bool,bool)>;
 struct PresentObservations {
   bool emptyFirst=false;
+  bool timing=false;
   VkDeviceSize roiStride=0;
   std::function<const std::array<M1Rect,3>*()> requestedRoi;
 };
