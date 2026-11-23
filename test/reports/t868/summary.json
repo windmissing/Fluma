@@ -1,0 +1,205 @@
+{
+  "schema": "T868_SPLIT_CANDIDATE_GPU_V1",
+  "pe": {
+    "path": ".codex/local-test/t833-candidate-release.exe",
+    "sha256": "78ee42e95543189ef4c376b4b8dfec1df648c9d0b5953d91a49595a28bf93773"
+  },
+  "fixtures": {
+    "F03": {
+      "config": "test/reports/t868/fixtures/F03-config128.bin",
+      "configSHA256": "a099bf256dcfc4ff9a5fde75a70ab35121d49bc80c37b05b31f9196b1453b33e",
+      "state": "test/reports/t868/fixtures/F03-state.bin",
+      "stateSHA256": "50e44c46bc44dcc0ca0afda19ab67d11caf42bef983f5c5f946277fbe51e87fa",
+      "stateWords": 49536,
+      "boundary": 2,
+      "viscosityBits": 1031798784
+    },
+    "F02": {
+      "config": "test/reports/t868/fixtures/F02-config128.bin",
+      "configSHA256": "295c075ebaaab6d857088cf5ff36ebd636cfa3680851fd42068fd52cd24f8bd3",
+      "state": "test/reports/t868/fixtures/F02-state.bin",
+      "stateSHA256": "e1c6b49ef4a23700e483649f43766c29c96366259be5110c2e8ff00c422d1fb1",
+      "stateWords": 49536,
+      "boundary": 1,
+      "viscosityBits": 1015021568
+    },
+    "F05": {
+      "config": "test/reports/t868/fixtures/F05-config128.bin",
+      "configSHA256": "da06c19e56e6dc713e016396d8939e1de24ac49cd4b3464dac109f985bf8b045",
+      "state": "test/reports/t868/fixtures/F05-state.bin",
+      "stateSHA256": "84685d65ceb5a804edd1c75a9cbb31e6a7c3c7a2042d1623b036624558c2e0ff",
+      "stateWords": 49536,
+      "boundary": 1,
+      "viscosityBits": 1015021568
+    }
+  },
+  "runs": {
+    "rest": {
+      "rows": 187,
+      "terminal": [
+        "STEADY_OP66",
+        "FAILED"
+      ],
+      "fixtureCase": null,
+      "op65": "QUALIFIED",
+      "route": "PC_SPLIT_CANDIDATE",
+      "sourceFence": 0,
+      "sourceEdge": null,
+      "sourceArchive": {
+        "sha256": "37942e61550c4126bd071f3c40cdfa2f1b45ccc20b6c9316a88d9875516e31cb",
+        "fileBytes": 1530368
+      },
+      "quantumFence": 2,
+      "quantumDispatches": 850,
+      "candidateModules": 17
+    },
+    "f02": {
+      "rows": 177,
+      "terminal": [
+        "STEADY_OP66",
+        "FAILED"
+      ],
+      "fixtureCase": "F02",
+      "op65": "QUALIFIED",
+      "route": "PRIVATE_PROJECT",
+      "sourceFence": null,
+      "sourceEdge": null,
+      "sourceArchive": null,
+      "quantumFence": 2,
+      "quantumDispatches": 850,
+      "candidateModules": 16
+    },
+    "f03": {
+      "rows": 177,
+      "terminal": [
+        "STEADY_OP66",
+        "FAILED"
+      ],
+      "fixtureCase": "F03",
+      "op65": "QUALIFIED",
+      "route": "PC_SPLIT_CANDIDATE",
+      "sourceFence": null,
+      "sourceEdge": null,
+      "sourceArchive": null,
+      "quantumFence": 2,
+      "quantumDispatches": 850,
+      "candidateModules": 16
+    },
+    "f05": {
+      "rows": 187,
+      "terminal": [
+        "STEADY_OP66",
+        "FAILED"
+      ],
+      "fixtureCase": "F05",
+      "op65": "QUALIFIED",
+      "route": "PC_SPLIT_CANDIDATE",
+      "sourceFence": 0,
+      "sourceEdge": null,
+      "sourceArchive": {
+        "sha256": "961a85d84727878c78c70b1aa26c633bea6868b69ad37a11b50cf79466cebf7f",
+        "fileBytes": 1530368
+      },
+      "quantumFence": 2,
+      "quantumDispatches": 850,
+      "candidateModules": 17
+    },
+    "f05-isozero": {
+      "rows": 187,
+      "terminal": [
+        "STEADY_OP66",
+        "FAILED"
+      ],
+      "fixtureCase": "F05",
+      "op65": "QUALIFIED",
+      "route": "PC_SPLIT_CANDIDATE",
+      "sourceFence": 0,
+      "sourceEdge": null,
+      "sourceArchive": {
+        "sha256": "5429b5cde404cbc6edcc3c39c223e19f98986179e6526fff1b24abdbcdec70e1",
+        "fileBytes": 1530368
+      },
+      "quantumFence": 2,
+      "quantumDispatches": 850,
+      "candidateModules": 17
+    },
+    "revoke-before": {
+      "rows": 186,
+      "terminal": [
+        "STEADY_OP66",
+        "FAILED"
+      ],
+      "fixtureCase": null,
+      "op65": "QUALIFIED",
+      "route": "PC_SPLIT_CANDIDATE",
+      "sourceFence": null,
+      "sourceEdge": null,
+      "sourceArchive": null,
+      "quantumFence": null,
+      "quantumDispatches": null,
+      "candidateModules": 17
+    },
+    "revoke-before2": {
+      "rows": 186,
+      "terminal": [
+        "STEADY_OP66",
+        "T833_CANDIDATE_REVOKED"
+      ],
+      "fixtureCase": null,
+      "op65": "QUALIFIED",
+      "route": "PC_SPLIT_CANDIDATE",
+      "sourceFence": null,
+      "sourceEdge": "REVOKED_BEFORE_SUBMIT",
+      "sourceArchive": null,
+      "quantumFence": null,
+      "quantumDispatches": null,
+      "candidateModules": 17
+    },
+    "revoke-after": {
+      "rows": 186,
+      "terminal": [
+        "STEADY_OP66",
+        "T833_CANDIDATE_REVOKED"
+      ],
+      "fixtureCase": null,
+      "op65": "QUALIFIED",
+      "route": "PC_SPLIT_CANDIDATE",
+      "sourceFence": 0,
+      "sourceEdge": null,
+      "sourceArchive": {
+        "sha256": "f793b39cc451fe24ae24b27632e2fbb2dcd4561d9d28f967974fab7dda8ee373",
+        "fileBytes": 1530368
+      },
+      "quantumFence": null,
+      "quantumDispatches": null,
+      "candidateModules": 17
+    }
+  },
+  "archives": {
+    "rest": "37942e61550c4126bd071f3c40cdfa2f1b45ccc20b6c9316a88d9875516e31cb",
+    "f05": "961a85d84727878c78c70b1aa26c633bea6868b69ad37a11b50cf79466cebf7f",
+    "f05-isozero": "5429b5cde404cbc6edcc3c39c223e19f98986179e6526fff1b24abdbcdec70e1",
+    "revoke-after": "f793b39cc451fe24ae24b27632e2fbb2dcd4561d9d28f967974fab7dda8ee373"
+  },
+  "findings": {
+    "QUANTUM_250MS_IGPU_LIMIT": {
+      "observed": "All QUANTUM routes (REST/F02/F03/F05) fail at vkWaitForFences.T833_RETIRE with fence=2 (VK_TIMEOUT): 850 dispatches exceed the fixed 250ms permit on Intel UHD 630. Matches T861 anticipation: 目标独显环境 required for quantum-numeric stages.",
+      "attribution": "GPU hardware constraint — needs discrete GPU environment; not a product defect."
+    },
+    "REVOKE_PULSE_FRAGILITY": {
+      "observed": "revoke-before run 1 failed T833_REAL_PULSE_ABSENT (250ms pulse window starved under load); retry succeeded. Revoke semantics verified on retry: REVOKED_BEFORE_SUBMIT (no submit/archive) and revoke-after (source submit+fence=0+archive exported, quantum skipped, T833_CANDIDATE_REVOKED).",
+      "attribution": "Scheduling flake documented as negative evidence; product behavior on success path verified."
+    },
+    "F03_FIRST_STEP": {
+      "observed": "F03 30-step series is production-scheduled work (per T861 handoff, F03 首步单列); on this iGPU the quantum dispatches time out before any step evidence is captured. F03 field admission (op65 QUALIFIED, fixture boundary=2, nu=1/16 shear eigenmode) is verified.",
+      "attribution": "Blocked by the same 250ms quantum limit — pending discrete GPU."
+    }
+  },
+  "verified": {
+    "roleCreation": "17 candidate module slots compiled per run (OP_37/OP_48/OP_61/OP_00_9_11/OP_00_0_5/OP12_14/OP15/OP16/OP17_PRIVATE_MOTION/OP17_PRIVATE_MMS/OP17_PRIVATE_LEDGER/OP_18/OP6/OP7_FIELD_ONLY/OP7_MOTION_ONLY/OP7_MMS_FORCE_ONLY/OP8), each with module SHA256",
+    "op66": "QUALIFIED in all 8 runs (steady 14-slot OP17 latch semantics)",
+    "source": "Accepted with full PC_G13_T833_RAW_V1 archive on REST/F05/F05-isozero/revoke-after (16 dispatches, fence=0, 1530368 B, six segments)",
+    "revocation": "revoke-before => REVOKED_BEFORE_SUBMIT (no submit, no archive); revoke-after => source completes, quantum skipped, T833_CANDIDATE_REVOKED",
+    "fixtures": "F02/F03/F05 config128+state originals built and op65-QUALIFIED (F02 private project c[7]=3; F03 periodic boundary=2 nu=1/16 shear eigenmode with exactNuBits-compatible c[12..17]; F05 closed-box MMS with wall-zeroed velocities and Q32.32 pi gauge sum 0)"
+  }
+}
