@@ -2,6 +2,7 @@
 #include <functional>
 #include "platform.h"
 #include "vulkan_api.h"
+#include "m1_hot_capture.h"
 
 namespace grs::pc {
 struct Frame {
@@ -19,11 +20,13 @@ struct Frame {
   const char *stage = "WSI_SETUP";
 };
 
+using PresentBusy = std::function<void(g13vk::M1HotCapture::Phase,bool,bool)>;
 Frame PresentBoot(g13vk::VulkanApi &, VkInstance, VkPhysicalDevice, VkDevice, VkQueue,
                   uint32_t family, VkSurfaceKHR, VkBuffer control, VkBuffer staging,
                   VkDeviceMemory stagingMemory, VkMemoryPropertyFlags,
                   HWND window, const std::function<bool()> &current,
                   const std::function<void(const Frame &)> &published,
                   VkDeviceSize m1PublicationBytes = 0, bool requireDiagnosticPixel = true,
-                  const std::function<VkBuffer()> &nextPublication = {}, bool fullM1 = false);
+                  const std::function<VkBuffer()> &nextPublication = {}, bool fullM1 = false,
+                  const PresentBusy &captureBusy = {});
 }

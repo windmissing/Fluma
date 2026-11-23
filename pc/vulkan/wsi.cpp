@@ -79,7 +79,9 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
                   HWND window, const std::function<bool()> &current,
                   const std::function<void(const Frame &)> &published,
                   VkDeviceSize m1PublicationBytes, bool requireDiagnosticPixel,
-                  const std::function<VkBuffer()> &nextPublication, bool fullM1) {
+                  const std::function<VkBuffer()> &nextPublication, bool fullM1,
+                  const PresentBusy &captureBusy) {
+  using BusyPhase=g13vk::M1HotCapture::Phase;
   Frame frame;
   const bool dryScene=m1PublicationBytes && !requireDiagnosticPixel;
   Presentation wsi{vk, device};
@@ -346,7 +348,9 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       frame.submit = vk.QueueSubmit(queue, 1, &submission, wsi.submitted);
       Check(frame.submit, "vkQueueSubmit.GRAPHICS");
       wsi.inFlight = true;
+      if (captureBusy) captureBusy(BusyPhase::GraphicsFence,true,false);
       frame.fence = vk.WaitForFences(device, 1, &wsi.submitted, VK_TRUE, UINT64_MAX);
+      if (captureBusy) captureBusy(BusyPhase::GraphicsFence,false,frame.fence==VK_SUCCESS && current());
       Check(frame.fence, "vkWaitForFences.GRAPHICS");
       void *mapped = nullptr;
       Check(vk.MapMemory(device, stagingMemory, 0, VK_WHOLE_SIZE, 0, &mapped), "vkMapMemory.PIXEL");
@@ -372,9 +376,14 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       present.pSwapchains = &wsi.swapchain;
       present.pImageIndices = &frame.imageIndex;
       present.pResults = &frame.imagePresent;
+      if (captureBusy) captureBusy(BusyPhase::Present,true,false);
       frame.presentEnter = QpcTicks();
       frame.present = wsi.QueuePresentKHR(queue, &present);
       frame.presentExit = QpcTicks();
+      if (captureBusy) {
+        const auto usable=[](VkResult result) { return result==VK_SUCCESS || result==VK_SUBOPTIMAL_KHR; };
+        captureBusy(BusyPhase::Present,false,usable(frame.present) && usable(frame.imagePresent) && current());
+      }
       wsi.inFlight = wsi.inFlight || frame.present == VK_SUCCESS || frame.present == VK_SUBOPTIMAL_KHR;
       if (frame.present != VK_SUBOPTIMAL_KHR) Check(frame.present, "vkQueuePresentKHR");
       if (frame.imagePresent != VK_SUBOPTIMAL_KHR) Check(frame.imagePresent, "PRESENT_IMAGE_RESULT");

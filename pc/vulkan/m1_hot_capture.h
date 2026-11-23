@@ -5,7 +5,7 @@
 namespace grs::g13vk {
 class M1HotCapture {
  public:
-  enum class Phase { Idle, SourceFence, QuantumFence };
+  enum class Phase { Idle, SourceFence, QuantumFence, GraphicsFence, Present };
   enum class Code { Idle, NotBusy, Reserved, Conflict, Cancelled, TimedOut, Frozen, Read, Ended };
   struct Page {
     SourceScope scope;
@@ -18,6 +18,10 @@ class M1HotCapture {
     std::lock_guard lock(mutex_);
     phase_=phase;
     nonce_=nonce;
+  }
+  void StopBusy() {
+    std::lock_guard lock(mutex_);
+    phase_=Phase::Idle;
   }
   Code Reserve(const SourceScope &scope,uint64_t request,uint64_t now) {
     std::lock_guard lock(mutex_);

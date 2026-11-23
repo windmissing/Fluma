@@ -361,6 +361,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       if (waited != VK_TIMEOUT) break;
     }
     if (waited == VK_SUCCESS || waited == VK_ERROR_DEVICE_LOST) inFlight = false;
+    if (attempt.hotCapture) attempt.hotCapture->StopBusy();
     const bool fresh = sourceCurrent();
     fields << ",\"m1FenceVkResult\":" << int(waited) << ",\"m1FenceNs\":\"" << fenceNs
            << "\",\"m1PulseCount\":" << clock.pulses << ",\"m1PulseFault\":"
@@ -430,7 +431,15 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   uint32_t ordinal=0;
   if (interactive && !RunM1Quantum(candidate, root, clock, permit, refresh, accepted, frameSerial, ordinal))
     return Receipt("FAILED", "M1_QUANTUM_NOT_ACCEPTED");
-  if (interactive && !attempt.m1ColdFile.empty()) CaptureM1Quantum(root, accepted, tail, stateWords, cmd);
+  std::future<M1ColdResult> coldWriter;
+  if (interactive && !attempt.m1ColdFile.empty())
+    coldWriter=CaptureM1Quantum(root,accepted,tail,stateWords,cmd);
+  const auto reportCold=[&] {
+    if (!coldWriter.valid()) return;
+    const auto exported=coldWriter.get();
+    fields << ",\"m1ColdPayloadSHA\":" << Quote(exported.sha)
+           << ",\"m1ColdBytes\":" << exported.bytes;
+  };
   if (!attempt.presentBoot) return Receipt("M1_DRY_SOURCE_ACCEPTED", "");
 
   Checkpoint("M1_SOURCE_WSI");
@@ -505,9 +514,23 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       return publicationBuffer();
     };
   }
+  pc::PresentBusy captureBusy;
+  if (attempt.hotCapture) captureBusy=[&](M1HotCapture::Phase phase,bool entered,bool usable) {
+    const auto nonce=wide(lease.nonce);
+    if (entered) {
+      attempt.hotCapture->Busy(phase,nonce);
+    } else {
+      attempt.hotCapture->StopBusy();
+      if (!usable || !attempt.acceptPointer(0,[&] {
+            attempt.hotCapture->Safe(nonce,&accepted.completion,pc::TimeNs());
+          }))
+        attempt.hotCapture->Safe(nonce,nullptr,pc::TimeNs());
+    }
+  };
   const auto frame = pc::PresentBoot(vk, instance, candidate.physical, device, queue, candidate.family,
       surface, publicationBuffer(), staging.handle, staging.memory, staging.flags, attempt.window,
       attempt.current, [&](const pc::Frame &visible) {
+        reportCold();
         const auto &completion=accepted.completion;
         const auto q64=[&](size_t lo) { return wide({completion[lo],completion[lo+1]}); };
         if (fullM1) {
@@ -535,7 +558,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
                << ",\"presentEnterQpc\":\"" << visible.presentEnter << "\",\"presentExitQpc\":\""
                << visible.presentExit << "\"}";
         publish(Receipt(interactive ? "M1_QUANTUM_PRESENT_QUEUED" : "M1_DRY_SOURCE_PRESENT_QUEUED", ""));
-      }, buffers[kM1Pub].bytes, !interactive, nextPublication, fullM1);
+      }, buffers[kM1Pub].bytes, !interactive, nextPublication, fullM1, captureBusy);
+  reportCold();
   const bool usable = frame.retire != VK_ERROR_DEVICE_LOST && frame.error != VK_ERROR_DEVICE_LOST;
   if (usable && leased)
     Require(root.Release(accepted.publication, accepted.publicationGeneration, true) == ControlCode::OK,

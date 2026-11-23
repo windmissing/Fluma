@@ -37,7 +37,7 @@ struct Window {
   grs::g13vk::M1Ingress ingress;
   grs::g13vk::M1HotCapture hotCapture;
   bool captureHot=false;
-  uint64_t captureRun=0;
+  uint64_t captureRun=0, captureReserved=0;
   uint64_t sampleTicks=0, offerSeq=0;
   int result = 1;
 
@@ -133,6 +133,15 @@ struct Window {
     if (!captureHot || !request || captureRun==request) return;
     using Code=grs::g13vk::M1HotCapture::Code;
     const auto state=hotCapture.Reserve(captureScope,request,ns);
+    if (state==Code::Reserved && captureReserved!=request) {
+      captureReserved=request;
+      Emit("{\"stage\":\"M1_HOT_CAPTURE_RESERVED\",\"request\":\""+std::to_string(request)+
+           "\",\"requestNs\":\""+std::to_string(ns)+"\"}");
+    } else if (state==Code::Cancelled || state==Code::TimedOut) {
+      captureRun=request;
+      Emit("{\"stage\":\"M1_HOT_CAPTURE_TERMINAL\",\"request\":\""+std::to_string(request)+
+           "\",\"state\":\""+(state==Code::Cancelled ? "CANCELLED" : "TIMED_OUT")+"\"}");
+    }
     if (state==Code::Frozen) {
       if (const auto page=hotCapture.Read(captureScope,request,ns)) {
         std::string row="{\"stage\":\"M1_HOT_CAPTURE\",\"request\":\""+std::to_string(request)+

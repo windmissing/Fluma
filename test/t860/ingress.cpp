@@ -79,5 +79,16 @@ int main() {
   capture.Authorize({});
   capture.Safe(102,&completion,1000000017);
   assert(!capture.Read(scope,3,1000000018));
+  capture.Authorize(scope);
+  capture.Busy(Phase::GraphicsFence,103);
+  assert(capture.Reserve(scope,4,1000000019)==Code::Reserved);
+  capture.StopBusy();
+  capture.Safe(103,&completion,1000000020);
+  const auto graphics=capture.Read(scope,4,1000000021);
+  assert(graphics && graphics->blocker==Phase::GraphicsFence);
+  capture.End(scope,4);
+  capture.Busy(Phase::Present,103);
+  capture.StopBusy();
+  assert(capture.Reserve(scope,5,1000000022)==Code::NotBusy);
   std::cout << "T860 ingress and immutable hot page checks passed\n";
 }

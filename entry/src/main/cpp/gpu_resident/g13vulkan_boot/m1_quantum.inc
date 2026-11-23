@@ -112,6 +112,7 @@ void Boot::PrepareM1Quantum(const Candidate &candidate) {
   inFlight=true;
   const auto waited=vk.WaitForFences(device,1,&fence,VK_TRUE,UINT64_MAX);
   if (waited==VK_SUCCESS || waited==VK_ERROR_DEVICE_LOST) inFlight=false;
+  if (attempt.hotCapture) attempt.hotCapture->StopBusy();
   Check(waited,"vkWaitForFences.M1_ANGLES");
   fields << ",\"m1ColdAngleUploadBytes\":" << sizeof(kAngleWords)
          << ",\"m1ColdAngleFenceVkResult\":" << int(waited);
@@ -274,7 +275,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   return true;
 }
 
-void Boot::CaptureM1Quantum(m1::SourceRootOwner &root, const grs::AcceptedRoot &accepted,
+std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, const grs::AcceptedRoot &accepted,
                             const grs::Words256 &sourceCompletion, uint32_t stateWords,
                             const std::array<uint32_t,32> &sourceCommand) {
   Checkpoint("M1_QUANTUM_COLD_CAPTURE");
@@ -337,20 +338,21 @@ void Boot::CaptureM1Quantum(m1::SourceRootOwner &root, const grs::AcceptedRoot &
   Require(std::memcmp(raw.data(),stored.data(),1024)==0,"M1_COLD_COMPLETION_CHANGED");
   std::memcpy(raw.data()+gpuBytes,sourceCompletion.data(),sizes[6]);
   std::memcpy(raw.data()+gpuBytes+sizes[6],sourceCommand.data(),sizes[7]);
-  const auto digest=Hash(raw.data(),raw.size());
-  const auto temp=attempt.m1ColdFile+L".pending-"+std::to_wstring(GetCurrentProcessId());
-  const HANDLE out=CreateFileW(temp.c_str(),GENERIC_WRITE,0,nullptr,CREATE_NEW,FILE_ATTRIBUTE_NORMAL,nullptr);
-  Require(out!=INVALID_HANDLE_VALUE,"M1_COLD_CREATE");
-  const auto write=[&](const void *src,size_t bytes) {
-    DWORD n=0;
-    return WriteFile(out,src,DWORD(bytes),&n,nullptr) ? n : 0;
-  };
-  const bool wrote=WriteM1Cold(sizes,digest,raw.data(),raw.size(),write) &&
-                   FlushFileBuffers(out);
-  CloseHandle(out);
-  const bool finished=wrote && MoveFileExW(temp.c_str(),attempt.m1ColdFile.c_str(),MOVEFILE_WRITE_THROUGH);
-  if (!finished) DeleteFileW(temp.c_str());
-  Require(finished,"M1_COLD_WRITE_OR_DESTINATION_EXISTS");
-  fields << ",\"m1ColdPayloadSHA\":" << Quote(Hex(digest.data()))
-         << ",\"m1ColdBytes\":" << (raw.size()+kM1ColdEnvelopeBytes);
+  // The worker owns only sealed CPU bytes and the destination path.
+  return std::async(std::launch::async,[path=attempt.m1ColdFile,sizes,raw=std::move(raw)] {
+    const auto digest=Hash(raw.data(),raw.size());
+    const auto temp=path+L".pending-"+std::to_wstring(GetCurrentProcessId());
+    const HANDLE out=CreateFileW(temp.c_str(),GENERIC_WRITE,0,nullptr,CREATE_NEW,FILE_ATTRIBUTE_NORMAL,nullptr);
+    Require(out!=INVALID_HANDLE_VALUE,"M1_COLD_CREATE");
+    const auto write=[&](const void *src,size_t bytes) {
+      DWORD n=0;
+      return WriteFile(out,src,DWORD(bytes),&n,nullptr) ? n : 0;
+    };
+    const bool wrote=WriteM1Cold(sizes,digest,raw.data(),raw.size(),write) && FlushFileBuffers(out);
+    CloseHandle(out);
+    const bool finished=wrote && MoveFileExW(temp.c_str(),path.c_str(),MOVEFILE_WRITE_THROUGH);
+    if (!finished) DeleteFileW(temp.c_str());
+    Require(finished,"M1_COLD_WRITE_OR_DESTINATION_EXISTS");
+    return M1ColdResult{Hex(digest.data()),raw.size()+kM1ColdEnvelopeBytes};
+  });
 }

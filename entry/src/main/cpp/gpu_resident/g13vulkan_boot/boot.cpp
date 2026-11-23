@@ -11,6 +11,7 @@
 #include "../m1/quantum_passes.h"
 #include "../m1/source_owner.h"
 #include <filesystem>
+#include <future>
 #else
 #include "../program_cache/mapped_build_id.h"
 #include <dlfcn.h>
@@ -28,6 +29,10 @@ namespace grs::g13vk {
 namespace {
 using namespace grs::g13;
 #ifdef _WIN32
+struct M1ColdResult {
+  std::string sha;
+  size_t bytes=0;
+};
 struct M1BusyFence {
   M1HotCapture *capture;
   uint64_t nonce;
@@ -273,7 +278,7 @@ private:
   bool RunM1Quantum(const Candidate &, grs::m1::SourceRootOwner &, grs::m1::ProgressClockV2 &,
                    grs::m1::PlanGrantV2 &, const std::function<bool()> &, grs::AcceptedRoot &,
                    uint64_t &, uint32_t &);
-  void CaptureM1Quantum(grs::m1::SourceRootOwner &, const grs::AcceptedRoot &, const grs::Words256 &,
+  std::future<M1ColdResult> CaptureM1Quantum(grs::m1::SourceRootOwner &, const grs::AcceptedRoot &, const grs::Words256 &,
                         uint32_t, const std::array<uint32_t,32> &);
 #endif
 };
