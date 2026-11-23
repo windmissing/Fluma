@@ -1,0 +1,152 @@
+{
+  "B_build": {
+    "sha256": "12d454b11469160ef2ff5f29dd9aaf8905a2d512d95bf070dc391d00ea44db28",
+    "windowsX64": true,
+    "bytes": 3748352
+  },
+  "B_OFF": {
+    "state": "OWNER_PULSE_COVERAGE",
+    "left": [
+      {
+        "action": 22,
+        "seq": "20",
+        "session": "1"
+      },
+      {
+        "action": 23,
+        "seq": "21",
+        "session": "1"
+      },
+      {
+        "action": 24,
+        "seq": "22",
+        "session": "1"
+      },
+      {
+        "action": 25,
+        "seq": "23",
+        "session": "1"
+      }
+    ],
+    "right": [
+      {
+        "action": 15,
+        "seq": "14",
+        "session": "1"
+      },
+      {
+        "action": 16,
+        "seq": "15",
+        "session": "1"
+      },
+      {
+        "action": 17,
+        "seq": "16",
+        "session": "1"
+      }
+    ],
+    "source7DeltaNs": [
+      15729600,
+      14961400
+    ],
+    "source7Q20": [
+      131949,
+      125505
+    ],
+    "source7CommandSHA": [
+      "2f95aef88b570941b79560de8f8c9a1340db1e773c4e90faa573ee1f1a1e26b5",
+      "7c7088d79e0d2b2879a9b8eb7cc28a172f4a85fe6e3a1821c175bc9796778b67"
+    ]
+  },
+  "B_arms": [
+    {
+      "sha256": "140e34355bfbf41cff3d6597cde4bbe06ba9e0196059d981089d20b06a9a06d0",
+      "lines": 136,
+      "offerQuoteRepairLines": [],
+      "run": "15887545012646",
+      "hz": 10000000,
+      "drain": "FENCE_RETIRED_BEFORE_DRAIN_PROBE",
+      "source": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15887546257120",
+          "admittedQ20": 131949,
+          "requested": 0.1258368,
+          "deltaNs": 15729600,
+          "commandSHA": "2f95aef88b570941b79560de8f8c9a1340db1e773c4e90faa573ee1f1a1e26b5"
+        },
+        "29": {
+          "outcome": "EXPIRED",
+          "offer": "2",
+          "ageNs": 44859200,
+          "reason": "STALE_ENDPOINT"
+        }
+      },
+      "missingOwnerTerminals": [
+        {
+          "action": 22,
+          "seq": "20",
+          "session": "1"
+        },
+        {
+          "action": 23,
+          "seq": "21",
+          "session": "1"
+        },
+        {
+          "action": 24,
+          "seq": "22",
+          "session": "1"
+        },
+        {
+          "action": 25,
+          "seq": "23",
+          "session": "1"
+        }
+      ]
+    },
+    {
+      "sha256": "80a88a86150a0f3e4ce7fe075b583f842c18725c94e788bd217f34188bf01ccc",
+      "lines": 143,
+      "offerQuoteRepairLines": [],
+      "run": "15887557528740",
+      "hz": 10000000,
+      "drain": "FENCE_RETIRED_BEFORE_DRAIN_PROBE",
+      "source": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15887558916739",
+          "admittedQ20": 125505,
+          "requested": 0.1196912,
+          "deltaNs": 14961400,
+          "commandSHA": "7c7088d79e0d2b2879a9b8eb7cc28a172f4a85fe6e3a1821c175bc9796778b67"
+        },
+        "29": {
+          "outcome": "EXPIRED",
+          "offer": "2",
+          "ageNs": 133630900,
+          "reason": "STALE_ENDPOINT"
+        }
+      },
+      "missingOwnerTerminals": [
+        {
+          "action": 15,
+          "seq": "14",
+          "session": "1"
+        },
+        {
+          "action": 16,
+          "seq": "15",
+          "session": "1"
+        },
+        {
+          "action": 17,
+          "seq": "16",
+          "session": "1"
+        }
+      ]
+    }
+  ]
+}

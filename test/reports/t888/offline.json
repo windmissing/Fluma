@@ -1,0 +1,193 @@
+{
+  "B_build": {
+    "sha256": "12d454b11469160ef2ff5f29dd9aaf8905a2d512d95bf070dc391d00ea44db28",
+    "windowsX64": true,
+    "bytes": 3748352
+  },
+  "selftest": {
+    "negatives": [
+      "DRAIN_FENCE",
+      "DRAIN_INCOMPLETE",
+      "DRAIN_FENCE",
+      "DRAIN_CREDIT",
+      "DRAIN_INTAKE_OR_CLOSE"
+    ],
+    "firstDifference": {
+      "state": "CLOCK_EQUIVALENCE_UNPROVEN",
+      "action": 2,
+      "field": "relativeNs",
+      "left": 200,
+      "right": 201
+    },
+    "syntheticNativeActions": 52
+  },
+  "A": {
+    "dual-lease": {
+      "sha256": "a07a7f7d0c462ec428a7f20dcf919710f07cfe60bc9983090364ac2a1b464a76",
+      "lines": 77,
+      "offerQuoteRepairCount": 42,
+      "queued": 3,
+      "newRoots": 3,
+      "repeat": 0,
+      "newQueueRate": 8.9695269292107,
+      "observedSpanSeconds": 0.2229772,
+      "queueIntervalMs": {
+        "count": 2,
+        "mean": 111.48859999999999,
+        "p95": 125.3731,
+        "p99": 125.3731,
+        "max": 125.3731
+      },
+      "newRootIntervalMs": {
+        "count": 2,
+        "mean": 111.48859999999999,
+        "p95": 125.3731,
+        "p99": 125.3731,
+        "max": 125.3731
+      },
+      "displayState": "PRESENT_EVIDENCE_PENDING",
+      "displayedFps": null,
+      "refreshHz": null,
+      "acceptedSourceRoots": 1,
+      "admittedQ20": 137873,
+      "sourceStartsAtOrAfterUp": [],
+      "sourceFencesAtOrAfterUp": [],
+      "cleanRetire": false,
+      "stockQ20": [
+        137873
+      ],
+      "sceneLeases": 3,
+      "postUpNewRoots": 0,
+      "postUpNonzeroActive": 0,
+      "postUpStockQ20": [],
+      "upQpc": 15872479344004,
+      "firstZeroActiveRelativeToUpMs": null,
+      "lastNonzeroActiveRelativeToUpMs": -11544.2274,
+      "gaps": [],
+      "fieldState": "MISSING_EVIDENCE",
+      "missing": [
+        "accepted inventory/event timeline",
+        "individual LAND event words",
+        "layer-attributed same-root RGBA probes",
+        "verified display trace / active refresh mode"
+      ],
+      "bulkRetentionSupported": false
+    },
+    "dual-release": {
+      "sha256": "56c781308709c0dc93bdc9dedd63a136f4e96b3d2045fc2028757319917741b4",
+      "lines": 851,
+      "offerQuoteRepairCount": 529,
+      "queued": 291,
+      "newRoots": 291,
+      "repeat": 0,
+      "newQueueRate": 24.65998430978736,
+      "observedSpanSeconds": 11.7599426,
+      "queueIntervalMs": {
+        "count": 290,
+        "mean": 40.551526206896554,
+        "p95": 42.8737,
+        "p99": 57.4276,
+        "max": 114.0031
+      },
+      "newRootIntervalMs": {
+        "count": 290,
+        "mean": 40.551526206896554,
+        "p95": 42.8737,
+        "p99": 57.4276,
+        "max": 114.0031
+      },
+      "displayState": "PRESENT_EVIDENCE_PENDING",
+      "displayedFps": null,
+      "refreshHz": null,
+      "acceptedSourceRoots": 1,
+      "admittedQ20": 128878,
+      "sourceStartsAtOrAfterUp": [],
+      "sourceFencesAtOrAfterUp": [],
+      "cleanRetire": true,
+      "stockQ20": [
+        128878
+      ],
+      "sceneLeases": 291,
+      "postUpNewRoots": 153,
+      "postUpNonzeroActive": 0,
+      "postUpStockQ20": [
+        128878
+      ],
+      "upQpc": 15872865122785,
+      "firstZeroActiveRelativeToUpMs": -2123.6721,
+      "lastNonzeroActiveRelativeToUpMs": -2164.9706,
+      "gaps": [],
+      "fieldState": "MISSING_EVIDENCE",
+      "missing": [
+        "accepted inventory/event timeline",
+        "individual LAND event words",
+        "layer-attributed same-root RGBA probes",
+        "verified display trace / active refresh mode"
+      ],
+      "bulkRetentionSupported": true
+    },
+    "empty-idle": {
+      "sha256": "bcfc30a9c8f57e772f873155701ae0cd457e8ca14de8c773f987c1f6f1668034",
+      "lines": 27,
+      "offerQuoteRepairCount": 0,
+      "queued": 0,
+      "fieldState": "MISSING_EVIDENCE",
+      "ready": 1,
+      "displayedFps": null
+    },
+    "longwindow": {
+      "sha256": "1d349f85ca12e21b3cc8b314e13ee0fde09eb73dc282ca7f96d45cbbaf047715",
+      "lines": 2526,
+      "offerQuoteRepairCount": 1774,
+      "queued": 721,
+      "newRoots": 721,
+      "repeat": 0,
+      "newQueueRate": 25.044703839785466,
+      "observedSpanSeconds": 28.7485931,
+      "queueIntervalMs": {
+        "count": 720,
+        "mean": 39.92860152777777,
+        "p95": 43.74,
+        "p99": 45.6564,
+        "max": 105.1218
+      },
+      "newRootIntervalMs": {
+        "count": 720,
+        "mean": 39.92860152777777,
+        "p95": 43.74,
+        "p99": 45.6564,
+        "max": 105.1218
+      },
+      "displayState": "PRESENT_EVIDENCE_PENDING",
+      "displayedFps": null,
+      "refreshHz": null,
+      "acceptedSourceRoots": 1,
+      "admittedQ20": 139681,
+      "sourceStartsAtOrAfterUp": [],
+      "sourceFencesAtOrAfterUp": [],
+      "cleanRetire": true,
+      "stockQ20": [
+        139681
+      ],
+      "sceneLeases": 0,
+      "postUpNewRoots": 230,
+      "postUpNonzeroActive": 0,
+      "postUpStockQ20": [
+        139681
+      ],
+      "upQpc": 15871904909548,
+      "firstZeroActiveRelativeToUpMs": -15982.427,
+      "lastNonzeroActiveRelativeToUpMs": -16024.7567,
+      "gaps": [],
+      "fieldState": "MISSING_EVIDENCE",
+      "missing": [
+        "accepted inventory/event timeline",
+        "individual LAND event words",
+        "layer-attributed same-root RGBA probes",
+        "verified display trace / active refresh mode"
+      ],
+      "bulkRetentionSupported": true
+    }
+  },
+  "B_OFF": "PENDING_T887_OFF_PAIR"
+}
