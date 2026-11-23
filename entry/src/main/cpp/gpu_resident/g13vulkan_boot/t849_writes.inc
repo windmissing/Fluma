@@ -37,7 +37,8 @@ void Boot::ObserveT849Writes() {
   VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
   begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
   Check(vk.BeginCommandBuffer(command,&begin),"vkBeginCommandBuffer.T849_PRIVATE");
-  // The same GPU-initialized 64x64 BOOT buffers stay bound throughout.
+  // Start CANDIDATE from the fenced BOOT BASE, including its original
+  // tracer records. The same four buffer bindings stay fixed throughout.
   // Use fixed rotation with a live MMS force window. No fixture word is an
   // accepted root or a native permit.
   const std::array<uint32_t,5> motion{0x3fc00000,0x3f800000,0x40000000,0,3};
@@ -45,7 +46,11 @@ void Boot::ObserveT849Writes() {
   constexpr uint32_t motionMetadata=3;
   const uint32_t scopeOp=0;
   const std::array<uint32_t,2> mmsSentinel{0x7fc00042,0x7fc00043};
-  Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT);
+  Barrier(kCompute|kTransfer,VK_ACCESS_SHADER_WRITE_BIT|VK_ACCESS_TRANSFER_WRITE_BIT,
+          kTransfer,VK_ACCESS_TRANSFER_READ_BIT|VK_ACCESS_TRANSFER_WRITE_BIT);
+  const VkBufferCopy seedCandidate{0,0,sizes[1]};
+  vk.CmdCopyBuffer(command,buffers[0].handle,buffers[1].handle,1,&seedCandidate);
+  Barrier(kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT);
   vk.CmdUpdateBuffer(command,buffers[1].handle,26*4,sizeof(motion),motion.data());
   vk.CmdUpdateBuffer(command,buffers[1].handle,198*4,sizeof(force),force.data());
   vk.CmdUpdateBuffer(command,buffers[1].handle,206*4,sizeof(motionMetadata),&motionMetadata);
@@ -116,6 +121,6 @@ void Boot::ObserveT849Writes() {
          << ",\"sha256\":" << Quote(Hex(Hash(raw.data(),raw.size()).data())) << ",\"segmentsBytes\":" << Words(sizes)
          << ",\"segments\":[\"BASE\",\"CANDIDATE\",\"WORK\",\"CTRL\"]"
          << ",\"stages\":[\"BEFORE\",\"FIELD\",\"MOTION\",\"MMS\",\"OP8\"]"
-         << ",\"case\":\"FIXED_ROTATION_MMS_INSIDE_MATCHED_MODE\",\"queueSubmit\":" << int(queued)
+         << ",\"case\":\"FIXED_ROTATION_MMS_INSIDE_BOOT_SEED\",\"queueSubmit\":" << int(queued)
          << ",\"fence\":" << int(waited) << ",\"acceptedRoot\":null,\"productionEquivalent\":false}";
 }
