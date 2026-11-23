@@ -41,6 +41,9 @@ struct CandidatePass {
   std::array<std::string_view,3> roles{};
   uint32_t count=0;
 };
+inline constexpr unsigned CandidateSet(const RootPlanPass &binding) {
+  return binding.targetSlot==4 ? 3u : binding.baseSlot==1 ? 2u : binding.targetSlot==2 ? 1u : 0u;
+}
 
 // An explicit candidate table. The canonical role and logical plans stay intact.
 inline constexpr bool PlanSplitCandidate(bool source,size_t ordinal,const g13::Pass &pass,

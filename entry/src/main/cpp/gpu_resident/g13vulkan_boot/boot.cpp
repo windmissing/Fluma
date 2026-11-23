@@ -146,6 +146,7 @@ struct Candidate {
   VkPhysicalDeviceProperties properties{};
   uint32_t family = UINT32_MAX;
   VkQueueFlags queueFlags = 0;
+  uint32_t timestampBits=0;
   bool present = false;
   bool useExtension = false;
 };
@@ -155,7 +156,22 @@ public:
   Boot(const Attempt &a, const Publish &p) : attempt(a), publish(p) {}
   ~Boot() {
     while (inFlight) {
+#ifdef _WIN32
+      const auto entered=pc::QpcTicks();
+#endif
       const VkResult drained = vk.DeviceWaitIdle(device);
+#ifdef _WIN32
+      if (t877PendingNonce) {
+        std::ostringstream row;
+        row << "{\"stage\":\"T877_DEVICE_DRAIN\",\"nonce\":\"" << t877PendingNonce
+            << "\",\"queue\":\"" << reinterpret_cast<uintptr_t>(queue)
+            << "\",\"device\":\"" << reinterpret_cast<uintptr_t>(device)
+            << "\",\"fence\":\"" << reinterpret_cast<uintptr_t>(fence)
+            << "\",\"enterQpc\":\"" << entered << "\",\"exitQpc\":\"" << pc::QpcTicks()
+            << "\",\"vkResult\":" << int(drained) << '}';
+        publish(row.str());
+      }
+#endif
       if (drained == VK_SUCCESS || drained == VK_ERROR_DEVICE_LOST)
         break;
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -169,6 +185,7 @@ public:
     if (shader)
       vk.DestroyShaderModule(device, shader, nullptr);
 #ifdef _WIN32
+    if (t877Queries) t877DestroyQueries(device,t877Queries,nullptr);
     for (auto p : m1QuantumPipelines)
       if (p) vk.DestroyPipeline(device, p, nullptr);
     for (auto p : t854Pipelines)
@@ -221,6 +238,9 @@ private:
   std::array<VkPipeline,2> m1QuantumPipelines{};
   std::array<VkPipeline,3> t854Pipelines{};
   std::vector<std::pair<std::string_view,VkPipeline>> t833Pipelines;
+  VkQueryPool t877Queries=VK_NULL_HANDLE;
+  PFN_vkDestroyQueryPool t877DestroyQueries=nullptr;
+  uint64_t t877PendingNonce=0;
   std::vector<uint32_t> t833Seed;
   size_t m1ReplayBytes=0;
   VkDescriptorPool m1QuantumDescriptorPool = VK_NULL_HANDLE;
@@ -283,7 +303,7 @@ private:
   std::string Read(const std::array<uint32_t, 18688> &control);
 #ifdef _WIN32
   void QualifySteady(const std::string &roleName);
-  std::string RunT833Candidate(const Profile &,const Config &);
+  std::string RunT833Candidate(const Profile &,const Config &,const Candidate &);
   void ObserveT849Reduction(const char *,PFN_vkResetCommandPool);
   void ObserveT849Writes();
   void ObserveT854Writes(const Profile &);
@@ -503,12 +523,14 @@ Candidate Boot::Select(const Profile &profile) {
       if (present && (family.queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
         candidate.family = i;
         candidate.queueFlags = family.queueFlags;
+        candidate.timestampBits=family.timestampValidBits;
         candidate.present = true;
         break;
       }
       if (candidate.family == UINT32_MAX) {
         candidate.family = i;
         candidate.queueFlags = family.queueFlags;
+        candidate.timestampBits=family.timestampValidBits;
         candidate.present = present == VK_TRUE;
       }
     }
@@ -1132,7 +1154,7 @@ std::string Boot::Run() {
 #ifdef _WIN32
   if (!attempt.t833CandidateFile.empty()) {
     if (numeric.find("\"state\":\"BOOT_NUMERIC_QUALIFIED\"")==std::string::npos) return numeric;
-    return RunT833Candidate(*profile,config);
+    return RunT833Candidate(*profile,config,candidate);
   }
   if (attempt.steadyQualification) {
     if (numeric.find("\"state\":\"BOOT_NUMERIC_QUALIFIED\"")==std::string::npos)

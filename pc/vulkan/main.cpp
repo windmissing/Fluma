@@ -39,7 +39,8 @@ struct Window {
   std::wstring t833ConfigFile,t833SeedFile;
   uint32_t t833ForcedJ=0;
   bool t833F05Rest=false;
-  std::array<uint64_t,32> g13PulseHistory{};
+  std::array<grs::pc::CandidatePulse,32> g13PulseHistory{};
+  std::string t877Mode;
   size_t g13PulseWrite=0;
   bool t833Allowed=true;
   std::atomic<uint64_t> sourcePulse{0};
@@ -288,7 +289,10 @@ struct Window {
     sourcePulse.store(ns,std::memory_order_relaxed);
     if (!t833CandidateFile.empty()) {
       std::lock_guard lock(mutex);
-      g13PulseHistory[g13PulseWrite++%g13PulseHistory.size()]=ns;
+      const auto receipt=grs::pc::QpcTicks();
+      g13PulseHistory[g13PulseWrite%g13PulseHistory.size()]={g13PulseWrite+1,ticks,receipt,ns,
+                                                           grs::pc::QpcNs(receipt,hz)};
+      ++g13PulseWrite;
       return;
     }
     grs::g13vk::SourceOffer offer;
@@ -429,11 +433,11 @@ struct Window {
                                                },t833Case,t833ConfigFile,t833SeedFile,t833ForcedJ,rootCapture,d1ReplayPrefix,
                                                !d1Mode.empty(),[&](uint64_t after) {
                                                  std::lock_guard guard(mutex);
-                                                 std::vector<uint64_t> samples;
+                                                 std::vector<grs::pc::CandidatePulse> samples;
                                                  const auto count=std::min(g13PulseWrite,g13PulseHistory.size());
                                                  for (size_t i=g13PulseWrite-count;i<g13PulseWrite;++i) {
-                                                   const auto ns=g13PulseHistory[i%g13PulseHistory.size()];
-                                                   if (ns>after) samples.push_back(ns);
+                                                   const auto pulse=g13PulseHistory[i%g13PulseHistory.size()];
+                                                   if (pulse.sequence>after) samples.push_back(pulse);
                                                  }
                                                  return samples;
                                                },t833F05Rest,&m1Pulses,[&] {
@@ -443,7 +447,7 @@ struct Window {
                                                  held={};
                                                  scope.permission=0;
                                                  ingress.Authorize(scope,0);
-                                               },sourceTrace},
+                                               },sourceTrace,t877Mode},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
@@ -584,6 +588,11 @@ int wmain(int argc, wchar_t **argv) {
       window.t833ForcedJ=uint32_t(trial[0]-L'0');
     }
     else if (!std::wcscmp(argv[i],L"--g13-f05-rest")) window.t833F05Rest=true;
+    else if (!std::wcscmp(argv[i],L"--g13-diagnostics") && i+1<argc) {
+      const std::wstring mode=argv[++i];
+      if (mode!=L"full" && mode!=L"hot") return 2;
+      window.t877Mode=mode==L"full" ? "full" : "hot";
+    }
     else if (!std::wcscmp(argv[i], L"--m1-window") && i+3 < argc) {
       window.m1SourceModule = argv[++i];
       window.m1QuantumCandidate = argv[++i];
@@ -621,7 +630,7 @@ int wmain(int argc, wchar_t **argv) {
                    "[--m1-d1-replay-prefix PATH] "
                    "[--m1-dual-source] | --qualify-t849-writes FILE | --g13-candidate FILE "
                    "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] [--g13-f05-rest] "
-                   "[--g13-revoke-before | --g13-revoke-after]]\n";
+                   "[--g13-revoke-before | --g13-revoke-after] [--g13-diagnostics full|hot]]\n";
       return 2;
     }
   }
@@ -640,6 +649,7 @@ int wmain(int argc, wchar_t **argv) {
   if (!window.t833Case.empty() && window.t833CandidateFile.empty()) return 2;
   if (window.t833ForcedJ && window.t833Case!="F03") return 2;
   if (window.t833F05Rest && window.t833Case!="F05") return 2;
+  if (!window.t877Mode.empty() && window.t833CandidateFile.empty()) return 2;
   if (!window.t833CandidateFile.empty() && (window.steady || !window.m1SourceModule.empty())) return 2;
   if (window.sourceTrace) window.ingress.EnableTrace();
   if (window.dualSource && (window.m1QuantumCandidate.empty() || !window.m1ColdFile.empty())) return 2;

@@ -10,6 +10,7 @@
 #include "m1_ingress.h"
 #include "m1_hot_capture.h"
 #include "m1_pulse_queue.h"
+#include "g13_candidate_timing.h"
 #else
 struct NativeWindow;
 #endif
@@ -49,11 +50,12 @@ struct Attempt {
   bool m1RootCapture=false;
   std::wstring m1ReplayPrefix;
   bool m1D1=false;
-  std::function<std::vector<uint64_t>(uint64_t)> t833Pulses;
+  std::function<std::vector<pc::CandidatePulse>(uint64_t)> t833Pulses;
   bool t833F05Rest=false;
   M1PulseQueue *m1Pulses=nullptr;
   std::function<void()> disarmM1Input;
   bool m1Trace=false;
+  std::string t877Mode;
 #else
   NativeWindow *window;
 #endif

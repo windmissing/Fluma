@@ -36,6 +36,7 @@ set_property(SOURCE "${GPU}/g13vulkan_boot/boot.cpp" APPEND PROPERTY OBJECT_DEPE
     "${GPU}/g13vulkan_boot/m1_cold_format.h"
     "${GPU}/g13vulkan_boot/t849_writes.inc" "${GPU}/g13vulkan_boot/t854_writes.inc" "${GPU}/g13vulkan_boot/boot.h"
     "${GPU}/g13vulkan_boot/t833_candidate.inc" "${CMAKE_CURRENT_SOURCE_DIR}/root_plan.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/g13_candidate_timing.h"
     "${GPU}/m1/quantum_passes.h" "${G13_ASSET_DIR}/pc_steady_spirv.h")
 set_property(SOURCE wsi.cpp APPEND PROPERTY OBJECT_DEPENDS "${G13_ASSET_DIR}/pc_view_spirv.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/wsi.h" "${CMAKE_CURRENT_SOURCE_DIR}/m1_hot_capture.h")
@@ -43,6 +44,7 @@ set_property(SOURCE main.cpp APPEND PROPERTY OBJECT_DEPENDS
     "${GPU}/g13vulkan_boot/boot.h" "${CMAKE_CURRENT_SOURCE_DIR}/m1_ingress.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/m1_hot_capture.h" "${CMAKE_CURRENT_SOURCE_DIR}/m1_d1_plan.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/m1_pulse_queue.h")
+set_property(SOURCE main.cpp APPEND PROPERTY OBJECT_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/g13_candidate_timing.h")
 set_property(SOURCE "${GPU}/g13vulkan_boot/boot.cpp" APPEND PROPERTY OBJECT_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/m1_ingress.h" "${CMAKE_CURRENT_SOURCE_DIR}/m1_hot_capture.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/m1_pulse_queue.h" "${GPU}/m1/progress_clock_v2.h")
