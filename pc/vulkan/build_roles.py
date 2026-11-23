@@ -75,6 +75,16 @@ def t849_arms(emit):
         raw, deps = emit((17,), lambda op, arm: substitute(arm, statement, "", name) if op == 17 else arm)
         assert "traceStage" in deps and ("drive" in deps) != ("entryLedger" in deps)
         yield name, [17,66], raw
+    for name, motion in (("OP17_MOTION_CONTEXT", True), ("OP17_MMS_CONTEXT", False)):
+        raw, deps = emit(
+            (17,),
+            lambda op, arm: substitute(arm, "\nentryLedger();", "", name) if op == 17 else arm,
+            lambda fn, body: cut_drive(fn, body, motion),
+        )
+        assert {"drive", "traceStage", "acceptedTime", "coldFP32Probe"} <= set(deps)
+        assert "entryLedger" not in deps
+        assert ("softReduce" in deps) == motion and ("softExp" in deps) != motion
+        yield name, [17,66], raw
     reduce = ("if(uOp==7u){lane=gl_LocalInvocationID.x;if(lane==0u){uint quadrant;"
               "Soft reduced=softReduce(softF32(uintBitsToFloat(outState[26])),quadrant);"
               "uvec4 raw=mathRaw(reduced);c[624]=quadrant;for(uint i=0u;i<4u;++i)c[625u+i]=raw[i];}return;}")
@@ -82,6 +92,72 @@ def t849_arms(emit):
     assert {"softReduce","softF32","mathRaw"} <= set(deps)
     assert not {"softPolynomial","softDiv","softExp"} & set(deps)
     yield "OP7_REDUCE_ONLY", [7,66], raw
+
+
+OP17_PROTOCOL = """
+const uint t854Tag=0x54383534u;
+bool t854Range(){return uPrivateWord>=uL[5]&&uPrivateWord%4u==0u&&
+                                uPrivateWord<=w.length()&&w.length()-uPrivateWord>=32u;}
+bool t854Previous(uint phase){
+ if(!t854Range())return false;
+ uint p=uPrivateWord;
+ return w[p]==t854Tag&&w[p+1u]==phase&&w[p+2u]==c[136]&&w[p+3u]==c[137]&&
+        w[p+4u]==uOp&&w[p+5u]==uScope&&w[p+6u]==uJ&&w[p+7u]==uMicro&&w[p+8u]==uBlock&&
+        w[p+9u]==uIndex&&w[p+10u]<=1u&&w[p+11u]==0u&&w[p+30u]==0u&&w[p+31u]==0u;
+}
+void t854Stage(uint phase){memoryBarrierBuffer();w[uPrivateWord+1u]=phase;}
+void t854MathSave(){
+ uint p=uPrivateWord;
+ w[p+12u]=uint(softDomain);w[p+13u]=localMathStatus;w[p+14u]=localMathFunction;
+ w[p+15u]=localMathObserved;w[p+16u]=localRounded;w[p+17u]=uint(expContext);
+ for(uint i=0u;i<4u;++i){w[p+18u+i]=localArg0[i];w[p+22u+i]=localArg1[i];w[p+26u+i]=localSoftResult[i];}
+}
+void t854MathRestore(){
+ uint p=uPrivateWord;
+ softDomain=w[p+12u]!=0u;localMathStatus=w[p+13u];localMathFunction=w[p+14u];
+ localMathObserved=w[p+15u];localRounded=w[p+16u];expContext=w[p+17u]!=0u;
+ for(uint i=0u;i<4u;++i){localArg0[i]=w[p+18u+i];localArg1[i]=w[p+22u+i];localSoftResult[i]=w[p+26u+i];}
+}
+void t854MotionLatch(bool isActive){
+ if(lane!=0u)return;
+ uint p=uPrivateWord;
+ w[p]=t854Tag;w[p+2u]=c[136];w[p+3u]=c[137];
+ w[p+4u]=uOp;w[p+5u]=uScope;w[p+6u]=uJ;w[p+7u]=uMicro;w[p+8u]=uBlock;w[p+9u]=uIndex;
+ w[p+10u]=uint(isActive);w[p+11u]=0u;w[p+30u]=0u;w[p+31u]=0u;
+ t854MathSave();t854Stage(1u);
+}
+"""
+
+
+def t854_private_arms(emit):
+    def drive_part(name, body, motion):
+        if name != "drive" or body == "void drive();":
+            return body
+        cut = "uvec4 fq=uvec4(baseState[18],baseState[19],0u,0u);"
+        front, tail = body.split(cut)
+        return front+"}" if motion else "void drive(){if(lane!=0u)return;"+cut+tail
+
+    def motion(arm):
+        arm = substitute(arm, "lane=gl_LocalInvocationID.x;", "lane=gl_LocalInvocationID.x;\n"
+                         "if(!t854Range()||(c[136]|c[137])==0u)return;\n"
+                         "if(lane==0u)w[uPrivateWord+1u]=0u;", "T854 private motion")
+        arm = substitute(arm, "if(noop){traceStage(true);",
+                         "if(noop){traceStage(true);t854MotionLatch(false);", "T854 private motion")
+        return substitute(arm, "entryLedger();}}}\ntraceStage(false);",
+                          "}}}\nt854MotionLatch(true);", "T854 private motion")
+
+    mms = """if(uOp==17u){lane=gl_LocalInvocationID.x;if(lane!=0u||!t854Previous(1u))return;
+ if(w[uPrivateWord+10u]==1u){t854MathRestore();drive();t854MathSave();}t854Stage(2u);return;}"""
+    ledger = """if(uOp==17u){lane=gl_LocalInvocationID.x;if(!t854Previous(2u))return;
+ if(w[uPrivateWord+10u]==1u){entryLedger();traceStage(false);}
+ if(lane==0u)t854Stage(3u);return;}"""
+    for name, arm, rewrite in (
+            ("OP17_PRIVATE_MOTION", motion, lambda fn, body: drive_part(fn, body, True)),
+            ("OP17_PRIVATE_MMS", lambda _: mms, lambda fn, body: drive_part(fn, body, False)),
+            ("OP17_PRIVATE_LEDGER", lambda _: ledger, None)):
+        raw, _ = emit((17,), lambda op, old: arm(old) if op == 17 else old, rewrite)
+        src = substitute(raw.decode(), "void main(){", OP17_PROTOCOL+"\nvoid main(){", name)
+        yield name, [17,66], src.encode()
 
 
 def build(out, compiler):
@@ -104,13 +180,15 @@ def build(out, compiler):
         sources.append((f"OP_00_{first}_{last}", [*selection, 66], raw))
     sources.extend(t841_arms(emit))
     sources.extend(t849_arms(emit))
+    sources.extend(t854_private_arms(emit))
     for name, opcodes, raw in sources:
         src = raw.decode()
         for a, b in (("#version 310 es", DECLARATION),
                      ("uniform uint uOp,uScope,uJ,uMicro,uBlock,uIndex;",
                       "layout(push_constant) uniform Dispatch {uint uOp,uScope,uJ,uMicro,uBlock,uIndex;};"),
                      ("uniform uint uL[80];",
-                      "layout(std140,set=0,binding=4) uniform LayoutWords {uint uL[80];};"),
+                      ("layout(std140,set=0,binding=4) uniform LayoutWords {uint uL[80];"+
+                       ("uint uPrivateWord;" if name.startswith("OP17_PRIVATE_") else "")+"};")),
                      ("highp float ulp=", "precise highp float ulp="),
                      ("highp float retained=", "precise highp float retained="),
                      ("highp float produced=", "precise highp float produced=")):
@@ -137,6 +215,8 @@ def build(out, compiler):
         assert re.findall(r"OpMemberDecorate %Dispatch (\d+) Offset (\d+)", asm) == [
             (str(i), str(i*4)) for i in range(6)]
         assert "OpDecorate %_arr_uint_uint_80 ArrayStride 16" in asm
+        if name.startswith("OP17_PRIVATE_"):
+            assert "OpMemberDecorate %LayoutWords 1 Offset 1280" in asm
         raw_spv = module.read_bytes()
         records.append(dict(role=name, sourceSHA=sha(encoded), sourceBytes=len(encoded), moduleSHA=sha(raw_spv),
                             moduleBytes=len(raw_spv), parentSHA=sha(raw), opcodes=opcodes,

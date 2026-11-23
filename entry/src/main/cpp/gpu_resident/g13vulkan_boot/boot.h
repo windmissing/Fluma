@@ -36,6 +36,7 @@ struct Attempt {
   std::function<bool(uint64_t, const std::function<void()> &)> acceptPointer;
   bool m1SinglePresent = false;
   std::wstring t849WriteFile;
+  bool t854PrivateWrites = false;
 #else
   NativeWindow *window;
 #endif

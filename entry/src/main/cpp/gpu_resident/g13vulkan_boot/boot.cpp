@@ -20,6 +20,7 @@
 #include <chrono>
 #include <fstream>
 #include <thread>
+#include <utility>
 #include <vector>
 
 namespace grs::g13vk {
@@ -141,6 +142,8 @@ public:
 #ifdef _WIN32
     for (auto p : m1QuantumPipelines)
       if (p) vk.DestroyPipeline(device, p, nullptr);
+    for (auto p : t854Pipelines)
+      if (p) vk.DestroyPipeline(device, p, nullptr);
     if (m1QuantumDescriptorPool) vk.DestroyDescriptorPool(device, m1QuantumDescriptorPool, nullptr);
 #endif
     if (pipelineLayout)
@@ -185,6 +188,7 @@ private:
 #ifdef _WIN32
   HMODULE loader = nullptr;
   std::array<VkPipeline,2> m1QuantumPipelines{};
+  std::array<VkPipeline,3> t854Pipelines{};
   VkDescriptorPool m1QuantumDescriptorPool = VK_NULL_HANDLE;
   std::vector<VkDescriptorSet> m1QuantumSets;
   std::vector<m1::QuantumPassOp> m1QuantumPasses;
@@ -247,6 +251,7 @@ private:
   void QualifySteady(const std::string &roleName);
   void ObserveT849Reduction(const char *,PFN_vkResetCommandPool);
   void ObserveT849Writes();
+  void ObserveT854Writes(const Profile &);
   std::string ProbeM1Source(const Candidate &);
   VkPipeline M1Pipeline(const std::wstring &, const char *);
   void PrepareM1Quantum(const Candidate &);
@@ -882,6 +887,7 @@ void Boot::QualifySteady(const std::string &roleName) {
 }
 
 #include "t849_writes.inc"
+#include "t854_writes.inc"
 
 void Boot::ObserveT849Reduction(const char *moduleSHA, PFN_vkResetCommandPool reset) {
   Checkpoint("T849_PRIVATE_REDUCE");
@@ -983,16 +989,20 @@ std::string Boot::Run() {
   const auto storage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 #ifdef _WIN32
   const auto stateTransferRead=attempt.t849WriteFile.empty() ? 0 : VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+  const VkDeviceSize privateWorkBytes=attempt.t854PrivateWrites ? 128 : 0;
+  const VkDeviceSize privateLayoutBytes=attempt.t854PrivateWrites ? 16 : 0;
 #else
   constexpr auto stateTransferRead=0;
+  constexpr VkDeviceSize privateWorkBytes=0, privateLayoutBytes=0;
 #endif
   for (size_t i = 0; i < 3; ++i)
     Allocate(i, profile->sw * 4, storage | VK_BUFFER_USAGE_TRANSFER_DST_BIT | stateTransferRead);
   for (size_t i = 3; i < 5; ++i)
     Allocate(i, profile->pw * 4, storage);
-  Allocate(kWork, profile->ww * 4, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
+  Allocate(kWork, profile->ww * 4 + privateWorkBytes, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT |
+           (privateWorkBytes ? VK_BUFFER_USAGE_TRANSFER_DST_BIT : 0));
   Allocate(kControl, 18688 * 4, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
-  Allocate(kLayout, kLayoutBytes, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
+  Allocate(kLayout, kLayoutBytes + privateLayoutBytes, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
   Allocate(kStaging, kStagingWords * 4, VK_BUFFER_USAGE_TRANSFER_DST_BIT, true);
   CreateDescriptors();
   VkCommandPoolCreateInfo pool{VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO};
@@ -1040,6 +1050,10 @@ std::string Boot::Run() {
     if (numeric.find("\"state\":\"BOOT_NUMERIC_QUALIFIED\"")==std::string::npos)
       return numeric;
     if (!attempt.t849WriteFile.empty()) {
+      if (attempt.t854PrivateWrites) {
+        ObserveT854Writes(*profile);
+        return Receipt("T854_PRIVATE_WRITES_CAPTURED","");
+      }
       ObserveT849Writes();
       return Receipt("T849_PRIVATE_WRITES_CAPTURED","");
     }

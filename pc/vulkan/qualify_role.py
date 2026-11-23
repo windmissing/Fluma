@@ -64,7 +64,8 @@ def supervise(exe, role, out, disable, stack_dumps=False, private_writes=False):
     stdout, stderr = stem.with_suffix(".jsonl"), stem.with_suffix(".stderr")
     invocation = [str(exe.resolve()), "--qualify-steady-role", role]
     if private_writes:
-        invocation = [str(exe.resolve()), "--qualify-t849-writes", str(stem.with_suffix(".bin").resolve())]
+        flag = "--qualify-t854-writes" if role == "T854_PRIVATE_WRITES" else "--qualify-t849-writes"
+        invocation = [str(exe.resolve()), flag, str(stem.with_suffix(".bin").resolve())]
     if disable:
         invocation.append("--disable-optimization")
     samples, rows = [], []
@@ -135,13 +136,14 @@ def supervise(exe, role, out, disable, stack_dumps=False, private_writes=False):
     final = rows[-1] if rows else {}
     probes = [r for r in rows if r.get("schema") == "PC_G13_STEADY_OP66_V1"]
     probe = probes[0] if probes else None
-    retired = not forced and final.get("state") in ("STEADY_ROLE_QUALIFIED","T849_PRIVATE_WRITES_CAPTURED")
+    retired = not forced and final.get("state") in ("STEADY_ROLE_QUALIFIED","T849_PRIVATE_WRITES_CAPTURED",
+                                                     "T854_PRIVATE_WRITES_CAPTURED")
     receipt = dict(attemptId=str(uuid.uuid4()), role=role, pid=child.pid, reason=reason, lastPipeline=build,
                    exeSHA=hashlib.sha256(exe.read_bytes()).hexdigest(), stdoutSHA=hashlib.sha256(stdout.read_bytes()).hexdigest(),
                    supervisorStopQpc=str(stop_tick), qpcFrequency=str(frequency), samples=samples, stackDumps=dumps,
                    probe=probe, forced=forced, exitCode=exit_code, ownerRetired=retired)
     if private_writes:
-        receipt.update(probes=probes, privateWrites=final.get("t849PrivateWrites"))
+        receipt.update(probes=probes, privateWrites=final.get("t854PrivateWrites",final.get("t849PrivateWrites")))
     stem.with_suffix(".receipt.json").write_text(json.dumps(receipt, indent=2)+"\n", encoding="utf8")
     return receipt
 
@@ -153,24 +155,28 @@ if __name__ == "__main__":
     parser.add_argument("roles", nargs="*")
     parser.add_argument("--t849-private-writes", action="store_true",
                         help="capture frozen diagnostic buffers for the qualified OP7 subphases and downstream OP8")
+    parser.add_argument("--t854-private-writes", action="store_true",
+                        help="capture three private OP17 cases after each instrumented phase qualifies")
     parser.add_argument("--disable-optimization", action="store_true")
     parser.add_argument("--stack-dumps", action="store_true",
                         help="take standard thread-stack minidumps of the owned child at 20s and 45s")
     args = parser.parse_args()
-    if args.t849_private_writes:
-        if args.roles or args.disable_optimization:
+    private_writes = args.t849_private_writes or args.t854_private_writes
+    if private_writes:
+        if args.roles or args.disable_optimization or (args.t849_private_writes and args.t854_private_writes):
             parser.error("private write set uses the pinned roles and default flags")
-        args.roles = ["T849_PRIVATE_WRITES"]
+        args.roles = ["T854_PRIVATE_WRITES" if args.t854_private_writes else "T849_PRIVATE_WRITES"]
     elif not args.roles:
         parser.error("provide at least one role")
     args.out.mkdir(parents=True, exist_ok=True)
     failed = False
     for role in args.roles:
-        if not args.t849_private_writes and not re.fullmatch(
+        if not private_writes and not re.fullmatch(
                 r"OP(?:_[0-9]+(?:_[0-9]+)*|7_(?:FIELD|DRIVE|MOTION|MMS_FORCE|REDUCE)_ONLY|"
-                r"17_(?:LEDGER_ONLY|DRIVE_CONTEXT)|6|8|12_14|15|16|17)", role):
+                r"17_(?:LEDGER_ONLY|DRIVE_CONTEXT|MOTION_CONTEXT|MMS_CONTEXT|PRIVATE_MOTION|PRIVATE_MMS|PRIVATE_LEDGER)|"
+                r"6|8|12_14|15|16|17)", role):
             parser.error("invalid role")
-        receipt = supervise(args.exe, role, args.out, args.disable_optimization, args.stack_dumps, args.t849_private_writes)
+        receipt = supervise(args.exe, role, args.out, args.disable_optimization, args.stack_dumps, private_writes)
         print(role, receipt["reason"], receipt["exitCode"], receipt["ownerRetired"], flush=True)
         failed |= receipt["exitCode"] != 0 or not receipt["ownerRetired"]
     raise SystemExit(int(failed))

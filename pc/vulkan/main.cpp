@@ -27,6 +27,7 @@ struct Window {
   std::wstring m1QuantumCandidate, m1QuantumCommit, m1ColdFile;
   bool m1Present = false;
   std::wstring t849WriteFile;
+  bool t854PrivateWrites = false;
   std::atomic<uint64_t> sourcePulse{0};
   bool pointerReady = false;
   grs::g13vk::PointerSample held;
@@ -132,7 +133,7 @@ struct Window {
                                                    return false;
                                                  accept();
                                                  return true;
-                                               }, once, t849WriteFile},
+                                               }, once, t849WriteFile, t854PrivateWrites},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos ||
@@ -151,7 +152,8 @@ struct Window {
           held = {};
         }
       }
-      const char *qualified = !t849WriteFile.empty() ? "\"state\":\"T849_PRIVATE_WRITES_CAPTURED\"" :
+      const char *qualified = t854PrivateWrites ? "\"state\":\"T854_PRIVATE_WRITES_CAPTURED\"" :
+                              !t849WriteFile.empty() ? "\"state\":\"T849_PRIVATE_WRITES_CAPTURED\"" :
                               m1Present ? "\"state\":\"M1_DRY_SOURCE_PRESENT_RETIRED\"" :
                               !m1SourceModule.empty() ? "\"state\":\"M1_DRY_SOURCE_ACCEPTED\"" :
                               !steadyRole.empty() ? "\"state\":\"STEADY_ROLE_QUALIFIED\"" :
@@ -229,6 +231,11 @@ int wmain(int argc, wchar_t **argv) {
     }
     else if (!std::wcscmp(argv[i], L"--qualify-t849-writes") && i+1 < argc) {
       window.t849WriteFile = argv[++i];
+      window.bootOnly = window.steady = true;
+    }
+    else if (!std::wcscmp(argv[i], L"--qualify-t854-writes") && i+1 < argc) {
+      window.t849WriteFile = argv[++i];
+      window.t854PrivateWrites = true;
       window.bootOnly = window.steady = true;
     }
     else if (!std::wcscmp(argv[i], L"--m1-window") && i+3 < argc) {
