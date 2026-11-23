@@ -1,0 +1,22 @@
+{
+ "revision": "T840_V2_M1_INDEPENDENT_RERUN_PASS_V1",
+ "date": "2026-11-23 09:00",
+ "unblock": "T830 regenerated spv components delivered (t830-m1-20261123: full_source.spv 1912af9e + candidate b8f0e327 + commit caf0614c, all SHA match original receipts)",
+ "rerun": {
+  "cmd": "t830-window-final.exe --once --present-m1-source t830-m1-20261123/full_source.spv",
+  "result": "M1 SOURCE stage TRIGGERED and COMPLETED \u2014 22 stages incl M1_SOURCE_MODULE/PIPELINE/BUFFERS/SUBMIT/FENCED_READBACK/WSI"
+ },
+ "M1checks": {
+  "state": "M1_DRY_SOURCE_PRESENT_RETIRED",
+  "m1AdmittedQ": 131072,
+  "m1Completion": "256 words",
+  "acceptedRoot==m1Nonce": true,
+  "generation": "1",
+  "pixel": "0xff00ff00 exact",
+  "present chain": "acquire/submit/fence/present/imagePresent ALL 0",
+  "m1PublicationReleased": true,
+  "m1WsiResult": 0,
+  "SPIR-V m1SourceModuleSHA": "1912af9e receipt-matched"
+ },
+ "verdict": "M1 dry SOURCE + same-root window presentation INDEPENDENTLY REPRODUCED \u2014 all 11 checks from v1 now verified on an INDEPENDENT rerun (v1 verified original receipts, v2 verifies independent execution)"
+}

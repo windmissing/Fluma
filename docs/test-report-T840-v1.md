@@ -40,3 +40,21 @@
 - 原件证据链 **11/11 验证通过**
 - 独立复跑：BOOT 窗口路径 PASS；**M1 SOURCE 独立复跑阻塞于 spv 组件
   缺失**——需 developer 重新提供三个 .spv（或保留生成产物）
+
+
+## v2 追加（2026-11-23 09:00，effector；spv 组件重提供——M1 独立复跑通过，v1 缺口闭环）
+
+**解锁**：T830 已重提供三个 spv 组件（t830-m1-20261123/：full_source.spv
+1912af9e + candidate b8f0e327 + commit caf0614c——SHA 与原件回执逐匹）。
+
+**M1 独立复跑**（`--once --present-m1-source` 固定入口）：
+
+- **M1 SOURCE 阶段触发并完成**：22 阶段（含 M1_SOURCE_MODULE/PIPELINE/
+  BUFFERS/SUBMIT/FENCED_READBACK/WSI）
+- 终态 **M1_DRY_SOURCE_PRESENT_RETIRED**
+- **11 项判据在独立复跑中全部复现**：m1AdmittedQ=131072、Completion
+  256 words、acceptedRoot==m1Nonce、generation 1、像素 **0xff00ff00 精确**、
+  present 链全 0、publicationReleased=true、SPIR-V 1912af9e
+
+**判定**：v1 验证的是 T830 原件回执链，v2 完成独立执行验证——**M1 dry
+SOURCE + 同根窗口呈现独立复现成功**，v1 的 spv 缺口闭环。
