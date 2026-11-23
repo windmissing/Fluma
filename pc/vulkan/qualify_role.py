@@ -116,8 +116,11 @@ if __name__ == "__main__":
     parser.add_argument("--disable-optimization", action="store_true")
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
+    failed = False
     for role in args.roles:
         if not re.fullmatch(r"OP(?:_[0-9]+(?:_[0-9]+)*|7_(?:FIELD|DRIVE)_ONLY|6|8|12_14|15|16|17)", role):
             parser.error("invalid role")
         receipt = supervise(args.exe, role, args.out, args.disable_optimization)
         print(role, receipt["reason"], receipt["exitCode"], receipt["ownerRetired"], flush=True)
+        failed |= receipt["exitCode"] != 0 or not receipt["ownerRetired"]
+    raise SystemExit(int(failed))
