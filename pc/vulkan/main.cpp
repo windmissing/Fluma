@@ -114,9 +114,12 @@ struct Window {
                                                steadyRole, disableOptimization, m1SourceModule,
                                                [&] { return sourcePulse.load(std::memory_order_relaxed); },
                                                m1QuantumCandidate, m1QuantumCommit, m1ColdFile,
-                                               [&] {
+                                               [&](const std::string &readyReceipt) {
                                                  std::lock_guard guard(mutex);
-                                                 pointerReady = !closing && generation == previous;
+                                                 if (closing || generation != previous) return false;
+                                                 Emit(readyReceipt);
+                                                 pointerReady = true;
+                                                 return true;
                                                },
                                                [&] {
                                                  std::lock_guard guard(mutex);

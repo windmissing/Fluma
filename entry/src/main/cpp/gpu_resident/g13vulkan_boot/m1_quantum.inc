@@ -113,7 +113,9 @@ void Boot::PrepareM1Quantum(const Candidate &candidate) {
   const auto waited=vk.WaitForFences(device,1,&fence,VK_TRUE,UINT64_MAX);
   if (waited==VK_SUCCESS || waited==VK_ERROR_DEVICE_LOST) inFlight=false;
   Check(waited,"vkWaitForFences.M1_ANGLES");
-  fields << ",\"m1ColdAngleUploadBytes\":" << sizeof(kAngleWords);
+  fields << ",\"m1ColdAngleUploadBytes\":" << sizeof(kAngleWords)
+         << ",\"m1ColdAngleFenceVkResult\":" << int(waited);
+  Checkpoint("M1_QUANTUM_COLD_ANGLES_COMPLETE");
 }
 
 bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,

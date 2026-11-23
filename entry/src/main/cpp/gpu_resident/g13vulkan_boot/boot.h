@@ -31,7 +31,7 @@ struct Attempt {
   std::wstring m1SourceModule;
   std::function<uint64_t()> sourcePulse;
   std::wstring m1QuantumCandidate, m1QuantumCommit, m1ColdFile;
-  std::function<void()> pointerReady;
+  std::function<bool(const std::string &)> pointerReady;
   std::function<PointerSample()> pointer;
   std::function<bool(uint64_t, const std::function<void()> &)> acceptPointer;
   bool m1SinglePresent = false;

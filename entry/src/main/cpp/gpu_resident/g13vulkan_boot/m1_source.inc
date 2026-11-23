@@ -1,12 +1,27 @@
 constexpr char kM1CandidateSHA[] = "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c";
 constexpr char kM1CommitSHA[] = "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce";
 
+constexpr bool SourceDescriptorsReady(VkResult allocated, size_t expected, size_t requested,
+                                      size_t nonNull, bool current) {
+  return allocated == VK_SUCCESS && requested == expected && nonNull == expected && current;
+}
+
+static_assert(SourceDescriptorsReady(VK_SUCCESS,16,16,16,true));
+static_assert(!SourceDescriptorsReady(VK_SUCCESS,16,8,8,true));
+static_assert(!SourceDescriptorsReady(VK_SUCCESS,16,16,15,true));
+static_assert(!SourceDescriptorsReady(VK_ERROR_OUT_OF_POOL_MEMORY,16,16,16,true));
+static_assert(!SourceDescriptorsReady(VK_SUCCESS,16,16,16,false));
+
 std::string Boot::ProbeM1Source(const Candidate &candidate) {
   constexpr uint32_t K = 192, Kw = 128, kColumn = 16*(K+Kw);
   constexpr uint32_t headerAt = kColumn+16*128, stateWords = headerAt+256;
   constexpr uint32_t workWords = 96+4096*64+stateWords+4096*16;
   constexpr uint32_t pubWords = 16*K+20*Kw+16*128+256;
   constexpr uint32_t passes = 8;
+  constexpr size_t banks[]{kM1Base,kM1Candidate};
+  constexpr uint32_t setCount = uint32_t(std::size(banks))*passes;
+  constexpr uint32_t storageBindingsPerSet = 4;
+  static_assert(setCount == 16);
   constexpr auto storage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
   constexpr auto upload = VK_BUFFER_USAGE_TRANSFER_DST_BIT;
   constexpr auto block = 20*sizeof(uint32_t);
@@ -73,23 +88,34 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
 
   vk.DestroyDescriptorPool(device, descriptorPool, nullptr);
   descriptorPool = VK_NULL_HANDLE;
-  const VkDescriptorPoolSize counts[] = {{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, passes*8},
-                                         {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, passes*2}};
+  const VkDescriptorPoolSize counts[] = {{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, setCount*storageBindingsPerSet},
+                                         {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, setCount}};
   VkDescriptorPoolCreateInfo pool{VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
-  pool.maxSets = passes*2;
+  pool.maxSets = setCount;
   pool.poolSizeCount = 2;
   pool.pPoolSizes = counts;
   Check(vk.CreateDescriptorPool(device, &pool, nullptr, &descriptorPool), "vkCreateDescriptorPool.M1_SOURCE");
-  std::array<VkDescriptorSetLayout, passes*2> layouts;
+  std::array<VkDescriptorSetLayout, setCount> layouts;
   layouts.fill(descriptorLayout);
-  std::array<VkDescriptorSet, passes*2> bindings{};
+  std::array<VkDescriptorSet, setCount> bindings{};
   VkDescriptorSetAllocateInfo setInfo{VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
   setInfo.descriptorPool = descriptorPool;
-  setInfo.descriptorSetCount = passes;
+  setInfo.descriptorSetCount = setCount;
   setInfo.pSetLayouts = layouts.data();
-  Check(vk.AllocateDescriptorSets(device, &setInfo, bindings.data()), "vkAllocateDescriptorSets.M1_SOURCE");
-  constexpr size_t banks[]{kM1Base,kM1Candidate};
-  for (size_t base=0; base<2; ++base) {
+  const auto allocated=vk.AllocateDescriptorSets(device,&setInfo,bindings.data());
+  const auto firstNull=std::find(bindings.begin(),bindings.end(),VK_NULL_HANDLE);
+  const auto nonNull=std::count_if(bindings.begin(),bindings.end(),[](VkDescriptorSet set) {
+    return set!=VK_NULL_HANDLE;
+  });
+  fields << ",\"m1SourceDescriptorAllocation\":{\"expectedSets\":" << setCount
+         << ",\"requestedSets\":" << setInfo.descriptorSetCount << ",\"nonNullSets\":" << nonNull
+         << ",\"firstNullIndex\":" << (firstNull==bindings.end() ? "null" : std::to_string(firstNull-bindings.begin()))
+         << ",\"vkResult\":" << int(allocated) << "}";
+  Checkpoint("M1_SOURCE_DESCRIPTOR_ALLOCATED");
+  Check(allocated,"vkAllocateDescriptorSets.M1_SOURCE");
+  Require(SourceDescriptorsReady(allocated,setCount,setInfo.descriptorSetCount,size_t(nonNull),attempt.current()),
+          "M1_SOURCE_DESCRIPTOR_SETS_INCOMPLETE_OR_REVOKED");
+  for (size_t base=0; base<std::size(banks); ++base) {
     for (uint32_t pass = 0; pass < passes; ++pass) {
       const size_t output = pass < 5 ? kM1Events : pass < 7 ? kM1Pub : kM1Tail;
       const size_t slots[] = {banks[base], banks[1-base], kM1Work, output, kM1Uniform};
@@ -105,6 +131,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       vk.UpdateDescriptorSets(device, uint32_t(writes.size()), writes.data(), 0, nullptr);
     }
   }
+  fields << ",\"m1SourceDescriptorUpdates\":" << setCount;
+  Checkpoint("M1_SOURCE_DESCRIPTOR_UPDATES_COMPLETE");
 
   auto reset = reinterpret_cast<PFN_vkResetCommandPool>(vk.GetDeviceProcAddr(device, "vkResetCommandPool"));
   auto fill = reinterpret_cast<PFN_vkCmdFillBuffer>(vk.GetDeviceProcAddr(device, "vkCmdFillBuffer"));
@@ -135,8 +163,10 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   uint64_t pulse = attempt.sourcePulse();
   uint64_t delta = 0;
   if (interactive) {
-    Checkpoint("M1_POINTER_READY");
-    attempt.pointerReady();
+    stage="M1_POINTER_READY";
+    const bool opened=attempt.pointerReady(Receipt("RUNNING",""));
+    stage="M1_POINTER_WAIT";
+    Require(opened,"ATTEMPT_REVOKED");
     uint64_t anchor = 0, hold = 0, expired = 0;
     while (attempt.current()) {
       const auto next = attempt.pointer();
