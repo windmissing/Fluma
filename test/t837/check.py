@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import importlib.util
+import io
 import json
 import math
 from pathlib import Path
@@ -10,7 +11,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools/g13"))
-from read_archive import exact_id, read
+from read_archive import exact_id, read, tagged_receipt
 
 
 def load_module(path):
@@ -46,7 +47,7 @@ def identity(words, offset):
     return words[offset] | words[offset+1] << 32
 
 
-def tail_from_archive(path, receipt):
+def candidate_archive(path, receipt):
     result = read(path, receipt)
     enforce(result["state"] == "STRUCTURALLY_COMPLETE", "forensic/partial archive")
     # Validate the exact file SHA again while extracting bounded windows.
@@ -55,14 +56,23 @@ def tail_from_archive(path, receipt):
     with path.open("rb") as source:
         first = source.readline(16385)
         header = json.loads(first)["words"]
-        enforce(header[4] == 2, "FULL capture required for GridView")
+        kind = {1: "ROOT", 2: "FULL"}[header[4]]
         profile = next(p for p in LAYOUT["profiles"] if (p["Nx"], p["Ny"]) == tuple(header[96:98]))
-        ctrl = next(d["byteOffset"] for d in profile["FULLColdDirectory"] if d["name"] == "CTRL")
-        candidate = next(d["byteOffset"] for d in profile["FULLColdDirectory"] if d["name"] == "CANDIDATE")
-        raw_fields = {f["name"]: bytearray() for f in profile["state"] if f["name"] in ("u","v","piQ32")}
-        spans = [(ctrl,512,config), (ctrl+73728,1024,tail)]
+        directory = {d["name"]: d for d in profile[f"{kind}ColdDirectory"]}
+        ctrl = directory["CTRL"]["byteOffset"]
+        candidate = directory["CANDIDATE"]["byteOffset"]
+        raw_fields = {n: bytearray() for n in ("u", "v", "piQ32", "motion")} if kind == "FULL" else {}
+        packs = {n: bytearray() for n in ("PACK0", "PACK1")} if kind == "FULL" else {}
+        native_raw = bytearray()
+        permit_raw = bytearray()
+        spans = [(ctrl,512,config), (ctrl+73728,1024,tail), (ctrl+512,512,permit_raw),
+                 (5504*4,1024,native_raw)]
         spans.extend((candidate+f["byteStart"], f["bytes"], raw_fields[f["name"]])
                      for f in profile["state"] if f["name"] in raw_fields)
+        if raw_fields:
+            spans.append((candidate+30*4, 4, raw_fields["motion"]))
+        spans.extend((directory[name]["byteOffset"], directory[name]["byteLength"], data)
+                     for name, data in packs.items())
         checksum.update(first)
         for line in source:
             checksum.update(line)
@@ -79,7 +89,35 @@ def tail_from_archive(path, receipt):
     enforce(all(len(target) == size for _, size, target in spans), "archive field range")
     fields = {name: [item[0] for item in struct.iter_unpack("<q" if name == "piQ32" else "<I", values)]
               for name, values in raw_fields.items()}
-    return bytes(config), bytes(tail), result["fileSHA256"], fields
+    native = tagged_receipt(io.BytesIO(native_raw), 0, 256, 6)
+    permit = struct.unpack("<128I", permit_raw)
+    return dict(kind=kind, config=bytes(config), tail=bytes(tail), sha=result["fileSHA256"], fields=fields,
+                packs=packs, native=native, permit=permit, header=header)
+
+
+def tail_from_archive(path, receipt):
+    """Compatibility helper for consumers that require a FULL field."""
+    a = candidate_archive(path, receipt)
+    enforce(a["kind"] == "FULL", "FULL capture required for GridView")
+    return a["config"], a["tail"], a["sha"], {k: a["fields"][k] for k in ("u", "v", "piQ32")}
+
+
+def pack_view(a):
+    tail = struct.unpack("<256I", a["tail"])
+    config = struct.unpack("<128I", a["config"])
+    nx, ny = config[4:6]
+    matches = []
+    for data in a["packs"].values():
+        words = struct.unpack(f"<{len(data)//4}I", data)
+        if (len(words) == 64+16*nx*ny and words[:2] == (1446195527,1)
+                and words[4:6] == (nx,ny) and words[7] == 1 and words[63] == 0xc0de1301
+                and identity(words,18) == identity(tail,8) and identity(words,20) == identity(tail,26)
+                and identity(words,14) == identity(tail,20) and words[24:32] == config[76:84]):
+            matches.append(words)
+    enforce(len(matches) == 1, "same-root GPU PACK required")
+    words = matches[0]
+    return dict(phi=[words[64+16*i+3] for i in range(nx*ny)], pRef=words[48], T0=config[11],
+                motion={0:"REST",1:"REST",2:"RAMP_SPIN",3:"CONSTANT_SPIN"}[a["fields"]["motion"][0]])
 
 
 def units(config, view):
@@ -203,26 +241,52 @@ def field_reference(case, fields, view, nu, accepted_quantum):
                 finestThresholdsSatisfied=(vrms <= 1/32 and vmax <= 1/16 and prms <= 1/16) if nx == 128 else None)
 
 
-def inspect(e, config, raw, synthetic=False):
+def completion(e, raw, *, archive=None):
+    enforce(len(raw) == 1024 and sha(raw) == e["completionSHA"], "Completion256 SHA/size")
+    tail = struct.unpack("<256I", raw)
+    enforce(tail[:4] == (MAGIC["tail"], 1, MAGIC["profile"], 256) and tail[255] == 0xc0de1301,
+            "Completion256 header/seal")
+    opcode = tail[4]
+    expected_count = {0: 820, 50: 16}.get(opcode)
+    enforce(expected_count is not None and tail[5] == 1 and tail[7] == 0 and tail[42:44] == (1, 3)
+            and tail[39] == expected_count and tail[40]+tail[41] == tail[39]
+            and (tail[37] & tail[38]) == tail[37], "accepted opcode/counts/audit")
+    for name, offset in (("nonce",8), ("plan",10), ("owner",14), ("context",16),
+                         ("surface",18), ("geometry",20), ("configGeneration",22),
+                         ("commit",26), ("acceptedQuantum",34)):
+        value = exact_id(e[name])
+        enforce((value != 0 or opcode == 50 and name == "acceptedQuantum")
+                and value == identity(tail, offset), "completion identity " + name)
+    grant, deadline, gpu_accept = (identity(tail, i) for i in (28, 30, 32))
+    if archive is not None and archive["native"].get("backend") == "VULKAN_PC":
+        native = archive["native"]
+        permit = archive["permit"]
+        accepted_ns = exact_id(e["nativeAcceptedNs"])
+        enforce(e["native"] == native and gpu_accept == 0 and native["gpuTailAvailable"] is True
+                and native["nativeError"] == 0 and native["nativeOutcome"] == 1
+                and e["acceptedRoot"] == e["nonce"] == native["nonce"]
+                and opcode == permit[1] and permit[92] == 0 and tail[125:127] == (1,0)
+                and tail[120:122] == (permit[3],permit[5]) and tail[37] == permit[7]
+                and tail[8:24] == permit[8:24]
+                and grant == identity(permit,36) and deadline == identity(permit,38)
+                and accepted_ns == exact_id(native["acceptedNs"]) == identity(archive["header"],12),
+                "native accepted epoch or permit")
+    else:
+        enforce("nativeAcceptedNs" not in e, "native receipt missing from archive")
+        accepted_ns = gpu_accept
+    enforce(0 < grant <= accepted_ns <= deadline <= grant+250_000_000, "completion deadline")
+    return tail
+
+
+def inspect(e, config, raw, synthetic=False, *, archive=None):
     enforce(e.get("synthetic") is synthetic, "evidence mode")
     case = e["case"]
     enforce(case in CASES, "fixture identity")
     if not e.get("acceptedRoot"):
         return dict(state="MISSING_EVIDENCE", missing=["nonempty accepted root"])
     enforce(case in PHYSICAL, "diagnostic case cannot consume physical publication")
-    enforce(len(raw) == 1024 and sha(raw) == e["completionSHA"], "Completion256 SHA/size")
-    tail = struct.unpack("<256I", raw)
-    enforce(tail[:4] == (MAGIC["tail"], 1, MAGIC["profile"], 256) and tail[255] == 0xc0de1301,
-            "Completion256 header/seal")
-    enforce(tail[4:6] == (2, 1) and tail[7] == 0 and tail[42:44] == (1, 3) and
-            tail[39] == 820 and (tail[37] & tail[38]) == tail[37], "QUANTUM acceptance/audit")
-    for name, offset in (("nonce",8), ("plan",10), ("owner",14), ("context",16),
-                         ("surface",18), ("geometry",20), ("configGeneration",22),
-                         ("commit",26), ("acceptedQuantum",34)):
-        value = exact_id(e[name])
-        enforce(value != 0 and value == identity(tail, offset), "completion identity " + name)
-    enforce(identity(tail, 28) <= identity(tail, 32) <= identity(tail, 30)
-            <= identity(tail, 28)+250_000_000, "completion deadline")
+    tail = completion(e, raw, archive=archive)
+    enforce(tail[4] == 0, "physical QUANTUM required")
     probes = e["op66"]
     roles = e["roles"]
     enforce(isinstance(roles, dict) and roles and set(roles) == {p["role"] for p in probes}
@@ -245,12 +309,36 @@ def inspect(e, config, raw, synthetic=False):
                 units=result, reference=reference, expected=CASES[case]["expected"])
 
 
+def inspect_archive(manifest, archive, *, synthetic=False):
+    enforce(manifest["synthetic"] is synthetic, "evidence mode")
+    enforce(manifest["archiveSHA"] == archive["sha"], "manifest archive SHA")
+    if not manifest.get("acceptedRoot"):
+        return dict(state="MISSING_EVIDENCE", missing=["nonempty accepted root"])
+    tail = completion(manifest, archive["tail"], archive=archive)
+    if tail[4] == 50 or archive["kind"] == "ROOT":
+        enforce("view" not in manifest, "GridView requires FULL physical QUANTUM")
+        return dict(state="SOURCE_ABI_ONLY" if tail[4] == 50 else "ROOT_ABI_ONLY",
+                    acceptedRoot=manifest["acceptedRoot"], archiveKind=archive["kind"])
+    view = manifest["view"]
+    enforce(all(view[dest] == archive["fields"][src] for dest, src in
+                (("u32","u"), ("v32","v"), ("piQ32","piQ32"))), "GridView raw field mismatch")
+    if archive["native"].get("backend") == "VULKAN_PC":
+        pack = pack_view(archive)
+        bits = lambda x: struct.unpack("<I", struct.pack("<f", x))[0]
+        enforce(view["phiSource"] == "SAME_ROOT_GPU_PACK_FIELD_3"
+                and [bits(x) for x in view["phi"]] == pack["phi"]
+                and bits(view["pRef"]) == pack["pRef"] and bits(view["T0"]) == pack["T0"]
+                and view["motion"] == pack["motion"], "GridView GPU PACK provenance")
+    return inspect(manifest, archive["config"], archive["tail"], synthetic, archive=archive)
+
+
 def selftest():
     config = bytearray(512)
     struct.pack_into("<2I", config, 16, 2, 2)
     struct.pack_into("<3df", config, 48, 2, 1000, 4, .001)
     words = [0]*256
-    words[:6] = [MAGIC["tail"], 1, MAGIC["profile"], 256, 2, 1]
+    words[:6] = [MAGIC["tail"], 1, MAGIC["profile"], 256, 0, 1]
+    words[28:34] = [100, 0, 200, 0, 150, 0]
     words[36:44] = [1, 7, 7, 820, 820, 0, 1, 3]
     words[255] = 0xc0de1301
     e = dict(synthetic=True, case="F01", acceptedRoot="fixture")
@@ -302,13 +390,9 @@ if __name__ == "__main__":
             result = read(args.archive, args.receipt)
         else:
             manifest = T721.load(args.manifest)
-            config, raw, archive_sha, fields = tail_from_archive(args.archive, args.receipt)
-            enforce(manifest["archiveSHA"] == archive_sha, "manifest archive SHA")
-            view = manifest["view"]
-            enforce(all(view[dest] == fields[src] for dest, src in
-                        (("u32","u"), ("v32","v"), ("piQ32","piQ32"))), "GridView raw field mismatch")
-            result = inspect(manifest, config, raw)
+            result = inspect_archive(manifest, candidate_archive(args.archive, args.receipt))
     except (ValueError, TypeError, OSError, KeyError, IndexError, StopIteration, struct.error) as error:
         result = dict(state="INVALID", error=str(error))
     print(json.dumps(result, indent=2))
-    sys.exit(int(result["state"] not in ("SYNTHETIC_PASS", "SPEC_ONLY", "STRUCTURALLY_COMPLETE")))
+    sys.exit(int(result["state"] not in ("SYNTHETIC_PASS", "SPEC_ONLY", "STRUCTURALLY_COMPLETE",
+                                        "SOURCE_ABI_ONLY", "ROOT_ABI_ONLY")))

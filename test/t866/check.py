@@ -190,13 +190,11 @@ def laplace(samples):
 
 def full(manifest, archive, receipt):
     e=json.loads(manifest.read_bytes())
-    config,raw,digest,grid=F.tail_from_archive(archive,receipt)
-    need(e['archiveSHA']==digest and all(e['view'][a]==grid[b] for a,b in
-         (('u32','u'),('v32','v'),('piQ32','piQ32'))),'FULL_GRID_RAW')
-    accepted=F.inspect(e,config,raw)
+    capture=F.candidate_archive(archive,receipt)
+    accepted=F.inspect_archive(e,capture)
     need(accepted['state']=='CASE_REFERENCE_PENDING' and e['case'] in ('F03','F05'),'FULL_ROOT_GATE')
-    fields, units=F.field_view(e['view'],config)
-    tail=struct.unpack('<256I',raw)
+    fields, units=F.field_view(e['view'],capture['config'])
+    tail=struct.unpack('<256I',capture['tail'])
     return {'state':'FIELD_SAMPLE_VALID_MATRIX_PENDING','case':e['case'],'units':units,
             'reference':physical_case(e['case'],fields,e['view'],units['nu'],S.u64(tail,34),tail[36])}
 
