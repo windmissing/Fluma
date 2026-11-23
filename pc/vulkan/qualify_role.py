@@ -4,6 +4,7 @@ import ctypes
 from ctypes import wintypes
 import hashlib
 import json
+import re
 from pathlib import Path
 import subprocess
 import time
@@ -17,6 +18,13 @@ def times(function, handle):
     return [str((t.dwHighDateTime << 32) | t.dwLowDateTime) for t in result]
 
 
+def qpc(kernel, function):
+    value = ctypes.c_longlong()
+    if not getattr(kernel, function)(ctypes.byref(value)):
+        raise ctypes.WinError(ctypes.get_last_error())
+    return value.value
+
+
 def supervise(exe, role, out, disable):
     kernel = ctypes.WinDLL("kernel32", use_last_error=True)
     kernel.OpenProcess.argtypes = kernel.OpenThread.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
@@ -25,6 +33,7 @@ def supervise(exe, role, out, disable):
     for f in (kernel.GetThreadTimes, kernel.GetProcessTimes):
         f.argtypes = [wintypes.HANDLE] + [ctypes.POINTER(wintypes.FILETIME)] * 4
         f.restype = wintypes.BOOL
+    frequency = qpc(kernel, "QueryPerformanceFrequency")
     stem = out / (role + ("-noopt" if disable else ""))
     stdout, stderr = stem.with_suffix(".jsonl"), stem.with_suffix(".stderr")
     invocation = [str(exe.resolve()), "--qualify-steady-role", role]
@@ -54,13 +63,15 @@ def supervise(exe, role, out, disable):
                             owner = row.get("ownerTid", owner)
                             if row.get("call") == "vkCreateComputePipelines":
                                 build = row
-                                last_enter = (int(row["qpc"])/int(row["qpcFrequency"])
-                                              if row["edge"] == "ENTER" else None)
+                                if int(row["qpcFrequency"]) != frequency:
+                                    raise ValueError("child and supervisor QPC frequency differ")
+                                last_enter = int(row["qpc"]) if row["edge"] == "ENTER" else None
                     now = time.monotonic()
+                    tick = qpc(kernel, "QueryPerformanceCounter")
                     if now >= next_sample:
                         thread = kernel.OpenThread(0x0800, False, owner) if owner else None
                         try:
-                            samples.append(dict(elapsed=now-created, ownerTid=owner, alive=alive,
+                            samples.append(dict(elapsed=now-created, qpc=str(tick), ownerTid=owner, alive=alive,
                                                 processTimes=times(kernel.GetProcessTimes, process) if process else None,
                                                 ownerTimes=times(kernel.GetThreadTimes, thread) if thread else None))
                         finally:
@@ -69,13 +80,14 @@ def supervise(exe, role, out, disable):
                         next_sample = now + 5
                     if not alive:
                         break
-                    if last_enter is not None and time.perf_counter() - last_enter >= 60:
+                    if last_enter is not None and tick-last_enter >= 60*frequency:
                         reason = "CALL_UNRETURNED"
                         break
                     if now-created >= 120:
                         reason = "CHILD_WALL_LIMIT"
                         break
                     time.sleep(0.1)
+                stop_tick = qpc(kernel,"QueryPerformanceCounter")
                 forced = child.poll() is None
                 if forced:
                     child.kill()
@@ -90,7 +102,8 @@ def supervise(exe, role, out, disable):
     retired = not forced and final.get("state") == "STEADY_ROLE_QUALIFIED"
     receipt = dict(attemptId=str(uuid.uuid4()), role=role, pid=child.pid, reason=reason, lastPipeline=build,
                    exeSHA=hashlib.sha256(exe.read_bytes()).hexdigest(), stdoutSHA=hashlib.sha256(stdout.read_bytes()).hexdigest(),
-                   samples=samples, probe=probe, forced=forced, exitCode=exit_code, ownerRetired=retired)
+                   supervisorStopQpc=str(stop_tick), qpcFrequency=str(frequency), samples=samples,
+                   probe=probe, forced=forced, exitCode=exit_code, ownerRetired=retired)
     stem.with_suffix(".receipt.json").write_text(json.dumps(receipt, indent=2)+"\n", encoding="utf8")
     return receipt
 
@@ -104,7 +117,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     for role in args.roles:
-        if not role.startswith("OP_") or not all(x.isdecimal() for x in role[3:].split("_")):
+        if not re.fullmatch(r"OP(?:_[0-9]+(?:_[0-9]+)*|7_(?:FIELD|DRIVE)_ONLY|6|8|12_14|15|16|17)", role):
             parser.error("invalid role")
         receipt = supervise(args.exe, role, args.out, args.disable_optimization)
         print(role, receipt["reason"], receipt["exitCode"], receipt["ownerRetired"], flush=True)

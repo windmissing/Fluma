@@ -30,6 +30,30 @@ def substitute(source, old, new, role):
     return source.replace(old, new, 1)
 
 
+def t841_arms(emit):
+    def field_arm(arm):
+        frozen = ("{{if(uOp==OP_ROOT_FINAL_FIELD_AUDIT||(!selected&&c[768u+uScope]==0u)){fieldAudit();\n"
+                  "audit(1u);\naudit(2u);\n{drive();}}\nreturn;}}")
+        # Preserve the original arm's final return as in the signed-off T841 shader.
+        return substitute(arm, frozen, "fieldAudit();\naudit(1u);\naudit(2u);\nreturn;", "OP7_FIELD_ONLY")
+
+    for name, rewrite in (
+        ("OP7_FIELD_ONLY", field_arm),
+        ("OP7_DRIVE_ONLY", lambda arm: "if(uOp==7u){lane=gl_LocalInvocationID.x;drive();return;}"),
+    ):
+        raw, deps = emit((7,), lambda op, arm: rewrite(arm) if op == 7 else arm)
+        if name == "OP7_FIELD_ONLY":
+            assert "fieldAudit" in deps and "audit" in deps and "drive" not in deps
+        else:
+            assert {"drive","acceptedTime","softExp","failMath"} <= set(deps)
+            assert "fieldAudit" not in deps and "c[522]" not in raw.decode().split("if(uOp==7u){")[-1]
+        yield name, [7,66], raw
+    for name, opcodes in (("OP6",(6,)), ("OP8",(8,)), ("OP12_14",(12,13,14)),
+                          ("OP15",(15,)), ("OP16",(16,)), ("OP17",(17,))):
+        raw, _ = emit(opcodes)
+        yield name, [*opcodes,66], raw
+
+
 def build(out, compiler):
     manifest = json.loads((out / "assets_manifest.json").read_bytes())
     assert manifest["variant"] == "DEPENDENCY_SPLIT"
@@ -48,6 +72,7 @@ def build(out, compiler):
         selection = tuple(range(first, last + 1))
         raw, _ = emit(selection)
         sources.append((f"OP_00_{first}_{last}", [*selection, 66], raw))
+    sources.extend(t841_arms(emit))
     for name, opcodes, raw in sources:
         src = raw.decode()
         for a, b in (("#version 310 es", DECLARATION),

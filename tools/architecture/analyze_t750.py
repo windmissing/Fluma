@@ -54,8 +54,8 @@ def split_group(raw):
         if name and name != "main":
             bodies[name].append(text)
 
-    def emit(opcodes):
-        entry = "\n".join(arms[op] for op in (66, *opcodes))
+    def emit(opcodes, rewrite=None):
+        entry = "\n".join(rewrite(op, arms[op]) if rewrite else arms[op] for op in (66, *opcodes))
         work = list(CALL.findall(entry))
         deps = set()
         while work:
