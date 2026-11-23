@@ -1,0 +1,773 @@
+{
+  "schema": "T885_PC_INTERFACE_EVIDENCE_V1",
+  "sourceBaseline": "9101958c",
+  "executableSha256": {
+    "t853": "9bdbcf7dc59e0ba497364ceadb1eb98830734dbdf4c66e06631980d44b42e15e",
+    "t872": "6ec0ec5c9e401ff4f7000e305f4acc989c2e5f9db35b8e6bfc97474ec8669871"
+  },
+  "moduleSha256": {
+    "full_source": "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162",
+    "quantum_candidate": "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c",
+    "quantum_commit": "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce"
+  },
+  "qpcFrequencyHz": 10000000,
+  "runs": [
+    {
+      "path": "test/reports/t856/fixed.jsonl",
+      "sourceCommitOfOriginals": "38a25f9d",
+      "logSha256": "52dbd3003f3056147f743675a9174a542834f4f9afd8e64f116b27c74955e204",
+      "lineCount": 24,
+      "offerQuoteRepairCount": 0,
+      "fixedSource": {
+        "line": 24,
+        "admittedQ20": 131072,
+        "nonce": "15641693867517"
+      }
+    },
+    {
+      "path": "test/reports/t856/run2.jsonl",
+      "sourceCommitOfOriginals": "38a25f9d",
+      "logSha256": "d305f5f056120b7a9c1cd51f8c2f2ea740d266a7fe72cdceada12efc28ec7b97",
+      "lineCount": 35,
+      "offerQuoteRepairCount": 0,
+      "queuedRoots": 1,
+      "dimensions": [
+        784,
+        461
+      ],
+      "presentSpanNs": 0,
+      "pixels": [
+        "0xff525355"
+      ],
+      "acceptedAngleIndices": [
+        0
+      ],
+      "bedEventCounts": [
+        0
+      ],
+      "retireReceipts": [
+        {
+          "line": 35,
+          "state": "M1_QUANTUM_PRESENT_RETIRED",
+          "wsiRetireVkResult": 0,
+          "publicationReleased": true,
+          "lastReject": null
+        }
+      ],
+      "first": {
+        "line": 32,
+        "nonce": "15648396347025",
+        "presentExitQpc": "15648397868068",
+        "sourceCommit": "1",
+        "physicsCommit": "2",
+        "generation": "2",
+        "pixel": "0xff525355",
+        "sandLive": 1,
+        "waterLive": 0,
+        "sandTotalQ20": 126172,
+        "waterTotalQ20": 0,
+        "sandAdmittedQ20": 126172,
+        "waterAdmittedQ20": 0,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          0,
+          1
+        ],
+        "bedEventCountSlot": 0
+      },
+      "last": {
+        "line": 32,
+        "nonce": "15648396347025",
+        "presentExitQpc": "15648397868068",
+        "sourceCommit": "1",
+        "physicsCommit": "2",
+        "generation": "2",
+        "pixel": "0xff525355",
+        "sandLive": 1,
+        "waterLive": 0,
+        "sandTotalQ20": 126172,
+        "waterTotalQ20": 0,
+        "sandAdmittedQ20": 126172,
+        "waterAdmittedQ20": 0,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          0,
+          1
+        ],
+        "bedEventCountSlot": 0
+      },
+      "upIntervals": [
+        {
+          "upLine": 33,
+          "rootCountAfterUpBeforeNextDown": 0,
+          "firstRootLine": null,
+          "lastRootLine": null
+        }
+      ],
+      "sandLiveTransitions": []
+    },
+    {
+      "path": "test/reports/t856/run3.jsonl",
+      "sourceCommitOfOriginals": "38a25f9d",
+      "logSha256": "8d40116c12c012fe99426c3e7bac352d468a2df85593f7ff5eddae63705884c0",
+      "lineCount": 141,
+      "offerQuoteRepairCount": 0,
+      "queuedRoots": 1,
+      "dimensions": [
+        784,
+        461
+      ],
+      "presentSpanNs": 0,
+      "pixels": [
+        "0xff525355"
+      ],
+      "acceptedAngleIndices": [
+        0
+      ],
+      "bedEventCounts": [
+        0
+      ],
+      "retireReceipts": [
+        {
+          "line": 141,
+          "state": "M1_QUANTUM_PRESENT_RETIRED",
+          "wsiRetireVkResult": 0,
+          "publicationReleased": true,
+          "lastReject": null
+        }
+      ],
+      "first": {
+        "line": 34,
+        "nonce": "15652757277577",
+        "presentExitQpc": "15652758797539",
+        "sourceCommit": "1",
+        "physicsCommit": "2",
+        "generation": "2",
+        "pixel": "0xff525355",
+        "sandLive": 2,
+        "waterLive": 0,
+        "sandTotalQ20": 136485,
+        "waterTotalQ20": 0,
+        "sandAdmittedQ20": 136485,
+        "waterAdmittedQ20": 0,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          0,
+          2
+        ],
+        "bedEventCountSlot": 0
+      },
+      "last": {
+        "line": 34,
+        "nonce": "15652757277577",
+        "presentExitQpc": "15652758797539",
+        "sourceCommit": "1",
+        "physicsCommit": "2",
+        "generation": "2",
+        "pixel": "0xff525355",
+        "sandLive": 2,
+        "waterLive": 0,
+        "sandTotalQ20": 136485,
+        "waterTotalQ20": 0,
+        "sandAdmittedQ20": 136485,
+        "waterAdmittedQ20": 0,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          0,
+          2
+        ],
+        "bedEventCountSlot": 0
+      },
+      "upIntervals": [
+        {
+          "upLine": 67,
+          "rootCountAfterUpBeforeNextDown": 0,
+          "firstRootLine": null,
+          "lastRootLine": null
+        },
+        {
+          "upLine": 139,
+          "rootCountAfterUpBeforeNextDown": 0,
+          "firstRootLine": null,
+          "lastRootLine": null
+        }
+      ],
+      "sandLiveTransitions": []
+    },
+    {
+      "path": "test/reports/t876/sand-then-water.jsonl",
+      "sourceCommitOfOriginals": "f70ed1c9",
+      "logSha256": "72f28e245c41a70f7d91a27f36c64853ebad5055c71b982bd08b544df3d47a85",
+      "lineCount": 681,
+      "offerQuoteRepairCount": 433,
+      "queuedRoots": 213,
+      "dimensions": [
+        784,
+        461
+      ],
+      "presentSpanNs": 8953746800,
+      "pixels": [
+        "0xff525355"
+      ],
+      "acceptedAngleIndices": [
+        0
+      ],
+      "bedEventCounts": [
+        0
+      ],
+      "retireReceipts": [
+        {
+          "line": 681,
+          "state": "M1_QUANTUM_PRESENT_RETIRED",
+          "wsiRetireVkResult": 0,
+          "publicationReleased": true,
+          "lastReject": "WINDOW_REVOKED"
+        }
+      ],
+      "first": {
+        "line": 51,
+        "nonce": "15836348008024",
+        "presentExitQpc": "15836350086966",
+        "sourceCommit": "1",
+        "physicsCommit": "2",
+        "generation": "2",
+        "pixel": "0xff525355",
+        "sandLive": 1,
+        "waterLive": 0,
+        "sandTotalQ20": 97584,
+        "waterTotalQ20": 0,
+        "sandAdmittedQ20": 97584,
+        "waterAdmittedQ20": 0,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          0,
+          1
+        ],
+        "bedEventCountSlot": 0
+      },
+      "last": {
+        "line": 680,
+        "nonce": "15836439237732",
+        "presentExitQpc": "15836439624434",
+        "sourceCommit": "1",
+        "physicsCommit": "214",
+        "generation": "214",
+        "pixel": "0xff525355",
+        "sandLive": 0,
+        "waterLive": 0,
+        "sandTotalQ20": 97584,
+        "waterTotalQ20": 0,
+        "sandAdmittedQ20": 97584,
+        "waterAdmittedQ20": 0,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          0,
+          0
+        ],
+        "bedEventCountSlot": 0
+      },
+      "upIntervals": [
+        {
+          "upLine": 283,
+          "rootCountAfterUpBeforeNextDown": 28,
+          "firstRootLine": 290,
+          "lastRootLine": 319
+        },
+        {
+          "upLine": 598,
+          "rootCountAfterUpBeforeNextDown": 76,
+          "firstRootLine": 605,
+          "lastRootLine": 680
+        }
+      ],
+      "sandLiveTransitions": [
+        {
+          "before": {
+            "line": 362,
+            "nonce": "15836388736384",
+            "presentExitQpc": "15836389157052",
+            "sourceCommit": "1",
+            "physicsCommit": "85",
+            "generation": "85",
+            "pixel": "0xff525355",
+            "sandLive": 1,
+            "waterLive": 0,
+            "sandTotalQ20": 97584,
+            "waterTotalQ20": 0,
+            "sandAdmittedQ20": 97584,
+            "waterAdmittedQ20": 0,
+            "acceptedAngleIndex": 0,
+            "eventRange": [
+              0,
+              1
+            ],
+            "bedEventCountSlot": 0
+          },
+          "after": {
+            "line": 365,
+            "nonce": "15836389158809",
+            "presentExitQpc": "15836389566558",
+            "sourceCommit": "1",
+            "physicsCommit": "86",
+            "generation": "86",
+            "pixel": "0xff525355",
+            "sandLive": 0,
+            "waterLive": 0,
+            "sandTotalQ20": 97584,
+            "waterTotalQ20": 0,
+            "sandAdmittedQ20": 97584,
+            "waterAdmittedQ20": 0,
+            "acceptedAngleIndex": 0,
+            "eventRange": [
+              1,
+              3
+            ],
+            "bedEventCountSlot": 0
+          }
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t876/water-then-sand.jsonl",
+      "sourceCommitOfOriginals": "f70ed1c9",
+      "logSha256": "293c27916427678e06e0f2610ec2fbac3f60c42349f072edfbab8505524a381e",
+      "lineCount": 96,
+      "offerQuoteRepairCount": 54,
+      "queuedRoots": 5,
+      "dimensions": [
+        784,
+        461
+      ],
+      "presentSpanNs": 336459600,
+      "pixels": [
+        "0xff525355"
+      ],
+      "acceptedAngleIndices": [
+        0
+      ],
+      "bedEventCounts": [
+        0
+      ],
+      "retireReceipts": [
+        {
+          "line": 90,
+          "state": "FAILED",
+          "wsiRetireVkResult": 0,
+          "publicationReleased": true,
+          "lastReject": "ROOT_DEADLINE"
+        }
+      ],
+      "first": {
+        "line": 48,
+        "nonce": "15837163338498",
+        "presentExitQpc": "15837164692081",
+        "sourceCommit": "1",
+        "physicsCommit": "2",
+        "generation": "2",
+        "pixel": "0xff525355",
+        "sandLive": 0,
+        "waterLive": 1,
+        "sandTotalQ20": 0,
+        "waterTotalQ20": 124733,
+        "sandAdmittedQ20": 0,
+        "waterAdmittedQ20": 124733,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          0,
+          1
+        ],
+        "bedEventCountSlot": 0
+      },
+      "last": {
+        "line": 81,
+        "nonce": "15837167416397",
+        "presentExitQpc": "15837168056677",
+        "sourceCommit": "1",
+        "physicsCommit": "6",
+        "generation": "6",
+        "pixel": "0xff525355",
+        "sandLive": 0,
+        "waterLive": 1,
+        "sandTotalQ20": 0,
+        "waterTotalQ20": 124733,
+        "sandAdmittedQ20": 0,
+        "waterAdmittedQ20": 124733,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          2,
+          3
+        ],
+        "bedEventCountSlot": 0
+      },
+      "upIntervals": [
+        {
+          "upLine": 91,
+          "rootCountAfterUpBeforeNextDown": 0,
+          "firstRootLine": null,
+          "lastRootLine": null
+        },
+        {
+          "upLine": 95,
+          "rootCountAfterUpBeforeNextDown": 0,
+          "firstRootLine": null,
+          "lastRootLine": null
+        }
+      ],
+      "sandLiveTransitions": []
+    },
+    {
+      "path": "test/reports/t876/run3-sand-water-long.jsonl",
+      "sourceCommitOfOriginals": "f70ed1c9",
+      "logSha256": "36dd6b858789b9e3f3a854ebe121b5858aca5006cfe775fcc035471a40c4351c",
+      "lineCount": 958,
+      "offerQuoteRepairCount": 719,
+      "queuedRoots": 199,
+      "dimensions": [
+        784,
+        461
+      ],
+      "presentSpanNs": 8157587400,
+      "pixels": [
+        "0xff525355"
+      ],
+      "acceptedAngleIndices": [
+        0
+      ],
+      "bedEventCounts": [
+        0
+      ],
+      "retireReceipts": [
+        {
+          "line": 958,
+          "state": "M1_QUANTUM_PRESENT_RETIRED",
+          "wsiRetireVkResult": 0,
+          "publicationReleased": true,
+          "lastReject": null
+        }
+      ],
+      "first": {
+        "line": 47,
+        "nonce": "15837622800187",
+        "presentExitQpc": "15837624160087",
+        "sourceCommit": "1",
+        "physicsCommit": "2",
+        "generation": "2",
+        "pixel": "0xff525355",
+        "sandLive": 1,
+        "waterLive": 0,
+        "sandTotalQ20": 100011,
+        "waterTotalQ20": 0,
+        "sandAdmittedQ20": 100011,
+        "waterAdmittedQ20": 0,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          0,
+          1
+        ],
+        "bedEventCountSlot": 0
+      },
+      "last": {
+        "line": 950,
+        "nonce": "15837705321751",
+        "presentExitQpc": "15837705735961",
+        "sourceCommit": "1",
+        "physicsCommit": "200",
+        "generation": "200",
+        "pixel": "0xff525355",
+        "sandLive": 0,
+        "waterLive": 0,
+        "sandTotalQ20": 100011,
+        "waterTotalQ20": 0,
+        "sandAdmittedQ20": 100011,
+        "waterAdmittedQ20": 0,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          0,
+          0
+        ],
+        "bedEventCountSlot": 0
+      },
+      "upIntervals": [
+        {
+          "upLine": 242,
+          "rootCountAfterUpBeforeNextDown": 7,
+          "firstRootLine": 249,
+          "lastRootLine": 258
+        },
+        {
+          "upLine": 957,
+          "rootCountAfterUpBeforeNextDown": 0,
+          "firstRootLine": null,
+          "lastRootLine": null
+        }
+      ],
+      "sandLiveTransitions": [
+        {
+          "before": {
+            "line": 430,
+            "nonce": "15837660126755",
+            "presentExitQpc": "15837660537329",
+            "sourceCommit": "1",
+            "physicsCommit": "85",
+            "generation": "85",
+            "pixel": "0xff525355",
+            "sandLive": 1,
+            "waterLive": 0,
+            "sandTotalQ20": 100011,
+            "waterTotalQ20": 0,
+            "sandAdmittedQ20": 100011,
+            "waterAdmittedQ20": 0,
+            "acceptedAngleIndex": 0,
+            "eventRange": [
+              1,
+              2
+            ],
+            "bedEventCountSlot": 0
+          },
+          "after": {
+            "line": 434,
+            "nonce": "15837660538295",
+            "presentExitQpc": "15837660955693",
+            "sourceCommit": "1",
+            "physicsCommit": "86",
+            "generation": "86",
+            "pixel": "0xff525355",
+            "sandLive": 0,
+            "waterLive": 0,
+            "sandTotalQ20": 100011,
+            "waterTotalQ20": 0,
+            "sandAdmittedQ20": 100011,
+            "waterAdmittedQ20": 0,
+            "acceptedAngleIndex": 0,
+            "eventRange": [
+              2,
+              4
+            ],
+            "bedEventCountSlot": 0
+          }
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t876/run4.jsonl",
+      "sourceCommitOfOriginals": "f70ed1c9",
+      "logSha256": "c2c40b9855175433eafdbb69c587259c4b3129c2369a5611c47530e2c92fc78a",
+      "lineCount": 96,
+      "offerQuoteRepairCount": 53,
+      "queuedRoots": 5,
+      "dimensions": [
+        784,
+        461
+      ],
+      "presentSpanNs": 342006900,
+      "pixels": [
+        "0xff525355"
+      ],
+      "acceptedAngleIndices": [
+        0
+      ],
+      "bedEventCounts": [
+        0
+      ],
+      "retireReceipts": [
+        {
+          "line": 88,
+          "state": "FAILED",
+          "wsiRetireVkResult": 0,
+          "publicationReleased": true,
+          "lastReject": "ROOT_DEADLINE"
+        }
+      ],
+      "first": {
+        "line": 46,
+        "nonce": "15838349646696",
+        "presentExitQpc": "15838350868624",
+        "sourceCommit": "1",
+        "physicsCommit": "2",
+        "generation": "2",
+        "pixel": "0xff525355",
+        "sandLive": 1,
+        "waterLive": 0,
+        "sandTotalQ20": 129279,
+        "waterTotalQ20": 0,
+        "sandAdmittedQ20": 129279,
+        "waterAdmittedQ20": 0,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          0,
+          1
+        ],
+        "bedEventCountSlot": 0
+      },
+      "last": {
+        "line": 80,
+        "nonce": "15838353616654",
+        "presentExitQpc": "15838354288693",
+        "sourceCommit": "1",
+        "physicsCommit": "6",
+        "generation": "6",
+        "pixel": "0xff525355",
+        "sandLive": 1,
+        "waterLive": 0,
+        "sandTotalQ20": 129279,
+        "waterTotalQ20": 0,
+        "sandAdmittedQ20": 129279,
+        "waterAdmittedQ20": 0,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          2,
+          3
+        ],
+        "bedEventCountSlot": 0
+      },
+      "upIntervals": [
+        {
+          "upLine": 89,
+          "rootCountAfterUpBeforeNextDown": 0,
+          "firstRootLine": null,
+          "lastRootLine": null
+        },
+        {
+          "upLine": 94,
+          "rootCountAfterUpBeforeNextDown": 0,
+          "firstRootLine": null,
+          "lastRootLine": null
+        }
+      ],
+      "sandLiveTransitions": []
+    },
+    {
+      "path": "test/reports/t876/run5.jsonl",
+      "sourceCommitOfOriginals": "f70ed1c9",
+      "logSha256": "27f74a4a889ced575df66f51af6685588ba9b7c82afc1b674436ca98f91656fc",
+      "lineCount": 1191,
+      "offerQuoteRepairCount": 876,
+      "queuedRoots": 280,
+      "dimensions": [
+        784,
+        461
+      ],
+      "presentSpanNs": 12046638800,
+      "pixels": [
+        "0xff525355"
+      ],
+      "acceptedAngleIndices": [
+        0
+      ],
+      "bedEventCounts": [
+        0
+      ],
+      "retireReceipts": [
+        {
+          "line": 1191,
+          "state": "M1_QUANTUM_PRESENT_RETIRED",
+          "wsiRetireVkResult": 0,
+          "publicationReleased": true,
+          "lastReject": "WINDOW_REVOKED"
+        }
+      ],
+      "first": {
+        "line": 46,
+        "nonce": "15838969350206",
+        "presentExitQpc": "15838970545968",
+        "sourceCommit": "1",
+        "physicsCommit": "2",
+        "generation": "2",
+        "pixel": "0xff525355",
+        "sandLive": 1,
+        "waterLive": 0,
+        "sandTotalQ20": 116887,
+        "waterTotalQ20": 0,
+        "sandAdmittedQ20": 116887,
+        "waterAdmittedQ20": 0,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          0,
+          1
+        ],
+        "bedEventCountSlot": 0
+      },
+      "last": {
+        "line": 1190,
+        "nonce": "15839090628004",
+        "presentExitQpc": "15839091012356",
+        "sourceCommit": "1",
+        "physicsCommit": "281",
+        "generation": "281",
+        "pixel": "0xff525355",
+        "sandLive": 0,
+        "waterLive": 0,
+        "sandTotalQ20": 116887,
+        "waterTotalQ20": 0,
+        "sandAdmittedQ20": 116887,
+        "waterAdmittedQ20": 0,
+        "acceptedAngleIndex": 0,
+        "eventRange": [
+          0,
+          0
+        ],
+        "bedEventCountSlot": 0
+      },
+      "upIntervals": [
+        {
+          "upLine": 186,
+          "rootCountAfterUpBeforeNextDown": 19,
+          "firstRootLine": 193,
+          "lastRootLine": 214
+        },
+        {
+          "upLine": 1148,
+          "rootCountAfterUpBeforeNextDown": 36,
+          "firstRootLine": 1155,
+          "lastRootLine": 1190
+        }
+      ],
+      "sandLiveTransitions": [
+        {
+          "before": {
+            "line": 389,
+            "nonce": "15839006812838",
+            "presentExitQpc": "15839007340615",
+            "sourceCommit": "1",
+            "physicsCommit": "85",
+            "generation": "85",
+            "pixel": "0xff525355",
+            "sandLive": 1,
+            "waterLive": 0,
+            "sandTotalQ20": 116887,
+            "waterTotalQ20": 0,
+            "sandAdmittedQ20": 116887,
+            "waterAdmittedQ20": 0,
+            "acceptedAngleIndex": 0,
+            "eventRange": [
+              1,
+              2
+            ],
+            "bedEventCountSlot": 0
+          },
+          "after": {
+            "line": 393,
+            "nonce": "15839007342843",
+            "presentExitQpc": "15839007816785",
+            "sourceCommit": "1",
+            "physicsCommit": "86",
+            "generation": "86",
+            "pixel": "0xff525355",
+            "sandLive": 0,
+            "waterLive": 0,
+            "sandTotalQ20": 116887,
+            "waterTotalQ20": 0,
+            "sandAdmittedQ20": 116887,
+            "waterAdmittedQ20": 0,
+            "acceptedAngleIndex": 0,
+            "eventRange": [
+              2,
+              4
+            ],
+            "bedEventCountSlot": 0
+          }
+        }
+      ]
+    }
+  ]
+}
