@@ -1,0 +1,631 @@
+{
+  "schema": "T902_PC_REPLAY_CAPTURE_AND_SOURCE_PROVENANCE_V1",
+  "originalCommit": "1c949af2",
+  "replaySourceCommit": "ba503ee5",
+  "sandSourceCommit": "21d9ffc5",
+  "replayPeSha256": "f7dab474b8017899f6d3261fd0c96d979b6a8ef18137311e454d3ebdd4faa4af",
+  "replay": [
+    {
+      "path": "test/reports/t896/b-replay-off.jsonl",
+      "fileSha256": "ab03c195664213099d4887e4d0e9ba685d3077dda7377c1382b67a7e8b5bc8ba",
+      "lineCount": 30,
+      "geo": "2",
+      "previewCheckpoint": {
+        "line": 26,
+        "stage": "M1_EMPTY_PREVIEW_SUBMIT",
+        "state": "RUNNING",
+        "detail": ""
+      },
+      "captureCheckpoint": {
+        "line": 27,
+        "stage": "M1_QUANTUM_COLD_CAPTURE",
+        "state": "RUNNING",
+        "detail": ""
+      },
+      "failure": {
+        "line": 28,
+        "stage": "M1_QUANTUM_COLD_CAPTURE",
+        "state": "FAILED",
+        "detail": "M1_COLD_ROOT_BACKING"
+      },
+      "drain": {
+        "line": 29,
+        "state": "OWNER_TERMINATED_BEFORE_DRAIN_PROOF",
+        "retired": false,
+        "traceLoss": 0,
+        "ownerCoverage": {
+          "revision": "M1_D1_OWNER_COVERAGE_V1",
+          "complete": false,
+          "loss": 0,
+          "producerQueued": 0,
+          "sessions": []
+        }
+      },
+      "close": {
+        "line": 30,
+        "stage": "M1_D1_CLOSE",
+        "qpc": "15968689176721"
+      },
+      "missingStages": [
+        "M1_D1_READY",
+        "M1_D1_ACTION",
+        "M1_D1_PULSE_OWNER",
+        "M1_SOURCE_WSI",
+        "END_INTAKE"
+      ],
+      "recordedColdCopySubmits": 0
+    },
+    {
+      "path": "test/reports/t896/b-replay-off2.jsonl",
+      "fileSha256": "ef92609b7a62e57ecd2e876166d9231231719d8573bae47602ee512bf266c53d",
+      "lineCount": 30,
+      "geo": "2",
+      "previewCheckpoint": {
+        "line": 26,
+        "stage": "M1_EMPTY_PREVIEW_SUBMIT",
+        "state": "RUNNING",
+        "detail": ""
+      },
+      "captureCheckpoint": {
+        "line": 27,
+        "stage": "M1_QUANTUM_COLD_CAPTURE",
+        "state": "RUNNING",
+        "detail": ""
+      },
+      "failure": {
+        "line": 28,
+        "stage": "M1_QUANTUM_COLD_CAPTURE",
+        "state": "FAILED",
+        "detail": "M1_COLD_ROOT_BACKING"
+      },
+      "drain": {
+        "line": 29,
+        "state": "OWNER_TERMINATED_BEFORE_DRAIN_PROOF",
+        "retired": false,
+        "traceLoss": 0,
+        "ownerCoverage": {
+          "revision": "M1_D1_OWNER_COVERAGE_V1",
+          "complete": false,
+          "loss": 0,
+          "producerQueued": 0,
+          "sessions": []
+        }
+      },
+      "close": {
+        "line": 30,
+        "stage": "M1_D1_CLOSE",
+        "qpc": "15969003580628"
+      },
+      "missingStages": [
+        "M1_D1_READY",
+        "M1_D1_ACTION",
+        "M1_D1_PULSE_OWNER",
+        "M1_SOURCE_WSI",
+        "END_INTAKE"
+      ],
+      "recordedColdCopySubmits": 0
+    },
+    {
+      "path": "test/reports/t896/b-replay-on.jsonl",
+      "fileSha256": "2e1e391c931b10314cdf471d1ec489c92817f8204c4d3f5dde676fee93dbd58a",
+      "lineCount": 30,
+      "geo": "2",
+      "previewCheckpoint": {
+        "line": 26,
+        "stage": "M1_EMPTY_PREVIEW_SUBMIT",
+        "state": "RUNNING",
+        "detail": ""
+      },
+      "captureCheckpoint": {
+        "line": 27,
+        "stage": "M1_QUANTUM_COLD_CAPTURE",
+        "state": "RUNNING",
+        "detail": ""
+      },
+      "failure": {
+        "line": 28,
+        "stage": "M1_QUANTUM_COLD_CAPTURE",
+        "state": "FAILED",
+        "detail": "M1_COLD_ROOT_BACKING"
+      },
+      "drain": {
+        "line": 29,
+        "state": "OWNER_TERMINATED_BEFORE_DRAIN_PROOF",
+        "retired": false,
+        "traceLoss": 0,
+        "ownerCoverage": {
+          "revision": "M1_D1_OWNER_COVERAGE_V1",
+          "complete": false,
+          "loss": 0,
+          "producerQueued": 0,
+          "sessions": []
+        }
+      },
+      "close": {
+        "line": 30,
+        "stage": "M1_D1_CLOSE",
+        "qpc": "15968692018973"
+      },
+      "missingStages": [
+        "M1_D1_READY",
+        "M1_D1_ACTION",
+        "M1_D1_PULSE_OWNER",
+        "M1_SOURCE_WSI",
+        "END_INTAKE"
+      ],
+      "recordedColdCopySubmits": 0
+    }
+  ],
+  "offControls": {
+    "firstDifference": {
+      "state": "CLOCK_OR_INPUT_DIFFERENCE",
+      "action": 1,
+      "left": [
+        1,
+        "DELIVERED",
+        24108700,
+        [
+          1,
+          1,
+          0,
+          0,
+          4,
+          166556,
+          "accepted",
+          "PAGE_PULSE_ACCEPTED",
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "right": [
+        1,
+        "DELIVERED",
+        23463100,
+        [
+          1,
+          1,
+          0,
+          0,
+          6,
+          153732,
+          "accepted",
+          "PAGE_PULSE_ACCEPTED",
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "source7": [
+      {
+        "outcome": "ACCEPTED",
+        "offer": "1",
+        "root": "15968412120498",
+        "admittedQ20": 125531,
+        "requested": 0.119716,
+        "deltaNs": 14964500,
+        "commandSHA": "ffd5c18ac6cf44b67d5bd171da34eec5083fdcc24856dfc938ce4b8b0b97fe3b"
+      },
+      {
+        "outcome": "ACCEPTED",
+        "offer": "1",
+        "root": "15968424178853",
+        "admittedQ20": 127018,
+        "requested": 0.1211344,
+        "deltaNs": 15141800,
+        "commandSHA": "e043341bb1843c6f2127d634ec9b7e9ab968b6833e7f87e819aee75dfda2d667"
+      }
+    ],
+    "source29": [
+      {
+        "outcome": "REVOKED",
+        "offer": "2"
+      },
+      {
+        "outcome": "EXPIRED",
+        "offer": "2",
+        "reason": "STALE_ENDPOINT",
+        "ageNs": 129606900
+      }
+    ],
+    "ownerCoverage": [
+      {
+        "1": {
+          "session": "1",
+          "queued": 28,
+          "accepted": 26,
+          "rejected": 0,
+          "revoked": 2,
+          "queuedMask": "268435455",
+          "terminalMask": "268435455"
+        }
+      },
+      {
+        "1": {
+          "session": "1",
+          "queued": 48,
+          "accepted": 48,
+          "rejected": 0,
+          "revoked": 0,
+          "queuedMask": "281474976710655",
+          "terminalMask": "281474976710655"
+        }
+      }
+    ]
+  },
+  "sandboxInputSha256": "3580ccb1a4199f41708bd9a790f8997f77c4af87dac1743b08c636264e22f55a",
+  "sandboxInputPath": ".codex/local-test/t894-model-source.u32le",
+  "sand": [
+    {
+      "path": "test/reports/t896/c-dm2-boot.jsonl",
+      "fileSha256": "c731e029842aa8c948bc45cb4ee3f5810fdfb00906c09c673994b8faf24ac344",
+      "PE": ".codex/local-test/t894-dm2-release/pc_sand_dm2_host.exe",
+      "peSha256": "5788e027a94d37221ebf28333d85d17f425230df0d133d7ea09bdd3c37ca2653",
+      "roleHeaderSha256": "3f34b41e1e1a20c2e6b636fbdbf262e1fe9453ce8c962c225b56462914fcedd7",
+      "verifiedComputeModules": 45,
+      "verifiedGraphicsModules": 0,
+      "sourcePasses": [
+        [
+          0,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          5,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          6,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          7,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          8,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          9,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          10,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          11,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ]
+      ],
+      "boot": {
+        "line": 1,
+        "stage": "BOOT",
+        "family": "DM2",
+        "roleSetSHA": "3639e57f834308bab001ca783f321b6a503c232caa924e04b1d8f1d7e3333ca6",
+        "vendor": 32902,
+        "device": 16024,
+        "driver": 1656924,
+        "run": "1599666010046200",
+        "beginNs": "1599666020999900",
+        "retiredNs": "1599666162922300",
+        "vkResult": 0,
+        "error": 0,
+        "seal": 6559303,
+        "eligible": true
+      },
+      "business": {
+        "line": 2,
+        "stage": "ROOT",
+        "family": "DM2",
+        "kind": "SOURCE",
+        "run": "1599666010046200",
+        "nonce": "1",
+        "plan": "1",
+        "fence": "2659162125304",
+        "fenceGeneration": "2",
+        "deadlineNs": "1599666422773900",
+        "vkResult": 2,
+        "dispatches": 12,
+        "tailRead": false,
+        "outcome": 0,
+        "reason": 0,
+        "clockFault": 0,
+        "accepted": false,
+        "inputSHA": "c1acf576410f5f49014098f44a1abad08fc8ae52c95d01a19a9a5d6aaf661c7f",
+        "inputOrigin": "SYNTHETIC_RESEARCH"
+      },
+      "retire": {
+        "line": 3,
+        "stage": "RETIRE",
+        "vkResult": 0
+      },
+      "terminalOriginal": "DM2 ROOT_NOT_ACCEPTED",
+      "bootHostSpanNs": 141922400,
+      "rootGrantDerivedNs": 1599666172773900,
+      "bootEndToGrantDerivedNs": 9851600,
+      "rootDeadlineNs": 1599666422773900,
+      "exactGpuNs": null,
+      "finalFenceProvenByExplicitRetire": true
+    },
+    {
+      "path": "test/reports/t896/c-r1-boot.jsonl",
+      "fileSha256": "a529c20fba95c0f2c9f4e2e16031c14fac7aeffb9c237a50f88663e0eb0658f7",
+      "PE": ".codex/local-test/t894-r1-release/pc_sand_r1_host.exe",
+      "peSha256": "4de99b3a0285f21e56e3a6243a081b45bf9cbf59e9a11d4f295fb04fc62d8cf0",
+      "roleHeaderSha256": "6a90a29ab0ab323fcdf4da61bf9a2dc186e1505e29bc44e23fa93119686eda77",
+      "verifiedComputeModules": 49,
+      "verifiedGraphicsModules": 6,
+      "sourcePasses": [
+        [
+          30,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          31,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          512,
+          0,
+          0,
+          -1,
+          1,
+          0
+        ],
+        [
+          32,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          33,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          34,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          513,
+          2,
+          0,
+          -1,
+          1,
+          6
+        ],
+        [
+          35,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          514,
+          2,
+          0,
+          -1,
+          1,
+          6
+        ],
+        [
+          36,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          37,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          513,
+          4,
+          0,
+          -1,
+          1,
+          6
+        ],
+        [
+          38,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          514,
+          4,
+          0,
+          -1,
+          1,
+          6
+        ],
+        [
+          39,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          40,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ],
+        [
+          515,
+          0,
+          0,
+          -1,
+          1,
+          0
+        ],
+        [
+          516,
+          0,
+          0,
+          -1,
+          1,
+          0
+        ],
+        [
+          41,
+          0,
+          0,
+          -1,
+          0,
+          0
+        ]
+      ],
+      "boot": {
+        "line": 1,
+        "stage": "BOOT",
+        "family": "R1",
+        "roleSetSHA": "f7d812d64eba3c932fcfc41d70fbed48835349819f235b6d9d61fb58216641f3",
+        "vendor": 32902,
+        "device": 16024,
+        "driver": 1656924,
+        "run": "1599688293041400",
+        "beginNs": "1599688301310500",
+        "retiredNs": "1599688696558200",
+        "vkResult": 0,
+        "error": 0,
+        "seal": 3223126018,
+        "eligible": true
+      },
+      "business": {
+        "line": 2,
+        "stage": "ROOT",
+        "family": "R1",
+        "kind": "SOURCE",
+        "run": "1599688293041400",
+        "nonce": "1",
+        "plan": "1",
+        "fence": "1463906195768",
+        "fenceGeneration": "2",
+        "deadlineNs": "1599688958107200",
+        "vkResult": 2,
+        "dispatches": 19,
+        "tailRead": false,
+        "outcome": 0,
+        "reason": 0,
+        "clockFault": 0,
+        "accepted": false,
+        "inputSHA": "88b61e3b785fcbaa54f19f62630798eb4cdbee36bac3af3c69d3f23d85881525",
+        "inputOrigin": "SYNTHETIC_RESEARCH"
+      },
+      "retire": {
+        "line": 3,
+        "stage": "RETIRE",
+        "vkResult": 2
+      },
+      "terminalOriginal": "R1 ROOT_NOT_ACCEPTED",
+      "bootHostSpanNs": 395247700,
+      "rootGrantDerivedNs": 1599688708107200,
+      "bootEndToGrantDerivedNs": 11549000,
+      "rootDeadlineNs": 1599688958107200,
+      "exactGpuNs": null,
+      "finalFenceProvenByExplicitRetire": false
+    }
+  ]
+}
