@@ -1,0 +1,636 @@
+{
+  "experiment": "T870_CONTACT_LIFT_V1",
+  "status": "PASS",
+  "seed": 0,
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "machine": "AMD64"
+  },
+  "implementationSHA256": "d9f831706a6b3c2ef2c85389e584aa3bfc8c0ea4401b601dc00525ea250aa078",
+  "inputs": {
+    "mass_kg": 1.0,
+    "sourceId": 1,
+    "staticFriction": 0.5,
+    "dynamicFriction": 0.5,
+    "dt_ms": [
+      10,
+      5
+    ],
+    "pulseEnd_ms": 100,
+    "end_ms": 400,
+    "loads_T_N_N_N": {
+      "A": [
+        [
+          0.0,
+          -10.0
+        ],
+        [
+          0.0,
+          -10.0
+        ]
+      ],
+      "B": [
+        [
+          6.0,
+          -10.0
+        ],
+        [
+          0.0,
+          -10.0
+        ]
+      ],
+      "C": [
+        [
+          6.0,
+          1.0
+        ],
+        [
+          0.0,
+          -1.0
+        ]
+      ]
+    }
+  },
+  "sampleCount": 366,
+  "samplesSHA256": "499f40e6b7392098098cfc343adbc0b7faa2f3d8808fee458028e17ecfa51f36",
+  "checks": [
+    {
+      "case": "A/B/C",
+      "dt_ms": 10,
+      "check": "baseline_has_B_false_lift",
+      "passed": true,
+      "observed": {
+        "A": false,
+        "B": true,
+        "C": true
+      }
+    },
+    {
+      "case": "B/C",
+      "dt_ms": 10,
+      "check": "same_tangential_input",
+      "passed": true
+    },
+    {
+      "case": "A",
+      "dt_ms": 10,
+      "check": "event_order",
+      "passed": true,
+      "observed": []
+    },
+    {
+      "case": "A",
+      "dt_ms": 10,
+      "check": "unique_mass_source_and_no_penetration",
+      "passed": true,
+      "firstInvalidSample": null
+    },
+    {
+      "case": "A",
+      "dt_ms": 10,
+      "check": "supported_at_all_samples",
+      "passed": true,
+      "firstInvalidSample": null
+    },
+    {
+      "case": "B",
+      "dt_ms": 10,
+      "check": "event_order",
+      "passed": true,
+      "observed": [
+        [
+          "S",
+          "F"
+        ],
+        [
+          "F",
+          "S"
+        ]
+      ]
+    },
+    {
+      "case": "B",
+      "dt_ms": 10,
+      "check": "unique_mass_source_and_no_penetration",
+      "passed": true,
+      "firstInvalidSample": null
+    },
+    {
+      "case": "B",
+      "dt_ms": 10,
+      "check": "supported_at_all_samples",
+      "passed": true,
+      "firstInvalidSample": null
+    },
+    {
+      "case": "B",
+      "dt_ms": 10,
+      "check": "remains_stopped",
+      "passed": true
+    },
+    {
+      "case": "C",
+      "dt_ms": 10,
+      "check": "event_order",
+      "passed": true,
+      "observed": [
+        [
+          "S",
+          "P"
+        ],
+        [
+          "P",
+          "F"
+        ]
+      ]
+    },
+    {
+      "case": "C",
+      "dt_ms": 10,
+      "check": "unique_mass_source_and_no_penetration",
+      "passed": true,
+      "firstInvalidSample": null
+    },
+    {
+      "case": "C",
+      "dt_ms": 10,
+      "check": "positive_takeoff_evidence",
+      "passed": true,
+      "event": {
+        "fromState": "S",
+        "toState": "P",
+        "time_s": 0.01,
+        "firstPositiveY_m": 5e-05,
+        "outwardImpulse_Ns": 0.01
+      }
+    },
+    {
+      "case": "C",
+      "dt_ms": 10,
+      "check": "descending_zero_and_continuous_P",
+      "passed": true,
+      "event": {
+        "fromState": "P",
+        "toState": "F",
+        "time_s": 0.34142135623730957,
+        "yBefore_m": 0.00020000000000000608,
+        "yUnclipped_m": -0.0012499999999999937,
+        "incomingVy_mps": -0.14142135623730953
+      }
+    },
+    {
+      "case": "C",
+      "dt_ms": 10,
+      "check": "captured_mass_stays_in_F",
+      "passed": true,
+      "firstCaptured": {
+        "case": "C",
+        "dt_s": 0.01,
+        "t_s": 0.35,
+        "sourceId": 1,
+        "T_N": 0.0,
+        "N_N": -1.0,
+        "appliedPreviousInterval": [
+          0.0,
+          -1.0
+        ],
+        "baselineLift": false,
+        "state": "F",
+        "S_kg": 0.0,
+        "F_kg": 1.0,
+        "P_kg": 0.0,
+        "x_m": null,
+        "vx_mps": null,
+        "y_m": 0.0,
+        "vy_mps": 0.0,
+        "outwardImpulse_Ns": 0.09999999999999999,
+        "events": [
+          {
+            "fromState": "P",
+            "toState": "F",
+            "time_s": 0.34142135623730957,
+            "yBefore_m": 0.00020000000000000608,
+            "yUnclipped_m": -0.0012499999999999937,
+            "incomingVy_mps": -0.14142135623730953
+          }
+        ]
+      }
+    },
+    {
+      "case": "A/B/C",
+      "dt_ms": 5,
+      "check": "baseline_has_B_false_lift",
+      "passed": true,
+      "observed": {
+        "A": false,
+        "B": true,
+        "C": true
+      }
+    },
+    {
+      "case": "B/C",
+      "dt_ms": 5,
+      "check": "same_tangential_input",
+      "passed": true
+    },
+    {
+      "case": "A",
+      "dt_ms": 5,
+      "check": "event_order",
+      "passed": true,
+      "observed": []
+    },
+    {
+      "case": "A",
+      "dt_ms": 5,
+      "check": "unique_mass_source_and_no_penetration",
+      "passed": true,
+      "firstInvalidSample": null
+    },
+    {
+      "case": "A",
+      "dt_ms": 5,
+      "check": "supported_at_all_samples",
+      "passed": true,
+      "firstInvalidSample": null
+    },
+    {
+      "case": "B",
+      "dt_ms": 5,
+      "check": "event_order",
+      "passed": true,
+      "observed": [
+        [
+          "S",
+          "F"
+        ],
+        [
+          "F",
+          "S"
+        ]
+      ]
+    },
+    {
+      "case": "B",
+      "dt_ms": 5,
+      "check": "unique_mass_source_and_no_penetration",
+      "passed": true,
+      "firstInvalidSample": null
+    },
+    {
+      "case": "B",
+      "dt_ms": 5,
+      "check": "supported_at_all_samples",
+      "passed": true,
+      "firstInvalidSample": null
+    },
+    {
+      "case": "B",
+      "dt_ms": 5,
+      "check": "remains_stopped",
+      "passed": true
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "event_order",
+      "passed": true,
+      "observed": [
+        [
+          "S",
+          "P"
+        ],
+        [
+          "P",
+          "F"
+        ]
+      ]
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "unique_mass_source_and_no_penetration",
+      "passed": true,
+      "firstInvalidSample": null
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "positive_takeoff_evidence",
+      "passed": true,
+      "event": {
+        "fromState": "S",
+        "toState": "P",
+        "time_s": 0.005,
+        "firstPositiveY_m": 1.25e-05,
+        "outwardImpulse_Ns": 0.005
+      }
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "descending_zero_and_continuous_P",
+      "passed": true,
+      "event": {
+        "fromState": "P",
+        "toState": "F",
+        "time_s": 0.3414213562373094,
+        "yBefore_m": 0.00019999999999998548,
+        "yUnclipped_m": -0.0005125000000000148,
+        "incomingVy_mps": -0.14142135623730942
+      }
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "captured_mass_stays_in_F",
+      "passed": true,
+      "firstCaptured": {
+        "case": "C",
+        "dt_s": 0.005,
+        "t_s": 0.345,
+        "sourceId": 1,
+        "T_N": 0.0,
+        "N_N": -1.0,
+        "appliedPreviousInterval": [
+          0.0,
+          -1.0
+        ],
+        "baselineLift": false,
+        "state": "F",
+        "S_kg": 0.0,
+        "F_kg": 1.0,
+        "P_kg": 0.0,
+        "x_m": null,
+        "vx_mps": null,
+        "y_m": 0.0,
+        "vy_mps": 0.0,
+        "outwardImpulse_Ns": 0.10000000000000002,
+        "events": [
+          {
+            "fromState": "P",
+            "toState": "F",
+            "time_s": 0.3414213562373094,
+            "yBefore_m": 0.00019999999999998548,
+            "yUnclipped_m": -0.0005125000000000148,
+            "incomingVy_mps": -0.14142135623730942
+          }
+        ]
+      }
+    },
+    {
+      "case": "B",
+      "dt_ms": 10,
+      "check": "pulse_x_m",
+      "passed": true,
+      "observed": 0.005,
+      "reference": 0.005,
+      "tolerance": 0.001,
+      "absoluteError": 0.0
+    },
+    {
+      "case": "B",
+      "dt_ms": 10,
+      "check": "pulse_vx_mps",
+      "passed": true,
+      "observed": 0.09999999999999999,
+      "reference": 0.1,
+      "tolerance": 0.01,
+      "absoluteError": 1.3877787807814457e-17
+    },
+    {
+      "case": "B",
+      "dt_ms": 10,
+      "check": "stop_s",
+      "passed": true,
+      "observed": 0.12,
+      "reference": 0.12,
+      "tolerance": 0.01,
+      "absoluteError": 0.0
+    },
+    {
+      "case": "B",
+      "dt_ms": 10,
+      "check": "stop_x_m",
+      "passed": true,
+      "observed": 0.006,
+      "reference": 0.006,
+      "tolerance": 0.001,
+      "absoluteError": 0.0
+    },
+    {
+      "case": "C",
+      "dt_ms": 10,
+      "check": "pulse_y_m",
+      "passed": true,
+      "observed": 0.005,
+      "reference": 0.005,
+      "tolerance": 0.001,
+      "absoluteError": 0.0
+    },
+    {
+      "case": "C",
+      "dt_ms": 10,
+      "check": "pulse_vy_mps",
+      "passed": true,
+      "observed": 0.09999999999999999,
+      "reference": 0.1,
+      "tolerance": 0.01,
+      "absoluteError": 1.3877787807814457e-17
+    },
+    {
+      "case": "C",
+      "dt_ms": 10,
+      "check": "peak_y_m",
+      "passed": true,
+      "observed": 0.010000000000000002,
+      "reference": 0.01,
+      "tolerance": 0.001,
+      "absoluteError": 1.734723475976807e-18
+    },
+    {
+      "case": "C",
+      "dt_ms": 10,
+      "check": "peak_s",
+      "passed": true,
+      "observed": 0.2,
+      "reference": 0.2,
+      "tolerance": 0.01,
+      "absoluteError": 0.0
+    },
+    {
+      "case": "C",
+      "dt_ms": 10,
+      "check": "capture_s",
+      "passed": true,
+      "observed": 0.34142135623730957,
+      "reference": 0.3414213562373095,
+      "tolerance": 0.01,
+      "absoluteError": 5.551115123125783e-17
+    },
+    {
+      "case": "B",
+      "dt_ms": 5,
+      "check": "pulse_x_m",
+      "passed": true,
+      "observed": 0.005,
+      "reference": 0.005,
+      "tolerance": 0.001,
+      "absoluteError": 0.0
+    },
+    {
+      "case": "B",
+      "dt_ms": 5,
+      "check": "pulse_vx_mps",
+      "passed": true,
+      "observed": 0.10000000000000002,
+      "reference": 0.1,
+      "tolerance": 0.01,
+      "absoluteError": 1.3877787807814457e-17
+    },
+    {
+      "case": "B",
+      "dt_ms": 5,
+      "check": "stop_s",
+      "passed": true,
+      "observed": 0.12000000000000001,
+      "reference": 0.12,
+      "tolerance": 0.005,
+      "absoluteError": 1.3877787807814457e-17
+    },
+    {
+      "case": "B",
+      "dt_ms": 5,
+      "check": "stop_x_m",
+      "passed": true,
+      "observed": 0.006000000000000001,
+      "reference": 0.006,
+      "tolerance": 0.001,
+      "absoluteError": 8.673617379884035e-19
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "pulse_y_m",
+      "passed": true,
+      "observed": 0.005,
+      "reference": 0.005,
+      "tolerance": 0.001,
+      "absoluteError": 0.0
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "pulse_vy_mps",
+      "passed": true,
+      "observed": 0.10000000000000002,
+      "reference": 0.1,
+      "tolerance": 0.01,
+      "absoluteError": 1.3877787807814457e-17
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "peak_y_m",
+      "passed": true,
+      "observed": 0.009999999999999995,
+      "reference": 0.01,
+      "tolerance": 0.001,
+      "absoluteError": 5.204170427930421e-18
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "peak_s",
+      "passed": true,
+      "observed": 0.2,
+      "reference": 0.2,
+      "tolerance": 0.005,
+      "absoluteError": 0.0
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "capture_s",
+      "passed": true,
+      "observed": 0.3414213562373094,
+      "reference": 0.3414213562373095,
+      "tolerance": 0.005,
+      "absoluteError": 1.1102230246251565e-16
+    },
+    {
+      "case": "B",
+      "dt_ms": 5,
+      "check": "half_step:pulse_x_m",
+      "passed": true,
+      "coarseAbsoluteError": 0.0,
+      "fineAbsoluteError": 0.0
+    },
+    {
+      "case": "B",
+      "dt_ms": 5,
+      "check": "half_step:pulse_vx_mps",
+      "passed": true,
+      "coarseAbsoluteError": 1.3877787807814457e-17,
+      "fineAbsoluteError": 1.3877787807814457e-17
+    },
+    {
+      "case": "B",
+      "dt_ms": 5,
+      "check": "half_step:stop_s",
+      "passed": true,
+      "coarseAbsoluteError": 0.0,
+      "fineAbsoluteError": 1.3877787807814457e-17
+    },
+    {
+      "case": "B",
+      "dt_ms": 5,
+      "check": "half_step:stop_x_m",
+      "passed": true,
+      "coarseAbsoluteError": 0.0,
+      "fineAbsoluteError": 8.673617379884035e-19
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "half_step:pulse_y_m",
+      "passed": true,
+      "coarseAbsoluteError": 0.0,
+      "fineAbsoluteError": 0.0
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "half_step:pulse_vy_mps",
+      "passed": true,
+      "coarseAbsoluteError": 1.3877787807814457e-17,
+      "fineAbsoluteError": 1.3877787807814457e-17
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "half_step:peak_y_m",
+      "passed": true,
+      "coarseAbsoluteError": 1.734723475976807e-18,
+      "fineAbsoluteError": 5.204170427930421e-18
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "half_step:peak_s",
+      "passed": true,
+      "coarseAbsoluteError": 0.0,
+      "fineAbsoluteError": 0.0
+    },
+    {
+      "case": "C",
+      "dt_ms": 5,
+      "check": "half_step:capture_s",
+      "passed": true,
+      "coarseAbsoluteError": 5.551115123125783e-17,
+      "fineAbsoluteError": 1.1102230246251565e-16
+    }
+  ],
+  "firstFailure": null
+}
