@@ -1,0 +1,114 @@
+{
+  "attemptId": "6737d316-d6b6-4559-9af3-80feda2ba564",
+  "role": "OP15",
+  "pid": 80360,
+  "reason": "CHILD_EXIT",
+  "lastPipeline": {
+    "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+    "call": "vkCreateComputePipelines",
+    "edge": "EXIT",
+    "role": "OP15",
+    "moduleSHA": "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f",
+    "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+    "flags": 0,
+    "pipelineCache": null,
+    "pid": 80360,
+    "ownerTid": 30176,
+    "processStartTick": "134398696638265202",
+    "qpcFrequency": "10000000",
+    "qpc": "15559097476365",
+    "vkResult": 0
+  },
+  "exeSHA": "ad40c7ce3ba07ac9a782b0a2b2acf5b34ca233f6d778142192bc9fd7dc950b01",
+  "stdoutSHA": "2c8b3656cd79cfe997679692dcbb668879bc7965902617d86ca47efdaa448d05",
+  "supervisorStopQpc": "15559099069818",
+  "qpcFrequency": "10000000",
+  "samples": [
+    {
+      "elapsed": 0.06200000015087426,
+      "qpc": "15558960027875",
+      "ownerTid": null,
+      "alive": true,
+      "processTimes": [
+        "134398696638265202",
+        "0",
+        "0",
+        "0"
+      ],
+      "ownerTimes": null
+    },
+    {
+      "elapsed": 5.094000000040978,
+      "qpc": "15559010350710",
+      "ownerTid": 30176,
+      "alive": true,
+      "processTimes": [
+        "134398696638265202",
+        "0",
+        "1875000",
+        "46093750"
+      ],
+      "ownerTimes": [
+        "134398696639139452",
+        "0",
+        "1718750",
+        "46093750"
+      ]
+    },
+    {
+      "elapsed": 10.125,
+      "qpc": "15559060665918",
+      "ownerTid": 30176,
+      "alive": true,
+      "processTimes": [
+        "134398696638265202",
+        "0",
+        "2343750",
+        "92968750"
+      ],
+      "ownerTimes": [
+        "134398696639139452",
+        "0",
+        "2187500",
+        "92968750"
+      ]
+    }
+  ],
+  "probe": {
+    "schema": "PC_G13_STEADY_OP66_V1",
+    "role": "OP15",
+    "moduleSHA": "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f",
+    "pid": 80360,
+    "processStartTick": "134398696638265202",
+    "ownerTid": 30176,
+    "pipelineNs": "330819100",
+    "queueSubmit": 0,
+    "wait": 0,
+    "probeWords": [
+      1065353217,
+      1065353216,
+      1,
+      4194304,
+      7,
+      0,
+      0,
+      1179661106,
+      1065353217,
+      1065353216,
+      1,
+      4194304,
+      7,
+      0,
+      0,
+      1179661106
+    ],
+    "mismatchMasks": [
+      0,
+      0
+    ],
+    "acceptedRoot": null
+  },
+  "forced": false,
+  "exitCode": 0,
+  "ownerRetired": true
+}

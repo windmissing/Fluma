@@ -1,0 +1,124 @@
+{
+  "schema": "T833_T841_DIAGNOSTIC_RESULT_V1",
+  "executable": ".codex/local-test/t833-t841-qualification.exe",
+  "exeSHA": "ad40c7ce3ba07ac9a782b0a2b2acf5b34ca233f6d778142192bc9fd7dc950b01",
+  "build": "WINDOWS_X64_RELEASE_PASS",
+  "roles": [
+    {
+      "role": "OP7_FIELD_ONLY",
+      "moduleSHA": "e1f6130967e203043aa6e2e9a786f6a677d18cf20bb7b7ae32084afa617438d6",
+      "sourceSHA": "5c96aad9fb1e6160a6503a448fd001a3f115724f7da101fdbded0539e9347156",
+      "observed": "CHILD_EXIT",
+      "callMs": 307.0671,
+      "observedMinimumMs": null,
+      "mismatchMasks": [
+        0,
+        0
+      ],
+      "exitCode": 0,
+      "stdoutSHA": "50600a88f9837c60c20a720bf35bb0329293f47205e9fbf2e6feaa6f2ef5d99e",
+      "ownerRetired": true
+    },
+    {
+      "role": "OP7_DRIVE_ONLY",
+      "moduleSHA": "158cd36f62f309af57212c3812067306e115d526d5507db154f7efcbd5aafb77",
+      "sourceSHA": "e83cf4498144c60dc44092db6316b2c5fd9af16b8cd2be4e493095f339ded203",
+      "observed": "CALL_UNRETURNED",
+      "callMs": null,
+      "observedMinimumMs": 60002.6232,
+      "mismatchMasks": null,
+      "exitCode": 1,
+      "stdoutSHA": "8fef07bb777452619830ea8add9d3b8b4caaa9767db989f81d2b55c8c4d3a0ab",
+      "ownerRetired": false
+    },
+    {
+      "role": "OP15",
+      "moduleSHA": "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f",
+      "sourceSHA": "68e64f5c7ef3df84535b5f5c085afd8d347fcd7f8e2d5872d1647799389683e6",
+      "observed": "CHILD_EXIT",
+      "callMs": 330.8191,
+      "observedMinimumMs": null,
+      "mismatchMasks": [
+        0,
+        0
+      ],
+      "exitCode": 0,
+      "stdoutSHA": "2c8b3656cd79cfe997679692dcbb668879bc7965902617d86ca47efdaa448d05",
+      "ownerRetired": true
+    },
+    {
+      "role": "OP17",
+      "moduleSHA": "cb5b3825a2659b8b0e2343963e6e1166e4ad86117dbcc84e80a3b68b7a265d3c",
+      "sourceSHA": "60cd8cc83f8b5becab0f89436a402792007f9f7194e3e7e9af3ee02bbcc4dab5",
+      "observed": "CALL_UNRETURNED",
+      "callMs": null,
+      "observedMinimumMs": 60100.3392,
+      "mismatchMasks": null,
+      "exitCode": 1,
+      "stdoutSHA": "00d9c7f253486dee2440c0802218473b8b5caf0209a23f8e83398ea4499c64bf",
+      "ownerRetired": false
+    },
+    {
+      "role": "OP6",
+      "moduleSHA": "f1128f66ec7b845d82a50e0eb9c8c772dbf709c245653a2aab2f586a246d97c4",
+      "sourceSHA": "a35750988a0dc519d7d7b1c76933f0530460a3b9857514c6d8a1c150336b452e",
+      "observed": "CHILD_EXIT",
+      "callMs": 35.3471,
+      "observedMinimumMs": null,
+      "mismatchMasks": [
+        0,
+        0
+      ],
+      "exitCode": 0,
+      "stdoutSHA": "502165adeda3224f3e56f0c13b9d230be560977178d0e04d18763f69276db8cd",
+      "ownerRetired": true
+    },
+    {
+      "role": "OP8",
+      "moduleSHA": "bffb8188783f3ce412eee6fe19b70684e514025fe607e208342480a5392fb9e6",
+      "sourceSHA": "a470698c1683b9798b0335566658e6c085562a11d0bd501c1137eb8fba288495",
+      "observed": "CHILD_EXIT",
+      "callMs": 52.1382,
+      "observedMinimumMs": null,
+      "mismatchMasks": [
+        0,
+        0
+      ],
+      "exitCode": 0,
+      "stdoutSHA": "be6f909130b932b100c3aeb4252a17c1b99341f913c690f5ab12058e20576d48",
+      "ownerRetired": true
+    },
+    {
+      "role": "OP12_14",
+      "moduleSHA": "eceb9fcb4f4ed1cba79ceb49a9974e945c907934864a125ae4ca445d489c39b5",
+      "sourceSHA": "4672f3b57cf3be6a59df7ecc256eb0148b3938206b0743446985796f07e087aa",
+      "observed": "CHILD_EXIT",
+      "callMs": 58.7476,
+      "observedMinimumMs": null,
+      "mismatchMasks": [
+        0,
+        0
+      ],
+      "exitCode": 0,
+      "stdoutSHA": "e527ef6067960d120f356efd68b7a2044504c0718dd9b814a12bda20ae62f621",
+      "ownerRetired": true
+    },
+    {
+      "role": "OP16",
+      "moduleSHA": "cfaaa4d61649236f6e6e2bfdbd759f0e62e67cc9288c927d1f0822c27fa926d2",
+      "sourceSHA": "ad40920e4e98837ae5bf52daad7b55850be81d9807e9e1af9e41f674657f42a3",
+      "observed": "CHILD_EXIT",
+      "callMs": 102.1986,
+      "observedMinimumMs": null,
+      "mismatchMasks": [
+        0,
+        0
+      ],
+      "exitCode": 0,
+      "stdoutSHA": "e2a4ce9a1c8c74bd253fead76d24797794d3799d31f1e636161ae3e0094be2f3",
+      "ownerRetired": true
+    }
+  ],
+  "productionMap": "FROZEN",
+  "rootDispatch": "NOT_RUN"
+}
