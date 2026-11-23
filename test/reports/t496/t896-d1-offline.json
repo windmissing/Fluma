@@ -1,0 +1,215 @@
+{
+  "arms": {
+    "off1": {
+      "sha256": "9fa211c04de2ec4c002deee972f474cd23a34c1ff1d716eff43cf06831f32034",
+      "lines": 122,
+      "offerQuoteRepairLines": [],
+      "mode": "OFF",
+      "run": "15968410217019",
+      "sessions": {
+        "1": {
+          "session": "1",
+          "queued": 28,
+          "accepted": 26,
+          "rejected": 0,
+          "revoked": 2,
+          "queuedMask": "268435455",
+          "terminalMask": "268435455"
+        }
+      },
+      "source": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15968412120498",
+          "admittedQ20": 125531,
+          "requested": 0.119716,
+          "deltaNs": 14964500,
+          "commandSHA": "ffd5c18ac6cf44b67d5bd171da34eec5083fdcc24856dfc938ce4b8b0b97fe3b"
+        },
+        "29": {
+          "outcome": "REVOKED",
+          "offer": "2"
+        }
+      },
+      "acceptedRoots": 4,
+      "drain": "FENCE_RETIRED_BEFORE_DRAIN_PROBE",
+      "retireKind": "TOMBSTONE_RETIRED",
+      "wsiReleased": true,
+      "capture": [
+        "OFF_NOOP",
+        "REVOKED"
+      ],
+      "hotPages": 0,
+      "t865FirstReject": "ACTION_TERMINAL"
+    },
+    "off2": {
+      "sha256": "a2b169ffaf9e4c9dd0c504d1391c90855336906cba8f524c1cc5561fcd5f9d22",
+      "lines": 151,
+      "offerQuoteRepairLines": [],
+      "mode": "OFF",
+      "run": "15968422530005",
+      "sessions": {
+        "1": {
+          "session": "1",
+          "queued": 48,
+          "accepted": 48,
+          "rejected": 0,
+          "revoked": 0,
+          "queuedMask": "281474976710655",
+          "terminalMask": "281474976710655"
+        }
+      },
+      "source": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15968424178853",
+          "admittedQ20": 127018,
+          "requested": 0.1211344,
+          "deltaNs": 15141800,
+          "commandSHA": "e043341bb1843c6f2127d634ec9b7e9ab968b6833e7f87e819aee75dfda2d667"
+        },
+        "29": {
+          "outcome": "EXPIRED",
+          "offer": "2",
+          "reason": "STALE_ENDPOINT",
+          "ageNs": 129606900
+        }
+      },
+      "acceptedRoots": 14,
+      "drain": "BUSINESS_SIGNALED",
+      "retireKind": "BUSINESS_SIGNALED",
+      "wsiReleased": true,
+      "capture": [
+        "OFF_NOOP",
+        "OFF_NOOP"
+      ],
+      "hotPages": 0,
+      "t865FirstReject": "CLOCK_EQUIVALENCE_UNPROVEN"
+    },
+    "on": {
+      "sha256": "4ae7f6425f173ff503249bef90edef67ea39be31ecfcd51fdb1967575fb7ca15",
+      "lines": 123,
+      "offerQuoteRepairLines": [],
+      "mode": "ON",
+      "run": "15968677493063",
+      "sessions": {
+        "1": {
+          "session": "1",
+          "queued": 29,
+          "accepted": 27,
+          "rejected": 0,
+          "revoked": 2,
+          "queuedMask": "536870911",
+          "terminalMask": "536870911"
+        }
+      },
+      "source": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15968679142148",
+          "admittedQ20": 127849,
+          "requested": 0.1219272,
+          "deltaNs": 15240900,
+          "commandSHA": "2e441f67ee0c9388cbf1f6e5aa5175acf4f89c4fc0573417a31062b5988ef592"
+        },
+        "29": {
+          "outcome": "REVOKED",
+          "offer": "2"
+        }
+      },
+      "acceptedRoots": 4,
+      "drain": "FENCE_RETIRED_BEFORE_DRAIN_PROBE",
+      "retireKind": "TOMBSTONE_RETIRED",
+      "wsiReleased": true,
+      "capture": [
+        "RESERVED",
+        "REVOKED"
+      ],
+      "hotPages": 0,
+      "t865FirstReject": "ACTION_TERMINAL"
+    }
+  },
+  "offPair": {
+    "state": "CLOCK_OR_INPUT_DIFFERENCE",
+    "action": 1,
+    "left": [
+      1,
+      "DELIVERED",
+      24108700,
+      [
+        1,
+        1,
+        0,
+        0,
+        4,
+        166556,
+        "accepted",
+        "PAGE_PULSE_ACCEPTED",
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "right": [
+      1,
+      "DELIVERED",
+      23463100,
+      [
+        1,
+        1,
+        0,
+        0,
+        6,
+        153732,
+        "accepted",
+        "PAGE_PULSE_ACCEPTED",
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "replays": {
+    "replay-off": {
+      "sha256": "ab03c195664213099d4887e4d0e9ba685d3077dda7377c1382b67a7e8b5bc8ba",
+      "lines": 30,
+      "offerQuoteRepairLines": [],
+      "firstFailureLine": 28,
+      "stage": "M1_QUANTUM_COLD_CAPTURE",
+      "detail": "M1_COLD_ROOT_BACKING",
+      "actions": 0,
+      "drain": "OWNER_TERMINATED_BEFORE_DRAIN_PROOF"
+    },
+    "replay-off2": {
+      "sha256": "ef92609b7a62e57ecd2e876166d9231231719d8573bae47602ee512bf266c53d",
+      "lines": 30,
+      "offerQuoteRepairLines": [],
+      "firstFailureLine": 28,
+      "stage": "M1_QUANTUM_COLD_CAPTURE",
+      "detail": "M1_COLD_ROOT_BACKING",
+      "actions": 0,
+      "drain": "OWNER_TERMINATED_BEFORE_DRAIN_PROOF"
+    },
+    "replay-on": {
+      "sha256": "2e1e391c931b10314cdf471d1ec489c92817f8204c4d3f5dde676fee93dbd58a",
+      "lines": 30,
+      "offerQuoteRepairLines": [],
+      "firstFailureLine": 28,
+      "stage": "M1_QUANTUM_COLD_CAPTURE",
+      "detail": "M1_COLD_ROOT_BACKING",
+      "actions": 0,
+      "drain": "OWNER_TERMINATED_BEFORE_DRAIN_PROOF"
+    }
+  },
+  "t865FourArm": "ARM_SET",
+  "negativeControls": [
+    "DRAIN_BUSINESS_FENCE",
+    "D1_OWNER_COVERAGE_RECEIPT"
+  ],
+  "handoff": "T902_THEN_RECAPTURE"
+}

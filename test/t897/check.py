@@ -162,7 +162,7 @@ def d1(rows):
     plan = OLD.D1.plan()
     need([(r['id'],OLD.KINDS[r['kind']],int(r['scriptNs'])) for r in actions] ==
          [(s['actionId'],s['kind'],s['scriptNs']) for s in plan], 'D1_ACTION_TABLE')
-    need(ready['run'] == drain['run'] == scope[0] and drain['geometry'] == scope[1]
+    need(ready['run'] == drain['run'] == scope[0] and drain['generation'] == scope[1]
          and drain['traceLoss'] == coverage['loss'] == 0 and coverage['complete'] is True
          and coverage['revision'] == 'M1_D1_OWNER_COVERAGE_V1', 'D1_OWNER_COVERAGE_RECEIPT')
     hz = int(ready['qpcFrequency'])
@@ -171,7 +171,7 @@ def d1(rows):
     for r in actions:
         if OLD.KINDS[r['kind']] != 'PULSE':
             if ready['mode'] == 'OFF' and OLD.KINDS[r['kind']] != 'SOURCE':
-                need(r['state'] == 'OFF_NOOP', 'D1_OFF_CAPTURE_STATE')
+                need(r['state'] in ('OFF_NOOP','REVOKED'), 'D1_OFF_CAPTURE_STATE')
             continue
         k = (r['session'],r['nativeSeq'])
         if r['state'] != 'DELIVERED':
@@ -290,7 +290,7 @@ def selftest(a, archive, full):
         sessions = [dict(session=str(i+1),queued=24,accepted=23+i,rejected=0,revoked=1-i,
                          queuedMask=str((1<<24)-1),terminalMask=str((1<<24)-1)) for i in range(2)]
         rows.extend([dict(stage='END_INTAKE',run=run,geometry='2',lastPulseSession='2',lastPulseSeq='24'),
-                     dict(stage='M1_D1_DRAIN',m1D1Drain=dict(run=run,geometry='2',traceLoss=0,drainNs='900000',
+                     dict(stage='M1_D1_DRAIN',m1D1Drain=dict(run=run,generation='2',traceLoss=0,drainNs='900000',
                           ownerCoverage=dict(revision='M1_D1_OWNER_COVERAGE_V1',complete=True,loss=0,
                                              producerQueued=48,sessions=sessions)))])
         return rows

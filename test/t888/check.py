@@ -160,7 +160,17 @@ def d1_drain(seal, drain, close, hz, authority=()):
          and all(drain[k]==0 for k in ('offers','inFlight','leases','pending','permits','captureRequests',
                                      'writer','reader','pin','traceLoss','ownerState')),'DRAIN_INCOMPLETE')
     need(drain['wsiUsed'] is True and drain['retireVkResult']==0,'DRAIN_WSI')
-    if int(drain['ownerFence']):
+    if drain.get('ownerFenceKind')=='BUSINESS_SIGNALED':
+        enter, exit = (drain[k] for k in ('ownerFenceEnterQpc','ownerFenceExitQpc'))
+        need(int(drain['ownerFence'])>0 and drain['ownerFenceVkResult']==0
+             and 0<int(enter)<=int(exit) and drain['ownerProbeVkResult']==1 and drain['ownerProbeQpc']=='0'
+             and any(a['nonce']==drain['ownerFenceNonce'] and a['fenceObject']==drain['ownerFence']
+                     and a['run']==drain['run'] and a['geometry']==drain['generation']
+                     and a['acceptedRoot']==a['nonce'] and a['submitVkResult']==0
+                     and a['fencePending'] is False and a['lastWait'][:2]==[enter,exit]
+                     and a['lastWait'][3]==0 for a in authority), 'DRAIN_BUSINESS_FENCE')
+        fence_state='BUSINESS_SIGNALED'
+    elif int(drain['ownerFence']):
         need(drain['ownerFenceVkResult']==0
              and 0<int(drain['ownerFenceEnterQpc'])<=int(drain['ownerFenceExitQpc'])
              and int(drain['ownerFenceNonce'])>0 and
