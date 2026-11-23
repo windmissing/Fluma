@@ -346,7 +346,8 @@ private:
   const char *AwaitM1Fence(uint64_t,const std::function<const char *()> &,M1WaitLog &);
   void M1RootTrace(const char *,uint64_t,const m1::ProgressClockV2 &,const m1::PlanGrantV2 &,
                    const grs::AcceptedRoot &,const M1WaitLog &);
-  void RetireM1Root(m1::SourceRootOwner &,M1WaitLog &);
+  struct M1Retirement { uint64_t nonce=0,exitQpc=0; bool submitted=false,proven=false; } m1Retirement;
+  void RetireM1Root(m1::SourceRootOwner &,uint64_t,M1WaitLog &);
   bool D1Ended() const { return attempt.m1D1 && attempt.d1Intake->Snapshot().ns; }
   void SubmitM1Root(const VkSubmitInfo &,uint64_t,uint64_t,uint64_t,M1WaitLog &);
   VkResult d1FenceResult=VK_NOT_READY;

@@ -13,6 +13,7 @@
 #include "g13_candidate_timing.h"
 #include "m1_d1_drain.h"
 #include "m1_observation.h"
+#include "m1_recovery.h"
 #else
 struct NativeWindow;
 #endif

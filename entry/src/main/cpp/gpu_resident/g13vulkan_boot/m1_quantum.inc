@@ -124,6 +124,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
                         const std::function<bool()> &refresh, grs::AcceptedRoot &accepted,
                         uint64_t &frameSerial, uint32_t &ordinal) {
   using namespace m1pc;
+  m1Retirement={};
   m1::QuantumParameters p;
   const auto &passes=m1QuantumPasses;
   const auto &sets=m1QuantumSets;
@@ -233,7 +234,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   M1WaitLog log;
   const auto reject=[&] {
     attempt.disarmM1Input();
-    RetireM1Root(root,log);
+    RetireM1Root(root,nonce,log);
     fields << ",\"m1QuantumReject\":" << Quote(m1Reject);
     M1RootTrace("Quantum",nonce,clock,permit,accepted,log);
     return false;

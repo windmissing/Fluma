@@ -51,6 +51,7 @@ struct Window {
   bool t833Allowed=true;
   std::atomic<uint64_t> sourcePulse{0};
   bool pointerReady = false;
+  uint64_t pointerReadyQpc=0;
   grs::g13vk::PointerSample held;
   grs::g13vk::SourceScope scope;
   grs::g13vk::M1Ingress ingress;
@@ -337,6 +338,10 @@ struct Window {
     scope.permission=held.hold;
     ingress.Authorize(scope,held.hold);
     const auto geometry=generation, hold=held.hold;
+    const auto inputReady=pointerReady;
+    const auto readyQpc=pointerReadyQpc;
+    const auto selected=material;
+    const auto bound=held.material;
     const auto eventDpi=dpi;
     lock.unlock();
     Emit("{\"stage\":\"WIN32_POINTER\",\"kind\":\"" + action +
@@ -344,22 +349,27 @@ struct Window {
          "\",\"seq\":\"" + std::to_string(sequence) +
          "\",\"qpc\":\"" + std::to_string(ticks) +
          "\",\"x\":" + std::to_string(x) + ",\"y\":" + std::to_string(y) +
-         ",\"dpi\":" + std::to_string(eventDpi) + ",\"hold\":\"" + std::to_string(hold) + "\"}");
+         ",\"dpi\":" + std::to_string(eventDpi) + ",\"hold\":\"" + std::to_string(hold) +
+         "\",\"inputReady\":" + (inputReady ? "true" : "false") +
+         ",\"readyQpc\":\"" + std::to_string(readyQpc) + "\",\"selectedMaterial\":" + std::to_string(selected) +
+         ",\"boundMaterial\":" + (hold ? std::to_string(bound) : "null") +
+         ",\"reject\":" + (action!="DOWN" || hold ? "null" :
+                      !inputReady ? "\"NOT_READY\"" : "\"OUTSIDE_CLIENT\"") + "}");
   }
 
   void SelectMaterial(uint32_t next) {
-    uint64_t geometry;
-    {
-      std::lock_guard lock(mutex);
-      if (closing || material==next) return;
-      material=next;
-      held={};
-      scope.permission=0;
-      ingress.Authorize(scope,0);
-      geometry=generation;
-    }
-    Emit("{\"stage\":\"M1_SOURCE_MODE\",\"geometry\":\""+std::to_string(geometry)+
-         "\",\"material\":"+std::to_string(next)+"}");
+    std::lock_guard lock(mutex);
+    if (closing || material==next) return;
+    const auto revoked=held.hold;
+    const auto old=material;
+    material=next;
+    held={};
+    scope.permission=0;
+    ingress.Authorize(scope,0);
+    Emit("{\"stage\":\"M1_SOURCE_MODE\",\"kind\":\"MODE_CHANGED\",\"geometry\":\""+std::to_string(generation)+
+         "\",\"seq\":\""+std::to_string(++eventSeq)+"\",\"qpc\":\""+std::to_string(grs::pc::QpcTicks())+
+         "\",\"revokedHold\":\""+std::to_string(revoked)+"\",\"oldMaterial\":"+std::to_string(old)+
+         ",\"material\":"+std::to_string(next)+",\"inputReady\":"+(pointerReady ? "true" : "false")+"}");
   }
 
   void SetGravity(int32_t angle,uint64_t expectedGeometry,bool relative=false) {
@@ -499,6 +509,7 @@ struct Window {
                                                    std::lock_guard guard(mutex);
                                                    if (closing || generation != previous) return false;
                                                    Emit(readyReceipt);
+                                                   pointerReadyQpc=grs::pc::QpcTicks();
                                                    pointerReady = true;
                                                    if (!d1Mode.empty() && !d1ReadyNs) {
                                                      d1ReadyScope=scope;

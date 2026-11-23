@@ -63,13 +63,16 @@ const char *Boot::AwaitM1Fence(uint64_t deadline,const std::function<const char 
   }
 }
 
-void Boot::RetireM1Root(m1::SourceRootOwner &root,M1WaitLog &log) {
+void Boot::RetireM1Root(m1::SourceRootOwner &root,uint64_t nonce,M1WaitLog &log) {
+  m1Retirement={nonce,0,log.submit==VK_SUCCESS,false};
   root.Stop();
   if (log.submit!=VK_SUCCESS) {
     if (log.submit==VK_ERROR_DEVICE_LOST) root.ContextLost();
     else {
       grs::AcceptedRoot discarded;
       root.Poll(FenceState::Signaled,nullptr,0,0,discarded); // Never submitted.
+      m1Retirement.proven=root.State()==FlightState::Idle;
+      m1Retirement.exitQpc=pc::QpcTicks();
     }
     return;
   }
@@ -94,6 +97,8 @@ void Boot::RetireM1Root(m1::SourceRootOwner &root,M1WaitLog &log) {
   if (log.retire==VK_SUCCESS) {
     grs::AcceptedRoot discarded;
     const auto polled=root.Poll(FenceState::Signaled,nullptr,0,0,discarded);
+    m1Retirement.proven=polled==ControlCode::STALE && root.State()==FlightState::Idle;
+    m1Retirement.exitQpc=log.retireExit ? log.retireExit : log.lastWait.exit;
     if (attempt.m1D1) d1OwnerPoll=polled;
   }
 }
@@ -384,11 +389,21 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   SourceOffer firstOffer;
   uint64_t pulse = 0;
   uint64_t delta = 0;
-  const auto awaitSource=[&] {
+  const auto awaitSource=[&](bool recovering=false) {
     inputSample={};
     firstOffer={};
     stage="M1_POINTER_READY";
-    const bool opened=attempt.pointerReady(Receipt("RUNNING",""));
+    const auto openInput=[&] {
+      if (recovering) {
+        while (attempt.current() && !primeClock()) beginClock(false);
+        if (!attempt.current()) return false;
+        fields << ",\"m1RecoveryReadySession\":\"" << clock.session
+               << "\",\"m1RecoveryBaselineSeq\":\"" << m1Consumed.seq
+               << "\",\"m1RecoveryBaselineReceiptQpc\":\"" << m1Consumed.receiptTicks << '"';
+      }
+      return attempt.pointerReady(Receipt("RUNNING",""));
+    };
+    const bool opened=openInput();
     stage="M1_POINTER_WAIT";
     if (!opened) return false;
     while (attempt.current() && !D1Ended()) {
@@ -398,7 +413,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         fields << ",\"m1IdlePulseFault\":" << Quote(clock.fault);
         publish(Receipt("M1_WAIT_NEW_INPUT",""));
         beginClock(false);
-        if (!attempt.pointerReady(Receipt("RUNNING",""))) break;
+        if (!openInput()) break;
         continue;
       }
       if (!fresh) { Sleep(1); continue; }
@@ -642,7 +657,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     M1WaitLog log;
     const auto reject=[&] {
       if (!clock.open || std::strcmp(m1Reject,"SOURCE_HOLD_REVOKED")!=0) attempt.disarmM1Input();
-      RetireM1Root(root,log);
+      RetireM1Root(root,wide(request.nonce),log);
       if (root.State()!=FlightState::Idle) attempt.disarmM1Input();
       fields << ",\"m1SourceReject\":" << Quote(m1Reject);
       M1RootTrace("Source",wide(request.nonce),clock,permit,accepted,log);
@@ -726,27 +741,40 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     }
   };
   uint32_t ordinal=0;
-  const auto recoverableClock=[&] {
-    return !clock.open && m1Reject &&
-        (std::strcmp(m1Reject,"CLOCK_GAP")==0 || std::strcmp(m1Reject,"PULSE_QUEUE_OVERFLOW")==0);
-  };
-  const auto advanceQuantum=[&](bool hadFrame) {
-    while (!RunM1Quantum(candidate,root,clock,permit,refresh,accepted,frameSerial,ordinal)) {
+  uint64_t lastPresentedRoot=0;
+  const auto recover=[&]() {
       attempt.disarmM1Input();
-      if (!attempt.current() || !recoverableClock() || inFlight || root.State()!=FlightState::Idle ||
-          attempt.m1D1 || attempt.m1SinglePresent || !attempt.m1ColdFile.empty()) return false;
-      if (!publish(Receipt(hadFrame ? "M1_STALE_WAIT_NEW_INPUT" : "M1_FAULT_WAIT_NEW_INPUT",m1Reject)))
+      const bool ordinary=interactive && !attempt.m1D1 && !attempt.m1SinglePresent && attempt.m1ColdFile.empty();
+      if (!pc::CanRearmM1(m1Reject,ordinary,attempt.current(),root.State()==FlightState::Idle,
+                         inFlight,root.HasLeases(),clock.open,m1Retirement.proven)) return false;
+      const auto oldSession=clock.session;
+      const auto returned=clock.revoked,cleared=clock.clearedCarry;
+      clock.Revoke(m1Reject);
+      fields << ",\"m1Recovery\":{\"oldSession\":\"" << oldSession
+             << "\",\"reason\":" << Quote(m1Reject) << ",\"failedNonce\":\"" << m1Retirement.nonce
+             << "\",\"oldRetiredQpc\":\"" << m1Retirement.exitQpc
+             << "\",\"submitted\":" << (m1Retirement.submitted ? "true" : "false")
+             << ",\"returnedCredits\":" << clock.revoked-returned
+             << ",\"clearedCarry\":" << clock.clearedCarry-cleared
+             << ",\"balanced\":" << (clock.Balanced() ? "true" : "false")
+             << ",\"lastAcceptedRoot\":\"" << wide(accepted.nonce)
+             << "\",\"lastPresentedRoot\":\"" << lastPresentedRoot << "\"}";
+      if (!publish(Receipt(lastPresentedRoot ? "M1_STALE_WAIT_NEW_INPUT" : "M1_FAULT_WAIT_NEW_INPUT",m1Reject)))
         return false;
       fields.str(setupFields);
       fields.seekp(0,std::ios::end);
       beginClock(false);
-      if (!awaitSource() || !primeClock()) return false;
+      if (!awaitSource(true) || !primeClock()) return false;
       clock.ready=clock.baseline=true;
       if (!ClaimM1(clock,inputSample.hold,true,permit)) return false;
       ++frameSerial;
       ordinal=0;
       stage="M1_RECOVERED_SOURCE";
-      if (!consumeSource(inputSample,pulse,delta,firstOffer)) return false;
+      return consumeSource(inputSample,pulse,delta,firstOffer);
+  };
+  const auto advanceQuantum=[&]() {
+    while (!RunM1Quantum(candidate,root,clock,permit,refresh,accepted,frameSerial,ordinal)) {
+      if (!recover()) return false;
     }
     return true;
   };
@@ -763,9 +791,11 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       finishOffer(firstOffer,IngressCode::Rejected,0,"M1_SOURCE_PERMIT",pc::TimeNs());
       return "M1_SOURCE_PERMIT";
     }
-    if (!(consumeSource(inputSample,pulse,delta,firstOffer) && accepted.sourceSuccess && tail[61]))
-      return "M1_SOURCE_NOT_ADMITTED";
-    if (interactive && !advanceQuantum(false)) return "M1_QUANTUM_NOT_ACCEPTED";
+    if (!(consumeSource(inputSample,pulse,delta,firstOffer) && accepted.sourceSuccess && tail[61])) {
+      if (!pc::RecoverableM1Deadline(m1Reject) || !recover() || !accepted.sourceSuccess || !tail[61])
+        return "M1_SOURCE_NOT_ADMITTED";
+    }
+    if (interactive && !advanceQuantum()) return "M1_QUANTUM_NOT_ACCEPTED";
     return nullptr;
   };
   if (!attempt.m1Preview) {
@@ -908,7 +938,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
           }
         }
       }
-       if (sourceFatal || inFlight || root.State()==FlightState::StateLost || D1Ended() || !advanceQuantum(true)) {
+       if ((sourceFatal && !recover()) || inFlight || root.State()==FlightState::StateLost || D1Ended() || !advanceQuantum()) {
          const bool intakeStop=D1Ended() && (!sourceFatal ||
              (m1Reject && std::strcmp(m1Reject,"D1_END_INTAKE")==0)) && !inFlight &&
              root.State()==FlightState::Idle;
@@ -992,6 +1022,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
           roiTerminal=!roiPending;
         }
         ++businessPresents;
+        lastPresentedRoot=wide(lease.nonce);
         const auto &completion=accepted.completion;
         const auto q64=[&](size_t lo) { return wide({completion[lo],completion[lo+1]}); };
         if (fullM1) {
