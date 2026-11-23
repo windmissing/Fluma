@@ -31,7 +31,12 @@ def constant_names(text):
     return names
 
 
-def split_inputs(source):
+def split_inputs(source, *, composite_r1=False):
+    if composite_r1:
+        guard = "#ifndef G11VIS_STAGE_GLSL\n#define G11VIS_STAGE_GLSL\n"
+        if source.count(guard) != 1 or source.count("#endif\n") != 1:
+            raise ValueError("Unexpected R1 visual include guard")
+        source = source.replace(guard, "").replace("#endif\n", "")
     definitions, units = source_units(source, False)
     if definitions:
         raise ValueError("New preprocessor definitions require dependency review")
@@ -54,11 +59,19 @@ def split_inputs(source):
         raise ValueError("Unexpected G9 shader entry")
     ops = {name: int(value) for name, value in
            re.findall(r"const uint (G9_OP_\w+)\s*=\s*(\d+)u;", source)}
-    if sorted(ops.values()) != list(range(44)) or ops.get("G9_OP_ROOT_INIT") != 12:
+    if composite_r1:
+        if sorted(ops.values()) != list(range(42)) or ops.get("G9_OP_ROOT_INIT") != 0:
+            raise ValueError("Unexpected R1 parent opcode table")
+        visual = {name: int(value, 0) for name, value in
+                  re.findall(r"const uint (G11_OP_\w+|G11_COLD_INIT)\s*=\s*(0x[\da-f]+|\d+)u;", source)}
+        if sorted(visual.values()) != [512, 513, 514, 515, 516, 0x7fffff01]:
+            raise ValueError(f"Unexpected R1 visual opcode table: {visual}")
+        ops.update(visual)
+    elif sorted(ops.values()) != list(range(44)) or ops.get("G9_OP_ROOT_INIT") != 12:
         raise ValueError("Unexpected G9 opcode table")
     entry = units[run][1].replace("void g9Run(", "void main(", 1)
     literals = dict(ops, **{"0x7fffff00u": WARM})
-    bodies = {op: specialize(entry, op, literals) for op in (*range(44), WARM)}
+    bodies = {op: specialize(entry, op, literals) for op in (*ops.values(), WARM)}
 
     def build(opcodes):
         body = "\n".join(f"if(uOp=={op}u){{\n{bodies[op]}\nreturn;\n}}" for op in opcodes)

@@ -114,9 +114,10 @@ function passTable(which) {
 
 function emit() {
   const outDir = process.argv[2] || path.join(ROOT, 'entry/.cxx/default/default/debug/arm64-v8a/gpu_resident');
+  const families = process.argv[3] === '--r1-only' ? ['r1'] : ['r1', 'dm'];
   fs.mkdirSync(outDir, { recursive: true });
   let header = '#pragma once\n#include <array>\n#include <cstdint>\nstruct G11Pass{uint32_t op;uint32_t role,j;int32_t micro;uint32_t vis,phase;};\n';
-  for (const which of ['r1', 'dm']) {
+  for (const which of families) {
     const { src, sha, ops } = build(which);
     const tag = which === 'dm' ? 'Dm' : 'R1';
     const raw = 'kG11' + tag + 'Pipeline';
@@ -135,7 +136,7 @@ function emit() {
     console.log('g11vis composite ' + which.toUpperCase() + ': pipeline sha256=' + sha.slice(0, 16) + '… source=' + table.source.length + ' quantum=' + table.quantum.length);
   }
   fs.writeFileSync(path.join(outDir, 'g11vis_pipeline.h'), header);
-  for(const which of ['r1','dm']){fs.writeFileSync(path.join(outDir,'g11vis_'+which+'.comp'),build(which).src);}
+  for(const which of families){fs.writeFileSync(path.join(outDir,'g11vis_'+which+'.comp'),build(which).src);}
   const inputs=['docs/architecture-T660-contract-v1.json','entry/src/main/cpp/gpu_resident/g11vis/bootstrap_generated.h','entry/src/main/cpp/gpu_resident/g9spf/pipeline.comp','entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp','entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl','entry/src/main/cpp/gpu_resident/g11vis/material_plan.glsl','entry/src/main/cpp/gpu_resident/g11vis/marker_map.glsl','tools/g11/generate_contract.cjs','docs/architecture-T552-g9-seed-manifest-v2.json','entry/src/main/cpp/gpu_resident/g11vis/parent_seed_generated.h','docs/architecture-T563-g11-r1-dispatch-v1.json','docs/architecture-T563-g11-dm-dispatch-v1.json','docs/architecture-T660-g11-manifest-v2.json','entry/src/main/cpp/gpu_resident/g11vis/generated_contract.h','test/t566_generate_composite.cjs',...manifest.inputs.map(x=>x.path),manifest.visualSeedRecipe.path];
   fs.writeFileSync(path.join(outDir,'g11vis_dependencies.cmake'),'set(G11_INPUTS\n'+[...new Set(inputs)].map(p=>'\"'+path.join(ROOT,p).replaceAll('\\','/')+'\"').join('\n')+'\n)\n');
   fs.writeFileSync(path.join(outDir,'g11vis_inputs.json'),JSON.stringify(Object.fromEntries(inputs.map(p=>[p,crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,p))).digest('hex')])),null,2));

@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 // T639: real parent types at every boundary; no cross-parent layout casts.
 #include "../acceptance_t647/contract.h"
 #include "../g9dm/research_config.h"
