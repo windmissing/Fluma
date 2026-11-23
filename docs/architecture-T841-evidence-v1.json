@@ -1,0 +1,620 @@
+{
+  "schema": "T841_PC_G13_OP7_ISOLATION_V1",
+  "qualificationPE": {
+    "path": ".codex/local-test/t833-role.exe",
+    "bytes": 2099712,
+    "sha256": "dbd5bb4f7cc79e81f276fefbb672d2660f166c37a86f29a079dec4e4d37ae8c7"
+  },
+  "adapter": {
+    "vendor": 32902,
+    "device": 16024,
+    "driverVersionRaw": 1656924,
+    "driverVersionText": "31.0.101.2140",
+    "effectiveApi": 4202496,
+    "queueFamily": 0,
+    "luid": "3cda000000000000",
+    "deviceUUID": "8680983e020000000000000000000000",
+    "driverUUID": "33312e302e3130312e32313430000000",
+    "pipelineCacheUUID": "6d3c693169315a32653f663161356301"
+  },
+  "diagnosticObserveSeconds": 60,
+  "childWallLimitSeconds": 120,
+  "runs": [
+    {
+      "case": "OP_00_0_5",
+      "receipt": {
+        "path": "test/reports/t833/role-isolation/OP_00_0_5.receipt.json",
+        "bytes": 2487,
+        "sha256": "e2b99f48f8890e12ad78915a3a5a5bf9fc174c197b186a2037823ebdc4ce141e"
+      },
+      "raw": {
+        "path": "test/reports/t833/role-isolation/OP_00_0_5.jsonl",
+        "bytes": 45452,
+        "sha256": "b65507b4b77dbecd72615d36b68784608f152a1721b46659d6b62c6df71dda72"
+      },
+      "identity": {
+        "role": "OP_00_0_5",
+        "moduleSHA": "a42bb063c6ccb0402291d6bdb6bfe863cf6324771ba0f558c1a3666862cd6ea4",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pid": 97700,
+        "ownerTid": 35912,
+        "processStartTick": "134398341491300493",
+        "qpcFrequency": "10000000",
+        "pipelineCache": null
+      },
+      "enterQpc": "15203941641696",
+      "exitQpc": "15203949643344",
+      "vkResult": 0,
+      "pipelineProbeNs": 800134300,
+      "lastProcessSampleAgeSec": 10.187,
+      "lateThreadSamples": null,
+      "result": "CHILD_EXIT",
+      "exitCode": 0,
+      "forced": false,
+      "ownerRetiredAsDefinedBySupervisor": true,
+      "probeMasks": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "OP_00_12_17",
+      "receipt": {
+        "path": "test/reports/t833/role-isolation/OP_00_12_17.receipt.json",
+        "bytes": 5930,
+        "sha256": "661ab55d928fb384bddc8fe0e42edf03b0794d0b9d3613f4228ea2c17322ba67"
+      },
+      "raw": {
+        "path": "test/reports/t833/role-isolation/OP_00_12_17.jsonl",
+        "bytes": 33013,
+        "sha256": "2401143aa8e750845861769887845c6dc7986b2f52ad1021dbb784e02f532050"
+      },
+      "identity": {
+        "role": "OP_00_12_17",
+        "moduleSHA": "498b52f7ab8840a510f68a8427ec3394f2d0d5fe9f44481faa4d19b16948478f",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pid": 90116,
+        "ownerTid": 18212,
+        "processStartTick": "134398342360859656",
+        "qpcFrequency": "10000000",
+        "pipelineCache": null
+      },
+      "enterQpc": "15204811695282",
+      "exitQpc": null,
+      "vkResult": null,
+      "pipelineProbeNs": null,
+      "lastProcessSampleAgeSec": 70.64,
+      "lateThreadSamples": {
+        "processElapsedSec": [
+          20.265,
+          70.64
+        ],
+        "threadCpuDeltaSec": 47.6875,
+        "fraction": 0.9467
+      },
+      "result": "CALL_UNRETURNED",
+      "exitCode": 1,
+      "forced": true,
+      "ownerRetiredAsDefinedBySupervisor": false,
+      "probeMasks": null
+    },
+    {
+      "case": "OP_00_6_11",
+      "receipt": {
+        "path": "test/reports/t833/role-isolation/OP_00_6_11.receipt.json",
+        "bytes": 5909,
+        "sha256": "b276c38012747e97dcb5b353aed48c3816122c957ec96e5492f7bea34ef0a3f5"
+      },
+      "raw": {
+        "path": "test/reports/t833/role-isolation/OP_00_6_11.jsonl",
+        "bytes": 33002,
+        "sha256": "7a58b96f40d876276d97e64d72382e3adac0f4b5746da8f51ad1e20954cb1d50"
+      },
+      "identity": {
+        "role": "OP_00_6_11",
+        "moduleSHA": "8e62c28be9da3d98e990a72fabf5c2e0d5597a028c1d3e51fd93ba4a294ab187",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pid": 98004,
+        "ownerTid": 98212,
+        "processStartTick": "134398341630412632",
+        "qpcFrequency": "10000000",
+        "pipelineCache": null
+      },
+      "enterQpc": "15204080639857",
+      "exitQpc": null,
+      "vkResult": null,
+      "pipelineProbeNs": null,
+      "lastProcessSampleAgeSec": 70.484,
+      "lateThreadSamples": {
+        "processElapsedSec": [
+          20.187,
+          70.484
+        ],
+        "threadCpuDeltaSec": 48.828125,
+        "fraction": 0.9708
+      },
+      "result": "CALL_UNRETURNED",
+      "exitCode": 1,
+      "forced": true,
+      "ownerRetiredAsDefinedBySupervisor": false,
+      "probeMasks": null
+    },
+    {
+      "case": "OP_00_6_8",
+      "receipt": {
+        "path": "test/reports/t833/role-isolation/OP_00_6_8.receipt.json",
+        "bytes": 5913,
+        "sha256": "7ef67553859f7a34ff2464136cf6434e20407bf5b3f1d21bdca045c31103c3f2"
+      },
+      "raw": {
+        "path": "test/reports/t833/role-isolation/OP_00_6_8.jsonl",
+        "bytes": 32998,
+        "sha256": "052c1b32842420a3778ff6c81321ad863ba9da3e6027dd8ee5859c6d124b906b"
+      },
+      "identity": {
+        "role": "OP_00_6_8",
+        "moduleSHA": "0dbe6d536e14ef2410269152f2bae3d65db9eadf20441965b651ed3dd8cfd144",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pid": 36128,
+        "ownerTid": 15908,
+        "processStartTick": "134398343158621474",
+        "qpcFrequency": "10000000",
+        "pipelineCache": null
+      },
+      "enterQpc": "15205609348965",
+      "exitQpc": null,
+      "vkResult": null,
+      "pipelineProbeNs": null,
+      "lastProcessSampleAgeSec": 70.469,
+      "lateThreadSamples": {
+        "processElapsedSec": [
+          20.172,
+          70.469
+        ],
+        "threadCpuDeltaSec": 48.796875,
+        "fraction": 0.9702
+      },
+      "result": "CALL_UNRETURNED",
+      "exitCode": 1,
+      "forced": true,
+      "ownerRetiredAsDefinedBySupervisor": false,
+      "probeMasks": null
+    },
+    {
+      "case": "OP_00_7_7-noopt",
+      "receipt": {
+        "path": "test/reports/t833/role-isolation/OP_00_7_7-noopt.receipt.json",
+        "bytes": 5911,
+        "sha256": "15e933717c26a9bba266e8a6bd46fba31d6b87c7ab8b78b35d65316411c7394a"
+      },
+      "raw": {
+        "path": "test/reports/t833/role-isolation/OP_00_7_7-noopt.jsonl",
+        "bytes": 32998,
+        "sha256": "bf288600d073655c582ff174e8c6caa74546b84dd967753bbf1b1f5630078f62"
+      },
+      "identity": {
+        "role": "OP_00_7_7",
+        "moduleSHA": "3d8817dc9ee484e7be0f24a0cc1fe9f16ffbfe49838579be11b2a72cfd81b8e9",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 1,
+        "pid": 85896,
+        "ownerTid": 44184,
+        "processStartTick": "134398349446174902",
+        "qpcFrequency": "10000000",
+        "pipelineCache": null
+      },
+      "enterQpc": "15211894079115",
+      "exitQpc": null,
+      "vkResult": null,
+      "pipelineProbeNs": null,
+      "lastProcessSampleAgeSec": 70.594,
+      "lateThreadSamples": {
+        "processElapsedSec": [
+          20.203,
+          70.594
+        ],
+        "threadCpuDeltaSec": 48.1875,
+        "fraction": 0.9563
+      },
+      "result": "CALL_UNRETURNED",
+      "exitCode": 1,
+      "forced": true,
+      "ownerRetiredAsDefinedBySupervisor": false,
+      "probeMasks": null
+    },
+    {
+      "case": "OP_00_7_7",
+      "receipt": {
+        "path": "test/reports/t833/role-isolation/OP_00_7_7.receipt.json",
+        "bytes": 5896,
+        "sha256": "0b7b9b88aff3b12484166cc7b7b86055a899973957804b3bac4ec7bd2f9b987d"
+      },
+      "raw": {
+        "path": "test/reports/t833/role-isolation/OP_00_7_7.jsonl",
+        "bytes": 32998,
+        "sha256": "2953ac9d9abc91d12b353d97e0f6972a62f70ec7336926efe96424ecd7f35c43"
+      },
+      "identity": {
+        "role": "OP_00_7_7",
+        "moduleSHA": "3d8817dc9ee484e7be0f24a0cc1fe9f16ffbfe49838579be11b2a72cfd81b8e9",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pid": 78544,
+        "ownerTid": 89540,
+        "processStartTick": "134398344052818116",
+        "qpcFrequency": "10000000",
+        "pipelineCache": null
+      },
+      "enterQpc": "15206514759461",
+      "exitQpc": null,
+      "vkResult": null,
+      "pipelineProbeNs": null,
+      "lastProcessSampleAgeSec": 70.531,
+      "lateThreadSamples": {
+        "processElapsedSec": [
+          20.219,
+          70.531
+        ],
+        "threadCpuDeltaSec": 48.71875,
+        "fraction": 0.9683
+      },
+      "result": "CALL_UNRETURNED",
+      "exitCode": 1,
+      "forced": true,
+      "ownerRetiredAsDefinedBySupervisor": false,
+      "probeMasks": null
+    },
+    {
+      "case": "OP_00_9_11",
+      "receipt": {
+        "path": "test/reports/t833/role-isolation/OP_00_9_11.receipt.json",
+        "bytes": 2844,
+        "sha256": "12149d9d97db0d393a3f7424166617f0194ab3e1f5c266e0149d8275e4385c4e"
+      },
+      "raw": {
+        "path": "test/reports/t833/role-isolation/OP_00_9_11.jsonl",
+        "bytes": 45473,
+        "sha256": "b9c24f383f5b26db03677368ac6808ee9e71d46f930b04c5b8b3a76e92b641a1"
+      },
+      "identity": {
+        "role": "OP_00_9_11",
+        "moduleSHA": "aea0b1d38cab41f2f4e92eefd598b2c39e18dbb67554c5a53cda2db9cc0d265b",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pid": 96816,
+        "ownerTid": 67400,
+        "processStartTick": "134398343888998715",
+        "qpcFrequency": "10000000",
+        "pipelineCache": null
+      },
+      "enterQpc": "15206350844366",
+      "exitQpc": "15206372167889",
+      "vkResult": 0,
+      "pipelineProbeNs": 2132253400,
+      "lastProcessSampleAgeSec": 15.172,
+      "lateThreadSamples": null,
+      "result": "CHILD_EXIT",
+      "exitCode": 0,
+      "forced": false,
+      "ownerRetiredAsDefinedBySupervisor": true,
+      "probeMasks": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "OP_61",
+      "receipt": {
+        "path": "test/reports/t833/role-isolation/OP_61.receipt.json",
+        "bytes": 2474,
+        "sha256": "b3b7bf53587e085e5c84f77927602bedf4446bdc34bbdd721e5ef44030842c04"
+      },
+      "raw": {
+        "path": "test/reports/t833/role-isolation/OP_61.jsonl",
+        "bytes": 45412,
+        "sha256": "5f0b2026fd214121da694af2cbdaf88f96c8c803048bffc0580ce063117776d6"
+      },
+      "identity": {
+        "role": "OP_61",
+        "moduleSHA": "bf0e2f1eecc3d50f1b605f17c8d77971ecb1315abd100383fac7f4fae2cebdca",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pid": 36268,
+        "ownerTid": 92408,
+        "processStartTick": "134398341355135027",
+        "qpcFrequency": "10000000",
+        "pipelineCache": null
+      },
+      "enterQpc": "15203804710720",
+      "exitQpc": "15203811120006",
+      "vkResult": 0,
+      "pipelineProbeNs": 640898100,
+      "lastProcessSampleAgeSec": 10.188,
+      "lateThreadSamples": null,
+      "result": "CHILD_EXIT",
+      "exitCode": 0,
+      "forced": false,
+      "ownerRetiredAsDefinedBySupervisor": true,
+      "probeMasks": [
+        0,
+        0
+      ]
+    }
+  ],
+  "glslangVersion": "Glslang Version: 11:16.6.0",
+  "validation": "STATIC_SPIRV_VALIDATE_REFLECT_NOT_RUN_ON_GPU",
+  "baselineOp7RecompiledBitIdentical": true,
+  "variants": [
+    {
+      "role": "OP7_ARCHIVE",
+      "opcodes": [
+        7
+      ],
+      "privateProbe": 66,
+      "sourceBytes": 22828,
+      "sourceSHA": "53ca4a1c96050ade8987c4c2cf0b9a820adf634131d731f1f82f26e571c69477",
+      "spirvBytes": 108832,
+      "spirvSHA": "3d8817dc9ee484e7be0f24a0cc1fe9f16ffbfe49838579be11b2a72cfd81b8e9",
+      "spirvInstructions": 7129,
+      "calls": 307,
+      "deps": {
+        "fieldAudit": true,
+        "drive": true,
+        "acceptedTime": true,
+        "softExp": true,
+        "entryLedger": false,
+        "failMath": true
+      },
+      "reflectedSet0Bindings": [
+        "3",
+        "4",
+        "1",
+        "0",
+        "2"
+      ]
+    },
+    {
+      "role": "OP7_FIELD_ONLY",
+      "opcodes": [
+        7
+      ],
+      "privateProbe": 66,
+      "sourceBytes": 11459,
+      "sourceSHA": "5c96aad9fb1e6160a6503a448fd001a3f115724f7da101fdbded0539e9347156",
+      "spirvBytes": 44256,
+      "spirvSHA": "e1f6130967e203043aa6e2e9a786f6a677d18cf20bb7b7ae32084afa617438d6",
+      "spirvInstructions": 2888,
+      "calls": 77,
+      "deps": {
+        "fieldAudit": true,
+        "drive": false,
+        "acceptedTime": false,
+        "softExp": false,
+        "entryLedger": false,
+        "failMath": false
+      },
+      "reflectedSet0Bindings": [
+        "3",
+        "4",
+        "1",
+        "0",
+        "2"
+      ]
+    },
+    {
+      "role": "OP7_DRIVE_ONLY",
+      "opcodes": [
+        7
+      ],
+      "privateProbe": 66,
+      "sourceBytes": 18142,
+      "sourceSHA": "e83cf4498144c60dc44092db6316b2c5fd9af16b8cd2be4e493095f339ded203",
+      "spirvBytes": 81776,
+      "spirvSHA": "158cd36f62f309af57212c3812067306e115d526d5507db154f7efcbd5aafb77",
+      "spirvInstructions": 5280,
+      "calls": 232,
+      "deps": {
+        "fieldAudit": false,
+        "drive": true,
+        "acceptedTime": true,
+        "softExp": true,
+        "entryLedger": false,
+        "failMath": true
+      },
+      "reflectedSet0Bindings": [
+        "3",
+        "0",
+        "1",
+        "2",
+        "4"
+      ]
+    },
+    {
+      "role": "OP6",
+      "opcodes": [
+        6
+      ],
+      "privateProbe": 66,
+      "sourceBytes": 7725,
+      "sourceSHA": "a35750988a0dc519d7d7b1c76933f0530460a3b9857514c6d8a1c150336b452e",
+      "spirvBytes": 21968,
+      "spirvSHA": "f1128f66ec7b845d82a50e0eb9c8c772dbf709c245653a2aab2f586a246d97c4",
+      "spirvInstructions": 1339,
+      "calls": 7,
+      "deps": {
+        "fieldAudit": false,
+        "drive": false,
+        "acceptedTime": false,
+        "softExp": false,
+        "entryLedger": false,
+        "failMath": false
+      },
+      "reflectedSet0Bindings": [
+        "3",
+        "4",
+        "0",
+        "1",
+        "2"
+      ]
+    },
+    {
+      "role": "OP8",
+      "opcodes": [
+        8
+      ],
+      "privateProbe": 66,
+      "sourceBytes": 7860,
+      "sourceSHA": "a470698c1683b9798b0335566658e6c085562a11d0bd501c1137eb8fba288495",
+      "spirvBytes": 21472,
+      "spirvSHA": "bffb8188783f3ce412eee6fe19b70684e514025fe607e208342480a5392fb9e6",
+      "spirvInstructions": 1270,
+      "calls": 8,
+      "deps": {
+        "fieldAudit": false,
+        "drive": false,
+        "acceptedTime": false,
+        "softExp": false,
+        "entryLedger": false,
+        "failMath": false
+      },
+      "reflectedSet0Bindings": [
+        "3",
+        "0",
+        "1",
+        "4",
+        "2"
+      ]
+    },
+    {
+      "role": "OP12_14",
+      "opcodes": [
+        12,
+        13,
+        14
+      ],
+      "privateProbe": 66,
+      "sourceBytes": 8598,
+      "sourceSHA": "4672f3b57cf3be6a59df7ecc256eb0148b3938206b0743446985796f07e087aa",
+      "spirvBytes": 27448,
+      "spirvSHA": "eceb9fcb4f4ed1cba79ceb49a9974e945c907934864a125ae4ca445d489c39b5",
+      "spirvInstructions": 1705,
+      "calls": 11,
+      "deps": {
+        "fieldAudit": false,
+        "drive": false,
+        "acceptedTime": false,
+        "softExp": false,
+        "entryLedger": false,
+        "failMath": false
+      },
+      "reflectedSet0Bindings": [
+        "3",
+        "4",
+        "1",
+        "0",
+        "2"
+      ]
+    },
+    {
+      "role": "OP15",
+      "opcodes": [
+        15
+      ],
+      "privateProbe": 66,
+      "sourceBytes": 11570,
+      "sourceSHA": "68e64f5c7ef3df84535b5f5c085afd8d347fcd7f8e2d5872d1647799389683e6",
+      "spirvBytes": 44704,
+      "spirvSHA": "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f",
+      "spirvInstructions": 2918,
+      "calls": 77,
+      "deps": {
+        "fieldAudit": true,
+        "drive": false,
+        "acceptedTime": false,
+        "softExp": false,
+        "entryLedger": false,
+        "failMath": false
+      },
+      "reflectedSet0Bindings": [
+        "3",
+        "4",
+        "1",
+        "0",
+        "2"
+      ]
+    },
+    {
+      "role": "OP16",
+      "opcodes": [
+        16
+      ],
+      "privateProbe": 66,
+      "sourceBytes": 9765,
+      "sourceSHA": "ad40920e4e98837ae5bf52daad7b55850be81d9807e9e1af9e41f674657f42a3",
+      "spirvBytes": 34836,
+      "spirvSHA": "cfaaa4d61649236f6e6e2bfdbd759f0e62e67cc9288c927d1f0822c27fa926d2",
+      "spirvInstructions": 2168,
+      "calls": 25,
+      "deps": {
+        "fieldAudit": false,
+        "drive": false,
+        "acceptedTime": false,
+        "softExp": false,
+        "entryLedger": false,
+        "failMath": false
+      },
+      "reflectedSet0Bindings": [
+        "3",
+        "4",
+        "0",
+        "1",
+        "2"
+      ]
+    },
+    {
+      "role": "OP17",
+      "opcodes": [
+        17
+      ],
+      "privateProbe": 66,
+      "sourceBytes": 21332,
+      "sourceSHA": "60cd8cc83f8b5becab0f89436a402792007f9f7194e3e7e9af3ee02bbcc4dab5",
+      "spirvBytes": 99768,
+      "spirvSHA": "cb5b3825a2659b8b0e2343963e6e1166e4ad86117dbcc84e80a3b68b7a265d3c",
+      "spirvInstructions": 6475,
+      "calls": 264,
+      "deps": {
+        "fieldAudit": false,
+        "drive": true,
+        "acceptedTime": true,
+        "softExp": true,
+        "entryLedger": true,
+        "failMath": true
+      },
+      "reflectedSet0Bindings": [
+        "3",
+        "4",
+        "0",
+        "1",
+        "2"
+      ]
+    }
+  ],
+  "ordinal": {
+    "index": 815,
+    "op": "ROOT_FINAL_FIELD_AUDIT",
+    "opcode": 7,
+    "scope": 0,
+    "J": 0,
+    "micro": 0,
+    "iterationBlock": 0
+  },
+  "canonicalDispatchCounts": {
+    "source": 16,
+    "quantum": 820
+  }
+}
