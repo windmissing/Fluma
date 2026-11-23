@@ -116,6 +116,9 @@ void Boot::RetireM1Root(m1::SourceRootOwner &root,uint64_t nonce,M1WaitLog &log)
 void Boot::M1RootTrace(const char *kind,uint64_t nonce,const m1::ProgressClockV2 &clock,
                        const m1::PlanGrantV2 &grant,const grs::AcceptedRoot &accepted,
                        const M1WaitLog &log) {
+  if (!m1Reject && log.calls && log.lastWait.result==VK_SUCCESS &&
+      nonce==((uint64_t(accepted.nonce.hi)<<32)|accepted.nonce.lo))
+    m1AcceptedFence={nonce,log.lastWait.enter,log.lastWait.exit,reinterpret_cast<uintptr_t>(fence)};
   const uint64_t deadline=grant.id ? grant.grantedNs+m1::ProgressClockV2::JobNs : 0;
   const uint64_t firstWaitNs=log.calls ? pc::QpcNs(log.rows.front().enter,pc::QpcFrequency()) : 0;
   fields << ",\"m1" << kind << "Authority\":{\"reason\":" << (m1Reject ? Quote(m1Reject) : "null")
@@ -755,6 +758,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       const auto exported=CaptureM1Quantum(root,accepted,tail,stateWords,cmd,{}).get();
       if (attempt.m1D1 && exported.bytes) ++d1WritersCompleted;
       fields << ",\"m1SourceReplaySHA\":" << Quote(exported.sha);
+      if (exported.bytes) publish(Receipt("M1_SOURCE_REPLAY_SEALED",""));
     }
     return true;
   };
@@ -847,11 +851,12 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   }
   std::future<M1ColdResult> coldWriter;
   const auto captureAccepted=[&] {
-    if (!interactive) return;
+    if (!interactive || accepted.completion[27]!=2) return;
     if (!attempt.m1ReplayPrefix.empty()) {
       const auto exported=CaptureM1Quantum(root,accepted,tail,stateWords,cmd,{}).get();
       if (attempt.m1D1 && exported.bytes) ++d1WritersCompleted;
       fields << ",\"m1QuantumReplaySHA\":" << Quote(exported.sha);
+      if (exported.bytes) publish(Receipt("M1_QUANTUM_REPLAY_SEALED",""));
     }
     if (attempt.m1ColdFile.empty()) return;
     const auto ticket=attempt.m1ColdOnBusy
@@ -867,7 +872,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       fields << ",\"m1ColdReservation\":\"NO_FIRST_QUANTUM_BUSY_RESERVATION\"";
     }
   };
-  if (!attempt.m1RootCapture) captureAccepted();
+  if (!attempt.m1Preview && (!attempt.m1RootCapture || !attempt.m1ReplayPrefix.empty())) captureAccepted();
   if (attempt.m1D1 && (inFlight || root.State()==FlightState::StateLost))
     return finishWithoutWsi("M1_CAPTURE_FENCE");
   const auto reportCold=[&] {
@@ -921,6 +926,14 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         if (const auto failure=startBusiness()) {
           nextRootFailed=attempt.current();
           if (nextRootFailed) publish(Receipt("FAILED",failure));
+          return VK_NULL_HANDLE;
+        }
+        if (!attempt.m1RootCapture || !attempt.m1ReplayPrefix.empty()) captureAccepted();
+        if (attempt.m1D1 && (inFlight || root.State()==FlightState::StateLost)) {
+          nextRootFailed=true;
+          const auto end=attempt.d1Intake->Await();
+          retireSubmitted(end);
+          if (inFlight) reportDrain(end,nullptr);
           return VK_NULL_HANDLE;
         }
         preview=false;

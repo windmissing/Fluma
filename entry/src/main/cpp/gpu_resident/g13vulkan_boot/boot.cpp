@@ -142,6 +142,7 @@ struct Buffer {
   VkDeviceMemory memory = VK_NULL_HANDLE;
   VkDeviceSize bytes = 0;
   VkMemoryPropertyFlags flags = 0;
+  uint64_t generation = 0;
 };
 struct Candidate {
   VkPhysicalDevice physical = VK_NULL_HANDLE;
@@ -342,6 +343,11 @@ private:
   std::string ProbeM1Source(const Candidate &);
   M1Pulse m1Latest,m1Consumed;
   uint64_t m1Run=0;
+  struct M1AcceptedFence {
+    uint64_t nonce=0,enter=0,exit=0;
+    uintptr_t object=0;
+  } m1AcceptedFence;
+  std::array<uint64_t,5> m1LastReplay{};
   const char *m1Reject=nullptr;
   pc::M1Gravity m1GrantGravity{};
   bool ClaimM1(m1::ProgressClockV2 &,uint64_t,bool,m1::PlanGrantV2 &);
@@ -648,6 +654,7 @@ void Boot::OpenDevice(const Candidate &candidate) {
 void Boot::Allocate(size_t slot, VkDeviceSize bytes, VkBufferUsageFlags usage, bool host) {
   auto &buffer = buffers[slot];
   buffer.bytes = bytes;
+  ++buffer.generation;
   VkBufferCreateInfo info{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
   info.size = bytes;
   info.usage = usage;

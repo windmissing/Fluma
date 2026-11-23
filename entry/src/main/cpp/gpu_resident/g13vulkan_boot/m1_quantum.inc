@@ -310,14 +310,19 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
   const bool replay=!replayPrefix.empty();
   const bool rootOnly=attempt.m1RootCapture || replay;
   const bool sourceRoot=stored[27]==1;
+  const auto nonce=(uint64_t(accepted.nonce.hi)<<32)|accepted.nonce.lo;
+  const auto generation=(uint64_t(accepted.publicationGeneration.hi)<<32)|accepted.publicationGeneration.lo;
+  const std::array<uint64_t,5> key{m1Run,attempt.geometry,stored[27],nonce,generation};
+  Require(!inFlight && m1AcceptedFence.object && m1AcceptedFence.exit,"M1_COLD_ACCEPT_EDGE");
+  const bool d1Replay=!attempt.m1ReplayPrefix.empty() && observationPrefix.empty();
   const size_t bank=accepted.bank ? kM1Candidate : kM1Base;
   const size_t publication=sourceRoot ? kM1Pub : accepted.publication ? kM1QPubAlt : kM1QPub;
   const size_t events=sourceRoot ? kM1Events : kM1QEvents;
-  Require(accepted.bank<=1 && accepted.publication<=1 && root.Bank()==accepted.bank &&
-          (stored[27]==2 || (replay && sourceRoot)) &&
-          stored[32]==1-accepted.bank && stored[35]==accepted.publication &&
-          stored[52]<=eventCount && eventCount<=stored[54] &&
-          eventCount<=buffers[events].bytes/256,"M1_COLD_ROOT_BACKING");
+  const M1ColdAnchor anchor{m1Run,attempt.geometry,nonce,generation,m1AcceptedFence.nonce,
+                            accepted.bank,accepted.publication};
+  Require(root.Bank()==accepted.bank && M1ColdBackingMatches(stored,anchor,replay,buffers[events].bytes),
+          "M1_COLD_ROOT_BACKING");
+  if (d1Replay && m1LastReplay==key) return noCapture();
   const std::array<uint32_t, 8> sizes{1024,stateWords*4,eventCount*256,uint32_t(buffers[publication].bytes),
                                     rootOnly ? 0u : stateWords*4,rootOnly ? 0u : sourceCompletion[53]*256,
                                     rootOnly ? 0u : 1024u,rootOnly ? 0u : 128u};
@@ -331,13 +336,52 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
     fields << ",\"m1ReplayIncomplete\":\"RAW_CREDIT_EXHAUSTED\",\"m1ReplayBytes\":" << m1ReplayBytes;
     return std::async(std::launch::deferred,[] { return M1ColdResult{}; });
   }
-  PublicationLease lease;
-  Require(root.Acquire(accepted.publication,accepted.publicationGeneration,lease)==ControlCode::OK,
-          "M1_COLD_LEASE");
   if (!buffers[kM1ColdStaging].handle)
     Allocate(kM1ColdStaging,replay ? M1HotCapture::kColdLimit : gpuBytes,
              VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
   const auto &staging=buffers[kM1ColdStaging];
+  const size_t slots[]={kM1Tail,bank,events,publication,kM1Candidate,kM1Events};
+  Require(gpuBytes<=staging.bytes,"M1_COLD_STAGING_RANGE");
+  for (size_t i=0;i<std::size(slots);++i)
+    Require(sizes[i]<=buffers[slots[i]].bytes,"M1_COLD_BUFFER_RANGE");
+  PublicationLease lease;
+  Require(root.Acquire(accepted.publication,accepted.publicationGeneration,lease)==ControlCode::OK,
+          "M1_COLD_LEASE");
+  struct Pin {
+    m1::SourceRootOwner &owner;
+    const grs::AcceptedRoot &root;
+    const bool &inFlight;
+    bool held=true;
+    ~Pin() {
+      if (held && !inFlight && owner.State()!=FlightState::StateLost)
+        owner.Release(root.publication,root.publicationGeneration,true);
+    }
+  } pin{root,accepted,inFlight};
+  Require(lease.leased && lease.bank==accepted.bank &&
+          Compare64(lease.nonce,accepted.nonce)==0 &&
+          Compare64(lease.generation,accepted.publicationGeneration)==0 &&
+          Compare64(lease.identity.run,{uint32_t(m1Run),uint32_t(m1Run>>32)})==0 &&
+          Compare64(lease.identity.geometry,{uint32_t(attempt.geometry),uint32_t(attempt.geometry>>32)})==0,
+          "M1_COLD_LEASE_BACKING");
+  std::ostringstream proof;
+  proof << "\"run\":\"" << m1Run << "\",\"geometry\":\"" << attempt.geometry
+        << "\",\"rootKind\":" << Quote(sourceRoot ? "SOURCE" : "QUANTUM")
+        << ",\"nonce\":\"" << nonce << "\",\"publicationGeneration\":\"" << generation
+        << "\",\"baseBank\":" << stored[32] << ",\"finalBank\":" << stored[33]
+        << ",\"publicationSlot\":" << stored[35] << ",\"eventArena\":" << stored[51]
+        << ",\"eventStart\":" << stored[52] << ",\"eventEnd\":" << eventCount
+        << ",\"eventCapacity\":" << stored[54] << ",\"businessFence\":\"" << m1AcceptedFence.object
+        << "\",\"businessFenceEnterQpc\":\"" << m1AcceptedFence.enter
+        << "\",\"businessFenceExitQpc\":\"" << m1AcceptedFence.exit
+        << "\",\"businessFenceVkResult\":0,\"ranges\":[";
+  for (size_t i=0;i<std::size(slots);++i) {
+    const auto &backing=buffers[slots[i]];
+    if (i) proof << ',';
+    proof << "{\"slot\":" << slots[i] << ",\"buffer\":\"" << reinterpret_cast<uintptr_t>(backing.handle)
+          << "\",\"allocation\":\"" << reinterpret_cast<uintptr_t>(backing.memory)
+          << "\",\"generation\":" << backing.generation << ",\"offset\":0,\"bytes\":" << sizes[i] << '}';
+  }
+  proof << ']';
   auto reset=reinterpret_cast<PFN_vkResetCommandPool>(vk.GetDeviceProcAddr(device,"vkResetCommandPool"));
   Require(reset!=nullptr,"M1_COLD_RESET_FUNCTION");
   Check(reset(device,commandPool,0),"vkResetCommandPool.M1_COLD");
@@ -349,7 +393,6 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
   begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
   Check(vk.BeginCommandBuffer(command,&begin),"vkBeginCommandBuffer.M1_COLD");
   Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_READ_BIT);
-  const size_t slots[]={kM1Tail,bank,events,publication,kM1Candidate,kM1Events};
   VkDeviceSize at=0;
   for (size_t i=0;i<std::size(slots);++i) {
     if (!sizes[i]) continue;
@@ -362,30 +405,36 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
   VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
   submit.commandBufferCount=1;
   submit.pCommandBuffers=&command;
+  uint64_t submitEnter=0,submitExit=0;
+  const auto submitCopy=[&] {
+    submitEnter=pc::QpcTicks();
+    const auto result=vk.QueueSubmit(queue,1,&submit,fence);
+    submitExit=pc::QpcTicks();
+    return result;
+  };
   VkResult submitted=VK_NOT_READY;
   if (attempt.m1D1) {
     const bool authorized=attempt.acceptPointer(0,[&] {
-      if (!D1Ended()) submitted=vk.QueueSubmit(queue,1,&submit,fence);
+      if (!D1Ended()) submitted=submitCopy();
     });
-    if (!authorized || submitted==VK_NOT_READY) {
-      Require(root.Release(accepted.publication,accepted.publicationGeneration,true)==ControlCode::OK,
-              "M1_COLD_RELEASE");
-      return noCapture();
-    }
+    if (!authorized || submitted==VK_NOT_READY) return noCapture();
     if (submitted==VK_ERROR_DEVICE_LOST) {
       d1FenceResult=submitted;
       root.ContextLost();
       return noCapture();
     }
   } else {
-    submitted=vk.QueueSubmit(queue,1,&submit,fence);
+    submitted=submitCopy();
+    if (submitted==VK_ERROR_DEVICE_LOST) root.ContextLost();
   }
   Check(submitted,"vkQueueSubmit.M1_COLD");
   inFlight=true;
+  if (d1Replay) m1LastReplay=key;
   const auto waitEnter=pc::QpcTicks();
   const auto wait=vk.WaitForFences(device,1,&fence,VK_TRUE,m1::ProgressClockV2::JobNs);
   const auto waitExit=pc::QpcTicks();
   if (wait==VK_SUCCESS || wait==VK_ERROR_DEVICE_LOST) inFlight=false;
+  if (wait==VK_ERROR_DEVICE_LOST) root.ContextLost();
   if (attempt.m1D1) {
     d1FenceObject=reinterpret_cast<uintptr_t>(fence);
     d1FenceNonce=(uint64_t(accepted.nonce.hi)<<32)|accepted.nonce.lo;
@@ -394,29 +443,42 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
     d1FenceKind=wait==VK_SUCCESS ? "COLD_COPY_SIGNALED" : "COLD_COPY_SUBMITTED";
     d1FenceEnter=waitEnter;
     d1FenceExit=waitExit;
-    if (wait==VK_ERROR_DEVICE_LOST) {
-      root.ContextLost();
-      return noCapture();
-    }
-    if (wait!=VK_SUCCESS) {
+    if (inFlight)
       d1CaptureLease.emplace(accepted.publication,accepted.publicationGeneration);
-      return noCapture();
-    }
   }
+  if (replay) {
+    const auto copyFence=std::to_string(reinterpret_cast<uintptr_t>(fence));
+    const auto evidence=proof.str()+",\"copyFence\":\""+copyFence+"\"";
+    publish("{\"stage\":\"COLD_COPY_SUBMITTED\","+evidence+
+            ",\"submitEnterQpc\":\""+std::to_string(submitEnter)+"\",\"submitExitQpc\":\""+
+            std::to_string(submitExit)+"\",\"submitVkResult\":0}");
+    publish("{\"stage\":\"COLD_COPY_WAIT\","+evidence+
+            ",\"waitEnterQpc\":\""+std::to_string(waitEnter)+"\",\"waitExitQpc\":\""+
+            std::to_string(waitExit)+"\",\"waitVkResult\":"+std::to_string(wait)+"}");
+  }
+  if (attempt.m1D1 && wait!=VK_SUCCESS) return noCapture();
   Check(wait,"vkWaitForFences.M1_COLD");
   std::vector<uint8_t> raw(size_t(payload),0);
   void *mapped=nullptr;
-  Check(vk.MapMemory(device,staging.memory,0,VK_WHOLE_SIZE,0,&mapped),"vkMapMemory.M1_COLD");
-  VkResult invalidation=VK_SUCCESS;
-  if (!(staging.flags&VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
-    VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,nullptr,staging.memory,0,VK_WHOLE_SIZE};
-    invalidation=vk.InvalidateMappedMemoryRanges(device,1,&range);
+  const auto map=vk.MapMemory(device,staging.memory,0,VK_WHOLE_SIZE,0,&mapped);
+  VkResult invalidation=VK_NOT_READY;
+  if (map==VK_SUCCESS) {
+    invalidation=VK_SUCCESS;
+    if (!(staging.flags&VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+      VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,nullptr,staging.memory,0,VK_WHOLE_SIZE};
+      invalidation=vk.InvalidateMappedMemoryRanges(device,1,&range);
+    }
+    if (invalidation==VK_SUCCESS) std::memcpy(raw.data(),mapped,size_t(gpuBytes));
+    vk.UnmapMemory(device,staging.memory);
   }
-  if (invalidation==VK_SUCCESS) std::memcpy(raw.data(),mapped,size_t(gpuBytes));
-  vk.UnmapMemory(device,staging.memory);
+  if (map==VK_ERROR_DEVICE_LOST || invalidation==VK_ERROR_DEVICE_LOST) root.ContextLost();
+  if (replay) publish("{\"stage\":\"COLD_COPY_READBACK\","+proof.str()+
+                      ",\"mapVkResult\":"+std::to_string(map)+",\"invalidateVkResult\":"+std::to_string(invalidation)+"}");
+  Check(map,"vkMapMemory.M1_COLD");
   Check(invalidation,"vkInvalidateMappedMemoryRanges.M1_COLD");
   Require(root.Release(accepted.publication,accepted.publicationGeneration,true)==ControlCode::OK,
           "M1_COLD_RELEASE");
+  pin.held=false;
   Require(std::memcmp(raw.data(),stored.data(),1024)==0,"M1_COLD_COMPLETION_CHANGED");
   if (!rootOnly) {
     std::memcpy(raw.data()+gpuBytes,sourceCompletion.data(),sizes[6]);
@@ -436,7 +498,6 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
   fields << '}';
   // The worker owns only sealed CPU bytes and the destination path.
   if (replay) m1ReplayBytes+=size_t(payload);
-  const auto nonce=(uint64_t(accepted.nonce.hi)<<32)|accepted.nonce.lo;
   const auto outputPath=replay ? replayPrefix+L"-"+std::to_wstring(nonce)+L".m1root" : attempt.m1ColdFile;
   return std::async(std::launch::async,[path=outputPath,sizes,raw=std::move(raw),
                                        capture=attempt.hotCapture,ticket,rootOnly]() mutable {
