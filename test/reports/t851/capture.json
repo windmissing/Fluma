@@ -1,0 +1,182 @@
+{
+  "schema": "T851_SOURCE_DESCRIPTOR_CRASH_ATTRIBUTION_V1",
+  "textEvidenceLineEndings": "CRLF",
+  "sourceSnapshot": "819088e7",
+  "sourceAngleChange": "12759bca",
+  "pe": {
+    "path": ".codex/local-test/t830-held-release-20261123.exe",
+    "bytes": 2820608,
+    "sha256": "4ab9ff59a22c0fc625640724aedcf0e0c01c66afc89b80e1f0356dc5412fe7d5"
+  },
+  "modules": [
+    {
+      "path": ".codex/local-test/t830-m1-20261123/full_source.spv",
+      "bytes": 180584,
+      "sha256": "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162"
+    },
+    {
+      "path": ".codex/local-test/t830-m1-20261123/quantum_candidate.spv",
+      "bytes": 174912,
+      "sha256": "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c"
+    },
+    {
+      "path": ".codex/local-test/t830-m1-20261123/quantum_commit.spv",
+      "bytes": 254040,
+      "sha256": "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce"
+    }
+  ],
+  "runs": [
+    {
+      "file": {
+        "path": "test/reports/t847/run1.jsonl",
+        "bytes": 54995,
+        "sha256": "eeb75095b6072e5f08cbd1a53978550f61097f043098afe8a848ba7bbf263443"
+      },
+      "rows": 22,
+      "pid": 37616,
+      "ownerTid": 37348,
+      "processStartTick": "134398711365350157",
+      "lastStage": "M1_QUANTUM_COLD_ANGLES",
+      "lastState": "RUNNING",
+      "bootFence": 0,
+      "m1SourcePipeline": 0
+    },
+    {
+      "file": {
+        "path": "test/reports/t847/run2.jsonl",
+        "bytes": 54995,
+        "sha256": "4fb112cb0bc88cf375b92660edffce016c6031af9fdead3221cdb80653e30545"
+      },
+      "rows": 22,
+      "pid": 84872,
+      "ownerTid": 95792,
+      "processStartTick": "134398711755231479",
+      "lastStage": "M1_QUANTUM_COLD_ANGLES",
+      "lastState": "RUNNING",
+      "bootFence": 0,
+      "m1SourcePipeline": 0
+    },
+    {
+      "file": {
+        "path": "test/reports/t847/run3.jsonl",
+        "bytes": 54994,
+        "sha256": "9618dcbdfbedb77efd003fff3a449bb989786d412dc76a5a09a0b4f510af5bc9"
+      },
+      "rows": 22,
+      "pid": 81048,
+      "ownerTid": 78464,
+      "processStartTick": "134398712595841464",
+      "lastStage": "M1_QUANTUM_COLD_ANGLES",
+      "lastState": "RUNNING",
+      "bootFence": 0,
+      "m1SourcePipeline": 0
+    },
+    {
+      "file": {
+        "path": "test/reports/t851/pinned-debug.jsonl",
+        "bytes": 55043,
+        "sha256": "d8f1518503fb50ca640c5dc9dde71b8907c345aa36dbc81c922ad878b53818ba"
+      },
+      "rows": 22,
+      "pid": 28444,
+      "ownerTid": 21188,
+      "processStartTick": "134398724580785569",
+      "lastStage": "M1_QUANTUM_COLD_ANGLES",
+      "lastState": "RUNNING",
+      "bootFence": 0,
+      "m1SourcePipeline": 0
+    }
+  ],
+  "stack": {
+    "path": "test/reports/t851/pinned-debug-stack.txt",
+    "bytes": 1433,
+    "sha256": "7519526d8a8d2a4f36744a432510ab47f66b2d5962ecafb31a6664813da19f82"
+  },
+  "disassembly": {
+    "path": "test/reports/t851/pinned-disassembly.txt",
+    "bytes": 3045,
+    "sha256": "572d7b50e6130e5a5037d08bb15f6def136cea40d2c6b62bf73235b4b1750d55"
+  },
+  "firstCaptureAttempt": {
+    "scope": "ONE_PINNED_CHILD_NATIVE_DEBUG_EVENTS_NO_POINTER_OR_RENDER_ACCEPTANCE",
+    "captureTimestamp": "2026-11-23T01:52:48.653364+00:00",
+    "pid": 18776,
+    "ownerTid": 39708,
+    "processStartTick": "134398723085408655",
+    "peSHA": "4ab9ff59a22c0fc625640724aedcf0e0c01c66afc89b80e1f0356dc5412fe7d5",
+    "spirvSHA": [
+      "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162",
+      "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c",
+      "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce"
+    ],
+    "jsonlSHA": "5365dd57be7ac7730273626c77bf5c3069400218345e0084e58cf64dead363fe",
+    "rowCount": 10,
+    "lastStage": "BOOT_PIPELINE",
+    "lastState": "RUNNING",
+    "exitCode": "0x1",
+    "timedOut": true,
+    "exceptions": []
+  },
+  "exception": {
+    "code": "0xc0000005",
+    "access": "READ",
+    "address": "0x55",
+    "module": "igvk64.dll",
+    "icdSHA": "df10df2b47df8d8742546dbe97b781e272b437e721999b4dc5bf940426d9a907",
+    "icdRva": "0x55b996",
+    "appCallRva": "0x17ba5",
+    "appReturnRva": "0x17bab",
+    "appCall": "vkUpdateDescriptorSets.M1_SOURCE",
+    "windowsThreadMatchesOwner": true
+  },
+  "descriptors": {
+    "routeCount": 2,
+    "passesPerRoute": 8,
+    "poolMaxSets": 16,
+    "allocatedSets": 8,
+    "plannedWriteSets": 16,
+    "unallocatedIndices": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ]
+  },
+  "angle": {
+    "sizeBytes": 245776,
+    "sha256": "23b5210055d0b3f51892967170134a6cad14360579b038e26ee48f3ea5bbb368",
+    "peOccurrences": 1,
+    "peFileOffset": 2516464,
+    "workBytes": 552272,
+    "workspaceByteRange": [
+      13632,
+      259408
+    ],
+    "chunks": [
+      {
+        "dstOffset": 13632,
+        "bytes": 65536
+      },
+      {
+        "dstOffset": 79168,
+        "bytes": 65536
+      },
+      {
+        "dstOffset": 144704,
+        "bytes": 65536
+      },
+      {
+        "dstOffset": 210240,
+        "bytes": 49168
+      }
+    ],
+    "coldUploadCallReturnedBeforeObservedException": true,
+    "gpuReadback": "NOT_OBSERVED"
+  },
+  "productHardwareAcceptance": "NOT_RUN",
+  "werApplicationEvent": "NO_MATCHING_1000_OR_1001_IN_T847_TIME_WINDOW"
+}

@@ -1,0 +1,63 @@
+Held-release PE (preferred image base 0x140000000)
+  00000001400177B5: mov         dword ptr [rbp+00000000000002A8h],22h
+  00000001400177BF: movups      xmmword ptr [rbp+00000000000002B0h],xmm0
+  00000001400177C6: movups      xmmword ptr [rbp+00000000000002C0h],xmm0
+  00000001400177CD: mov         rax,qword ptr [rsi+0000000000000738h]
+  00000001400177D4: mov         qword ptr [rbp+00000000000002B8h],rax
+  00000001400177DB: mov         dword ptr [rbp+00000000000002C0h],8
+  00000001400177E5: lea         rax,[rbp+00000000000001A0h]
+  00000001400177EC: mov         qword ptr [rbp+00000000000002C8h],rax
+  00000001400177F3: lea         r8,[rbp+0000000000000500h]
+  00000001400177FA: lea         rdx,[rbp+00000000000002A8h]
+  0000000140017801: mov         rcx,qword ptr [rsi+0000000000000238h]
+  0000000140017808: call        qword ptr [rsi+00000000000000F0h]
+  000000014001780E: mov         ebx,eax
+  0000000140017810: test        eax,eax
+  0000000140017812: jne         0000000140019860
+  0000000140017818: mov         qword ptr [rbp+0000000000000610h],9
+  0000000140017823: mov         qword ptr [rbp+0000000000000618h],0Ah
+
+  0000000140017B86: mov         qword ptr [rbp+00000000000009E8h],r9
+  0000000140017B8D: mov         qword ptr [rsp+20h],r9
+  0000000140017B92: lea         r8,[rbp+00000000000008B0h]
+  0000000140017B99: mov         edx,5
+  0000000140017B9E: mov         rcx,qword ptr [rsi+0000000000000238h]
+  0000000140017BA5: call        qword ptr [rsi+00000000000000F8h]
+  0000000140017BAB: inc         edi
+  0000000140017BAD: cmp         edi,8
+  0000000140017BB0: jb          0000000140017880
+  0000000140017BB6: mov         r15,qword ptr [rbp-70h]
+  0000000140017BBA: inc         r15
+  0000000140017BBD: mov         qword ptr [rbp-70h],r15
+  0000000140017BC1: cmp         r15,2
+  0000000140017BC5: jb          0000000140017840
+
+  000000014001FC85: je          000000014001FC9E
+  000000014001FC87: lea         r8,[rbp+0000000000012440h]
+  000000014001FC8E: mov         rdx,r13
+  000000014001FC91: mov         rcx,rdi
+  000000014001FC94: call        0000000140016B80
+  000000014001FC99: jmp         000000014001FAF9
+
+Intel ICD (preferred image base 0x180000000)
+Microsoft (R) COFF/PE Dumper Version 14.51.36246.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file C:\Windows\System32\DriverStore\FileRepository\iigd_dch.inf_amd64_130547712612821e\igvk64.dll
+
+File Type: DLL
+
+  000000018055B980: 41 3B C0           cmp         eax,r8d
+  000000018055B983: 0F 83 FB C1 00 00  jae         0000000180567B84
+  000000018055B989: 8B F0              mov         esi,eax
+  000000018055B98B: 48 C1 E6 06        shl         rsi,6
+  000000018055B98F: 49 03 F1           add         rsi,r9
+  000000018055B992: 48 8B 5E 10        mov         rbx,qword ptr [rsi+10h]
+  000000018055B996: 80 7B 55 00        cmp         byte ptr [rbx+55h],0
+  000000018055B99A: 0F 85 04 0F 00 00  jne         000000018055C8A4
+  000000018055B9A0: FF
+
+  Summary
+
+      EA0000 .text

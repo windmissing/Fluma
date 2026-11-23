@@ -1,0 +1,15 @@
+CHILD_PID 28444
+ATTACH 1 err=0
+EXCEPTION pid=28444 tid=21188 chance=1 code=0xc0000005 at=00007FFE9B5BB996 arg0=0x0 arg1=0x55
+FRAME igvk64 rva=0x55b996 pc=0x7ffe9b5bb996 image=C:\Windows\System32\DriverStore\FileRepository\iigd_dch.inf_amd64_130547712612821e\igvk64.dll
+FRAME igvk64 rva=0x55b996 pc=0x7ffe9b5bb996 image=C:\Windows\System32\DriverStore\FileRepository\iigd_dch.inf_amd64_130547712612821e\igvk64.dll
+FRAME t830-held-release-20261123 rva=0x17bab pc=0x7ff7d4977bab image=D:\hmprojects\HelloWorld\.codex\local-test\t830-held-release-20261123.exe
+FRAME t830-held-release-20261123 rva=0x1fc99 pc=0x7ff7d497fc99 image=D:\hmprojects\HelloWorld\.codex\local-test\t830-held-release-20261123.exe
+FRAME t830-held-release-20261123 rva=0x2010b pc=0x7ff7d498010b image=D:\hmprojects\HelloWorld\.codex\local-test\t830-held-release-20261123.exe
+FRAME t830-held-release-20261123 rva=0x5a9e pc=0x7ff7d4965a9e image=D:\hmprojects\HelloWorld\.codex\local-test\t830-held-release-20261123.exe
+FRAME t830-held-release-20261123 rva=0x1b61 pc=0x7ff7d4961b61 image=D:\hmprojects\HelloWorld\.codex\local-test\t830-held-release-20261123.exe
+FRAME ucrtbase rva=0x2cd30 pc=0x7fff9190cd30 image=C:\Windows\System32\ucrtbase.dll
+FRAME KERNEL32 rva=0x2dda7 pc=0x7fff93ccdda7 image=C:\Windows\System32\KERNEL32.DLL
+FRAME ntdll rva=0x7ee4c pc=0x7fff9463ee4c image=C:\Windows\SYSTEM32\ntdll.dll
+DEBUG_EXIT 0xc0000005
+PROCESS_EXIT 0xc0000005
