@@ -57,24 +57,54 @@ def read_archive(path):
          and q[53] * 256 == sizes[2] and s[53] * 256 == sizes[5], 'EVENT_LENGTH')
     need(all(pair(q, i) == pair(s, i) for i in (6, 8, 10, 12, 18, 38, 40))
          and 0 < pair(s, 4) < pair(q, 4)
-         and q[26] == 1 and pair(q, 24) == pair(s, 24)
+         and q[26] == 1 and pair(q, 14) == pair(s, 18)
          and pair(q, 16) == pair(s, 20) and pair(q, 20) == pair(q, 16) + 1
          and pair(q, 36) == pair(s, 36) + 1 and q[32] == s[33] and q[35] in (0, 1),
          'ROOT_LINEAGE')
+    lineage(q, s, sections)
     need(cmd[:2] == (1129534023, 2) and pair(cmd, 4) == pair(s, 6)
          and pair(cmd, 12) == pair(s, 38) and pair(cmd, 28) == pair(s, 40)
          and cmd[14:16] == s[59:61], 'SOURCE_COMMAND')
     return sections, digest.hex(), q, s
 
 
-def join(archive, rows):
+def lineage(q, s, sections):
+    qframe, sframe = pair(q, 24), pair(s, 24)
+    qpermit, spermit = pair(q, 22), pair(s, 22)
+    need(sframe > 0 and spermit > 0, 'SOURCE_FRAME_OR_PERMIT')
+    need(s[51] == sframe % 2 and q[51] == qframe % 2, 'EVENT_ARENA')
+    if qframe == sframe:
+        need(qpermit == spermit, 'SAME_FRAME_PERMIT')
+        prefix = sections['source_events']
+        need(q[52] == s[53] and sections['quantum_events'].startswith(prefix), 'SAME_FRAME_PREFIX')
+        return 'SAME_FRAME_PREFIX'
+    need(qframe == sframe + 1 and qpermit == spermit + 1, 'NEXT_FRAME_OR_PERMIT')
+    need(q[52] == 0, 'NEXT_FRAME_EVENT_START')
+    return 'NEXT_FRAME'
+
+
+def legacy_container_bytes(original, archive):
+    """Prove T856's diagnostic normalization preserved every payload byte."""
+    sections, digest, _, _ = archive
+    payload = b''.join(sections[n] for n in NAMES)
+    prefix = HEADER.pack(b'M1PCOLD1', *map(len, sections.values()), bytes.fromhex(digest))
+    expected = prefix[:48] + payload
+    with original.open('rb') as stream:
+        actual = stream.read(len(expected) + 1)
+    need(actual == expected, 'LEGACY_CONTAINER_OR_PAYLOAD_CHANGED')
+    return len(expected)
+
+
+def join(archive, rows, *, legacy_bytes=None):
     sections, digest, q, s = archive
     matching = [r for r in rows if r.get('stage') == 'M1_SOURCE_WSI'
                 and r.get('state') == 'M1_QUANTUM_PRESENT_QUEUED'
                 and r.get('m1ColdPayloadSHA') == digest]
     need(len(matching) == 1, 'COLD_RECEIPT')
     row = matching[0]
-    need(row['m1ColdBytes'] == HEADER.size + sum(map(len, sections.values())), 'COLD_RECEIPT_SIZE')
+    full_bytes = HEADER.size + sum(map(len, sections.values()))
+    receipt_bytes = full_bytes if legacy_bytes is None else legacy_bytes
+    need(row['m1ColdBytes'] == receipt_bytes, 'COLD_RECEIPT_SIZE')
     need(str(pair(s, 4)) == row.get('m1Nonce') and str(pair(q, 4)) == row.get('m1QuantumNonce')
          and tuple(row.get('m1Completion', ())) == s
          and tuple(row.get('m1QuantumCompletion', ())) == q, 'NONCE_OR_GPU_WORDS')
@@ -96,10 +126,17 @@ def join(archive, rows):
                and r.get('stage') == row['stage'] and r.get('windowFrame') == frame
                and all(k in r and r[k] == row[k] for k in SCOPE)
                and r.get('m1ColdPayloadSHA') == digest
+               and r.get('m1ColdBytes') == receipt_bytes
                and r.get('m1PublicationReleased') is True
                and r.get('m1WsiResult') == r.get('m1WsiRetireVkResult') == 0]
     need(len(retired) == 1, 'RETIRE_OR_SCOPE')
     return {'root': keys, 'scope': {k: row[k] for k in SCOPE}, 'payloadSHA256': digest,
+            'lineage': lineage(q, s, sections),
+            'sourceFrame': pair(s, 24), 'quantumFrame': pair(q, 24),
+            'sourcePermit': pair(s, 22), 'quantumPermit': pair(q, 22),
+            'sourceEventEnd': s[53], 'quantumEventStart': q[52], 'quantumEventEnd': q[53],
+            'container': 'T856_PAYLOAD_ONLY_ORIGINAL_REJECTED' if legacy_bytes is not None else 'FULL_SHA256',
+            'receiptBytes': receipt_bytes, 'decodedBytes': full_bytes,
             'sections': {k: {'bytes': len(v), 'sha256': hashlib.sha256(v).hexdigest()}
                          for k, v in sections.items()}}
 
@@ -108,10 +145,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('archive', type=Path)
     parser.add_argument('jsonl', type=Path)
+    parser.add_argument('--t856-short-original', type=Path,
+                        help='prove payload-only normalization against a separate original short-digest file')
     args = parser.parse_args()
     try:
         rows = [json.loads(line) for line in args.jsonl.read_bytes().splitlines() if line.strip()]
-        result = join(read_archive(args.archive), rows)
+        archive = read_archive(args.archive)
+        legacy_bytes = legacy_container_bytes(args.t856_short_original, archive) if args.t856_short_original else None
+        result = join(archive, rows, legacy_bytes=legacy_bytes)
     except (OSError, ValueError, KeyError, TypeError) as error:
         parser.exit(1, f'{error}\n')
     print(json.dumps(result, indent=2))
