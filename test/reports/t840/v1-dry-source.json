@@ -1,0 +1,20 @@
+{
+ "revision": "T840_V1_PC_DRY_SOURCE_WINDOW_V1",
+ "date": "2026-11-23 08:50",
+ "receipt": {
+  "pe": "t830-window-final.exe 9699313c receipt-identical VERIFIED",
+  "spirv": "m1SourceModuleSHA 1912af9e + candidate b8f0e327 + commit caf0614c per m1-bounded-shaders.json"
+ },
+ "originalsCheck": {
+  "source": "test/reports/t830/m1-source-window.jsonl (24 records, T830 session)",
+  "checks": "11/11 PASS (v1-checks.json): PE sha, adapter UHD 630, m1AdmittedQ 131072, m1Completion 256 words, generation-1 lease, pixel 0xff00ff00, zero-error present chain, acceptedRoot non-null, state RETIRED, SPIR-V SHA, fence 74.596ms within 250ms"
+ },
+ "independentRerun": {
+  "attempted": "3 runs (run1/run2/run3.jsonl, 40-150s windows)",
+  "result": "BOOT diagnostic complete 16 stages + pixel 0xff00ff00 each run; **M1 SOURCE stage NOT triggered without --m1-window argv**",
+  "blocker": "m1 source/candidate/commit SPIR-V component files (1912af9e/b8f0e327/caf0614c) NOT present on disk \u2014 T830 generated-and-cleaned; independent rerun needs the three .spv files re-provisioned",
+  "scope": "independent rerun of BOOT window path VERIFIED (16 stages + exact pixel 3/3 runs); M1 SOURCE independent rerun BLOCKED on missing spv components"
+ },
+ "diagnosticScope": "pointer/QUANTUM/product frames NOT in this card (\u5f85 T830 per card text)",
+ "verdict": "original evidence chain VERIFIED 11/11; independent rerun: BOOT window path PASS, M1 SOURCE blocked on missing spv components (developer re-provision needed)"
+}
