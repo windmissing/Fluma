@@ -1,0 +1,211 @@
+{
+  "schema": "T887_A_B_REVISION_ACCEPT_V1",
+  "pe": {
+    "A": {
+      "path": ".codex/local-test/t882-a-final.exe",
+      "sha256": "86e8ad81779157a94558bea64e067984045ed0a3801e1a2c098335f7180e06fc"
+    },
+    "B": {
+      "path": ".codex/local-test/t882-b-final.exe",
+      "sha256": "12d454b11469160ef2ff5f29dd9aaf8905a2d512d95bf070dc391d00ea44db28"
+    }
+  },
+  "subA": {
+    "a-forward": {
+      "rows": 126,
+      "firstSource": {
+        "material": 0,
+        "Q": 134242
+      },
+      "leaseStates": [
+        [
+          "134242",
+          "0",
+          2,
+          0
+        ],
+        [
+          "268281",
+          "0",
+          4,
+          0
+        ]
+      ],
+      "conservation": true,
+      "quanta": 5,
+      "quantumStates": {
+        "M1_QUANTUM_PRESENT_QUEUED": 3,
+        "FAILED": 2
+      },
+      "modes": [
+        1
+      ],
+      "reservationTerminals": {
+        "9": 39,
+        "2": 2,
+        "7": 1,
+        "4": 1
+      }
+    },
+    "a-forward2": {
+      "rows": 126,
+      "firstSource": {
+        "material": 0,
+        "Q": 137194
+      },
+      "leaseStates": [
+        [
+          "137194",
+          "0",
+          2,
+          0
+        ],
+        [
+          "266126",
+          "0",
+          3,
+          0
+        ]
+      ],
+      "conservation": true,
+      "quanta": 7,
+      "quantumStates": {
+        "M1_QUANTUM_PRESENT_QUEUED": 5,
+        "FAILED": 2
+      },
+      "modes": [
+        1
+      ],
+      "reservationTerminals": {
+        "9": 38,
+        "2": 2,
+        "7": 1,
+        "4": 1
+      }
+    },
+    "a-reverse": {
+      "rows": 116,
+      "firstSource": {
+        "material": 1,
+        "Q": 139845
+      },
+      "leaseStates": [
+        [
+          "0",
+          "139845",
+          0,
+          1
+        ],
+        [
+          "0",
+          "276010",
+          0,
+          2
+        ]
+      ],
+      "conservation": true,
+      "quanta": 6,
+      "quantumStates": {
+        "M1_QUANTUM_PRESENT_QUEUED": 4,
+        "FAILED": 2
+      },
+      "modes": [
+        1,
+        0
+      ],
+      "reservationTerminals": {
+        "9": 33,
+        "2": 2,
+        "7": 1,
+        "4": 1
+      }
+    },
+    "findings": {
+      "SAME_SCENE_SECOND_ACCEPT": {
+        "observed": "T882 A reservation admits a SECOND SOURCE in the same scene at frame boundaries: forward sand 137194→266126 (Δ=128932, liveS 2→4); reverse water 139845→276010 (Δ=136165, liveW 1→2). Two non-zero accepts per scene run PROVEN (same material)."
+      },
+      "CROSS_MATERIAL_BLOCKED": {
+        "observed": "Sand→water / water→sand cross-material second admission did not occur in 3 runs: after the first scene's ROOT_DEADLINE quantum failures (iGPU 250ms continuation limit, 2 FAILED per run) pointerReady goes false; the second DOWN registers hold=0 and no water/sand offer is created. Additionally the reservation trace shows the pending chain retained material 0 (superseded chain), not the switched material.",
+        "attribution": "Frame-loop death from ROOT_DEADLINE (known iGPU limit) + reservation chain carrying pre-switch material. Product-level: needs the frame loop alive at the second DOWN and/or mode-switch propagation into the pending reservation. → developer/architect."
+      },
+      "REVOCATION_LIFECYCLE": {
+        "observed": "M1_RESERVATION terminals: Superseded (result 9) dominant, plus Accepted (2), Expired (7), Revoked (4) — full lifecycle exercised in real interaction."
+      },
+      "CONSERVATION": {
+        "observed": "All lease frames: sandStockQ==sandAdmittedTotalQ and waterStockQ==waterAdmittedTotalQ (both runs). Pixel samples constant 0xff525355 (informational)."
+      }
+    }
+  },
+  "subB": {
+    "b-off1": {
+      "actions": 52,
+      "states": {
+        "DELIVERED": 46,
+        "AWAIT_PULSE": 2,
+        "OFF_NOOP": 2,
+        "REVOKED": 2
+      },
+      "drain": "RETIRED",
+      "drainEndNs": "1588755273136500",
+      "allTerminal": true
+    },
+    "b-off2": {
+      "actions": 52,
+      "states": {
+        "DELIVERED": 48,
+        "AWAIT_PULSE": 2,
+        "OFF_NOOP": 2
+      },
+      "drain": "RETIRED",
+      "drainEndNs": "1588756529894100",
+      "allTerminal": true
+    },
+    "b-on": {
+      "actions": 52,
+      "states": {
+        "DELIVERED": 46,
+        "AWAIT_PULSE": 2,
+        "RESERVED": 1,
+        "ENDED": 1,
+        "REVOKED": 2
+      },
+      "drain": "RETIRED",
+      "drainEndNs": "1588784801165400",
+      "allTerminal": true
+    },
+    "b-replay-off": {
+      "actions": 52,
+      "states": {
+        "DELIVERED": 48,
+        "AWAIT_PULSE": 2,
+        "OFF_NOOP": 2
+      },
+      "drain": "RETIRED",
+      "drainEndNs": "1588785908584100",
+      "allTerminal": true
+    },
+    "b-replay-on": {
+      "actions": 52,
+      "states": {
+        "DELIVERED": 37,
+        "AWAIT_PULSE": 2,
+        "NOT_BUSY": 1,
+        "REVOKED": 12
+      },
+      "drain": "RETIRED",
+      "drainEndNs": "1588787124629000",
+      "allTerminal": true
+    },
+    "offPairContract": {
+      "meanDeltaMs": 2.32,
+      "maxDeltaMs": 14.29,
+      "stateFirstDiff": "actions 51-52: off1 REVOKED vs off2 DELIVERED (scheduling flake)",
+      "bothDrainsRetired": true,
+      "verdict": "time contract comparable → proceeded to four arms per card"
+    },
+    "replayRoots": {
+      "count": 15,
+      "allValid": true
+    }
+  }
+}
