@@ -37,6 +37,9 @@ struct Window {
   std::string t833Case;
   std::wstring t833ConfigFile,t833SeedFile;
   uint32_t t833ForcedJ=0;
+  bool t833F05Rest=false;
+  std::array<uint64_t,32> g13PulseHistory{};
+  size_t g13PulseWrite=0;
   bool t833Allowed=true;
   std::atomic<uint64_t> sourcePulse{0};
   bool pointerReady = false;
@@ -248,6 +251,11 @@ struct Window {
   void Pulse() {
     const auto ticks=grs::pc::QpcTicks(), ns=grs::pc::TimeNs();
     sourcePulse.store(ns,std::memory_order_relaxed);
+    if (!t833CandidateFile.empty()) {
+      std::lock_guard lock(mutex);
+      g13PulseHistory[g13PulseWrite++%g13PulseHistory.size()]=ns;
+      return;
+    }
     grs::g13vk::SourceOffer offer;
     {
       std::lock_guard lock(mutex);
@@ -383,7 +391,16 @@ struct Window {
                                                  std::lock_guard guard(mutex);
                                                  t833Allowed=false;
                                                },t833Case,t833ConfigFile,t833SeedFile,t833ForcedJ,rootCapture,d1ReplayPrefix,
-                                               !d1Mode.empty()},
+                                               !d1Mode.empty(),[&](uint64_t after) {
+                                                 std::lock_guard guard(mutex);
+                                                 std::vector<uint64_t> samples;
+                                                 const auto count=std::min(g13PulseWrite,g13PulseHistory.size());
+                                                 for (size_t i=g13PulseWrite-count;i<g13PulseWrite;++i) {
+                                                   const auto ns=g13PulseHistory[i%g13PulseHistory.size()];
+                                                   if (ns>after) samples.push_back(ns);
+                                                 }
+                                                 return samples;
+                                               },t833F05Rest},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
@@ -522,6 +539,7 @@ int wmain(int argc, wchar_t **argv) {
       if (trial!=L"1" && trial!=L"2" && trial!=L"4") return 2;
       window.t833ForcedJ=uint32_t(trial[0]-L'0');
     }
+    else if (!std::wcscmp(argv[i],L"--g13-f05-rest")) window.t833F05Rest=true;
     else if (!std::wcscmp(argv[i], L"--m1-window") && i+3 < argc) {
       window.m1SourceModule = argv[++i];
       window.m1QuantumCandidate = argv[++i];
@@ -558,7 +576,7 @@ int wmain(int argc, wchar_t **argv) {
                    "[--m1-capture-hot] [--m1-source-trace] [--m1-d1 OFF|ON|REPLAY_OFF|REPLAY_ON] "
                    "[--m1-d1-replay-prefix PATH] "
                    "[--m1-dual-source] | --qualify-t849-writes FILE | --g13-candidate FILE "
-                   "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] "
+                   "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] [--g13-f05-rest] "
                    "[--g13-revoke-before | --g13-revoke-after]]\n";
       return 2;
     }
@@ -577,6 +595,7 @@ int wmain(int argc, wchar_t **argv) {
   if (!window.t833RevokeAt.empty() && window.t833CandidateFile.empty()) return 2;
   if (!window.t833Case.empty() && window.t833CandidateFile.empty()) return 2;
   if (window.t833ForcedJ && window.t833Case!="F03") return 2;
+  if (window.t833F05Rest && window.t833Case!="F05") return 2;
   if (!window.t833CandidateFile.empty() && (window.steady || !window.m1SourceModule.empty())) return 2;
   if (window.sourceTrace) window.ingress.EnableTrace();
   if (window.dualSource && (window.m1QuantumCandidate.empty() || !window.m1ColdFile.empty())) return 2;

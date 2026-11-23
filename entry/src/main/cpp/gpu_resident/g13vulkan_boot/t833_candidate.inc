@@ -63,7 +63,7 @@ std::array<uint32_t,1024> T833Capsule(const Config &config,const Input &original
 
 std::string Boot::RunT833Candidate(const Profile &profile,const Config &config) {
   const bool privateProject=attempt.t833Case=="F02";
-  const bool sourceFirst=attempt.t833Case!="F02" && attempt.t833Case!="F03";
+  const bool sourceFirst=attempt.t833Case!="F02" && attempt.t833Case!="F03" && !attempt.t833F05Rest;
   const uint32_t diagnostic=privateProject ? 1u : attempt.t833Case.empty() ? 0u : 2u;
   fields << ",\"oldMonolithicPCReference\":\"MISSING_PC_REFERENCE\""
          << ",\"candidateInput\":" << Quote(attempt.t833Case.empty() ? "REST_BOOT_RAMP_SOURCE" : attempt.t833Case)
@@ -100,30 +100,34 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config) 
   const VkDeviceSize slotBytes=(kCandidateLatchWords+kCandidateErrorWords)*sizeof(uint32_t);
   const VkDeviceSize slotRegion=kCandidateSlotCount*slotBytes;
   const VkDeviceSize coldBytes=sizeof(Completion)+slotRegion+3*profile.sw*4ull+
-                              buffers[kWork].bytes+buffers[kControl].bytes+profile.pw*4ull;
+                              buffers[kWork].bytes+buffers[kControl].bytes+2*profile.pw*4ull;
   Require(coldBytes<=16*1024*1024 && profile.ww%4==0,"T833_CAPTURE_RANGE");
   Allocate(kM1ColdStaging,coldBytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
   const auto &staging=buffers[kM1ColdStaging];
 
-  uint64_t lastPulse=0,pulseCount=0,earned=0,remainder=0,overload=0,maxGap=0,acceptedNonce=0;
+  uint64_t lastPulse=attempt.sourcePulse(),pulseCount=lastPulse ? 1 : 0,earned=0,remainder=0,
+           overload=0,maxGap=0,acceptedNonce=0,consumed=0;
+  bool clockFault=false;
   const auto readPulse=[&] {
-    const auto ns=attempt.sourcePulse();
-    const auto now=pc::TimeNs();
-    if (!ns || now<ns || now-ns>kCandidateGapNs || ns<lastPulse) return false;
-    if (ns!=lastPulse) {
+    if (clockFault) return false;
+    for (const auto ns:attempt.t833Pulses(lastPulse)) {
       if (lastPulse) {
         const auto gap=ns-lastPulse;
-        if (gap>kCandidateGapNs) return false;
+        if (gap>kCandidateGapNs) {
+          clockFault=true;
+          return false;
+        }
         maxGap=std::max(maxGap,gap);
         remainder+=120*gap;
         earned+=remainder/1000000000ull;
         remainder%=1000000000ull;
-        overload=earned>4 ? earned-4 : 0;
+        if (earned-consumed-overload>4) overload=earned-consumed-4;
       }
       lastPulse=ns;
       ++pulseCount;
     }
-    return true;
+    const auto now=pc::TimeNs();
+    return lastPulse && now>=lastPulse && now-lastPulse<=kCandidateGapNs;
   };
   const auto beginClock=pc::TimeNs();
   while (attempt.current() && pc::TimeNs()-beginClock<kCandidateJobNs &&
@@ -143,15 +147,15 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config) 
   };
   std::array<std::vector<uint8_t>,2> evidence;
   const auto root=[&](bool source,const auto &plan,uint32_t base,uint32_t candidate,uint32_t pack,
-                       uint64_t commit,uint64_t sourceSeq) {
-    if (!source && earned==overload) {
+                       uint64_t commit,uint64_t sourceSeq,uint64_t quantumTick) {
+    if (!source && earned==overload+consumed) {
       const auto waitFrom=pc::TimeNs();
-      while (attempt.current() && pc::TimeNs()-waitFrom<kCandidateGapNs && earned==overload) {
+      while (attempt.current() && pc::TimeNs()-waitFrom<kCandidateGapNs && earned==overload+consumed) {
         if (!readPulse()) break;
         Sleep(1);
       }
     }
-    Require(attempt.current() && readPulse() && (source || earned>overload),"T833_PERMIT_MISSING_OR_STALE");
+    Require(attempt.current() && readPulse() && (source || earned>overload+consumed),"T833_PERMIT_MISSING_OR_STALE");
     const uint64_t grant=pc::TimeNs(),deadline=grant+kCandidateJobNs,nonce=pc::QpcTicks();
     Permit permit{};
     permit[0]=1; permit[1]=source ? 50 : 0; permit[3]=candidate;
@@ -166,6 +170,7 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config) 
     const auto token=acceptedScope(commit);
     const auto baseHash=Hash(token.data(),token.size());
     std::copy(baseHash.begin(),baseHash.end(),permit.begin()+80);
+    Put(permit.data()+88,quantumTick);
     Put(permit.data()+90,sourceSeq);
     permit[127]=kSeal;
     Input original{};
@@ -176,6 +181,7 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config) 
     Put(original.data()+20,source ? 1 : nonce);
     Put(original.data()+22,source ? 0 : grant);
     Put(original.data()+24,commit);
+    Put(original.data()+26,quantumTick);
     if (!source) { original[30]=permit[92]; original[31]=permit[93]; }
     for (const auto &h:std::array<std::pair<size_t,size_t>,6>{
         {{32,76},{40,36},{48,44},{56,52},{64,60},{72,68}}})
@@ -197,10 +203,10 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config) 
     std::copy_n(canonical.data()+80,8,permit.data()+72);
     const auto capsule=T833Capsule(config,original,canonical,permit);
     std::array<uint32_t,256> quota{};
-    for (const auto &entry:std::array<std::pair<size_t,uint64_t>,14>{{
+    for (const auto &entry:std::array<std::pair<size_t,uint64_t>,16>{{
         {0,id.session},{2,pulseCount},{4,lastPulse},{6,lastPulse},{8,pulseCount},{10,maxGap},
-        {12,maxGap},{14,earned},{18,overload},{22,remainder},{26,commit+1},{30,!source},
-        {36,id.control},{46,grant}}})
+        {12,maxGap},{14,earned},{16,consumed},{18,overload},{22,remainder},{26,commit+1},{30,!source},
+        {32,quantumTick},{36,id.control},{46,grant}}})
       Put(quota.data()+entry.first,entry.second);
     Put(quota.data()+34,sourceSeq);
     Put(quota.data()+48,deadline);
@@ -272,8 +278,8 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config) 
     copy(kControl,kColdTailWordOffset*4,0,sizeof(Completion));
     const auto fieldsAt=sizeof(Completion)+slotIndex*slotBytes;
     VkDeviceSize offset=fieldsAt;
-    const std::array<size_t,6> captured{base,candidate,2,kWork,kControl,pack};
-    std::array<uint32_t,6> bytes{};
+    const std::array<size_t,7> captured{base,candidate,2,kWork,kControl,3,4};
+    std::array<uint32_t,7> bytes{};
     for (size_t i=0;i<captured.size();++i) {
       bytes[i]=uint32_t(buffers[captured[i]].bytes);
       copy(captured[i],0,offset,bytes[i]);
@@ -291,7 +297,9 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config) 
     submit.commandBufferCount=1;
     submit.pCommandBuffers=&command;
     VkResult submitted=VK_NOT_READY;
+    uint64_t submittedQpc=0;
     if (!readPulse() || pc::TimeNs()>deadline || !attempt.acceptPointer(0,[&] {
+          submittedQpc=pc::QpcTicks();
           submitted=vk.QueueSubmit(queue,1,&submit,fence);
         })) {
       fields << ",\"" << prefix << "Edge\":\"REVOKED_BEFORE_SUBMIT\"";
@@ -310,6 +318,10 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config) 
       waited=vk.WaitForFences(device,1,&fence,VK_TRUE,kCandidateJobNs);
     if (waited==VK_SUCCESS || waited==VK_ERROR_DEVICE_LOST) inFlight=false;
     fields << ",\"" << prefix << "Fence\":" << int(waited);
+    fields << ",\"" << prefix << "Submit\":" << int(submitted)
+           << ",\"" << prefix << "SubmitQpc\":\"" << submittedQpc << "\""
+           << ",\"" << prefix << "FenceQpc\":\"" << pc::QpcTicks() << "\""
+           << ",\"" << prefix << "FenceObject\":\"" << reinterpret_cast<uintptr_t>(fence) << "\"";
     Check(waited,"vkWaitForFences.T833_RETIRE");
     void *mapped=nullptr;
     Check(vk.MapMemory(device,staging.memory,0,VK_WHOLE_SIZE,0,&mapped),"vkMapMemory.T833");
@@ -333,17 +345,30 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config) 
               std::equal(pass.binding.push.begin(),pass.binding.push.end(),latch.begin()+4) &&
               latch[10]<=1 && !latch[11] && !latch[30] && !latch[31];
     }
-    bool matched=false;
-    if (timely && readPulse() && latchOK && T833TailMatches(tail,permit,0,sourceSeq))
+    uint64_t matchedNs=0;
+    if (timely && readPulse() && latchOK && T833TailMatches(tail,permit,quantumTick,sourceSeq))
       attempt.acceptPointer(0,[&] {
-        if (pc::TimeNs()<=deadline) { matched=true; if (!privateProject) acceptedNonce=nonce; }
+        const auto observed=pc::TimeNs();
+        if (observed<=deadline) {
+          matchedNs=observed;
+          if (!privateProject) acceptedNonce=nonce;
+        }
       });
+    const bool matched=matchedNs!=0;
     const bool accepted=matched && !privateProject;
-    fields << ",\"" << prefix << "Archive\":{\"schema\":\"PC_G13_T833_RAW_V1\",\"sha256\":"
+    const uint32_t nativeError=matched ? 0u : !attempt.current() ? 11u :
+        pc::TimeNs()>deadline ? 9u : tail[7] ? tail[7] : 2u;
+    if (accepted && !source) ++consumed;
+    fields << ",\"" << prefix << "Archive\":{\"schema\":\"PC_G13_T833_RAW_V2\",\"sha256\":"
            << Quote(Hex(Hash(raw.data(),raw.size()).data()))
            << ",\"fileBytes\":" << raw.size() << ",\"slotCount\":" << slotIndex << ",\"slotBytes\":" << slotBytes
            << ",\"fieldOffset\":" << fieldsAt << ",\"segmentsBytes\":" << Words(bytes)
-           << ",\"segments\":[\"BASE\",\"CANDIDATE\",\"REPLAY\",\"WORK\",\"CTRL\",\"PACK\"]"
+           << ",\"segments\":[\"BASE\",\"CANDIDATE\",\"REPLAY\",\"WORK\",\"CTRL\",\"PACK0\",\"PACK1\"]"
+           << ",\"baseBank\":" << base << ",\"candidateBank\":" << candidate
+           << ",\"publicationSlot\":" << pack-3 << ",\"gpuTailAvailable\":true"
+           << ",\"nativeError\":" << nativeError
+           << ",\"acceptedNs\":\"" << (accepted ? matchedNs : 0) << "\""
+           << ",\"baseToken\":" << Quote(token)
            << ",\"descriptorBuffers\":[";
     for (size_t j=0;j<captured.size();++j) {
       if (j) fields << ',';
@@ -357,11 +382,12 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config) 
     evidence[source ? 0 : 1]=std::move(raw);
     return matched;
   };
-  const auto exportEvidence=[&] {
+  const auto exportEvidence=[&](uint32_t tick=0) {
     for (size_t i=0;i<evidence.size();++i) {
-      const auto &raw=evidence[i];
+      auto &raw=evidence[i];
       if (raw.empty()) continue;
-      const auto path=attempt.t833CandidateFile+(i==0 ? L".source" : L".quantum");
+      auto path=attempt.t833CandidateFile+(i==0 ? L".source" : L".quantum");
+      if (i && tick) path+=L"."+std::to_wstring(tick);
       const auto temp=path+L".pending-"+std::to_wstring(GetCurrentProcessId());
       const HANDLE output=CreateFileW(temp.c_str(),GENERIC_WRITE,0,nullptr,CREATE_NEW,FILE_ATTRIBUTE_NORMAL,nullptr);
       Require(output!=INVALID_HANDLE_VALUE,"T833_RAW_CREATE");
@@ -372,13 +398,32 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config) 
       const auto committed=saved && MoveFileExW(temp.c_str(),path.c_str(),MOVEFILE_WRITE_THROUGH);
       if (!committed) DeleteFileW(temp.c_str());
       Require(committed,"T833_RAW_WRITE_OR_EXISTS");
+      raw.clear();
     }
   };
   bool source=false,quantum=false;
+  if (attempt.t833Case=="F03") {
+    const auto initial=fields.str();
+    for (uint32_t tick=0;tick<30;++tick) {
+      fields.str(initial);
+      fields.seekp(0,std::ios::end);
+      fields << ",\"t833SeriesStep\":" << tick+1;
+      const auto base=tick&1u;
+      quantum=root(false,k_quantum,base,1-base,4-base,tick,0,tick);
+      exportEvidence(tick+1);
+      if (!attempt.t833RevokeAt.empty() && !attempt.current() && !quantum)
+        return Receipt("T833_CANDIDATE_REVOKED","");
+      const bool kept=publish(Receipt(quantum ? "T833_SERIES_ROOT" : "FAILED",
+                                     quantum ? "" : "T833_F03_ROOT_NOT_ACCEPTED"));
+      if (!quantum || !kept) return Receipt("FAILED","T833_F03_SERIES_INCOMPLETE");
+    }
+    fields << ",\"t833SeriesComplete\":30";
+    return Receipt("T833_CANDIDATE_CAPTURED","");
+  }
   try {
-    if (sourceFirst) source=root(true,k_source,0,1,4,0,1);
-    if (!sourceFirst) quantum=root(false,k_quantum,0,1,4,0,0);
-    else if (source) quantum=root(false,k_quantum,1,0,3,1,1);
+    if (sourceFirst) source=root(true,k_source,0,1,4,0,1,0);
+    if (!sourceFirst) quantum=root(false,k_quantum,0,1,4,0,0,0);
+    else if (source) quantum=root(false,k_quantum,1,0,3,1,1,0);
   } catch (...) {
     exportEvidence();
     throw;

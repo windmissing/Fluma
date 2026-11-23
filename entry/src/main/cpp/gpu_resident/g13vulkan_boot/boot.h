@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <functional>
 #include <string>
+#include <vector>
 
 #ifdef _WIN32
 #include "platform.h"
@@ -47,6 +48,8 @@ struct Attempt {
   bool m1RootCapture=false;
   std::wstring m1ReplayPrefix;
   bool m1D1=false;
+  std::function<std::vector<uint64_t>(uint64_t)> t833Pulses;
+  bool t833F05Rest=false;
 #else
   NativeWindow *window;
 #endif
