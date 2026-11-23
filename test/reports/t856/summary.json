@@ -1,0 +1,186 @@
+{
+  "exe": {
+    "path": ".codex/local-test/t853-final.exe",
+    "sha256": "9bdbcf7dc59e0ba497364ceadb1eb98830734dbdf4c66e06631980d44b42e15e",
+    "expected": "9bdbcf7dc59e0ba497364ceadb1eb98830734dbdf4c66e06631980d44b42e15e"
+  },
+  "full_source": {
+    "sha256": "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162"
+  },
+  "quantum_candidate": {
+    "sha256": "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c"
+  },
+  "quantum_commit": {
+    "sha256": "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce"
+  },
+  "fixed": {
+    "rows": 24,
+    "terminal": "M1_DRY_SOURCE_ACCEPTED",
+    "stage": "M1_SOURCE_FENCED_READBACK",
+    "m1AdmittedQ": 131072,
+    "descriptorAllocation": {
+      "expectedSets": 16,
+      "requestedSets": 16,
+      "nonNullSets": 16,
+      "firstNullIndex": null,
+      "vkResult": 0
+    },
+    "descriptorUpdates": 16,
+    "ownerCode": 0,
+    "fenceVkResult": 0,
+    "queueVkResult": 0,
+    "pulseFault": null,
+    "exitMatchesT853BuildReceipt": true
+  },
+  "run2": {
+    "rows": 35,
+    "terminalState": "M1_QUANTUM_PRESENT_RETIRED",
+    "pointerEvents": [
+      [
+        "DOWN",
+        "1"
+      ],
+      [
+        "UP",
+        "0"
+      ],
+      [
+        "CAPTURE_LOST",
+        "0"
+      ]
+    ],
+    "anglesFenceVkResult": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "angleUploadBytes": [
+      245776,
+      245776,
+      245776,
+      245776,
+      245776,
+      245776,
+      245776,
+      245776,
+      245776,
+      245776
+    ],
+    "descriptorAllocation": {
+      "expectedSets": 16,
+      "requestedSets": 16,
+      "nonNullSets": 16,
+      "firstNullIndex": null,
+      "vkResult": 0
+    },
+    "descriptorUpdates": 16,
+    "sourceOwnerCode": 0,
+    "sourceFence": 0,
+    "quantumOwnerCode": 0,
+    "quantumFence": 0,
+    "admittedQ": 126172,
+    "coldPayloadSHA": "3a358054ee802c5da71853ce9c43d7d7ad4e6e7c2a5fa1405766b4382a119eaf",
+    "coldBytes": 93872,
+    "coldFileBytes": 93872,
+    "presentQueued": true,
+    "presentRetired": true,
+    "publicationReleased": true,
+    "wsiResult": 0,
+    "wsiRetireVkResult": 0,
+    "windowFrame": {
+      "kind": "M1_QUANTUM_WINDOW",
+      "acceptedRoot": "15648396347025",
+      "publicationSlot": 0,
+      "run": "15648394981938",
+      "config": "2",
+      "sourceCommit": "1",
+      "physicsCommit": "2",
+      "generation": "2",
+      "imageIndex": 0,
+      "width": 784,
+      "height": 461,
+      "format": 44,
+      "acquire": 0,
+      "submit": 0,
+      "fence": 0,
+      "present": 0,
+      "imagePresent": 0,
+      "pixel": 4283585365,
+      "presentEnterQpc": "15648397867993",
+      "presentExitQpc": "15648397868068"
+    },
+    "hold": "1",
+    "pointerSeq": "1",
+    "sourceDeltaNs": "15040900",
+    "pulseFault": null
+  },
+  "run3": {
+    "rows": 141,
+    "terminalState": "M1_QUANTUM_PRESENT_RETIRED",
+    "pointerCount": 109,
+    "descriptorAllocation": {
+      "expectedSets": 16,
+      "requestedSets": 16,
+      "nonNullSets": 16,
+      "firstNullIndex": null,
+      "vkResult": 0
+    },
+    "descriptorUpdates": 16,
+    "admittedQ": 136485,
+    "coldPayloadSHA": "dbc5fc34a32c134abab617f43028e23462265a1a61349c035019ef5e11e66450",
+    "coldBytes": 94384,
+    "presentQueued": true,
+    "presentRetired": true,
+    "publicationReleased": true,
+    "wsiResult": 0,
+    "windowFrame": {
+      "kind": "M1_QUANTUM_WINDOW",
+      "acceptedRoot": "15652757277577",
+      "publicationSlot": 0,
+      "run": "15652755088611",
+      "config": "2",
+      "sourceCommit": "1",
+      "physicsCommit": "2",
+      "generation": "2",
+      "imageIndex": 0,
+      "width": 784,
+      "height": 461,
+      "format": 44,
+      "acquire": 0,
+      "submit": 0,
+      "fence": 0,
+      "present": 0,
+      "imagePresent": 0,
+      "pixel": 4283585365,
+      "presentEnterQpc": "15652758797443",
+      "presentExitQpc": "15652758797539"
+    },
+    "sourceOwnerCode": 0,
+    "quantumOwnerCode": 0,
+    "exitCode": 0
+  },
+  "archiveFinding": {
+    "actualLayout": "magic(8)+sizes(32)+digest8+raw",
+    "expectedLayout": "magic(8)+sizes(32)+digest32+raw",
+    "cause": "m1_quantum.inc write(digest.data(), DWORD(digest.size())) — std::array<uint32_t,8>::size() counts elements(8) not bytes(32)",
+    "fileBytes": 93872,
+    "jsonlColdBytes": 93872,
+    "payloadSHA256Recovered": "3a358054ee802c5da71853ce9c43d7d7ad4e6e7c2a5fa1405766b4382a119eaf",
+    "normalizedRun2": {
+      "path": "test/reports/t856/m1pcold1-run2-normalized.bin",
+      "bytes": 93896
+    },
+    "normalizedRun3": {
+      "path": "test/reports/t856/m1pcold1-run3-normalized.bin",
+      "bytes": 94408
+    },
+    "t848Join": "ROOT_LINEAGE: pair(q,24)!=pair(s,24) — quantum on new frame (eventStart=0). First-frame Claim carries pending=0 (baseline pulse only), so QUANTUM claims frame 2; single-capture path cannot produce same-frame pair. Contract gap between T848 checker and capture design; not fixable at effector level."
+  }
+}
