@@ -1,0 +1,1041 @@
+{
+  "schema": "T496_PC_OFFLINE_JOIN_V1",
+  "arms": {
+    "off2": {
+      "sha256": "329c7ac79930068b9ea92a9907851d238c23ee86836c82b7697112fe01eb5f40",
+      "lines": 94,
+      "offerQuoteRepairLines": [
+        36,
+        45,
+        65,
+        71
+      ],
+      "mode": "OFF",
+      "run": "15832670277993",
+      "actionRows": 52,
+      "sourceTerminals": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15832671633199",
+          "admittedQ20": 122231,
+          "requested": 0.1165688,
+          "deltaNs": 14571100,
+          "commandSHA": "d228b9dd61fd304d3ddf2ad3e36c7347fbc6e33b3a673d7dd168684e0748650d"
+        },
+        "29": {
+          "outcome": "EXPIRED",
+          "offer": "2"
+        }
+      },
+      "acceptedRoots": 8,
+      "wsiRetired": true,
+      "drain": {
+        "retired": false,
+        "offers": 0,
+        "inFlight": 0,
+        "leases": 0,
+        "permits": 0,
+        "retireVkResult": 0
+      },
+      "d1HotRoots": [],
+      "captureActions": [
+        "OFF_NOOP",
+        "OFF_NOOP"
+      ],
+      "faults": [
+        "FENCE_OR_PERMIT_FAILED"
+      ]
+    },
+    "on2": {
+      "sha256": "5f96ae0d984e968e68ee2f4c3454a4195ae83233cbb2b66c78b0d1bda15c431b",
+      "lines": 100,
+      "offerQuoteRepairLines": [
+        36,
+        42,
+        68,
+        81
+      ],
+      "mode": "ON",
+      "run": "15832681227571",
+      "actionRows": 52,
+      "sourceTerminals": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15832682593823",
+          "admittedQ20": 134856,
+          "requested": 0.1286088,
+          "deltaNs": 16076100,
+          "commandSHA": "7702313ebd92ca6bb4161c9d458b551a16439e9d502baf214b0b83db56f02374"
+        },
+        "29": {
+          "outcome": "EXPIRED",
+          "offer": "2"
+        }
+      },
+      "acceptedRoots": 13,
+      "wsiRetired": true,
+      "drain": {
+        "retired": false,
+        "offers": 0,
+        "inFlight": 0,
+        "leases": 0,
+        "permits": 0,
+        "retireVkResult": 0
+      },
+      "d1HotRoots": [
+        "15832683861715"
+      ],
+      "captureActions": [
+        "RESERVED",
+        "ENDED"
+      ],
+      "faults": [
+        "FENCE_OR_PERMIT_FAILED"
+      ]
+    },
+    "replay-off2": {
+      "sha256": "baeca8c190f157534a998ba412ddc24448b2488c6047bee70db1797dc4b63043",
+      "lines": 105,
+      "offerQuoteRepairLines": [
+        36,
+        43,
+        70,
+        87
+      ],
+      "mode": "REPLAY_OFF",
+      "run": "15832692401797",
+      "actionRows": 52,
+      "sourceTerminals": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15832693820756",
+          "admittedQ20": 134887,
+          "requested": 0.1286384,
+          "deltaNs": 16079800,
+          "commandSHA": "733afce9c6831215c7b57e863b9dce16f2fb4d7e10fc4b95d7fce26ed51c139f"
+        },
+        "29": {
+          "outcome": "EXPIRED",
+          "offer": "2"
+        }
+      },
+      "acceptedRoots": 10,
+      "wsiRetired": true,
+      "drain": {
+        "retired": true,
+        "offers": 0,
+        "inFlight": 0,
+        "leases": 0,
+        "permits": 0,
+        "retireVkResult": 0
+      },
+      "d1HotRoots": [],
+      "captureActions": [
+        "OFF_NOOP",
+        "OFF_NOOP"
+      ],
+      "faults": []
+    },
+    "replay-on2": {
+      "sha256": "c17307239c235b67d8261b5e3172f6a3df8eee9e2abfaf62d76988d9da508e76",
+      "lines": 104,
+      "offerQuoteRepairLines": [
+        36,
+        43,
+        70,
+        88
+      ],
+      "mode": "REPLAY_ON",
+      "run": "15832703950020",
+      "actionRows": 52,
+      "sourceTerminals": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15832705284059",
+          "admittedQ20": 134481,
+          "requested": 0.128252,
+          "deltaNs": 16031500,
+          "commandSHA": "513cd37d75ed2f9601e39560fc6a12ff841ec042e7b19516d09ce33b40cbe152"
+        },
+        "29": {
+          "outcome": "EXPIRED",
+          "offer": "2"
+        }
+      },
+      "acceptedRoots": 9,
+      "wsiRetired": true,
+      "drain": {
+        "retired": false,
+        "offers": 0,
+        "inFlight": 1,
+        "leases": 0,
+        "permits": 0,
+        "retireVkResult": 0
+      },
+      "d1HotRoots": [],
+      "captureActions": [
+        "NOT_BUSY",
+        "NO_PAGE"
+      ],
+      "faults": [
+        "FENCE_OR_PERMIT_FAILED"
+      ]
+    }
+  },
+  "historical": {
+    "off": {
+      "sha256": "e1405884e2baeb7b6b0983298d4d30d6aa2825937abcc40d3c5ac4a2f73f4339",
+      "lines": 93,
+      "offerQuoteRepairLines": [
+        36,
+        46,
+        65,
+        75
+      ],
+      "mode": "OFF",
+      "run": "15831546665583",
+      "actionRows": 52,
+      "sourceTerminals": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15831548029641",
+          "admittedQ20": 126287,
+          "requested": 0.1204376,
+          "deltaNs": 15054700,
+          "commandSHA": "21ab478df4f0000da154d7ecd18c89de314b81c2518e9f8047428818c2f61da8"
+        },
+        "29": {
+          "outcome": "EXPIRED",
+          "offer": "2"
+        }
+      },
+      "acceptedRoots": 7,
+      "wsiRetired": true,
+      "drain": {
+        "retired": false,
+        "offers": 0,
+        "inFlight": 1,
+        "leases": 0,
+        "permits": 0,
+        "retireVkResult": 0
+      },
+      "d1HotRoots": [],
+      "captureActions": [
+        "OFF_NOOP",
+        "OFF_NOOP"
+      ],
+      "faults": [
+        "FENCE_OR_PERMIT_FAILED"
+      ]
+    },
+    "on": {
+      "sha256": "309a1f2713dc430a94888edc23d5c97ba45df0e25b35c2e579fc5de8b65a7c5d",
+      "lines": 83,
+      "offerQuoteRepairLines": [
+        36,
+        46
+      ],
+      "mode": "ON",
+      "run": "15831651695734",
+      "actionRows": 52,
+      "sourceTerminals": {
+        "7": {
+          "outcome": "REJECTED",
+          "offer": "1"
+        },
+        "29": {
+          "outcome": "MISSING_OFFER"
+        }
+      },
+      "acceptedRoots": 0,
+      "wsiRetired": false,
+      "drain": null,
+      "d1HotRoots": [],
+      "captureActions": [
+        "NOT_BUSY",
+        "REVOKED"
+      ],
+      "faults": [
+        "CLOCK_GAP",
+        "PERMIT_REVOKED"
+      ]
+    },
+    "replay-off": {
+      "sha256": "45ba15854ffddcee721776aee761bb03a01f136fb213734601e3b58745ba0997",
+      "lines": 93,
+      "offerQuoteRepairLines": [
+        36,
+        46,
+        66,
+        92
+      ],
+      "mode": "REPLAY_OFF",
+      "run": "15832036677097",
+      "actionRows": 52,
+      "sourceTerminals": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15832038019920",
+          "admittedQ20": 130847,
+          "requested": 0.1247856,
+          "deltaNs": 15598200,
+          "commandSHA": "e6a6e44a361285e8f0d3b943262dec7a33dcadd5a19f4cc81f97ae1148793dd9"
+        },
+        "29": {
+          "outcome": "REVOKED",
+          "offer": "2"
+        }
+      },
+      "acceptedRoots": 3,
+      "wsiRetired": false,
+      "drain": null,
+      "d1HotRoots": [],
+      "captureActions": [
+        "OFF_NOOP",
+        "OFF_NOOP"
+      ],
+      "faults": [
+        "FENCE_OR_PERMIT_FAILED"
+      ]
+    },
+    "replay-on": {
+      "sha256": "858bc67f1534326a977b3089312bfcdc3caf99db9e431b5482af9648627c453c",
+      "lines": 97,
+      "offerQuoteRepairLines": [
+        36,
+        49,
+        66,
+        83
+      ],
+      "mode": "REPLAY_ON",
+      "run": "15832286027320",
+      "actionRows": 52,
+      "sourceTerminals": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15832287403737",
+          "admittedQ20": 130065,
+          "requested": 0.12404,
+          "deltaNs": 15505000,
+          "commandSHA": "73cc8535a09a7c69c9584600a9834e54290fe2f68c48316047aac0199b3c914f"
+        },
+        "29": {
+          "outcome": "EXPIRED",
+          "offer": "2"
+        }
+      },
+      "acceptedRoots": 5,
+      "wsiRetired": true,
+      "drain": {
+        "retired": false,
+        "offers": 0,
+        "inFlight": 1,
+        "leases": 0,
+        "permits": 0,
+        "retireVkResult": 0
+      },
+      "d1HotRoots": [
+        "15832288701596"
+      ],
+      "captureActions": [
+        "RESERVED",
+        "ENDED"
+      ],
+      "faults": [
+        "FENCE_OR_PERMIT_FAILED"
+      ]
+    },
+    "on-retry": {
+      "sha256": "a116f04a86e013d440d138f5fa8deb57bd7336ff3925412ea945d80c571f5246",
+      "lines": 95,
+      "offerQuoteRepairLines": [
+        36,
+        45,
+        65,
+        73
+      ],
+      "mode": "ON",
+      "run": "15831925971136",
+      "actionRows": 52,
+      "sourceTerminals": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "15831927347272",
+          "admittedQ20": 134893,
+          "requested": 0.1286448,
+          "deltaNs": 16080600,
+          "commandSHA": "3b7f8bf0118e45d82441c6c40a07d5ebf142dca76886b63dffe9bb42c49cada4"
+        },
+        "29": {
+          "outcome": "EXPIRED",
+          "offer": "2"
+        }
+      },
+      "acceptedRoots": 8,
+      "wsiRetired": true,
+      "drain": {
+        "retired": false,
+        "offers": 0,
+        "inFlight": 1,
+        "leases": 0,
+        "permits": 0,
+        "retireVkResult": 0
+      },
+      "d1HotRoots": [
+        "15831928119124"
+      ],
+      "captureActions": [
+        "RESERVED",
+        "ENDED"
+      ],
+      "faults": [
+        "FENCE_OR_PERMIT_FAILED"
+      ]
+    }
+  },
+  "replayArchives": {
+    "replay-on-prefix-15832287403737.m1root": {
+      "kind": "SOURCE",
+      "nonce": "15832287403737",
+      "scope": [
+        84204,
+        "134398969961513822",
+        "2",
+        88336,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "99c8b78472f38f71be172614e2c42c556a0cb23b1745afc7c36f610a3840cea2",
+      "bytes": 62720,
+      "sectionSHA": [
+        "56c89fd185a03eb96ed04524b2a07931af4e433f9769dfdafc40596a5b388922",
+        "e6b36146790e09efb5ffe4fb5e695446fd3a0b1a9b5a3b8d9850d8d96d15f6d1",
+        "262a8b1f794b21a42b67a69188fcd820da86eed25b5c4a37076765151bae4892",
+        "8caa9d894c89d1b02a590b2f2899eaf866e388247a6f841c4d884e0012afe414"
+      ],
+      "fileSHA": "377b6545c5086ff3ea5765069d3233ca48ed94e96ce5a150e91db914552a9b48"
+    },
+    "replay-on-prefix-15832288701596.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832288701596",
+      "scope": [
+        84204,
+        "134398969961513822",
+        "2",
+        88336,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "6d97f48df209515a8b70afd69aa80b06cb982282c8674f0d1c7cabdaee3a7c38",
+      "bytes": 62720,
+      "sectionSHA": [
+        "565a754f814a730fd1f5114f15cda3625f2380af2df5b4a4f5e0ce97f1fd712b",
+        "4c876d25e0d5226757af2b5595c5815b26915433b41fe0b27b9bffaad04111e5",
+        "ebd024a3115fb7c1da1c26ee98599f9af266f1809ce89a66152959ce25d1e8e8",
+        "9008028757682c80ef224e27dca0229ec69eebf447f4a3336642ba7be00e488d"
+      ],
+      "fileSHA": "2dab62cdb29107ecfce2196e01fe80b5f61e44518bcc95358fa1fe24f14f9621"
+    },
+    "replay-on-prefix-15832290358580.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832290358580",
+      "scope": [
+        84204,
+        "134398969961513822",
+        "2",
+        88336,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "734ae7fb5da0b2f9b15e9689caf8017ed0c2b1e4686f1e0b112805846dbdcdef",
+      "bytes": 62720,
+      "sectionSHA": [
+        "55e4614efdd2eb6350f144d2849b7e73d31c092faf0f3e89c2cbd7d24e452cab",
+        "6775a43d73a3b5507c11ef5d7ec0e3f5bbb9985a97eecc7e11953e86030990bc",
+        "35f9a3d791fd7768e9d009305d9e16d82a99bc9046a5f6144427976681d33926",
+        "35e24413d47fe36c71ed5debe7af9e29ab4361f07626b112aed2602592884cdf"
+      ],
+      "fileSHA": "f75c94eeb80d66358805376989cf4832a90ae3527bdd5bdf9424e05529dfe181"
+    },
+    "replay-on-prefix-15832291339176.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832291339176",
+      "scope": [
+        84204,
+        "134398969961513822",
+        "2",
+        88336,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "60efd6ff8e441a498e625098a4415c5cd779e5ce6a50e3cd234e5c0b60543524",
+      "bytes": 62976,
+      "sectionSHA": [
+        "051586d914547ac5a80fdb0f82bfeadd9cb0da55843e00203728a63dad677e26",
+        "e8e194f6728ceb0a94e0884317f0abf56e513c854ad60eef6cb86eebd5b45680",
+        "48ab0c7c5efc2282f4e960d51dc6d198d8e1dcaae8cb14c5b2c6c0ecf531a2ec",
+        "b932f2ddf9cdf2fe7fd03642e53fcc815613c463ea85e5307b4247a9ca8a6c87"
+      ],
+      "fileSHA": "79cfb73c67d365b1cbdb4f3d780572d6547e9f9dd6e6038b2685ca071b5db742"
+    },
+    "replay-on-prefix-15832292323122.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832292323122",
+      "scope": [
+        84204,
+        "134398969961513822",
+        "2",
+        88336,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "9212cf423d038c003bc743a033d3caacbd051b2c83ecaf56fb1c5023210d8f3d",
+      "bytes": 62720,
+      "sectionSHA": [
+        "9c82f9aab655f6ef4749299acc0d4fa91ec9979cd2f6cf2556994fe0c10168a0",
+        "55de3ca8d55e3749ebf1a331cf40850e217a1f26fd94d1f09516690d961f3478",
+        "0dc15d0f1d6ac2b16234c3786eb7d2adc8caf00720435c64334767f86e6d6705",
+        "fd27d5c403fb40a80c35c3a6fa01f6d283d175344ac5017887a2b46939ecceca"
+      ],
+      "fileSHA": "f2d15c481e88b80f3c25a758f152825979a3829b04bce74aafc454fd80a0904b"
+    },
+    "replay-prefix-15832038019920.m1root": {
+      "kind": "SOURCE",
+      "nonce": "15832038019920",
+      "scope": [
+        95628,
+        "134398969712919001",
+        "2",
+        91620,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "6b8754668e7ed811974e60fa56931ea18493ebb5e6096162a04f53492703758e",
+      "bytes": 62720,
+      "sectionSHA": [
+        "9a04505c4b1ddb16396e74534bcb44a49f4a8969bc86140548cb52409fa83be7",
+        "81e4b1f1307805f192892eab6d94f60e7dfa8d2473916d4722f0b7e07a14f0a4",
+        "24515c3e35c5ddbee143d48b4b5e84a3d2e18144e88ddb0eb709217f0addb224",
+        "e7325bf4fa51db8da22c730939b5309d3ffdcd14929f120dd9566ffc3537f6cd"
+      ],
+      "fileSHA": "8152ff45f41c42ac50856d46c892d70909c514c84b37894b4fb64d9fbcf16967"
+    },
+    "replay-prefix-15832038933790.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832038933790",
+      "scope": [
+        95628,
+        "134398969712919001",
+        "2",
+        91620,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "1c982c20081bd56e756d8f989b5912f5869695cb21d55b9feca4385a09d37d14",
+      "bytes": 62720,
+      "sectionSHA": [
+        "583c6ab98e1447fdf1201a3871be1d80e3738281e75dfcfbe33d3234e88200d4",
+        "851c65fa374ce97d2407a8a54d62987f47262962f35a716b3d55130ef956fd96",
+        "645abd584b2307097a0631dc417e96f6c1a65cb3fd7f16721f0b5ae26d0db5dd",
+        "2f39e0bb1d9f4900d89c5ade2e1ffdd33d25ff489cb05936502ba0748b0ad60c"
+      ],
+      "fileSHA": "8e2c898b83fd56dfda5839b408f34fe25d938c7aba3c8166da57ef99c6949568"
+    },
+    "replay-prefix-15832040670511.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832040670511",
+      "scope": [
+        95628,
+        "134398969712919001",
+        "2",
+        91620,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "b381545f95565645b437b95313f618947642357153d77051f99a26cb7def9c53",
+      "bytes": 62720,
+      "sectionSHA": [
+        "e4d4713786bcb60d945bdd03cf9c562de1551f9b99fbbb494ba7b78aa3c29c85",
+        "a2959187ed92c0f5c9df885e37df81fc05797a447bb0d1fdfe09eb623e8c850e",
+        "33c87a2daccdc80b7285d610e70df2e0e02c7790056f9999b58a51021090a708",
+        "07afc68b9e19406dd6e42493445f5ec91e932a947a993f8635c6887d3fdc3f51"
+      ],
+      "fileSHA": "10a52bfdf765a7b97a25ea09b4244d47c9d37910e735951297482236657b7712"
+    },
+    "ro2-prefix-15832693820756.m1root": {
+      "kind": "SOURCE",
+      "nonce": "15832693820756",
+      "scope": [
+        79640,
+        "134398970369596402",
+        "2",
+        63100,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "7492cb8446bd5e846980b6de887dd9e13bb1f2f314692e904a4f45fe13140e79",
+      "bytes": 62976,
+      "sectionSHA": [
+        "05dbdcd679470ea7c2e448bc69211167049c81d24fe7ecb742c1415ff43a989f",
+        "36c52a143773e1daa55e00864d133021ba562c090961bab53165178b1a850cd5",
+        "d41e8f4b4168ddb2e01740b303ac4a77235096f15e0e865943ba1e3aa45b5c8a",
+        "e25c816a940765de21786c3536c504440dc5e918eeaf575cfc1d43bd26b0fd94"
+      ],
+      "fileSHA": "5196df2b528154bc830f1cec9d96123b5b0777a7595a2d431fe490b2f495e561"
+    },
+    "ro2-prefix-15832694301411.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832694301411",
+      "scope": [
+        79640,
+        "134398970369596402",
+        "2",
+        63100,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "c01661586db428967a9bc94744a636bcd01567bb01aff2d3acfa670377b4a3ce",
+      "bytes": 62976,
+      "sectionSHA": [
+        "a1bc54c8283c55ea3e0551ae57491bb12e71b2330dcfa16f543bb60d706ab452",
+        "53093c6bb8a5bc32c2484aa577d1e100204d588c9c64864680ed855e857f443c",
+        "03609bc1dd3ea1438a0fc7ad004ff456df66eb91ada1aa59fadf79f2e32d2e54",
+        "577b629ddbd94ade70802b287452d1ddcc05567cbecd7ab31a36923e2abd337c"
+      ],
+      "fileSHA": "3cddac4b303f916d564cb560138ad09734c9ea6bfb246a0e37c53bbb7fc4bb7c"
+    },
+    "ro2-prefix-15832695253677.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832695253677",
+      "scope": [
+        79640,
+        "134398970369596402",
+        "2",
+        63100,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "f54b52811fb21b6695d04cb730675992a797010bcbb35c51688ec49ac925eee5",
+      "bytes": 62976,
+      "sectionSHA": [
+        "a8f23e907c6e4c701f8bc4d0794e15e8e02c7f081947559dfe1e1a2a730a431e",
+        "9b3ba24385e9b9677ffdc54ac63480b648df5a54e852f165f6302bc22084d17a",
+        "dfbe89a976d5ca56a5ed5d1702553473a0ddfef26c73dd35c7032ac3ce87aa32",
+        "d5cbd2f2e4acac25a5560776b85e539bd47128c0357b8a60141ce6b935aab483"
+      ],
+      "fileSHA": "2d44091453c5f60c23733cbee099f251ae17dab53d1a08e584d29f3f1034b25c"
+    },
+    "ro2-prefix-15832695811925.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832695811925",
+      "scope": [
+        79640,
+        "134398970369596402",
+        "2",
+        63100,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "c3e58857256d2b3e0161d4cadab4585b4f3f735e733a0bb57d6c7ac23b5ccf11",
+      "bytes": 62976,
+      "sectionSHA": [
+        "ddae9ab2a2588abe2cab6629e967b9c96c34e4fd4232729d50c70d8f2506e2d4",
+        "a5bb816d483f158cd455279b5668140328c93c4278126db9100eb816938ddf91",
+        "f68d08962a504e6191ec9d311e67982440aa3c1a6acfa050dc82cbe446f8c5cb",
+        "b5c081ad876158f0be98983f27251da78b61de6cecdb9974f349c893ced69b77"
+      ],
+      "fileSHA": "247a7b685601ee246ac43484904a993d3e40ccd8ef46c4bcb5e91f84d16dede3"
+    },
+    "ro2-prefix-15832696455507.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832696455507",
+      "scope": [
+        79640,
+        "134398970369596402",
+        "2",
+        63100,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "0e8d63a6bd7a2cf9ba4d7288367e80e9013bd63df302431c0b45b688d93f8def",
+      "bytes": 63488,
+      "sectionSHA": [
+        "01ae8ea7fd0f8a2679c43eb60d3fb980f76537a3f212bc9adcabdda5915eb0d3",
+        "b2a5944a5014418e482f77757006db716f295d8b18a2cbac274cd443b010b859",
+        "001433fcc82f6276358b636f36564501ce803f6bd351dd2ffc51699d6ccc8b12",
+        "1c269e22198203b4ee8a8398f400209bd54f0579b82c8eff78ec351249745c87"
+      ],
+      "fileSHA": "2df786b0b1e0d10d4b3ba2f193d14a082d13c63559a5ca3060f62e6b879f5804"
+    },
+    "ro2-prefix-15832697076337.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832697076337",
+      "scope": [
+        79640,
+        "134398970369596402",
+        "2",
+        63100,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "aa7e245eed347a6f11a88cf0261898042b960f0c249aca1b84f834ca4c75ab4d",
+      "bytes": 64000,
+      "sectionSHA": [
+        "1d6cc9aa4ea5396d208c1f0fc8499646e1823410ceef1e5883077addc2672ac4",
+        "b5d70da02847bcf19e0b94b655dcec67a6cbca58774b2ae9111914dd9d90633f",
+        "76f6672e95d7c926075b3182df571b685f3319d10b068de821c4a99be51bdd98",
+        "1bba3be8ae46eade4fc201ca302dd19188234e30ee404aae2ec0be1bf4459aae"
+      ],
+      "fileSHA": "b614e9d3a63c0c397f8744ec41e2abf710e8a479c8989f99e2b6a99abf35414d"
+    },
+    "ro2-prefix-15832697665388.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832697665388",
+      "scope": [
+        79640,
+        "134398970369596402",
+        "2",
+        63100,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "b36d09bbb01ef4f5dcc8eb4f16bd8d9c6fdd812f2562726c92c022741cec610a",
+      "bytes": 64512,
+      "sectionSHA": [
+        "a27fce780910fd46bd8e0efe056675a5d2dbdf067a54ba05e2d48520ac982149",
+        "cc4feb1039b4630deffc6a6e8a26bff1ef2198d15436992aaa920e3409149327",
+        "ee265725eaca07fad812788b82f525528a7d6dcef55417dc21ba7512e80803d0",
+        "402188dbedb961f828134c9bc82cf0927916b90af203cf263e94f5f4f242c34a"
+      ],
+      "fileSHA": "91f245c8478e38f962b9a69112956d72776432b800f1005890d641ace6648796"
+    },
+    "ro2-prefix-15832698282132.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832698282132",
+      "scope": [
+        79640,
+        "134398970369596402",
+        "2",
+        63100,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "9ea606708c955f0298928b8580268a2b83abf66f0fe24cd00e6c7b06ecb40210",
+      "bytes": 62976,
+      "sectionSHA": [
+        "2e73d0e3af87d1a28c208b49d77c401bf66244644573802e528d505963925080",
+        "1361a1e468e2325694c65ffbde541e6100c3d60935d31fc374f461e620ee4c73",
+        "82f7a91557486f2ed65e2c6c15762dc25ffc6cd32a93e4561f9b7c3090925461",
+        "64003618cbb9786a9df0b5ed3ecc918dcedca5c46f72168297b97b7b9b508aa2"
+      ],
+      "fileSHA": "dfaef90097103f42f07a8c348581de87169457a810b333d76fbcf4ba10ed509c"
+    },
+    "ro2-prefix-15832698931164.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832698931164",
+      "scope": [
+        79640,
+        "134398970369596402",
+        "2",
+        63100,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "5009332d2c16f98e819a479b830883fb402b2485c93caa2a82dd76f0820aab7f",
+      "bytes": 63488,
+      "sectionSHA": [
+        "1680366a9c84bcc09f7795972a3c3969dbce5b830c1be66bf0174317d6082aa9",
+        "fac9c89062d1c9452825b52c03f5850e650b55c3ec5bf1e741b3f14fc0328e2f",
+        "fb04d2fcaabc6a6fefc7728b7cbd4d8832df9bd6b67d976f7c20efb8ad41cc0b",
+        "d10c30d92616a9f39289fcf2a1e978b323a8022b5154a31cef2f5a2c3aa3e202"
+      ],
+      "fileSHA": "76daafcabb63662de8af7aae0f35c727216df6f26dd3e00073577a56abe38639"
+    },
+    "ro2-prefix-15832699606581.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832699606581",
+      "scope": [
+        79640,
+        "134398970369596402",
+        "2",
+        63100,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "360ff4d12477351c8c981afc8d312df1b3336484891085b61944d3944bd00c15",
+      "bytes": 64000,
+      "sectionSHA": [
+        "b48a1db3dd030781f5f2dd4470552d26524cac51638f67760549fe9039c389d8",
+        "df011d80e613e0063541bde85736045d13eb1dd561e82f3ebd4d9761828f07c6",
+        "d61eca46b30c2ae904d0db6a38e3cc4e464debe30eef87147683d53fab7160da",
+        "387f61d4ace33c01f67630b61001849ba0643a46aa7d68c90f0480153f0080ed"
+      ],
+      "fileSHA": "44ce52e8481da4c854b016107f8bbd61a368c374c46fdfce832c1ecfbe751724"
+    },
+    "ron2-prefix-15832705284059.m1root": {
+      "kind": "SOURCE",
+      "nonce": "15832705284059",
+      "scope": [
+        6484,
+        "134398970381121451",
+        "2",
+        96000,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "63c4016d666615eb9d41fc1e152b133cdf2a514a980fc123b95e120bcfcc88c9",
+      "bytes": 62976,
+      "sectionSHA": [
+        "ed70f936982f3c81e2cffb9f938944f8a027ec3d8478b627eb65b7a88099837f",
+        "c5df2d68bf9aabebc5bcad4178b798af28118d3d8c3afaf072490c05be429752",
+        "576c95e13607793c00ca2f6706c616879dcde23577955c22b8d82af84297f14b",
+        "7213b2c69ebf851ed0b75997aa77beb22b04c333e9aa90b4f45413c42799a4c4"
+      ],
+      "fileSHA": "b0405a8d35f1956e2d669482f99a94002486a45ff1983f1cee3acfc239829329"
+    },
+    "ron2-prefix-15832705748490.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832705748490",
+      "scope": [
+        6484,
+        "134398970381121451",
+        "2",
+        96000,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "a4450e8aa6ab0ba4efea8d6b837dd27e55b7db9e148bae74d9adf4df6b2fb661",
+      "bytes": 62976,
+      "sectionSHA": [
+        "4a00188310d99a4f9b9d8e6088967023ae306029c6d9913d0d6395230350a2fb",
+        "58c8df2a5aaddc565d02a0b4469c158c7644ab398355920d45ce25c1c59d51b3",
+        "4a147aeffe41f5962c7163c5a40b3e605ee910bd39d3ca6adbac6bb3bb982a2a",
+        "96bde191db73d42c8516eae13fd999d7339cba3caa46116875484f185927eeeb"
+      ],
+      "fileSHA": "e00fd5ae6f545ca1af61affb0745d312b23e7749ece079df98ab2c3de4313809"
+    },
+    "ron2-prefix-15832706868008.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832706868008",
+      "scope": [
+        6484,
+        "134398970381121451",
+        "2",
+        96000,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "0b24638a7216d84be223e6786678835c35b027787afe3369d3ee59d36bf1ff7f",
+      "bytes": 62976,
+      "sectionSHA": [
+        "535e5f92dff78043b87c116997c330b422c29094b09ddb07209dd7537e404146",
+        "50710aa1e4d7442e1621dff2d252a4c9bd63184bfeb58c76413f40a3a0078857",
+        "8221630fb5aa91ea1cddd0dc82567d0448e81d4c5761996caa200633b5010e19",
+        "cc54db24f7d37ad822ab95fad927c30cfb35075e6419543b09dfef80a063ce87"
+      ],
+      "fileSHA": "e2c26654ef825ce06e0bc28481ce1aec1c31bf94e3e592df20bbe4b85cd209ae"
+    },
+    "ron2-prefix-15832707490515.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832707490515",
+      "scope": [
+        6484,
+        "134398970381121451",
+        "2",
+        96000,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "ea3adf0809c6c1954ee39369ded9240dc59b7d8264b510136f130d5588b98a62",
+      "bytes": 62976,
+      "sectionSHA": [
+        "f60c3f8dd27f9ee6180d74203ca426bc530da16948cdf63a2c98dceee58607c0",
+        "e548fb7a57a41c1e2aeba9ceedab444a8ca5c1b77b85f9fbe0f8945fca91f835",
+        "ec0ce347bdeafca239701e8b5cfdf23ea18223115b1ea13cb20484d3d607408b",
+        "f6a32fac9997f6ffba2b30f7c23e610ac0640b034acb275e77863ebdc69131ca"
+      ],
+      "fileSHA": "ed06ce7c49ca17c3f3b8ff6dc39a412c0f91e6a34558e07e5bc4c0a2aae2f6fd"
+    },
+    "ron2-prefix-15832708134896.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832708134896",
+      "scope": [
+        6484,
+        "134398970381121451",
+        "2",
+        96000,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "10c426b1fca1bced76c594f1413151dd8499ab068632c4f42d29ea3c479968c3",
+      "bytes": 63488,
+      "sectionSHA": [
+        "b02fddaed6fbad8e409535cd3767dce4b42f4d1d6181d13dd0784a0bfe4805c2",
+        "5b4ecfb0032be348ea7f76fb087ddb31a955411c5ebd27d5495172ce3689ee58",
+        "9070dd3f0edb5a402c8c5eaa5860d195cea7166ad4d02e80faa049ce6d07af45",
+        "c5db6c32192996ce1e07a62d86b7309f8652ac13e575f24ebc1b6932dbf0172a"
+      ],
+      "fileSHA": "654379e8b2484f406c55173bfaa1ecfe3adfd3ce9052a2281d036faa74afb89b"
+    },
+    "ron2-prefix-15832708783376.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832708783376",
+      "scope": [
+        6484,
+        "134398970381121451",
+        "2",
+        96000,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "15d323a971ae842e3988f801c367922b306c6ee9460f2b9ac4fbaf003c64ba6b",
+      "bytes": 64000,
+      "sectionSHA": [
+        "eabc61cfb7277116aabd34fa3aebb7e9e6fa8dadcc8488462296eb4e9b15675a",
+        "d3073ca9ed6d66c95b821aab3f6bb3d3940f5e8343bbf587ef288bff312bccb5",
+        "981f16d3d86cb131146b05793b11ac87a143610786c531f6d7b4ebab6214bc16",
+        "102bbef4cc5c8292c7286b3cc6ebfdb3014854245c810d289cb54942512166d2"
+      ],
+      "fileSHA": "04452da03ba0f11e0ee7b38dc700b2e3c5e067d1a59bce8aeb1b6a12af92bc4e"
+    },
+    "ron2-prefix-15832709414741.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832709414741",
+      "scope": [
+        6484,
+        "134398970381121451",
+        "2",
+        96000,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "f6bf72d84ea5139d3d2ef59c27a36e92dfe36e2abeab1763816ca71f3a3cb099",
+      "bytes": 64512,
+      "sectionSHA": [
+        "e3d7fc03e9515a2c315b60140151688246f11696c652ec6cee39c9303b98f648",
+        "0c158eeb13ace157a51f2d13192c071d2a91b15ab553df07ed200b0a358995e1",
+        "244085afb9ab2a65c932495809dad9203341bcd5dcc1a5e368cec894051c6400",
+        "a611c65d5e223882c7625f55dadb2d1215ffd698dc55f2d58fc5b593fa6eb68d"
+      ],
+      "fileSHA": "7899bd8a57ed64237a7a26f8e9c60d49aae7e6e5c1f4690690ca55c4e7fe22ee"
+    },
+    "ron2-prefix-15832710087986.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832710087986",
+      "scope": [
+        6484,
+        "134398970381121451",
+        "2",
+        96000,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "bfcaaa9556b1663823e33bee146af0ba2182187d6b2d92d35b8739552a740a80",
+      "bytes": 62976,
+      "sectionSHA": [
+        "889c7999b8472760710d0afcff32a0b8276cf00c2de81edc0d6f65287644e91d",
+        "408dd9ac8c4e99e96cc9e9eb8ba547d4f71e4aabbc5bf9c8971ce65c0c6ada6d",
+        "6922741fcbd243c19bfc6a60d02f5819f1a6fdf67ce29c97ea18d0390be419f3",
+        "5cd27e046e4ac2c8c815292b187b8bf281a9494e10973141c87da53d5778a42c"
+      ],
+      "fileSHA": "a81680f10c55e429d2ad6df7f3d0030d046144acfd537e3b3268dbcb93bb9eac"
+    },
+    "ron2-prefix-15832710745145.m1root": {
+      "kind": "QUANTUM",
+      "nonce": "15832710745145",
+      "scope": [
+        6484,
+        "134398970381121451",
+        "2",
+        96000,
+        "1",
+        "2"
+      ],
+      "payloadSHA": "24f0fa7a1c91455f5d39e7cb983ef21b055c7fc92839ced4cae8e3bef82680f7",
+      "bytes": 63488,
+      "sectionSHA": [
+        "62b28123cad3545c4d1f98ddecb899de653318e0302e49d2211df76cd8dc7744",
+        "2f7cbaff0ab2ba51efd89141d200197d94ec99576cd1369e39970318473ee432",
+        "b877209b44cf6b55b46fcee504e45ac2341776acc163f407a904833f3865f11a",
+        "dec47cdf4f14a6311ddc4212e3198239f150482817482a923c6a29c18bc150e5"
+      ],
+      "fileSHA": "31ebed34eef5833cbc0b769d0e1e8230d3a2a78ffdd016df873aaf86c6957f70"
+    }
+  },
+  "d2": {
+    "first": {
+      "sha256": "a4df9fc9bbc46ca29757db7911fc5f7f6b3eeaa079ba94e3896450b38f18a2f9",
+      "lines": 38,
+      "offerQuoteRepairLines": [],
+      "pages": 2,
+      "root": 15814207678530
+    },
+    "following": {
+      "sha256": "5c121fd302bc24ba1598ea651b200f733be934ac95ce9343ca9913e0d6bdac7d",
+      "lines": 40,
+      "offerQuoteRepairLines": [],
+      "root": {
+        "kind": "QUANTUM",
+        "nonce": "15823393860401",
+        "scope": [
+          86564,
+          "134398960797446510",
+          "2",
+          19376,
+          "1",
+          "2"
+        ],
+        "payloadSHA": "069160171a0af9678ccc04dc28f997f4366698b01b7241fd4686ce0cbd698ddc",
+        "bytes": 62720,
+        "sectionSHA": [
+          "44f81d88a51f6c52187d08ac52437b20ad22b209fe5be003606d3df9def77ecb",
+          "44f0a5da7978160c45b8b12205a7b169cd0e6db4c1e7a66177e6fe37083ae1dd",
+          "9386dbb95efd6fff4e603d7f4996f880b4f19786b4c50e2c3ac7bc5baa833776",
+          "81b0ecf234714326c4b8dfd6a8e23850fb2cee4c8240b29317585a6525a594a9"
+        ],
+        "fileSHA": "ba1676adfb1ed119ad74d921825cc1f97ebda65449c3e9e0a803d6a4efa29d18"
+      },
+      "pages": 1
+    },
+    "hot": {
+      "sha256": "cc15b44328e4060db46d369601fa9e5efaa0aa8a905f07be11fddf2c01e23a63",
+      "lines": 75,
+      "offerQuoteRepairLines": [],
+      "terminal": [
+        "FROZEN_HOT_PAGE"
+      ],
+      "scope": "HOT_ONLY"
+    }
+  },
+  "strictD1": "NOT_COMPARABLE_REAL_INPUT_DIFF",
+  "strictT865Gates": {
+    "OFF": "DRAIN",
+    "ON": "DRAIN",
+    "REPLAY_OFF": "CLOCK_EQUIVALENCE_UNPROVEN",
+    "REPLAY_ON": "DRAIN"
+  },
+  "observedSourceQ20": [
+    122231,
+    134856,
+    134887,
+    134481
+  ],
+  "observedSourceDeltaNs": [
+    14571100,
+    16076100,
+    16079800,
+    16031500
+  ],
+  "negativeControls": [
+    "OFFER_TERMINAL_CHAIN",
+    "OFFER_IDENTITY"
+  ]
+}

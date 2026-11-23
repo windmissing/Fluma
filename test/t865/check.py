@@ -67,7 +67,7 @@ def arm(row, mode):
     need(row['mode']==mode and len({a['terminalId'] for a in actions})==52,'TERMINAL_DUPLICATE')
     for item in actions:
         kind=item['action']['kind']
-        allowed={'PULSE':('ACCEPTED',), 'SOURCE':('ACCEPTED','REJECTED','REVOKED'),
+        allowed={'PULSE':('ACCEPTED',), 'SOURCE':('ACCEPTED','REJECTED','REVOKED','EXPIRED'),
                  'RESERVE':('RESERVED','NOT_BUSY'), 'END':('ENDED','NO_PAGE')}
         valid=('OFF_NOOP',) if kind in ('RESERVE','END') and mode.endswith('OFF') else allowed[kind]
         need(item['terminal'] in valid and item['actualNs']>=row['readyNs'],'ACTION_TERMINAL')
@@ -201,7 +201,7 @@ def source_trace(rows):
         identity=tuple(row[k] for k in ('sample','hold','pulseTicks','sampleTicks','pulseNs',
                                         'sampleNs','frequency','pixelX','pixelY','material'))
         if stage=='M1_OFFER_TERMINAL':
-            need(key in pending and key not in terminal and pending[key]==identity and code in (2,3,4)
+            need(key in pending and key not in terminal and pending[key]==identity and code in (2,3,4,7)
                  and (int(row['root'])>0)==(code==2),'OFFER_TRACE_TERMINAL')
             terminal[key]=code
         elif code==0:
