@@ -27,6 +27,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   constexpr auto block = 20*sizeof(uint32_t);
   constexpr char sourceSHA[] = "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162";
   const bool interactive = !attempt.m1QuantumCandidate.empty();
+  const bool fullM1=interactive && attempt.m1DualSource;
+  const uint32_t emitQ=fullM1 ? 16u*1048576u : 1048576u;
   auto narrow = [](uint64_t value) { return grs::U64{uint32_t(value), uint32_t(value >> 32)}; };
   auto digestWords = [](const char *hex, auto &words) {
     for (size_t i = 0; i < 32; ++i) {
@@ -47,7 +49,9 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   Require(bool(input.read(reinterpret_cast<char *>(module.data()), size)) &&
           Hex(Hash(module.data(), size_t(size)).data()) == sourceSHA, "M1_MODULE_SHA");
   fields << ",\"m1SourceModuleSHA\":" << Quote(sourceSHA)
-         << ",\"inputKind\":" << Quote(interactive ? "WIN32_POINTER_HOLD" : "PC_DIAGNOSTIC_DRY_SOURCE");
+         << ",\"inputKind\":" << Quote(interactive ? "WIN32_POINTER_HOLD" : "PC_DIAGNOSTIC_DRY_SOURCE")
+         << ",\"m1InputProfile\":" << Quote(fullM1 ? "FULL_M1_V2" : "DRY_M1_V2")
+         << ",\"m1EmitQ\":" << emitQ;
   vk.DestroyPipeline(device, pipeline, nullptr);
   vk.DestroyShaderModule(device, shader, nullptr);
   pipeline = VK_NULL_HANDLE;
@@ -153,7 +157,9 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   digestWords(kAngleSha256, identity.angleSha);
   digestWords(m1::manifestSha, identity.layoutSha);
   m1::SourceRootOwner root;
-  Require(root.Initialize(identity, K, Kw) == ControlCode::OK, "M1_SOURCE_OWNER_INIT");
+  using SourceProfile=m1::SourceRootOwner::Profile;
+  Require(root.Initialize(identity,K,Kw,fullM1 ? SourceProfile::FullM1 : SourceProfile::SourceCore)
+          ==ControlCode::OK,"M1_SOURCE_OWNER_INIT");
 
   m1::ProgressClockV2 clock;
   Require(clock.BeginSession(), "M1_SOURCE_SESSION");
@@ -238,6 +244,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   const auto &staging=buffers[kStaging];
   const auto runSource=[&](const PointerSample &inputSample,uint64_t pulse,uint64_t delta,
                            const SourceOffer &offer) {
+    namespace sourceWire=grs::m1::sourceCommand32;
     Require(sourceSerial!=UINT32_MAX,"M1_SOURCE_SEQUENCE_EXHAUSTED");
     Check(reset(device,commandPool,0),"vkResetCommandPool.M1_SOURCE");
     vk.DestroyFence(device,fence,nullptr);
@@ -258,8 +265,11 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     cmd = {};
     cmd[0] = 1129534023;
     cmd[1] = 2;
+    cmd[sourceWire::kind] = fullM1 ? inputSample.material : 0;
+    Require(cmd[sourceWire::kind]<=1,"M1_SOURCE_MATERIAL_INVALID");
     cmd[4] = identity.run.lo; cmd[5] = identity.run.hi;
-    cmd[8] = cmd[14] = 1;
+    cmd[8] = 1;
+    cmd[sourceWire::sourceId] = 1+cmd[sourceWire::kind];
     cmd[6] = cmd[15] = ++sourceSerial;
     cmd[10] = interactive ? uint32_t(inputSample.hold) : 1;
     cmd[11] = interactive ? uint32_t(inputSample.hold>>32) : 0;
@@ -303,7 +313,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     vk.CmdUpdateBuffer(command, buffers[kM1Work].handle, 0, sizeof(cmd), cmd.data());
     for (uint32_t pass = 0; pass < passes; ++pass) {
       const std::array<uint32_t,20> uniforms{
-        K,Kw,16*K,kColumn,headerAt,stateWords,pass,1048576,request.nonce.lo,request.nonce.hi,
+        K,Kw,16*K,kColumn,headerAt,stateWords,pass,emitQ,request.nonce.lo,request.nonce.hi,
         request.frame.lo,request.frame.hi,request.control.lo,request.control.hi,root.Bank(),
         request.publicationSlot,request.eventArena,request.carry,request.uploadedBytes,0};
       vk.CmdUpdateBuffer(command, buffers[kM1Uniform].handle, stride*pass, block, uniforms.data());
@@ -323,7 +333,10 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     Check(vk.EndCommandBuffer(command), "vkEndCommandBuffer.M1_SOURCE");
     Checkpoint("M1_SOURCE_SUBMIT");
     const auto sourceCurrent = [&] {
-      return refresh() && (!interactive || attempt.pointer().hold == inputSample.hold);
+      if (!refresh()) return false;
+      if (!interactive) return true;
+      const auto held=attempt.pointer();
+      return held.hold==inputSample.hold && held.material==inputSample.material;
     };
     if (!sourceCurrent() || pc::TimeNs()>=deadline) {
       root.Stop();
@@ -397,7 +410,9 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     }
     fields << ",\"m1Completion\":" << Words(tail) << ",\"m1OwnerCode\":" << int(result);
     Require(result == ControlCode::OK,"M1_SOURCE_COMPLETION_INVALID");
-    fields << ",\"m1AdmittedQ\":" << tail[61] << ",\"m1PublicationGeneration\":" << accepted.publicationGeneration.lo;
+    fields << ",\"m1AdmittedQ\":" << tail[61] << ",\"m1PublicationGeneration\":" << accepted.publicationGeneration.lo
+           << ",\"m1SourceMaterial\":" << cmd[sourceWire::kind] << ",\"m1SourceOutcome\":" << tail[28]
+           << ",\"m1SourceAdmissionClass\":" << tail[158];
     return true;
   };
   const auto consumeSource=[&](const PointerSample &input,uint64_t ns,uint64_t elapsed,const SourceOffer &offer) {
@@ -493,7 +508,20 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   const auto frame = pc::PresentBoot(vk, instance, candidate.physical, device, queue, candidate.family,
       surface, publicationBuffer(), staging.handle, staging.memory, staging.flags, attempt.window,
       attempt.current, [&](const pc::Frame &visible) {
-        const auto wide = [](grs::U64 value) { return (uint64_t(value.hi)<<32) | value.lo; };
+        const auto &completion=accepted.completion;
+        const auto q64=[&](size_t lo) { return wide({completion[lo],completion[lo+1]}); };
+        if (fullM1) {
+          namespace layout=grs::m1::completion256;
+          fields << ",\"m1SceneLease\":{\"abi\":\"GRS_GPU_SCENE_Q20_M1_V2\",\"sand16Word\":0"
+                 << ",\"water20Word\":" << 16*K << ",\"column16Word\":" << 16*K+20*Kw
+                 << ",\"geometry\":\"" << wide(lease.identity.geometry)
+                 << "\",\"sandStockQ\":\"" << q64(layout::sandAfterLo)
+                 << "\",\"waterStockQ\":\"" << q64(layout::waterAfterLo)
+                 << "\",\"sandAdmittedTotalQ\":\"" << q64(layout::I_sandLo)
+                 << "\",\"waterAdmittedTotalQ\":\"" << q64(layout::I_waterLo)
+                 << "\",\"activeSand\":" << completion[layout::sandLive]
+                 << ",\"activeWater\":" << completion[layout::waterLive] << "}";
+        }
         fields << ",\"windowFrame\":{\"kind\":" << Quote(interactive ? "M1_QUANTUM_WINDOW" : "M1_DRY_SOURCE_DIAGNOSTIC")
                << ",\"acceptedRoot\":\"" << wide(lease.nonce) << "\",\"publicationSlot\":" << accepted.publication
                << ",\"run\":\"" << wide(lease.identity.run) << "\",\"config\":\"" << wide(lease.identity.config)
@@ -507,7 +535,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
                << ",\"presentEnterQpc\":\"" << visible.presentEnter << "\",\"presentExitQpc\":\""
                << visible.presentExit << "\"}";
         publish(Receipt(interactive ? "M1_QUANTUM_PRESENT_QUEUED" : "M1_DRY_SOURCE_PRESENT_QUEUED", ""));
-      }, buffers[kM1Pub].bytes, !interactive, nextPublication);
+      }, buffers[kM1Pub].bytes, !interactive, nextPublication, fullM1);
   const bool usable = frame.retire != VK_ERROR_DEVICE_LOST && frame.error != VK_ERROR_DEVICE_LOST;
   if (usable && leased)
     Require(root.Release(accepted.publication, accepted.publicationGeneration, true) == ControlCode::OK,

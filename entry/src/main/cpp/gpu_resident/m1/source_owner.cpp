@@ -4,10 +4,13 @@ namespace grs {namespace m1 {namespace {
 U64 read(const uint32_t* p,size_t i){return {p[i],p[i+1]};}bool eq(U64 a,U64 b){return Compare64(a,b)==0;}bool match(const uint32_t* p,size_t i,U64 v){return eq(read(p,i),v);}void put(Words256& p,size_t i,U64 v){p[i]=v.lo;p[i+1]=v.hi;}bool plus(U64 a,uint32_t q,U64 b){U64 v;return Add64(a,{q,0},v)&&eq(v,b);}
 }
 ControlCode SourceRootOwner::Initialize(const Identity& id,uint32_t k,uint32_t kw){
+ return Initialize(id,k,kw,Profile::SourceCore);
+}
+ControlCode SourceRootOwner::Initialize(const Identity& id,uint32_t k,uint32_t kw,Profile profile){
  if((k!=192&&k!=512)||(kw!=64&&kw!=128))return ControlCode::UNSUPPORTED_FEATURE;
  if(state==FlightState::Submitted||state==FlightState::Quarantined)return ControlCode::BUSY;for(const auto& p:pubs)if(p.leased||p.releasePending)return ControlCode::BACKPRESSURE;
  for(U64 v:{id.run,id.owner,id.context,id.surface,id.geometry,id.config})if(!(v.lo|v.hi))return ControlCode::INVALID_INPUT;
- identity=id;K=k;Kw=kw;fullWaterContract=false;header={};header[0]=1213420103;header[1]=2;header[2]=256;put(header,4,id.run);put(header,6,id.owner);put(header,8,id.context);put(header,10,id.surface);put(header,20,id.geometry);put(header,22,id.config);
+ identity=id;K=k;Kw=kw;fullWaterContract=profile==Profile::FullM1;header={};header[0]=1213420103;header[1]=2;header[2]=256;put(header,4,id.run);put(header,6,id.owner);put(header,8,id.context);put(header,10,id.surface);put(header,20,id.geometry);put(header,22,id.config);
  for(size_t i=24;i<=26;i++)header[i]=1;for(size_t i=27;i<=30;i++)header[i]=2;header[31]=3;header[39]=header[40]=1;header[43]=K;header[44]=Kw;header[77]=1;header[78]=2;header[84]=1;header[122]=header[124]=header[125]=1;header[123]=65536;
  for(size_t i=0;i<8;i++){header[88+i]=id.shaderSha[i];header[96+i]=id.angleSha[i];header[104+i]=id.layoutSha[i];}
  bank=0;lastNonce={};pubs[0]={};pubs[1]={};tombstone=false;mapped=accepted=0;state=FlightState::Idle;return ControlCode::OK;

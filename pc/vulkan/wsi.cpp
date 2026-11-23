@@ -79,7 +79,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
                   HWND window, const std::function<bool()> &current,
                   const std::function<void(const Frame &)> &published,
                   VkDeviceSize m1PublicationBytes, bool requireDiagnosticPixel,
-                  const std::function<VkBuffer()> &nextPublication) {
+                  const std::function<VkBuffer()> &nextPublication, bool fullM1) {
   Frame frame;
   const bool dryScene=m1PublicationBytes && !requireDiagnosticPixel;
   Presentation wsi{vk, device};
@@ -200,9 +200,10 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       Check(vk.CreateShaderModule(device, &info, nullptr, &module), "vkCreateShaderModule.GRAPHICS");
     };
     shader(kBootViewVertex, wsi.vertex);
-    if (dryScene)
-      shader(kM1DrySceneFragment, wsi.fragment);
-    else if (m1PublicationBytes)
+    if (dryScene) {
+      if (fullM1) shader(kM1FullSceneFragment, wsi.fragment);
+      else shader(kM1DrySceneFragment, wsi.fragment);
+    } else if (m1PublicationBytes)
       shader(kM1SourceViewFragment, wsi.fragment);
     else
       shader(kBootViewFragment, wsi.fragment);

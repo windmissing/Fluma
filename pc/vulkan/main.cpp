@@ -26,6 +26,8 @@ struct Window {
   std::wstring m1SourceModule;
   std::wstring m1QuantumCandidate, m1QuantumCommit, m1ColdFile;
   bool m1Present = false;
+  bool dualSource = false;
+  uint32_t material=0;
   std::wstring t849WriteFile;
   bool t854PrivateWrites = false;
   std::atomic<uint64_t> sourcePulse{0};
@@ -69,7 +71,10 @@ struct Window {
     const std::string action(kind);
     if (action == "DOWN") {
       held = {};
-      if (pointerReady && inside) held.hold = sequence;
+      if (pointerReady && inside) {
+        held.hold = sequence;
+        held.material = material;
+      }
     } else if (action != "MOVE" || !inside) {
       held = {};
     }
@@ -93,6 +98,21 @@ struct Window {
          "\",\"qpc\":\"" + std::to_string(ticks) +
          "\",\"x\":" + std::to_string(x) + ",\"y\":" + std::to_string(y) +
          ",\"dpi\":" + std::to_string(eventDpi) + ",\"hold\":\"" + std::to_string(hold) + "\"}");
+  }
+
+  void SelectMaterial(uint32_t next) {
+    uint64_t geometry;
+    {
+      std::lock_guard lock(mutex);
+      if (closing || material==next) return;
+      material=next;
+      held={};
+      scope.permission=0;
+      ingress.Authorize(scope,0);
+      geometry=generation;
+    }
+    Emit("{\"stage\":\"M1_SOURCE_MODE\",\"geometry\":\""+std::to_string(geometry)+
+         "\",\"material\":"+std::to_string(next)+"}");
   }
 
   void Pulse() {
@@ -198,7 +218,7 @@ struct Window {
                                                  scope=next;
                                                  ingress.Authorize(scope,0);
                                                  hotCapture.Authorize(next);
-                                               }, &ingress, captureHot ? &hotCapture : nullptr},
+                                               }, &ingress, captureHot ? &hotCapture : nullptr, dualSource},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos ||
@@ -257,6 +277,12 @@ LRESULT CALLBACK Dispatch(HWND hwnd, UINT message, WPARAM w, LPARAM l) {
     if (w & MK_LBUTTON) window->Input("MOVE", GET_X_LPARAM(l), GET_Y_LPARAM(l));
     return 0;
   case WM_LBUTTONUP: window->Input("UP", GET_X_LPARAM(l), GET_Y_LPARAM(l)); ReleaseCapture(); return 0;
+  case WM_KEYDOWN:
+    if (window->dualSource && (w=='1' || w=='2')) {
+      window->SelectMaterial(w=='2' ? 1u : 0u);
+      return 0;
+    }
+    break;
   case WM_CANCELMODE: window->Input("CANCEL", 0, 0); if (GetCapture() == hwnd) ReleaseCapture(); return 0;
   case WM_CAPTURECHANGED: window->Input("CAPTURE_LOST", 0, 0); return 0;
   case WM_KILLFOCUS: window->Input("FOCUS_LOST", 0, 0); if (GetCapture() == hwnd) ReleaseCapture(); return 0;
@@ -315,6 +341,7 @@ int wmain(int argc, wchar_t **argv) {
       window.m1ColdFile = argv[++i];
     }
     else if (!std::wcscmp(argv[i], L"--m1-capture-hot")) window.captureHot=true;
+    else if (!std::wcscmp(argv[i], L"--m1-dual-source")) window.dualSource=true;
     else if ((!std::wcscmp(argv[i], L"--probe-m1-source") ||
               !std::wcscmp(argv[i], L"--present-m1-source")) && i+1 < argc) {
       window.m1Present = !std::wcscmp(argv[i], L"--present-m1-source");
@@ -325,7 +352,7 @@ int wmain(int argc, wchar_t **argv) {
       std::cerr << "usage: hello_world_pc [--once] [--boot-only | --qualify-steady | "
                    "--qualify-steady-role NAME [--disable-optimization] | --probe-m1-source SPV | "
                    "--present-m1-source SPV | --m1-window SOURCE_SPV CANDIDATE_SPV COMMIT_SPV "
-                   "[--m1-cold FILE] [--m1-capture-hot] | --qualify-t849-writes FILE]\n";
+                   "[--m1-cold FILE] [--m1-capture-hot] [--m1-dual-source] | --qualify-t849-writes FILE]\n";
       return 2;
     }
   }
@@ -333,6 +360,7 @@ int wmain(int argc, wchar_t **argv) {
   if (!window.t849WriteFile.empty() && !window.steadyRole.empty()) return 2;
   if (window.steady && !window.m1SourceModule.empty()) return 2;
   if (window.captureHot && window.m1QuantumCandidate.empty()) return 2;
+  if (window.dualSource && (window.m1QuantumCandidate.empty() || !window.m1ColdFile.empty())) return 2;
   if ((!window.m1ColdFile.empty() && window.m1QuantumCandidate.empty()) ||
       (!window.m1QuantumCandidate.empty() && window.bootOnly)) return 2;
   SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);

@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <mutex>
 
@@ -60,7 +61,10 @@ class M1Ingress {
     if (!(offer.scope==scope_) || !hold_ || offer.sample.hold!=hold_)
       return {Code::Revoked};
     if (offer.seq<=last_) return {Code::Expired};
-    if (!offer.frequency || !offer.sample.sequence || !offer.sampleTicks ||
+    const auto &sample=offer.sample;
+    if (sample.material>1 || !std::isfinite(sample.x) || !std::isfinite(sample.y) ||
+        sample.x<0 || sample.x>=128 || sample.y<0 || sample.y>256 ||
+        !offer.frequency || !sample.sequence || !offer.sampleTicks ||
         offer.pulseTicks<=offer.sampleTicks || offer.pulseNs<=offer.sample.timeNs)
       return {Code::Invalid};
     for (auto &slot : active_) if (!slot.offer.seq) {

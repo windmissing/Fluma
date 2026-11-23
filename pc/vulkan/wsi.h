@@ -25,5 +25,5 @@ Frame PresentBoot(g13vk::VulkanApi &, VkInstance, VkPhysicalDevice, VkDevice, Vk
                   HWND window, const std::function<bool()> &current,
                   const std::function<void(const Frame &)> &published,
                   VkDeviceSize m1PublicationBytes = 0, bool requireDiagnosticPixel = true,
-                  const std::function<VkBuffer()> &nextPublication = {});
+                  const std::function<VkBuffer()> &nextPublication = {}, bool fullM1 = false);
 }

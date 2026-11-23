@@ -5,7 +5,9 @@ namespace grs {namespace m1 {
 // Revision 2 owner for SOURCE and the FullM1 QUANTUM transport.
 class SourceRootOwner {
 public:
+ enum class Profile { SourceCore, FullM1 };
  ControlCode Initialize(const Identity&,uint32_t K,uint32_t Kw);
+ ControlCode Initialize(const Identity&,uint32_t K,uint32_t Kw,Profile);
  ControlCode Begin(const RootRequest&,const std::array<uint32_t,32>&);
  ControlCode BeginQuantum(const RootRequest&,int requestedAngle);
  ControlCode Poll(FenceState,const uint32_t*,size_t,uint32_t,AcceptedRoot&);

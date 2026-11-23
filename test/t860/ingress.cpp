@@ -35,6 +35,25 @@ int main() {
   ingress.Authorize(scope,7);
   assert(ingress.OfferSource(first).code==SourceCode::Expired);
 
+  auto nextScope=scope;
+  nextScope.permission=20;
+  ingress.Authorize(scope,0);
+  ingress.Authorize(nextScope,20);
+  auto water=next;
+  water.scope=nextScope;
+  water.sample.hold=20;
+  water.sample.material=1;
+  water.seq=6;
+  auto invalid=water;
+  invalid.sample.material=2;
+  assert(ingress.OfferSource(invalid).code==SourceCode::Invalid);
+  invalid.sample=water.sample;
+  invalid.sample.x=128;
+  assert(ingress.OfferSource(invalid).code==SourceCode::Invalid);
+  assert(ingress.OfferSource(water).code==SourceCode::Pending);
+  const auto acquired=ingress.Take();
+  assert(acquired.scope.run==scope.run && acquired.sample.material==1 && acquired.sample.hold==20);
+
   M1HotCapture capture;
   using Code=M1HotCapture::Code;
   using Phase=M1HotCapture::Phase;

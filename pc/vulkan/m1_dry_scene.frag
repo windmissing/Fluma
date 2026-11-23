@@ -14,7 +14,13 @@ vec3 srgb(vec3 c) {
 
 void main() {
     const uint sandCapacity = 192u;
+#ifdef M1_FULL_SCENE
+    const uint waterCapacity = 128u;
+    const uint waterBase = 16u*sandCapacity;
+    const uint columnBase = waterBase + 20u*waterCapacity;
+#else
     const uint columnBase = 16u*sandCapacity + 20u*128u;
+#endif
     const uint header = columnBase + 16u*128u;
     const vec3 background = vec3(.006,.008,.014);
     vec3 rgb = background;
@@ -33,6 +39,28 @@ void main() {
                 break;
             }
         }
+#ifdef M1_FULL_SCENE
+        float bed = uintBitsToFloat(P[columnBase+8u*128u+column]);
+        const vec3 waterColor = vec3(.04,.13,.18);
+        float water = uintBitsToFloat(P[columnBase+10u*128u+column]);
+        float eta = uintBitsToFloat(P[columnBase+9u*128u+column]);
+        if (water > 0. && point.y <= eta) {
+            float path = clamp(eta-max(point.y,bed),0.,water);
+            rgb = mix(rgb,waterColor,1.-exp(-.03*path));
+        }
+        uint packets = min(P[header+35u],waterCapacity);
+        for (uint i=0u; i<packets; ++i) {
+            uint mass = P[waterBase+i];
+            if (mass==0u) continue;
+            vec2 position = vec2(uintBitsToFloat(P[waterBase+16u*waterCapacity+i]),
+                                 uintBitsToFloat(P[waterBase+17u*waterCapacity+i]));
+            float radius = 2.*sqrt(float(mass)/131072.);
+            vec2 local = (uv-vec2(position.x/128.,1.-position.y/256.))*extent/radius;
+            float alpha = .8*(1.-smoothstep(.8,1.,length(local)));
+            float highlight = pow(max(0.,1.-length(local-vec2(-.25,-.25))),8.);
+            rgb = mix(rgb,mix(waterColor,vec3(.8,.9,1.),highlight),alpha);
+        }
+#endif
         vec2 edge = abs(uv*extent-extent*.5)-extent*.5;
         if (abs(max(edge.x,edge.y))<=1.) rgb = vec3(.08)+rgb*.8;
     }

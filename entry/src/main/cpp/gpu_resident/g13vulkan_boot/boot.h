@@ -36,6 +36,7 @@ struct Attempt {
   std::function<void(SourceScope)> sourceScope;
   M1Ingress *ingress = nullptr;
   M1HotCapture *hotCapture = nullptr;
+  bool m1DualSource = false;
 #else
   NativeWindow *window;
 #endif
