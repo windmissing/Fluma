@@ -335,22 +335,20 @@ void Boot::CaptureM1Quantum(m1::SourceRootOwner &root, const grs::AcceptedRoot &
   Require(std::memcmp(raw.data(),stored.data(),1024)==0,"M1_COLD_COMPLETION_CHANGED");
   std::memcpy(raw.data()+gpuBytes,sourceCompletion.data(),sizes[6]);
   std::memcpy(raw.data()+gpuBytes+sizes[6],sourceCommand.data(),sizes[7]);
-  constexpr char magic[]="M1PCOLD1";
   const auto digest=Hash(raw.data(),raw.size());
   const auto temp=attempt.m1ColdFile+L".pending-"+std::to_wstring(GetCurrentProcessId());
   const HANDLE out=CreateFileW(temp.c_str(),GENERIC_WRITE,0,nullptr,CREATE_NEW,FILE_ATTRIBUTE_NORMAL,nullptr);
   Require(out!=INVALID_HANDLE_VALUE,"M1_COLD_CREATE");
-  const auto write=[&](const void *src,DWORD bytes) {
+  const auto write=[&](const void *src,size_t bytes) {
     DWORD n=0;
-    return WriteFile(out,src,bytes,&n,nullptr) && n==bytes;
+    return WriteFile(out,src,DWORD(bytes),&n,nullptr) ? n : 0;
   };
-  const bool wrote=write(magic,8) && write(sizes.data(),DWORD(sizeof(sizes))) &&
-                   write(digest.data(),DWORD(digest.size())) && write(raw.data(),DWORD(raw.size())) &&
+  const bool wrote=WriteM1Cold(sizes,digest,raw.data(),raw.size(),write) &&
                    FlushFileBuffers(out);
   CloseHandle(out);
   const bool finished=wrote && MoveFileExW(temp.c_str(),attempt.m1ColdFile.c_str(),MOVEFILE_WRITE_THROUGH);
   if (!finished) DeleteFileW(temp.c_str());
   Require(finished,"M1_COLD_WRITE_OR_DESTINATION_EXISTS");
   fields << ",\"m1ColdPayloadSHA\":" << Quote(Hex(digest.data()))
-         << ",\"m1ColdBytes\":" << (payload+8+sizeof(sizes)+digest.size());
+         << ",\"m1ColdBytes\":" << (raw.size()+kM1ColdEnvelopeBytes);
 }
