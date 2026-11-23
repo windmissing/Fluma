@@ -1,0 +1,224 @@
+{
+  "schema": "T864_DUAL_SOURCE_V1",
+  "pe": {
+    "path": ".codex/local-test/t860-paged-release.exe",
+    "sha256": "b02294dcdd5daa88c434cb444f0ce48882a21bd44a51908fcf9ad89f96e8c7e4",
+    "note": "newest PE with --m1-dual-source + --m1-source-trace (T862 dual features merged into T860-paged build); t862-release.exe lacks --m1-source-trace"
+  },
+  "spirv": {
+    "full_source": "1912af9e...",
+    "quantum_candidate": "b8f0e327...",
+    "quantum_commit": "caf0614c..."
+  },
+  "runs": {
+    "run1-4phase": {
+      "rows": 746,
+      "acceptedOffers": [
+        {
+          "offer": "2",
+          "hold": "1",
+          "material": 0,
+          "root": "15704901335891"
+        }
+      ],
+      "modeSwitches": [
+        1,
+        0
+      ],
+      "revokedOffers": 16,
+      "presentedFrames": 25,
+      "firstQuantum": {
+        "state": "M1_QUANTUM_PRESENT_QUEUED",
+        "reject": "",
+        "fenceVkResult": 0
+      },
+      "sceneLeaseSample": {
+        "abi": "GRS_GPU_SCENE_Q20_M1_V2",
+        "sand16Word": 0,
+        "water20Word": 3072,
+        "column16Word": 5632,
+        "geometry": "2",
+        "sandStockQ": "124585",
+        "waterStockQ": "0",
+        "sandAdmittedTotalQ": "124585",
+        "waterAdmittedTotalQ": "0",
+        "activeSand": 1,
+        "activeWater": 0
+      },
+      "emitQ": null,
+      "inputProfile": null
+    },
+    "run2-water": {
+      "rows": 259,
+      "acceptedOffers": [
+        {
+          "offer": "2",
+          "hold": "1",
+          "material": 1,
+          "root": "15711368697287"
+        }
+      ],
+      "modeSwitches": [
+        1
+      ],
+      "revokedOffers": 4,
+      "presentedFrames": 11,
+      "firstQuantum": {
+        "state": "M1_QUANTUM_PRESENT_QUEUED",
+        "reject": "",
+        "fenceVkResult": 0
+      },
+      "sceneLeaseSample": {
+        "abi": "GRS_GPU_SCENE_Q20_M1_V2",
+        "sand16Word": 0,
+        "water20Word": 3072,
+        "column16Word": 5632,
+        "geometry": "2",
+        "sandStockQ": "0",
+        "waterStockQ": "129635",
+        "sandAdmittedTotalQ": "0",
+        "waterAdmittedTotalQ": "129635",
+        "activeSand": 0,
+        "activeWater": 1
+      },
+      "emitQ": 16777216,
+      "inputProfile": "FULL_M1_V2"
+    },
+    "run3-sand": {
+      "rows": 440,
+      "acceptedOffers": [
+        {
+          "offer": "2",
+          "hold": "1",
+          "material": 0,
+          "root": "15711559826637"
+        }
+      ],
+      "modeSwitches": [],
+      "revokedOffers": 8,
+      "presentedFrames": 7,
+      "firstQuantum": {
+        "state": "M1_QUANTUM_PRESENT_QUEUED",
+        "reject": "",
+        "fenceVkResult": 0
+      },
+      "sceneLeaseSample": {
+        "abi": "GRS_GPU_SCENE_Q20_M1_V2",
+        "sand16Word": 0,
+        "water20Word": 3072,
+        "column16Word": 5632,
+        "geometry": "2",
+        "sandStockQ": "134668",
+        "waterStockQ": "0",
+        "sandAdmittedTotalQ": "134668",
+        "waterAdmittedTotalQ": "0",
+        "activeSand": 2,
+        "activeWater": 0
+      },
+      "emitQ": 16777216,
+      "inputProfile": "FULL_M1_V2"
+    },
+    "run4-dual": {
+      "rows": 64,
+      "acceptedOffers": [
+        {
+          "offer": "2",
+          "hold": "1",
+          "material": 0,
+          "root": "15711791568710"
+        }
+      ],
+      "modeSwitches": [
+        1,
+        0
+      ],
+      "revokedOffers": 4,
+      "presentedFrames": 0,
+      "firstQuantum": {
+        "state": "FAILED",
+        "reject": "FENCE_OR_PERMIT_FAILED",
+        "fenceVkResult": 2
+      },
+      "sceneLeaseSample": null,
+      "emitQ": null,
+      "inputProfile": null
+    },
+    "run5-dual": {
+      "rows": 208,
+      "acceptedOffers": [
+        {
+          "offer": "2",
+          "hold": "1",
+          "material": 0,
+          "root": "15712277504595"
+        }
+      ],
+      "modeSwitches": [
+        1
+      ],
+      "revokedOffers": 8,
+      "presentedFrames": 1,
+      "firstQuantum": {
+        "state": "FAILED",
+        "reject": "FENCE_OR_PERMIT_FAILED",
+        "fenceVkResult": 2
+      },
+      "sceneLeaseSample": {
+        "abi": "GRS_GPU_SCENE_Q20_M1_V2",
+        "sand16Word": 0,
+        "water20Word": 3072,
+        "column16Word": 5632,
+        "geometry": "2",
+        "sandStockQ": "126391",
+        "waterStockQ": "0",
+        "sandAdmittedTotalQ": "126391",
+        "waterAdmittedTotalQ": "0",
+        "activeSand": 1,
+        "activeWater": 0
+      },
+      "emitQ": 16777216,
+      "inputProfile": "FULL_M1_V2"
+    }
+  },
+  "findings": {
+    "CONTINUATION_QUANTUM_FENCE_OR_PERMIT": {
+      "observed": "In --m1-dual-source mode (no --m1-cold), after the first accepted SOURCE and first Present, the continuation QUANTUM fails FENCE_OR_PERMIT_FAILED (m1QuantumFenceVkResult=2 VK_TIMEOUT, fenceNs<deadline => permit/clock revoked) on Intel UHD 630. run1 survived 25 frames before failing; run4/run5 failed at the first quantum; run2/run3 completed their holds and closed before continuation failure.",
+      "impact": "Blocks cross-source same-scene accumulation (sand then water accepted in one scene run) — second hold never accepted after FAILED state.",
+      "attribution": "Timing-sensitive permit/clock revocation under dual-mode load; needs developer/architect analysis. Single-source (T856/T863) quantum continuation on the same GPU succeeded repeatedly."
+    },
+    "PIXEL": {
+      "observed": "All presented frames pixel=0xff525355 (same as T856/T863 interactive frames) at the fixed sample point (width*129/256, height-1). Interactive route does not validate pixel; scene content from m1_source_view/m1_full_scene shader.",
+      "note": "Empty-box presentation and full water optics not separately exercised yet — registered for later goals."
+    }
+  },
+  "verified": {
+    "sandAdmission": {
+      "runs": [
+        "run3 (134668 Q)",
+        "run5 (126391 Q)",
+        "run1 (124585 Q)"
+      ],
+      "material": 0,
+      "inputProfile": "FULL_M1_V2",
+      "emitQ": 16777216
+    },
+    "waterAdmission": {
+      "runs": [
+        "run2-water (129635 Q)"
+      ],
+      "material": 1,
+      "activeWater": 1,
+      "waterStockFromEmptyScene": true
+    },
+    "modeSwitch": {
+      "key1_2": "M1_SOURCE_MODE material 0<->1",
+      "revocation": "switch revokes pending offers (result=4 Revoked; 4-16 per switch) and clears held"
+    },
+    "sameGenerationPresent": {
+      "frames": "M1_QUANTUM_PRESENT_QUEUED with m1SceneLease (sand: run1 25 frames, run3 7; water: run2 11)"
+    },
+    "midHoldSwitch": {
+      "run1 phase C": "key press during hold -> MODE row emitted, hold cleared, pending offers revoked; re-press (new hold) accepted path reached"
+    }
+  }
+}
