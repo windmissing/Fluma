@@ -1,0 +1,98 @@
+{
+  "schema": "T892_BED_LANDING_LONGWINDOW_V1",
+  "pe": {
+    "path": ".codex/local-test/t882-a-final.exe",
+    "sha256": "86e8ad81779157a94558bea64e067984045ed0a3801e1a2c098335f7180e06fc"
+  },
+  "runs": {
+    "bed_dual": {
+      "file": "test/reports/t892/bed-dual.jsonl",
+      "rows": 187,
+      "upAtLiveNonzero": true,
+      "upTrigger": "lease activeSand>=1 detected at t+0.3s; real UP posted",
+      "beforeUP": {
+        "leases": 1,
+        "stock": "121460",
+        "activeSand": 1
+      },
+      "afterUPStock": [
+        "121460"
+      ],
+      "settleFrames": 83,
+      "quanta": 120,
+      "quantaStates": {
+        "M1_QUANTUM_PRESENT_QUEUED": 119,
+        "M1_QUANTUM_PRESENT_RETIRED": 1
+      },
+      "frames": 120,
+      "fps": 23.8,
+      "retired": true,
+      "conservation": true,
+      "sameRun": true
+    },
+    "cold_busy": {
+      "file": "test/reports/t892/cold-busy.jsonl",
+      "archive": {
+        "bytes": 94408,
+        "digestOK": true,
+        "busyReservation": {
+          "request": "15922573225346",
+          "busyRoot": "15922574654822"
+        },
+        "pages": [
+          {
+            "offset": 0,
+            "count": 65536,
+            "sha": "5aaccc832e8432b4"
+          },
+          {
+            "offset": 65536,
+            "count": 28800,
+            "sha": "5aaccc832e8432b4"
+          }
+        ],
+        "t848JoinExit": 0,
+        "lineage": "NEXT_FRAME",
+        "events": {
+          "q_events": 2,
+          "s_events": 2
+        },
+        "stock": {
+          "qBefore": 136607,
+          "qAfter": 136607,
+          "sBefore": 0,
+          "sAfter": 136607
+        },
+        "live": {
+          "qSandLive": 2,
+          "sSandLive": 2
+        },
+        "bedEventCount": {
+          "q": 0,
+          "s": 0
+        }
+      },
+      "retired": true
+    }
+  },
+  "verified": {
+    "STOP_SOURCE_LANDING": {
+      "observed": "run1: real UP at live-particles-nonzero (activeSand=1, stock 121460). After UP: 83 frames (~3.6s settle) with activeSand=1→0 (particles settle), stock CONSTANT 121460 across all 119 post-UP frames — bed retained with zero loss. 120 quanta, clean RETIRED."
+    },
+    "BUSY_RESERVATION_COLD_ARCHIVE": {
+      "observed": "run2: --m1-cold-on-busy busy reservation captured M1PCOLD1 94408B (2 pages 65536+28800), digest 32B valid, T848 join exit 0 (lineage NEXT_FRAME). Archive carries 2 q_events + 2 s_events (256B each), stock fields qBefore/qAfter=136607 (sBefore 0→sAfter 136607), sandLive=2 at capture."
+    },
+    "SAME_ROOT_WINDOW": {
+      "observed": "run1 single run identity across all 120 frames; run2 archive busyRoot bound to run nonce; windowFrame pixel constant."
+    }
+  },
+  "gaps": {
+    "PER_PARTICLE_LAND_EVENTS": {
+      "observed": "Completion bedEventCount (word 95) = 0 in BOTH q and s completions of the captured archive — the per-particle LAND ledger is present in layout but records zero events in this flow. 逐笔 LAND 缺证：事件区只含 quantum/source 根级事件（各 2 条 256B），无逐笔落地记录。",
+      "attribution": "Product interface gap — bed event emission not wired in the interactive path (or requires a different trigger)."
+    },
+    "ROI_PIXEL_PAIRING": {
+      "observed": "PC interface exposes only the single sample-point pixel (0xff525355); no ROI/pixel-level bed readout exists. 逐像素 ROI 配对缺证。"
+    }
+  }
+}
