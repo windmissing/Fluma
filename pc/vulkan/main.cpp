@@ -69,10 +69,12 @@ struct Window {
   grs::g13vk::M1D1Intake d1Intake;
   grs::g13vk::SourceScope d1ReadyScope;
   uint64_t d1ReadyNs=0;
+  uint64_t d1Queued=0;
   std::chrono::steady_clock::time_point d1ReadyTime;
   bool captureHot=false, captureCold=false, sourceTrace=false;
   bool rootCapture=false;
   std::wstring d1Mode,d1ReplayPrefix;
+  bool d1ColdReanchor=false;
   std::condition_variable d1Ready;
   std::atomic<unsigned> m1Shown{0};
   uint64_t captureRun=0, captureReserved=0, droppedTrace=0;
@@ -116,9 +118,11 @@ struct Window {
       }
     }
   }
-  grs::g13vk::M1Pulse ReceiveM1Pulse(uint64_t ticks,uint64_t ns,uint64_t hz,uint32_t action=0) {
+  grs::g13vk::M1PulseQueue::Receipt ReceiveM1Pulse(uint64_t ticks,uint64_t ns,uint64_t hz,
+      uint32_t action=0,uint64_t *receivedQpc=nullptr) {
     const auto receipt=grs::pc::QpcTicks();
-    return m1Pulses.Receive(generation,{0,ticks,receipt,ns,grs::pc::QpcNs(receipt,hz),0,action});
+    if (receivedQpc) *receivedQpc=receipt;
+    return m1Pulses.ReceiveWithReceipt(generation,{0,ticks,receipt,ns,grs::pc::QpcNs(receipt,hz),0,action});
   }
   bool D1CaptureEnabled() const { return d1Mode==L"ON" || d1Mode==L"REPLAY_ON"; }
   void DrainSourceTrace() {
@@ -175,11 +179,40 @@ struct Window {
     if (!d1Intake.MarkReported()) return;
     DrainSourceTrace();
     const auto sourceLoss=ingress.TraceLoss();
+    grs::g13vk::SourceScope ready;
+    uint64_t producerQueued=0;
+    {
+      std::lock_guard lock(mutex);
+      ready=d1ReadyScope;
+      producerQueued=d1Queued;
+    }
+    const auto ledger=m1Pulses.Ledger(ready.run,ready.geometry);
+    const auto count=[](uint64_t bits) {
+      unsigned result=0;
+      for (;bits;bits&=bits-1) ++result;
+      return result;
+    };
+    uint64_t recordedQueued=0;
+    for (size_t i=0;i<ledger.size;++i) recordedQueued+=count(ledger.sessions[i].queued);
+    const bool sealed=d1Intake.Snapshot().ns!=0;
     std::lock_guard lock(output);
     const auto loss=sourceLoss+outputLossTotal;
+    std::ostringstream coverage;
+    coverage << ",\"ownerCoverage\":{\"revision\":\"M1_D1_OWNER_COVERAGE_V1\",\"complete\":"
+             << (ledger.Complete() && producerQueued==recordedQueued && sealed && !loss ? "true" : "false")
+             << ",\"loss\":" << ledger.lost << ",\"producerQueued\":" << producerQueued << ",\"sessions\":[";
+    for (size_t i=0;i<ledger.size;++i) {
+      const auto &s=ledger.sessions[i];
+      if (i) coverage << ',';
+      coverage << "{\"session\":\"" << s.scope.session << "\",\"queued\":" << count(s.queued)
+               << ",\"accepted\":" << count(s.accepted) << ",\"rejected\":" << count(s.rejected)
+               << ",\"revoked\":" << count(s.revoked) << ",\"queuedMask\":\"" << s.queued
+               << "\",\"terminalMask\":\"" << (s.accepted|s.rejected|s.revoked) << "\"}";
+    }
+    coverage << "]}";
     outputFinal="{\"stage\":\"M1_D1_DRAIN\",\"m1D1Drain\":{" + details +
                 ",\"retired\":" + (healthy && !loss ? "true" : "false") +
-                ",\"traceLoss\":" + std::to_string(loss) + "}}";
+                ",\"traceLoss\":" + std::to_string(loss) + coverage.str() + "}}";
     outputReady.notify_one();
   }
   void RunD1() {
@@ -198,7 +231,8 @@ struct Window {
     }
     const bool enabled=D1CaptureEnabled();
     const std::string mode(d1Mode.begin(),d1Mode.end());
-    uint64_t previousNs=0,reservation=0,lastPulseSeq=0,lastPulseSession=0;
+    uint64_t reservation=0,lastPulseSeq=0,lastPulseSession=0;
+    M1Pulse previous;
     D1Action pending{};
     uint64_t createdNs=0,createdTicks=0;
     Emit("{\"stage\":\"M1_D1_READY\",\"readyNs\":\""+std::to_string(ready)+
@@ -211,6 +245,9 @@ struct Window {
       const auto ns=grs::pc::QpcNs(ticks,hz);
       SourceOffer offer;
       M1Pulse nativePulse;
+      const char *nativeState="NOT_SUBMITTED";
+      uint64_t receiptQpc=0;
+      uint32_t sourceRejected=0;
       bool current;
       {
         std::lock_guard lock(mutex);
@@ -222,30 +259,40 @@ struct Window {
         }
         if (current && action.kind==D1Kind::Pulse) {
           sourcePulse.store(ns,std::memory_order_relaxed);
-          nativePulse=ReceiveM1Pulse(ticks,ns,hz,action.id);
+          const auto received=ReceiveM1Pulse(ticks,ns,hz,action.id,&receiptQpc);
+          nativePulse=received.pulse;
+          nativeState=received.state;
           if (nativePulse.seq) {
+            ++d1Queued;
             lastPulseSeq=nativePulse.seq;
             lastPulseSession=nativePulse.session;
           }
-          if (pending.id) {
+          if (pending.id && AdjacentSourcePulses(previous,nativePulse)) {
             const auto serial=++eventSeq;
             held={serial,serial,createdNs,64.5,pending.y,int(64.5*width/128.),
                   int((1.-pending.y/256.)*height),0};
             scope.permission=held.hold;
             ingress.Authorize(scope,held.hold);
             offer={scope,++offerSeq,ns,ticks,createdTicks,grs::pc::QpcFrequency(),held,2,pending.id,
-                   previousNs && ns>previousNs ? ns-previousNs : 0};
-            pending={};
+                   ns-previous.uiNs};
+          } else if (pending.id) {
+            sourceRejected=pending.id;
           }
-          previousNs=ns;
+          pending={};
+          previous=nativePulse;
         }
       }
       const char *state="REVOKED";
       if (current) {
         switch (action.kind) {
         case D1Kind::Pulse:
-          state="DELIVERED";
-          if (offer.seq) ingress.OfferSource(offer);
+          state=nativePulse.seq ? "DELIVERED" : nativeState;
+          if (offer.seq) {
+            const auto result=ingress.OfferSource(offer);
+            if (result.code!=M1Ingress::Code::Pending)
+              Emit("{\"stage\":\"M1_D1_SOURCE_TERMINAL\",\"actionId\":"+std::to_string(offer.action)+
+                   ",\"offerResult\":"+std::to_string(int(result.code))+",\"state\":\"NOT_ADMITTED\"}");
+          }
           break;
         case D1Kind::Source: state="AWAIT_PULSE"; break;
         case D1Kind::Reserve:
@@ -270,14 +317,20 @@ struct Window {
           break;
         }
       }
+      if (sourceRejected)
+        Emit("{\"stage\":\"M1_D1_SOURCE_TERMINAL\",\"actionId\":"+std::to_string(sourceRejected)+
+             ",\"state\":\"NO_ADJACENT_QUEUED_PULSE\",\"pulseActionId\":"+std::to_string(action.id)+"}");
       Emit("{\"stage\":\"M1_D1_ACTION\",\"id\":"+std::to_string(action.id)+
            ",\"kind\":"+std::to_string(int(action.kind))+",\"scriptNs\":\""+std::to_string(action.ns)+
            "\",\"actualNs\":\""+std::to_string(ns)+"\",\"callbackQpc\":\""+std::to_string(ticks)+
-           "\",\"nativeReceiptQpc\":\""+std::to_string(nativePulse.receiptTicks)+
+           "\",\"nativeReceiptQpc\":\""+std::to_string(receiptQpc)+
            "\",\"nativeSeq\":\""+std::to_string(nativePulse.seq)+
            "\",\"session\":\""+std::to_string(nativePulse.session)+"\",\"state\":\""+state+"\"}");
     }
     std::lock_guard lock(mutex);
+    if (pending.id)
+      Emit("{\"stage\":\"M1_D1_SOURCE_TERMINAL\",\"actionId\":"+std::to_string(pending.id)+
+           ",\"state\":\"REVOKED_END_INTAKE\"}");
     ingress.EndIntake();
     const auto cancelled=hotCapture.EndIntake();
     const auto ended=grs::pc::TimeNs();
@@ -401,7 +454,7 @@ struct Window {
     grs::g13vk::SourceOffer offer;
     {
       std::lock_guard lock(mutex);
-      const auto pulse=!closing && !m1SourceModule.empty() ? ReceiveM1Pulse(ticks,ns,hz) : grs::g13vk::M1Pulse{};
+      const auto pulse=!closing && !m1SourceModule.empty() ? ReceiveM1Pulse(ticks,ns,hz).pulse : grs::g13vk::M1Pulse{};
       if (closing || !pointerReady) return;
       offer.scope=scope;
       if (sourceAnchorHold!=held.hold) { sourceAnchorHold=held.hold; sourceAnchor={}; }
@@ -563,7 +616,7 @@ struct Window {
                                                  ingress.Authorize(scope,0);
                                                },sourceTrace,t877Mode,&d1Intake,[&](const std::string &details,bool healthy) {
                                                  ReportD1(details,healthy);
-                                               },[&](const std::string &row) { Emit(row); },m1Preview,[&] {
+                                               },m1Preview || (!d1Mode.empty() && !d1ColdReanchor),[&] {
                                                  std::lock_guard guard(mutex);
                                                  return m1GravityEnabled && !closing && previous==generation ?
                                                      gravity : grs::pc::M1Gravity{};
@@ -769,6 +822,7 @@ int wmain(int argc, wchar_t **argv) {
       window.sourceTrace=true;
     }
     else if (!std::wcscmp(argv[i],L"--m1-d1-replay-prefix") && i+1<argc) window.d1ReplayPrefix=argv[++i];
+    else if (!std::wcscmp(argv[i],L"--m1-d1-cold-reanchor")) window.d1ColdReanchor=true;
     else if ((!std::wcscmp(argv[i], L"--probe-m1-source") ||
               !std::wcscmp(argv[i], L"--present-m1-source")) && i+1 < argc) {
       window.m1Present = !std::wcscmp(argv[i], L"--present-m1-source");
@@ -810,6 +864,24 @@ int wmain(int argc, wchar_t **argv) {
   if (!window.t877Mode.empty() && window.t833CandidateFile.empty()) return 2;
   if (!window.t833CandidateFile.empty() && (window.steady || !window.m1SourceModule.empty())) return 2;
   if (window.sourceTrace) window.ingress.EnableTrace();
+  if (window.d1ColdReanchor && window.d1Mode.empty()) return 2;
+  if (!window.d1Mode.empty()) {
+    window.m1Pulses.Observe(grs::pc::QpcTicks,[&](const grs::g13vk::M1PulseQueue::Terminal &e) {
+      using Outcome=grs::g13vk::M1PulseQueue::Outcome;
+      const auto &p=e.pulse;
+      std::ostringstream row;
+      row << "{\"stage\":\"M1_D1_PULSE_OWNER\",\"actionId\":" << p.action
+          << ",\"run\":\"" << e.scope.run << "\",\"geometry\":\"" << e.scope.geometry
+          << "\",\"session\":\"" << p.session << "\",\"seq\":\"" << p.seq
+          << "\",\"callbackQpc\":\"" << p.callbackTicks << "\",\"nativeReceiptQpc\":\"" << p.receiptTicks
+          << "\",\"ownerQpc\":\"" << e.qpc << "\",\"outcome\":\""
+          << (e.outcome==Outcome::Accepted ? "ACCEPTED" : e.outcome==Outcome::Rejected ? "REJECTED" : "REVOKED")
+          << "\",\"state\":\"" << e.reason << '"';
+      if (e.clockObserved) row << ",\"generated\":" << e.generated << ",\"pending\":" << e.pending
+                               << ",\"carry\":" << e.carry << ",\"overload\":" << e.overload;
+      window.Emit(row.str()+"}");
+    });
+  }
   if (window.dualSource && (window.m1QuantumCandidate.empty() || !window.m1ColdFile.empty())) return 2;
   if ((!window.m1ColdFile.empty() && window.m1QuantumCandidate.empty()) ||
       (!window.m1QuantumCandidate.empty() && window.bootOnly)) return 2;

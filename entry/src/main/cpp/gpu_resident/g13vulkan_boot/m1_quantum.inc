@@ -387,6 +387,7 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
     d1FenceNonce=(uint64_t(accepted.nonce.hi)<<32)|accepted.nonce.lo;
     d1OwnerPoll.reset();
     d1FenceResult=wait;
+    d1FenceKind=wait==VK_SUCCESS ? "COLD_COPY_SIGNALED" : "COLD_COPY_SUBMITTED";
     d1FenceEnter=waitEnter;
     d1FenceExit=waitExit;
     if (wait==VK_ERROR_DEVICE_LOST) {

@@ -24,6 +24,7 @@ void Boot::SubmitM1Root(const VkSubmitInfo &submit,uint64_t hold,uint64_t deadli
             d1FenceNonce=nonce;
             d1OwnerPoll.reset();
             d1FenceResult=VK_NOT_READY;
+            d1FenceKind="BUSINESS_SUBMITTED";
             d1FenceEnter=d1FenceExit=0;
           }
         }
@@ -48,6 +49,7 @@ const char *Boot::AwaitM1Fence(uint64_t deadline,const std::function<const char 
     log.last=sample.result;
     if (attempt.m1D1) {
       d1FenceResult=sample.result;
+      if (sample.result==VK_SUCCESS) d1FenceKind="BUSINESS_SIGNALED";
       d1FenceEnter=sample.enter;
       d1FenceExit=sample.exit;
     }
@@ -99,7 +101,10 @@ void Boot::RetireM1Root(m1::SourceRootOwner &root,uint64_t nonce,M1WaitLog &log)
     const auto polled=root.Poll(FenceState::Signaled,nullptr,0,0,discarded);
     m1Retirement.proven=polled==ControlCode::STALE && root.State()==FlightState::Idle;
     m1Retirement.exitQpc=log.retireExit ? log.retireExit : log.lastWait.exit;
-    if (attempt.m1D1) d1OwnerPoll=polled;
+    if (attempt.m1D1) {
+      d1OwnerPoll=polled;
+      if (polled==ControlCode::STALE) d1FenceKind="TOMBSTONE_RETIRED";
+    }
   }
 }
 
@@ -328,19 +333,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     pulseStartTicks=pc::QpcTicks();
     attempt.m1Pulses->Begin(pulseScope,pulseStartTicks);
   };
-  const M1PulseQueue::Observer pulseObserver=attempt.m1D1 ?
-        M1PulseQueue::Observer([&](const M1Pulse &p,const char *state) {
-          std::ostringstream row;
-          row << "{\"stage\":\"M1_D1_PULSE_OWNER\",\"actionId\":" << p.action
-              << ",\"session\":\"" << p.session << "\",\"seq\":\"" << p.seq
-              << "\",\"callbackQpc\":\"" << p.callbackTicks << "\",\"nativeReceiptQpc\":\"" << p.receiptTicks
-              << "\",\"ownerQpc\":\"" << pc::QpcTicks() << "\",\"state\":" << Quote(state)
-              << ",\"generated\":" << clock.generated << ",\"pending\":" << clock.pending
-              << ",\"carry\":" << clock.carry << ",\"overload\":" << clock.overload << '}';
-          attempt.d1PulseTrace(row.str());
-        }) : M1PulseQueue::Observer{};
   const auto refresh=[&] {
-    if (!clock.open || !attempt.m1Pulses->Consume(pulseScope,clock,m1Latest,m1Consumed,pulseObserver)) return false;
+    if (!clock.open || !attempt.m1Pulses->Consume(pulseScope,clock,m1Latest,m1Consumed)) return false;
     return clock.Fresh(pc::TimeNs());
   };
   const auto primeClock=[&] {
@@ -445,8 +439,13 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     if (d1FenceResult==VK_SUCCESS) {
       inFlight=false;
       grs::AcceptedRoot discarded;
-      if (!d1CaptureLease) d1OwnerPoll=root.Poll(FenceState::Signaled,nullptr,0,0,discarded);
-      else if (root.Release(d1CaptureLease->first,d1CaptureLease->second,true)==ControlCode::OK) d1CaptureLease.reset();
+      if (!d1CaptureLease) {
+        d1OwnerPoll=root.Poll(FenceState::Signaled,nullptr,0,0,discarded);
+        if (d1OwnerPoll==ControlCode::STALE) d1FenceKind="TOMBSTONE_RETIRED";
+      } else if (root.Release(d1CaptureLease->first,d1CaptureLease->second,true)==ControlCode::OK) {
+        d1CaptureLease.reset();
+        d1FenceKind="COLD_COPY_SIGNALED";
+      }
     } else if (d1FenceResult==VK_ERROR_DEVICE_LOST) {
       inFlight=false;
       root.ContextLost();
@@ -455,7 +454,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   };
   const auto reportDrain=[&](const M1D1Intake::End &end,const pc::Frame *frame) {
     attempt.disarmM1Input();
-    attempt.m1Pulses->RevokeQueued(pulseScope,pulseObserver);
+    attempt.m1Pulses->RevokeQueued(pulseScope,{});
     const auto offers=attempt.ingress->PendingCount();
     const auto captures=attempt.hotCapture && attempt.hotCapture->HasLiveRequest();
     const auto pending=clock.pending;
@@ -483,6 +482,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         << "\",\"lastOffer\":\"" << end.offer << "\",\"offers\":" << offers
         << ",\"inFlight\":" << int(inFlight) << ",\"leases\":" << int(root.HasLeases())
         << ",\"ownerState\":" << int(root.State()) << ",\"ownerFenceVkResult\":" << int(d1FenceResult)
+        << ",\"ownerFenceKind\":" << Quote(d1FenceKind)
         << ",\"ownerFence\":\"" << d1FenceObject << "\",\"ownerFenceNonce\":\"" << d1FenceNonce
         << "\",\"ownerProbeVkResult\":" << int(d1DrainProbe) << ",\"ownerProbeQpc\":\"" << d1ProbeQpc
         << "\",\"ownerTombstonePoll\":" << (d1OwnerPoll ? std::to_string(int(*d1OwnerPoll)) : "null")
@@ -842,7 +842,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   if (!attempt.presentBoot) return Receipt("M1_DRY_SOURCE_ACCEPTED", "");
 
   Checkpoint("M1_SOURCE_WSI");
-  PublicationLease lease;
+  PublicationLease lease{};
   bool leased=false;
   bool preview=attempt.m1Preview;
   if (!preview) {
@@ -968,6 +968,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   }
   pc::PresentBusy captureBusy;
   if (attempt.hotCapture && !attempt.m1ColdOnBusy) captureBusy=[&](M1HotCapture::Phase phase,bool entered,bool usable) {
+    if (!leased) return;
     const auto nonce=wide(lease.nonce);
     if (entered) {
       attempt.hotCapture->Busy(phase,nonce);

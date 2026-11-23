@@ -61,7 +61,6 @@ struct Attempt {
   std::string t877Mode;
   M1D1Intake *d1Intake=nullptr;
   std::function<void(const std::string &,bool)> d1Report;
-  std::function<void(const std::string &)> d1PulseTrace;
   bool m1Preview=false;
   std::function<pc::M1Gravity()> m1Gravity;
   pc::M1Observation m1Observation;

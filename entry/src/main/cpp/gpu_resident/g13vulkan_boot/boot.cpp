@@ -351,6 +351,7 @@ private:
   bool D1Ended() const { return attempt.m1D1 && attempt.d1Intake->Snapshot().ns; }
   void SubmitM1Root(const VkSubmitInfo &,uint64_t,uint64_t,uint64_t,M1WaitLog &);
   VkResult d1FenceResult=VK_NOT_READY;
+  const char *d1FenceKind="NO_FENCE";
   VkResult d1DrainProbe=VK_NOT_READY;
   uint64_t d1FenceEnter=0,d1FenceExit=0;
   uintptr_t d1FenceObject=0;
