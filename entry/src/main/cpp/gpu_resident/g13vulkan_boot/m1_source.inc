@@ -158,8 +158,29 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   m1::ProgressClockV2 clock;
   Require(clock.BeginSession(), "M1_SOURCE_SESSION");
   clock.ready = true;
+  const auto wide=[](grs::U64 value) { return (uint64_t(value.hi)<<32)|value.lo; };
+  using IngressCode=M1Ingress::Code;
+  if (interactive) {
+    Require(attempt.ingress && attempt.sourceScope,"M1_INGRESS_MISSING");
+    attempt.sourceScope({wide(identity.run),wide(identity.owner),wide(identity.context),
+                         wide(identity.surface),wide(identity.geometry),wide(identity.config),0,attempt.ticket});
+  }
+  const auto finishOffer=[&](const SourceOffer &offer,IngressCode code,uint64_t rootNonce=0) {
+    if (offer.seq) attempt.ingress->Finish(offer.seq,{code,rootNonce});
+  };
+  const auto takeFresh=[&] {
+    for (unsigned i=0;i<4;++i) {
+      const auto offer=attempt.ingress->Take();
+      const auto now=pc::TimeNs();
+      if (!offer.seq || (now>=offer.pulseNs && now-offer.pulseNs<=m1::ProgressClockV2::GapNs))
+        return offer;
+      finishOffer(offer,IngressCode::Expired);
+    }
+    return SourceOffer{};
+  };
   const auto setupFields=fields.str();
   PointerSample inputSample{};
+  SourceOffer firstOffer;
   uint64_t pulse = attempt.sourcePulse();
   uint64_t delta = 0;
   if (interactive) {
@@ -169,8 +190,10 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     Require(opened,"ATTEMPT_REVOKED");
     uint64_t anchor = 0, hold = 0, expired = 0;
     while (attempt.current()) {
-      const auto next = attempt.pointer();
-      const auto ns = attempt.sourcePulse();
+      const auto offer = takeFresh();
+      if (!offer.seq) { Sleep(1); continue; }
+      const auto next = offer.sample;
+      const auto ns = offer.pulseNs;
       if (next.hold != hold) {
         hold = next.hold;
         anchor = 0;
@@ -179,6 +202,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         if (anchor && ns != anchor) {
           if (ns > anchor && ns-anchor <= m1::ProgressClockV2::GapNs) {
             inputSample = next;
+            firstOffer = offer;
             pulse = ns;
             delta = ns-anchor;
             break;
@@ -187,7 +211,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         }
         anchor = ns;
       }
-      Sleep(1);
+      finishOffer(offer,IngressCode::Rejected);
     }
     Require(inputSample.hold != 0, "ATTEMPT_REVOKED");
     fields << ",\"m1Hold\":\"" << inputSample.hold << "\",\"m1PointerSeq\":\"" << inputSample.sequence
@@ -212,7 +236,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   Words256 tail{};
   AcceptedRoot accepted;
   const auto &staging=buffers[kStaging];
-  const auto runSource=[&](const PointerSample &inputSample,uint64_t pulse,uint64_t delta) {
+  const auto runSource=[&](const PointerSample &inputSample,uint64_t pulse,uint64_t delta,
+                           const SourceOffer &offer) {
     Require(sourceSerial!=UINT32_MAX,"M1_SOURCE_SEQUENCE_EXHAUSTED");
     Check(reset(device,commandPool,0),"vkResetCommandPool.M1_SOURCE");
     vk.DestroyFence(device,fence,nullptr);
@@ -253,6 +278,18 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     const double source[] = {interactive ? inputSample.x : 64.5, interactive ? inputSample.y : 0.0,
                              interactive ? 8.0*double(delta)/1000000000.0 : 0.125};
     std::memcpy(cmd.data()+16, source, sizeof(source));
+    if (offer.seq) {
+      const auto &s=offer.scope;
+      std::array<uint64_t,23> original{s.run,s.owner,s.context,s.surface,s.geometry,s.config,s.permission,
+          s.pageSession,offer.seq,offer.pulseNs,offer.pulseTicks,offer.sampleTicks,offer.frequency,offer.origin,
+          inputSample.hold,inputSample.sequence,inputSample.timeNs,uint32_t(inputSample.clientX),
+          uint32_t(inputSample.clientY),0,0,inputSample.material,wide(request.nonce)};
+      std::memcpy(original.data()+19,source,2*sizeof(double));
+      fields << ",\"m1ProducerWords\":" << Words(original)
+             << ",\"m1ProducerSHA\":" << Quote(Hex(Hash(original.data(),sizeof(original)-8).data()))
+             << ",\"m1SourceWords\":" << Words(cmd)
+             << ",\"m1SourceWordsSHA\":" << Quote(Hex(Hash(cmd.data(),sizeof(cmd)).data()));
+    }
     Require(root.Begin(request, cmd) == ControlCode::OK, "M1_SOURCE_OWNER_BEGIN");
     const auto deadline = permit.grantedNs+m1::ProgressClockV2::JobNs;
     VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
@@ -300,6 +337,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     submit.pCommandBuffers = &command;
     Check(vk.QueueSubmit(queue, 1, &submit, fence), "vkQueueSubmit.M1_SOURCE");
     inFlight = true;
+    M1BusyFence busy{attempt.hotCapture,M1HotCapture::Phase::SourceFence,wide(request.nonce)};
     fields << ",\"m1QueueVkResult\":0,\"m1Nonce\":\"" << ((uint64_t(request.nonce.hi)<<32) | request.nonce.lo)
            << "\",\"m1DeadlineNs\":\"" << deadline << "\",\"m1PulseNs\":\"" << pulse << "\"";
     VkResult waited = VK_NOT_READY;
@@ -341,8 +379,13 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     Check(invalidation, "vkInvalidateMappedMemoryRanges.M1_SOURCE");
     auto result = ControlCode::STALE;
     const auto accept = [&] {
-      if (pc::TimeNs() <= deadline)
+      if (pc::TimeNs() <= deadline) {
         result = root.Poll(FenceState::Signaled, tail.data(), tail.size(), 0, accepted);
+        if (result==ControlCode::OK)
+          finishOffer(offer,accepted.sourceSuccess ? IngressCode::Accepted : IngressCode::Rejected,
+                      wide(request.nonce));
+        busy.Complete(result==ControlCode::OK ? &tail : nullptr);
+      }
     };
     if (pc::TimeNs()>deadline || !sourceCurrent() || !attempt.acceptPointer(inputSample.hold,accept)
         || result==ControlCode::STALE) {
@@ -357,7 +400,17 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     fields << ",\"m1AdmittedQ\":" << tail[61] << ",\"m1PublicationGeneration\":" << accepted.publicationGeneration.lo;
     return true;
   };
-  Require(runSource(inputSample,pulse,delta) && accepted.sourceSuccess && tail[61],
+  const auto consumeSource=[&](const PointerSample &input,uint64_t ns,uint64_t elapsed,const SourceOffer &offer) {
+    try {
+      const bool completed=runSource(input,ns,elapsed,offer);
+      if (!completed) finishOffer(offer,IngressCode::Rejected);
+      return completed;
+    } catch (...) {
+      finishOffer(offer,IngressCode::Rejected);
+      throw;
+    }
+  };
+  Require(consumeSource(inputSample,pulse,delta,firstOffer) && accepted.sourceSuccess && tail[61],
           "M1_SOURCE_NOT_ADMITTED");
   uint32_t ordinal=0;
   if (interactive && !RunM1Quantum(candidate, root, clock, permit, refresh, accepted, frameSerial, ordinal))
@@ -390,32 +443,37 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         Require(clock.BeginSession(),"M1_PRESENT_SESSION");
         clock.ready=true;
         coldPresent=false;
+        anchor=0;
         fields << ",\"m1ClockReanchoredAfterColdPresent\":true";
       }
       if (!clock.activeRemaining && refresh()) {
-        const auto pointer=attempt.pointer();
-        const auto ui=attempt.sourcePulse();
-        if (pointer.hold!=anchorHold) {
-          anchorHold=pointer.hold;
-          anchor=0;
-        }
-        if (pointer.hold && pointer.hold!=expiredHold && ui>pointer.timeNs) {
-          if (anchor && ui!=anchor) {
-            if (ui<anchor || ui-anchor>m1::ProgressClockV2::GapNs) {
-              expiredHold=pointer.hold;
-            } else if (clock.Claim(pc::TimeNs(),0,pointer.hold,true,permit)) {
-              ++frameSerial;
-              ordinal=0;
-              fields << ",\"m1Hold\":\"" << pointer.hold << "\",\"m1PointerSeq\":\"" << pointer.sequence
-                     << "\",\"m1PointerNs\":\"" << pointer.timeNs << "\",\"m1SourceDeltaNs\":\"" << ui-anchor << "\"";
-              if (!runSource(pointer,ui,ui-anchor)) {
-                // A revoked SOURCE appended no accepted prefix to this frame.
-                // Leave its granted quanta in the plan and start with prefix zero.
-                publish(Receipt("M1_SOURCE_REVOKED",""));
+        const auto offer=takeFresh();
+        const auto pointer=offer.sample;
+        const auto ui=offer.pulseNs;
+        if (offer.seq) {
+          if (pointer.hold!=anchorHold) {
+            anchorHold=pointer.hold;
+            anchor=0;
+          }
+          if (pointer.hold && pointer.hold!=expiredHold && ui>pointer.timeNs) {
+            if (anchor && ui!=anchor) {
+              if (ui<anchor || ui-anchor>m1::ProgressClockV2::GapNs) {
+                expiredHold=pointer.hold;
+              } else if (clock.Claim(pc::TimeNs(),0,pointer.hold,true,permit)) {
+                ++frameSerial;
+                ordinal=0;
+                fields << ",\"m1Hold\":\"" << pointer.hold << "\",\"m1PointerSeq\":\"" << pointer.sequence
+                       << "\",\"m1PointerNs\":\"" << pointer.timeNs << "\",\"m1SourceDeltaNs\":\"" << ui-anchor << "\"";
+                if (!consumeSource(pointer,ui,ui-anchor,offer)) {
+                  // A revoked SOURCE appended no accepted prefix to this frame.
+                  // Leave its granted quanta in the plan and start with prefix zero.
+                  publish(Receipt("M1_SOURCE_REVOKED",""));
+                }
               }
             }
+            anchor=ui;
           }
-          anchor=ui;
+          finishOffer(offer,IngressCode::Rejected);
         }
       }
       if (!RunM1Quantum(candidate,root,clock,permit,refresh,accepted,frameSerial,ordinal)) {

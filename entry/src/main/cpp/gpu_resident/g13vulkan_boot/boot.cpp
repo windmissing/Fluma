@@ -27,6 +27,20 @@
 namespace grs::g13vk {
 namespace {
 using namespace grs::g13;
+#ifdef _WIN32
+struct M1BusyFence {
+  M1HotCapture *capture;
+  uint64_t nonce;
+  M1BusyFence(M1HotCapture *c,M1HotCapture::Phase phase,uint64_t n) : capture(c),nonce(n) {
+    if (capture) capture->Busy(phase,nonce);
+  }
+  ~M1BusyFence() { Complete(nullptr); }
+  void Complete(const grs::Words256 *accepted) {
+    if (capture) capture->Safe(nonce,accepted,pc::TimeNs());
+    capture=nullptr;
+  }
+};
+#endif
 constexpr uint32_t kSeal = 0xc0de1301u;
 constexpr size_t kTailWords = 256, kInputs65 = 744, kInputs66 = 18648;
 constexpr size_t kMathWords = 60, kMathProbeOffset = 512;

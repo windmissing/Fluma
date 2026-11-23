@@ -31,6 +31,12 @@ struct Window {
   std::atomic<uint64_t> sourcePulse{0};
   bool pointerReady = false;
   grs::g13vk::PointerSample held;
+  grs::g13vk::SourceScope scope;
+  grs::g13vk::M1Ingress ingress;
+  grs::g13vk::M1HotCapture hotCapture;
+  bool captureHot=false;
+  uint64_t captureRun=0;
+  uint64_t sampleTicks=0, offerSeq=0;
   int result = 1;
 
   void Emit(const std::string &json) {
@@ -49,13 +55,16 @@ struct Window {
     ++generation;
     pointerReady = false;
     held = {};
+    ingress.Authorize({},0);
+    hotCapture.Authorize({});
     wake.notify_one();
   }
 
   void Input(const char *kind, int x, int y) {
-    std::lock_guard lock(mutex);
+    std::unique_lock lock(mutex);
     if (closing) return;
     const auto sequence = ++eventSeq;
+    const auto ticks = grs::pc::QpcTicks();
     const bool inside = x >= 0 && y >= 0 && x < width && y < height;
     const std::string action(kind);
     if (action == "DOWN") {
@@ -69,19 +78,65 @@ struct Window {
       held.timeNs = grs::pc::TimeNs();
       held.x = (double(x)+0.5)*128/width;
       held.y = (1-(double(y)+0.5)/height)*256;
+      held.clientX = x;
+      held.clientY = y;
+      sampleTicks = ticks;
     }
+    scope.permission=held.hold;
+    ingress.Authorize(scope,held.hold);
+    const auto geometry=generation, hold=held.hold;
+    const auto eventDpi=dpi;
+    lock.unlock();
     Emit("{\"stage\":\"WIN32_POINTER\",\"kind\":\"" + action +
-         "\",\"geometry\":\"" + std::to_string(generation) +
+         "\",\"geometry\":\"" + std::to_string(geometry) +
          "\",\"seq\":\"" + std::to_string(sequence) +
-         "\",\"qpc\":\"" + std::to_string(grs::pc::QpcTicks()) +
+         "\",\"qpc\":\"" + std::to_string(ticks) +
          "\",\"x\":" + std::to_string(x) + ",\"y\":" + std::to_string(y) +
-         ",\"dpi\":" + std::to_string(dpi) + ",\"hold\":\"" + std::to_string(held.hold) + "\"}");
+         ",\"dpi\":" + std::to_string(eventDpi) + ",\"hold\":\"" + std::to_string(hold) + "\"}");
+  }
+
+  void Pulse() {
+    const auto ticks=grs::pc::QpcTicks(), ns=grs::pc::TimeNs();
+    sourcePulse.store(ns,std::memory_order_relaxed);
+    grs::g13vk::SourceOffer offer;
+    {
+      std::lock_guard lock(mutex);
+      if (closing || !pointerReady) return;
+      offer.scope=scope;
+      if (held.hold)
+        offer={scope, ++offerSeq, ns, ticks, sampleTicks, grs::pc::QpcFrequency(), held, 1};
+    }
+    if (offer.seq) ingress.OfferSource(offer);
+    auto captureScope=offer.scope;
+    captureScope.permission=0;
+    const auto request=captureScope.run;
+    if (!captureHot || !request || captureRun==request) return;
+    using Code=grs::g13vk::M1HotCapture::Code;
+    const auto state=hotCapture.Reserve(captureScope,request,ns);
+    if (state==Code::Frozen) {
+      if (const auto page=hotCapture.Read(captureScope,request,ns)) {
+        std::string row="{\"stage\":\"M1_HOT_CAPTURE\",\"request\":\""+std::to_string(request)+
+          "\",\"root\":\""+std::to_string(page->busyRoot)+"\",\"requestedNs\":\""+
+          std::to_string(page->requestedNs)+"\",\"frozenNs\":\""+std::to_string(page->frozenNs)+
+          "\",\"safePoint\":\""+std::to_string(page->safePoint)+"\",\"blocker\":"+
+          std::to_string(int(page->blocker))+",\"completion\":[";
+        for (size_t i=0;i<page->completion.size();++i) {
+          if (i) row+=',';
+          row+=std::to_string(page->completion[i]);
+        }
+        hotCapture.End(captureScope,request);
+        Emit(row+"]}");
+        captureRun=request;
+      }
+    }
   }
 
   void Close() {
     std::lock_guard lock(mutex);
     closing = true;
     held = {};
+    ingress.Authorize({},0);
+    hotCapture.Authorize({});
     wake.notify_one();
   }
 
@@ -116,10 +171,13 @@ struct Window {
                                                [&] { return sourcePulse.load(std::memory_order_relaxed); },
                                                m1QuantumCandidate, m1QuantumCommit, m1ColdFile,
                                                [&](const std::string &readyReceipt) {
-                                                 std::lock_guard guard(mutex);
-                                                 if (closing || generation != previous) return false;
-                                                 Emit(readyReceipt);
-                                                 pointerReady = true;
+                                                 std::lock_guard sink(output);
+                                                 {
+                                                   std::lock_guard guard(mutex);
+                                                   if (closing || generation != previous) return false;
+                                                   pointerReady = true;
+                                                 }
+                                                 std::cout << readyReceipt << std::endl;
                                                  return true;
                                                },
                                                [&] {
@@ -133,7 +191,14 @@ struct Window {
                                                    return false;
                                                  accept();
                                                  return true;
-                                               }, once, t849WriteFile, t854PrivateWrites},
+                                               }, once, t849WriteFile, t854PrivateWrites,
+                                               [&](grs::g13vk::SourceScope next) {
+                                                 std::lock_guard guard(mutex);
+                                                 if (closing || generation != previous) return;
+                                                 scope=next;
+                                                 ingress.Authorize(scope,0);
+                                                 hotCapture.Authorize(next);
+                                               }, &ingress, captureHot ? &hotCapture : nullptr},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos ||
@@ -150,6 +215,8 @@ struct Window {
         if (generation == previous) {
           pointerReady = false;
           held = {};
+          ingress.Authorize({},0);
+          hotCapture.Authorize({});
         }
       }
       const char *qualified = t854PrivateWrites ? "\"state\":\"T854_PRIVATE_WRITES_CAPTURED\"" :
@@ -199,7 +266,7 @@ LRESULT CALLBACK Dispatch(HWND hwnd, UINT message, WPARAM w, LPARAM l) {
     return 0;
   case WM_TIMER:
     if (w == kSourceProbeTimer) {
-      window->sourcePulse.store(grs::pc::TimeNs(), std::memory_order_relaxed);
+      window->Pulse();
       return 0;
     }
     KillTimer(hwnd, 1);
@@ -247,6 +314,7 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--m1-cold") && i+1 < argc) {
       window.m1ColdFile = argv[++i];
     }
+    else if (!std::wcscmp(argv[i], L"--m1-capture-hot")) window.captureHot=true;
     else if ((!std::wcscmp(argv[i], L"--probe-m1-source") ||
               !std::wcscmp(argv[i], L"--present-m1-source")) && i+1 < argc) {
       window.m1Present = !std::wcscmp(argv[i], L"--present-m1-source");
@@ -257,13 +325,14 @@ int wmain(int argc, wchar_t **argv) {
       std::cerr << "usage: hello_world_pc [--once] [--boot-only | --qualify-steady | "
                    "--qualify-steady-role NAME [--disable-optimization] | --probe-m1-source SPV | "
                    "--present-m1-source SPV | --m1-window SOURCE_SPV CANDIDATE_SPV COMMIT_SPV "
-                   "[--m1-cold FILE] | --qualify-t849-writes FILE]\n";
+                   "[--m1-cold FILE] [--m1-capture-hot] | --qualify-t849-writes FILE]\n";
       return 2;
     }
   }
   if (window.disableOptimization && window.steadyRole.empty()) return 2;
   if (!window.t849WriteFile.empty() && !window.steadyRole.empty()) return 2;
   if (window.steady && !window.m1SourceModule.empty()) return 2;
+  if (window.captureHot && window.m1QuantumCandidate.empty()) return 2;
   if ((!window.m1ColdFile.empty() && window.m1QuantumCandidate.empty()) ||
       (!window.m1QuantumCandidate.empty() && window.bootOnly)) return 2;
   SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);

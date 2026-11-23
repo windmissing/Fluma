@@ -229,6 +229,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   submit.pCommandBuffers=&cmd;
   Check(vk.QueueSubmit(queue,1,&submit,fence),"vkQueueSubmit.M1_QUANTUM");
   inFlight=true;
+  M1BusyFence busy{attempt.hotCapture,M1HotCapture::Phase::QuantumFence,nonce};
   VkResult waited=VK_NOT_READY;
   uint64_t now=pc::TimeNs();
   while (now<deadline && current()) {
@@ -261,6 +262,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
       if (pc::TimeNs()>deadline) return;
       result=root.Poll(FenceState::Signaled,tail.data(),tail.size(),0,accepted);
       if (result==ControlCode::OK) clock.AcceptQuantum(permit.id);
+      busy.Complete(result==ControlCode::OK ? &tail : nullptr);
     });
   }
   fields << ",\"m1QuantumCompletion\":" << Words(tail) << ",\"m1QuantumOwnerCode\":" << int(result);
