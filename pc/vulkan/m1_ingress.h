@@ -39,6 +39,20 @@ class M1Ingress {
  public:
   enum class Code { Pending, Consuming, Accepted, Rejected, Revoked, Full, Conflict, Expired, Invalid };
   struct Result { Code code=Code::Invalid; uint64_t root=0; };
+  struct Trace { uint64_t serial=0; SourceOffer offer; Result result; bool terminal=false; };
+
+  void EnableTrace() { traceEnabled_=true; } // Before either thread starts.
+  std::size_t ReadTrace(Trace *out,std::size_t capacity,uint64_t &dropped) {
+    std::lock_guard lock(mutex_);
+    std::size_t count=0;
+    while (used_ && count<capacity) {
+      out[count++]=trace_[read_];
+      read_=(read_+1)%trace_.size();
+      --used_;
+    }
+    dropped=dropped_;
+    return count;
+  }
 
   void Authorize(const SourceScope &scope, uint64_t hold) {
     std::lock_guard lock(mutex_);
@@ -53,26 +67,30 @@ class M1Ingress {
 
   Result OfferSource(const SourceOffer &offer) {
     std::lock_guard lock(mutex_);
-    if (!offer.seq) return {Code::Invalid};
+    const auto report=[&](Result result) {
+      Record(offer,result,false);
+      return result;
+    };
+    if (!offer.seq) return report({Code::Invalid});
     for (const auto &group : {&active_, &recent_})
       for (const auto &slot : *group)
         if (slot.offer.seq==offer.seq)
-          return slot.offer==offer ? slot.result : Result{Code::Conflict};
+          return report(slot.offer==offer ? slot.result : Result{Code::Conflict});
     if (!(offer.scope==scope_) || !hold_ || offer.sample.hold!=hold_)
-      return {Code::Revoked};
-    if (offer.seq<=last_) return {Code::Expired};
+      return report({Code::Revoked});
+    if (offer.seq<=last_) return report({Code::Expired});
     const auto &sample=offer.sample;
     if (sample.material>1 || !std::isfinite(sample.x) || !std::isfinite(sample.y) ||
         sample.x<0 || sample.x>=128 || sample.y<0 || sample.y>256 ||
         !offer.frequency || !sample.sequence || !offer.sampleTicks ||
         offer.pulseTicks<=offer.sampleTicks || offer.pulseNs<=offer.sample.timeNs)
-      return {Code::Invalid};
+      return report({Code::Invalid});
     for (auto &slot : active_) if (!slot.offer.seq) {
       last_=offer.seq;
       slot={offer, {Code::Pending}};
-      return slot.result;
+      return report(slot.result);
     }
-    return {Code::Full};
+    return report({Code::Full});
   }
 
   SourceOffer Take() {
@@ -96,7 +114,15 @@ class M1Ingress {
 
  private:
   struct Slot { SourceOffer offer; Result result; };
+  void Record(const SourceOffer &offer,Result result,bool terminal) {
+    if (!traceEnabled_) return;
+    ++traceSerial_;
+    if (used_==trace_.size()) { ++dropped_; return; }
+    trace_[(read_+used_)%trace_.size()]={traceSerial_,offer,result,terminal};
+    ++used_;
+  }
   void Archive(Slot &slot, Result result) {
+    Record(slot.offer,result,true);
     recent_[cursor_]={slot.offer, result};
     cursor_=(cursor_+1)%recent_.size();
     slot={};
@@ -106,5 +132,9 @@ class M1Ingress {
   uint64_t hold_=0, last_=0;
   std::size_t cursor_=0;
   std::array<Slot, 4> active_{}, recent_{};
+  bool traceEnabled_=false;
+  uint64_t traceSerial_=0, dropped_=0;
+  std::size_t read_=0, used_=0;
+  std::array<Trace,256> trace_{};
 };
 } // namespace grs::g13vk

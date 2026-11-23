@@ -279,7 +279,7 @@ private:
                    grs::m1::PlanGrantV2 &, const std::function<bool()> &, grs::AcceptedRoot &,
                    uint64_t &, uint32_t &);
   std::future<M1ColdResult> CaptureM1Quantum(grs::m1::SourceRootOwner &, const grs::AcceptedRoot &, const grs::Words256 &,
-                        uint32_t, const std::array<uint32_t,32> &);
+                       uint32_t, const std::array<uint32_t,32> &, std::optional<M1HotCapture::Page>);
 #endif
 };
 

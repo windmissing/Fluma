@@ -350,7 +350,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     submit.pCommandBuffers = &command;
     Check(vk.QueueSubmit(queue, 1, &submit, fence), "vkQueueSubmit.M1_SOURCE");
     inFlight = true;
-    M1BusyFence busy{attempt.hotCapture,M1HotCapture::Phase::SourceFence,wide(request.nonce)};
+    M1BusyFence busy{attempt.m1ColdOnBusy ? nullptr : attempt.hotCapture,
+                     M1HotCapture::Phase::SourceFence,wide(request.nonce)};
     fields << ",\"m1QueueVkResult\":0,\"m1Nonce\":\"" << ((uint64_t(request.nonce.hi)<<32) | request.nonce.lo)
            << "\",\"m1DeadlineNs\":\"" << deadline << "\",\"m1PulseNs\":\"" << pulse << "\"";
     VkResult waited = VK_NOT_READY;
@@ -432,11 +433,27 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   if (interactive && !RunM1Quantum(candidate, root, clock, permit, refresh, accepted, frameSerial, ordinal))
     return Receipt("FAILED", "M1_QUANTUM_NOT_ACCEPTED");
   std::future<M1ColdResult> coldWriter;
-  if (interactive && !attempt.m1ColdFile.empty())
-    coldWriter=CaptureM1Quantum(root,accepted,tail,stateWords,cmd);
+  if (interactive && !attempt.m1ColdFile.empty()) {
+    const auto ticket=attempt.m1ColdOnBusy
+        ? attempt.hotCapture->ClaimCold(wide(accepted.nonce),pc::TimeNs()) : std::optional<M1HotCapture::Page>{};
+    if (ticket || !attempt.m1ColdOnBusy) {
+      try {
+        coldWriter=CaptureM1Quantum(root,accepted,tail,stateWords,cmd,ticket);
+      } catch (...) {
+        if (ticket) attempt.hotCapture->FailCold(*ticket);
+        throw;
+      }
+    } else {
+      fields << ",\"m1ColdReservation\":\"NO_FIRST_QUANTUM_BUSY_RESERVATION\"";
+    }
+  }
   const auto reportCold=[&] {
     if (!coldWriter.valid()) return;
     const auto exported=coldWriter.get();
+    if (!exported.bytes) {
+      fields << ",\"m1ColdReservation\":\"REVOKED_BEFORE_FROZEN\"";
+      return;
+    }
     fields << ",\"m1ColdPayloadSHA\":" << Quote(exported.sha)
            << ",\"m1ColdBytes\":" << exported.bytes;
   };
@@ -515,7 +532,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     };
   }
   pc::PresentBusy captureBusy;
-  if (attempt.hotCapture) captureBusy=[&](M1HotCapture::Phase phase,bool entered,bool usable) {
+  if (attempt.hotCapture && !attempt.m1ColdOnBusy) captureBusy=[&](M1HotCapture::Phase phase,bool entered,bool usable) {
     const auto nonce=wide(lease.nonce);
     if (entered) {
       attempt.hotCapture->Busy(phase,nonce);

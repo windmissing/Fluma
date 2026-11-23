@@ -8,4 +8,12 @@ Win32 脉冲通过四槽 `OfferSource` 提交不可变输入，Vulkan owner 消�
 
 `test/t860/ingress.cpp` 的离线检查通过，覆盖独立 producer、四槽背压、同键重复与冲突、水位过期、撤权、实际接口的忙点预约状态、热页不可变、独占阅读及预约超时。
 
-本卡部分交付。完整 D1 仍缺独立 52 动作业务驱动、逐动作终态 sink 和原字对照/重放接线。D2 热页当前单预约；全量冷档仍缺独立异步预约和多次读页接线，包括跨根 backing 与 credit 生命周期。现有 T848 首根封套尚无后续任意根解释，不能直接复用为后续根的冷页协议。下一步由 developer 补上述接口、由 tester 承接对应 reader 与固定动作，随后按 T858 用真实 PC 交付对照和退役证据。
+## 续接交付
+
+Windows x64 Release PE `.codex/local-test/t860-paged-release.exe`，SHA256 `b02294dcdd5daa88c434cb444f0ce48882a21bd44a51908fcf9ad89f96e8c7e4`。
+
+- `--m1-source-trace` 导出外部提交回执、待消费撤销及 owner 终态。固定环保序号和真实根身份，溢出显式报告丢项。
+- `--m1-cold-on-busy FILE` 由非 Vulkan owner 的窗口线程预约首个 QUANTUM 的真实 fence 忙段。owner 只为同一已接受根认领 copy，现有 16 MiB 上限随 credit 保留至 writer/reader 退役。writer 封存原字后提供单读者、64 KiB 顺序页、范围校验以及 60 秒 TTL。文件沿 T848 首根格式，页偏移从原 payload 起算。未预约到首 QUANTUM 时明确报告未采。
+- C++ 离线检查覆盖终态日志、过期/背压、同根认领、封页后错游标与重复读取拒绝、顺序完整读取及旧代拒绝，编译和自测通过。
+
+仍属部分交付。完整 D1 尚需独立 52 动作驱动与 OFF/ON 原字对照/重放，D2 后续任意根预约仍需版本化的 backing/arena 和 reader 协议。当前 T848 首根封套只解释首 SOURCE→QUANTUM，继续用于首根证据；跨根重用须由 architect 与 tester 明确新档案语义后再接生产读取。

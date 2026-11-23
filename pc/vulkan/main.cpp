@@ -5,6 +5,7 @@
 #include <cwchar>
 #include <iostream>
 #include <mutex>
+#include <sstream>
 #include <thread>
 #include <windowsx.h>
 
@@ -36,14 +37,43 @@ struct Window {
   grs::g13vk::SourceScope scope;
   grs::g13vk::M1Ingress ingress;
   grs::g13vk::M1HotCapture hotCapture;
-  bool captureHot=false;
-  uint64_t captureRun=0, captureReserved=0;
+  bool captureHot=false, captureCold=false, sourceTrace=false;
+  uint64_t captureRun=0, captureReserved=0, droppedTrace=0;
+  size_t coldOffset=0;
   uint64_t sampleTicks=0, offerSeq=0;
   int result = 1;
 
   void Emit(const std::string &json) {
     std::lock_guard lock(output);
     std::cout << json << std::endl;
+  }
+  void DrainSourceTrace() {
+    if (!sourceTrace) return;
+    std::array<grs::g13vk::M1Ingress::Trace,64> batch;
+    uint64_t dropped=0;
+    size_t count;
+    do {
+      count=ingress.ReadTrace(batch.data(),batch.size(),dropped);
+      for (size_t i=0;i<count;++i) {
+        const auto &record=batch[i];
+        const auto &o=record.offer;
+        std::ostringstream row;
+        row << "{\"stage\":\"M1_OFFER_" << (record.terminal ? "TERMINAL" : "RETURN")
+            << "\",\"serial\":\"" << record.serial << "\",\"run\":\"" << o.scope.run
+            << "\",\"geometry\":\"" << o.scope.geometry << "\",\"offer\":\"" << o.seq
+            << "\",\"sample\":\"" << o.sample.sequence << "\",\"hold\":\"" << o.sample.hold
+            << "\",\"pulseTicks\":\"" << o.pulseTicks << "\",\"sampleTicks\":\"" << o.sampleTicks
+            << "\",\"frequency\":\"" << o.frequency << "\",\"pulseNs\":\"" << o.pulseNs
+            << "\",\"sampleNs\":\"" << o.sample.timeNs << "\",\"pixelX\":" << o.sample.clientX
+            << ",\"pixelY\":" << o.sample.clientY << ",\"material\":" << o.sample.material
+            << ",\"result\":" << int(record.result.code) << ",\"root\":\"" << record.result.root << "\"}";
+        Emit(row.str());
+      }
+    } while (count==batch.size());
+    if (droppedTrace!=dropped) {
+      droppedTrace=dropped;
+      Emit("{\"stage\":\"M1_OFFER_TRACE_INCOMPLETE\",\"dropped\":"+std::to_string(dropped)+"}");
+    }
   }
 
   void Size() {
@@ -130,19 +160,35 @@ struct Window {
     auto captureScope=offer.scope;
     captureScope.permission=0;
     const auto request=captureScope.run;
-    if (!captureHot || !request || captureRun==request) return;
+    if (!(captureHot || captureCold) || !request || captureRun==request) return;
     using Code=grs::g13vk::M1HotCapture::Code;
     const auto state=hotCapture.Reserve(captureScope,request,ns);
     if (state==Code::Reserved && captureReserved!=request) {
       captureReserved=request;
+      coldOffset=0;
       Emit("{\"stage\":\"M1_HOT_CAPTURE_RESERVED\",\"request\":\""+std::to_string(request)+
            "\",\"requestNs\":\""+std::to_string(ns)+"\"}");
-    } else if (state==Code::Cancelled || state==Code::TimedOut) {
+    } else if (state==Code::Cancelled || state==Code::TimedOut || state==Code::Failed) {
       captureRun=request;
       Emit("{\"stage\":\"M1_HOT_CAPTURE_TERMINAL\",\"request\":\""+std::to_string(request)+
-           "\",\"state\":\""+(state==Code::Cancelled ? "CANCELLED" : "TIMED_OUT")+"\"}");
+           "\",\"state\":\""+(state==Code::Cancelled ? "CANCELLED" :
+                                   state==Code::TimedOut ? "TIMED_OUT" : "FAILED")+"\"}");
     }
-    if (state==Code::Frozen) {
+    if (captureCold && (state==Code::ColdFrozen || state==Code::ColdRead)) {
+      std::array<uint8_t,grs::g13vk::M1HotCapture::kPageLimit> bytes;
+      if (const auto page=hotCapture.ReadCold(captureScope,request,coldOffset,bytes.data(),bytes.size(),ns)) {
+        Emit("{\"stage\":\"M1_COLD_PAGE\",\"request\":\""+std::to_string(request)+
+             "\",\"root\":\""+std::to_string(page->lineage.busyRoot)+"\",\"offset\":"+
+             std::to_string(page->offset)+",\"count\":"+std::to_string(page->count)+",\"total\":"+
+             std::to_string(page->total)+",\"sha\":\""+page->sha+"\"}");
+        coldOffset+=page->count;
+        if (coldOffset==page->total) {
+          hotCapture.End(captureScope,request);
+          captureRun=request;
+        }
+      }
+    }
+    if (!captureCold && state==Code::Frozen) {
       if (const auto page=hotCapture.Read(captureScope,request,ns)) {
         std::string row="{\"stage\":\"M1_HOT_CAPTURE\",\"request\":\""+std::to_string(request)+
           "\",\"root\":\""+std::to_string(page->busyRoot)+"\",\"requestedNs\":\""+
@@ -227,7 +273,8 @@ struct Window {
                                                  scope=next;
                                                  ingress.Authorize(scope,0);
                                                  hotCapture.Authorize(next);
-                                               }, &ingress, captureHot ? &hotCapture : nullptr, dualSource},
+                                               }, &ingress, (captureHot || captureCold) ? &hotCapture : nullptr,
+                                               dualSource,captureCold},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos ||
@@ -302,12 +349,13 @@ LRESULT CALLBACK Dispatch(HWND hwnd, UINT message, WPARAM w, LPARAM l) {
   case WM_TIMER:
     if (w == kSourceProbeTimer) {
       window->Pulse();
+      window->DrainSourceTrace();
       return 0;
     }
     KillTimer(hwnd, 1);
     window->Close();
     return 0;
-  case kOwnerFinished: DestroyWindow(hwnd); return 0;
+  case kOwnerFinished: window->DrainSourceTrace(); DestroyWindow(hwnd); return 0;
   case WM_DESTROY: PostQuitMessage(0); return 0;
   }
   return DefWindowProcW(hwnd, message, w, l);
@@ -346,11 +394,13 @@ int wmain(int argc, wchar_t **argv) {
       window.m1QuantumCommit = argv[++i];
       window.m1Present = true;
     }
-    else if (!std::wcscmp(argv[i], L"--m1-cold") && i+1 < argc) {
+    else if ((!std::wcscmp(argv[i],L"--m1-cold") || !std::wcscmp(argv[i],L"--m1-cold-on-busy")) && i+1 < argc) {
+      window.captureCold=!std::wcscmp(argv[i],L"--m1-cold-on-busy");
       window.m1ColdFile = argv[++i];
     }
     else if (!std::wcscmp(argv[i], L"--m1-capture-hot")) window.captureHot=true;
     else if (!std::wcscmp(argv[i], L"--m1-dual-source")) window.dualSource=true;
+    else if (!std::wcscmp(argv[i], L"--m1-source-trace")) window.sourceTrace=true;
     else if ((!std::wcscmp(argv[i], L"--probe-m1-source") ||
               !std::wcscmp(argv[i], L"--present-m1-source")) && i+1 < argc) {
       window.m1Present = !std::wcscmp(argv[i], L"--present-m1-source");
@@ -361,7 +411,8 @@ int wmain(int argc, wchar_t **argv) {
       std::cerr << "usage: hello_world_pc [--once] [--boot-only | --qualify-steady | "
                    "--qualify-steady-role NAME [--disable-optimization] | --probe-m1-source SPV | "
                    "--present-m1-source SPV | --m1-window SOURCE_SPV CANDIDATE_SPV COMMIT_SPV "
-                   "[--m1-cold FILE] [--m1-capture-hot] [--m1-dual-source] | --qualify-t849-writes FILE]\n";
+                   "[--m1-cold FILE | --m1-cold-on-busy FILE] [--m1-capture-hot] [--m1-source-trace] "
+                   "[--m1-dual-source] | --qualify-t849-writes FILE]\n";
       return 2;
     }
   }
@@ -369,6 +420,8 @@ int wmain(int argc, wchar_t **argv) {
   if (!window.t849WriteFile.empty() && !window.steadyRole.empty()) return 2;
   if (window.steady && !window.m1SourceModule.empty()) return 2;
   if (window.captureHot && window.m1QuantumCandidate.empty()) return 2;
+  if (window.captureHot && window.captureCold) return 2;
+  if (window.sourceTrace) window.ingress.EnableTrace();
   if (window.dualSource && (window.m1QuantumCandidate.empty() || !window.m1ColdFile.empty())) return 2;
   if ((!window.m1ColdFile.empty() && window.m1QuantumCandidate.empty()) ||
       (!window.m1QuantumCandidate.empty() && window.bootOnly)) return 2;

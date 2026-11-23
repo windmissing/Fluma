@@ -37,6 +37,7 @@ struct Attempt {
   M1Ingress *ingress = nullptr;
   M1HotCapture *hotCapture = nullptr;
   bool m1DualSource = false;
+  bool m1ColdOnBusy = false;
 #else
   NativeWindow *window;
 #endif

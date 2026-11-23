@@ -277,7 +277,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
 
 std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, const grs::AcceptedRoot &accepted,
                             const grs::Words256 &sourceCompletion, uint32_t stateWords,
-                            const std::array<uint32_t,32> &sourceCommand) {
+                            const std::array<uint32_t,32> &sourceCommand,std::optional<M1HotCapture::Page> ticket) {
   Checkpoint("M1_QUANTUM_COLD_CAPTURE");
   const uint32_t eventCount=accepted.completion[53];
   const auto &stored=accepted.completion;
@@ -339,7 +339,9 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
   std::memcpy(raw.data()+gpuBytes,sourceCompletion.data(),sizes[6]);
   std::memcpy(raw.data()+gpuBytes+sizes[6],sourceCommand.data(),sizes[7]);
   // The worker owns only sealed CPU bytes and the destination path.
-  return std::async(std::launch::async,[path=attempt.m1ColdFile,sizes,raw=std::move(raw)] {
+  return std::async(std::launch::async,[path=attempt.m1ColdFile,sizes,raw=std::move(raw),
+                                       capture=attempt.hotCapture,ticket]() mutable {
+    try {
     const auto digest=Hash(raw.data(),raw.size());
     const auto temp=path+L".pending-"+std::to_wstring(GetCurrentProcessId());
     const HANDLE out=CreateFileW(temp.c_str(),GENERIC_WRITE,0,nullptr,CREATE_NEW,FILE_ATTRIBUTE_NORMAL,nullptr);
@@ -353,6 +355,13 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
     const bool finished=wrote && MoveFileExW(temp.c_str(),path.c_str(),MOVEFILE_WRITE_THROUGH);
     if (!finished) DeleteFileW(temp.c_str());
     Require(finished,"M1_COLD_WRITE_OR_DESTINATION_EXISTS");
-    return M1ColdResult{Hex(digest.data()),raw.size()+kM1ColdEnvelopeBytes};
+    M1ColdResult result{Hex(digest.data()),raw.size()+kM1ColdEnvelopeBytes};
+    if (ticket && !capture->SealCold(*ticket,raw,result.sha,pc::TimeNs()))
+      return M1ColdResult{};
+    return result;
+    } catch (...) {
+      if (ticket) capture->FailCold(*ticket);
+      throw;
+    }
   });
 }
