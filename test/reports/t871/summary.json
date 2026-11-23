@@ -1,0 +1,2706 @@
+{
+  "experiment": "T871_PULSE_RELEASE_V1",
+  "status": "PASS",
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "machine": "AMD64"
+  },
+  "seed": 0,
+  "mass_kg": 1.0,
+  "sourceId": 1,
+  "threshold_m": 0.002,
+  "window_ms": 400,
+  "tangential_N": 0,
+  "beforePulse_N": -1,
+  "duringPulse_N": 1,
+  "afterPulse_N": -1,
+  "implementationSHA256": "9844c9ae0f307a64ed5b004fbc983f24e00ac9cdd9f7ca27cef979a2afd9c3fb",
+  "samplesSHA256": "1e6e153156481d41470cba65f125e5debdd16520bde5ff1e88a268ad734da5fd",
+  "sampleCount": 732,
+  "runs": [
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.02,
+          "normal_N": 1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.02,
+          "end_s": 0.04,
+          "normal_N": -1.0,
+          "y_m": 0.0002,
+          "vy_mps": 0.02,
+          "impulse_Ns": 0.02,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.04,
+          "end_s": 0.0682842712474619,
+          "normal_N": -1.0,
+          "y_m": 0.0004,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.02,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.0682842712474619,
+          "end_s": 0.4,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.02,
+          "in_flight": false
+        }
+      ],
+      "baseline": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.01,
+        "y_m": 5e-05,
+        "vy_mps": 0.01,
+        "outwardImpulse_Ns": 0.01
+      },
+      "events": [
+        {
+          "kind": "APEX",
+          "time_s": 0.04,
+          "y_m": 0.0004,
+          "vy_mps": 0.0,
+          "nextSample_s": 0.04
+        },
+        {
+          "kind": "TRIAL_RETURN",
+          "time_s": 0.0682842712474619,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "incomingVy_mps": -0.028284271247461905,
+          "outwardImpulse_Ns": 0.02,
+          "yBefore_m": 0.0004,
+          "yAtRootUnclipped_m": -1.0842021724855044e-19,
+          "yNextSampleUnclipped_m": -5.000000000000013e-05,
+          "fromMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "toMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "nextSample_s": 0.07
+        }
+      ]
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.02,
+          "normal_N": 1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.02,
+          "end_s": 0.04,
+          "normal_N": -1.0,
+          "y_m": 0.0002,
+          "vy_mps": 0.02,
+          "impulse_Ns": 0.02,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.04,
+          "end_s": 0.0682842712474619,
+          "normal_N": -1.0,
+          "y_m": 0.0004,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.02,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.0682842712474619,
+          "end_s": 0.4,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.02,
+          "in_flight": false
+        }
+      ],
+      "baseline": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.005,
+        "y_m": 1.25e-05,
+        "vy_mps": 0.005,
+        "outwardImpulse_Ns": 0.005
+      },
+      "events": [
+        {
+          "kind": "APEX",
+          "time_s": 0.04,
+          "y_m": 0.0004,
+          "vy_mps": 0.0,
+          "nextSample_s": 0.04
+        },
+        {
+          "kind": "TRIAL_RETURN",
+          "time_s": 0.0682842712474619,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "incomingVy_mps": -0.028284271247461905,
+          "outwardImpulse_Ns": 0.02,
+          "yBefore_m": 0.0004,
+          "yAtRootUnclipped_m": -1.0842021724855044e-19,
+          "yNextSampleUnclipped_m": -5.000000000000013e-05,
+          "fromMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "toMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "nextSample_s": 0.07
+        }
+      ]
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.003,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": false
+        },
+        {
+          "start_s": 0.003,
+          "end_s": 0.023,
+          "normal_N": 1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.023,
+          "end_s": 0.043,
+          "normal_N": -1.0,
+          "y_m": 0.0002,
+          "vy_mps": 0.02,
+          "impulse_Ns": 0.02,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.043,
+          "end_s": 0.0712842712474619,
+          "normal_N": -1.0,
+          "y_m": 0.0004,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.02,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.0712842712474619,
+          "end_s": 0.4,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.02,
+          "in_flight": false
+        }
+      ],
+      "baseline": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.01,
+        "y_m": 2.4500000000000003e-05,
+        "vy_mps": 0.007,
+        "outwardImpulse_Ns": 0.007
+      },
+      "events": [
+        {
+          "kind": "APEX",
+          "time_s": 0.043,
+          "y_m": 0.0004,
+          "vy_mps": 0.0,
+          "nextSample_s": 0.05
+        },
+        {
+          "kind": "TRIAL_RETURN",
+          "time_s": 0.0712842712474619,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "incomingVy_mps": -0.028284271247461898,
+          "outwardImpulse_Ns": 0.02,
+          "yBefore_m": 0.0004,
+          "yAtRootUnclipped_m": 1.0842021724855044e-19,
+          "yNextSampleUnclipped_m": -0.0002845000000000002,
+          "fromMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "toMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "nextSample_s": 0.08
+        }
+      ]
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.003,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": false
+        },
+        {
+          "start_s": 0.003,
+          "end_s": 0.023,
+          "normal_N": 1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.023,
+          "end_s": 0.043,
+          "normal_N": -1.0,
+          "y_m": 0.0002,
+          "vy_mps": 0.02,
+          "impulse_Ns": 0.02,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.043,
+          "end_s": 0.0712842712474619,
+          "normal_N": -1.0,
+          "y_m": 0.0004,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.02,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.0712842712474619,
+          "end_s": 0.4,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.02,
+          "in_flight": false
+        }
+      ],
+      "baseline": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.005,
+        "y_m": 2e-06,
+        "vy_mps": 0.002,
+        "outwardImpulse_Ns": 0.002
+      },
+      "events": [
+        {
+          "kind": "APEX",
+          "time_s": 0.043,
+          "y_m": 0.0004,
+          "vy_mps": 0.0,
+          "nextSample_s": 0.045
+        },
+        {
+          "kind": "TRIAL_RETURN",
+          "time_s": 0.0712842712474619,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "incomingVy_mps": -0.028284271247461898,
+          "outwardImpulse_Ns": 0.02,
+          "yBefore_m": 0.0004,
+          "yAtRootUnclipped_m": 1.0842021724855044e-19,
+          "yNextSampleUnclipped_m": -0.00011199999999999996,
+          "fromMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "toMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "nextSample_s": 0.075
+        }
+      ]
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.05,
+          "normal_N": 1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.05,
+          "end_s": 0.1,
+          "normal_N": -1.0,
+          "y_m": 0.0012500000000000002,
+          "vy_mps": 0.05,
+          "impulse_Ns": 0.05,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.1,
+          "end_s": 0.17071067811865476,
+          "normal_N": -1.0,
+          "y_m": 0.0025000000000000005,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.05,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.17071067811865476,
+          "end_s": 0.4,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.05,
+          "in_flight": false
+        }
+      ],
+      "baseline": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.01,
+        "y_m": 5e-05,
+        "vy_mps": 0.01,
+        "outwardImpulse_Ns": 0.01
+      },
+      "events": [
+        {
+          "kind": "F_TO_P",
+          "time_s": 0.0683772233983162,
+          "y_m": 0.002,
+          "vy_mps": 0.031622776601683805,
+          "outwardImpulse_Ns": 0.05,
+          "segmentStart_s": 0.05,
+          "segmentEnd_s": 0.1,
+          "fromMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "toMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "nextSample_s": 0.07
+        },
+        {
+          "kind": "APEX",
+          "time_s": 0.1,
+          "y_m": 0.0025000000000000005,
+          "vy_mps": 0.0,
+          "nextSample_s": 0.1
+        },
+        {
+          "kind": "P_TO_F",
+          "time_s": 0.17071067811865476,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "incomingVy_mps": -0.07071067811865475,
+          "outwardImpulse_Ns": 0.05,
+          "yBefore_m": 0.0025000000000000005,
+          "yAtRootUnclipped_m": 4.336808689942018e-19,
+          "yNextSampleUnclipped_m": -0.0006999999999999984,
+          "fromMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "toMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "nextSample_s": 0.18
+        }
+      ]
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.05,
+          "normal_N": 1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.05,
+          "end_s": 0.1,
+          "normal_N": -1.0,
+          "y_m": 0.0012500000000000002,
+          "vy_mps": 0.05,
+          "impulse_Ns": 0.05,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.1,
+          "end_s": 0.17071067811865476,
+          "normal_N": -1.0,
+          "y_m": 0.0025000000000000005,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.05,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.17071067811865476,
+          "end_s": 0.4,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.05,
+          "in_flight": false
+        }
+      ],
+      "baseline": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.005,
+        "y_m": 1.25e-05,
+        "vy_mps": 0.005,
+        "outwardImpulse_Ns": 0.005
+      },
+      "events": [
+        {
+          "kind": "F_TO_P",
+          "time_s": 0.0683772233983162,
+          "y_m": 0.002,
+          "vy_mps": 0.031622776601683805,
+          "outwardImpulse_Ns": 0.05,
+          "segmentStart_s": 0.05,
+          "segmentEnd_s": 0.1,
+          "fromMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "toMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "nextSample_s": 0.07
+        },
+        {
+          "kind": "APEX",
+          "time_s": 0.1,
+          "y_m": 0.0025000000000000005,
+          "vy_mps": 0.0,
+          "nextSample_s": 0.1
+        },
+        {
+          "kind": "P_TO_F",
+          "time_s": 0.17071067811865476,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "incomingVy_mps": -0.07071067811865475,
+          "outwardImpulse_Ns": 0.05,
+          "yBefore_m": 0.0025000000000000005,
+          "yAtRootUnclipped_m": 4.336808689942018e-19,
+          "yNextSampleUnclipped_m": -0.0003124999999999981,
+          "fromMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "toMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "nextSample_s": 0.175
+        }
+      ]
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.003,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": false
+        },
+        {
+          "start_s": 0.003,
+          "end_s": 0.053,
+          "normal_N": 1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.053,
+          "end_s": 0.103,
+          "normal_N": -1.0,
+          "y_m": 0.0012499999999999998,
+          "vy_mps": 0.049999999999999996,
+          "impulse_Ns": 0.049999999999999996,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.103,
+          "end_s": 0.17371067811865476,
+          "normal_N": -1.0,
+          "y_m": 0.0024999999999999996,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.049999999999999996,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.17371067811865476,
+          "end_s": 0.4,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.049999999999999996,
+          "in_flight": false
+        }
+      ],
+      "baseline": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.01,
+        "y_m": 2.4500000000000003e-05,
+        "vy_mps": 0.007,
+        "outwardImpulse_Ns": 0.007
+      },
+      "events": [
+        {
+          "kind": "F_TO_P",
+          "time_s": 0.07137722339831622,
+          "y_m": 0.002,
+          "vy_mps": 0.03162277660168378,
+          "outwardImpulse_Ns": 0.049999999999999996,
+          "segmentStart_s": 0.053,
+          "segmentEnd_s": 0.103,
+          "fromMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "toMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "nextSample_s": 0.08
+        },
+        {
+          "kind": "APEX",
+          "time_s": 0.103,
+          "y_m": 0.0024999999999999996,
+          "vy_mps": 0.0,
+          "nextSample_s": 0.11
+        },
+        {
+          "kind": "P_TO_F",
+          "time_s": 0.17371067811865476,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "incomingVy_mps": -0.07071067811865477,
+          "outwardImpulse_Ns": 0.049999999999999996,
+          "yBefore_m": 0.0024999999999999996,
+          "yAtRootUnclipped_m": -1.3010426069826053e-18,
+          "yNextSampleUnclipped_m": -0.0004645000000000005,
+          "fromMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "toMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "nextSample_s": 0.18
+        }
+      ]
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.003,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": false
+        },
+        {
+          "start_s": 0.003,
+          "end_s": 0.053,
+          "normal_N": 1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.053,
+          "end_s": 0.103,
+          "normal_N": -1.0,
+          "y_m": 0.0012499999999999998,
+          "vy_mps": 0.049999999999999996,
+          "impulse_Ns": 0.049999999999999996,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.103,
+          "end_s": 0.17371067811865476,
+          "normal_N": -1.0,
+          "y_m": 0.0024999999999999996,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.049999999999999996,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.17371067811865476,
+          "end_s": 0.4,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.049999999999999996,
+          "in_flight": false
+        }
+      ],
+      "baseline": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.005,
+        "y_m": 2e-06,
+        "vy_mps": 0.002,
+        "outwardImpulse_Ns": 0.002
+      },
+      "events": [
+        {
+          "kind": "F_TO_P",
+          "time_s": 0.07137722339831622,
+          "y_m": 0.002,
+          "vy_mps": 0.03162277660168378,
+          "outwardImpulse_Ns": 0.049999999999999996,
+          "segmentStart_s": 0.053,
+          "segmentEnd_s": 0.103,
+          "fromMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "toMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "nextSample_s": 0.075
+        },
+        {
+          "kind": "APEX",
+          "time_s": 0.103,
+          "y_m": 0.0024999999999999996,
+          "vy_mps": 0.0,
+          "nextSample_s": 0.105
+        },
+        {
+          "kind": "P_TO_F",
+          "time_s": 0.17371067811865476,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "incomingVy_mps": -0.07071067811865477,
+          "outwardImpulse_Ns": 0.049999999999999996,
+          "yBefore_m": 0.0024999999999999996,
+          "yAtRootUnclipped_m": -1.3010426069826053e-18,
+          "yNextSampleUnclipped_m": -9.200000000000007e-05,
+          "fromMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "toMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "nextSample_s": 0.175
+        }
+      ]
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.1,
+          "normal_N": 1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.1,
+          "end_s": 0.2,
+          "normal_N": -1.0,
+          "y_m": 0.005000000000000001,
+          "vy_mps": 0.1,
+          "impulse_Ns": 0.1,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.2,
+          "end_s": 0.3414213562373095,
+          "normal_N": -1.0,
+          "y_m": 0.010000000000000002,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.1,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.3414213562373095,
+          "end_s": 0.4,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.1,
+          "in_flight": false
+        }
+      ],
+      "baseline": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.01,
+        "y_m": 5e-05,
+        "vy_mps": 0.01,
+        "outwardImpulse_Ns": 0.01
+      },
+      "events": [
+        {
+          "kind": "F_TO_P",
+          "time_s": 0.0632455532033676,
+          "y_m": 0.0020000000000000005,
+          "vy_mps": 0.0632455532033676,
+          "outwardImpulse_Ns": 0.0632455532033676,
+          "segmentStart_s": 0.0,
+          "segmentEnd_s": 0.1,
+          "fromMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "toMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "nextSample_s": 0.07
+        },
+        {
+          "kind": "APEX",
+          "time_s": 0.2,
+          "y_m": 0.010000000000000002,
+          "vy_mps": 0.0,
+          "nextSample_s": 0.2
+        },
+        {
+          "kind": "P_TO_F",
+          "time_s": 0.3414213562373095,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "incomingVy_mps": -0.1414213562373095,
+          "outwardImpulse_Ns": 0.1,
+          "yBefore_m": 0.010000000000000002,
+          "yAtRootUnclipped_m": 1.734723475976807e-18,
+          "yNextSampleUnclipped_m": -0.0012499999999999924,
+          "fromMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "toMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "nextSample_s": 0.35
+        }
+      ]
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.1,
+          "normal_N": 1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.1,
+          "end_s": 0.2,
+          "normal_N": -1.0,
+          "y_m": 0.005000000000000001,
+          "vy_mps": 0.1,
+          "impulse_Ns": 0.1,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.2,
+          "end_s": 0.3414213562373095,
+          "normal_N": -1.0,
+          "y_m": 0.010000000000000002,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.1,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.3414213562373095,
+          "end_s": 0.4,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.1,
+          "in_flight": false
+        }
+      ],
+      "baseline": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.005,
+        "y_m": 1.25e-05,
+        "vy_mps": 0.005,
+        "outwardImpulse_Ns": 0.005
+      },
+      "events": [
+        {
+          "kind": "F_TO_P",
+          "time_s": 0.0632455532033676,
+          "y_m": 0.0020000000000000005,
+          "vy_mps": 0.0632455532033676,
+          "outwardImpulse_Ns": 0.0632455532033676,
+          "segmentStart_s": 0.0,
+          "segmentEnd_s": 0.1,
+          "fromMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "toMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "nextSample_s": 0.065
+        },
+        {
+          "kind": "APEX",
+          "time_s": 0.2,
+          "y_m": 0.010000000000000002,
+          "vy_mps": 0.0,
+          "nextSample_s": 0.2
+        },
+        {
+          "kind": "P_TO_F",
+          "time_s": 0.3414213562373095,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "incomingVy_mps": -0.1414213562373095,
+          "outwardImpulse_Ns": 0.1,
+          "yBefore_m": 0.010000000000000002,
+          "yAtRootUnclipped_m": 1.734723475976807e-18,
+          "yNextSampleUnclipped_m": -0.0005124999999999921,
+          "fromMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "toMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "nextSample_s": 0.345
+        }
+      ]
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.003,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": false
+        },
+        {
+          "start_s": 0.003,
+          "end_s": 0.103,
+          "normal_N": 1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.103,
+          "end_s": 0.20299999999999999,
+          "normal_N": -1.0,
+          "y_m": 0.004999999999999999,
+          "vy_mps": 0.09999999999999999,
+          "impulse_Ns": 0.09999999999999999,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.20299999999999999,
+          "end_s": 0.3444213562373095,
+          "normal_N": -1.0,
+          "y_m": 0.009999999999999998,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.09999999999999999,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.3444213562373095,
+          "end_s": 0.4,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.09999999999999999,
+          "in_flight": false
+        }
+      ],
+      "baseline": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.01,
+        "y_m": 2.4500000000000003e-05,
+        "vy_mps": 0.007,
+        "outwardImpulse_Ns": 0.007
+      },
+      "events": [
+        {
+          "kind": "F_TO_P",
+          "time_s": 0.0662455532033676,
+          "y_m": 0.0020000000000000005,
+          "vy_mps": 0.0632455532033676,
+          "outwardImpulse_Ns": 0.0632455532033676,
+          "segmentStart_s": 0.003,
+          "segmentEnd_s": 0.103,
+          "fromMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "toMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "nextSample_s": 0.07
+        },
+        {
+          "kind": "APEX",
+          "time_s": 0.20299999999999999,
+          "y_m": 0.009999999999999998,
+          "vy_mps": 0.0,
+          "nextSample_s": 0.21
+        },
+        {
+          "kind": "P_TO_F",
+          "time_s": 0.3444213562373095,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "incomingVy_mps": -0.14142135623730953,
+          "outwardImpulse_Ns": 0.09999999999999999,
+          "yBefore_m": 0.009999999999999998,
+          "yAtRootUnclipped_m": -5.204170427930421e-18,
+          "yNextSampleUnclipped_m": -0.0008044999999999997,
+          "fromMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "toMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "nextSample_s": 0.35
+        }
+      ]
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.003,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": false
+        },
+        {
+          "start_s": 0.003,
+          "end_s": 0.103,
+          "normal_N": 1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.0,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.103,
+          "end_s": 0.20299999999999999,
+          "normal_N": -1.0,
+          "y_m": 0.004999999999999999,
+          "vy_mps": 0.09999999999999999,
+          "impulse_Ns": 0.09999999999999999,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.20299999999999999,
+          "end_s": 0.3444213562373095,
+          "normal_N": -1.0,
+          "y_m": 0.009999999999999998,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.09999999999999999,
+          "in_flight": true
+        },
+        {
+          "start_s": 0.3444213562373095,
+          "end_s": 0.4,
+          "normal_N": -1.0,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "impulse_Ns": 0.09999999999999999,
+          "in_flight": false
+        }
+      ],
+      "baseline": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.005,
+        "y_m": 2e-06,
+        "vy_mps": 0.002,
+        "outwardImpulse_Ns": 0.002
+      },
+      "events": [
+        {
+          "kind": "F_TO_P",
+          "time_s": 0.0662455532033676,
+          "y_m": 0.0020000000000000005,
+          "vy_mps": 0.0632455532033676,
+          "outwardImpulse_Ns": 0.0632455532033676,
+          "segmentStart_s": 0.003,
+          "segmentEnd_s": 0.103,
+          "fromMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "toMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "nextSample_s": 0.07
+        },
+        {
+          "kind": "APEX",
+          "time_s": 0.20299999999999999,
+          "y_m": 0.009999999999999998,
+          "vy_mps": 0.0,
+          "nextSample_s": 0.205
+        },
+        {
+          "kind": "P_TO_F",
+          "time_s": 0.3444213562373095,
+          "y_m": 0.0,
+          "vy_mps": 0.0,
+          "incomingVy_mps": -0.14142135623730953,
+          "outwardImpulse_Ns": 0.09999999999999999,
+          "yBefore_m": 0.009999999999999998,
+          "yAtRootUnclipped_m": -5.204170427930421e-18,
+          "yNextSampleUnclipped_m": -8.200000000000048e-05,
+          "fromMass_kg": {
+            "F": 0,
+            "P": 1.0
+          },
+          "toMass_kg": {
+            "F": 1.0,
+            "P": 0
+          },
+          "nextSample_s": 0.345
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "candidate_order",
+      "passed": true,
+      "observed": [
+        "APEX",
+        "TRIAL_RETURN"
+      ],
+      "reference": [
+        "APEX",
+        "TRIAL_RETURN"
+      ]
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "baseline_positive_sample",
+      "passed": true,
+      "observed": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.01,
+        "y_m": 5e-05,
+        "vy_mps": 0.01,
+        "outwardImpulse_Ns": 0.01
+      },
+      "falsePositive": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "apex_time_s",
+      "passed": true,
+      "observed": 0.04,
+      "reference": 0.04
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "apex_height_m",
+      "passed": true,
+      "observed": 0.0004,
+      "reference": 0.0004
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "return_time_s",
+      "passed": true,
+      "observed": 0.0682842712474619,
+      "reference": 0.0682842712474619
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "return_incoming_velocity_mps",
+      "passed": true,
+      "observed": -0.028284271247461905,
+      "reference": -0.028284271247461905
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "return_height_m",
+      "passed": true,
+      "observed": -1.0842021724855044e-19,
+      "reference": 0.0
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "descending_crossing",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "all_samples_trajectory_mass_and_absorption",
+      "passed": true,
+      "firstInvalid": null
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "candidate_order",
+      "passed": true,
+      "observed": [
+        "APEX",
+        "TRIAL_RETURN"
+      ],
+      "reference": [
+        "APEX",
+        "TRIAL_RETURN"
+      ]
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "baseline_positive_sample",
+      "passed": true,
+      "observed": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.005,
+        "y_m": 1.25e-05,
+        "vy_mps": 0.005,
+        "outwardImpulse_Ns": 0.005
+      },
+      "falsePositive": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "apex_time_s",
+      "passed": true,
+      "observed": 0.04,
+      "reference": 0.04
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "apex_height_m",
+      "passed": true,
+      "observed": 0.0004,
+      "reference": 0.0004
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "return_time_s",
+      "passed": true,
+      "observed": 0.0682842712474619,
+      "reference": 0.0682842712474619
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "return_incoming_velocity_mps",
+      "passed": true,
+      "observed": -0.028284271247461905,
+      "reference": -0.028284271247461905
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "return_height_m",
+      "passed": true,
+      "observed": -1.0842021724855044e-19,
+      "reference": 0.0
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "descending_crossing",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "all_samples_trajectory_mass_and_absorption",
+      "passed": true,
+      "firstInvalid": null
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "candidate_order",
+      "passed": true,
+      "observed": [
+        "APEX",
+        "TRIAL_RETURN"
+      ],
+      "reference": [
+        "APEX",
+        "TRIAL_RETURN"
+      ]
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "baseline_positive_sample",
+      "passed": true,
+      "observed": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.01,
+        "y_m": 2.4500000000000003e-05,
+        "vy_mps": 0.007,
+        "outwardImpulse_Ns": 0.007
+      },
+      "falsePositive": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "apex_time_s",
+      "passed": true,
+      "observed": 0.039999999999999994,
+      "reference": 0.04
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "apex_height_m",
+      "passed": true,
+      "observed": 0.0004,
+      "reference": 0.0004
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "return_time_s",
+      "passed": true,
+      "observed": 0.06828427124746189,
+      "reference": 0.0682842712474619
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "return_incoming_velocity_mps",
+      "passed": true,
+      "observed": -0.028284271247461898,
+      "reference": -0.028284271247461905
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "return_height_m",
+      "passed": true,
+      "observed": 1.0842021724855044e-19,
+      "reference": 0.0
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "descending_crossing",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 10,
+      "check": "all_samples_trajectory_mass_and_absorption",
+      "passed": true,
+      "firstInvalid": null
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "candidate_order",
+      "passed": true,
+      "observed": [
+        "APEX",
+        "TRIAL_RETURN"
+      ],
+      "reference": [
+        "APEX",
+        "TRIAL_RETURN"
+      ]
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "baseline_positive_sample",
+      "passed": true,
+      "observed": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.005,
+        "y_m": 2e-06,
+        "vy_mps": 0.002,
+        "outwardImpulse_Ns": 0.002
+      },
+      "falsePositive": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "apex_time_s",
+      "passed": true,
+      "observed": 0.039999999999999994,
+      "reference": 0.04
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "apex_height_m",
+      "passed": true,
+      "observed": 0.0004,
+      "reference": 0.0004
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "return_time_s",
+      "passed": true,
+      "observed": 0.06828427124746189,
+      "reference": 0.0682842712474619
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "return_incoming_velocity_mps",
+      "passed": true,
+      "observed": -0.028284271247461898,
+      "reference": -0.028284271247461905
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "return_height_m",
+      "passed": true,
+      "observed": 1.0842021724855044e-19,
+      "reference": 0.0
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "descending_crossing",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 20,
+      "dt_ms": 5,
+      "check": "all_samples_trajectory_mass_and_absorption",
+      "passed": true,
+      "firstInvalid": null
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "candidate_order",
+      "passed": true,
+      "observed": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ],
+      "reference": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ]
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "baseline_positive_sample",
+      "passed": true,
+      "observed": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.01,
+        "y_m": 5e-05,
+        "vy_mps": 0.01,
+        "outwardImpulse_Ns": 0.01
+      },
+      "falsePositive": false
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "release_time_s",
+      "passed": true,
+      "observed": 0.0683772233983162,
+      "reference": 0.0683772233983162
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "release_height_m",
+      "passed": true,
+      "observed": 0.002,
+      "reference": 0.002
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "release_velocity_mps",
+      "passed": true,
+      "observed": 0.031622776601683805,
+      "reference": 0.031622776601683805
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "release_impulse_Ns",
+      "passed": true,
+      "observed": 0.05,
+      "reference": 0.05
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "release_pulse_side",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "release_inherits_trial_state",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "apex_time_s",
+      "passed": true,
+      "observed": 0.1,
+      "reference": 0.1
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "apex_height_m",
+      "passed": true,
+      "observed": 0.0025000000000000005,
+      "reference": 0.0025000000000000005
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "return_time_s",
+      "passed": true,
+      "observed": 0.17071067811865476,
+      "reference": 0.17071067811865476
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "return_incoming_velocity_mps",
+      "passed": true,
+      "observed": -0.07071067811865475,
+      "reference": -0.07071067811865477
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "return_height_m",
+      "passed": true,
+      "observed": 4.336808689942018e-19,
+      "reference": 0.0
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "descending_crossing",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "all_samples_trajectory_mass_and_absorption",
+      "passed": true,
+      "firstInvalid": null
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "candidate_order",
+      "passed": true,
+      "observed": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ],
+      "reference": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ]
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "baseline_positive_sample",
+      "passed": true,
+      "observed": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.005,
+        "y_m": 1.25e-05,
+        "vy_mps": 0.005,
+        "outwardImpulse_Ns": 0.005
+      },
+      "falsePositive": false
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "release_time_s",
+      "passed": true,
+      "observed": 0.0683772233983162,
+      "reference": 0.0683772233983162
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "release_height_m",
+      "passed": true,
+      "observed": 0.002,
+      "reference": 0.002
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "release_velocity_mps",
+      "passed": true,
+      "observed": 0.031622776601683805,
+      "reference": 0.031622776601683805
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "release_impulse_Ns",
+      "passed": true,
+      "observed": 0.05,
+      "reference": 0.05
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "release_pulse_side",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "release_inherits_trial_state",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "apex_time_s",
+      "passed": true,
+      "observed": 0.1,
+      "reference": 0.1
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "apex_height_m",
+      "passed": true,
+      "observed": 0.0025000000000000005,
+      "reference": 0.0025000000000000005
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "return_time_s",
+      "passed": true,
+      "observed": 0.17071067811865476,
+      "reference": 0.17071067811865476
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "return_incoming_velocity_mps",
+      "passed": true,
+      "observed": -0.07071067811865475,
+      "reference": -0.07071067811865477
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "return_height_m",
+      "passed": true,
+      "observed": 4.336808689942018e-19,
+      "reference": 0.0
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "descending_crossing",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "all_samples_trajectory_mass_and_absorption",
+      "passed": true,
+      "firstInvalid": null
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "candidate_order",
+      "passed": true,
+      "observed": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ],
+      "reference": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ]
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "baseline_positive_sample",
+      "passed": true,
+      "observed": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.01,
+        "y_m": 2.4500000000000003e-05,
+        "vy_mps": 0.007,
+        "outwardImpulse_Ns": 0.007
+      },
+      "falsePositive": false
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "release_time_s",
+      "passed": true,
+      "observed": 0.06837722339831621,
+      "reference": 0.0683772233983162
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "release_height_m",
+      "passed": true,
+      "observed": 0.002,
+      "reference": 0.002
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "release_velocity_mps",
+      "passed": true,
+      "observed": 0.03162277660168378,
+      "reference": 0.031622776601683805
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "release_impulse_Ns",
+      "passed": true,
+      "observed": 0.049999999999999996,
+      "reference": 0.05
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "release_pulse_side",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "release_inherits_trial_state",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "apex_time_s",
+      "passed": true,
+      "observed": 0.09999999999999999,
+      "reference": 0.1
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "apex_height_m",
+      "passed": true,
+      "observed": 0.0024999999999999996,
+      "reference": 0.0025000000000000005
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "return_time_s",
+      "passed": true,
+      "observed": 0.17071067811865476,
+      "reference": 0.17071067811865476
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "return_incoming_velocity_mps",
+      "passed": true,
+      "observed": -0.07071067811865477,
+      "reference": -0.07071067811865477
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "return_height_m",
+      "passed": true,
+      "observed": -1.3010426069826053e-18,
+      "reference": 0.0
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "descending_crossing",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 10,
+      "check": "all_samples_trajectory_mass_and_absorption",
+      "passed": true,
+      "firstInvalid": null
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "candidate_order",
+      "passed": true,
+      "observed": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ],
+      "reference": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ]
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "baseline_positive_sample",
+      "passed": true,
+      "observed": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.005,
+        "y_m": 2e-06,
+        "vy_mps": 0.002,
+        "outwardImpulse_Ns": 0.002
+      },
+      "falsePositive": false
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "release_time_s",
+      "passed": true,
+      "observed": 0.06837722339831621,
+      "reference": 0.0683772233983162
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "release_height_m",
+      "passed": true,
+      "observed": 0.002,
+      "reference": 0.002
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "release_velocity_mps",
+      "passed": true,
+      "observed": 0.03162277660168378,
+      "reference": 0.031622776601683805
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "release_impulse_Ns",
+      "passed": true,
+      "observed": 0.049999999999999996,
+      "reference": 0.05
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "release_pulse_side",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "release_inherits_trial_state",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "apex_time_s",
+      "passed": true,
+      "observed": 0.09999999999999999,
+      "reference": 0.1
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "apex_height_m",
+      "passed": true,
+      "observed": 0.0024999999999999996,
+      "reference": 0.0025000000000000005
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "return_time_s",
+      "passed": true,
+      "observed": 0.17071067811865476,
+      "reference": 0.17071067811865476
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "return_incoming_velocity_mps",
+      "passed": true,
+      "observed": -0.07071067811865477,
+      "reference": -0.07071067811865477
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "return_height_m",
+      "passed": true,
+      "observed": -1.3010426069826053e-18,
+      "reference": 0.0
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "descending_crossing",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 50,
+      "dt_ms": 5,
+      "check": "all_samples_trajectory_mass_and_absorption",
+      "passed": true,
+      "firstInvalid": null
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "candidate_order",
+      "passed": true,
+      "observed": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ],
+      "reference": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ]
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "baseline_positive_sample",
+      "passed": true,
+      "observed": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.01,
+        "y_m": 5e-05,
+        "vy_mps": 0.01,
+        "outwardImpulse_Ns": 0.01
+      },
+      "falsePositive": false
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "release_time_s",
+      "passed": true,
+      "observed": 0.0632455532033676,
+      "reference": 0.06324555320336758
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "release_height_m",
+      "passed": true,
+      "observed": 0.0020000000000000005,
+      "reference": 0.002
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "release_velocity_mps",
+      "passed": true,
+      "observed": 0.0632455532033676,
+      "reference": 0.06324555320336758
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "release_impulse_Ns",
+      "passed": true,
+      "observed": 0.0632455532033676,
+      "reference": 0.06324555320336758
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "release_pulse_side",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "release_inherits_trial_state",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "apex_time_s",
+      "passed": true,
+      "observed": 0.2,
+      "reference": 0.2
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "apex_height_m",
+      "passed": true,
+      "observed": 0.010000000000000002,
+      "reference": 0.010000000000000002
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "return_time_s",
+      "passed": true,
+      "observed": 0.3414213562373095,
+      "reference": 0.3414213562373095
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "return_incoming_velocity_mps",
+      "passed": true,
+      "observed": -0.1414213562373095,
+      "reference": -0.14142135623730953
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "return_height_m",
+      "passed": true,
+      "observed": 1.734723475976807e-18,
+      "reference": 0.0
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "descending_crossing",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "all_samples_trajectory_mass_and_absorption",
+      "passed": true,
+      "firstInvalid": null
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "candidate_order",
+      "passed": true,
+      "observed": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ],
+      "reference": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ]
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "baseline_positive_sample",
+      "passed": true,
+      "observed": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.005,
+        "y_m": 1.25e-05,
+        "vy_mps": 0.005,
+        "outwardImpulse_Ns": 0.005
+      },
+      "falsePositive": false
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "release_time_s",
+      "passed": true,
+      "observed": 0.0632455532033676,
+      "reference": 0.06324555320336758
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "release_height_m",
+      "passed": true,
+      "observed": 0.0020000000000000005,
+      "reference": 0.002
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "release_velocity_mps",
+      "passed": true,
+      "observed": 0.0632455532033676,
+      "reference": 0.06324555320336758
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "release_impulse_Ns",
+      "passed": true,
+      "observed": 0.0632455532033676,
+      "reference": 0.06324555320336758
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "release_pulse_side",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "release_inherits_trial_state",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "apex_time_s",
+      "passed": true,
+      "observed": 0.2,
+      "reference": 0.2
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "apex_height_m",
+      "passed": true,
+      "observed": 0.010000000000000002,
+      "reference": 0.010000000000000002
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "return_time_s",
+      "passed": true,
+      "observed": 0.3414213562373095,
+      "reference": 0.3414213562373095
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "return_incoming_velocity_mps",
+      "passed": true,
+      "observed": -0.1414213562373095,
+      "reference": -0.14142135623730953
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "return_height_m",
+      "passed": true,
+      "observed": 1.734723475976807e-18,
+      "reference": 0.0
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "descending_crossing",
+      "passed": true
+    },
+    {
+      "phase_ms": 0,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "all_samples_trajectory_mass_and_absorption",
+      "passed": true,
+      "firstInvalid": null
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "candidate_order",
+      "passed": true,
+      "observed": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ],
+      "reference": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ]
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "baseline_positive_sample",
+      "passed": true,
+      "observed": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.01,
+        "y_m": 2.4500000000000003e-05,
+        "vy_mps": 0.007,
+        "outwardImpulse_Ns": 0.007
+      },
+      "falsePositive": false
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "release_time_s",
+      "passed": true,
+      "observed": 0.0632455532033676,
+      "reference": 0.06324555320336758
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "release_height_m",
+      "passed": true,
+      "observed": 0.0020000000000000005,
+      "reference": 0.002
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "release_velocity_mps",
+      "passed": true,
+      "observed": 0.0632455532033676,
+      "reference": 0.06324555320336758
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "release_impulse_Ns",
+      "passed": true,
+      "observed": 0.0632455532033676,
+      "reference": 0.06324555320336758
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "release_pulse_side",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "release_inherits_trial_state",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "apex_time_s",
+      "passed": true,
+      "observed": 0.19999999999999998,
+      "reference": 0.2
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "apex_height_m",
+      "passed": true,
+      "observed": 0.009999999999999998,
+      "reference": 0.010000000000000002
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "return_time_s",
+      "passed": true,
+      "observed": 0.3414213562373095,
+      "reference": 0.3414213562373095
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "return_incoming_velocity_mps",
+      "passed": true,
+      "observed": -0.14142135623730953,
+      "reference": -0.14142135623730953
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "return_height_m",
+      "passed": true,
+      "observed": -5.204170427930421e-18,
+      "reference": 0.0
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "descending_crossing",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 10,
+      "check": "all_samples_trajectory_mass_and_absorption",
+      "passed": true,
+      "firstInvalid": null
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "candidate_order",
+      "passed": true,
+      "observed": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ],
+      "reference": [
+        "F_TO_P",
+        "APEX",
+        "P_TO_F"
+      ]
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "baseline_positive_sample",
+      "passed": true,
+      "observed": {
+        "kind": "FIRST_POSITIVE_SAMPLE",
+        "time_s": 0.005,
+        "y_m": 2e-06,
+        "vy_mps": 0.002,
+        "outwardImpulse_Ns": 0.002
+      },
+      "falsePositive": false
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "release_time_s",
+      "passed": true,
+      "observed": 0.0632455532033676,
+      "reference": 0.06324555320336758
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "release_height_m",
+      "passed": true,
+      "observed": 0.0020000000000000005,
+      "reference": 0.002
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "release_velocity_mps",
+      "passed": true,
+      "observed": 0.0632455532033676,
+      "reference": 0.06324555320336758
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "release_impulse_Ns",
+      "passed": true,
+      "observed": 0.0632455532033676,
+      "reference": 0.06324555320336758
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "release_pulse_side",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "release_inherits_trial_state",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "apex_time_s",
+      "passed": true,
+      "observed": 0.19999999999999998,
+      "reference": 0.2
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "apex_height_m",
+      "passed": true,
+      "observed": 0.009999999999999998,
+      "reference": 0.010000000000000002
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "return_time_s",
+      "passed": true,
+      "observed": 0.3414213562373095,
+      "reference": 0.3414213562373095
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "return_incoming_velocity_mps",
+      "passed": true,
+      "observed": -0.14142135623730953,
+      "reference": -0.14142135623730953
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "return_height_m",
+      "passed": true,
+      "observed": -5.204170427930421e-18,
+      "reference": 0.0
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "descending_crossing",
+      "passed": true
+    },
+    {
+      "phase_ms": 3,
+      "pulse_ms": 100,
+      "dt_ms": 5,
+      "check": "all_samples_trajectory_mass_and_absorption",
+      "passed": true,
+      "firstInvalid": null
+    },
+    {
+      "pulse_ms": 20,
+      "check": "all_steps_and_phases_event_order",
+      "passed": true
+    },
+    {
+      "pulse_ms": 20,
+      "check": "all_steps_and_phases_event_times",
+      "passed": true,
+      "maxDifference_s": 1.3877787807814457e-17
+    },
+    {
+      "pulse_ms": 50,
+      "check": "all_steps_and_phases_event_order",
+      "passed": true
+    },
+    {
+      "pulse_ms": 50,
+      "check": "all_steps_and_phases_event_times",
+      "passed": true,
+      "maxDifference_s": 1.3877787807814457e-17
+    },
+    {
+      "pulse_ms": 100,
+      "check": "all_steps_and_phases_event_order",
+      "passed": true
+    },
+    {
+      "pulse_ms": 100,
+      "check": "all_steps_and_phases_event_times",
+      "passed": true,
+      "maxDifference_s": 2.7755575615628914e-17
+    },
+    {
+      "check": "tangent_apex_does_not_publish",
+      "passed": true,
+      "threshold_m": 0.0025000000000000005
+    }
+  ],
+  "firstFailure": null
+}
