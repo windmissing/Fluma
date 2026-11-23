@@ -1,0 +1,487 @@
+{
+  "schema": "T889_PC_BUDGET_AND_VIEW_RECOUNT_V1",
+  "g13OriginalRevision": "a56e4a3c",
+  "g13PeSha256": "ce824652d3d24408b50a55f0de1522fd6eefd63cbaa1fa5f603f35451c66e7f1",
+  "g13Implementation": "555cfe69",
+  "quantumDispatchPlan": {
+    "logical": 820,
+    "physical": 850,
+    "computeBarriers": 850,
+    "op17Slots": 14,
+    "op7Slots": 1,
+    "hotCopyCalls": 29,
+    "fullCopyCalls": 36,
+    "hotBytes": 3376
+  },
+  "g13Arms": [
+    {
+      "path": "test/reports/t879/f02-full.jsonl",
+      "fileSha256": "520a55e9479eff849e5b391d61191c91d85d4d3515ab367213c44feacdaf7497",
+      "fixtureWholeConfigSHA256": "295c075ebaaab6d857088cf5ff36ebd636cfa3680851fd42068fd52cd24f8bd3",
+      "fixtureSealedConfigSHA256": "6e7b33e68d51277112aef85cac090a69572ecdf4b8cb4dcfae0bef43940f357d",
+      "fixtureStateSHA256": "e1c6b49ef4a23700e483649f43766c29c96366259be5110c2e8ff00c422d1fb1",
+      "qpcFrequencyHz": 10000000,
+      "waitLine": 176,
+      "timestampLine": 177,
+      "drainLine": 179,
+      "nonce": "15858124779617",
+      "lastBusinessWaitReturn": 2,
+      "retireReturn": 2,
+      "deviceDrainReturn": 0,
+      "recordNs": 5866900,
+      "submitCallNs": 22700,
+      "businessNsFromSubmitExit": 245266700,
+      "stopOvershootNs": 1321700,
+      "pollCount": 16,
+      "eachPollRequestedMaxNs": 2000000,
+      "eachPollActualMinNs": 8926300,
+      "eachPollActualMaxNs": 16129800,
+      "maxCallbackGapNs": 17320900,
+      "maxReceiptGapNs": 17320800,
+      "pulseAgeAtStopNs": 15768300,
+      "retireWallNs": 253156900,
+      "retireExitToDrainEnterNs": 5228500,
+      "deviceDrainWallNs": 1207173800,
+      "submitExitToRetireExitNs": 498423600,
+      "submitExitToDeviceDrainExitNs": 1710825900,
+      "quantumGpuExecutionNs": null,
+      "sourceGpuMarkers": null
+    },
+    {
+      "path": "test/reports/t879/f02-hot.jsonl",
+      "fileSha256": "23cabf73a34ebe0dbaa62433b539f64278f9e0c1da27963fffad37cd93ec367a",
+      "fixtureWholeConfigSHA256": "295c075ebaaab6d857088cf5ff36ebd636cfa3680851fd42068fd52cd24f8bd3",
+      "fixtureSealedConfigSHA256": "6e7b33e68d51277112aef85cac090a69572ecdf4b8cb4dcfae0bef43940f357d",
+      "fixtureStateSHA256": "e1c6b49ef4a23700e483649f43766c29c96366259be5110c2e8ff00c422d1fb1",
+      "qpcFrequencyHz": 10000000,
+      "waitLine": 176,
+      "timestampLine": 177,
+      "drainLine": 179,
+      "nonce": "15858524577214",
+      "lastBusinessWaitReturn": 2,
+      "retireReturn": 2,
+      "deviceDrainReturn": 0,
+      "recordNs": 667700,
+      "submitCallNs": 34600,
+      "businessNsFromSubmitExit": 249966500,
+      "stopOvershootNs": 686200,
+      "pollCount": 16,
+      "eachPollRequestedMaxNs": 2000000,
+      "eachPollActualMinNs": 15015300,
+      "eachPollActualMaxNs": 16007800,
+      "maxCallbackGapNs": 30024100,
+      "maxReceiptGapNs": 30023600,
+      "pulseAgeAtStopNs": 15800500,
+      "retireWallNs": 252579500,
+      "retireExitToDrainEnterNs": 262200,
+      "deviceDrainWallNs": 1181534900,
+      "submitExitToRetireExitNs": 502546200,
+      "submitExitToDeviceDrainExitNs": 1684343300,
+      "quantumGpuExecutionNs": null,
+      "sourceGpuMarkers": null
+    },
+    {
+      "path": "test/reports/t879/f03-full.jsonl",
+      "fileSha256": "250a82757e845902333c30998c8932469dfb12599941ba9a8a955a8d6ccc20c9",
+      "fixtureWholeConfigSHA256": "a099bf256dcfc4ff9a5fde75a70ab35121d49bc80c37b05b31f9196b1453b33e",
+      "fixtureSealedConfigSHA256": "26051404767c425a8d823881b86ca561079b15151cc5fe82b585d8af935cdcef",
+      "fixtureStateSHA256": "50e44c46bc44dcc0ca0afda19ab67d11caf42bef983f5c5f946277fbe51e87fa",
+      "qpcFrequencyHz": 10000000,
+      "waitLine": 176,
+      "timestampLine": 177,
+      "drainLine": 179,
+      "nonce": "15858545006903",
+      "lastBusinessWaitReturn": 2,
+      "retireReturn": 2,
+      "deviceDrainReturn": 0,
+      "recordNs": 879000,
+      "submitCallNs": 65200,
+      "businessNsFromSubmitExit": 252413000,
+      "stopOvershootNs": 3382500,
+      "pollCount": 16,
+      "eachPollRequestedMaxNs": 2000000,
+      "eachPollActualMinNs": 14923900,
+      "eachPollActualMaxNs": 16023100,
+      "maxCallbackGapNs": 30386600,
+      "maxReceiptGapNs": 30386100,
+      "pulseAgeAtStopNs": 29545600,
+      "retireWallNs": 253207800,
+      "retireExitToDrainEnterNs": 240400,
+      "deviceDrainWallNs": 1016475300,
+      "submitExitToRetireExitNs": 505620900,
+      "submitExitToDeviceDrainExitNs": 1522336600,
+      "quantumGpuExecutionNs": null,
+      "sourceGpuMarkers": null
+    },
+    {
+      "path": "test/reports/t879/f03-hot.jsonl",
+      "fileSha256": "c315a8c4ad303f7d068ab9f38947ae2522c7e1084418c79cd5484555b27a3b96",
+      "fixtureWholeConfigSHA256": "a099bf256dcfc4ff9a5fde75a70ab35121d49bc80c37b05b31f9196b1453b33e",
+      "fixtureSealedConfigSHA256": "26051404767c425a8d823881b86ca561079b15151cc5fe82b585d8af935cdcef",
+      "fixtureStateSHA256": "50e44c46bc44dcc0ca0afda19ab67d11caf42bef983f5c5f946277fbe51e87fa",
+      "qpcFrequencyHz": 10000000,
+      "waitLine": 176,
+      "timestampLine": 177,
+      "drainLine": 179,
+      "nonce": "15864302044919",
+      "lastBusinessWaitReturn": 2,
+      "retireReturn": 2,
+      "deviceDrainReturn": 0,
+      "recordNs": 632600,
+      "submitCallNs": 23000,
+      "businessNsFromSubmitExit": 254129700,
+      "stopOvershootNs": 4802100,
+      "pollCount": 16,
+      "eachPollRequestedMaxNs": 2000000,
+      "eachPollActualMinNs": 15006800,
+      "eachPollActualMaxNs": 17716500,
+      "maxCallbackGapNs": 30786100,
+      "maxReceiptGapNs": 30786900,
+      "pulseAgeAtStopNs": 1492100,
+      "retireWallNs": 263999800,
+      "retireExitToDrainEnterNs": 276700,
+      "deviceDrainWallNs": 1298346600,
+      "submitExitToRetireExitNs": 518129600,
+      "submitExitToDeviceDrainExitNs": 1816752900,
+      "quantumGpuExecutionNs": null,
+      "sourceGpuMarkers": null
+    },
+    {
+      "path": "test/reports/t879/f05-full.jsonl",
+      "fileSha256": "4d8d9b572395671507332dd71a2399a9770b953e909d92dc5b69d0f1e92ecc66",
+      "fixtureWholeConfigSHA256": "da06c19e56e6dc713e016396d8939e1de24ac49cd4b3464dac109f985bf8b045",
+      "fixtureSealedConfigSHA256": "4b093f6f647681b43c8b79a398d84a1aeb244ba9080df8004e9f1d1c7adf2adc",
+      "fixtureStateSHA256": "84685d65ceb5a804edd1c75a9cbb31e6a7c3c7a2042d1623b036624558c2e0ff",
+      "qpcFrequencyHz": 10000000,
+      "waitLine": 189,
+      "timestampLine": 190,
+      "drainLine": 193,
+      "nonce": "15864331901528",
+      "lastBusinessWaitReturn": 2,
+      "retireReturn": 2,
+      "deviceDrainReturn": 0,
+      "recordNs": 646800,
+      "submitCallNs": 20900,
+      "businessNsFromSubmitExit": 249308400,
+      "stopOvershootNs": 1100,
+      "pollCount": 17,
+      "eachPollRequestedMaxNs": 2000000,
+      "eachPollActualMinNs": 708000,
+      "eachPollActualMaxNs": 16273500,
+      "maxCallbackGapNs": 26547100,
+      "maxReceiptGapNs": 26547300,
+      "pulseAgeAtStopNs": 12546000,
+      "retireWallNs": 251001700,
+      "retireExitToDrainEnterNs": 22248700,
+      "deviceDrainWallNs": 1589650200,
+      "submitExitToRetireExitNs": 500310200,
+      "submitExitToDeviceDrainExitNs": 2112209100,
+      "quantumGpuExecutionNs": null,
+      "sourceGpuMarkers": {
+        "waitLine": 186,
+        "timestampLine": 188,
+        "acceptedRoot": "15864331242070",
+        "rawTicks": {
+          "UPLOAD_DONE": "2088873233",
+          "ACTUAL_BEGIN": "2088908857",
+          "ACTUAL_END": "2088920181",
+          "REPLAY_BEGIN": "2088920190",
+          "REPLAY_END": "2088930844",
+          "COMPARE_DONE": "2088934496",
+          "PACK_DONE": "2088963533",
+          "BEFORE_TAIL": "2089491014",
+          "BUSINESS_COPIES_DONE": "2089493819"
+        },
+        "validBits": 36,
+        "periodNs": 83.333,
+        "uploadToBusinessCopiesDoneNs": 51715293,
+        "uploadToLastAvailablePointNs": 51715293,
+        "lastAvailablePoint": "BUSINESS_COPIES_DONE",
+        "actualSpanNs": 943663,
+        "replaySpanNs": 887830,
+        "packToBeforeTailSpanNs": 43956574,
+        "sourceV2Bytes": 1792768,
+        "sourceV2Sha256": "23f34a499ecb03078bbefbe0f319abefa8b61b456603864d64c90f477c4d3c95"
+      }
+    },
+    {
+      "path": "test/reports/t879/f05-hot.jsonl",
+      "fileSha256": "123c4f76285d294edf16aaa8e9280e214642706f85032c71cd2c17ce5ac92d51",
+      "fixtureWholeConfigSHA256": "da06c19e56e6dc713e016396d8939e1de24ac49cd4b3464dac109f985bf8b045",
+      "fixtureSealedConfigSHA256": "4b093f6f647681b43c8b79a398d84a1aeb244ba9080df8004e9f1d1c7adf2adc",
+      "fixtureStateSHA256": "84685d65ceb5a804edd1c75a9cbb31e6a7c3c7a2042d1623b036624558c2e0ff",
+      "qpcFrequencyHz": 10000000,
+      "waitLine": 190,
+      "timestampLine": 191,
+      "drainLine": 194,
+      "nonce": "15864358133467",
+      "lastBusinessWaitReturn": 2,
+      "retireReturn": 2,
+      "deviceDrainReturn": 0,
+      "recordNs": 596200,
+      "submitCallNs": 24700,
+      "businessNsFromSubmitExit": 255196900,
+      "stopOvershootNs": 5832100,
+      "pollCount": 17,
+      "eachPollRequestedMaxNs": 2000000,
+      "eachPollActualMinNs": 4217300,
+      "eachPollActualMaxNs": 16209900,
+      "maxCallbackGapNs": 18272400,
+      "maxReceiptGapNs": 18273000,
+      "pulseAgeAtStopNs": 15764600,
+      "retireWallNs": 265220300,
+      "retireExitToDrainEnterNs": 25945400,
+      "deviceDrainWallNs": 1589097400,
+      "submitExitToRetireExitNs": 520417200,
+      "submitExitToDeviceDrainExitNs": 2135460000,
+      "quantumGpuExecutionNs": null,
+      "sourceGpuMarkers": {
+        "waitLine": 186,
+        "timestampLine": 189,
+        "acceptedRoot": "15864357394369",
+        "rawTicks": {
+          "UPLOAD_DONE": "2120254630",
+          "ACTUAL_BEGIN": "2120289780",
+          "ACTUAL_END": "2120301387",
+          "REPLAY_BEGIN": "2120301400",
+          "REPLAY_END": "2120313501",
+          "COMPARE_DONE": "2120317946",
+          "PACK_DONE": "2120346716",
+          "BEFORE_TAIL": "2120944206",
+          "BUSINESS_COPIES_DONE": "2120944310",
+          "COLD_COPIES_DONE": "2120952284"
+        },
+        "validBits": 36,
+        "periodNs": 83.333,
+        "uploadToBusinessCopiesDoneNs": 57473103,
+        "uploadToLastAvailablePointNs": 58137601,
+        "lastAvailablePoint": "COLD_COPIES_DONE",
+        "actualSpanNs": 967246,
+        "replaySpanNs": 1008413,
+        "packToBeforeTailSpanNs": 49790634,
+        "sourceV2Bytes": 1792768,
+        "sourceV2Sha256": "19e6aaf9db77b33a9b2631eec6e6963abb96d4352ded0cd19773bbb823dad562"
+      }
+    }
+  ],
+  "m1OriginalRevision": "c24df15b",
+  "m1PeSha256": "6ec0ec5c9e401ff4f7000e305f4acc989c2e5f9db35b8e6bfc97474ec8669871",
+  "m1Views": [
+    {
+      "path": "test/reports/t884/dual-lease.jsonl",
+      "fileSha256": "a07a7f7d0c462ec428a7f20dcf919710f07cfe60bc9983090364ac2a1b464a76",
+      "lineCount": 77,
+      "offerQuoteRepairCount": 42,
+      "readyLines": [
+        26
+      ],
+      "upLines": [
+        76
+      ],
+      "queuedRoots": 3,
+      "presentSpanNs": 222977200,
+      "sourceCommit": [
+        "1"
+      ],
+      "stockQ20": [
+        137873
+      ],
+      "activeSandAcrossRootQpc": {
+        "beforeUp": {
+          "2": 3
+        },
+        "afterUp": {},
+        "afterUpByPresentExitQpc": {}
+      },
+      "sandLiveTransitions": [],
+      "acceptedAngleIndices": [
+        0
+      ],
+      "settledAfterAndFlightAfterPairs": [
+        [
+          0,
+          0
+        ]
+      ],
+      "pixels": [
+        "0xff525355"
+      ],
+      "terminals": [
+        {
+          "line": 74,
+          "state": "FAILED",
+          "stage": "M1_QUANTUM_SUBMIT",
+          "detail": "M1_QUANTUM_CONTINUATION_FAILED",
+          "quantumReject": "ROOT_DEADLINE"
+        },
+        {
+          "line": 75,
+          "state": "FAILED",
+          "stage": "M1_QUANTUM_SUBMIT",
+          "detail": "M1_QUANTUM_CONTINUATION_FAILED",
+          "quantumReject": "ROOT_DEADLINE"
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t884/dual-release.jsonl",
+      "fileSha256": "56c781308709c0dc93bdc9dedd63a136f4e96b3d2045fc2028757319917741b4",
+      "lineCount": 851,
+      "offerQuoteRepairCount": 529,
+      "readyLines": [
+        26
+      ],
+      "upLines": [
+        692
+      ],
+      "queuedRoots": 291,
+      "presentSpanNs": 11759942600,
+      "sourceCommit": [
+        "1"
+      ],
+      "stockQ20": [
+        128878
+      ],
+      "activeSandAcrossRootQpc": {
+        "beforeUp": {
+          "0": 55,
+          "1": 84
+        },
+        "afterUp": {
+          "0": 152
+        },
+        "afterUpByPresentExitQpc": {
+          "0": 153
+        }
+      },
+      "sandLiveTransitions": [
+        {
+          "priorLine": 442,
+          "line": 446,
+          "activeBefore": 1,
+          "activeAfter": 0,
+          "root": "15872843474793",
+          "stockQ20": 128878,
+          "rootQpc": "15872843474793"
+        }
+      ],
+      "acceptedAngleIndices": [
+        0
+      ],
+      "settledAfterAndFlightAfterPairs": [
+        [
+          0,
+          0
+        ]
+      ],
+      "pixels": [
+        "0xff525355"
+      ],
+      "terminals": [
+        {
+          "line": 851,
+          "state": "M1_QUANTUM_PRESENT_RETIRED",
+          "stage": "M1_QUANTUM_SUBMIT",
+          "detail": "",
+          "quantumReject": "WINDOW_REVOKED"
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t884/empty-idle.jsonl",
+      "fileSha256": "bcfc30a9c8f57e772f873155701ae0cd457e8ca14de8c773f987c1f6f1668034",
+      "lineCount": 27,
+      "offerQuoteRepairCount": 0,
+      "readyLines": [
+        26
+      ],
+      "upLines": [],
+      "queuedRoots": 0,
+      "presentSpanNs": null,
+      "sourceCommit": [],
+      "stockQ20": [],
+      "activeSandAcrossRootQpc": {
+        "beforeUp": {},
+        "afterUp": {},
+        "afterUpByPresentExitQpc": {}
+      },
+      "sandLiveTransitions": [],
+      "acceptedAngleIndices": [],
+      "settledAfterAndFlightAfterPairs": [],
+      "pixels": [],
+      "terminals": [
+        {
+          "line": 27,
+          "state": "FAILED",
+          "stage": "M1_POINTER_WAIT",
+          "detail": "ATTEMPT_REVOKED",
+          "quantumReject": null
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t884/longwindow.jsonl",
+      "fileSha256": "1d349f85ca12e21b3cc8b314e13ee0fde09eb73dc282ca7f96d45cbbaf047715",
+      "lineCount": 2526,
+      "offerQuoteRepairCount": 1774,
+      "readyLines": [
+        26
+      ],
+      "upLines": [
+        2292
+      ],
+      "queuedRoots": 721,
+      "presentSpanNs": 28748593100,
+      "sourceCommit": [
+        "1"
+      ],
+      "stockQ20": [
+        139681
+      ],
+      "activeSandAcrossRootQpc": {
+        "beforeUp": {
+          "0": 408,
+          "2": 84
+        },
+        "afterUp": {
+          "0": 229
+        },
+        "afterUpByPresentExitQpc": {
+          "0": 230
+        }
+      },
+      "sandLiveTransitions": [
+        {
+          "priorLine": 457,
+          "line": 460,
+          "activeBefore": 2,
+          "activeAfter": 0,
+          "root": "15871744663027",
+          "stockQ20": 139681,
+          "rootQpc": "15871744663027"
+        }
+      ],
+      "acceptedAngleIndices": [
+        0
+      ],
+      "settledAfterAndFlightAfterPairs": [
+        [
+          0,
+          0
+        ]
+      ],
+      "pixels": [
+        "0xff525355"
+      ],
+      "terminals": [
+        {
+          "line": 2526,
+          "state": "M1_QUANTUM_PRESENT_RETIRED",
+          "stage": "M1_QUANTUM_SUBMIT",
+          "detail": "",
+          "quantumReject": "WINDOW_REVOKED"
+        }
+      ]
+    }
+  ]
+}
