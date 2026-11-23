@@ -1,0 +1,252 @@
+{
+  "schema": "T879_FULL_HOT_SEGMENTATION_V1",
+  "pe": {
+    "path": ".codex/local-test/t877-release.exe",
+    "sha256": "ce824652d3d24408b50a55f0de1522fd6eefd63cbaa1fa5f603f35451c66e7f1"
+  },
+  "machine": "Intel UHD Graphics 630 (deviceUUID 8680983e-0200-0000-0000-000000000000, driver 31.0.101.2140) — same iGPU as T868 baseline; discrete GPU NOT mixed in (per T878)",
+  "fixtures": "T868 frozen F02/F03/F05 config/state (same SHA)",
+  "arms": {
+    "f02-full": {
+      "rows": 180,
+      "op65": "QUALIFIED",
+      "firstStop": "GRANT_DEADLINE",
+      "recordMs": 5.867,
+      "submitVkResult": 0,
+      "pollCount": 16,
+      "businessWaitMs": 245.0,
+      "lastBusinessWaitVk": 2,
+      "retireWaitVk": 2,
+      "retireWaitMs": 253.2,
+      "pulseAgeNs": "15768300",
+      "maxCallbackGapNs": "17320900",
+      "gpuTimestamps": [
+        {
+          "state": "FENCE_NOT_SIGNALED",
+          "validBits": 36,
+          "periodNs": 83.333,
+          "points": 17,
+          "available": 0
+        }
+      ],
+      "drainMs": 1207.2,
+      "drainVk": 0,
+      "terminal": [
+        "T833_ROOT_RETIRE_WAIT",
+        "FAILED"
+      ]
+    },
+    "f02-hot": {
+      "rows": 180,
+      "op65": "QUALIFIED",
+      "firstStop": "GRANT_DEADLINE",
+      "recordMs": 0.668,
+      "submitVkResult": 0,
+      "pollCount": 16,
+      "businessWaitMs": 249.8,
+      "lastBusinessWaitVk": 2,
+      "retireWaitVk": 2,
+      "retireWaitMs": 252.6,
+      "pulseAgeNs": "15800500",
+      "maxCallbackGapNs": "30024100",
+      "gpuTimestamps": [
+        {
+          "state": "FENCE_NOT_SIGNALED",
+          "validBits": 36,
+          "periodNs": 83.333,
+          "points": 17,
+          "available": 0
+        }
+      ],
+      "drainMs": 1181.5,
+      "drainVk": 0,
+      "terminal": [
+        "T833_ROOT_RETIRE_WAIT",
+        "FAILED"
+      ]
+    },
+    "f03-full": {
+      "rows": 180,
+      "op65": "QUALIFIED",
+      "firstStop": "GRANT_DEADLINE",
+      "recordMs": 0.879,
+      "submitVkResult": 0,
+      "pollCount": 16,
+      "businessWaitMs": 252.1,
+      "lastBusinessWaitVk": 2,
+      "retireWaitVk": 2,
+      "retireWaitMs": 253.2,
+      "pulseAgeNs": "29545600",
+      "maxCallbackGapNs": "30386600",
+      "gpuTimestamps": [
+        {
+          "state": "FENCE_NOT_SIGNALED",
+          "validBits": 36,
+          "periodNs": 83.333,
+          "points": 17,
+          "available": 0
+        }
+      ],
+      "drainMs": 1016.5,
+      "drainVk": 0,
+      "terminal": [
+        "T833_ROOT_RETIRE_WAIT",
+        "FAILED"
+      ]
+    },
+    "f03-hot": {
+      "rows": 180,
+      "op65": "QUALIFIED",
+      "firstStop": "GRANT_DEADLINE",
+      "recordMs": 0.633,
+      "submitVkResult": 0,
+      "pollCount": 16,
+      "businessWaitMs": 253.9,
+      "lastBusinessWaitVk": 2,
+      "retireWaitVk": 2,
+      "retireWaitMs": 264.0,
+      "pulseAgeNs": "1492100",
+      "maxCallbackGapNs": "30786100",
+      "gpuTimestamps": [
+        {
+          "state": "FENCE_NOT_SIGNALED",
+          "validBits": 36,
+          "periodNs": 83.333,
+          "points": 17,
+          "available": 0
+        }
+      ],
+      "drainMs": 1298.3,
+      "drainVk": 0,
+      "terminal": [
+        "T833_ROOT_RETIRE_WAIT",
+        "FAILED"
+      ]
+    },
+    "f05-full": {
+      "rows": 194,
+      "op65": "QUALIFIED",
+      "firstStop": "GRANT_DEADLINE",
+      "recordMs": 0.647,
+      "submitVkResult": 0,
+      "pollCount": 17,
+      "businessWaitMs": 249.2,
+      "lastBusinessWaitVk": 2,
+      "retireWaitVk": 2,
+      "retireWaitMs": 251.0,
+      "pulseAgeNs": "12546000",
+      "maxCallbackGapNs": "26547100",
+      "gpuTimestamps": [
+        {
+          "state": "READ_AFTER_FENCE",
+          "validBits": 36,
+          "periodNs": 83.333,
+          "points": 9,
+          "available": 9
+        },
+        {
+          "state": "FENCE_NOT_SIGNALED",
+          "validBits": 36,
+          "periodNs": 83.333,
+          "points": 17,
+          "available": 0
+        }
+      ],
+      "sourceAccepted": {
+        "sha256": "23f34a499ecb03078bbefbe0f319abefa8b61b456603864d64c90f477c4d3c95",
+        "fileBytes": 1792768,
+        "schema": "PC_G13_T833_RAW_V2",
+        "segments": [
+          "BASE",
+          "CANDIDATE",
+          "REPLAY",
+          "WORK",
+          "CTRL",
+          "PACK0",
+          "PACK1"
+        ]
+      },
+      "drainMs": 1589.7,
+      "drainVk": 0,
+      "sourceArchiveFile": {
+        "name": "f05-full-capture.bin.source",
+        "bytes": 1792768
+      },
+      "terminal": [
+        "T833_ROOT_RETIRE_WAIT",
+        "FAILED"
+      ]
+    },
+    "f05-hot": {
+      "rows": 195,
+      "op65": "QUALIFIED",
+      "firstStop": "GRANT_DEADLINE",
+      "recordMs": 0.596,
+      "submitVkResult": 0,
+      "pollCount": 17,
+      "businessWaitMs": 255.0,
+      "lastBusinessWaitVk": 2,
+      "retireWaitVk": 2,
+      "retireWaitMs": 265.2,
+      "pulseAgeNs": "15764600",
+      "maxCallbackGapNs": "18272400",
+      "gpuTimestamps": [
+        {
+          "state": "READ_AFTER_FENCE",
+          "validBits": 36,
+          "periodNs": 83.333,
+          "points": 10,
+          "available": 10
+        },
+        {
+          "state": "FENCE_NOT_SIGNALED",
+          "validBits": 36,
+          "periodNs": 83.333,
+          "points": 17,
+          "available": 0
+        }
+      ],
+      "sourceAccepted": {
+        "sha256": "19e6aaf9db77b33a9b2631eec6e6963abb96d4352ded0cd19773bbb823dad562",
+        "fileBytes": 1792768,
+        "schema": "PC_G13_T833_RAW_V2",
+        "segments": [
+          "BASE",
+          "CANDIDATE",
+          "REPLAY",
+          "WORK",
+          "CTRL",
+          "PACK0",
+          "PACK1"
+        ]
+      },
+      "drainMs": 1589.1,
+      "drainVk": 0,
+      "sourceArchiveFile": {
+        "name": "f05-hot-capture.bin.source",
+        "bytes": 1792768
+      },
+      "terminal": [
+        "T833_ROOT_RETIRE_WAIT",
+        "FAILED"
+      ]
+    }
+  },
+  "findings": {
+    "ATTRIBUTION_ANSWERED": {
+      "observed": "All six arms: firstStop=GRANT_DEADLINE (NOT pulse/window revocation). Business waits consumed the full 250ms budget (245-255ms over 16 bounded 2ms polls), retire wait 250ms vkResult=2, then DEVICE_DRAIN (vkDeviceWaitIdle) took 1016-1590ms — the true GPU execution time of the 850-dispatch QUANTUM root on this iGPU.",
+      "conclusion": "T873 attribution resolved: the QUANTUM root is GPU-execution-bound at ~1.0-1.6s vs the 250ms budget (4-6x over). Pulses remained healthy (age 1.5-29.5ms, maxCallbackGap up to 30.8ms vs 33ms limit). Not a host/scheduling/pulse issue."
+    },
+    "SOURCE_VS_QUANTUM_GPU_TIME": {
+      "observed": "F05 arms: SOURCE root (16 dispatches) GPU timestamps READ_AFTER_FENCE — actual GPU time 51.7ms (full) / 58.1ms (hot), within the 250ms budget; source archive PC_G13_T833_RAW_V2 (1792768 B, 7 segments incl. PACK0/PACK1) written. QUANTUM root (850 dispatches): FENCE_NOT_SIGNALED in every arm.",
+      "conclusion": "The budget is adequate for SOURCE-scale roots on this iGPU; only the 850-dispatch QUANTUM root exceeds it."
+    },
+    "FULL_VS_HOT": {
+      "observed": "full arms: recordMs 0.65-5.87ms (f02-full 5.87ms includes first-time path); hot arms: recordMs 0.60-0.67ms. Business waits, firstStop, retire, drain statistically indistinguishable (drain 1016-1590ms both modes). f02-full/hot: 1207/1182ms; f03-full/hot: 1016/1298ms; f05-full/hot: 1590/1589ms. The hot mode's reduced in-fence evidence (3376 B vs full seven-segment) does not change the GPU execution bound.",
+      "conclusion": "Evidence-copy strategy (T873 recommendation 3) is NOT the bottleneck on this iGPU — the compute dispatches themselves dominate."
+    },
+    "REACHABLE_DOMAIN": {
+      "observed": "F02/F03/F05 op65 QUALIFIED in all arms (fixture admission intact). F05: SOURCE accepted with V2 archive in both full/hot. F02 (private project) and F03 (periodic shear): quantum-first routes reach submission but no numeric-domain results on this iGPU. GPU timestamps: 36 valid bits, 83.333ns period (query capability present)."
+    }
+  }
+}
