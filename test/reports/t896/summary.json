@@ -1,0 +1,349 @@
+{
+  "schema": "T896_CROSS_MATERIAL_D1_HOSTS_V1",
+  "pe": {
+    "A": {
+      "path": ".codex/local-test/t894-a-release.exe",
+      "sha256": "186a008eec9d7b52771bb9187a362702ccd41df68ef5c129984b76c92fa9f112"
+    },
+    "B": {
+      "path": ".codex/local-test/t894-b-release.exe",
+      "sha256": "f7dab474b8017899f6d3261fd0c96d979b6a8ef18137311e454d3ebdd4faa4af"
+    },
+    "DM2": {
+      "path": ".codex/local-test/t894-dm2-release/pc_sand_dm2_host.exe",
+      "sha256": "5788e027a94d37221ebf28333d85d17f425230df0d133d7ea09bdd3c37ca2653"
+    },
+    "R1": {
+      "path": ".codex/local-test/t894-r1-release/pc_sand_r1_host.exe",
+      "sha256": "4de99b3a0285f21e56e3a6243a081b45bf9cbf59e9a11d4f295fb04fc62d8cf0"
+    },
+    "input": {
+      "path": ".codex/local-test/t894-model-source.u32le",
+      "sha256": "3580ccb1a4199f41708bd9a790f8997f77c4af87dac1743b08c636264e22f55a"
+    }
+  },
+  "subA": {
+    "a-forward2": {
+      "admissions": [
+        {
+          "material": 0,
+          "Q": 128052
+        },
+        {
+          "material": 0,
+          "Q": 128052
+        },
+        {
+          "material": 0,
+          "Q": 132380
+        },
+        {
+          "material": 1,
+          "Q": 140686
+        }
+      ],
+      "leaseStates": [
+        [
+          "128052",
+          "0",
+          1,
+          0
+        ],
+        [
+          "260432",
+          "0",
+          3,
+          0
+        ],
+        [
+          "260432",
+          "140686",
+          3,
+          1
+        ]
+      ],
+      "conservation": true,
+      "recoveries": [
+        {
+          "oldSession": "2",
+          "reason": "LATE_FENCE_SIGNAL",
+          "failedNonce": "15967448976730",
+          "oldRetiredQpc": "15967449590910",
+          "submitted": true,
+          "returnedCredits": 6,
+          "clearedCarry": 504112000,
+          "balanced": true,
+          "lastAcceptedRoot": "15967448303630",
+          "lastPresentedRoot": "15967448303630"
+        },
+        {
+          "oldSession": "5",
+          "reason": "ROOT_DEADLINE",
+          "failedNonce": "15967478071707",
+          "oldRetiredQpc": "15967478714325",
+          "submitted": true,
+          "returnedCredits": 5,
+          "clearedCarry": 302200000,
+          "balanced": true,
+          "lastAcceptedRoot": "15967477348901",
+          "lastPresentedRoot": "15967477348901"
+        }
+      ],
+      "quanta": 8,
+      "states": {
+        "M1_QUANTUM_PRESENT_QUEUED": 6,
+        "M1_STALE_WAIT_NEW_INPUT": 2
+      },
+      "retired": true
+    },
+    "a-reverse": {
+      "admissions": [
+        {
+          "material": 1,
+          "Q": 133102
+        },
+        {
+          "material": 1,
+          "Q": 133102
+        },
+        {
+          "material": 1,
+          "Q": 100897
+        },
+        {
+          "material": 0,
+          "Q": 76720
+        }
+      ],
+      "leaseStates": [
+        [
+          "0",
+          "133102",
+          0,
+          1
+        ],
+        [
+          "0",
+          "233999",
+          0,
+          2
+        ],
+        [
+          "76720",
+          "233999",
+          1,
+          2
+        ]
+      ],
+      "conservation": true,
+      "recoveries": [
+        {
+          "oldSession": "2",
+          "reason": "ROOT_DEADLINE",
+          "failedNonce": "15967830259680",
+          "oldRetiredQpc": "15967830843327",
+          "submitted": true,
+          "returnedCredits": 6,
+          "clearedCarry": 811772000,
+          "balanced": true,
+          "lastAcceptedRoot": "15967829579453",
+          "lastPresentedRoot": "15967829579453"
+        },
+        {
+          "oldSession": "3",
+          "reason": "ROOT_DEADLINE",
+          "failedNonce": "15967859273314",
+          "oldRetiredQpc": "15967860025547",
+          "submitted": true,
+          "returnedCredits": 6,
+          "clearedCarry": 96180000,
+          "balanced": true,
+          "lastAcceptedRoot": "15967858404276",
+          "lastPresentedRoot": "15967858404276"
+        }
+      ],
+      "quanta": 7,
+      "states": {
+        "M1_QUANTUM_PRESENT_QUEUED": 5,
+        "M1_STALE_WAIT_NEW_INPUT": 2
+      },
+      "retired": true
+    },
+    "verdict": "CROSS-MATERIAL SAME-SCENE ACCEPTANCE PROVEN (both orders): forward sand 128052→+132380→WATER 140686 (final lease sand 260432 + water 140686, liveS 3 liveW 1); reverse water 133102→+100897→SAND 76720 (final sand 76720 + water 233999, liveS 1 liveW 2). T894 A recovery rework (m1Recovery: real retire QPC/credits/carry/balanced/lastRoot) enabled the frame-loop revival that T887 lacked. Conservation all frames; STALE_WAIT_NEW_INPUT recovery ×2 per run; clean RETIRED."
+  },
+  "subB": {
+    "b-off1": {
+      "actions": 52,
+      "states": {
+        "DELIVERED": 28,
+        "AWAIT_PULSE": 2,
+        "OFF_NOOP": 1,
+        "REVOKED": 21
+      },
+      "pulseOwnerRows": 28,
+      "drain": "RETIRED",
+      "ownerCoverage": {
+        "complete": true,
+        "loss": 0
+      },
+      "retired": false
+    },
+    "b-off2": {
+      "actions": 52,
+      "states": {
+        "DELIVERED": 48,
+        "AWAIT_PULSE": 2,
+        "OFF_NOOP": 2
+      },
+      "pulseOwnerRows": 48,
+      "drain": "RETIRED",
+      "ownerCoverage": {
+        "complete": true,
+        "loss": 0
+      },
+      "retired": true
+    },
+    "b-on": {
+      "actions": 52,
+      "states": {
+        "DELIVERED": 29,
+        "AWAIT_PULSE": 2,
+        "RESERVED": 1,
+        "REVOKED": 20
+      },
+      "pulseOwnerRows": 29,
+      "drain": "RETIRED",
+      "ownerCoverage": {
+        "complete": true,
+        "loss": 0
+      },
+      "retired": false
+    },
+    "b-replay-off": {
+      "actions": 0,
+      "states": {},
+      "pulseOwnerRows": 0,
+      "drain": "OWNER_TERMINATED_BEFORE_DRAIN_PROOF",
+      "ownerCoverage": {
+        "complete": false,
+        "loss": 0
+      },
+      "retired": false
+    },
+    "b-replay-off2": {
+      "actions": 0,
+      "states": {},
+      "pulseOwnerRows": 0,
+      "drain": "OWNER_TERMINATED_BEFORE_DRAIN_PROOF",
+      "ownerCoverage": {
+        "complete": false,
+        "loss": 0
+      },
+      "retired": false
+    },
+    "b-replay-on": {
+      "actions": 0,
+      "states": {},
+      "pulseOwnerRows": 0,
+      "drain": "OWNER_TERMINATED_BEFORE_DRAIN_PROOF",
+      "ownerCoverage": {
+        "complete": false,
+        "loss": 0
+      },
+      "retired": false
+    },
+    "offPairContract": {
+      "meanDeltaMs": 3.69,
+      "maxDeltaMs": 11.93,
+      "bothDrainsRetired": true,
+      "firstDiff": "off1 actions 31-52 REVOKED (flake; off1 still drain RETIRED + coverage complete loss=0)",
+      "verdict": "comparable → four arms attempted"
+    },
+    "blocked": "REPLAY_OFF/REPLAY_ON arms fail reproducibly at M1_QUANTUM_COLD_CAPTURE M1_COLD_ROOT_BACKING (owner terminated before drain proof, exit 1, 0 actions) — the T894 B replay path interacts badly with the recovery rework on the first accepted root. Product-level defect → developer. ON arm: 52 actions (29 DELIVERED+RESERVED+20 REVOKED flake) with drain RETIRED."
+  },
+  "subC": {
+    "DM2": {
+      "boot": {
+        "stage": "BOOT",
+        "family": "DM2",
+        "roleSetSHA": "3639e57f834308bab001ca783f321b6a503c232caa924e04b1d8f1d7e3333ca6",
+        "vendor": 32902,
+        "device": 16024,
+        "driver": 1656924,
+        "run": "1599666010046200",
+        "beginNs": "1599666020999900",
+        "retiredNs": "1599666162922300",
+        "vkResult": 0,
+        "error": 0,
+        "seal": 6559303,
+        "eligible": true
+      },
+      "root": {
+        "stage": "ROOT",
+        "family": "DM2",
+        "kind": "SOURCE",
+        "run": "1599666010046200",
+        "nonce": "1",
+        "plan": "1",
+        "fence": "2659162125304",
+        "fenceGeneration": "2",
+        "deadlineNs": "1599666422773900",
+        "vkResult": "2",
+        "dispatches": "12",
+        "tailRead": "False",
+        "outcome": "0",
+        "reason": "0",
+        "clockFault": "0",
+        "accepted": "False",
+        "inputSHA": "c1acf576410f5f49014098f44a1abad08fc8ae52c95d01a19a9a5d6aaf66",
+        "inputOrigin": "SYNTHETIC_RESEARCH"
+      },
+      "retire": {
+        "stage": "RETIRE",
+        "vkResult": 0
+      }
+    },
+    "R1": {
+      "boot": {
+        "stage": "BOOT",
+        "family": "R1",
+        "roleSetSHA": "f7d812d64eba3c932fcfc41d70fbed48835349819f235b6d9d61fb58216641f3",
+        "vendor": 32902,
+        "device": 16024,
+        "driver": 1656924,
+        "run": "1599688293041400",
+        "beginNs": "1599688301310500",
+        "retiredNs": "1599688696558200",
+        "vkResult": 0,
+        "error": 0,
+        "seal": 3223126018,
+        "eligible": true
+      },
+      "root": {
+        "stage": "ROOT",
+        "family": "R1",
+        "kind": "SOURCE",
+        "run": "1599688293041400",
+        "nonce": "1",
+        "plan": "1",
+        "fence": "1463906195768",
+        "fenceGeneration": "2",
+        "deadlineNs": "1599688958107200",
+        "vkResult": "2",
+        "dispatches": "19",
+        "tailRead": "False",
+        "outcome": "0",
+        "reason": "0",
+        "clockFault": "0",
+        "accepted": "False",
+        "inputSHA": "88b61e3b785fcbaa54f19f62630798eb4cdbee36bac3af3c69d3f23d8588",
+        "inputOrigin": "SYNTHETIC_RESEARCH"
+      },
+      "retire": {
+        "stage": "RETIRE",
+        "vkResult": 2
+      }
+    },
+    "verdict": "DM2 (45 modules) and R1 (49+6) BOOT PASS: vkResult=0, seals (6559303/3223126018), eligible=true, real vendor/device/driver, input SHA bound, SYNTHETIC_RESEARCH origin. ROOT acceptance blocked on this iGPU: DM2 12 dispatches vkResult=2, R1 19 dispatches vkResult=2 → ROOT_NOT_ACCEPTED (250ms-class fence limit, same as G13 QUANTUM). DM2 ROOT/FULL archives and R1 WORK witness/Present unreachable until ROOT passes (needs discrete GPU or deadline decision)."
+  }
+}
