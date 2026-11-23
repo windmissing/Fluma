@@ -20,6 +20,8 @@ class VulkanOwner {
     uint32_t queueFamily;
     PFN_vkGetDeviceProcAddr load;
     VkPhysicalDeviceLimits limits;
+    uint32_t timestampBits=0;
+    bool sourceTimestamps=false;
   };
   struct Readback {
     Slice buffer;
@@ -54,6 +56,21 @@ class VulkanOwner {
     std::array<uint32_t,256> tail{};
     bool read=false;
     uint32_t captured=0;
+    struct Timeline {
+      struct Wait { uint64_t enter=0,exit=0,timeout=0; VkResult result=VK_NOT_READY; };
+      std::array<Wait,128> waits{};
+      Wait lastWait{};
+      size_t calls=0;
+      uint64_t recordEnter=0,recordExit=0,submitEnter=0,submitExit=0,stopNs=0;
+      uint64_t readEnter=0,readExit=0;
+      VkResult submit=VK_NOT_READY,readFence=VK_NOT_READY,invalidate=VK_NOT_READY;
+      const char *stop="PRECONDITION";
+    } timing;
+  };
+  struct RootIdentity { uint64_t run,nonce,plan; };
+  struct AcceptTiming {
+    uint64_t gateEnter=0,gateExit=0;
+    const char *result="TAIL_NOT_READY";
   };
 #ifdef PC_SAND_G11_R1
   using Permit=g11vis::CompositePermit;
@@ -77,7 +94,9 @@ class VulkanOwner {
                       const Upload *,size_t,const std::function<bool()> &current,uint64_t timeoutNs);
   RootReceipt Run(Root,const StorageSlots &,const Slice &common,const Readback &,const Upload *,size_t,
                   const std::function<bool()> &current,uint64_t absoluteDeadlineNs,
-                  const std::function<uint64_t()> &nowNs,const Capture *capture=nullptr);
+                  const std::function<uint64_t()> &nowNs,const Capture *capture=nullptr,
+                  const RootIdentity *diagnostic=nullptr);
+  void FinishSourceDiagnostic(const RootReceipt &,bool accepted,uint64_t retireTimeoutNs);
   VkResult Retire(uint64_t timeoutNs);
   bool HasPendingWork() const { return inFlight_; }
   bool Eligible() const { return eligible_; }
@@ -85,7 +104,7 @@ class VulkanOwner {
   const char *RootModuleSHA(Root) const;
   std::optional<PreparedWords> Prepare(const Permit &,accept647::ProgramFacts);
   std::optional<AcceptedProof> AcceptCurrent(const std::function<bool()> &current,
-                                             const std::function<uint64_t()> &nowNs);
+                                             const std::function<uint64_t()> &nowNs,AcceptTiming *timing=nullptr);
 #ifdef PC_SAND_G11_R1
   struct WitnessView {
     WitnessSelection selection;
@@ -112,6 +131,9 @@ class VulkanOwner {
   VkCommandPool pool_=VK_NULL_HANDLE;
   VkCommandBuffer command_=VK_NULL_HANDLE;
   VkFence fence_=VK_NULL_HANDLE;
+  VkQueryPool sourceQueries_=VK_NULL_HANDLE;
+  VkResult queryCreate_=VK_NOT_READY;
+  std::optional<RootIdentity> submittedSource_;
   std::vector<Pipeline> pipelines_;
   std::unique_ptr<Prepared> prepared_;
   std::thread::id thread_;
@@ -128,9 +150,11 @@ class VulkanOwner {
   VkBuffer qualifiedBuffer_=VK_NULL_HANDLE;
   bool inFlight_=false,eligible_=false,opened_=false;
   bool OnOwner() const { return thread_==std::this_thread::get_id(); }
-  VkResult Begin(const Upload *,size_t);
-  VkResult Submit();
-  VkResult MapReady(const Readback &, VkDeviceSize);
+  VkResult Begin(const Upload *,size_t,bool timestamp=false);
+  VkResult Submit(RootReceipt::Timeline *timing=nullptr);
+  VkResult MapReady(const Readback &, VkDeviceSize, RootReceipt::Timeline *timing=nullptr);
+  void ReportSourceGpu(const char *,VkResult,bool accepted);
+  void DrainPending();
   bool Dispatch(const Pass &,const Command &,const StorageSlots &,const Slice &common,
                 VkDescriptorSet);
 };

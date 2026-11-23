@@ -66,5 +66,6 @@ bool MakeHostVisible(PFN_vkCmdPipelineBarrier, VkCommandBuffer, const Slice &sta
 VkResult AwaitReadback(PFN_vkWaitForFences, PFN_vkInvalidateMappedMemoryRanges, VkDevice,
                        VkFence, uint64_t timeoutNs, bool coherent, VkDeviceMemory,
                        VkDeviceSize allocationBytes, VkDeviceSize atom,
-                       VkDeviceSize begin, VkDeviceSize bytes);
+                       VkDeviceSize begin, VkDeviceSize bytes,
+                       VkResult *fenceResult=nullptr,VkResult *invalidateResult=nullptr);
 }

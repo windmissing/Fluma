@@ -11,6 +11,7 @@
 #include <fstream>
 #include <iostream>
 #include <mutex>
+#include <sstream>
 #include <string_view>
 
 namespace grs::pc::sand {
@@ -42,7 +43,7 @@ struct Options {
   std::filesystem::path modules, source, archive, witness;
   uint32_t steps=0;
   int32_t angle=0;
-  bool full=false,present=false;
+  bool full=false,present=false,sourceTimestamps=false;
 };
 
 Options Args(int argc,wchar_t **argv) {
@@ -60,6 +61,10 @@ Options Args(int argc,wchar_t **argv) {
     const std::wstring_view key=argv[i];
     if (key==L"--full") { RequireHost(!out.full,"DUPLICATE_FULL"); out.full=true; }
     else if (key==L"--present") { RequireHost(!out.present,"DUPLICATE_PRESENT"); out.present=true; }
+    else if (key==L"--source-timestamps") {
+      RequireHost(!out.sourceTimestamps,"DUPLICATE_SOURCE_TIMESTAMPS");
+      out.sourceTimestamps=true;
+    }
     else {
       RequireHost(i+1<argc,"MISSING_ARGUMENT");
       const auto *value=argv[++i];
@@ -86,7 +91,19 @@ Options Args(int argc,wchar_t **argv) {
               (!out.full || (out.steps && !out.archive.empty())) &&
               (out.archive.empty() || out.steps || !out.source.empty()),"DM2_CAPABILITIES");
 #endif
+  RequireHost(!out.sourceTimestamps || !out.source.empty(),"SOURCE_TIMESTAMPS_NEED_SOURCE");
   return out;
+}
+
+std::string HexBytes(const uint8_t *bytes,size_t count) {
+  constexpr char hex[]="0123456789abcdef";
+  std::string result;
+  result.reserve(count*2);
+  for (size_t i=0;i<count;++i) {
+    result+=hex[bytes[i]>>4];
+    result+=hex[bytes[i]&15];
+  }
+  return result;
 }
 
 Input128 ReadSource(const std::filesystem::path &path) {
@@ -182,9 +199,14 @@ class PulseClock {
     });
   }
   ~PulseClock() { stop_=true; worker_.join(); }
-  bool Fresh() {
+  struct FreshSample { uint64_t observed=0,sequence=0,callback=0,receipt=0; unsigned fault=0; bool fresh=false; };
+  bool Fresh(FreshSample *sample=nullptr) {
     std::lock_guard lock(mutex_);
-    return clock.Fresh(HostDevice::Now());
+    const auto observed=HostDevice::Now();
+    const bool fresh=clock.Fresh(observed);
+    if (sample) *sample={observed,clock.counters.pulseSequence,clock.counters.uiNs,clock.counters.receiveNs,
+                        unsigned(clock.fault),fresh};
+    return fresh;
   }
   unsigned Fault() {
     std::lock_guard lock(mutex_);
@@ -225,6 +247,60 @@ class PulseClock {
   std::thread worker_;
 };
 
+void SourceTimeline(const HostDevice &gpu,const VulkanOwner &owner,const VulkanOwner::RootIdentity &id,
+                    const StorageSlots &storage,const Slice &common,const Slice &tail,
+                    uint64_t grant,uint64_t deadline,uint64_t frozen,uint64_t expected,
+                    const PulseClock::FreshSample &pulse,const VulkanOwner::RootReceipt &raw,
+                    const VulkanOwner::AcceptTiming &gate,uint64_t promoteEnter,uint64_t promoteExit,bool accepted) {
+  const auto &t=raw.timing;
+  std::ostringstream row;
+  row << "{\"stage\":\"ROOT_TIMELINE\",\"family\":\"" << family << "\",\"rootKind\":\"SOURCE\",\"run\":\""
+      << id.run << "\",\"nonce\":\"" << id.nonce << "\",\"plan\":\"" << id.plan
+      << "\",\"roleSetSHA\":\"" << owner.RoleSetSHA()
+      << "\",\"device\":\"" << reinterpret_cast<uintptr_t>(gpu.device)
+      << "\",\"queue\":\"" << reinterpret_cast<uintptr_t>(gpu.queue)
+      << "\",\"fence\":\"" << reinterpret_cast<uintptr_t>(raw.fence) << "\",\"fenceGeneration\":\"" << raw.generation
+      << "\",\"grantNs\":\"" << grant << "\",\"deadlineNs\":\"" << deadline
+      << "\",\"inputFrozenNs\":\"" << frozen << "\",\"expectedReadyNs\":\"" << expected
+      << "\",\"recordEnterNs\":\"" << t.recordEnter << "\",\"recordExitNs\":\"" << t.recordExit
+      << "\",\"submitEnterNs\":\"" << t.submitEnter << "\",\"submitExitNs\":\"" << t.submitExit
+      << "\",\"submitVkResult\":" << int(t.submit) << ",\"stopNs\":\"" << t.stopNs
+      << "\",\"firstStop\":\"" << t.stop << "\",\"clock\":{\"observedNs\":\"" << pulse.observed
+      << "\",\"seq\":\"" << pulse.sequence << "\",\"callbackNs\":\"" << pulse.callback
+      << "\",\"receiptNs\":\"" << pulse.receipt << "\",\"ageNs\":"
+      << (pulse.receipt && pulse.observed>=pulse.receipt ? std::to_string(pulse.observed-pulse.receipt) : "null")
+      << ",\"fresh\":" << (pulse.fresh ? "true" : "false") << ",\"fault\":" << pulse.fault
+      << "},\"pollCount\":" << t.calls << ",\"polls\":[";
+  const auto wait=[&](const VulkanOwner::RootReceipt::Timeline::Wait &w) {
+    row << "{\"enterNs\":\"" << w.enter << "\",\"exitNs\":\"" << w.exit << "\",\"timeoutNs\":\""
+        << w.timeout << "\",\"vkResult\":" << int(w.result) << '}';
+  };
+  for (size_t i=0;i<std::min(t.calls,t.waits.size());++i) {
+    if (i) row << ',';
+    wait(t.waits[i]);
+  }
+  row << "],\"lastPoll\":";
+  if (t.calls) wait(t.lastWait); else row << "null";
+  row << ",\"readbackEnterNs\":\"" << t.readEnter << "\",\"readbackExitNs\":\"" << t.readExit
+      << "\",\"readbackFenceVkResult\":" << int(t.readFence)
+      << ",\"invalidateVkResult\":" << int(t.invalidate)
+      << ",\"gateEnterNs\":\"" << gate.gateEnter << "\",\"gateExitNs\":\"" << gate.gateExit
+      << "\",\"gateResult\":\"" << gate.result << "\",\"promoteEnterNs\":\"" << promoteEnter
+      << "\",\"promoteExitNs\":\"" << promoteExit << "\",\"acceptedRoot\":"
+      << (accepted ? std::to_string(id.nonce) : "null") << ",\"ranges\":[";
+  const auto range=[&](const Slice &s) {
+    row << "{\"buffer\":\"" << reinterpret_cast<uintptr_t>(s.buffer) << "\",\"generation\":\"" << s.generation
+        << "\",\"offset\":" << s.offset << ",\"bytes\":" << s.bytes << '}';
+  };
+  for (size_t i=0;i<storage.size();++i) {
+    if (i) row << ',';
+    range(storage[i]);
+  }
+  row << "],\"common\":"; range(common);
+  row << ",\"staging\":"; range(tail);
+  std::cout << row.str() << "}\n";
+}
+
 void WriteWords(const std::filesystem::path &path,const uint32_t *words,size_t bytes) {
   RequireHost(!std::filesystem::exists(path),"DESTINATION_EXISTS");
   std::ofstream out(path,std::ios::binary);
@@ -258,7 +334,8 @@ int Run(const Options &opt) {
   HostDevice gpu;
   gpu.Open(opt.present);
   VulkanOwner owner;
-  RequireVk(owner.Open({gpu.device,gpu.queue,gpu.family,gpu.deviceProc,gpu.properties.limits},opt.modules),
+  RequireVk(owner.Open({gpu.device,gpu.queue,gpu.family,gpu.deviceProc,gpu.properties.limits,
+                        gpu.timestampBits,opt.sourceTimestamps},opt.modules),
             "VULKAN_ROLE_PIPELINES");
   Scope scope{HostDevice::Now(),GetCurrentThreadId(),reinterpret_cast<uintptr_t>(gpu.device),
               1,1,1,gpu.window ? reinterpret_cast<uintptr_t>(gpu.window) : 1,1,
@@ -322,6 +399,11 @@ int Run(const Options &opt) {
   std::cout << "{\"stage\":\"BOOT\",\"family\":\"" << family << "\",\"roleSetSHA\":\"" << owner.RoleSetSHA()
             << "\",\"vendor\":" << gpu.properties.vendorID << ",\"device\":" << gpu.properties.deviceID
             << ",\"driver\":" << gpu.properties.driverVersion << ",\"run\":\"" << scope.run
+            << "\",\"deviceType\":" << gpu.properties.deviceType << ",\"queueFamily\":" << gpu.family
+            << ",\"deviceUUID\":\"" << HexBytes(gpu.deviceId.deviceUUID,VK_UUID_SIZE)
+            << "\",\"driverUUID\":\"" << HexBytes(gpu.deviceId.driverUUID,VK_UUID_SIZE)
+            << "\",\"luidValid\":" << (gpu.deviceId.deviceLUIDValid ? "true" : "false")
+            << ",\"luid\":\"" << HexBytes(gpu.deviceId.deviceLUID,VK_LUID_SIZE)
             << "\",\"beginNs\":\"" << bootStarted << "\",\"retiredNs\":\"" << bootRetired
             << "\",\"vkResult\":" << int(bootAudit.result) << ",\"error\":" << bootAudit.error
             << ",\"seal\":" << bootAudit.seal << ",\"eligible\":" << (bootAudit.eligible?"true":"false") << "}\n";
@@ -387,7 +469,8 @@ int Run(const Options &opt) {
       RequireHost(surface() && HostDevice::Now()<claimLimit,"WAIT_NATIVE_GRANT");
       Sleep(1);
     }
-    const auto current=[&] { return surface() && pacing.Fresh(); };
+    PulseClock::FreshSample pulse;
+    const auto current=[&] { return surface() && pacing.Fresh(source ? &pulse : nullptr); };
     permit.nonce=permit.frame=permit.control=uint64_t(n)+1;
     permit.plan=pacing.grant.id;
     const auto rootBegin=pacing.grant.grantedNs;
@@ -409,6 +492,7 @@ int Run(const Options &opt) {
                   "SOURCE_MODEL_ENVELOPE");
     } else gate.Pose(angle,now);
     RequireHost(int(gate.Freeze(source ? &command : nullptr,permit.nonce,now,input))==0,"FROZEN_INPUT");
+    const auto frozenNs=source ? HostDevice::Now() : 0;
     permit.inputSha=accept647::HashWords(input.data(),input.size());
     parent->RootConfig(config,ParentPermit(permit),seedSHA);
     const auto unif=Uniforms(l,permit,angle,banks,visGeneration,visTicks);
@@ -442,14 +526,19 @@ int Run(const Options &opt) {
     const bool captureOn=last && opt.full;
     if (captureOn) capture={discovery.data()};
 #endif
+    const auto expectedNs=source ? HostDevice::Now() : 0;
+    const VulkanOwner::RootIdentity diagnostic{scope.run,permit.nonce,permit.plan};
     const auto raw=owner.Run(root,storage,common,tail,uploads.data(),uploads.size(),current,
-                             permit.deadline,HostDevice::Now,captureOn ? &capture : nullptr);
+                             permit.deadline,HostDevice::Now,captureOn ? &capture : nullptr,source ? &diagnostic : nullptr);
     const auto before=storage;
     const auto beforeBanks=banks;
     std::array<uint32_t,256> quota{};
+    VulkanOwner::AcceptTiming gateTiming;
+    uint64_t promoteEnter=0;
     const auto accepted=pacing.Accept(source,[&](const auto &fresh) {
-      auto proof=owner.AcceptCurrent([&] { return surface() && fresh(); },HostDevice::Now);
+      auto proof=owner.AcceptCurrent([&] { return surface() && fresh(); },HostDevice::Now,source ? &gateTiming : nullptr);
       if (proof) {
+        if (source) promoteEnter=HostDevice::Now();
         commit=accept647::Pair(proof->Words().data(),30);
         quanta=accept647::Pair(proof->Words().data(),54);
 #ifdef PC_SAND_G11_R1
@@ -461,6 +550,7 @@ int Run(const Options &opt) {
       }
       return proof;
     },quota);
+    const auto promoteExit=promoteEnter ? HostDevice::Now() : 0;
     std::cout << "{\"stage\":\"ROOT\",\"family\":\"" << family << "\",\"kind\":\"" << (source?"SOURCE":"QUANTUM")
               << "\",\"run\":\"" << scope.run << "\",\"nonce\":\"" << permit.nonce << "\",\"plan\":\"" << permit.plan
               << "\",\"fence\":\"" << reinterpret_cast<uintptr_t>(raw.fence) << "\",\"fenceGeneration\":\""
@@ -470,8 +560,13 @@ int Run(const Options &opt) {
               << ",\"clockFault\":" << pacing.Fault()
               << ",\"accepted\":" << (accepted?"true":"false") << ",\"inputSHA\":\"" << HexDigest(permit.inputSha)
               << "\",\"inputOrigin\":\"SYNTHETIC_RESEARCH\"}\n";
+    if (source) {
+      owner.FinishSourceDiagnostic(raw,accepted.has_value(),Clock::RootNs);
+      SourceTimeline(gpu,owner,diagnostic,before,common,tail.buffer,rootBegin,permit.deadline,frozenNs,expectedNs,
+                     pulse,raw,gateTiming,promoteEnter,promoteExit,accepted.has_value());
+    }
     if (!accepted) {
-      if (owner.HasPendingWork()) std::cout << "{\"stage\":\"RETIRE\",\"vkResult\":"
+      if (!source && owner.HasPendingWork()) std::cout << "{\"stage\":\"RETIRE\",\"vkResult\":"
                                             << int(owner.Retire(Clock::RootNs)) << "}\n";
       RequireHost(false,"ROOT_NOT_ACCEPTED");
     }
@@ -546,7 +641,7 @@ int Run(const Options &opt) {
 int wmain(int argc,wchar_t **argv) {
   using namespace grs::pc::sand;
   if (argc==2 && std::wstring_view(argv[1])==L"--help") {
-    std::cout << "pc_sand_" << family << " --modules DIR [--source INPUT128.u32le] [--steps N] [--angle-index N] "
+    std::cout << "pc_sand_" << family << " --modules DIR [--source INPUT128.u32le [--source-timestamps]] [--steps N] [--angle-index N] "
               << (kind==grs::g11vis::ParentKind::DM ? "[--archive FILE [--full]]" : "[--witness FILE] [--present]") << '\n';
     return 0;
   }

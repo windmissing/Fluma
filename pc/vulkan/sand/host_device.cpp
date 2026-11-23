@@ -97,11 +97,16 @@ void HostDevice::Open(bool present) {
       physical=d;
       family=i;
       properties=candidate;
+      timestampBits=families[i].timestampValidBits;
       break;
     }
     if (physical) break;
   }
   RequireHost(physical!=VK_NULL_HANDLE,"NO_COMPATIBLE_GPU_QUEUE");
+  if (const auto props2=I(GetPhysicalDeviceProperties2)) {
+    VkPhysicalDeviceProperties2 identity{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,&deviceId};
+    props2(physical,&identity);
+  }
   mem(physical,&memory_);
   VkPhysicalDeviceFeatures supported{};
   features(physical,&supported);

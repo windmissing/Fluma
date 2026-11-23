@@ -190,11 +190,13 @@ bool MakeHostVisible(PFN_vkCmdPipelineBarrier barrier,VkCommandBuffer cb,const S
 
 VkResult AwaitReadback(PFN_vkWaitForFences wait,PFN_vkInvalidateMappedMemoryRanges invalidate,VkDevice device,
                        VkFence fence,uint64_t timeoutNs,bool coherent,VkDeviceMemory memory,
-                       VkDeviceSize allocationBytes,VkDeviceSize atom,VkDeviceSize begin,VkDeviceSize bytes) {
+                       VkDeviceSize allocationBytes,VkDeviceSize atom,VkDeviceSize begin,VkDeviceSize bytes,
+                       VkResult *fenceResult,VkResult *invalidateResult) {
   if (!wait || !device || !fence || !memory || !bytes || begin>allocationBytes ||
       bytes>allocationBytes-begin || (!coherent && (!invalidate || !atom)))
     return VK_ERROR_INITIALIZATION_FAILED;
   const auto result=wait(device,1,&fence,VK_TRUE,timeoutNs);
+  if (fenceResult) *fenceResult=result;
   if (result!=VK_SUCCESS || coherent) return result;
   VkMappedMemoryRange range{};
   range.sType=VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
@@ -203,6 +205,8 @@ VkResult AwaitReadback(PFN_vkWaitForFences wait,PFN_vkInvalidateMappedMemoryRang
   const auto end=begin+bytes;
   const auto padding=(atom-end%atom)%atom;
   range.size=end+std::min(padding,allocationBytes-end)-range.offset;
-  return invalidate(device,1,&range);
+  const auto invalidated=invalidate(device,1,&range);
+  if (invalidateResult) *invalidateResult=invalidated;
+  return invalidated;
 }
 }

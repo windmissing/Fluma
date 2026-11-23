@@ -24,6 +24,8 @@ class HostDevice {
   VkSurfaceKHR surface=VK_NULL_HANDLE;
   uint32_t family=0;
   VkPhysicalDeviceProperties properties{};
+  VkPhysicalDeviceIDProperties deviceId{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES};
+  uint32_t timestampBits=0;
   PFN_vkGetInstanceProcAddr instanceProc=nullptr;
   PFN_vkGetDeviceProcAddr deviceProc=nullptr;
 

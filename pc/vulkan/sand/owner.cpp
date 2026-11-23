@@ -1,8 +1,11 @@
 #include "owner.h"
+#include "../platform.h"
 #include "../../../entry/src/main/cpp/gpu_resident/program_cache/sha256.h"
 #include <algorithm>
 #include <fstream>
 #include <new>
+#include <iostream>
+#include <sstream>
 #ifdef PC_SAND_G11_R1
 #include "../../../entry/src/main/cpp/gpu_resident/g11vis/generated_contract.h"
 #endif
@@ -12,16 +15,25 @@ namespace {
 constexpr uint32_t warmOpcode=0x7fffff00;
 constexpr VkDeviceSize stateBytes=591872, controlsOffset=1166976, tailOffset=1171072;
 #ifdef PC_SAND_G11_R1
+constexpr const char *kSandFamily="R1";
+constexpr size_t kSourceBoundaries[]{5,10,13,18};
+constexpr const char *kSourceSpans[]{"PREPARE","ACTUAL_WRITER","REPLAY_AUDIT_APPLY","COMPARE_PACK_AUDIT_SEAL"};
 constexpr VkDeviceSize arenaBytes=11718656, workBytes=4825728, auditBytes=512;
 constexpr uint32_t coldOpcode=0x7fffff01, goodSeal=0xc01d0002;
 constexpr auto &visual=g11vis::kVisualResources[0];
 constexpr VkDeviceSize seedBytes=512+visual.v*128+8192+256;
 constexpr VkDeviceSize bootReadbackBytes=auditBytes+seedBytes;
 #else
+constexpr const char *kSandFamily="DM2";
+constexpr size_t kSourceBoundaries[]{4,7,11};
+constexpr const char *kSourceSpans[]{"PREPARE","SOURCE_WRITER","AUDIT_COMPARE_PACK_SEAL"};
 constexpr VkDeviceSize arenaBytes=12767232, workBytes=1311360, auditBytes=8;
 constexpr uint32_t coldOpcode=warmOpcode, goodSeal=0x641647;
 constexpr VkDeviceSize bootReadbackBytes=auditBytes;
 #endif
+constexpr size_t kQueryCount=std::size(kSourceBoundaries)+3;
+static_assert(kSourceBoundaries[std::size(kSourceBoundaries)-1]+1==std::size(kSource));
+static_assert(std::size(kSourceBoundaries)==std::size(kSourceSpans));
 constexpr uint64_t maxJobNs=250000000;
 constexpr uint64_t pollNs=2000000;
 
@@ -60,6 +72,11 @@ struct VulkanOwner::Api {
 #define MEMBER(name) PFN_vk##name name=nullptr;
   SAND_DEVICE(MEMBER)
 #undef MEMBER
+  PFN_vkCreateQueryPool CreateQueryPool=nullptr;
+  PFN_vkDestroyQueryPool DestroyQueryPool=nullptr;
+  PFN_vkCmdResetQueryPool CmdResetQueryPool=nullptr;
+  PFN_vkCmdWriteTimestamp CmdWriteTimestamp=nullptr;
+  PFN_vkGetQueryPoolResults GetQueryPoolResults=nullptr;
 };
 
 struct VulkanOwner::Prepared {
@@ -143,11 +160,20 @@ std::optional<VulkanOwner::PreparedWords> VulkanOwner::Prepare(const Permit &per
 }
 
 std::optional<VulkanOwner::AcceptedProof> VulkanOwner::AcceptCurrent(const std::function<bool()> &current,
-    const std::function<uint64_t()> &now) {
+    const std::function<uint64_t()> &now,AcceptTiming *timing) {
   if (!OnOwner() || !prepared_) return {};
   auto job=std::move(prepared_);
   if (!job->expected || !job->generation || job->generation!=generation_ || !job->evidence.mapped ||
-      !eligible_ || inFlight_ || !current || !now || !current() || now()>job->expected->U64(28)) return {};
+      !eligible_ || inFlight_ || !current || !now) return {};
+  if (!current()) {
+    if (timing) timing->result="STALE_PERMIT";
+    return {};
+  }
+  if (now()>job->expected->U64(28)) {
+    if (timing) timing->result="GRANT_DEADLINE";
+    return {};
+  }
+  if (timing) timing->gateEnter=now();
   accept647::NativeMappedObservation observation(job->active,job->tail,job->evidence);
 #ifdef PC_SAND_G11_R1
   auto proof=g11vis::CompositeGate::Accepted(job->permit,*job->expected,observation);
@@ -156,7 +182,6 @@ std::optional<VulkanOwner::AcceptedProof> VulkanOwner::AcceptCurrent(const std::
     witnessNonce_=proof->Permission().Nonce();
     witnessGeneration_=job->generation;
   }
-  return proof;
 #else
   auto proof=g9dm::CompletionGate::Accepted(job->permit,*job->expected,observation);
   if (proof && proof->Words()[6]!=2) {
@@ -164,8 +189,12 @@ std::optional<VulkanOwner::AcceptedProof> VulkanOwner::AcceptCurrent(const std::
     acceptedStorage_=job->storage;
     acceptedDiscovery_=job->discovery;
   }
-  return proof;
 #endif
+  if (timing) {
+    timing->gateExit=now();
+    timing->result=proof ? "TAIL_ACCEPTED" : "TAIL_REJECT";
+  }
+  return proof;
 }
 
 #ifdef PC_SAND_G11_R1
@@ -218,7 +247,8 @@ bool VulkanOwner::CaptureDmArchive(std::ostream &sink,const AcceptedProof &proof
 
 VulkanOwner::~VulkanOwner() {
   if (!api_) return;
-  if (inFlight_) api_->DeviceWaitIdle(context_.device);
+  DrainPending();
+  if (sourceQueries_) api_->DestroyQueryPool(context_.device,sourceQueries_,nullptr);
   for (const auto &p:pipelines_) api_->DestroyPipeline(context_.device,p.object,nullptr);
   if (fence_) api_->DestroyFence(context_.device,fence_,nullptr);
   if (pool_) api_->DestroyCommandPool(context_.device,pool_,nullptr);
@@ -318,11 +348,25 @@ VkResult VulkanOwner::Open(const Context &context,const std::filesystem::path &d
   fence.sType=VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
   r=api_->CreateFence(context.device,&fence,nullptr,&fence_);
   opened_=r==VK_SUCCESS;
+  if (opened_ && context.sourceTimestamps && context.timestampBits && context.timestampBits<=64) {
+#define QUERY(name) api_->name=reinterpret_cast<PFN_vk##name>(context.load(context.device,"vk" #name))
+    QUERY(CreateQueryPool); QUERY(DestroyQueryPool); QUERY(CmdResetQueryPool);
+    QUERY(CmdWriteTimestamp); QUERY(GetQueryPoolResults);
+#undef QUERY
+    if (api_->CreateQueryPool && api_->DestroyQueryPool && api_->CmdResetQueryPool &&
+        api_->CmdWriteTimestamp && api_->GetQueryPoolResults) {
+      VkQueryPoolCreateInfo query{VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO};
+      query.queryType=VK_QUERY_TYPE_TIMESTAMP;
+      query.queryCount=uint32_t(kQueryCount);
+      queryCreate_=api_->CreateQueryPool(context.device,&query,nullptr,&sourceQueries_);
+      if (queryCreate_!=VK_SUCCESS) sourceQueries_=VK_NULL_HANDLE;
+    }
+  }
   return r;
 }
 #undef SAND_DEVICE
 
-VkResult VulkanOwner::Begin(const Upload *uploads,size_t count) {
+VkResult VulkanOwner::Begin(const Upload *uploads,size_t count,bool timestamp) {
   if (!opened_ || !OnOwner() || inFlight_ || (count && !uploads) || generation_==UINT64_MAX)
     return VK_ERROR_INITIALIZATION_FAILED;
   for (size_t i=0;i<count;++i)
@@ -341,6 +385,10 @@ VkResult VulkanOwner::Begin(const Upload *uploads,size_t count) {
   r=api_->BeginCommandBuffer(command_,&begin);
   if (r!=VK_SUCCESS) return r;
   ++generation_;
+  if (timestamp) {
+    api_->CmdResetQueryPool(command_,sourceQueries_,0,uint32_t(kQueryCount));
+    api_->CmdWriteTimestamp(command_,VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,sourceQueries_,0);
+  }
   for (size_t i=0;i<count;++i) {
     const auto &upload=uploads[i];
     for (VkDeviceSize off=0;off<upload.destination.bytes;) {
@@ -357,17 +405,24 @@ VkResult VulkanOwner::Begin(const Upload *uploads,size_t count) {
   api_->CmdPipelineBarrier(command_,VK_PIPELINE_STAGE_TRANSFER_BIT,
                             VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT|VK_PIPELINE_STAGE_TRANSFER_BIT,0,
                             1,&sync,0,nullptr,0,nullptr);
+  if (timestamp) api_->CmdWriteTimestamp(command_,VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,sourceQueries_,1);
   return VK_SUCCESS;
 }
 
-VkResult VulkanOwner::Submit() {
+VkResult VulkanOwner::Submit(RootReceipt::Timeline *timing) {
   const auto ended=api_->EndCommandBuffer(command_);
+  if (timing) timing->recordExit=pc::TimeNs();
   if (ended!=VK_SUCCESS) return ended;
   VkSubmitInfo submit{};
   submit.sType=VK_STRUCTURE_TYPE_SUBMIT_INFO;
   submit.commandBufferCount=1;
   submit.pCommandBuffers=&command_;
+  if (timing) timing->submitEnter=pc::TimeNs();
   const auto result=api_->QueueSubmit(context_.queue,1,&submit,fence_);
+  if (timing) {
+    timing->submitExit=pc::TimeNs();
+    timing->submit=result;
+  }
   inFlight_=result==VK_SUCCESS;
   if (result==VK_ERROR_DEVICE_LOST) eligible_=false;
   return result;
@@ -382,10 +437,103 @@ VkResult VulkanOwner::Retire(uint64_t timeoutNs) {
   return result;
 }
 
-VkResult VulkanOwner::MapReady(const Readback &memory,VkDeviceSize bytes) {
+void VulkanOwner::ReportSourceGpu(const char *state,VkResult retired,bool accepted) {
+  if (!submittedSource_) return;
+  const auto id=*submittedSource_;
+  submittedSource_.reset();
+  struct Query { uint64_t tick=0,available=0; };
+  std::array<Query,kQueryCount> points{};
+  const bool readable=retired==VK_SUCCESS && sourceQueries_ && !inFlight_;
+  std::ostringstream row;
+  row << "{\"stage\":\"ROOT_GPU_TIMESTAMPS\",\"family\":\"" << kSandFamily
+      << "\",\"state\":\"" << state << "\",\"run\":\"" << id.run << "\",\"nonce\":\"" << id.nonce
+      << "\",\"plan\":\"" << id.plan << "\",\"device\":\"" << reinterpret_cast<uintptr_t>(context_.device)
+      << "\",\"queue\":\"" << reinterpret_cast<uintptr_t>(context_.queue)
+      << "\",\"fence\":\"" << reinterpret_cast<uintptr_t>(fence_) << "\",\"fenceGeneration\":\"" << generation_
+      << "\",\"acceptedRoot\":" << (accepted ? std::to_string(id.nonce) : "null")
+      << ",\"fenceVkResult\":" << int(retired) << ",\"timestampRequested\":"
+      << (context_.sourceTimestamps ? "true" : "false") << ",\"queryCreateVkResult\":" << int(queryCreate_)
+      << ",\"queryPool\":\"" << reinterpret_cast<uintptr_t>(sourceQueries_)
+      << "\",\"validBits\":" << context_.timestampBits
+      << ",\"periodNs\":" << context_.limits.timestampPeriod << ",\"points\":[";
+  for (size_t i=0;i<points.size();++i) {
+    auto &point=points[i];
+    const auto vk=readable ? api_->GetQueryPoolResults(context_.device,sourceQueries_,uint32_t(i),1,
+        sizeof(point),&point,sizeof(point),VK_QUERY_RESULT_64_BIT|VK_QUERY_RESULT_WITH_AVAILABILITY_BIT) : VK_NOT_READY;
+    if (vk!=VK_SUCCESS) point.available=0;
+    if (i) row << ',';
+    row << "{\"i\":" << i << ",\"vkResult\":" << int(vk) << ",\"available\":" << (point.available ? "true" : "false")
+        << ",\"tick\":" << (point.available ? "\""+std::to_string(point.tick)+"\"" : "null") << '}';
+  }
+  row << "],\"spans\":[";
+  const auto span=[&](const char *name,size_t i) {
+    if (i) row << ',';
+    row << "{\"name\":\"" << name << "\",\"ns\":";
+    const auto bits=context_.timestampBits;
+    if (bits && bits<=64 && points[i].available && points[i+1].available) {
+      const auto mask=bits==64 ? UINT64_MAX : (uint64_t{1}<<bits)-1;
+      row << ((points[i+1].tick-points[i].tick)&mask)*double(context_.limits.timestampPeriod);
+    } else row << "null";
+    row << '}';
+  };
+  span("UPLOAD",0);
+  for (size_t i=0;i<std::size(kSourceSpans);++i) span(kSourceSpans[i],i+1);
+  span("TAIL_COPY",points.size()-2);
+  std::cout << row.str() << "]}\n";
+}
+
+void VulkanOwner::FinishSourceDiagnostic(const RootReceipt &receipt,bool accepted,uint64_t retireTimeoutNs) {
+  if (!submittedSource_ || receipt.generation!=generation_ || receipt.fence!=fence_) return;
+  if (!inFlight_) {
+    ReportSourceGpu(accepted ? "ACCEPTED_FENCE" : "REJECTED_ROOT_DIAGNOSTIC",receipt.timing.lastWait.result,accepted);
+    return;
+  }
+  const auto enter=pc::TimeNs();
+  const auto result=Retire(retireTimeoutNs);
+  const auto exit=pc::TimeNs();
+  std::cout << "{\"stage\":\"RETIRE\",\"family\":\"" << kSandFamily << "\",\"run\":\"" << submittedSource_->run
+            << "\",\"nonce\":\"" << submittedSource_->nonce << "\",\"fence\":\""
+            << reinterpret_cast<uintptr_t>(fence_) << "\",\"fenceGeneration\":\"" << generation_
+            << "\",\"enterNs\":\"" << enter << "\",\"exitNs\":\"" << exit << "\",\"timeoutNs\":\""
+            << retireTimeoutNs << "\",\"vkResult\":" << int(result) << ",\"acceptedRoot\":null,\"state\":\""
+            << (result==VK_SUCCESS ? "RETIRED" : result==VK_ERROR_DEVICE_LOST ? "DEVICE_LOST" : "RETIRE_PENDING")
+            << "\"}\n";
+  if (!inFlight_)
+    ReportSourceGpu(result==VK_SUCCESS ? "LATE_RETIRED_DIAGNOSTIC" : "DEVICE_LOST",result,false);
+}
+
+void VulkanOwner::DrainPending() {
+  while (inFlight_) {
+    const auto enter=pc::TimeNs();
+    const auto idle=api_->DeviceWaitIdle(context_.device);
+    const auto exit=pc::TimeNs();
+    const auto fenceEnter=idle==VK_SUCCESS ? pc::TimeNs() : 0;
+    const auto confirmed=idle==VK_SUCCESS ?
+        api_->WaitForFences(context_.device,1,&fence_,VK_TRUE,0) :
+        idle==VK_ERROR_DEVICE_LOST ? idle : VK_NOT_READY;
+    const auto fenceExit=fenceEnter ? pc::TimeNs() : 0;
+    if (idle==VK_SUCCESS || idle==VK_ERROR_DEVICE_LOST) inFlight_=false;
+    std::cout << "{\"stage\":\"DEVICE_DRAIN\",\"family\":\"" << kSandFamily << "\",\"device\":\""
+              << reinterpret_cast<uintptr_t>(context_.device) << "\",\"queue\":\""
+              << reinterpret_cast<uintptr_t>(context_.queue) << "\",\"fence\":\""
+              << reinterpret_cast<uintptr_t>(fence_) << "\",\"fenceGeneration\":\"" << generation_
+              << "\",\"nonce\":" << (submittedSource_ ? std::to_string(submittedSource_->nonce) : "null")
+              << ",\"enterNs\":\"" << enter << "\",\"exitNs\":\"" << exit << "\",\"idleVkResult\":" << int(idle)
+              << ",\"fenceVkResult\":" << int(confirmed) << ",\"confirmEnterNs\":\"" << fenceEnter
+              << "\",\"confirmExitNs\":\"" << fenceExit << "\",\"acceptedRoot\":null,\"state\":\""
+              << (confirmed==VK_SUCCESS ? "RETIRED" : confirmed==VK_ERROR_DEVICE_LOST ? "DEVICE_LOST" : "RETIRE_PENDING")
+              << "\"}\n";
+    if (!inFlight_)
+      ReportSourceGpu(confirmed==VK_SUCCESS ? "LATE_RETIRED_DIAGNOSTIC" :
+                      confirmed==VK_ERROR_DEVICE_LOST ? "DEVICE_LOST" : "RETIRE_PENDING",confirmed,false);
+    else std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+}
+
+VkResult VulkanOwner::MapReady(const Readback &memory,VkDeviceSize bytes,RootReceipt::Timeline *timing) {
   return AwaitReadback(api_->WaitForFences,api_->InvalidateMappedMemoryRanges,context_.device,
       fence_,0,memory.coherent,memory.memory,memory.allocationBytes,context_.limits.nonCoherentAtomSize,
-      memory.mappedOffset,bytes);
+      memory.mappedOffset,bytes,timing ? &timing->readFence : nullptr,timing ? &timing->invalidate : nullptr);
 }
 
 bool VulkanOwner::Dispatch(const Pass &p,const Command &c,const StorageSlots &storage,
@@ -486,10 +634,20 @@ VulkanOwner::BootReceipt VulkanOwner::Qualify(const StorageSlots &storage,const 
 
 VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,const Slice &common,
     const Readback &readback,const Upload *uploads,size_t count,const std::function<bool()> &current,
-    uint64_t deadline,const std::function<uint64_t()> &now,const Capture *capture) {
+    uint64_t deadline,const std::function<uint64_t()> &now,const Capture *capture,const RootIdentity *diagnostic) {
   RootReceipt result;
-  if (!opened_ || !OnOwner() || !eligible_ || !current || !now || !current() || now()>=deadline ||
-      storage[5].buffer!=qualifiedBuffer_ || storage[5].generation!=qualifiedWork_ ||
+  const bool trace=root==Root::Source && diagnostic;
+  auto &timing=result.timing;
+  auto *timeline=trace ? &timing : nullptr;
+  const auto stopped=[&](const char *reason,uint64_t at) { timing.stop=reason; timing.stopNs=at; };
+  if (!opened_ || !OnOwner() || !eligible_ || !current || !now) return result;
+  const bool initialCurrent=current();
+  const auto initialNs=initialCurrent || trace ? now() : 0;
+  if (!initialCurrent || initialNs>=deadline) {
+    stopped(initialNs>=deadline ? "GRANT_DEADLINE" : "STALE_PERMIT",initialNs);
+    return result;
+  }
+  if (storage[5].buffer!=qualifiedBuffer_ || storage[5].generation!=qualifiedWork_ ||
       !SliceFits(storage[5],workBytes) || !SliceFits(readback.buffer,1024) || !readback.words) return result;
   if (prepared_ && (prepared_->generation || !prepared_->expected ||
       prepared_->expected->Word(3)!=(root==Root::Source ? 1u : 2u) ||
@@ -514,7 +672,12 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
       if (!SliceFits(capture->discovery[i],arenaBytes)) return result;
   }
 #endif
-  result.result=Begin(uploads,count);
+  const bool timestamps=trace && sourceQueries_;
+  if (trace) {
+    timing.recordEnter=now();
+    timing.stop="RECORD_REJECT";
+  }
+  result.result=Begin(uploads,count,timestamps);
   if (result.result!=VK_SUCCESS) return result;
   result.generation=generation_;
   result.fence=fence_;
@@ -527,6 +690,7 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
   const auto n=source ? std::size(kSource) : std::size(kQuantum);
   std::array<std::pair<std::array<uint8_t,4>,VkDescriptorSet>,16> cache{};
   size_t used=0;
+  size_t span=0;
   for (size_t i=0;i<n;++i) {
     const auto planned=Plan(root,i);
     if (!planned || !RecordParentCopies(api_->CmdPipelineBarrier,api_->CmdCopyBuffer,command_,*planned,
@@ -603,6 +767,10 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
         api_->CmdPipelineBarrier(command_,VK_PIPELINE_STAGE_TRANSFER_BIT,VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
                                   0,1,&copyRetired,0,nullptr,0,nullptr);
     }
+    if (timestamps && span<std::size(kSourceBoundaries) && i==kSourceBoundaries[span]) {
+      api_->CmdWriteTimestamp(command_,VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,sourceQueries_,uint32_t(span+2));
+      ++span;
+    }
   }
   auto tail=storage[5];
   tail.offset+=tailOffset;
@@ -620,22 +788,55 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
     return result;
   }
 #endif
-  if (!current() || now()>=deadline) { result.result=VK_NOT_READY; return result; }
-  result.result=Submit();
-  if (result.result!=VK_SUCCESS) return result;
+  if (timestamps)
+    api_->CmdWriteTimestamp(command_,VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,sourceQueries_,uint32_t(kQueryCount-1));
+  const auto submitCurrent=current();
+  const auto preSubmit=submitCurrent || trace ? now() : 0;
+  if (!submitCurrent || preSubmit>=deadline) {
+    timing.recordExit=preSubmit;
+    stopped(preSubmit>=deadline ? "GRANT_DEADLINE" : "STALE_PERMIT",preSubmit);
+    result.result=VK_NOT_READY;
+    return result;
+  }
+  result.result=Submit(timeline);
+  if (result.result!=VK_SUCCESS) {
+    if (trace) stopped("SUBMIT_RESULT",now());
+    return result;
+  }
+  if (trace) submittedSource_=*diagnostic;
   uint64_t fenceNs=0;
   for (;;) {
     const auto at=now();
     if (!current() || at>=deadline) {
+      stopped(at>=deadline ? "GRANT_DEADLINE" : "STALE_PERMIT",at);
       result.result=at>=deadline ? VK_TIMEOUT : VK_NOT_READY;
       return result;
     }
-    result.result=Retire(std::min(deadline-at,pollNs));
+    const auto timeout=std::min(deadline-at,pollNs);
+    const auto enter=trace ? now() : 0;
+    result.result=Retire(timeout);
+    if (trace) {
+      timing.lastWait={enter,now(),timeout,result.result};
+      if (timing.calls<timing.waits.size()) timing.waits[timing.calls]=timing.lastWait;
+      ++timing.calls;
+    }
     if (result.result!=VK_TIMEOUT) { fenceNs=now(); break; }
   }
-  if (result.result!=VK_SUCCESS || !current() || fenceNs>=deadline) return result;
-  result.result=MapReady(readback,1024);
-  if (result.result==VK_SUCCESS && current() && now()<deadline) {
+  if (result.result!=VK_SUCCESS) {
+    stopped("FENCE_RESULT",fenceNs);
+    return result;
+  }
+  const bool fenceCurrent=current();
+  if (!fenceCurrent || fenceNs>=deadline) {
+    stopped(fenceNs>=deadline ? "LATE_FENCE_SIGNAL" : "STALE_PERMIT",fenceNs);
+    return result;
+  }
+  if (trace) timing.readEnter=now();
+  result.result=MapReady(readback,1024,timeline);
+  if (trace) timing.readExit=now();
+  const bool readCurrent=result.result==VK_SUCCESS && current();
+  const auto readObserved=readCurrent ? now() : 0;
+  if (readCurrent && readObserved<deadline) {
     std::copy_n(readback.words,result.tail.size(),result.tail.begin());
     result.read=true;
     if (prepared_) {
@@ -660,6 +861,8 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
       e.fenceSignaled=e.mapped=e.current=e.liveGuard=true;
     }
   }
+  if (trace) stopped(result.read ? "TAIL_READY" : result.result!=VK_SUCCESS ? "READBACK_RESULT" :
+                     readObserved>=deadline ? "GRANT_DEADLINE" : "STALE_PERMIT",readObserved ? readObserved : timing.readExit);
   return result;
 }
 }
