@@ -1,0 +1,82 @@
+{
+  "schema": "T833_T849_NARROW_QUALIFICATION_V1",
+  "executable": ".codex/local-test/t833-t849-qualification.exe",
+  "exeSHA": "49d4f25ee390eba265e8a05091a501f213648a6cb06e539364d3993ad8991c23",
+  "roles": [
+    {
+      "role": "OP7_MOTION_ONLY",
+      "sourceSHA": "09f801ee8152cf5f4bca837bf21bf81034725d825d5b67dfe73fa92686b0ea25",
+      "moduleSHA": "9efb3d5704a436a53cb1abfed30e17a7b934a11d89571186b929f52630b85a40",
+      "result": "CHILD_EXIT",
+      "pipelineNs": "59155831600",
+      "ownerRetired": true
+    },
+    {
+      "role": "OP7_MMS_FORCE_ONLY",
+      "sourceSHA": "9e4d5c9e2c14c465235c2282eb35a6de9b041b96c934aaae2978b0f27d1a58a1",
+      "moduleSHA": "ccb4049b3d3ea0571f03374140fe8529e17fe6e1dd837a38c8249ae505b001e9",
+      "result": "CHILD_EXIT",
+      "pipelineNs": "9469616900",
+      "ownerRetired": true
+    },
+    {
+      "role": "OP17_LEDGER_ONLY",
+      "sourceSHA": "ed110e6dc88b5fb3f9e9868a2be79a023467181cca9e3c858543a7247ed26b6d",
+      "moduleSHA": "c36edde69b9cbd4029e153f6d8d21ddad93c021e32fe94f20e9c194db5d207d0",
+      "result": "CHILD_EXIT",
+      "pipelineNs": "78824400",
+      "ownerRetired": true
+    },
+    {
+      "role": "OP17_DRIVE_CONTEXT",
+      "sourceSHA": "4f7121607816414ed6c783d87c025f5d415354d57693e4fa7a58958cce046f0a",
+      "moduleSHA": "599f8ff437e98bf3b39f88471cde123150b330977d59564a4edb4826ea5efb58",
+      "result": "CALL_UNRETURNED",
+      "pipelineNs": null,
+      "ownerRetired": false
+    }
+  ],
+  "stackResult": [
+    {
+      "targetSeconds": 20,
+      "beginQpc": "15589485230827",
+      "endQpc": "15589488430626",
+      "ownerTid": 8916,
+      "file": "OP17_DRIVE_CONTEXT-20s.dmp",
+      "bytes": 224125,
+      "sha256": "5bf95e1c6be47f406f792f3cd86deb38e26d1027a495aa736eaf49bb1d0e2b31",
+      "stackBytes": 178832,
+      "rip": "0x7fff85e655e8",
+      "module": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+      "version": "31.0.101.2140",
+      "offset": "0xae55e8",
+      "rawFile": ".codex/local-test/t833-t849-stack/OP17_DRIVE_CONTEXT-20s.dmp",
+      "symbolicUnwind": "NOT_RESOLVED"
+    },
+    {
+      "targetSeconds": 45,
+      "beginQpc": "15589734975726",
+      "endQpc": "15589738158289",
+      "ownerTid": 8916,
+      "file": "OP17_DRIVE_CONTEXT-45s.dmp",
+      "bytes": 214637,
+      "sha256": "372c39bae92f2f5f6484ef2b1a6cfe2bd22d79cc6dc23eb41c9fc81b202672a3",
+      "stackBytes": 169344,
+      "rip": "0x7fff858217de",
+      "module": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+      "version": "31.0.101.2140",
+      "offset": "0x4a17de",
+      "rawFile": ".codex/local-test/t833-t849-stack/OP17_DRIVE_CONTEXT-45s.dmp",
+      "symbolicUnwind": "NOT_RESOLVED"
+    }
+  ],
+  "stackProcessStartTick": "134398726816955554",
+  "wprError": "0xc5585011",
+  "productionMap": "FROZEN",
+  "reduceBuild": {
+    "referenceSourceSHA": "c8927fc15ca2e86ede027223eee24f87f544567d063b26a4f1a1e8d03e049b7c",
+    "sourceSHA": "f58bdc6692ee800114b848000d8d23f6136bfdeacb0d6fa756573eb267ca8908",
+    "moduleSHA": "37603451236a7cba25f679aaaddd4e8bd1e236de91a8680587d1abd7aeff10a1",
+    "running": "NOT_NEEDED_MOTION_QUALIFIED"
+  }
+}

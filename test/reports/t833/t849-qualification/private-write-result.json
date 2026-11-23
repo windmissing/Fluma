@@ -1,0 +1,906 @@
+{
+  "schema": "T833_T849_PRIVATE_OBSERVATIONS_V1",
+  "captures": [
+    {
+      "case": "initial-field-error",
+      "executable": ".codex/local-test/t833-t849-private.exe",
+      "exeSHA": "b71fc49da789cafdfecd4db418c05c35d2dde94f2f6ff298f91931573d8d1d21",
+      "archive": ".codex/local-test/t833-t849-private/T849_PRIVATE_WRITES.bin",
+      "archiveSHA": "7b7cff6fd3ec60ccb7f629a7390da5946d7b40897ade33f245adb3a17be4de6f",
+      "stages": [
+        {
+          "stage": "BEFORE",
+          "firstError": [
+            0,
+            0
+          ],
+          "count": [
+            0,
+            0
+          ],
+          "audit": 0,
+          "motion": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            2143289410,
+            2143289411
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 0,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": []
+          }
+        },
+        {
+          "stage": "FIELD",
+          "firstError": [
+            7,
+            35
+          ],
+          "count": [
+            1,
+            0
+          ],
+          "audit": 0,
+          "motion": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            2143289410,
+            2143289411
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 3235779345,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              513,
+              514,
+              522,
+              526,
+              733,
+              734,
+              735,
+              744,
+              745,
+              746,
+              748,
+              749,
+              752,
+              766
+            ]
+          }
+        },
+        {
+          "stage": "MOTION",
+          "firstError": [
+            7,
+            35
+          ],
+          "count": [
+            1,
+            0
+          ],
+          "audit": 0,
+          "motion": [
+            1069617425,
+            1065353216,
+            0,
+            0,
+            0,
+            0,
+            572662306,
+            572662306,
+            572662306,
+            1073709602,
+            0,
+            0,
+            0,
+            1073676288,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            2143289410,
+            2143289411
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 3235779345,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              624,
+              625,
+              630,
+              631,
+              632,
+              633,
+              637
+            ]
+          }
+        },
+        {
+          "stage": "MMS",
+          "firstError": [
+            7,
+            35
+          ],
+          "count": [
+            1,
+            0
+          ],
+          "audit": 0,
+          "motion": [
+            1069617425,
+            1065353216,
+            0,
+            0,
+            0,
+            0,
+            572662306,
+            572662306,
+            572662306,
+            1073709602,
+            0,
+            0,
+            0,
+            1073676288,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            1048436771,
+            1039910089
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 3235779345,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              642,
+              643
+            ]
+          }
+        },
+        {
+          "stage": "OP8",
+          "firstError": [
+            7,
+            35
+          ],
+          "count": [
+            2,
+            0
+          ],
+          "audit": 0,
+          "motion": [
+            1069617425,
+            1065353216,
+            0,
+            0,
+            0,
+            0,
+            572662306,
+            572662306,
+            572662306,
+            1073709602,
+            0,
+            0,
+            0,
+            1073676288,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            1048436771,
+            1039910089
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 3235779345,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              522,
+              752
+            ]
+          }
+        }
+      ],
+      "productionEquivalent": false
+    },
+    {
+      "case": "matched-mode",
+      "executable": ".codex/local-test/t833-t849-private-final.exe",
+      "exeSHA": "d0c1f720b1c8d92c619348ed4c32891839eda32ac64ca580ecbbae4792e00731",
+      "archive": ".codex/local-test/t833-t849-private-matched/T849_PRIVATE_WRITES.bin",
+      "archiveSHA": "f88cd8295d23ed8b95c9517024ef83d2f6e75dc94262d07bfe2f411dbda2d281",
+      "stages": [
+        {
+          "stage": "BEFORE",
+          "firstError": [
+            0,
+            0
+          ],
+          "count": [
+            0,
+            0
+          ],
+          "audit": 0,
+          "motion": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            2143289410,
+            2143289411
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 0,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": []
+          }
+        },
+        {
+          "stage": "FIELD",
+          "firstError": [
+            7,
+            26
+          ],
+          "count": [
+            1,
+            0
+          ],
+          "audit": 0,
+          "motion": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            2143289410,
+            2143289411
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 3235779345,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              513,
+              514,
+              522,
+              526,
+              733,
+              734,
+              735,
+              744,
+              745,
+              746,
+              748,
+              749,
+              752,
+              766
+            ]
+          }
+        },
+        {
+          "stage": "MOTION",
+          "firstError": [
+            7,
+            26
+          ],
+          "count": [
+            1,
+            0
+          ],
+          "audit": 0,
+          "motion": [
+            1069617425,
+            1065353216,
+            0,
+            0,
+            0,
+            0,
+            572662306,
+            572662306,
+            572662306,
+            1073709602,
+            0,
+            0,
+            0,
+            1073676288,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            2143289410,
+            2143289411
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 3235779345,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              624,
+              625,
+              630,
+              631,
+              632,
+              633,
+              637
+            ]
+          }
+        },
+        {
+          "stage": "MMS",
+          "firstError": [
+            7,
+            26
+          ],
+          "count": [
+            1,
+            0
+          ],
+          "audit": 0,
+          "motion": [
+            1069617425,
+            1065353216,
+            0,
+            0,
+            0,
+            0,
+            572662306,
+            572662306,
+            572662306,
+            1073709602,
+            0,
+            0,
+            0,
+            1073676288,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            1048436771,
+            1039910089
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 3235779345,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              642,
+              643
+            ]
+          }
+        },
+        {
+          "stage": "OP8",
+          "firstError": [
+            7,
+            26
+          ],
+          "count": [
+            2,
+            0
+          ],
+          "audit": 0,
+          "motion": [
+            1069617425,
+            1065353216,
+            0,
+            0,
+            0,
+            0,
+            572662306,
+            572662306,
+            572662306,
+            1073709602,
+            0,
+            0,
+            0,
+            1073676288,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            1048436771,
+            1039910089
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 3235779345,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              522,
+              752
+            ]
+          }
+        }
+      ],
+      "productionEquivalent": false
+    },
+    {
+      "case": "boot-seeded",
+      "executable": ".codex/local-test/t833-t849-private-seeded.exe",
+      "exeSHA": "fd562769aa7a76879143dd4ee0e572a1a0273b9ca11dbd7c853a5a33a068f4e0",
+      "archive": ".codex/local-test/t833-t849-private-seeded/T849_PRIVATE_WRITES.bin",
+      "archiveSHA": "e885143830c6c8eb754312bb657e1bc17fc21365d08083363f8d932def45e7cf",
+      "stages": [
+        {
+          "stage": "BEFORE",
+          "firstError": [
+            0,
+            0
+          ],
+          "count": [
+            0,
+            0
+          ],
+          "audit": 0,
+          "motion": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            2143289410,
+            2143289411
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 0,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": []
+          }
+        },
+        {
+          "stage": "FIELD",
+          "firstError": [
+            0,
+            0
+          ],
+          "count": [
+            1,
+            0
+          ],
+          "audit": 6,
+          "motion": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            2143289410,
+            2143289411
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 0,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              522,
+              752,
+              755
+            ]
+          }
+        },
+        {
+          "stage": "MOTION",
+          "firstError": [
+            0,
+            0
+          ],
+          "count": [
+            1,
+            0
+          ],
+          "audit": 6,
+          "motion": [
+            1069617425,
+            1065353216,
+            0,
+            0,
+            0,
+            0,
+            572662306,
+            572662306,
+            572662306,
+            1073709602,
+            0,
+            0,
+            0,
+            1073676288,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            2143289410,
+            2143289411
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 0,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              624,
+              625,
+              630,
+              631,
+              632,
+              633,
+              637
+            ]
+          }
+        },
+        {
+          "stage": "MMS",
+          "firstError": [
+            0,
+            0
+          ],
+          "count": [
+            1,
+            0
+          ],
+          "audit": 6,
+          "motion": [
+            1069617425,
+            1065353216,
+            0,
+            0,
+            0,
+            0,
+            572662306,
+            572662306,
+            572662306,
+            1073709602,
+            0,
+            0,
+            0,
+            1073676288,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            1048436771,
+            1039910089
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 0,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              642,
+              643
+            ]
+          }
+        },
+        {
+          "stage": "OP8",
+          "firstError": [
+            0,
+            0
+          ],
+          "count": [
+            2,
+            0
+          ],
+          "audit": 6,
+          "motion": [
+            1069617425,
+            1065353216,
+            0,
+            0,
+            0,
+            0,
+            572662306,
+            572662306,
+            572662306,
+            1073709602,
+            0,
+            0,
+            0,
+            1073676288,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mms": [
+            1048436771,
+            1039910089
+          ],
+          "gravity": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstErrorSeal": 0,
+          "changedWords": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              522,
+              752
+            ]
+          }
+        }
+      ],
+      "productionEquivalent": false
+    }
+  ]
+}
