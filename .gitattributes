@@ -121,3 +121,8 @@ docs/architecture-T772-*.json -text whitespace=cr-at-eol
 docs/receipt-T772-*.json -text whitespace=cr-at-eol
 docs/architecture-T783-*.json -text whitespace=cr-at-eol
 docs/receipt-T783-*.json -text whitespace=cr-at-eol
+
+# T870 reproducibility receipt records the exact source and output bytes.
+test/t870/contact_lift.py text eol=lf
+test/reports/t870/samples.jsonl text eol=lf
+test/reports/t870/summary.json text eol=lf
