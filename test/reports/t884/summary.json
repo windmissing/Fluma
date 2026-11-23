@@ -1,0 +1,103 @@
+{
+  "schema": "T884_DRY_SAND_LONGWINDOW_V1",
+  "pe": {
+    "path": ".codex/local-test/t872-release.exe",
+    "sha256": "6ec0ec5c9e401ff4f7000e305f4acc989c2e5f9db35b8e6bfc97474ec8669871",
+    "note": "T876 同身份工件（T872 有序脉冲版）；三 SPIR-V 沿原 SHA 1912af9e/b8f0e327/caf0614c"
+  },
+  "runs": {
+    "longwindow_single": {
+      "rows": 752,
+      "admittedQ": 139681,
+      "quanta": 721,
+      "quantumStates": {
+        "M1_QUANTUM_PRESENT_QUEUED": 720,
+        "M1_QUANTUM_PRESENT_RETIRED": 1
+      },
+      "frames": 721,
+      "fps": 25.08,
+      "singleRun": true,
+      "generationRange": [
+        2,
+        722
+      ],
+      "sourceCommitConstant": true,
+      "presentRetired": true
+    },
+    "dual_release": {
+      "rows": 322,
+      "quanta": 291,
+      "quantumStates": {
+        "M1_QUANTUM_PRESENT_QUEUED": 290,
+        "M1_QUANTUM_PRESENT_RETIRED": 1
+      },
+      "lease": {
+        "count": 291,
+        "sandStockQ": [
+          "128878"
+        ],
+        "conservation": true,
+        "activeSand": [
+          0,
+          1
+        ],
+        "beforeUP": {
+          "count": 138,
+          "stock": "128878",
+          "activeSand": [
+            0,
+            1
+          ]
+        },
+        "afterUP": {
+          "count": 153,
+          "stock": [
+            "128878"
+          ],
+          "activeSand": [
+            0
+          ]
+        }
+      },
+      "presentRetired": true
+    },
+    "empty_idle": {
+      "rows": 27,
+      "frames": 0,
+      "quanta": 0,
+      "pointerEvents": 0
+    }
+  },
+  "targets": {
+    "target1_intake": {
+      "status": "PROVEN",
+      "evidence": "longwindow_single: 139681 Q admitted in 20s hold; 721 sustained frames @25fps; sourceCommit=1, generation 2→722"
+    },
+    "target3_touch_accumulate": {
+      "status": "PROVEN",
+      "evidence": "dual_release: before-UP 138 leases stock 128878 activeSand=1 (live particles during intake); after-UP 153 leases stock CONSTANT 128878 activeSand=0 (release stops emission, bed persists); conservation stock==admittedTotal all 291 frames"
+    },
+    "target2_shader_window": {
+      "status": "PROVEN",
+      "evidence": "721+291 windowFrames with pixel samples, single run identity, presentVk=0 all frames; interactive M1_QUANTUM_WINDOW frames (m1_full_scene pipeline)"
+    },
+    "target4_bed_particle_sameframe": {
+      "status": "PARTIAL",
+      "evidence": "m1SceneLease per-frame carries sandStockQ/sandLive(activeSand) same-frame with windowFrame; per-pixel pairing not available via current PC interface (single sample point pixel 0xff525355 only)"
+    },
+    "target5_empty_container": {
+      "status": "GAP",
+      "evidence": "empty-idle probe: no input → POINTER_READY waits indefinitely, 0 frames, 0 quanta. Empty-box presentation requires a SOURCE for first frame in current M1 design; idle empty-box view not reachable. Registered as actual gap."
+    },
+    "target6_compute_longwindow": {
+      "status": "PROVEN",
+      "evidence": "longwindow_single: 28.7s continuous window, 721 sequential quantum roots all PRESENT_QUEUED + clean RETIRED; 25fps sustained (below 60Hz — recorded as-is, no gate relaxation claimed)"
+    },
+    "gaps_registered": {
+      "gravity_interface": "interactive path has no runtime gravity switch (REST config c[24]/c[25]=0 fixed); fixture path has gravity in config but is not the interactive window",
+      "sampling_interface": "pulse cadence fixed 10ms by WM_TIMER; no runtime sampling control",
+      "empty_box_view": "see target5 — needs design decision (e.g. present dry diagnostic frame or admit zero-emit SOURCE)",
+      "fps_vs_60Hz": "25fps sustained on UHD 630; 60Hz not achievable with 127-dispatch quantum at this GPU (recorded, not gated)"
+    }
+  }
+}
