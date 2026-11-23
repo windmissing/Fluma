@@ -1,0 +1,5345 @@
+{
+  "schema": "T898_PC_LIVE_SOURCE_AND_AUTONOMOUS_RECOUNT_V1",
+  "origin": ".codex/local-test/demo-recovery-20261123-202032-832.jsonl",
+  "bytes": 2247877,
+  "sha256": "219a6a7c286f3a6ce2e23e4c6595cfc502065abbbbff9a55486e1aa9918bd11e",
+  "lines": 2110,
+  "sourceCodeBaseline": "8787f323",
+  "localT894PeSha256": "186a008eec9d7b52771bb9187a362702ccd41df68ef5c129984b76c92fa9f112",
+  "qpcHz": 10000000,
+  "computeModules": {
+    "m1SourceModuleSHA": "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162",
+    "m1QuantumCandidateSHA": "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c",
+    "m1QuantumCommitSHA": "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce"
+  },
+  "duplicateFieldRows": 70,
+  "duplicateFields": {
+    "m1GravityGrant": 61,
+    "m1RecoveryBaselineSeq": 14,
+    "m1RecoveryBaselineReceiptQpc": 14,
+    "m1RecoveryReadySession": 14,
+    "m1IdlePulseFault": 6
+  },
+  "stateCounts": {
+    "M1_EMPTY_PRESENT_QUEUED": 1,
+    "M1_QUANTUM_PRESENT_QUEUED": 137,
+    "M1_QUANTUM_PRESENT_RETIRED": 1,
+    "M1_SOURCE_REVOKED": 2,
+    "M1_STALE_WAIT_NEW_INPUT": 52,
+    "M1_WAIT_NEW_INPUT": 7,
+    "RUNNING": 86
+  },
+  "rootFailuresByKindReason": {
+    "QUANTUM:CLOCK_GAP": 5,
+    "QUANTUM:LATE_FENCE_SIGNAL": 4,
+    "QUANTUM:ROOT_DEADLINE": 43
+  },
+  "pressedHoldsBySourceCount": {
+    "0": 3,
+    "1": 48,
+    "2": 4,
+    "3": 1
+  },
+  "distinctAcceptedSources": 59,
+  "totalSourceQ20": 6878928,
+  "presentEvidenceBounds": [
+    {
+      "line": 33,
+      "nonce": "15963467570243",
+      "presentExitQpc": "15963468567539",
+      "run": "15963073238641",
+      "session": "1",
+      "plan": "2",
+      "sourceCommit": 1,
+      "physicsCommit": 2,
+      "frame": 2,
+      "ordinal": 1,
+      "activeSand": 1,
+      "stockQ20": 127623,
+      "bedEventCount": 0,
+      "eventRange": [
+        0,
+        1
+      ],
+      "kind": "M1_QUANTUM_WINDOW",
+      "dispatches": 127,
+      "pixel": "0xff525355"
+    },
+    {
+      "line": 2092,
+      "nonce": "15964352222602",
+      "presentExitQpc": "15964353854252",
+      "run": "15963073238641",
+      "session": "56",
+      "plan": "119",
+      "sourceCommit": 57,
+      "physicsCommit": 194,
+      "frame": 119,
+      "ordinal": 1,
+      "activeSand": 63,
+      "stockQ20": 6635572,
+      "bedEventCount": 0,
+      "eventRange": [
+        0,
+        63
+      ],
+      "kind": "M1_QUANTUM_WINDOW",
+      "dispatches": 127,
+      "pixel": "0xff525355"
+    }
+  ],
+  "terminal": {
+    "line": 2110,
+    "state": "M1_QUANTUM_PRESENT_RETIRED",
+    "wsi": 0,
+    "wsiRetire": 0,
+    "publicationReleased": true
+  },
+  "recoveryRows": [
+    {
+      "line": 36,
+      "kind": "QUANTUM",
+      "oldSession": "1",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963469991789",
+      "oldRetiredQpc": "15963470529062",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 274064000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963469359832",
+      "lastPresentedRoot": "15963469359832",
+      "plan": "2",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596347007024200,
+      "grantNs": 1596346757024200,
+      "firstWait": [
+        "15963469993928",
+        "15963470152776",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963469993928",
+        "15963470152776",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516785448",
+      "failedRootRemainingAtNonceNs": 7845300,
+      "failedRootRemainingAtFirstWaitNs": 7631400,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 3
+    },
+    {
+      "line": 288,
+      "kind": "QUANTUM",
+      "oldSession": "2",
+      "reason": "CLOCK_GAP",
+      "failedNonce": "15963495702396",
+      "oldRetiredQpc": "15963496194540",
+      "submitted": true,
+      "returnedCredits": 0,
+      "clearedCarry": 0,
+      "balanced": true,
+      "lastAcceptedRoot": "15963494948444",
+      "lastPresentedRoot": "15963494948444",
+      "plan": "12",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596349794543700,
+      "grantNs": 1596349544543700,
+      "firstWait": [
+        "15963495704627",
+        "15963495803015",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963495956815",
+        "15963496115889",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516785000",
+      "failedRootRemainingAtNonceNs": 224304100,
+      "failedRootRemainingAtFirstWaitNs": 224081000,
+      "failureActiveRemaining": 0,
+      "failurePending": 0,
+      "sameGrantLastAcceptedOrdinal": null
+    },
+    {
+      "line": 320,
+      "kind": "QUANTUM",
+      "oldSession": "3",
+      "reason": "CLOCK_GAP",
+      "failedNonce": "15963504711529",
+      "oldRetiredQpc": "15963505235630",
+      "submitted": true,
+      "returnedCredits": 0,
+      "clearedCarry": 0,
+      "balanced": true,
+      "lastAcceptedRoot": "15963503914210",
+      "lastPresentedRoot": "15963503914210",
+      "plan": "17",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596350695258200,
+      "grantNs": 1596350445258200,
+      "firstWait": [
+        "15963504713945",
+        "15963504827562",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963504987616",
+        "15963505147631",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516782312",
+      "failedRootRemainingAtNonceNs": 224105300,
+      "failedRootRemainingAtFirstWaitNs": 223863700,
+      "failureActiveRemaining": 0,
+      "failurePending": 0,
+      "sameGrantLastAcceptedOrdinal": null
+    },
+    {
+      "line": 332,
+      "kind": "QUANTUM",
+      "oldSession": "4",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963510303480",
+      "oldRetiredQpc": "15963510900482",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 178344000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963509692214",
+      "lastPresentedRoot": "15963509692214",
+      "plan": "20",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596351067746500,
+      "grantNs": 1596350817746500,
+      "firstWait": [
+        "15963510305857",
+        "15963510413522",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963510571949",
+        "15963510726659",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516784776",
+      "failedRootRemainingAtNonceNs": 37398500,
+      "failedRootRemainingAtFirstWaitNs": 37160800,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 3
+    },
+    {
+      "line": 460,
+      "kind": "QUANTUM",
+      "oldSession": "5",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963521203159",
+      "oldRetiredQpc": "15963521872868",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 20608000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963520536021",
+      "lastPresentedRoot": "15963520536021",
+      "plan": "23",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596352144016300,
+      "grantNs": 1596351894016300,
+      "firstWait": [
+        "15963521206716",
+        "15963521333060",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963521333100",
+        "15963521491962",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516781416",
+      "failedRootRemainingAtNonceNs": 23700400,
+      "failedRootRemainingAtFirstWaitNs": 23344700,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 3
+    },
+    {
+      "line": 798,
+      "kind": "QUANTUM",
+      "oldSession": "6",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963549344109",
+      "oldRetiredQpc": "15963550020423",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 638436000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963548627015",
+      "lastPresentedRoot": "15963548627015",
+      "plan": "25",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596354949723900,
+      "grantNs": 1596354699723900,
+      "firstWait": [
+        "15963549346870",
+        "15963549443804",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963549443854",
+        "15963549600014",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516782536",
+      "failedRootRemainingAtNonceNs": 15313000,
+      "failedRootRemainingAtFirstWaitNs": 15036900,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 3
+    },
+    {
+      "line": 809,
+      "kind": "QUANTUM",
+      "oldSession": "7",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963562246515",
+      "oldRetiredQpc": "15963562956396",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 714132000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963561520088",
+      "lastPresentedRoot": "15963561520088",
+      "plan": "28",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596356256109200,
+      "grantNs": 1596356006109200,
+      "firstWait": [
+        "15963562249399",
+        "15963562387707",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963562539061",
+        "15963562694108",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516784776",
+      "failedRootRemainingAtNonceNs": 31457700,
+      "failedRootRemainingAtFirstWaitNs": 31169300,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 3
+    },
+    {
+      "line": 819,
+      "kind": "QUANTUM",
+      "oldSession": "8",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963575608348",
+      "oldRetiredQpc": "15963576340469",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 290528000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963574865811",
+      "lastPresentedRoot": "15963574865811",
+      "plan": "31",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596357587429600,
+      "grantNs": 1596357337429600,
+      "firstWait": [
+        "15963575610616",
+        "15963575762600",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963575762662",
+        "15963575914669",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516779624",
+      "failedRootRemainingAtNonceNs": 26594800,
+      "failedRootRemainingAtFirstWaitNs": 26368000,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 3
+    },
+    {
+      "line": 830,
+      "kind": "QUANTUM",
+      "oldSession": "9",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963587549909",
+      "oldRetiredQpc": "15963588305752",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 579332000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963586791957",
+      "lastPresentedRoot": "15963586791957",
+      "plan": "34",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596358775781300,
+      "grantNs": 1596358525781300,
+      "firstWait": [
+        "15963587555385",
+        "15963587592863",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963587752796",
+        "15963587757826",
+        501700,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516787016",
+      "failedRootRemainingAtNonceNs": 20790400,
+      "failedRootRemainingAtFirstWaitNs": 20242800,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 3
+    },
+    {
+      "line": 979,
+      "kind": "QUANTUM",
+      "oldSession": "10",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963599829396",
+      "oldRetiredQpc": "15963600643197",
+      "submitted": true,
+      "returnedCredits": 6,
+      "clearedCarry": 672392000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963599001524",
+      "lastPresentedRoot": "15963599001524",
+      "plan": "37",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596360036252600,
+      "grantNs": 1596359786252600,
+      "firstWait": [
+        "15963599831878",
+        "15963599938970",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963600249290",
+        "15963600397175",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516779624",
+      "failedRootRemainingAtNonceNs": 53313000,
+      "failedRootRemainingAtFirstWaitNs": 53064800,
+      "failureActiveRemaining": 2,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1126,
+      "kind": "QUANTUM",
+      "oldSession": "11",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963610167261",
+      "oldRetiredQpc": "15963610987453",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 604700000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963609311573",
+      "lastPresentedRoot": "15963609311573",
+      "plan": "39",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596361094582800,
+      "grantNs": 1596360844582800,
+      "firstWait": [
+        "15963610169460",
+        "15963610333943",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963610799299",
+        "15963610951671",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516786568",
+      "failedRootRemainingAtNonceNs": 77856700,
+      "failedRootRemainingAtFirstWaitNs": 77636800,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1815,
+      "kind": "QUANTUM",
+      "oldSession": "12",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963632297158",
+      "oldRetiredQpc": "15963633191672",
+      "submitted": true,
+      "returnedCredits": 6,
+      "clearedCarry": 596268000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963631281951",
+      "lastPresentedRoot": "15963631281951",
+      "plan": "41",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596363268472700,
+      "grantNs": 1596363018472700,
+      "firstWait": [
+        "15963632299232",
+        "15963632459689",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963632608834",
+        "15963632766505",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516782984",
+      "failedRootRemainingAtNonceNs": 38756900,
+      "failedRootRemainingAtFirstWaitNs": 38549500,
+      "failureActiveRemaining": 2,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1822,
+      "kind": "QUANTUM",
+      "oldSession": "13",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963639026820",
+      "oldRetiredQpc": "15963639904034",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 987860000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963638133284",
+      "lastPresentedRoot": "15963638133284",
+      "plan": "43",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596363972465400,
+      "grantNs": 1596363722465400,
+      "firstWait": [
+        "15963639030038",
+        "15963639124596",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963639588577",
+        "15963639743842",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516786568",
+      "failedRootRemainingAtNonceNs": 69783400,
+      "failedRootRemainingAtFirstWaitNs": 69461600,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1830,
+      "kind": "QUANTUM",
+      "oldSession": "14",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963645698580",
+      "oldRetiredQpc": "15963646606353",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 10900000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963644747897",
+      "lastPresentedRoot": "15963644747897",
+      "plan": "45",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596364628993500,
+      "grantNs": 1596364378993500,
+      "firstWait": [
+        "15963645701073",
+        "15963645844321",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963646158817",
+        "15963646312842",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516786568",
+      "failedRootRemainingAtNonceNs": 59135500,
+      "failedRootRemainingAtFirstWaitNs": 58886200,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1841,
+      "kind": "QUANTUM",
+      "oldSession": "15",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963651952844",
+      "oldRetiredQpc": "15963652864229",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 926732000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963651008703",
+      "lastPresentedRoot": "15963651008703",
+      "plan": "47",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596365252701400,
+      "grantNs": 1596365002701400,
+      "firstWait": [
+        "15963651955033",
+        "15963652063495",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963652375927",
+        "15963652532545",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516783208",
+      "failedRootRemainingAtNonceNs": 57417000,
+      "failedRootRemainingAtFirstWaitNs": 57198100,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1850,
+      "kind": "QUANTUM",
+      "oldSession": "16",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963659176170",
+      "oldRetiredQpc": "15963660057870",
+      "submitted": true,
+      "returnedCredits": 6,
+      "clearedCarry": 247512000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963658285356",
+      "lastPresentedRoot": "15963658285356",
+      "plan": "50",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596365989011800,
+      "grantNs": 1596365739011800,
+      "firstWait": [
+        "15963659178153",
+        "15963659196999",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963659820681",
+        "15963659976078",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516782760",
+      "failedRootRemainingAtNonceNs": 71394800,
+      "failedRootRemainingAtFirstWaitNs": 71196500,
+      "failureActiveRemaining": 2,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1858,
+      "kind": "QUANTUM",
+      "oldSession": "17",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963669574907",
+      "oldRetiredQpc": "15963670485389",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 368004000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963668608776",
+      "lastPresentedRoot": "15963668608776",
+      "plan": "52",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596367012373700,
+      "grantNs": 1596366762373700,
+      "firstWait": [
+        "15963669577220",
+        "15963669640142",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963670107206",
+        "15963670263566",
+        1653200,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516786568",
+      "failedRootRemainingAtNonceNs": 54883000,
+      "failedRootRemainingAtFirstWaitNs": 54651700,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1865,
+      "kind": "QUANTUM",
+      "oldSession": "18",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963679472290",
+      "oldRetiredQpc": "15963680417898",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 384120000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963678501283",
+      "lastPresentedRoot": "15963678501283",
+      "plan": "54",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596367995443100,
+      "grantNs": 1596367745443100,
+      "firstWait": [
+        "15963679474424",
+        "15963679617117",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963679928570",
+        "15963680086337",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516782536",
+      "failedRootRemainingAtNonceNs": 48214100,
+      "failedRootRemainingAtFirstWaitNs": 48000700,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1874,
+      "kind": "QUANTUM",
+      "oldSession": "20",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963690608044",
+      "oldRetiredQpc": "15963691576722",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 175620000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963689575746",
+      "lastPresentedRoot": "15963689575746",
+      "plan": "56",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596369098375000,
+      "grantNs": 1596368848375000,
+      "firstWait": [
+        "15963690610233",
+        "15963690631862",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963690938758",
+        "15963691097993",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516783432",
+      "failedRootRemainingAtNonceNs": 37570600,
+      "failedRootRemainingAtFirstWaitNs": 37351700,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1884,
+      "kind": "QUANTUM",
+      "oldSession": "21",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963699765571",
+      "oldRetiredQpc": "15963700758772",
+      "submitted": true,
+      "returnedCredits": 6,
+      "clearedCarry": 660016000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963698732584",
+      "lastPresentedRoot": "15963698732584",
+      "plan": "59",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596370018833800,
+      "grantNs": 1596369768833800,
+      "firstWait": [
+        "15963699767934",
+        "15963699786038",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963700091460",
+        "15963700243199",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516781416",
+      "failedRootRemainingAtNonceNs": 42276700,
+      "failedRootRemainingAtFirstWaitNs": 42040400,
+      "failureActiveRemaining": 2,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1893,
+      "kind": "QUANTUM",
+      "oldSession": "22",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963709382509",
+      "oldRetiredQpc": "15963710381621",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 868136000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963708339050",
+      "lastPresentedRoot": "15963708339050",
+      "plan": "61",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596370976777500,
+      "grantNs": 1596370726777500,
+      "firstWait": [
+        "15963709384513",
+        "15963709455953",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963709617394",
+        "15963709768728",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516784104",
+      "failedRootRemainingAtNonceNs": 38526600,
+      "failedRootRemainingAtFirstWaitNs": 38326200,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1900,
+      "kind": "QUANTUM",
+      "oldSession": "23",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963714840595",
+      "oldRetiredQpc": "15963715886781",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 186508000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963713777161",
+      "lastPresentedRoot": "15963713777161",
+      "plan": "63",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596371522132800,
+      "grantNs": 1596371272132800,
+      "firstWait": [
+        "15963714842820",
+        "15963714935639",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963715090040",
+        "15963715246292",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516784328",
+      "failedRootRemainingAtNonceNs": 38073300,
+      "failedRootRemainingAtFirstWaitNs": 37850800,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1907,
+      "kind": "QUANTUM",
+      "oldSession": "24",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963722252792",
+      "oldRetiredQpc": "15963723333340",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 438276000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963721131329",
+      "lastPresentedRoot": "15963721131329",
+      "plan": "65",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596372252432600,
+      "grantNs": 1596372002432600,
+      "firstWait": [
+        "15963722255244",
+        "15963722357128",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963722514116",
+        "15963722667378",
+        1021000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516784776",
+      "failedRootRemainingAtNonceNs": 27153400,
+      "failedRootRemainingAtFirstWaitNs": 26908200,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1914,
+      "kind": "QUANTUM",
+      "oldSession": "25",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963732856457",
+      "oldRetiredQpc": "15963733956884",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 897716000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963731744821",
+      "lastPresentedRoot": "15963731744821",
+      "plan": "67",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596373309286400,
+      "grantNs": 1596373059286400,
+      "firstWait": [
+        "15963732858672",
+        "15963732953453",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963732953757",
+        "15963733109140",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516787016",
+      "failedRootRemainingAtNonceNs": 23640700,
+      "failedRootRemainingAtFirstWaitNs": 23419200,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1921,
+      "kind": "QUANTUM",
+      "oldSession": "26",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15963742459505",
+      "oldRetiredQpc": "15963743571984",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 239388000,
+      "balanced": true,
+      "lastAcceptedRoot": "15963741316894",
+      "lastPresentedRoot": "15963741316894",
+      "plan": "69",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596374263138600,
+      "grantNs": 1596374013138600,
+      "firstWait": [
+        "15963742461672",
+        "15963742601209",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15963742601262",
+        "15963742754687",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516783432",
+      "failedRootRemainingAtNonceNs": 17188100,
+      "failedRootRemainingAtFirstWaitNs": 16971400,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 2
+    },
+    {
+      "line": 1931,
+      "kind": "QUANTUM",
+      "oldSession": "29",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964162060127",
+      "oldRetiredQpc": "15964163491252",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 80116000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964159844777",
+      "lastPresentedRoot": "15964159844777",
+      "plan": "71",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596416234477600,
+      "grantNs": 1596415984477600,
+      "firstWait": [
+        "15964162062252",
+        "15964162155446",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964162311265",
+        "15964162464197",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516784776",
+      "failedRootRemainingAtNonceNs": 28464900,
+      "failedRootRemainingAtFirstWaitNs": 28252400,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 1939,
+      "kind": "QUANTUM",
+      "oldSession": "30",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964173004086",
+      "oldRetiredQpc": "15964174219367",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 725640000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964171568738",
+      "lastPresentedRoot": "15964171568738",
+      "plan": "73",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596417406873700,
+      "grantNs": 1596417156873700,
+      "firstWait": [
+        "15964173006304",
+        "15964173070224",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964173995866",
+        "15964174152634",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516782312",
+      "failedRootRemainingAtNonceNs": 106465100,
+      "failedRootRemainingAtFirstWaitNs": 106243300,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 1947,
+      "kind": "QUANTUM",
+      "oldSession": "32",
+      "reason": "LATE_FENCE_SIGNAL",
+      "failedNonce": "15964189441743",
+      "oldRetiredQpc": "15964190680486",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 465684000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964188088096",
+      "lastPresentedRoot": "15964188088096",
+      "plan": "75",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596419058809500,
+      "grantNs": 1596418808809500,
+      "firstWait": [
+        "15964189444333",
+        "15964189598565",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964190536188",
+        "15964190680486",
+        2000000,
+        0
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516779624",
+      "failedRootRemainingAtNonceNs": 114635200,
+      "failedRootRemainingAtFirstWaitNs": 114376200,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 1953,
+      "kind": "QUANTUM",
+      "oldSession": "33",
+      "reason": "LATE_FENCE_SIGNAL",
+      "failedNonce": "15964199505952",
+      "oldRetiredQpc": "15964200707719",
+      "submitted": true,
+      "returnedCredits": 6,
+      "clearedCarry": 586800000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964198150104",
+      "lastPresentedRoot": "15964198150104",
+      "plan": "77",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596420065010400,
+      "grantNs": 1596419815010400,
+      "firstWait": [
+        "15964199507889",
+        "15964199554317",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964200634014",
+        "15964200707719",
+        1609000,
+        0
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516781416",
+      "failedRootRemainingAtNonceNs": 114415200,
+      "failedRootRemainingAtFirstWaitNs": 114221500,
+      "failureActiveRemaining": 2,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 1959,
+      "kind": "QUANTUM",
+      "oldSession": "34",
+      "reason": "LATE_FENCE_SIGNAL",
+      "failedNonce": "15964206407178",
+      "oldRetiredQpc": "15964207646509",
+      "submitted": true,
+      "returnedCredits": 6,
+      "clearedCarry": 825240000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964205121633",
+      "lastPresentedRoot": "15964205121633",
+      "plan": "79",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596420762163100,
+      "grantNs": 1596420512163100,
+      "firstWait": [
+        "15964206409675",
+        "15964206510365",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964207594751",
+        "15964207646509",
+        2000000,
+        0
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516784104",
+      "failedRootRemainingAtNonceNs": 121445300,
+      "failedRootRemainingAtFirstWaitNs": 121195600,
+      "failureActiveRemaining": 2,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 1965,
+      "kind": "QUANTUM",
+      "oldSession": "35",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964214540424",
+      "oldRetiredQpc": "15964215770100",
+      "submitted": true,
+      "returnedCredits": 6,
+      "clearedCarry": 666828000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964213216876",
+      "lastPresentedRoot": "15964213216876",
+      "plan": "81",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596421571687600,
+      "grantNs": 1596421321687600,
+      "firstWait": [
+        "15964214542500",
+        "15964214617823",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964215709840",
+        "15964215716886",
+        703700,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516779624",
+      "failedRootRemainingAtNonceNs": 117645200,
+      "failedRootRemainingAtFirstWaitNs": 117437600,
+      "failureActiveRemaining": 2,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 1971,
+      "kind": "QUANTUM",
+      "oldSession": "36",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964222929966",
+      "oldRetiredQpc": "15964224451097",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 534264000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964221383971",
+      "lastPresentedRoot": "15964221383971",
+      "plan": "83",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596422388396700,
+      "grantNs": 1596422138396700,
+      "firstWait": [
+        "15964222933297",
+        "15964223033258",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964223817138",
+        "15964223972600",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516786568",
+      "failedRootRemainingAtNonceNs": 95400100,
+      "failedRootRemainingAtFirstWaitNs": 95067000,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 1977,
+      "kind": "QUANTUM",
+      "oldSession": "37",
+      "reason": "LATE_FENCE_SIGNAL",
+      "failedNonce": "15964230484090",
+      "oldRetiredQpc": "15964231753585",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 923844000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964229137784",
+      "lastPresentedRoot": "15964229137784",
+      "plan": "85",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596423163778300,
+      "grantNs": 1596422913778300,
+      "firstWait": [
+        "15964230486854",
+        "15964230536809",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964231609784",
+        "15964231753585",
+        2000000,
+        0
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516781416",
+      "failedRootRemainingAtNonceNs": 115369300,
+      "failedRootRemainingAtFirstWaitNs": 115092900,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 1983,
+      "kind": "QUANTUM",
+      "oldSession": "38",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964237691112",
+      "oldRetiredQpc": "15964238954286",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 889092000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964236285221",
+      "lastPresentedRoot": "15964236285221",
+      "plan": "87",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596423878522000,
+      "grantNs": 1596423628522000,
+      "firstWait": [
+        "15964237693491",
+        "15964237806303",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964238742373",
+        "15964238895441",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516786568",
+      "failedRootRemainingAtNonceNs": 109410800,
+      "failedRootRemainingAtFirstWaitNs": 109172900,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 1989,
+      "kind": "QUANTUM",
+      "oldSession": "39",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964245072059",
+      "oldRetiredQpc": "15964246369986",
+      "submitted": true,
+      "returnedCredits": 6,
+      "clearedCarry": 514428000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964243716138",
+      "lastPresentedRoot": "15964243716138",
+      "plan": "89",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596424621613700,
+      "grantNs": 1596424371613700,
+      "firstWait": [
+        "15964245075210",
+        "15964245116617",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964246202869",
+        "15964246357318",
+        1326800,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516786568",
+      "failedRootRemainingAtNonceNs": 114407800,
+      "failedRootRemainingAtFirstWaitNs": 114092700,
+      "failureActiveRemaining": 2,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 1995,
+      "kind": "QUANTUM",
+      "oldSession": "40",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964252412057",
+      "oldRetiredQpc": "15964253690406",
+      "submitted": true,
+      "returnedCredits": 6,
+      "clearedCarry": 921320000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964251036863",
+      "lastPresentedRoot": "15964251036863",
+      "plan": "91",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596425353686200,
+      "grantNs": 1596425103686200,
+      "firstWait": [
+        "15964252414423",
+        "15964252463373",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964253401754",
+        "15964253553585",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516782312",
+      "failedRootRemainingAtNonceNs": 112480500,
+      "failedRootRemainingAtFirstWaitNs": 112243900,
+      "failureActiveRemaining": 2,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2001,
+      "kind": "QUANTUM",
+      "oldSession": "41",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964259403058",
+      "oldRetiredQpc": "15964260808191",
+      "submitted": true,
+      "returnedCredits": 6,
+      "clearedCarry": 810576000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964257936122",
+      "lastPresentedRoot": "15964257936122",
+      "plan": "93",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596426043612200,
+      "grantNs": 1596425793612200,
+      "firstWait": [
+        "15964259406847",
+        "15964259490123",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964260429912",
+        "15964260436132",
+        621000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516783208",
+      "failedRootRemainingAtNonceNs": 103306400,
+      "failedRootRemainingAtFirstWaitNs": 102927500,
+      "failureActiveRemaining": 2,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2007,
+      "kind": "QUANTUM",
+      "oldSession": "42",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964267626119",
+      "oldRetiredQpc": "15964269013032",
+      "submitted": true,
+      "returnedCredits": 6,
+      "clearedCarry": 660012000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964266106530",
+      "lastPresentedRoot": "15964266106530",
+      "plan": "95",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596426860652900,
+      "grantNs": 1596426610652900,
+      "firstWait": [
+        "15964267629283",
+        "15964267661422",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964268587451",
+        "15964268743914",
+        1907900,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516783208",
+      "failedRootRemainingAtNonceNs": 98041000,
+      "failedRootRemainingAtFirstWaitNs": 97724600,
+      "failureActiveRemaining": 2,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2013,
+      "kind": "QUANTUM",
+      "oldSession": "44",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964274498706",
+      "oldRetiredQpc": "15964275870711",
+      "submitted": true,
+      "returnedCredits": 6,
+      "clearedCarry": 602928000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964273078442",
+      "lastPresentedRoot": "15964273078442",
+      "plan": "97",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596427557844000,
+      "grantNs": 1596427307844000,
+      "firstWait": [
+        "15964274501358",
+        "15964274629838",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964275563657",
+        "15964275723463",
+        1478300,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516787016",
+      "failedRootRemainingAtNonceNs": 107973400,
+      "failedRootRemainingAtFirstWaitNs": 107708200,
+      "failureActiveRemaining": 2,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2018,
+      "kind": "QUANTUM",
+      "oldSession": "45",
+      "reason": "CLOCK_GAP",
+      "failedNonce": "15964281780506",
+      "oldRetiredQpc": "15964283217366",
+      "submitted": true,
+      "returnedCredits": 0,
+      "clearedCarry": 0,
+      "balanced": true,
+      "lastAcceptedRoot": "15964281456839",
+      "lastPresentedRoot": "15964273078442",
+      "plan": "99",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596428428050600,
+      "grantNs": 1596428178050600,
+      "firstWait": [
+        "15964281782570",
+        "15964281926869",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964282698731",
+        "15964282858598",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516782312",
+      "failedRootRemainingAtNonceNs": 250000000,
+      "failedRootRemainingAtFirstWaitNs": 249793600,
+      "failureActiveRemaining": 0,
+      "failurePending": 0,
+      "sameGrantLastAcceptedOrdinal": null
+    },
+    {
+      "line": 2024,
+      "kind": "QUANTUM",
+      "oldSession": "46",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964290566697",
+      "oldRetiredQpc": "15964291979800",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 690924000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964289081869",
+      "lastPresentedRoot": "15964289081869",
+      "plan": "101",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596429158186800,
+      "grantNs": 1596428908186800,
+      "firstWait": [
+        "15964290568884",
+        "15964290610945",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964291543748",
+        "15964291705246",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516786568",
+      "failedRootRemainingAtNonceNs": 101517100,
+      "failedRootRemainingAtFirstWaitNs": 101298400,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2030,
+      "kind": "QUANTUM",
+      "oldSession": "47",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964296988567",
+      "oldRetiredQpc": "15964298463653",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 437700000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964295427280",
+      "lastPresentedRoot": "15964295427280",
+      "plan": "103",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596429792727900,
+      "grantNs": 1596429542727900,
+      "firstWait": [
+        "15964296990780",
+        "15964297116431",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964297888344",
+        "15964298044178",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516782984",
+      "failedRootRemainingAtNonceNs": 93871200,
+      "failedRootRemainingAtFirstWaitNs": 93649900,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2036,
+      "kind": "QUANTUM",
+      "oldSession": "48",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964304672227",
+      "oldRetiredQpc": "15964306198182",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 159516000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964302999376",
+      "lastPresentedRoot": "15964302999376",
+      "plan": "105",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596430549937500,
+      "grantNs": 1596430299937500,
+      "firstWait": [
+        "15964304674742",
+        "15964304837599",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964305453377",
+        "15964305606150",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516784776",
+      "failedRootRemainingAtNonceNs": 82714800,
+      "failedRootRemainingAtFirstWaitNs": 82463300,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2042,
+      "kind": "QUANTUM",
+      "oldSession": "49",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964312733814",
+      "oldRetiredQpc": "15964314239145",
+      "submitted": true,
+      "returnedCredits": 5,
+      "clearedCarry": 945384000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964311201686",
+      "lastPresentedRoot": "15964311201686",
+      "plan": "107",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596431370168600,
+      "grantNs": 1596431120168600,
+      "firstWait": [
+        "15964312736617",
+        "15964312751476",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964313683573",
+        "15964313839509",
+        1811300,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516786568",
+      "failedRootRemainingAtNonceNs": 96787200,
+      "failedRootRemainingAtFirstWaitNs": 96506900,
+      "failureActiveRemaining": 1,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2048,
+      "kind": "QUANTUM",
+      "oldSession": "50",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964321261723",
+      "oldRetiredQpc": "15964322816904",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 452352000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964319638444",
+      "lastPresentedRoot": "15964319638444",
+      "plan": "109",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596432213844400,
+      "grantNs": 1596431963844400,
+      "firstWait": [
+        "15964321264031",
+        "15964321303857",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964322092488",
+        "15964322252982",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516779624",
+      "failedRootRemainingAtNonceNs": 87672100,
+      "failedRootRemainingAtFirstWaitNs": 87441300,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2054,
+      "kind": "QUANTUM",
+      "oldSession": "51",
+      "reason": "CLOCK_GAP",
+      "failedNonce": "15964327956419",
+      "oldRetiredQpc": "15964329558058",
+      "submitted": true,
+      "returnedCredits": 0,
+      "clearedCarry": 0,
+      "balanced": true,
+      "lastAcceptedRoot": "15964326282523",
+      "lastPresentedRoot": "15964326282523",
+      "plan": "111",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596432878251900,
+      "grantNs": 1596432628251900,
+      "firstWait": [
+        "15964327959068",
+        "15964327983779",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964328135942",
+        "15964328289215",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516784776",
+      "failedRootRemainingAtNonceNs": 82610000,
+      "failedRootRemainingAtFirstWaitNs": 82345100,
+      "failureActiveRemaining": 0,
+      "failurePending": 0,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2061,
+      "kind": "QUANTUM",
+      "oldSession": "52",
+      "reason": "CLOCK_GAP",
+      "failedNonce": "15964331585090",
+      "oldRetiredQpc": "15964333219552",
+      "submitted": true,
+      "returnedCredits": 0,
+      "clearedCarry": 0,
+      "balanced": true,
+      "lastAcceptedRoot": "15964331267588",
+      "lastPresentedRoot": "15964326282523",
+      "plan": "113",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596433408508900,
+      "grantNs": 1596433158508900,
+      "firstWait": [
+        "15964331588103",
+        "15964331746948",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964332992798",
+        "15964333149532",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516784104",
+      "failedRootRemainingAtNonceNs": 249999900,
+      "failedRootRemainingAtFirstWaitNs": 249698600,
+      "failureActiveRemaining": 0,
+      "failurePending": 0,
+      "sameGrantLastAcceptedOrdinal": null
+    },
+    {
+      "line": 2077,
+      "kind": "QUANTUM",
+      "oldSession": "54",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964340231779",
+      "oldRetiredQpc": "15964341843526",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 182412000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964338450786",
+      "lastPresentedRoot": "15964338450786",
+      "plan": "115",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596434095078600,
+      "grantNs": 1596433845078600,
+      "firstWait": [
+        "15964340234527",
+        "15964340266507",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964340873305",
+        "15964341028212",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516783208",
+      "failedRootRemainingAtNonceNs": 71900700,
+      "failedRootRemainingAtFirstWaitNs": 71625900,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2087,
+      "kind": "QUANTUM",
+      "oldSession": "55",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964346839888",
+      "oldRetiredQpc": "15964348525051",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 656088000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964345090983",
+      "lastPresentedRoot": "15964345090983",
+      "plan": "117",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596434759098200,
+      "grantNs": 1596434509098200,
+      "firstWait": [
+        "15964346842288",
+        "15964346941512",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964347557632",
+        "15964347716662",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516782312",
+      "failedRootRemainingAtNonceNs": 75109400,
+      "failedRootRemainingAtFirstWaitNs": 74869400,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2093,
+      "kind": "QUANTUM",
+      "oldSession": "56",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15964353855429",
+      "oldRetiredQpc": "15964355393676",
+      "submitted": true,
+      "returnedCredits": 7,
+      "clearedCarry": 444204000,
+      "balanced": true,
+      "lastAcceptedRoot": "15964352222602",
+      "lastPresentedRoot": "15964352222602",
+      "plan": "119",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596435472260100,
+      "grantNs": 1596435222260100,
+      "firstWait": [
+        "15964353857708",
+        "15964353894356",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15964354681746",
+        "15964354841213",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516782312",
+      "failedRootRemainingAtNonceNs": 86717200,
+      "failedRootRemainingAtFirstWaitNs": 86489300,
+      "failureActiveRemaining": 3,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": 1
+    },
+    {
+      "line": 2101,
+      "kind": "QUANTUM",
+      "oldSession": "59",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15965933532104",
+      "oldRetiredQpc": "15965936262012",
+      "submitted": true,
+      "returnedCredits": 8,
+      "clearedCarry": 670164000,
+      "balanced": true,
+      "lastAcceptedRoot": "15965932587056",
+      "lastPresentedRoot": "15964352222602",
+      "plan": "121",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596593603210400,
+      "grantNs": 1596593353210400,
+      "firstWait": [
+        "15965933539130",
+        "15965933679854",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15965936009710",
+        "15965936161346",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516784776",
+      "failedRootRemainingAtNonceNs": 250000000,
+      "failedRootRemainingAtFirstWaitNs": 249297400,
+      "failureActiveRemaining": 4,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": null
+    },
+    {
+      "line": 2106,
+      "kind": "QUANTUM",
+      "oldSession": "60",
+      "reason": "ROOT_DEADLINE",
+      "failedNonce": "15965982659941",
+      "oldRetiredQpc": "15965985675615",
+      "submitted": true,
+      "returnedCredits": 8,
+      "clearedCarry": 890580000,
+      "balanced": true,
+      "lastAcceptedRoot": "15965981781351",
+      "lastPresentedRoot": "15964352222602",
+      "plan": "123",
+      "scopeRun": "15963073238641",
+      "deadlineNs": 1596598515994000,
+      "grantNs": 1596598265994000,
+      "firstWait": [
+        "15965982662023",
+        "15965982717253",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15965985105797",
+        "15965985266978",
+        2000000,
+        2
+      ],
+      "retireVkResult": 0,
+      "fenceObject": "2584516782760",
+      "failedRootRemainingAtNonceNs": 249999900,
+      "failedRootRemainingAtFirstWaitNs": 249791700,
+      "failureActiveRemaining": 4,
+      "failurePending": 4,
+      "sameGrantLastAcceptedOrdinal": null
+    }
+  ],
+  "readyRows": [
+    {
+      "line": 37,
+      "session": "2",
+      "baselineQpc": "15963470633309",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 289,
+      "session": "3",
+      "baselineQpc": "15963496333696",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 321,
+      "session": "4",
+      "baselineQpc": "15963505320762",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 333,
+      "session": "5",
+      "baselineQpc": "15963511046318",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 465,
+      "session": "6",
+      "baselineQpc": "15963521963126",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 799,
+      "session": "7",
+      "baselineQpc": "15963550068366",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 810,
+      "session": "8",
+      "baselineQpc": "15963563050727",
+      "baselineSeq": "2"
+    },
+    {
+      "line": 820,
+      "session": "9",
+      "baselineQpc": "15963576381451",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 831,
+      "session": "10",
+      "baselineQpc": "15963588386725",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 980,
+      "session": "11",
+      "baselineQpc": "15963600709711",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1144,
+      "session": "12",
+      "baselineQpc": "15963611113777",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1816,
+      "session": "13",
+      "baselineQpc": "15963633233998",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1823,
+      "session": "14",
+      "baselineQpc": "15963640081770",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1831,
+      "session": "15",
+      "baselineQpc": "15963646624059",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1842,
+      "session": "16",
+      "baselineQpc": "15963652993805",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1851,
+      "session": "17",
+      "baselineQpc": "15963660142210",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1859,
+      "session": "18",
+      "baselineQpc": "15963670545432",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1866,
+      "session": "19",
+      "baselineQpc": "15963680561397",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1868,
+      "session": "20",
+      "baselineQpc": "15963685070169",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1875,
+      "session": "21",
+      "baselineQpc": "15963691642783",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1885,
+      "session": "22",
+      "baselineQpc": "15963700877064",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1894,
+      "session": "23",
+      "baselineQpc": "15963710529241",
+      "baselineSeq": "2"
+    },
+    {
+      "line": 1901,
+      "session": "24",
+      "baselineQpc": "15963716019220",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1908,
+      "session": "25",
+      "baselineQpc": "15963723454469",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1915,
+      "session": "26",
+      "baselineQpc": "15963734038008",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1922,
+      "session": "27",
+      "baselineQpc": "15963743587463",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1925,
+      "session": "28",
+      "baselineQpc": "15964124930624",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1928,
+      "session": "29",
+      "baselineQpc": "15964138936264",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1932,
+      "session": "30",
+      "baselineQpc": "15964163546729",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1940,
+      "session": "31",
+      "baselineQpc": "15964174307659",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1942,
+      "session": "32",
+      "baselineQpc": "15964177182677",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1948,
+      "session": "33",
+      "baselineQpc": "15964190697137",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1954,
+      "session": "34",
+      "baselineQpc": "15964200814501",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1960,
+      "session": "35",
+      "baselineQpc": "15964207754464",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1966,
+      "session": "36",
+      "baselineQpc": "15964215865448",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1972,
+      "session": "37",
+      "baselineQpc": "15964224591336",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1978,
+      "session": "38",
+      "baselineQpc": "15964231786238",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1984,
+      "session": "39",
+      "baselineQpc": "15964239001739",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 1990,
+      "session": "40",
+      "baselineQpc": "15964246657073",
+      "baselineSeq": "2"
+    },
+    {
+      "line": 1996,
+      "session": "41",
+      "baselineQpc": "15964253714095",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2002,
+      "session": "42",
+      "baselineQpc": "15964260897234",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2008,
+      "session": "44",
+      "baselineQpc": "15964269525718",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2014,
+      "session": "45",
+      "baselineQpc": "15964275884569",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2019,
+      "session": "46",
+      "baselineQpc": "15964283329875",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2025,
+      "session": "47",
+      "baselineQpc": "15964292019812",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2031,
+      "session": "48",
+      "baselineQpc": "15964298521710",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2037,
+      "session": "49",
+      "baselineQpc": "15964306226285",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2043,
+      "session": "50",
+      "baselineQpc": "15964314315972",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2049,
+      "session": "51",
+      "baselineQpc": "15964322866090",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2055,
+      "session": "52",
+      "baselineQpc": "15964329571644",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2062,
+      "session": "53",
+      "baselineQpc": "15964333303325",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2064,
+      "session": "54",
+      "baselineQpc": "15964334595666",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2078,
+      "session": "55",
+      "baselineQpc": "15964341965773",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2088,
+      "session": "56",
+      "baselineQpc": "15964348583939",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2094,
+      "session": "57",
+      "baselineQpc": "15964355458324",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2097,
+      "session": "58",
+      "baselineQpc": "15964855764316",
+      "baselineSeq": "2"
+    },
+    {
+      "line": 2099,
+      "session": "59",
+      "baselineQpc": "15965230086248",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2102,
+      "session": "60",
+      "baselineQpc": "15965936321994",
+      "baselineSeq": "1"
+    },
+    {
+      "line": 2107,
+      "session": "61",
+      "baselineQpc": "15965985703636",
+      "baselineSeq": "1"
+    }
+  ],
+  "holds": [
+    {
+      "downLine": 32,
+      "hold": "3",
+      "downQpc": "15963466490446",
+      "endLine": 115,
+      "endKind": "UP",
+      "endQpc": "15963475326026",
+      "nextDownLine": 117,
+      "durationNs": 883558000,
+      "sourceCount": 1,
+      "sourceLines": [
+        33
+      ],
+      "sourceTotalQ20": 127623,
+      "quantumStartsDuringHold": 3,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [
+        36
+      ],
+      "afterReleaseRetireLines": []
+    },
+    {
+      "downLine": 117,
+      "hold": "83",
+      "downQpc": "15963478050049",
+      "endLine": 194,
+      "endKind": "UP",
+      "endQpc": "15963484348147",
+      "nextDownLine": 204,
+      "durationNs": 629809800,
+      "sourceCount": 3,
+      "sourceLines": [
+        118,
+        189,
+        193
+      ],
+      "sourceTotalQ20": 388631,
+      "quantumStartsDuringHold": 10,
+      "quantumStartsAfterReleaseBeforeNextDown": 8,
+      "afterReleaseActiveSand": [
+        5
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": []
+    },
+    {
+      "downLine": 204,
+      "hold": "153",
+      "downQpc": "15963488050418",
+      "endLine": 215,
+      "endKind": "UP",
+      "endQpc": "15963490065873",
+      "nextDownLine": 223,
+      "durationNs": 201545500,
+      "sourceCount": 1,
+      "sourceLines": [
+        210
+      ],
+      "sourceTotalQ20": 127395,
+      "quantumStartsDuringHold": 4,
+      "quantumStartsAfterReleaseBeforeNextDown": 6,
+      "afterReleaseActiveSand": [
+        6
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": []
+    },
+    {
+      "downLine": 223,
+      "hold": "162",
+      "downQpc": "15963493398998",
+      "endLine": 285,
+      "endKind": "UP",
+      "endQpc": "15963495525029",
+      "nextDownLine": 290,
+      "durationNs": 212603100,
+      "sourceCount": 0,
+      "sourceLines": [],
+      "sourceTotalQ20": 0,
+      "quantumStartsDuringHold": 4,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        288
+      ]
+    },
+    {
+      "downLine": 290,
+      "hold": "221",
+      "downQpc": "15963498209875",
+      "endLine": 296,
+      "endKind": "UP",
+      "endQpc": "15963500186817",
+      "nextDownLine": 303,
+      "durationNs": 197694200,
+      "sourceCount": 2,
+      "sourceLines": [
+        293,
+        298
+      ],
+      "sourceTotalQ20": 253475,
+      "quantumStartsDuringHold": 3,
+      "quantumStartsAfterReleaseBeforeNextDown": 5,
+      "afterReleaseActiveSand": [
+        8
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": []
+    },
+    {
+      "downLine": 303,
+      "hold": "227",
+      "downQpc": "15963502891318",
+      "endLine": 317,
+      "endKind": "UP",
+      "endQpc": "15963504573215",
+      "nextDownLine": 322,
+      "durationNs": 168189700,
+      "sourceCount": 0,
+      "sourceLines": [],
+      "sourceTotalQ20": 0,
+      "quantumStartsDuringHold": 2,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        320
+      ]
+    },
+    {
+      "downLine": 322,
+      "hold": "240",
+      "downQpc": "15963506922718",
+      "endLine": 327,
+      "endKind": "UP",
+      "endQpc": "15963508476567",
+      "nextDownLine": 334,
+      "durationNs": 155384900,
+      "sourceCount": 2,
+      "sourceLines": [
+        323,
+        329
+      ],
+      "sourceTotalQ20": 264900,
+      "quantumStartsDuringHold": 2,
+      "quantumStartsAfterReleaseBeforeNextDown": 2,
+      "afterReleaseActiveSand": [
+        12
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        332
+      ]
+    },
+    {
+      "downLine": 334,
+      "hold": "246",
+      "downQpc": "15963516220077",
+      "endLine": 782,
+      "endKind": "UP",
+      "endQpc": "15963533455373",
+      "nextDownLine": 784,
+      "durationNs": 1723529600,
+      "sourceCount": 2,
+      "sourceLines": [
+        335,
+        402
+      ],
+      "sourceTotalQ20": 263739,
+      "quantumStartsDuringHold": 6,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [
+        460
+      ],
+      "afterReleaseRetireLines": []
+    },
+    {
+      "downLine": 784,
+      "hold": "688",
+      "downQpc": "15963546271429",
+      "endLine": 794,
+      "endKind": "UP",
+      "endQpc": "15963547929313",
+      "nextDownLine": 800,
+      "durationNs": 165788400,
+      "sourceCount": 1,
+      "sourceLines": [
+        792
+      ],
+      "sourceTotalQ20": 127041,
+      "quantumStartsDuringHold": 2,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        16
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        798
+      ]
+    },
+    {
+      "downLine": 800,
+      "hold": "699",
+      "downQpc": "15963557142322",
+      "endLine": 801,
+      "endKind": "UP",
+      "endQpc": "15963558481371",
+      "nextDownLine": 811,
+      "durationNs": 133904900,
+      "sourceCount": 1,
+      "sourceLines": [
+        803
+      ],
+      "sourceTotalQ20": 134575,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 5,
+      "afterReleaseActiveSand": [
+        18
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        809
+      ]
+    },
+    {
+      "downLine": 811,
+      "hold": "702",
+      "downQpc": "15963571188679",
+      "endLine": 812,
+      "endKind": "UP",
+      "endQpc": "15963572451639",
+      "nextDownLine": 821,
+      "durationNs": 126296000,
+      "sourceCount": 1,
+      "sourceLines": [
+        814
+      ],
+      "sourceTotalQ20": 76194,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 4,
+      "afterReleaseActiveSand": [
+        19
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        819
+      ]
+    },
+    {
+      "downLine": 821,
+      "hold": "705",
+      "downQpc": "15963582315483",
+      "endLine": 823,
+      "endKind": "UP",
+      "endQpc": "15963583761984",
+      "nextDownLine": 832,
+      "durationNs": 144650100,
+      "sourceCount": 1,
+      "sourceLines": [
+        822
+      ],
+      "sourceTotalQ20": 125229,
+      "quantumStartsDuringHold": 2,
+      "quantumStartsAfterReleaseBeforeNextDown": 4,
+      "afterReleaseActiveSand": [
+        20
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        830
+      ]
+    },
+    {
+      "downLine": 832,
+      "hold": "708",
+      "downQpc": "15963594734825",
+      "endLine": 981,
+      "endKind": "UP",
+      "endQpc": "15963601707947",
+      "nextDownLine": 983,
+      "durationNs": 697312200,
+      "sourceCount": 2,
+      "sourceLines": [
+        865,
+        977
+      ],
+      "sourceTotalQ20": 262629,
+      "quantumStartsDuringHold": 5,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [
+        979
+      ],
+      "afterReleaseRetireLines": []
+    },
+    {
+      "downLine": 983,
+      "hold": "852",
+      "downQpc": "15963607790504",
+      "endLine": 1801,
+      "endKind": "UP",
+      "endQpc": "15963626945406",
+      "nextDownLine": 1803,
+      "durationNs": 1915490200,
+      "sourceCount": 1,
+      "sourceLines": [
+        1061
+      ],
+      "sourceTotalQ20": 6809,
+      "quantumStartsDuringHold": 2,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [
+        1126
+      ],
+      "afterReleaseRetireLines": []
+    },
+    {
+      "downLine": 1803,
+      "hold": "1668",
+      "downQpc": "15963629391792",
+      "endLine": 1811,
+      "endKind": "UP",
+      "endQpc": "15963630744473",
+      "nextDownLine": 1817,
+      "durationNs": 135268100,
+      "sourceCount": 1,
+      "sourceLines": [
+        1813
+      ],
+      "sourceTotalQ20": 134239,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        26
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1815
+      ]
+    },
+    {
+      "downLine": 1817,
+      "hold": "1678",
+      "downQpc": "15963636543299",
+      "endLine": 1818,
+      "endKind": "UP",
+      "endQpc": "15963638046177",
+      "nextDownLine": 1824,
+      "durationNs": 150287800,
+      "sourceCount": 1,
+      "sourceLines": [
+        1820
+      ],
+      "sourceTotalQ20": 134324,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        27
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1822
+      ]
+    },
+    {
+      "downLine": 1824,
+      "hold": "1681",
+      "downQpc": "15963643100202",
+      "endLine": 1826,
+      "endKind": "UP",
+      "endQpc": "15963644597768",
+      "nextDownLine": 1832,
+      "durationNs": 149756600,
+      "sourceCount": 1,
+      "sourceLines": [
+        1828
+      ],
+      "sourceTotalQ20": 134637,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        29
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1830
+      ]
+    },
+    {
+      "downLine": 1832,
+      "hold": "1685",
+      "downQpc": "15963649470849",
+      "endLine": 1837,
+      "endKind": "UP",
+      "endQpc": "15963650654659",
+      "nextDownLine": 1843,
+      "durationNs": 118381000,
+      "sourceCount": 1,
+      "sourceLines": [
+        1839
+      ],
+      "sourceTotalQ20": 8516,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        29
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1841
+      ]
+    },
+    {
+      "downLine": 1843,
+      "hold": "1692",
+      "downQpc": "15963654910161",
+      "endLine": 1844,
+      "endKind": "UP",
+      "endQpc": "15963656331107",
+      "nextDownLine": 1852,
+      "durationNs": 142094600,
+      "sourceCount": 1,
+      "sourceLines": [
+        1846
+      ],
+      "sourceTotalQ20": 121118,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 3,
+      "afterReleaseActiveSand": [
+        27
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1850
+      ]
+    },
+    {
+      "downLine": 1852,
+      "hold": "1695",
+      "downQpc": "15963666905128",
+      "endLine": 1854,
+      "endKind": "UP",
+      "endQpc": "15963668517411",
+      "nextDownLine": 1860,
+      "durationNs": 161228300,
+      "sourceCount": 1,
+      "sourceLines": [
+        1856
+      ],
+      "sourceTotalQ20": 133357,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        29
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1858
+      ]
+    },
+    {
+      "downLine": 1860,
+      "hold": "1699",
+      "downQpc": "15963676729041",
+      "endLine": 1861,
+      "endKind": "UP",
+      "endQpc": "15963678093863",
+      "nextDownLine": 1869,
+      "durationNs": 136482200,
+      "sourceCount": 1,
+      "sourceLines": [
+        1863
+      ],
+      "sourceTotalQ20": 134636,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        31
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1865
+      ]
+    },
+    {
+      "downLine": 1869,
+      "hold": "1702",
+      "downQpc": "15963687820849",
+      "endLine": 1870,
+      "endKind": "UP",
+      "endQpc": "15963689124571",
+      "nextDownLine": 1876,
+      "durationNs": 130372200,
+      "sourceCount": 1,
+      "sourceLines": [
+        1872
+      ],
+      "sourceTotalQ20": 129062,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        32
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1874
+      ]
+    },
+    {
+      "downLine": 1876,
+      "hold": "1705",
+      "downQpc": "15963695119512",
+      "endLine": 1877,
+      "endKind": "UP",
+      "endQpc": "15963696392332",
+      "nextDownLine": 1883,
+      "durationNs": 127282000,
+      "sourceCount": 1,
+      "sourceLines": [
+        1879
+      ],
+      "sourceTotalQ20": 55018,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 3,
+      "afterReleaseActiveSand": [
+        33
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": []
+    },
+    {
+      "downLine": 1883,
+      "hold": "1708",
+      "downQpc": "15963700140563",
+      "endLine": 1886,
+      "endKind": "UP",
+      "endQpc": "15963701381505",
+      "nextDownLine": 1888,
+      "durationNs": 124094200,
+      "sourceCount": 0,
+      "sourceLines": [],
+      "sourceTotalQ20": 0,
+      "quantumStartsDuringHold": 0,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [
+        1884
+      ],
+      "afterReleaseRetireLines": []
+    },
+    {
+      "downLine": 1888,
+      "hold": "1711",
+      "downQpc": "15963706564260",
+      "endLine": 1889,
+      "endKind": "UP",
+      "endQpc": "15963707883060",
+      "nextDownLine": 1895,
+      "durationNs": 131880000,
+      "sourceCount": 1,
+      "sourceLines": [
+        1891
+      ],
+      "sourceTotalQ20": 129899,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        34
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1893
+      ]
+    },
+    {
+      "downLine": 1895,
+      "hold": "1714",
+      "downQpc": "15963711988481",
+      "endLine": 1896,
+      "endKind": "UP",
+      "endQpc": "15963713382262",
+      "nextDownLine": 1902,
+      "durationNs": 139378100,
+      "sourceCount": 1,
+      "sourceLines": [
+        1898
+      ],
+      "sourceTotalQ20": 131286,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        36
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1900
+      ]
+    },
+    {
+      "downLine": 1902,
+      "hold": "1717",
+      "downQpc": "15963719292746",
+      "endLine": 1903,
+      "endKind": "UP",
+      "endQpc": "15963720671281",
+      "nextDownLine": 1909,
+      "durationNs": 137853500,
+      "sourceCount": 1,
+      "sourceLines": [
+        1905
+      ],
+      "sourceTotalQ20": 7055,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        37
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1907
+      ]
+    },
+    {
+      "downLine": 1909,
+      "hold": "1720",
+      "downQpc": "15963729961076",
+      "endLine": 1910,
+      "endKind": "UP",
+      "endQpc": "15963731130957",
+      "nextDownLine": 1916,
+      "durationNs": 116988100,
+      "sourceCount": 1,
+      "sourceLines": [
+        1912
+      ],
+      "sourceTotalQ20": 129868,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        37
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1914
+      ]
+    },
+    {
+      "downLine": 1916,
+      "hold": "1723",
+      "downQpc": "15963739409391",
+      "endLine": 1917,
+      "endKind": "UP",
+      "endQpc": "15963740643113",
+      "nextDownLine": 1929,
+      "durationNs": 123372200,
+      "sourceCount": 1,
+      "sourceLines": [
+        1919
+      ],
+      "sourceTotalQ20": 134711,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 1,
+      "afterReleaseActiveSand": [
+        39
+      ],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1921
+      ]
+    },
+    {
+      "downLine": 1929,
+      "hold": "1728",
+      "downQpc": "15964158738285",
+      "endLine": 1933,
+      "endKind": "UP",
+      "endQpc": "15964164239874",
+      "nextDownLine": 1935,
+      "durationNs": 550158900,
+      "sourceCount": 1,
+      "sourceLines": [
+        1930
+      ],
+      "sourceTotalQ20": 66562,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [
+        1931
+      ],
+      "afterReleaseRetireLines": []
+    },
+    {
+      "downLine": 1935,
+      "hold": "1731",
+      "downQpc": "15964170771371",
+      "endLine": 1937,
+      "endKind": "UP",
+      "endQpc": "15964173951887",
+      "nextDownLine": 1943,
+      "durationNs": 318051600,
+      "sourceCount": 1,
+      "sourceLines": [
+        1936
+      ],
+      "sourceTotalQ20": 129011,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1939
+      ]
+    },
+    {
+      "downLine": 1943,
+      "hold": "1734",
+      "downQpc": "15964187409397",
+      "endLine": 1945,
+      "endKind": "UP",
+      "endQpc": "15964189840772",
+      "nextDownLine": 1949,
+      "durationNs": 243137500,
+      "sourceCount": 1,
+      "sourceLines": [
+        1944
+      ],
+      "sourceTotalQ20": 133404,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1947
+      ]
+    },
+    {
+      "downLine": 1949,
+      "hold": "1737",
+      "downQpc": "15964197471489",
+      "endLine": 1950,
+      "endKind": "UP",
+      "endQpc": "15964199263500",
+      "nextDownLine": 1955,
+      "durationNs": 179201100,
+      "sourceCount": 1,
+      "sourceLines": [
+        1952
+      ],
+      "sourceTotalQ20": 128351,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1953
+      ]
+    },
+    {
+      "downLine": 1955,
+      "hold": "1740",
+      "downQpc": "15964204441401",
+      "endLine": 1957,
+      "endKind": "UP",
+      "endQpc": "15964207210260",
+      "nextDownLine": 1961,
+      "durationNs": 276885900,
+      "sourceCount": 1,
+      "sourceLines": [
+        1956
+      ],
+      "sourceTotalQ20": 114397,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1959
+      ]
+    },
+    {
+      "downLine": 1961,
+      "hold": "1743",
+      "downQpc": "15964212568724",
+      "endLine": 1962,
+      "endKind": "UP",
+      "endQpc": "15964214059718",
+      "nextDownLine": 1967,
+      "durationNs": 149099400,
+      "sourceCount": 1,
+      "sourceLines": [
+        1964
+      ],
+      "sourceTotalQ20": 129491,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1965
+      ]
+    },
+    {
+      "downLine": 1967,
+      "hold": "1746",
+      "downQpc": "15964220722503",
+      "endLine": 1968,
+      "endKind": "UP",
+      "endQpc": "15964222521532",
+      "nextDownLine": 1973,
+      "durationNs": 179902900,
+      "sourceCount": 1,
+      "sourceLines": [
+        1970
+      ],
+      "sourceTotalQ20": 127802,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1971
+      ]
+    },
+    {
+      "downLine": 1973,
+      "hold": "1749",
+      "downQpc": "15964228406397",
+      "endLine": 1974,
+      "endKind": "UP",
+      "endQpc": "15964230223471",
+      "nextDownLine": 1979,
+      "durationNs": 181707400,
+      "sourceCount": 1,
+      "sourceLines": [
+        1976
+      ],
+      "sourceTotalQ20": 123960,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1977
+      ]
+    },
+    {
+      "downLine": 1979,
+      "hold": "1752",
+      "downQpc": "15964235633102",
+      "endLine": 1980,
+      "endKind": "UP",
+      "endQpc": "15964237439551",
+      "nextDownLine": 1985,
+      "durationNs": 180644900,
+      "sourceCount": 1,
+      "sourceLines": [
+        1982
+      ],
+      "sourceTotalQ20": 6748,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1983
+      ]
+    },
+    {
+      "downLine": 1985,
+      "hold": "1755",
+      "downQpc": "15964243014606",
+      "endLine": 1986,
+      "endKind": "UP",
+      "endQpc": "15964244834181",
+      "nextDownLine": 1991,
+      "durationNs": 181957500,
+      "sourceCount": 1,
+      "sourceLines": [
+        1988
+      ],
+      "sourceTotalQ20": 127890,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1989
+      ]
+    },
+    {
+      "downLine": 1991,
+      "hold": "1758",
+      "downQpc": "15964250432889",
+      "endLine": 1992,
+      "endKind": "UP",
+      "endQpc": "15964252211399",
+      "nextDownLine": 1997,
+      "durationNs": 177851000,
+      "sourceCount": 1,
+      "sourceLines": [
+        1994
+      ],
+      "sourceTotalQ20": 128364,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        1995
+      ]
+    },
+    {
+      "downLine": 1997,
+      "hold": "1761",
+      "downQpc": "15964257217242",
+      "endLine": 1998,
+      "endKind": "UP",
+      "endQpc": "15964259233321",
+      "nextDownLine": 2003,
+      "durationNs": 201607900,
+      "sourceCount": 1,
+      "sourceLines": [
+        2000
+      ],
+      "sourceTotalQ20": 136232,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2001
+      ]
+    },
+    {
+      "downLine": 2003,
+      "hold": "1764",
+      "downQpc": "15964265380075",
+      "endLine": 2004,
+      "endKind": "UP",
+      "endQpc": "15964266689329",
+      "nextDownLine": 2009,
+      "durationNs": 130925400,
+      "sourceCount": 1,
+      "sourceLines": [
+        2006
+      ],
+      "sourceTotalQ20": 137082,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2007
+      ]
+    },
+    {
+      "downLine": 2009,
+      "hold": "1767",
+      "downQpc": "15964272376971",
+      "endLine": 2010,
+      "endKind": "UP",
+      "endQpc": "15964273739565",
+      "nextDownLine": 2015,
+      "durationNs": 136259400,
+      "sourceCount": 1,
+      "sourceLines": [
+        2012
+      ],
+      "sourceTotalQ20": 127404,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2013
+      ]
+    },
+    {
+      "downLine": 2015,
+      "hold": "1770",
+      "downQpc": "15964281118992",
+      "endLine": 2016,
+      "endKind": "UP",
+      "endQpc": "15964282440200",
+      "nextDownLine": 2020,
+      "durationNs": 132120800,
+      "sourceCount": 1,
+      "sourceLines": [
+        2018
+      ],
+      "sourceTotalQ20": 131295,
+      "quantumStartsDuringHold": 0,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2018
+      ]
+    },
+    {
+      "downLine": 2020,
+      "hold": "1773",
+      "downQpc": "15964288403539",
+      "endLine": 2021,
+      "endKind": "UP",
+      "endQpc": "15964289618867",
+      "nextDownLine": 2026,
+      "durationNs": 121532800,
+      "sourceCount": 1,
+      "sourceLines": [
+        2023
+      ],
+      "sourceTotalQ20": 128349,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2024
+      ]
+    },
+    {
+      "downLine": 2026,
+      "hold": "1776",
+      "downQpc": "15964294794362",
+      "endLine": 2027,
+      "endKind": "UP",
+      "endQpc": "15964296609133",
+      "nextDownLine": 2032,
+      "durationNs": 181477100,
+      "sourceCount": 1,
+      "sourceLines": [
+        2029
+      ],
+      "sourceTotalQ20": 131161,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2030
+      ]
+    },
+    {
+      "downLine": 2032,
+      "hold": "1779",
+      "downQpc": "15964302273946",
+      "endLine": 2033,
+      "endKind": "UP",
+      "endQpc": "15964303800057",
+      "nextDownLine": 2038,
+      "durationNs": 152611100,
+      "sourceCount": 1,
+      "sourceLines": [
+        2035
+      ],
+      "sourceTotalQ20": 141690,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2036
+      ]
+    },
+    {
+      "downLine": 2038,
+      "hold": "1782",
+      "downQpc": "15964310722645",
+      "endLine": 2039,
+      "endKind": "UP",
+      "endQpc": "15964312051388",
+      "nextDownLine": 2044,
+      "durationNs": 132874300,
+      "sourceCount": 1,
+      "sourceLines": [
+        2041
+      ],
+      "sourceTotalQ20": 95811,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2042
+      ]
+    },
+    {
+      "downLine": 2044,
+      "hold": "1785",
+      "downQpc": "15964318937008",
+      "endLine": 2045,
+      "endKind": "UP",
+      "endQpc": "15964320469074",
+      "nextDownLine": 2050,
+      "durationNs": 153206600,
+      "sourceCount": 1,
+      "sourceLines": [
+        2047
+      ],
+      "sourceTotalQ20": 137409,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2048
+      ]
+    },
+    {
+      "downLine": 2050,
+      "hold": "1788",
+      "downQpc": "15964325429311",
+      "endLine": 2051,
+      "endKind": "UP",
+      "endQpc": "15964326630025",
+      "nextDownLine": 2056,
+      "durationNs": 120071400,
+      "sourceCount": 1,
+      "sourceLines": [
+        2053
+      ],
+      "sourceTotalQ20": 133305,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2054
+      ]
+    },
+    {
+      "downLine": 2056,
+      "hold": "1791",
+      "downQpc": "15964330831650",
+      "endLine": 2059,
+      "endKind": "UP",
+      "endQpc": "15964332118458",
+      "nextDownLine": 2065,
+      "durationNs": 128680800,
+      "sourceCount": 1,
+      "sourceLines": [
+        2061
+      ],
+      "sourceTotalQ20": 58055,
+      "quantumStartsDuringHold": 0,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2061
+      ]
+    },
+    {
+      "downLine": 2065,
+      "hold": "1796",
+      "downQpc": "15964337765859",
+      "endLine": 2074,
+      "endKind": "UP",
+      "endQpc": "15964338953370",
+      "nextDownLine": 2079,
+      "durationNs": 118751100,
+      "sourceCount": 1,
+      "sourceLines": [
+        2076
+      ],
+      "sourceTotalQ20": 126944,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2077
+      ]
+    },
+    {
+      "downLine": 2079,
+      "hold": "1807",
+      "downQpc": "15964344448528",
+      "endLine": 2084,
+      "endKind": "UP",
+      "endQpc": "15964345873347",
+      "nextDownLine": 2089,
+      "durationNs": 142481900,
+      "sourceCount": 1,
+      "sourceLines": [
+        2086
+      ],
+      "sourceTotalQ20": 129708,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2087
+      ]
+    },
+    {
+      "downLine": 2089,
+      "hold": "1814",
+      "downQpc": "15964351375980",
+      "endLine": 2090,
+      "endKind": "UP",
+      "endQpc": "15964352791120",
+      "nextDownLine": 2100,
+      "durationNs": 141514000,
+      "sourceCount": 1,
+      "sourceLines": [
+        2092
+      ],
+      "sourceTotalQ20": 129181,
+      "quantumStartsDuringHold": 1,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [],
+      "afterReleaseRetireLines": [
+        2093
+      ]
+    },
+    {
+      "downLine": 2100,
+      "hold": "1818",
+      "downQpc": "15965932386981",
+      "endLine": 2103,
+      "endKind": "UP",
+      "endQpc": "15965972353520",
+      "nextDownLine": 2105,
+      "durationNs": 3996653900,
+      "sourceCount": 1,
+      "sourceLines": [
+        2101
+      ],
+      "sourceTotalQ20": 118165,
+      "quantumStartsDuringHold": 0,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [
+        2101
+      ],
+      "afterReleaseRetireLines": []
+    },
+    {
+      "downLine": 2105,
+      "hold": "1821",
+      "downQpc": "15965981376881",
+      "endLine": 2108,
+      "endKind": "UP",
+      "endQpc": "15966045540304",
+      "nextDownLine": null,
+      "durationNs": 6416342300,
+      "sourceCount": 1,
+      "sourceLines": [
+        2106
+      ],
+      "sourceTotalQ20": 125191,
+      "quantumStartsDuringHold": 0,
+      "quantumStartsAfterReleaseBeforeNextDown": 0,
+      "afterReleaseActiveSand": [],
+      "duringHoldRetireLines": [
+        2106
+      ],
+      "afterReleaseRetireLines": []
+    }
+  ],
+  "selectedHoldQuanta": [
+    {
+      "hold": "3",
+      "displayedDuring": [
+        {
+          "line": 33,
+          "nonce": "15963467570243",
+          "presentExitQpc": "15963468567539",
+          "run": "15963073238641",
+          "session": "1",
+          "plan": "2",
+          "sourceCommit": 1,
+          "physicsCommit": 2,
+          "frame": 2,
+          "ordinal": 1,
+          "activeSand": 1,
+          "stockQ20": 127623,
+          "bedEventCount": 0,
+          "eventRange": [
+            0,
+            1
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 34,
+          "nonce": "15963468568581",
+          "presentExitQpc": "15963469358600",
+          "run": "15963073238641",
+          "session": "1",
+          "plan": "2",
+          "sourceCommit": 1,
+          "physicsCommit": 3,
+          "frame": 2,
+          "ordinal": 2,
+          "activeSand": 1,
+          "stockQ20": 127623,
+          "bedEventCount": 0,
+          "eventRange": [
+            1,
+            2
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 35,
+          "nonce": "15963469359832",
+          "presentExitQpc": "15963469990795",
+          "run": "15963073238641",
+          "session": "1",
+          "plan": "2",
+          "sourceCommit": 1,
+          "physicsCommit": 4,
+          "frame": 2,
+          "ordinal": 3,
+          "activeSand": 1,
+          "stockQ20": 127623,
+          "bedEventCount": 0,
+          "eventRange": [
+            2,
+            3
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        }
+      ],
+      "displayedAfter": []
+    },
+    {
+      "hold": "83",
+      "displayedDuring": [
+        {
+          "line": 118,
+          "nonce": "15963478803310",
+          "presentExitQpc": "15963479409015",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "4",
+          "sourceCommit": 2,
+          "physicsCommit": 6,
+          "frame": 4,
+          "ordinal": 1,
+          "activeSand": 2,
+          "stockQ20": 257225,
+          "bedEventCount": 0,
+          "eventRange": [
+            0,
+            2
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 135,
+          "nonce": "15963479410011",
+          "presentExitQpc": "15963480019719",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "4",
+          "sourceCommit": 2,
+          "physicsCommit": 7,
+          "frame": 4,
+          "ordinal": 2,
+          "activeSand": 2,
+          "stockQ20": 257225,
+          "bedEventCount": 0,
+          "eventRange": [
+            2,
+            4
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 164,
+          "nonce": "15963480021153",
+          "presentExitQpc": "15963480551526",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "4",
+          "sourceCommit": 2,
+          "physicsCommit": 8,
+          "frame": 4,
+          "ordinal": 3,
+          "activeSand": 2,
+          "stockQ20": 257225,
+          "bedEventCount": 0,
+          "eventRange": [
+            4,
+            6
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 185,
+          "nonce": "15963480552420",
+          "presentExitQpc": "15963481066654",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "4",
+          "sourceCommit": 2,
+          "physicsCommit": 9,
+          "frame": 4,
+          "ordinal": 4,
+          "activeSand": 2,
+          "stockQ20": 257225,
+          "bedEventCount": 0,
+          "eventRange": [
+            6,
+            8
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 189,
+          "nonce": "15963481351061",
+          "presentExitQpc": "15963481827769",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "5",
+          "sourceCommit": 3,
+          "physicsCommit": 11,
+          "frame": 5,
+          "ordinal": 1,
+          "activeSand": 3,
+          "stockQ20": 384497,
+          "bedEventCount": 0,
+          "eventRange": [
+            1,
+            4
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 190,
+          "nonce": "15963481829119",
+          "presentExitQpc": "15963482279054",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "5",
+          "sourceCommit": 3,
+          "physicsCommit": 12,
+          "frame": 5,
+          "ordinal": 2,
+          "activeSand": 3,
+          "stockQ20": 384497,
+          "bedEventCount": 0,
+          "eventRange": [
+            4,
+            7
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 191,
+          "nonce": "15963482280139",
+          "presentExitQpc": "15963482720304",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "5",
+          "sourceCommit": 3,
+          "physicsCommit": 13,
+          "frame": 5,
+          "ordinal": 3,
+          "activeSand": 3,
+          "stockQ20": 384497,
+          "bedEventCount": 0,
+          "eventRange": [
+            7,
+            10
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 192,
+          "nonce": "15963482721235",
+          "presentExitQpc": "15963483160711",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "5",
+          "sourceCommit": 3,
+          "physicsCommit": 14,
+          "frame": 5,
+          "ordinal": 4,
+          "activeSand": 3,
+          "stockQ20": 384497,
+          "bedEventCount": 0,
+          "eventRange": [
+            10,
+            13
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 193,
+          "nonce": "15963483420275",
+          "presentExitQpc": "15963483895590",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "6",
+          "sourceCommit": 4,
+          "physicsCommit": 16,
+          "frame": 6,
+          "ordinal": 1,
+          "activeSand": 5,
+          "stockQ20": 516254,
+          "bedEventCount": 0,
+          "eventRange": [
+            2,
+            7
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 196,
+          "nonce": "15963483896390",
+          "presentExitQpc": "15963484370938",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "6",
+          "sourceCommit": 4,
+          "physicsCommit": 17,
+          "frame": 6,
+          "ordinal": 2,
+          "activeSand": 5,
+          "stockQ20": 516254,
+          "bedEventCount": 0,
+          "eventRange": [
+            7,
+            12
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        }
+      ],
+      "displayedAfter": [
+        {
+          "line": 197,
+          "nonce": "15963484372277",
+          "presentExitQpc": "15963484853323",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "6",
+          "sourceCommit": 4,
+          "physicsCommit": 18,
+          "frame": 6,
+          "ordinal": 3,
+          "activeSand": 5,
+          "stockQ20": 516254,
+          "bedEventCount": 0,
+          "eventRange": [
+            12,
+            17
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 198,
+          "nonce": "15963484854305",
+          "presentExitQpc": "15963485339124",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "6",
+          "sourceCommit": 4,
+          "physicsCommit": 19,
+          "frame": 6,
+          "ordinal": 4,
+          "activeSand": 5,
+          "stockQ20": 516254,
+          "bedEventCount": 0,
+          "eventRange": [
+            17,
+            22
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 199,
+          "nonce": "15963485342195",
+          "presentExitQpc": "15963485823173",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "7",
+          "sourceCommit": 4,
+          "physicsCommit": 20,
+          "frame": 7,
+          "ordinal": 1,
+          "activeSand": 5,
+          "stockQ20": 516254,
+          "bedEventCount": 0,
+          "eventRange": [
+            0,
+            5
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 200,
+          "nonce": "15963485824440",
+          "presentExitQpc": "15963486307070",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "7",
+          "sourceCommit": 4,
+          "physicsCommit": 21,
+          "frame": 7,
+          "ordinal": 2,
+          "activeSand": 5,
+          "stockQ20": 516254,
+          "bedEventCount": 0,
+          "eventRange": [
+            5,
+            10
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 201,
+          "nonce": "15963486308045",
+          "presentExitQpc": "15963486779494",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "7",
+          "sourceCommit": 4,
+          "physicsCommit": 22,
+          "frame": 7,
+          "ordinal": 3,
+          "activeSand": 5,
+          "stockQ20": 516254,
+          "bedEventCount": 0,
+          "eventRange": [
+            10,
+            15
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 202,
+          "nonce": "15963486781008",
+          "presentExitQpc": "15963487261525",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "7",
+          "sourceCommit": 4,
+          "physicsCommit": 23,
+          "frame": 7,
+          "ordinal": 4,
+          "activeSand": 5,
+          "stockQ20": 516254,
+          "bedEventCount": 0,
+          "eventRange": [
+            15,
+            20
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 203,
+          "nonce": "15963487262873",
+          "presentExitQpc": "15963487737942",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "8",
+          "sourceCommit": 4,
+          "physicsCommit": 24,
+          "frame": 8,
+          "ordinal": 1,
+          "activeSand": 5,
+          "stockQ20": 516254,
+          "bedEventCount": 0,
+          "eventRange": [
+            0,
+            5
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 205,
+          "nonce": "15963487739005",
+          "presentExitQpc": "15963488223602",
+          "run": "15963073238641",
+          "session": "2",
+          "plan": "8",
+          "sourceCommit": 4,
+          "physicsCommit": 25,
+          "frame": 8,
+          "ordinal": 2,
+          "activeSand": 5,
+          "stockQ20": 516254,
+          "bedEventCount": 0,
+          "eventRange": [
+            5,
+            10
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        }
+      ]
+    },
+    {
+      "hold": "246",
+      "displayedDuring": [
+        {
+          "line": 335,
+          "nonce": "15963516940134",
+          "presentExitQpc": "15963517608843",
+          "run": "15963073238641",
+          "session": "5",
+          "plan": "22",
+          "sourceCommit": 10,
+          "physicsCommit": 60,
+          "frame": 22,
+          "ordinal": 1,
+          "activeSand": 14,
+          "stockQ20": 1297237,
+          "bedEventCount": 0,
+          "eventRange": [
+            0,
+            14
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 364,
+          "nonce": "15963517611223",
+          "presentExitQpc": "15963518287176",
+          "run": "15963073238641",
+          "session": "5",
+          "plan": "22",
+          "sourceCommit": 10,
+          "physicsCommit": 61,
+          "frame": 22,
+          "ordinal": 2,
+          "activeSand": 14,
+          "stockQ20": 1297237,
+          "bedEventCount": 0,
+          "eventRange": [
+            14,
+            28
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 400,
+          "nonce": "15963518291733",
+          "presentExitQpc": "15963518939401",
+          "run": "15963073238641",
+          "session": "5",
+          "plan": "22",
+          "sourceCommit": 10,
+          "physicsCommit": 62,
+          "frame": 22,
+          "ordinal": 3,
+          "activeSand": 14,
+          "stockQ20": 1297237,
+          "bedEventCount": 0,
+          "eventRange": [
+            28,
+            42
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 402,
+          "nonce": "15963519204464",
+          "presentExitQpc": "15963519866591",
+          "run": "15963073238641",
+          "session": "5",
+          "plan": "23",
+          "sourceCommit": 11,
+          "physicsCommit": 64,
+          "frame": 23,
+          "ordinal": 1,
+          "activeSand": 15,
+          "stockQ20": 1425763,
+          "bedEventCount": 0,
+          "eventRange": [
+            1,
+            16
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 403,
+          "nonce": "15963519867652",
+          "presentExitQpc": "15963520535070",
+          "run": "15963073238641",
+          "session": "5",
+          "plan": "23",
+          "sourceCommit": 11,
+          "physicsCommit": 65,
+          "frame": 23,
+          "ordinal": 2,
+          "activeSand": 15,
+          "stockQ20": 1425763,
+          "bedEventCount": 0,
+          "eventRange": [
+            16,
+            31
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 421,
+          "nonce": "15963520536021",
+          "presentExitQpc": "15963521199426",
+          "run": "15963073238641",
+          "session": "5",
+          "plan": "23",
+          "sourceCommit": 11,
+          "physicsCommit": 66,
+          "frame": 23,
+          "ordinal": 3,
+          "activeSand": 15,
+          "stockQ20": 1425763,
+          "bedEventCount": 0,
+          "eventRange": [
+            31,
+            46
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        }
+      ],
+      "displayedAfter": []
+    },
+    {
+      "hold": "708",
+      "displayedDuring": [
+        {
+          "line": 865,
+          "nonce": "15963595417307",
+          "presentExitQpc": "15963596223366",
+          "run": "15963073238641",
+          "session": "10",
+          "plan": "36",
+          "sourceCommit": 16,
+          "physicsCommit": 92,
+          "frame": 36,
+          "ordinal": 1,
+          "activeSand": 21,
+          "stockQ20": 2016945,
+          "bedEventCount": 0,
+          "eventRange": [
+            0,
+            21
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 914,
+          "nonce": "15963596227016",
+          "presentExitQpc": "15963597041820",
+          "run": "15963073238641",
+          "session": "10",
+          "plan": "36",
+          "sourceCommit": 16,
+          "physicsCommit": 93,
+          "frame": 36,
+          "ordinal": 2,
+          "activeSand": 21,
+          "stockQ20": 2016945,
+          "bedEventCount": 0,
+          "eventRange": [
+            21,
+            42
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 953,
+          "nonce": "15963597043197",
+          "presentExitQpc": "15963597861196",
+          "run": "15963073238641",
+          "session": "10",
+          "plan": "36",
+          "sourceCommit": 16,
+          "physicsCommit": 94,
+          "frame": 36,
+          "ordinal": 3,
+          "activeSand": 21,
+          "stockQ20": 2016945,
+          "bedEventCount": 0,
+          "eventRange": [
+            42,
+            63
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 977,
+          "nonce": "15963598139635",
+          "presentExitQpc": "15963598999851",
+          "run": "15963073238641",
+          "session": "10",
+          "plan": "37",
+          "sourceCommit": 17,
+          "physicsCommit": 96,
+          "frame": 37,
+          "ordinal": 1,
+          "activeSand": 23,
+          "stockQ20": 2151431,
+          "bedEventCount": 0,
+          "eventRange": [
+            2,
+            25
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 978,
+          "nonce": "15963599001524",
+          "presentExitQpc": "15963599827789",
+          "run": "15963073238641",
+          "session": "10",
+          "plan": "37",
+          "sourceCommit": 17,
+          "physicsCommit": 97,
+          "frame": 37,
+          "ordinal": 2,
+          "activeSand": 23,
+          "stockQ20": 2151431,
+          "bedEventCount": 0,
+          "eventRange": [
+            25,
+            48
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        }
+      ],
+      "displayedAfter": []
+    },
+    {
+      "hold": "852",
+      "displayedDuring": [
+        {
+          "line": 1061,
+          "nonce": "15963608445828",
+          "presentExitQpc": "15963609308726",
+          "run": "15963073238641",
+          "session": "11",
+          "plan": "39",
+          "sourceCommit": 18,
+          "physicsCommit": 99,
+          "frame": 39,
+          "ordinal": 1,
+          "activeSand": 24,
+          "stockQ20": 2158240,
+          "bedEventCount": 0,
+          "eventRange": [
+            0,
+            24
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        },
+        {
+          "line": 1105,
+          "nonce": "15963609311573",
+          "presentExitQpc": "15963610166194",
+          "run": "15963073238641",
+          "session": "11",
+          "plan": "39",
+          "sourceCommit": 18,
+          "physicsCommit": 100,
+          "frame": 39,
+          "ordinal": 2,
+          "activeSand": 24,
+          "stockQ20": 2158240,
+          "bedEventCount": 0,
+          "eventRange": [
+            24,
+            48
+          ],
+          "kind": "M1_QUANTUM_WINDOW",
+          "dispatches": 127,
+          "pixel": "0xff525355"
+        }
+      ],
+      "displayedAfter": []
+    },
+    {
+      "hold": "1818",
+      "displayedDuring": [],
+      "displayedAfter": []
+    },
+    {
+      "hold": "1821",
+      "displayedDuring": [],
+      "displayedAfter": []
+    }
+  ],
+  "acceptedSources": [
+    {
+      "line": 33,
+      "nonce": "15963466897817",
+      "hold": "3",
+      "session": "1",
+      "plan": "1",
+      "sourceCommit": 1,
+      "admittedQ20": 127623,
+      "rejectedQ20": 0,
+      "stockQ20": 127623,
+      "deltaNs": 15213900,
+      "firstFenceExitQpc": "15963467568528",
+      "commandSHA256": "48ca0fd00f8e8f498a5f5c070c4dea8f7375e26d9e5dc9615550fa4b70cdcc0b",
+      "producerSHA256": "e2241c4f5d550a6f432526743ab4d9ec0811e413341d9a570eef1a7660bb7fba"
+    },
+    {
+      "line": 118,
+      "nonce": "15963478439767",
+      "hold": "83",
+      "session": "2",
+      "plan": "3",
+      "sourceCommit": 2,
+      "admittedQ20": 129602,
+      "rejectedQ20": 0,
+      "stockQ20": 257225,
+      "deltaNs": 15449800,
+      "firstFenceExitQpc": "15963478801870",
+      "commandSHA256": "3632f63c6c59d6a261c87b5959dd7757c7716f498259222ed7731a8e52cb912c",
+      "producerSHA256": "04c1d13e7ee363c271f2d5b1c06eccc728df09551db5bd61a90a6acd47dc113d"
+    },
+    {
+      "line": 189,
+      "nonce": "15963481067535",
+      "hold": "83",
+      "session": "2",
+      "plan": "5",
+      "sourceCommit": 3,
+      "admittedQ20": 127272,
+      "rejectedQ20": 0,
+      "stockQ20": 384497,
+      "deltaNs": 15172100,
+      "firstFenceExitQpc": "15963481349480",
+      "commandSHA256": "c2d1b636cce60d079dcb23eb1747aca7edcbd3a116a453b529d7fdb2a5e0d51c",
+      "producerSHA256": "5cfa67bfd8003525d0a733eff3fceaae158b41c2e6d4fbf8ae546cdb29a77322"
+    },
+    {
+      "line": 193,
+      "nonce": "15963483161753",
+      "hold": "83",
+      "session": "2",
+      "plan": "6",
+      "sourceCommit": 4,
+      "admittedQ20": 131757,
+      "rejectedQ20": 0,
+      "stockQ20": 516254,
+      "deltaNs": 15706700,
+      "firstFenceExitQpc": "15963483418775",
+      "commandSHA256": "d8b7bb433ea80a8d80cb92a1a26b54cd8cebb6da563d264979748e377ac7538f",
+      "producerSHA256": "c90de8e4a376e0c6e2e0c6402f7e878f88e9a66f3246137bdf17790d3c7175f1"
+    },
+    {
+      "line": 210,
+      "nonce": "15963489187796",
+      "hold": "153",
+      "session": "2",
+      "plan": "9",
+      "sourceCommit": 5,
+      "admittedQ20": 127395,
+      "rejectedQ20": 0,
+      "stockQ20": 643649,
+      "deltaNs": 15186700,
+      "firstFenceExitQpc": "15963489448003",
+      "commandSHA256": "ea2f180e4ca1a59c83b29e3df0d06b7a38803c7643928ecb511337e6d7cb82d7",
+      "producerSHA256": "49cf06ed1af4284ceaff98d653d42df4b12d1fa707c3ee905e599750f43f9476"
+    },
+    {
+      "line": 293,
+      "nonce": "15963498595473",
+      "hold": "221",
+      "session": "3",
+      "plan": "13",
+      "sourceCommit": 6,
+      "admittedQ20": 125910,
+      "rejectedQ20": 0,
+      "stockQ20": 769559,
+      "deltaNs": 15009700,
+      "firstFenceExitQpc": "15963498852464",
+      "commandSHA256": "f44f21fd9b1a3bef0d0ec29a885bf71af5cbc2b9ba2329ba1c5f638e8e62e4c8",
+      "producerSHA256": "907bb626cbfb11971760e38962122ee0bd97d734772d6c00199ae2d950340142"
+    },
+    {
+      "line": 298,
+      "nonce": "15963499918778",
+      "hold": "221",
+      "session": "3",
+      "plan": "15",
+      "sourceCommit": 7,
+      "admittedQ20": 127565,
+      "rejectedQ20": 0,
+      "stockQ20": 897124,
+      "deltaNs": 15207000,
+      "firstFenceExitQpc": "15963500173863",
+      "commandSHA256": "97db7cfa37ceab380b9c9487426604177d890d01b09ae5a1fb2f2fb2c1b7ff73",
+      "producerSHA256": "73c47f6bc206211d981898865890289205cd6370728d9206f2b3341907f2e4fd"
+    },
+    {
+      "line": 323,
+      "nonce": "15963507304171",
+      "hold": "240",
+      "session": "4",
+      "plan": "18",
+      "sourceCommit": 8,
+      "admittedQ20": 132572,
+      "rejectedQ20": 0,
+      "stockQ20": 1029696,
+      "deltaNs": 15803900,
+      "firstFenceExitQpc": "15963507574608",
+      "commandSHA256": "659b51cd0b8d0c5e56e5ad0e8bc33ef3eadc9f78ec6005756936b61743774a8d",
+      "producerSHA256": "d0009756745b4ea9cc263f5bcb7fc6b84468a6309ae662524d46d11f572173c2"
+    },
+    {
+      "line": 329,
+      "nonce": "15963508177712",
+      "hold": "240",
+      "session": "4",
+      "plan": "20",
+      "sourceCommit": 9,
+      "admittedQ20": 132328,
+      "rejectedQ20": 0,
+      "stockQ20": 1162024,
+      "deltaNs": 15774800,
+      "firstFenceExitQpc": "15963508453811",
+      "commandSHA256": "8cb4891461151a32572732149851b726623e0484cb27c6bff2a9ec70d2e107b2",
+      "producerSHA256": "91e07e49621abb90cd6987898b018f295ffc9ddd31ccaf16a7169bdef778f5b2"
+    },
+    {
+      "line": 335,
+      "nonce": "15963516664954",
+      "hold": "246",
+      "session": "5",
+      "plan": "21",
+      "sourceCommit": 10,
+      "admittedQ20": 135213,
+      "rejectedQ20": 0,
+      "stockQ20": 1297237,
+      "deltaNs": 16118700,
+      "firstFenceExitQpc": "15963516938572",
+      "commandSHA256": "1e82b984ad3be6129ba9ee46e775a519b02a39c5a8e0a6f2be17f1ca1b0ecfab",
+      "producerSHA256": "24365e9039532ffa343ebdb631213e6ac58ef576f4b9058340cd883f3bd559e6"
+    },
+    {
+      "line": 402,
+      "nonce": "15963518940436",
+      "hold": "246",
+      "session": "5",
+      "plan": "23",
+      "sourceCommit": 11,
+      "admittedQ20": 128526,
+      "rejectedQ20": 0,
+      "stockQ20": 1425763,
+      "deltaNs": 15321500,
+      "firstFenceExitQpc": "15963519202741",
+      "commandSHA256": "598f78b73155b99bf4f396368b938e5a4bf2d95d6e2b92602a3f3e1a20050c87",
+      "producerSHA256": "2a5267e60874462ddfeb934e58df8dcfc505900838de3a5de6c12af8ae9f6e72"
+    },
+    {
+      "line": 792,
+      "nonce": "15963546638823",
+      "hold": "688",
+      "session": "6",
+      "plan": "24",
+      "sourceCommit": 12,
+      "admittedQ20": 127041,
+      "rejectedQ20": 0,
+      "stockQ20": 1552804,
+      "deltaNs": 15144500,
+      "firstFenceExitQpc": "15963546995726",
+      "commandSHA256": "49916f9c6078c0d5636f0b8d96bf8d086719bf49d8515591f8c38d415bdd4d69",
+      "producerSHA256": "fefe20d8afbc2d6376885c490df44d487e9ea158db6dc15eb1ed3f37e1988ce0"
+    },
+    {
+      "line": 803,
+      "nonce": "15963557580954",
+      "hold": "699",
+      "session": "7",
+      "plan": "26",
+      "sourceCommit": 13,
+      "admittedQ20": 134575,
+      "rejectedQ20": 0,
+      "stockQ20": 1687379,
+      "deltaNs": 16042700,
+      "firstFenceExitQpc": "15963557859588",
+      "commandSHA256": "f83ff0faf9725858b47740a468b1309092951b3b754c9626e015a37c1a95625e",
+      "producerSHA256": "e5d12ff9dd33cef14bfd82bcbb18fad859b67ffc25c7bd6b1914a42a87a327c7"
+    },
+    {
+      "line": 814,
+      "nonce": "15963571565888",
+      "hold": "702",
+      "session": "8",
+      "plan": "29",
+      "sourceCommit": 14,
+      "admittedQ20": 76194,
+      "rejectedQ20": 0,
+      "stockQ20": 1763573,
+      "deltaNs": 9083100,
+      "firstFenceExitQpc": "15963571845175",
+      "commandSHA256": "6f3ba6b87f310e59772f88714b3c93804a9d94ebd89e089f1cb351c2fc5f8ac8",
+      "producerSHA256": "87c35ee1e5da667d0b0c14446b681e7c017920ab041e86920fb72295416dce84"
+    },
+    {
+      "line": 822,
+      "nonce": "15963582618027",
+      "hold": "705",
+      "session": "9",
+      "plan": "32",
+      "sourceCommit": 15,
+      "admittedQ20": 125229,
+      "rejectedQ20": 0,
+      "stockQ20": 1888802,
+      "deltaNs": 14928500,
+      "firstFenceExitQpc": "15963582907408",
+      "commandSHA256": "c668188d235bd7afd4424de9141f6b824e9c4bb7595f2dafc1340f2aa83c0cc2",
+      "producerSHA256": "9befe1eaf8c9b62acf42c71f755ad91f4254f77f494b357183a51661a3481f4d"
+    },
+    {
+      "line": 865,
+      "nonce": "15963595124926",
+      "hold": "708",
+      "session": "10",
+      "plan": "35",
+      "sourceCommit": 16,
+      "admittedQ20": 128143,
+      "rejectedQ20": 0,
+      "stockQ20": 2016945,
+      "deltaNs": 15275900,
+      "firstFenceExitQpc": "15963595415846",
+      "commandSHA256": "e3beaf714d85efc60dda39a30a6919656bfb8b2e1e96d3204d46f6d6b026b42f",
+      "producerSHA256": "890909dcd547e3932ba9967966a954eac7ff313c35ec2343b773aa4478c962b7"
+    },
+    {
+      "line": 977,
+      "nonce": "15963597863037",
+      "hold": "708",
+      "session": "10",
+      "plan": "37",
+      "sourceCommit": 17,
+      "admittedQ20": 134486,
+      "rejectedQ20": 0,
+      "stockQ20": 2151431,
+      "deltaNs": 16032000,
+      "firstFenceExitQpc": "15963598138108",
+      "commandSHA256": "cec116d67a4ccd7f0ec6fd7cd01c8fbac09b34c840cb065f95d240459cae46b4",
+      "producerSHA256": "d7dbcfc7c2704edf824fde1b4a750a64168301384c2982fa88af8f3d2d53aa2a"
+    },
+    {
+      "line": 1061,
+      "nonce": "15963608160529",
+      "hold": "852",
+      "session": "11",
+      "plan": "38",
+      "sourceCommit": 18,
+      "admittedQ20": 6809,
+      "rejectedQ20": 0,
+      "stockQ20": 2158240,
+      "deltaNs": 811700,
+      "firstFenceExitQpc": "15963608444269",
+      "commandSHA256": "3f1caa7b39c113dadd755a7080bad92585c1503d021a55a01b217ff44e5b6af9",
+      "producerSHA256": "fc9bd549687c1b838c0af185b83eb9f9234836451d5e5309b3846bc9e61444e7"
+    },
+    {
+      "line": 1813,
+      "nonce": "15963629827698",
+      "hold": "1668",
+      "session": "12",
+      "plan": "40",
+      "sourceCommit": 19,
+      "admittedQ20": 134239,
+      "rejectedQ20": 0,
+      "stockQ20": 2292479,
+      "deltaNs": 16002600,
+      "firstFenceExitQpc": "15963630183215",
+      "commandSHA256": "a767a6e3018d638f93bee535e12ca684ea44df0acc08b68715eac628ec630d13",
+      "producerSHA256": "73299b9768f70333a372e35da4db2499b56cfe4bc04d393a06736f95d0849922"
+    },
+    {
+      "line": 1820,
+      "nonce": "15963636947178",
+      "hold": "1678",
+      "session": "13",
+      "plan": "42",
+      "sourceCommit": 20,
+      "admittedQ20": 134324,
+      "rejectedQ20": 0,
+      "stockQ20": 2426803,
+      "deltaNs": 16012700,
+      "firstFenceExitQpc": "15963637223174",
+      "commandSHA256": "33f615aebeb707f641ae02fd684f64614a636b78cc54791b8cff220252be38bc",
+      "producerSHA256": "b12b0b7236cc3c783066c1d9af9b9384cca71a602bf76e5c8602d964bcca9f08"
+    },
+    {
+      "line": 1828,
+      "nonce": "15963643511273",
+      "hold": "1681",
+      "session": "14",
+      "plan": "44",
+      "sourceCommit": 21,
+      "admittedQ20": 134637,
+      "rejectedQ20": 0,
+      "stockQ20": 2561440,
+      "deltaNs": 16050100,
+      "firstFenceExitQpc": "15963643788122",
+      "commandSHA256": "4f20f3d150958d222e5059887ca70dd8601cb379ff45469fc2120b2f99f14038",
+      "producerSHA256": "343768ca2f24c4f303a3e9b8d959a48a188d171c842b50e0fdd2a44e0a6d0c26"
+    },
+    {
+      "line": 1839,
+      "nonce": "15963649734749",
+      "hold": "1685",
+      "session": "15",
+      "plan": "46",
+      "sourceCommit": 22,
+      "admittedQ20": 8516,
+      "rejectedQ20": 0,
+      "stockQ20": 2569956,
+      "deltaNs": 1015200,
+      "firstFenceExitQpc": "15963650025110",
+      "commandSHA256": "60d44c260918a599316325345e40266984022740f707752135619a49c955701f",
+      "producerSHA256": "671ade98d300f64a276cbcea278549945a676aac14b0a7a859680ad5564256a1"
+    },
+    {
+      "line": 1846,
+      "nonce": "15963655163304",
+      "hold": "1692",
+      "session": "16",
+      "plan": "48",
+      "sourceCommit": 23,
+      "admittedQ20": 121118,
+      "rejectedQ20": 0,
+      "stockQ20": 2691074,
+      "deltaNs": 14438400,
+      "firstFenceExitQpc": "15963655452910",
+      "commandSHA256": "291bab2b5a1c25bda319b0ec95329c5a6211937a45dc6da4f8a03e1967c998f5",
+      "producerSHA256": "e3e84519ad3d63cae5a68fdd95288699a2c6cce29eff3328a4835a821470a3e7"
+    },
+    {
+      "line": 1856,
+      "nonce": "15963667332924",
+      "hold": "1695",
+      "session": "17",
+      "plan": "51",
+      "sourceCommit": 24,
+      "admittedQ20": 133357,
+      "rejectedQ20": 0,
+      "stockQ20": 2824431,
+      "deltaNs": 15897400,
+      "firstFenceExitQpc": "15963667622170",
+      "commandSHA256": "73d213b960b35042ecce70c4b9d16d1ab0a243e793f70cb80172783800d578d2",
+      "producerSHA256": "65e64af945a4e193fe9033352749ef4cedff5fdb86272df4649ce102fefc4652"
+    },
+    {
+      "line": 1863,
+      "nonce": "15963677162314",
+      "hold": "1699",
+      "session": "18",
+      "plan": "53",
+      "sourceCommit": 25,
+      "admittedQ20": 134636,
+      "rejectedQ20": 0,
+      "stockQ20": 2959067,
+      "deltaNs": 16049900,
+      "firstFenceExitQpc": "15963677452948",
+      "commandSHA256": "f5eafdef22fa1daaec537b74c9e88c90db8a39248c3db35c62c64af74a55dbac",
+      "producerSHA256": "5a25d79e54ca955bcb386abf94e0bb9c09b42236d0406c449c1d0512e658762c"
+    },
+    {
+      "line": 1872,
+      "nonce": "15963688175425",
+      "hold": "1702",
+      "session": "20",
+      "plan": "55",
+      "sourceCommit": 26,
+      "admittedQ20": 129062,
+      "rejectedQ20": 0,
+      "stockQ20": 3088129,
+      "deltaNs": 15385400,
+      "firstFenceExitQpc": "15963688481751",
+      "commandSHA256": "22f94111d4cdc972709d9145c16e92aa839541229d9dd7080b25e965f524d812",
+      "producerSHA256": "03b844314201270484fd093fb069832b72b827e0332285bf90c170e5a60e4025"
+    },
+    {
+      "line": 1879,
+      "nonce": "15963695296334",
+      "hold": "1705",
+      "session": "21",
+      "plan": "57",
+      "sourceCommit": 27,
+      "admittedQ20": 55018,
+      "rejectedQ20": 0,
+      "stockQ20": 3143147,
+      "deltaNs": 6558700,
+      "firstFenceExitQpc": "15963695577661",
+      "commandSHA256": "302e87d2bfc92250312d3d7e4833f5bdba459247b87d04908adc71eded49dea5",
+      "producerSHA256": "c74ab3e9fd8f418f38fbe919a1a1843af30e9e913f46633ca23d79bc58c7ce16"
+    },
+    {
+      "line": 1891,
+      "nonce": "15963706972239",
+      "hold": "1711",
+      "session": "22",
+      "plan": "60",
+      "sourceCommit": 28,
+      "admittedQ20": 129899,
+      "rejectedQ20": 0,
+      "stockQ20": 3273046,
+      "deltaNs": 15485200,
+      "firstFenceExitQpc": "15963707266259",
+      "commandSHA256": "ac8c0337b6867531d3a5d168c9fafe010f71f7e6473528f316442c00602588f5",
+      "producerSHA256": "39e19f9ca559ba71f778610b70cb03457f26e777b8cd6457417f7c11cd4b230d"
+    },
+    {
+      "line": 1898,
+      "nonce": "15963712435712",
+      "hold": "1714",
+      "session": "23",
+      "plan": "62",
+      "sourceCommit": 29,
+      "admittedQ20": 131286,
+      "rejectedQ20": 0,
+      "stockQ20": 3404332,
+      "deltaNs": 15650600,
+      "firstFenceExitQpc": "15963712719846",
+      "commandSHA256": "7044ec5191a3d852af9da5e1d7b0cbfcd9c6d157d9febc7bc782b16038806fa9",
+      "producerSHA256": "5a6322ff00c187335871d7077159c6296f6e702ae188bb8a28a2a01002ecfc09"
+    },
+    {
+      "line": 1905,
+      "nonce": "15963719725286",
+      "hold": "1717",
+      "session": "24",
+      "plan": "64",
+      "sourceCommit": 30,
+      "admittedQ20": 7055,
+      "rejectedQ20": 0,
+      "stockQ20": 3411387,
+      "deltaNs": 841100,
+      "firstFenceExitQpc": "15963720022726",
+      "commandSHA256": "e5ea44f7159f9e15808b42fddea2bb434a523a43ebaf376938ebc87691adf1e5",
+      "producerSHA256": "3f43efcfe72623be807d6251ea16c433061a302d193d670466cb775b8059bc9f"
+    },
+    {
+      "line": 1912,
+      "nonce": "15963730292730",
+      "hold": "1720",
+      "session": "25",
+      "plan": "66",
+      "sourceCommit": 31,
+      "admittedQ20": 129868,
+      "rejectedQ20": 0,
+      "stockQ20": 3541255,
+      "deltaNs": 15481500,
+      "firstFenceExitQpc": "15963730591068",
+      "commandSHA256": "4769beb413673c5a712dcbee06230969df47d3445afddc40554f6178d2348226",
+      "producerSHA256": "36e2fae850f6c1c6302e4344ea893be3f351b4d33aac817d49fef13751e003fc"
+    },
+    {
+      "line": 1919,
+      "nonce": "15963739829664",
+      "hold": "1723",
+      "session": "26",
+      "plan": "68",
+      "sourceCommit": 32,
+      "admittedQ20": 134711,
+      "rejectedQ20": 0,
+      "stockQ20": 3675966,
+      "deltaNs": 16058900,
+      "firstFenceExitQpc": "15963740129735",
+      "commandSHA256": "c4cbca1b69f0b42d7ae906ec6f93dbe66e06b8657347b64005e6e4217dfe20af",
+      "producerSHA256": "55b14ac3aca1d5e91c48a1230ca2fa358c2b7589c75b50619a073b99cf39cbdb"
+    },
+    {
+      "line": 1930,
+      "nonce": "15964159063614",
+      "hold": "1728",
+      "session": "29",
+      "plan": "70",
+      "sourceCommit": 33,
+      "admittedQ20": 66562,
+      "rejectedQ20": 0,
+      "stockQ20": 3742528,
+      "deltaNs": 7934900,
+      "firstFenceExitQpc": "15964159843107",
+      "commandSHA256": "7107fd1d5b90d75726eefd0f4db7dd4378e0a2f6aab077b561ed78f545b6d85b",
+      "producerSHA256": "42a115f0f3f2f8120f95631327eb59a47365f9173d784dcab00fedc4c290af6a"
+    },
+    {
+      "line": 1936,
+      "nonce": "15964171197956",
+      "hold": "1731",
+      "session": "30",
+      "plan": "72",
+      "sourceCommit": 34,
+      "admittedQ20": 129011,
+      "rejectedQ20": 0,
+      "stockQ20": 3871539,
+      "deltaNs": 15379400,
+      "firstFenceExitQpc": "15964171567220",
+      "commandSHA256": "a28a0b0479505155df5cd7fabaa10917a28b12c64f534b877533ed3a5faf5e2d",
+      "producerSHA256": "f20ae6502d6e627c184cb2e286d8fc04218d4021b3440d9b838bdb5bad64aeaa"
+    },
+    {
+      "line": 1944,
+      "nonce": "15964187742362",
+      "hold": "1734",
+      "session": "32",
+      "plan": "74",
+      "sourceCommit": 35,
+      "admittedQ20": 133404,
+      "rejectedQ20": 0,
+      "stockQ20": 4004943,
+      "deltaNs": 15903100,
+      "firstFenceExitQpc": "15964188085572",
+      "commandSHA256": "5f0f035e2aad925893e3db3ada473edf9121c7db9a59b658f5c6409a611edc04",
+      "producerSHA256": "5d27333c169d8a7b6aefa1dac7f0d197ccb6b5d6d2aa752eaffc43ab003d9839"
+    },
+    {
+      "line": 1952,
+      "nonce": "15964197843211",
+      "hold": "1737",
+      "session": "33",
+      "plan": "76",
+      "sourceCommit": 36,
+      "admittedQ20": 128351,
+      "rejectedQ20": 0,
+      "stockQ20": 4133294,
+      "deltaNs": 15300700,
+      "firstFenceExitQpc": "15964198148498",
+      "commandSHA256": "860aa9874037c982b6381fcba2e4df71b1539ea7e00b7225d529bd59c995b3df",
+      "producerSHA256": "2763673a7710d3a09a2af61cac92453aaa19e6a6be4ddc19722ea38070d1a474"
+    },
+    {
+      "line": 1956,
+      "nonce": "15964204812911",
+      "hold": "1740",
+      "session": "34",
+      "plan": "78",
+      "sourceCommit": 37,
+      "admittedQ20": 114397,
+      "rejectedQ20": 0,
+      "stockQ20": 4247691,
+      "deltaNs": 13637300,
+      "firstFenceExitQpc": "15964205119235",
+      "commandSHA256": "6a29f0175ab60a6e9472716a59ce179241f38663b89acf59f7634ae34f3fe71a",
+      "producerSHA256": "b19b7d430873324ce7396e51314dcad833ea18752f049bde5f8764cbcbe17cdc"
+    },
+    {
+      "line": 1964,
+      "nonce": "15964212903067",
+      "hold": "1743",
+      "session": "35",
+      "plan": "80",
+      "sourceCommit": 38,
+      "admittedQ20": 129491,
+      "rejectedQ20": 0,
+      "stockQ20": 4377182,
+      "deltaNs": 15436600,
+      "firstFenceExitQpc": "15964213215190",
+      "commandSHA256": "6ed28d2d822b4bda6395fa1a65bfe3d0c211468eda0a2973b7903825910c9fa3",
+      "producerSHA256": "e25f79d43e12a007c2c9cf40872948c35ee6479dc72ac761c9010eddeb61f9d2"
+    },
+    {
+      "line": 1970,
+      "nonce": "15964221012491",
+      "hold": "1746",
+      "session": "36",
+      "plan": "82",
+      "sourceCommit": 39,
+      "admittedQ20": 127802,
+      "rejectedQ20": 0,
+      "stockQ20": 4504984,
+      "deltaNs": 15235200,
+      "firstFenceExitQpc": "15964221381443",
+      "commandSHA256": "3e18152ab38a2aa61473be1167c97e077fa76af5b37e3a38ad165b815f5fe565",
+      "producerSHA256": "7791653f89854336e40e3555a009a334de5a798bb25c357cfdebfa5e7f21f362"
+    },
+    {
+      "line": 1976,
+      "nonce": "15964228811610",
+      "hold": "1749",
+      "session": "37",
+      "plan": "84",
+      "sourceCommit": 40,
+      "admittedQ20": 123960,
+      "rejectedQ20": 0,
+      "stockQ20": 4628944,
+      "deltaNs": 14777300,
+      "firstFenceExitQpc": "15964229135087",
+      "commandSHA256": "2246773372be4ed832dec246eae34f7b6f19368b6fb0f0aa08dfa8ebd697cb3f",
+      "producerSHA256": "f719bfe600f0f1a80a7e516da2fedddf80c243a1f91430a157e410f80a3a6d36"
+    },
+    {
+      "line": 1982,
+      "nonce": "15964235967001",
+      "hold": "1752",
+      "session": "38",
+      "plan": "86",
+      "sourceCommit": 41,
+      "admittedQ20": 6748,
+      "rejectedQ20": 0,
+      "stockQ20": 4635692,
+      "deltaNs": 804500,
+      "firstFenceExitQpc": "15964236283620",
+      "commandSHA256": "ccb87f3dc9fd66da0545c633f03bc86016ca82a8b4258b4b776a69b769d29e18",
+      "producerSHA256": "aa198c9cd77f5d259240b317c906eaf8565675786640e2e98dce5324531af411"
+    },
+    {
+      "line": 1988,
+      "nonce": "15964243403473",
+      "hold": "1755",
+      "session": "39",
+      "plan": "88",
+      "sourceCommit": 42,
+      "admittedQ20": 127890,
+      "rejectedQ20": 0,
+      "stockQ20": 4763582,
+      "deltaNs": 15245700,
+      "firstFenceExitQpc": "15964243714223",
+      "commandSHA256": "5f74086d3213212c03363bd7ee1a08d4deb4049f19a26f5b6046860c28e4fe0d",
+      "producerSHA256": "6dd986611a58c84cea19701691d172c65da103379ccf8d68ce9ad3f2b48e6133"
+    },
+    {
+      "line": 1994,
+      "nonce": "15964250735879",
+      "hold": "1758",
+      "session": "40",
+      "plan": "90",
+      "sourceCommit": 43,
+      "admittedQ20": 128364,
+      "rejectedQ20": 0,
+      "stockQ20": 4891946,
+      "deltaNs": 15302300,
+      "firstFenceExitQpc": "15964251035161",
+      "commandSHA256": "54c47ece444fd5c7a6efa4452d7648627f01576467eabe673644af36e430bff0",
+      "producerSHA256": "d105b9b429ffadaf5731f3ce032ba6c8baaa96b4550b48eabe7b31490c4d2f81"
+    },
+    {
+      "line": 2000,
+      "nonce": "15964257615082",
+      "hold": "1761",
+      "session": "41",
+      "plan": "92",
+      "sourceCommit": 44,
+      "admittedQ20": 136232,
+      "rejectedQ20": 0,
+      "stockQ20": 5028178,
+      "deltaNs": 16240200,
+      "firstFenceExitQpc": "15964257934583",
+      "commandSHA256": "6e663523ca7ea0e678f81e6252fafd8954dc7ceb341b2f8125dce6564d78ccee",
+      "producerSHA256": "7c78fb19aec90cf3fa01d08d10a8079e1618ae35fcb02c99bf3e487b105ec750"
+    },
+    {
+      "line": 2006,
+      "nonce": "15964265783121",
+      "hold": "1764",
+      "session": "42",
+      "plan": "94",
+      "sourceCommit": 45,
+      "admittedQ20": 137082,
+      "rejectedQ20": 0,
+      "stockQ20": 5165260,
+      "deltaNs": 16341500,
+      "firstFenceExitQpc": "15964266104607",
+      "commandSHA256": "c0e8b3fb69d1b56bc3b39ec4f0f9d7dd451157a655986991cbe7ebb0dc41b665",
+      "producerSHA256": "709cca59256a545b6050c166c872ed492c35c328f7def01ff62bd2c2f98af4e7"
+    },
+    {
+      "line": 2012,
+      "nonce": "15964272774010",
+      "hold": "1767",
+      "session": "44",
+      "plan": "96",
+      "sourceCommit": 46,
+      "admittedQ20": 127404,
+      "rejectedQ20": 0,
+      "stockQ20": 5292664,
+      "deltaNs": 15187800,
+      "firstFenceExitQpc": "15964273076635",
+      "commandSHA256": "cd1374de3fcf8662bbb30731af2c31ad42f884ff5f85a2c1c25787fa356b8a20",
+      "producerSHA256": "60f0262ed2d50e684eabb4b3429d5413a59a7562237f36ab450479f6aab52b37"
+    },
+    {
+      "line": 2018,
+      "nonce": "15964281456839",
+      "hold": "1770",
+      "session": "45",
+      "plan": "98",
+      "sourceCommit": 47,
+      "admittedQ20": 131295,
+      "rejectedQ20": 0,
+      "stockQ20": 5423959,
+      "deltaNs": 15651700,
+      "firstFenceExitQpc": "15964281779082",
+      "commandSHA256": "245981aa29052edabf3bfde446cfbc69aa43e3b8db496fe1c9cffcddf031e039",
+      "producerSHA256": "92bf2c48019cdba3337cb32d7ce67df1de6f45df250ea7a7cf943e7a088784c3"
+    },
+    {
+      "line": 2023,
+      "nonce": "15964288748744",
+      "hold": "1773",
+      "session": "46",
+      "plan": "100",
+      "sourceCommit": 48,
+      "admittedQ20": 128349,
+      "rejectedQ20": 0,
+      "stockQ20": 5552308,
+      "deltaNs": 15300400,
+      "firstFenceExitQpc": "15964289080321",
+      "commandSHA256": "f17d2a7d97dacf7d6c3e6b8dc65dee463d4c90917064e94dfa56f41c093be5b7",
+      "producerSHA256": "abed71baca1f80e69a8967a8bdc54b320d9605280a635d0baa7c0e5225eae668"
+    },
+    {
+      "line": 2029,
+      "nonce": "15964295097506",
+      "hold": "1776",
+      "session": "47",
+      "plan": "102",
+      "sourceCommit": 49,
+      "admittedQ20": 131161,
+      "rejectedQ20": 0,
+      "stockQ20": 5683469,
+      "deltaNs": 15635700,
+      "firstFenceExitQpc": "15964295425738",
+      "commandSHA256": "da87f100698fdb1c170e0d77b66e2c6837ef0478589917839ecdc306f141a653",
+      "producerSHA256": "a15768e2d3223f8d6d43ef1030f29461b4d9f090205e146122ec0ecdfefe6760"
+    },
+    {
+      "line": 2035,
+      "nonce": "15964302680768",
+      "hold": "1779",
+      "session": "48",
+      "plan": "104",
+      "sourceCommit": 50,
+      "admittedQ20": 141690,
+      "rejectedQ20": 0,
+      "stockQ20": 5825159,
+      "deltaNs": 16890800,
+      "firstFenceExitQpc": "15964302997483",
+      "commandSHA256": "af121ad0b565c94e511e124b624d6487ad36ecd3797e5f84be567a16320345f2",
+      "producerSHA256": "7d7df6dff0e280fd329344417078b7f9ff9f5b4a2041ed14d454803441059fad"
+    },
+    {
+      "line": 2041,
+      "nonce": "15964310887839",
+      "hold": "1782",
+      "session": "49",
+      "plan": "106",
+      "sourceCommit": 51,
+      "admittedQ20": 95811,
+      "rejectedQ20": 0,
+      "stockQ20": 5920970,
+      "deltaNs": 11421600,
+      "firstFenceExitQpc": "15964311199637",
+      "commandSHA256": "20919391fd1154476a826b7517707cfbb2405a7c2ae5bd4bfb4f9269fbc852ef",
+      "producerSHA256": "7f91a07b7882ce21db4d2a03f41395d6312500fe490ddf9cb7793bea6993674a"
+    },
+    {
+      "line": 2047,
+      "nonce": "15964319301330",
+      "hold": "1785",
+      "session": "50",
+      "plan": "108",
+      "sourceCommit": 52,
+      "admittedQ20": 137409,
+      "rejectedQ20": 0,
+      "stockQ20": 6058379,
+      "deltaNs": 16380500,
+      "firstFenceExitQpc": "15964319636952",
+      "commandSHA256": "65b03ad3eb9df8876d1f7e13c72aaae57a930c91aac11cdbeeb974e5e7ba23bc",
+      "producerSHA256": "ee418ed6e591a8e0ccfb55236c3407d810057be138364399cf9dbfcd9d5a8e99"
+    },
+    {
+      "line": 2053,
+      "nonce": "15964325966863",
+      "hold": "1788",
+      "session": "51",
+      "plan": "110",
+      "sourceCommit": 53,
+      "admittedQ20": 133305,
+      "rejectedQ20": 0,
+      "stockQ20": 6191684,
+      "deltaNs": 15891200,
+      "firstFenceExitQpc": "15964326280474",
+      "commandSHA256": "4fced5fbc08be0b8f7cd999f8b1ade39d0a70cbd987f021aea4390a7f9314505",
+      "producerSHA256": "32b3581e0e4620ee2fb3f87e0eda2faf45e2f3f9e8df6ff8b98dda6fc552f6fb"
+    },
+    {
+      "line": 2061,
+      "nonce": "15964331267588",
+      "hold": "1791",
+      "session": "52",
+      "plan": "112",
+      "sourceCommit": 54,
+      "admittedQ20": 58055,
+      "rejectedQ20": 0,
+      "stockQ20": 6249739,
+      "deltaNs": 6920700,
+      "firstFenceExitQpc": "15964331583412",
+      "commandSHA256": "a8b1cf47516088daed7f3a8690d989d3a337cdc5355d32ccf1d64153ba064141",
+      "producerSHA256": "6bc261ecbc91f59a4b4100f8d2cbddb6f942ea5c2b040a6a1f9f49977c157805"
+    },
+    {
+      "line": 2076,
+      "nonce": "15964338110912",
+      "hold": "1796",
+      "session": "54",
+      "plan": "114",
+      "sourceCommit": 55,
+      "admittedQ20": 126944,
+      "rejectedQ20": 0,
+      "stockQ20": 6376683,
+      "deltaNs": 15133000,
+      "firstFenceExitQpc": "15964338449300",
+      "commandSHA256": "4aefea08be73f30bc903a7415d03ce83d8943b3e8ff575636e4508a3445a099e",
+      "producerSHA256": "8e712dc745149317b8807399b85c35350795d5aea7c367576066cb54ba79a644"
+    },
+    {
+      "line": 2086,
+      "nonce": "15964344763731",
+      "hold": "1807",
+      "session": "55",
+      "plan": "116",
+      "sourceCommit": 56,
+      "admittedQ20": 129708,
+      "rejectedQ20": 0,
+      "stockQ20": 6506391,
+      "deltaNs": 15462400,
+      "firstFenceExitQpc": "15964345089320",
+      "commandSHA256": "7e88c5c4bdf9216cdc56e2d34a88c7d7beb7b2c8d373851d38e9c6b9f54aa637",
+      "producerSHA256": "59226f903747f63471ae6551107c5a10556b1c064503fa1130dd9a294eafc135"
+    },
+    {
+      "line": 2092,
+      "nonce": "15964351889914",
+      "hold": "1814",
+      "session": "56",
+      "plan": "118",
+      "sourceCommit": 57,
+      "admittedQ20": 129181,
+      "rejectedQ20": 0,
+      "stockQ20": 6635572,
+      "deltaNs": 15399600,
+      "firstFenceExitQpc": "15964352221085",
+      "commandSHA256": "173b670611192586b894e67d231052e15632d26a24d1832cc37d433f8f0d53bb",
+      "producerSHA256": "2ffdc7b2a7ff05296535fd36909e0eacaebed5080a6ea69a727d80f98996e46d"
+    },
+    {
+      "line": 2101,
+      "nonce": "15965932587056",
+      "hold": "1818",
+      "session": "59",
+      "plan": "120",
+      "sourceCommit": 58,
+      "admittedQ20": 118165,
+      "rejectedQ20": 0,
+      "stockQ20": 6753737,
+      "deltaNs": 14086400,
+      "firstFenceExitQpc": "15965933529364",
+      "commandSHA256": "e98771bfad5a7792e85dbd5836f9d5774756cc5726816c16d67375c125d912d5",
+      "producerSHA256": "c8ab0d06b2e34af57d8f905c0e61883465b4bb7adcd8b5472437b794cec01d7d"
+    },
+    {
+      "line": 2106,
+      "nonce": "15965981781351",
+      "hold": "1821",
+      "session": "60",
+      "plan": "122",
+      "sourceCommit": 59,
+      "admittedQ20": 125191,
+      "rejectedQ20": 0,
+      "stockQ20": 6878928,
+      "deltaNs": 14924000,
+      "firstFenceExitQpc": "15965982658438",
+      "commandSHA256": "18144dc8dbabaef9e738ba48706e7924f4637e18f75318eac48ab764c082d3ce",
+      "producerSHA256": "dd2eb868eeeacd82335e9c42d2379fc313a7221dc1ba5dcbe33ed66b7efe337e"
+    }
+  ],
+  "windowFacts": {
+    "postUpNewRoots": 53,
+    "activeSandRange": [
+      1,
+      65
+    ],
+    "acceptedFenceWallFromNonceNs": {
+      "median": 75237100,
+      "p95NearestRank": 158348300
+    },
+    "deadlineFailuresAfterPriorQuantumSameGrant": 41,
+    "deadlineFailuresNoEarlierAcceptedQuantumOnGrant": 2,
+    "lastAcceptedSourceCommit": 59,
+    "lastPresentedSourceCommit": 57,
+    "noSourceNonceAtReservationLogs": 0
+  },
+  "queuedQuantumRoots": 137
+}
