@@ -1,0 +1,1163 @@
+{
+  "schema": "T891_PC_SOURCE_D1_ATTRIBUTION_V1",
+  "captureCommit": "565d3578",
+  "sourceCommit": {
+    "A": "d6395752",
+    "B": "b683d90a"
+  },
+  "peSha256": {
+    "a": "86e8ad81779157a94558bea64e067984045ed0a3801e1a2c098335f7180e06fc",
+    "b": "12d454b11469160ef2ff5f29dd9aaf8905a2d512d95bf070dc391d00ea44db28"
+  },
+  "A": [
+    {
+      "path": "test/reports/t887/a-forward.jsonl",
+      "sha256": "00f711b7752a2bed5bf6635333cbc7f0291c1605a04ca806717f569cc5735572",
+      "modeRows": [
+        {
+          "line": 123,
+          "material": 1,
+          "geometry": "2"
+        }
+      ],
+      "pointers": [
+        {
+          "line": 27,
+          "kind": "DOWN",
+          "qpc": "15884875721508",
+          "seq": "1",
+          "hold": "1",
+          "geometry": "2",
+          "x": 392,
+          "y": 230
+        },
+        {
+          "line": 121,
+          "kind": "UP",
+          "qpc": "15884916549547",
+          "seq": "2",
+          "hold": "0",
+          "geometry": "2",
+          "x": 392,
+          "y": 230
+        },
+        {
+          "line": 122,
+          "kind": "CAPTURE_LOST",
+          "qpc": "15884916553470",
+          "seq": "3",
+          "hold": "0",
+          "geometry": "2",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "line": 124,
+          "kind": "DOWN",
+          "qpc": "15884925820564",
+          "seq": "4",
+          "hold": "0",
+          "geometry": "2",
+          "x": 392,
+          "y": 230
+        },
+        {
+          "line": 125,
+          "kind": "UP",
+          "qpc": "15884968289267",
+          "seq": "5",
+          "hold": "0",
+          "geometry": "2",
+          "x": 392,
+          "y": 230
+        },
+        {
+          "line": 126,
+          "kind": "CAPTURE_LOST",
+          "qpc": "15884968294764",
+          "seq": "6",
+          "hold": "0",
+          "geometry": "2",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "reservationReturns": 43,
+      "terminalCounts": {
+        "2": 2,
+        "4": 1,
+        "7": 1,
+        "9": 39
+      },
+      "lastTerminal": {
+        "line": 118,
+        "material": 0,
+        "session": "2",
+        "offer": "43",
+        "result": 4,
+        "reason": "AUTHORITY_CHANGED",
+        "root": "0",
+        "hold": "1"
+      },
+      "sourceCommits": [
+        {
+          "line": 38,
+          "offer": "1",
+          "hold": "1",
+          "root": "15884876181010",
+          "session": "1",
+          "material": 0,
+          "result": 2,
+          "geometry": "2",
+          "run": "15884875056304",
+          "samePresentLogSourceTailLine": 68,
+          "admittedQ20": 134242,
+          "slide": [
+            134242,
+            0
+          ],
+          "sourceCommit": 1
+        },
+        {
+          "line": 91,
+          "offer": "27",
+          "hold": "1",
+          "root": "15884880350339",
+          "session": "2",
+          "material": 0,
+          "result": 2,
+          "geometry": "2",
+          "run": "15884875056304",
+          "samePresentLogSourceTailLine": 102,
+          "admittedQ20": 134039,
+          "slide": [
+            268281,
+            0
+          ],
+          "sourceCommit": 2
+        }
+      ],
+      "queuedRoots": 4,
+      "lastAcceptedQuad": {
+        "line": 111,
+        "root": "15884881721597",
+        "frame": 4,
+        "ordinal": 2
+      },
+      "firstFailureLine": 119,
+      "failureDuplicateLine": 120,
+      "failureAuthority": {
+        "nonce": "15884882382773",
+        "plan": "4",
+        "session": "2",
+        "windowCurrent": true,
+        "clockOpen": true,
+        "fenceObject": "1889579878856",
+        "grantNs": "1588488035009100",
+        "deadlineNs": "1588488285009100",
+        "retireVkResult": 0,
+        "retireEnterQpc": "15884882880124",
+        "retireExitQpc": "15884882997023",
+        "fencePending": false,
+        "waitCount": 4,
+        "active": 2,
+        "pending": 4,
+        "carry": 366388000,
+        "acceptedRoot": "15884881721597",
+        "maxUiGapNs": "17111900",
+        "maxNativeGapNs": "17111600"
+      },
+      "firstWait": [
+        "15884882385183",
+        "15884882411013",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15884882723553",
+        "15884882879852",
+        2000000,
+        2
+      ],
+      "vkResult": 2,
+      "budgetAtNonceNs": 46731800,
+      "budgetAtFirstFenceWaitNs": 46490800,
+      "downAfterRetireNs": 4282354100
+    },
+    {
+      "path": "test/reports/t887/a-forward2.jsonl",
+      "sha256": "b479fbec584ddcd8a0cdf57273e79e7079c98c449d7b061f2c35994c65838756",
+      "modeRows": [
+        {
+          "line": 123,
+          "material": 1,
+          "geometry": "2"
+        }
+      ],
+      "pointers": [
+        {
+          "line": 27,
+          "kind": "DOWN",
+          "qpc": "15885495829580",
+          "seq": "1",
+          "hold": "1",
+          "geometry": "2",
+          "x": 392,
+          "y": 230
+        },
+        {
+          "line": 121,
+          "kind": "UP",
+          "qpc": "15885525830982",
+          "seq": "2",
+          "hold": "0",
+          "geometry": "2",
+          "x": 392,
+          "y": 230
+        },
+        {
+          "line": 122,
+          "kind": "CAPTURE_LOST",
+          "qpc": "15885525835291",
+          "seq": "3",
+          "hold": "0",
+          "geometry": "2",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "line": 124,
+          "kind": "DOWN",
+          "qpc": "15885553880765",
+          "seq": "4",
+          "hold": "0",
+          "geometry": "2",
+          "x": 392,
+          "y": 230
+        },
+        {
+          "line": 125,
+          "kind": "UP",
+          "qpc": "15885604902127",
+          "seq": "5",
+          "hold": "0",
+          "geometry": "2",
+          "x": 392,
+          "y": 230
+        },
+        {
+          "line": 126,
+          "kind": "CAPTURE_LOST",
+          "qpc": "15885604906399",
+          "seq": "6",
+          "hold": "0",
+          "geometry": "2",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "reservationReturns": 42,
+      "terminalCounts": {
+        "2": 2,
+        "4": 1,
+        "7": 1,
+        "9": 38
+      },
+      "lastTerminal": {
+        "line": 118,
+        "material": 0,
+        "session": "2",
+        "offer": "42",
+        "result": 4,
+        "reason": "AUTHORITY_CHANGED",
+        "root": "0",
+        "hold": "1"
+      },
+      "sourceCommits": [
+        {
+          "line": 38,
+          "offer": "1",
+          "hold": "1",
+          "root": "15885496089016",
+          "session": "1",
+          "material": 0,
+          "result": 2,
+          "geometry": "2",
+          "run": "15885494226927",
+          "samePresentLogSourceTailLine": 56,
+          "admittedQ20": 137194,
+          "slide": [
+            137194,
+            0
+          ],
+          "sourceCommit": 1
+        },
+        {
+          "line": 88,
+          "offer": "26",
+          "hold": "1",
+          "root": "15885500271083",
+          "session": "2",
+          "material": 0,
+          "result": 2,
+          "geometry": "2",
+          "run": "15885494226927",
+          "samePresentLogSourceTailLine": 99,
+          "admittedQ20": 128932,
+          "slide": [
+            266126,
+            0
+          ],
+          "sourceCommit": 2
+        }
+      ],
+      "queuedRoots": 6,
+      "lastAcceptedQuad": {
+        "line": 113,
+        "root": "15885501925689",
+        "frame": 4,
+        "ordinal": 3
+      },
+      "firstFailureLine": 119,
+      "failureDuplicateLine": 120,
+      "failureAuthority": {
+        "nonce": "15885502440907",
+        "plan": "4",
+        "session": "2",
+        "windowCurrent": true,
+        "clockOpen": true,
+        "fenceObject": "2165305199848",
+        "grantNs": "1588550027079000",
+        "deadlineNs": "1588550277079000",
+        "retireVkResult": 0,
+        "retireEnterQpc": "15885502770980",
+        "retireExitQpc": "15885502914431",
+        "fencePending": false,
+        "waitCount": 3,
+        "active": 1,
+        "pending": 4,
+        "carry": 133700000,
+        "acceptedRoot": "15885501925689",
+        "maxUiGapNs": "24586200",
+        "maxNativeGapNs": "24585600"
+      },
+      "firstWait": [
+        "15885502443411",
+        "15885502609667",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15885502769779",
+        "15885502770803",
+        101100,
+        2
+      ],
+      "vkResult": 2,
+      "budgetAtNonceNs": 32988300,
+      "budgetAtFirstFenceWaitNs": 32737900,
+      "downAfterRetireNs": 5096633400
+    },
+    {
+      "path": "test/reports/t887/a-reverse.jsonl",
+      "sha256": "6046fb94b8a1140aacfe272ce4fd5d3983a7e45a74bf91f2a420fd92c3e6855b",
+      "modeRows": [
+        {
+          "line": 27,
+          "material": 1,
+          "geometry": "2"
+        },
+        {
+          "line": 113,
+          "material": 0,
+          "geometry": "2"
+        }
+      ],
+      "pointers": [
+        {
+          "line": 28,
+          "kind": "DOWN",
+          "qpc": "15886718332457",
+          "seq": "1",
+          "hold": "1",
+          "geometry": "2",
+          "x": 392,
+          "y": 230
+        },
+        {
+          "line": 111,
+          "kind": "UP",
+          "qpc": "15886748344735",
+          "seq": "2",
+          "hold": "0",
+          "geometry": "2",
+          "x": 392,
+          "y": 230
+        },
+        {
+          "line": 112,
+          "kind": "CAPTURE_LOST",
+          "qpc": "15886748348944",
+          "seq": "3",
+          "hold": "0",
+          "geometry": "2",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "line": 114,
+          "kind": "DOWN",
+          "qpc": "15886757394699",
+          "seq": "4",
+          "hold": "0",
+          "geometry": "2",
+          "x": 392,
+          "y": 230
+        },
+        {
+          "line": 115,
+          "kind": "UP",
+          "qpc": "15886797415216",
+          "seq": "5",
+          "hold": "0",
+          "geometry": "2",
+          "x": 392,
+          "y": 230
+        },
+        {
+          "line": 116,
+          "kind": "CAPTURE_LOST",
+          "qpc": "15886797422086",
+          "seq": "6",
+          "hold": "0",
+          "geometry": "2",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "reservationReturns": 37,
+      "terminalCounts": {
+        "2": 2,
+        "4": 1,
+        "7": 1,
+        "9": 33
+      },
+      "lastTerminal": {
+        "line": 108,
+        "material": 1,
+        "session": "2",
+        "offer": "37",
+        "result": 4,
+        "reason": "AUTHORITY_CHANGED",
+        "root": "0",
+        "hold": "1"
+      },
+      "sourceCommits": [
+        {
+          "line": 37,
+          "offer": "1",
+          "hold": "1",
+          "root": "15886718604922",
+          "session": "1",
+          "material": 1,
+          "result": 2,
+          "geometry": "2",
+          "run": "15886713443120",
+          "samePresentLogSourceTailLine": 57,
+          "admittedQ20": 139845,
+          "slide": [
+            0,
+            139845
+          ],
+          "sourceCommit": 1
+        },
+        {
+          "line": 80,
+          "offer": "21",
+          "hold": "1",
+          "root": "15886721974059",
+          "session": "2",
+          "material": 1,
+          "result": 2,
+          "geometry": "2",
+          "run": "15886713443120",
+          "samePresentLogSourceTailLine": 89,
+          "admittedQ20": 136165,
+          "slide": [
+            0,
+            276010
+          ],
+          "sourceCommit": 2
+        }
+      ],
+      "queuedRoots": 5,
+      "lastAcceptedQuad": {
+        "line": 107,
+        "root": "15886723792319",
+        "frame": 4,
+        "ordinal": 3
+      },
+      "firstFailureLine": 109,
+      "failureDuplicateLine": 110,
+      "failureAuthority": {
+        "nonce": "15886724315781",
+        "plan": "4",
+        "session": "2",
+        "windowCurrent": true,
+        "clockOpen": true,
+        "fenceObject": "2307140768712",
+        "grantNs": "1588672197379000",
+        "deadlineNs": "1588672447379000",
+        "retireVkResult": 0,
+        "retireEnterQpc": "15886724549909",
+        "retireExitQpc": "15886724814259",
+        "fencePending": false,
+        "waitCount": 2,
+        "active": 1,
+        "pending": 4,
+        "carry": 902944000,
+        "acceptedRoot": "15886723792319",
+        "maxUiGapNs": "20972600",
+        "maxNativeGapNs": "20972000"
+      },
+      "firstWait": [
+        "15886724317930",
+        "15886724396513",
+        2000000,
+        2
+      ],
+      "lastWait": [
+        "15886724396571",
+        "15886724549708",
+        2000000,
+        2
+      ],
+      "vkResult": 2,
+      "budgetAtNonceNs": 15800900,
+      "budgetAtFirstFenceWaitNs": 15586000,
+      "downAfterRetireNs": 3258044000
+    }
+  ],
+  "B": [
+    {
+      "path": "test/reports/t887/b-off1.jsonl",
+      "sha256": "140e34355bfbf41cff3d6597cde4bbe06ba9e0196059d981089d20b06a9a06d0",
+      "mode": "OFF",
+      "scriptActionCount": 52,
+      "scriptActionStates": {
+        "0:DELIVERED": 46,
+        "0:REVOKED": 2,
+        "1:AWAIT_PULSE": 2,
+        "2:OFF_NOOP": 1,
+        "3:OFF_NOOP": 1
+      },
+      "ownerTerminalStates": {
+        "END_INTAKE_REVOKED": 1,
+        "PAGE_PULSE_ACCEPTED": 41
+      },
+      "lastSession1Owner": {
+        "line": 69,
+        "actionId": 21,
+        "seq": "19",
+        "callbackQpc": "15887548103191"
+      },
+      "firstSession2Owner": {
+        "line": 77,
+        "actionId": 26,
+        "seq": "1",
+        "callbackQpc": "15887548886914"
+      },
+      "firstQueuedPresentLine": 75,
+      "firstPresentExitQpc": "15887548775370",
+      "firstAfterReanchorPresentLine": 90,
+      "unclosedNativeReceipts": [
+        {
+          "line": 71,
+          "id": 22,
+          "session": "1",
+          "nativeSeq": "20",
+          "callbackQpc": "15887548261552",
+          "nativeReceiptQpc": "15887548261568",
+          "state": "DELIVERED"
+        },
+        {
+          "line": 72,
+          "id": 23,
+          "session": "1",
+          "nativeSeq": "21",
+          "callbackQpc": "15887548420338",
+          "nativeReceiptQpc": "15887548420349",
+          "state": "DELIVERED"
+        },
+        {
+          "line": 73,
+          "id": 24,
+          "session": "1",
+          "nativeSeq": "22",
+          "callbackQpc": "15887548571994",
+          "nativeReceiptQpc": "15887548572007",
+          "state": "DELIVERED"
+        },
+        {
+          "line": 74,
+          "id": 25,
+          "session": "1",
+          "nativeSeq": "23",
+          "callbackQpc": "15887548732934",
+          "nativeReceiptQpc": "15887548732952",
+          "state": "DELIVERED"
+        }
+      ],
+      "nativeZeroDelivered": [],
+      "firstDeliveredRelativeNs": 30857400,
+      "sourceOfferTerminals": [
+        {
+          "line": 58,
+          "run": "15887545012646",
+          "offer": "1",
+          "actionId": 7,
+          "pulseNs": "1588754625337200",
+          "result": 2,
+          "root": "15887546257120",
+          "acceptedQ20": 131949,
+          "actualDeltaNs": 15729600,
+          "sourceTailLine": 70
+        },
+        {
+          "line": 92,
+          "run": "15887545012646",
+          "offer": "2",
+          "actionId": 29,
+          "pulseNs": "1588754949832100",
+          "result": 7,
+          "root": "0",
+          "reason": "STALE_ENDPOINT",
+          "ageNs": "44859200"
+        }
+      ],
+      "endLine": 132,
+      "drainLine": 134,
+      "closeLine": 136,
+      "drain": "FENCE_RETIRED_BEFORE_DRAIN_PROBE",
+      "failures": [
+        [
+          129,
+          "LATE_FENCE_SIGNAL",
+          "15887552011628"
+        ],
+        [
+          135,
+          "LATE_FENCE_SIGNAL",
+          "15887552011628"
+        ]
+      ],
+      "archiveCount": 0,
+      "traceLoss": 0
+    },
+    {
+      "path": "test/reports/t887/b-off2.jsonl",
+      "sha256": "80a88a86150a0f3e4ce7fe075b583f842c18725c94e788bd217f34188bf01ccc",
+      "mode": "OFF",
+      "scriptActionCount": 52,
+      "scriptActionStates": {
+        "0:DELIVERED": 48,
+        "1:AWAIT_PULSE": 2,
+        "2:OFF_NOOP": 1,
+        "3:OFF_NOOP": 1
+      },
+      "ownerTerminalStates": {
+        "PAGE_PULSE_ACCEPTED": 45
+      },
+      "lastSession1Owner": {
+        "line": 56,
+        "actionId": 14,
+        "seq": "13",
+        "callbackQpc": "15887559690173"
+      },
+      "firstSession2Owner": {
+        "line": 63,
+        "actionId": 18,
+        "seq": "1",
+        "callbackQpc": "15887560327234"
+      },
+      "firstQueuedPresentLine": 61,
+      "firstPresentExitQpc": "15887560284953",
+      "firstAfterReanchorPresentLine": 75,
+      "unclosedNativeReceipts": [
+        {
+          "line": 58,
+          "id": 15,
+          "session": "1",
+          "nativeSeq": "14",
+          "callbackQpc": "15887559843243",
+          "nativeReceiptQpc": "15887559843255",
+          "state": "DELIVERED"
+        },
+        {
+          "line": 59,
+          "id": 16,
+          "session": "1",
+          "nativeSeq": "15",
+          "callbackQpc": "15887559999891",
+          "nativeReceiptQpc": "15887559999934",
+          "state": "DELIVERED"
+        },
+        {
+          "line": 60,
+          "id": 17,
+          "session": "1",
+          "nativeSeq": "16",
+          "callbackQpc": "15887560174210",
+          "nativeReceiptQpc": "15887560174252",
+          "state": "DELIVERED"
+        }
+      ],
+      "nativeZeroDelivered": [],
+      "firstDeliveredRelativeNs": 30246000,
+      "sourceOfferTerminals": [
+        {
+          "line": 50,
+          "run": "15887557528740",
+          "offer": "1",
+          "actionId": 7,
+          "pulseNs": "1588755875890300",
+          "result": 2,
+          "root": "15887558916739",
+          "acceptedQ20": 125505,
+          "actualDeltaNs": 14961400,
+          "sourceTailLine": 57
+        },
+        {
+          "line": 109,
+          "run": "15887557528740",
+          "offer": "2",
+          "actionId": 29,
+          "pulseNs": "1588756202114400",
+          "result": 7,
+          "root": "0",
+          "reason": "STALE_ENDPOINT",
+          "ageNs": "133630900"
+        }
+      ],
+      "endLine": 139,
+      "drainLine": 141,
+      "closeLine": 143,
+      "drain": "FENCE_RETIRED_BEFORE_DRAIN_PROBE",
+      "failures": [
+        [
+          142,
+          "CLOCK_GAP",
+          "15887565282579"
+        ]
+      ],
+      "archiveCount": 0,
+      "traceLoss": 0
+    },
+    {
+      "path": "test/reports/t887/b-on.jsonl",
+      "sha256": "07595dd7563c6d755cc6fb5ff03868c4282b4d2f9a55b54c25af37a014f011d1",
+      "mode": "ON",
+      "scriptActionCount": 52,
+      "scriptActionStates": {
+        "0:DELIVERED": 46,
+        "0:REVOKED": 2,
+        "1:AWAIT_PULSE": 2,
+        "2:RESERVED": 1,
+        "3:ENDED": 1
+      },
+      "ownerTerminalStates": {
+        "END_INTAKE_REVOKED": 1,
+        "PAGE_PULSE_ACCEPTED": 43
+      },
+      "lastSession1Owner": {
+        "line": 73,
+        "actionId": 23,
+        "seq": "21",
+        "callbackQpc": "15887843659045"
+      },
+      "firstSession2Owner": {
+        "line": 79,
+        "actionId": 26,
+        "seq": "1",
+        "callbackQpc": "15887844130378"
+      },
+      "firstQueuedPresentLine": 77,
+      "firstPresentExitQpc": "15887844055624",
+      "firstAfterReanchorPresentLine": 94,
+      "unclosedNativeReceipts": [
+        {
+          "line": 75,
+          "id": 24,
+          "session": "1",
+          "nativeSeq": "22",
+          "callbackQpc": "15887843812021",
+          "nativeReceiptQpc": "15887843812030",
+          "state": "DELIVERED"
+        },
+        {
+          "line": 76,
+          "id": 25,
+          "session": "1",
+          "nativeSeq": "23",
+          "callbackQpc": "15887843971647",
+          "nativeReceiptQpc": "15887843971653",
+          "state": "DELIVERED"
+        }
+      ],
+      "nativeZeroDelivered": [],
+      "firstDeliveredRelativeNs": 26846500,
+      "sourceOfferTerminals": [
+        {
+          "line": 59,
+          "run": "15887840255718",
+          "offer": "1",
+          "actionId": 7,
+          "pulseNs": "1588784146382600",
+          "result": 2,
+          "root": "15887841626941",
+          "acceptedQ20": 132675,
+          "actualDeltaNs": 15816200,
+          "sourceTailLine": 74
+        },
+        {
+          "line": 96,
+          "run": "15887840255718",
+          "offer": "2",
+          "actionId": 29,
+          "pulseNs": "1588784459748000",
+          "result": 7,
+          "root": "0",
+          "reason": "STALE_ENDPOINT",
+          "ageNs": "66780600"
+        }
+      ],
+      "endLine": 134,
+      "drainLine": 136,
+      "closeLine": 138,
+      "drain": "FENCE_RETIRED_BEFORE_DRAIN_PROBE",
+      "failures": [
+        [
+          137,
+          "ROOT_DEADLINE",
+          "15887847470146"
+        ]
+      ],
+      "archiveCount": 0,
+      "traceLoss": 0
+    },
+    {
+      "path": "test/reports/t887/b-replay-off.jsonl",
+      "sha256": "811f859af729b016dc281cdd164c43b2f44948bf43ff573f2133f0dd71073cd4",
+      "mode": "REPLAY_OFF",
+      "scriptActionCount": 52,
+      "scriptActionStates": {
+        "0:DELIVERED": 48,
+        "1:AWAIT_PULSE": 2,
+        "2:OFF_NOOP": 1,
+        "3:OFF_NOOP": 1
+      },
+      "ownerTerminalStates": {
+        "PAGE_PULSE_ACCEPTED": 45
+      },
+      "lastSession1Owner": {
+        "line": 57,
+        "actionId": 14,
+        "seq": "13",
+        "callbackQpc": "15887853490411"
+      },
+      "firstSession2Owner": {
+        "line": 65,
+        "actionId": 18,
+        "seq": "1",
+        "callbackQpc": "15887854108155"
+      },
+      "firstQueuedPresentLine": 63,
+      "firstPresentExitQpc": "15887853968794",
+      "firstAfterReanchorPresentLine": 78,
+      "unclosedNativeReceipts": [
+        {
+          "line": 59,
+          "id": 15,
+          "session": "1",
+          "nativeSeq": "14",
+          "callbackQpc": "15887853647978",
+          "nativeReceiptQpc": "15887853647991",
+          "state": "DELIVERED"
+        },
+        {
+          "line": 61,
+          "id": 16,
+          "session": "1",
+          "nativeSeq": "15",
+          "callbackQpc": "15887853797843",
+          "nativeReceiptQpc": "15887853797854",
+          "state": "DELIVERED"
+        },
+        {
+          "line": 62,
+          "id": 17,
+          "session": "1",
+          "nativeSeq": "16",
+          "callbackQpc": "15887853959563",
+          "nativeReceiptQpc": "15887853959571",
+          "state": "DELIVERED"
+        }
+      ],
+      "nativeZeroDelivered": [],
+      "firstDeliveredRelativeNs": 30060500,
+      "sourceOfferTerminals": [
+        {
+          "line": 49,
+          "run": "15887851310229",
+          "offer": "1",
+          "actionId": 7,
+          "pulseNs": "1588785254106800",
+          "result": 2,
+          "root": "15887852703273",
+          "acceptedQ20": 133850,
+          "actualDeltaNs": 15956200,
+          "sourceTailLine": 48
+        },
+        {
+          "line": 120,
+          "run": "15887851310229",
+          "offer": "2",
+          "actionId": 29,
+          "pulseNs": "1588785565960600",
+          "result": 7,
+          "root": "0",
+          "reason": "STALE_ENDPOINT",
+          "ageNs": "180398000"
+        }
+      ],
+      "endLine": 145,
+      "drainLine": 149,
+      "closeLine": 151,
+      "drain": "FENCE_RETIRED_BEFORE_DRAIN_PROBE",
+      "failures": [],
+      "archiveCount": 9,
+      "traceLoss": 0
+    },
+    {
+      "path": "test/reports/t887/b-replay-on.jsonl",
+      "sha256": "541810e00b85cceb67dd6a6f8dba3dd7d3407eb811ec51fffc45ef17eabc6202",
+      "mode": "REPLAY_ON",
+      "scriptActionCount": 52,
+      "scriptActionStates": {
+        "0:DELIVERED": 37,
+        "0:REVOKED": 11,
+        "1:AWAIT_PULSE": 2,
+        "2:NOT_BUSY": 1,
+        "3:REVOKED": 1
+      },
+      "ownerTerminalStates": {
+        "END_INTAKE_REVOKED": 1,
+        "PAGE_PULSE_ACCEPTED": 34
+      },
+      "lastSession1Owner": {
+        "line": 59,
+        "actionId": 15,
+        "seq": "14",
+        "callbackQpc": "15887865800602"
+      },
+      "firstSession2Owner": {
+        "line": 66,
+        "actionId": 18,
+        "seq": "1",
+        "callbackQpc": "15887866281979"
+      },
+      "firstQueuedPresentLine": 64,
+      "firstPresentExitQpc": "15887866223286",
+      "firstAfterReanchorPresentLine": 78,
+      "unclosedNativeReceipts": [
+        {
+          "line": 61,
+          "id": 16,
+          "session": "1",
+          "nativeSeq": "15",
+          "callbackQpc": "15887865960828",
+          "nativeReceiptQpc": "15887865960841",
+          "state": "DELIVERED"
+        },
+        {
+          "line": 63,
+          "id": 17,
+          "session": "1",
+          "nativeSeq": "16",
+          "callbackQpc": "15887866121120",
+          "nativeReceiptQpc": "15887866121129",
+          "state": "DELIVERED"
+        }
+      ],
+      "nativeZeroDelivered": [],
+      "firstDeliveredRelativeNs": 28318500,
+      "sourceOfferTerminals": [
+        {
+          "line": 51,
+          "run": "15887863470806",
+          "offer": "1",
+          "actionId": 7,
+          "pulseNs": "1588786469420000",
+          "result": 2,
+          "root": "15887864855637",
+          "acceptedQ20": 125997,
+          "actualDeltaNs": 15020100,
+          "sourceTailLine": 49
+        },
+        {
+          "line": 119,
+          "run": "15887863470806",
+          "offer": "2",
+          "actionId": 29,
+          "pulseNs": "1588786781589900",
+          "result": 4,
+          "root": "0"
+        }
+      ],
+      "endLine": 131,
+      "drainLine": 133,
+      "closeLine": 135,
+      "drain": "FENCE_RETIRED_BEFORE_DRAIN_PROBE",
+      "failures": [
+        [
+          117,
+          "LATE_FENCE_SIGNAL",
+          "15887869195673"
+        ],
+        [
+          134,
+          "LATE_FENCE_SIGNAL",
+          "15887869195673"
+        ]
+      ],
+      "archiveCount": 6,
+      "traceLoss": 0
+    }
+  ],
+  "sameProcessSameRootArchives": {
+    "b-replay-off": [
+      {
+        "nonce": "15887852703273",
+        "kind": "SOURCE",
+        "bytes": 62976,
+        "payloadSHA": "cccd044a15084cdad96aa87e08bf8bed8eb356bad17508ea709861fdede8575b",
+        "fileSHA": "42d4237969486e6b9fa5016a738e8fe76d6173262f8c93ef143e0413d71c2f77"
+      },
+      {
+        "nonce": "15887853154081",
+        "kind": "QUANTUM",
+        "bytes": 62976,
+        "payloadSHA": "cbe70e688690192433faa1ab689c4b92005839eb1803dfaffe32455fa18d8831",
+        "fileSHA": "5df70b90a20425dcf0a0e8f5603dfdda69b6fc255955e5780a693753b69d9c21"
+      },
+      {
+        "nonce": "15887854423644",
+        "kind": "QUANTUM",
+        "bytes": 62976,
+        "payloadSHA": "a7d10323df4e33a303d476165f9c1829e233676221e80c20dfe36ee7a0d431a4",
+        "fileSHA": "684354b9cfd11de1688a4edeb230bb901506783b4044d19f2618b0a73f8a9e0f"
+      },
+      {
+        "nonce": "15887855015421",
+        "kind": "QUANTUM",
+        "bytes": 62976,
+        "payloadSHA": "8175559f7d2dda95789c5018b630d1e39945ee4c797749f3fc2a47521ec39ffa",
+        "fileSHA": "4770388c0313c07af03cf80e6d1beee11c160adba1cf57356d602326f92f33d7"
+      },
+      {
+        "nonce": "15887855604438",
+        "kind": "QUANTUM",
+        "bytes": 63488,
+        "payloadSHA": "8b5a18e9b073ee2dcb22a288a27319f9c8f640f1a2bc8105cf2e763d2c8f3142",
+        "fileSHA": "e8f1d23e70f1b17e1b8e45ec2c47fd518a26ee744d5ef6e33287fedcc7839e61"
+      },
+      {
+        "nonce": "15887856212291",
+        "kind": "QUANTUM",
+        "bytes": 64000,
+        "payloadSHA": "a8150f38e5fb88dc580326293c518553b3c99b4900ef70fc3950ea11baa82e6b",
+        "fileSHA": "b588e2cff9166c72d50ea0b38d0d4734ff50e88cb48bd32d88bbe1db6f63812f"
+      },
+      {
+        "nonce": "15887856823915",
+        "kind": "QUANTUM",
+        "bytes": 64512,
+        "payloadSHA": "36177fe0f724c026ebe86d0facc197563dd4969747be303d618af7febaa28d36",
+        "fileSHA": "eb45de6e1881b13af56ca3a92808270c975545916365dee2ceed11b517d097bc"
+      },
+      {
+        "nonce": "15887857464078",
+        "kind": "QUANTUM",
+        "bytes": 62976,
+        "payloadSHA": "ecbaecd25d720e963ec4ee28798b5533060764c06cbfe8f6d9d616ab94943ceb",
+        "fileSHA": "3bc71aeea169b019d50061bb33fdc6442471f840f5c6ef3a224864a41fdf114b"
+      },
+      {
+        "nonce": "15887858109918",
+        "kind": "QUANTUM",
+        "bytes": 63488,
+        "payloadSHA": "b88ca72cd893fe5954060fa1f47da8ee665520dbcd6fa89757f3462d095cecee",
+        "fileSHA": "8aeeea6972c5c5dfb7e1dbf7790c9b9aa079e2f27fa3705aefab5bc2723a5634"
+      }
+    ],
+    "b-replay-on": [
+      {
+        "nonce": "15887864855637",
+        "kind": "SOURCE",
+        "bytes": 62720,
+        "payloadSHA": "b2b4f3b15d572169c22de71c543aa1de8df566afd6ff19b61152991d73544733",
+        "fileSHA": "2fd6f623d54a84274f1398516e3511358e84918501e0fbcf37f76d7702670dc2"
+      },
+      {
+        "nonce": "15887865366548",
+        "kind": "QUANTUM",
+        "bytes": 62720,
+        "payloadSHA": "3c05f3b91964b1aa9c4a6dd3de29138dca8c9c92434622baf1e06ee759239460",
+        "fileSHA": "9bdd73c6713a79a126cbf9bed639e85d1f0e39af85ccc5ab5ff42c69517421c5"
+      },
+      {
+        "nonce": "15887866442585",
+        "kind": "QUANTUM",
+        "bytes": 62720,
+        "payloadSHA": "a74c9bdc42a01f60d6a1815158f072831e0b2f55ab11adb496ae8efd4ab1ec59",
+        "fileSHA": "f5d149cb711b8d0ce0b686c20bddb313dc5e742a8a2d1577bf40b4546a09dce7"
+      },
+      {
+        "nonce": "15887867114118",
+        "kind": "QUANTUM",
+        "bytes": 62720,
+        "payloadSHA": "6918ad06060970f17f8a343846bf1e9aea50802ca78ab42e79d51f7e6bb97712",
+        "fileSHA": "4e992618fef498929df3da048358f0701ebf6a2fe1c97b314b473becd680e231"
+      },
+      {
+        "nonce": "15887867780908",
+        "kind": "QUANTUM",
+        "bytes": 62976,
+        "payloadSHA": "53d609c27dab3141ffdc2128fe52584a7dd031fbca9d5fce9ce577e912a71df3",
+        "fileSHA": "eaa28b0ef43a4b65e246edfca435a167fa08c82124b1510b2c134c93ed995853"
+      },
+      {
+        "nonce": "15887868559842",
+        "kind": "QUANTUM",
+        "bytes": 63232,
+        "payloadSHA": "0d7c17756b5c8a9156e53c180bead097d4dffdeed1da1a0fdde1209f61c542fe",
+        "fileSHA": "9db620a9c09353a5075e9f5b3f3bc689d7949d56c3d811677881b5b097223661"
+      }
+    ]
+  },
+  "replayOffPriorFenceWitness": {
+    "acceptedLine": 148,
+    "drainLine": 149,
+    "nonce": "15887858791631",
+    "fence": "1689432612200",
+    "fencePending": false,
+    "businessWait": [
+      "15887859244078",
+      "15887859323660",
+      2000000,
+      0
+    ],
+    "separateRetireVkResult": 1,
+    "ownerCode": 0
+  }
+}
