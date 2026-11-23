@@ -1,0 +1,668 @@
+{
+  "schema": "T849_PC_G13_DRIVE_CLOSURE_V1",
+  "qualificationPE": {
+    "path": ".codex/local-test/t833-t841-qualification.exe",
+    "bytes": 2819584,
+    "sha256": "ad40c7ce3ba07ac9a782b0a2b2acf5b34ca233f6d778142192bc9fd7dc950b01"
+  },
+  "adapter": {
+    "vendor": 32902,
+    "device": 16024,
+    "driverRaw": 1656924,
+    "driverVersion": "31.0.101.2140",
+    "deviceUUID": "8680983e020000000000000000000000",
+    "driverUUID": "33312e302e3130312e32313430000000",
+    "deviceLUID": "3cda000000000000",
+    "queueFamily": 0,
+    "effectiveApi": 4202496
+  },
+  "runs": [
+    {
+      "role": "OP7_FIELD_ONLY",
+      "raw": {
+        "path": "test/reports/t833/t841-qualification/OP7_FIELD_ONLY.jsonl",
+        "bytes": 45501,
+        "sha256": "50600a88f9837c60c20a720bf35bb0329293f47205e9fbf2e6feaa6f2ef5d99e"
+      },
+      "receipt": {
+        "path": "test/reports/t833/t841-qualification/OP7_FIELD_ONLY.receipt.json",
+        "bytes": 3056,
+        "sha256": "9ad0b644e1eae8edb18c46bb781c582beb5eb41274521a5bded6bb8ea71460cb"
+      },
+      "shader": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP7_FIELD_ONLY.comp",
+        "bytes": 11459,
+        "sha256": "5c96aad9fb1e6160a6503a448fd001a3f115724f7da101fdbded0539e9347156"
+      },
+      "spv": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP7_FIELD_ONLY.spv",
+        "bytes": 44256,
+        "sha256": "e1f6130967e203043aa6e2e9a786f6a677d18cf20bb7b7ae32084afa617438d6"
+      },
+      "moduleInPEOnce": true,
+      "identity": {
+        "pid": 27268,
+        "ownerTid": 97964,
+        "processStartTick": "134398695745800501",
+        "qpcFrequency": "10000000",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pipelineCache": null
+      },
+      "enterQpc": "15558216572053",
+      "exitQpc": "15558219643434",
+      "supervisorStopQpc": "15558220597720",
+      "elapsedEvidenceMs": 307.1381,
+      "threadStats": null,
+      "vkResult": 0,
+      "probeMasks": [
+        0,
+        0
+      ],
+      "state": "CHILD_EXIT",
+      "normalExit": true
+    },
+    {
+      "role": "OP7_DRIVE_ONLY",
+      "raw": {
+        "path": "test/reports/t833/t841-qualification/OP7_DRIVE_ONLY.jsonl",
+        "bytes": 33017,
+        "sha256": "8fef07bb777452619830ea8add9d3b8b4caaa9767db989f81d2b55c8c4d3a0ab"
+      },
+      "receipt": {
+        "path": "test/reports/t833/t841-qualification/OP7_DRIVE_ONLY.receipt.json",
+        "bytes": 6503,
+        "sha256": "a45381517e5dc8b4737637bd1561204d940549ee0731a1d28a7bf428aeffcfb3"
+      },
+      "shader": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP7_DRIVE_ONLY.comp",
+        "bytes": 18142,
+        "sha256": "e83cf4498144c60dc44092db6316b2c5fd9af16b8cd2be4e493095f339ded203"
+      },
+      "spv": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP7_DRIVE_ONLY.spv",
+        "bytes": 81776,
+        "sha256": "158cd36f62f309af57212c3812067306e115d526d5507db154f7efcbd5aafb77"
+      },
+      "moduleInPEOnce": true,
+      "identity": {
+        "pid": 96972,
+        "ownerTid": 83232,
+        "processStartTick": "134398695899647886",
+        "qpcFrequency": "10000000",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pipelineCache": null
+      },
+      "enterQpc": "15558358847620",
+      "exitQpc": null,
+      "supervisorStopQpc": "15558958873852",
+      "elapsedEvidenceMs": 60002.6232,
+      "threadStats": {
+        "firstQpc": "15558372503122",
+        "lastQpc": "15558926636909",
+        "threadCpuDeltaSec": 50.59375,
+        "sampleWallSec": 55.4133787,
+        "singleCoreFraction": 0.9130240961105661
+      },
+      "vkResult": null,
+      "probeMasks": null,
+      "state": "CALL_UNRETURNED",
+      "normalExit": false
+    },
+    {
+      "role": "OP15",
+      "raw": {
+        "path": "test/reports/t833/t841-qualification/OP15.jsonl",
+        "bytes": 45401,
+        "sha256": "2c8b3656cd79cfe997679692dcbb668879bc7965902617d86ca47efdaa448d05"
+      },
+      "receipt": {
+        "path": "test/reports/t833/t841-qualification/OP15.receipt.json",
+        "bytes": 2643,
+        "sha256": "b169754db3e2852b427eb69fa0ae93241391ac20eb3b44cb1121db7af56b6433"
+      },
+      "shader": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP15.comp",
+        "bytes": 11570,
+        "sha256": "68e64f5c7ef3df84535b5f5c085afd8d347fcd7f8e2d5872d1647799389683e6"
+      },
+      "spv": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP15.spv",
+        "bytes": 44704,
+        "sha256": "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f"
+      },
+      "moduleInPEOnce": true,
+      "identity": {
+        "pid": 80360,
+        "ownerTid": 30176,
+        "processStartTick": "134398696638265202",
+        "qpcFrequency": "10000000",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pipelineCache": null
+      },
+      "enterQpc": "15559094167083",
+      "exitQpc": "15559097476365",
+      "supervisorStopQpc": "15559099069818",
+      "elapsedEvidenceMs": 330.9282,
+      "threadStats": null,
+      "vkResult": 0,
+      "probeMasks": [
+        0,
+        0
+      ],
+      "state": "CHILD_EXIT",
+      "normalExit": true
+    },
+    {
+      "role": "OP17",
+      "raw": {
+        "path": "test/reports/t833/t841-qualification/OP17.jsonl",
+        "bytes": 32977,
+        "sha256": "00d9c7f253486dee2440c0802218473b8b5caf0209a23f8e83398ea4499c64bf"
+      },
+      "receipt": {
+        "path": "test/reports/t833/t841-qualification/OP17.receipt.json",
+        "bytes": 6448,
+        "sha256": "f6900f98fbe19f7c019f385bcf063e3c06c2fca5b095e78212568327099dc7ae"
+      },
+      "shader": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP17.comp",
+        "bytes": 21332,
+        "sha256": "60cd8cc83f8b5becab0f89436a402792007f9f7194e3e7e9af3ee02bbcc4dab5"
+      },
+      "spv": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP17.spv",
+        "bytes": 99768,
+        "sha256": "cb5b3825a2659b8b0e2343963e6e1166e4ad86117dbcc84e80a3b68b7a265d3c"
+      },
+      "moduleInPEOnce": true,
+      "identity": {
+        "pid": 85708,
+        "ownerTid": 11824,
+        "processStartTick": "134398696778120976",
+        "qpcFrequency": "10000000",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pipelineCache": null
+      },
+      "enterQpc": "15559233762877",
+      "exitQpc": null,
+      "supervisorStopQpc": "15559834766269",
+      "elapsedEvidenceMs": 60100.3392,
+      "threadStats": {
+        "firstQpc": "15559250846201",
+        "lastQpc": "15559804576610",
+        "threadCpuDeltaSec": 50.359375,
+        "sampleWallSec": 55.3730409,
+        "singleCoreFraction": 0.9094565546968182
+      },
+      "vkResult": null,
+      "probeMasks": null,
+      "state": "CALL_UNRETURNED",
+      "normalExit": false
+    },
+    {
+      "role": "OP6",
+      "raw": {
+        "path": "test/reports/t833/t841-qualification/OP6.jsonl",
+        "bytes": 45390,
+        "sha256": "502165adeda3224f3e56f0c13b9d230be560977178d0e04d18763f69276db8cd"
+      },
+      "receipt": {
+        "path": "test/reports/t833/t841-qualification/OP6.receipt.json",
+        "bytes": 2637,
+        "sha256": "4574d1febadd27c2129d377c5835ef67511a812ac757fd30a16e4668828b0df8"
+      },
+      "shader": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP6.comp",
+        "bytes": 7725,
+        "sha256": "a35750988a0dc519d7d7b1c76933f0530460a3b9857514c6d8a1c150336b452e"
+      },
+      "spv": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP6.spv",
+        "bytes": 21968,
+        "sha256": "f1128f66ec7b845d82a50e0eb9c8c772dbf709c245653a2aab2f586a246d97c4"
+      },
+      "moduleInPEOnce": true,
+      "identity": {
+        "pid": 88452,
+        "ownerTid": 79448,
+        "processStartTick": "134398697514208171",
+        "qpcFrequency": "10000000",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pipelineCache": null
+      },
+      "enterQpc": "15559979350509",
+      "exitQpc": "15559979704698",
+      "supervisorStopQpc": "15559981340383",
+      "elapsedEvidenceMs": 35.4189,
+      "threadStats": null,
+      "vkResult": 0,
+      "probeMasks": [
+        0,
+        0
+      ],
+      "state": "CHILD_EXIT",
+      "normalExit": true
+    },
+    {
+      "role": "OP8",
+      "raw": {
+        "path": "test/reports/t833/t841-qualification/OP8.jsonl",
+        "bytes": 45390,
+        "sha256": "be6f909130b932b100c3aeb4252a17c1b99341f913c690f5ab12058e20576d48"
+      },
+      "receipt": {
+        "path": "test/reports/t833/t841-qualification/OP8.receipt.json",
+        "bytes": 3010,
+        "sha256": "e2a911de64d0965370263e334da82bbc95480aa0ae511d83797eaf43bfa395e8"
+      },
+      "shader": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP8.comp",
+        "bytes": 7860,
+        "sha256": "a470698c1683b9798b0335566658e6c085562a11d0bd501c1137eb8fba288495"
+      },
+      "spv": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP8.spv",
+        "bytes": 21472,
+        "sha256": "bffb8188783f3ce412eee6fe19b70684e514025fe607e208342480a5392fb9e6"
+      },
+      "moduleInPEOnce": true,
+      "identity": {
+        "pid": 67024,
+        "ownerTid": 88136,
+        "processStartTick": "134398697660408066",
+        "qpcFrequency": "10000000",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pipelineCache": null
+      },
+      "enterQpc": "15560141291183",
+      "exitQpc": "15560141813206",
+      "supervisorStopQpc": "15560143126077",
+      "elapsedEvidenceMs": 52.2023,
+      "threadStats": null,
+      "vkResult": 0,
+      "probeMasks": [
+        0,
+        0
+      ],
+      "state": "CHILD_EXIT",
+      "normalExit": true
+    },
+    {
+      "role": "OP12_14",
+      "raw": {
+        "path": "test/reports/t833/t841-qualification/OP12_14.jsonl",
+        "bytes": 45431,
+        "sha256": "e527ef6067960d120f356efd68b7a2044504c0718dd9b814a12bda20ae62f621"
+      },
+      "receipt": {
+        "path": "test/reports/t833/t841-qualification/OP12_14.receipt.json",
+        "bytes": 2651,
+        "sha256": "63355bdec634a4c4355c9cc16dad11733b9c2959f3d523b81381f3eb7cd3a470"
+      },
+      "shader": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP12_14.comp",
+        "bytes": 8598,
+        "sha256": "4672f3b57cf3be6a59df7ecc256eb0148b3938206b0743446985796f07e087aa"
+      },
+      "spv": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP12_14.spv",
+        "bytes": 27448,
+        "sha256": "eceb9fcb4f4ed1cba79ceb49a9974e945c907934864a125ae4ca445d489c39b5"
+      },
+      "moduleInPEOnce": true,
+      "identity": {
+        "pid": 83676,
+        "ownerTid": 89344,
+        "processStartTick": "134398697822211074",
+        "qpcFrequency": "10000000",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pipelineCache": null
+      },
+      "enterQpc": "15560286522638",
+      "exitQpc": "15560287110422",
+      "supervisorStopQpc": "15560288655587",
+      "elapsedEvidenceMs": 58.7784,
+      "threadStats": null,
+      "vkResult": 0,
+      "probeMasks": [
+        0,
+        0
+      ],
+      "state": "CHILD_EXIT",
+      "normalExit": true
+    },
+    {
+      "role": "OP16",
+      "raw": {
+        "path": "test/reports/t833/t841-qualification/OP16.jsonl",
+        "bytes": 45402,
+        "sha256": "e2a4ce9a1c8c74bd253fead76d24797794d3799d31f1e636161ae3e0094be2f3"
+      },
+      "receipt": {
+        "path": "test/reports/t833/t841-qualification/OP16.receipt.json",
+        "bytes": 2655,
+        "sha256": "b6e891153e135f89e5340edc08a1d601d37257320c0b663aa6c8887757e46ee0"
+      },
+      "shader": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP16.comp",
+        "bytes": 9765,
+        "sha256": "ad40920e4e98837ae5bf52daad7b55850be81d9807e9e1af9e41f674657f42a3"
+      },
+      "spv": {
+        "path": ".codex/local-test/t833-t841-20261123/g13_assets/PC_OP16.spv",
+        "bytes": 34836,
+        "sha256": "cfaaa4d61649236f6e6e2bfdbd759f0e62e67cc9288c927d1f0822c27fa926d2"
+      },
+      "moduleInPEOnce": true,
+      "identity": {
+        "pid": 77352,
+        "ownerTid": 40796,
+        "processStartTick": "134398697967980731",
+        "qpcFrequency": "10000000",
+        "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+        "flags": 0,
+        "pipelineCache": null
+      },
+      "enterQpc": "15560428321132",
+      "exitQpc": "15560429343414",
+      "supervisorStopQpc": "15560430861114",
+      "elapsedEvidenceMs": 102.2282,
+      "threadStats": null,
+      "vkResult": 0,
+      "probeMasks": [
+        0,
+        0
+      ],
+      "state": "CHILD_EXIT",
+      "normalExit": true
+    }
+  ],
+  "glslangVersion": "Glslang Version: 11:16.6.0",
+  "offlineVariants": [
+    {
+      "role": "OP7_MOTION_ONLY",
+      "opcode": 7,
+      "privateProbe": 66,
+      "sourceBytes": 16535,
+      "sourceSHA": "09f801ee8152cf5f4bca837bf21bf81034725d825d5b67dfe73fa92686b0ea25",
+      "spirvBytes": 73916,
+      "spirvSHA": "9efb3d5704a436a53cb1abfed30e17a7b934a11d89571186b929f52630b85a40",
+      "instructions": 4774,
+      "calls": 189,
+      "loops": 24,
+      "reachable": {
+        "drive": true,
+        "entryLedger": false,
+        "softReduce": true,
+        "softPolynomial": true,
+        "softExp": false,
+        "softDiv": true,
+        "traceStage": false,
+        "coldFP32Probe": true
+      }
+    },
+    {
+      "role": "OP7_MMS_FORCE_ONLY",
+      "opcode": 7,
+      "privateProbe": 66,
+      "sourceBytes": 13924,
+      "sourceSHA": "9e4d5c9e2c14c465235c2282eb35a6de9b041b96c934aaae2978b0f27d1a58a1",
+      "spirvBytes": 56028,
+      "spirvSHA": "ccb4049b3d3ea0571f03374140fe8529e17fe6e1dd837a38c8249ae505b001e9",
+      "instructions": 3582,
+      "calls": 131,
+      "loops": 12,
+      "reachable": {
+        "drive": true,
+        "entryLedger": false,
+        "softReduce": false,
+        "softPolynomial": false,
+        "softExp": true,
+        "softDiv": true,
+        "traceStage": false,
+        "coldFP32Probe": true
+      }
+    },
+    {
+      "role": "OP17_LEDGER_ONLY",
+      "opcode": 17,
+      "privateProbe": 66,
+      "sourceBytes": 8937,
+      "sourceSHA": "ed110e6dc88b5fb3f9e9868a2be79a023467181cca9e3c858543a7247ed26b6d",
+      "spirvBytes": 28852,
+      "spirvSHA": "c36edde69b9cbd4029e153f6d8d21ddad93c021e32fe94f20e9c194db5d207d0",
+      "instructions": 1809,
+      "calls": 33,
+      "loops": 7,
+      "reachable": {
+        "drive": false,
+        "entryLedger": true,
+        "softReduce": false,
+        "softPolynomial": false,
+        "softExp": false,
+        "softDiv": false,
+        "traceStage": true,
+        "coldFP32Probe": true
+      }
+    },
+    {
+      "role": "OP17_DRIVE_CONTEXT",
+      "opcode": 17,
+      "privateProbe": 66,
+      "sourceBytes": 19976,
+      "sourceSHA": "4f7121607816414ed6c783d87c025f5d415354d57693e4fa7a58958cce046f0a",
+      "spirvBytes": 92592,
+      "spirvSHA": "599f8ff437e98bf3b39f88471cde123150b330977d59564a4edb4826ea5efb58",
+      "instructions": 5988,
+      "calls": 241,
+      "loops": 27,
+      "reachable": {
+        "drive": true,
+        "entryLedger": false,
+        "softReduce": true,
+        "softPolynomial": true,
+        "softExp": true,
+        "softDiv": true,
+        "traceStage": true,
+        "coldFP32Probe": true
+      }
+    },
+    {
+      "role": "OP7_REDUCE_ONLY",
+      "opcode": 7,
+      "privateProbe": 66,
+      "sourceBytes": 11175,
+      "sourceSHA": "c8927fc15ca2e86ede027223eee24f87f544567d063b26a4f1a1e8d03e049b7c",
+      "spirvBytes": 45548,
+      "spirvSHA": "db3790f77797fa5850eff1cf1f658e5b96894e56b5c380cfe45eece4852ae626",
+      "instructions": 2927,
+      "calls": 64,
+      "loops": 18,
+      "reachable": {
+        "drive": false,
+        "entryLedger": false,
+        "softReduce": true,
+        "softPolynomial": false,
+        "softExp": false,
+        "softDiv": false,
+        "traceStage": false,
+        "coldFP32Probe": true
+      }
+    }
+  ],
+  "rootPlan": {
+    "originalSource": 16,
+    "originalQuantum": 820,
+    "op7": [
+      {
+        "index": 815,
+        "op": "ROOT_FINAL_FIELD_AUDIT",
+        "opcode": 7,
+        "scope": 0,
+        "J": 0,
+        "micro": 0,
+        "iterationBlock": 0
+      }
+    ],
+    "op17": [
+      {
+        "index": 10,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 1,
+        "J": 1,
+        "micro": 0,
+        "iterationBlock": 0
+      },
+      {
+        "index": 70,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 1,
+        "J": 2,
+        "micro": 0,
+        "iterationBlock": 0
+      },
+      {
+        "index": 126,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 1,
+        "J": 2,
+        "micro": 1,
+        "iterationBlock": 0
+      },
+      {
+        "index": 186,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 1,
+        "J": 4,
+        "micro": 0,
+        "iterationBlock": 0
+      },
+      {
+        "index": 242,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 1,
+        "J": 4,
+        "micro": 1,
+        "iterationBlock": 0
+      },
+      {
+        "index": 298,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 1,
+        "J": 4,
+        "micro": 2,
+        "iterationBlock": 0
+      },
+      {
+        "index": 354,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 1,
+        "J": 4,
+        "micro": 3,
+        "iterationBlock": 0
+      },
+      {
+        "index": 415,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 2,
+        "J": 1,
+        "micro": 0,
+        "iterationBlock": 0
+      },
+      {
+        "index": 475,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 2,
+        "J": 2,
+        "micro": 0,
+        "iterationBlock": 0
+      },
+      {
+        "index": 531,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 2,
+        "J": 2,
+        "micro": 1,
+        "iterationBlock": 0
+      },
+      {
+        "index": 591,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 2,
+        "J": 4,
+        "micro": 0,
+        "iterationBlock": 0
+      },
+      {
+        "index": 647,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 2,
+        "J": 4,
+        "micro": 1,
+        "iterationBlock": 0
+      },
+      {
+        "index": 703,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 2,
+        "J": 4,
+        "micro": 2,
+        "iterationBlock": 0
+      },
+      {
+        "index": 759,
+        "op": "ENTRY_FINAL",
+        "opcode": 17,
+        "scope": 2,
+        "J": 4,
+        "micro": 3,
+        "iterationBlock": 0
+      }
+    ],
+    "sourceDriveSlots": [
+      {
+        "index": 5,
+        "op": "SOURCE_ACTUAL_INSTALL",
+        "opcode": 55
+      },
+      {
+        "index": 6,
+        "op": "SOURCE_ACTUAL_AUDIT",
+        "opcode": 56
+      },
+      {
+        "index": 8,
+        "op": "SOURCE_REPLAY_INSTALL",
+        "opcode": 58
+      },
+      {
+        "index": 9,
+        "op": "SOURCE_REPLAY_AUDIT",
+        "opcode": 59
+      }
+    ]
+  },
+  "newControlLive": "NOT_RUN",
+  "rootExecuted": false,
+  "stack": "NOT_OBSERVED"
+}
