@@ -1,0 +1,62 @@
+{
+  "schema": "T878_DISCRETE_GPU_CHECK_V1",
+  "date": "2026-11-23",
+  "machine": {
+    "cpus": "see HOST_IDENTITY rows in prior runs",
+    "adapters": [
+      {
+        "name": "GameViewer Virtual Display Adapter",
+        "pnp": "ROOT\\\\DISPLAY\\\\0000",
+        "type": "virtual",
+        "driver": "15.6.5.199",
+        "status": "OK"
+      },
+      {
+        "name": "Intel(R) UHD Graphics 630",
+        "pnp": "PCI\\\\VEN_8086&DEV_3E98&SUBSYS_861A103C&REV_02\\\\3&11583659&0&10",
+        "type": "integrated",
+        "adapterRAM": 1073741824,
+        "driver": "31.0.101.2140",
+        "status": "OK"
+      }
+    ],
+    "enumeration": {
+      "wmic_win32_VideoController": "2 adapters (GameViewer virtual + Intel UHD 630)",
+      "CIM_PnpDevice_Display": "2 devices, both Status=OK, CM_PROB_NONE",
+      "PnP_VEN_10DE_1002_1022": "no NVIDIA/AMD devices",
+      "thunderbolt_eGPU": "none",
+      "vulkaninfo": "GPU0+GPU1 both vendorID=0x8086 deviceID=0x3e98 INTEGRATED, deviceUUID 8680983e-0200-0000-0000-000000000000, driver 31.0.101.2140 (0x19485c), Vulkan 1.3.215 — the two entries are the same physical Intel iGPU enumerated through the physical + virtual display paths"
+    },
+    "conclusion": "NO qualifying discrete GPU present on this workstation. All prior T868 QUANTUM timeouts are on the Intel iGPU; the T873-predicted discrete-GPU requirement cannot be met here."
+  },
+  "cardScope": {
+    "asked": "先确认可用合格独显；可用时按T873核旧PE 78ee42e9…及逐模块同SHA、输入/argv，实际采F02/F03及必要F05/撤权；保adapter、UUID、QPC、原始终态。无工位交确切前置；不放宽原数值门，不等待T877。",
+    "result": "无可用独显工位 → 按卡面交确切前置（见 precondition）"
+  },
+  "precondition": {
+    "hardware": "任一合格独显 Windows PC（NVIDIA/AMD discrete，Vulkan 1.2+，timestamp query 可用优先）",
+    "artifacts": {
+      "PE": ".codex/local-test/t833-candidate-release.exe (SHA256 78ee42e9…系，与 T833 交接 924cea58 匹配)",
+      "fixtures": "test/reports/t868/fixtures/{F02,F03,F05}-config128.bin 与 -state.bin（SHA 见 fixtures.json，冻结输入）",
+      "referenceRuns": "T868 八轮原日志固定于 commit 0dc3761f（对照基线）"
+    },
+    "argv": [
+      "F02: --g13-candidate <capture.bin> --g13-fixture F02 <F02-config128.bin> <F02-state.bin>",
+      "F03: --g13-candidate <capture.bin> --g13-fixture F03 <F03-config128.bin> <F03-state.bin> --g13-trial 1",
+      "F05: --g13-candidate <capture.bin> --g13-fixture F05 <F05-config128.bin> <F05-state.bin>",
+      "revoke-before: --g13-candidate <capture.bin> --g13-revoke-before",
+      "revoke-after: --g13-candidate <capture.bin> --g13-revoke-after"
+    ],
+    "mustRecord": [
+      "完整 argv",
+      "GPU/driver/device UUID",
+      "Vulkan 能力与 FloatControls",
+      "实际角色 SHA",
+      "QPC",
+      "真实原件及退出",
+      "首根 250ms 内通过与否（只证该工件在该适配域可运行）"
+    ],
+    "gates": "不放宽原数值门：250ms deadline、33,333,333 ns pulse、Completion256/槽 latch 判据原值"
+  },
+  "t877_relation": "卡面明确不等待 T877；T877 PE（ce824652…，--g13-diagnostics full/hot 两入口）在仓可供接手工位一并使用"
+}
