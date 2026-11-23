@@ -1,0 +1,336 @@
+{
+  "schema": "T833_T854_QUALIFICATION_V1",
+  "developerBuild": "WINDOWS_X64_RELEASE_PASS",
+  "qualification": {
+    "exe": ".codex/local-test/t833-t854-qualification.exe",
+    "exeSHA": "4ab160fb4e7bdbd6a04d12ddaf0667cb45590ee4b39956ea1a18943e4851894e",
+    "roles": [
+      {
+        "role": "OP17_MOTION_CONTEXT",
+        "moduleSHA": "c3062c6d47f3851d14af8df1102d68ddef18df6f66cc1923d463b9a1cfdf76e5",
+        "pipelineNs": "58272018800",
+        "mismatchMasks": [
+          0,
+          0
+        ],
+        "ownerRetired": true
+      },
+      {
+        "role": "OP17_MMS_CONTEXT",
+        "moduleSHA": "ece1ae31f44497e594f1209ae796b50d791f4e9a41ea95b2c91a5b04271e7fe8",
+        "pipelineNs": "9242941400",
+        "mismatchMasks": [
+          0,
+          0
+        ],
+        "ownerRetired": true
+      },
+      {
+        "role": "OP17_LEDGER_ONLY",
+        "moduleSHA": "c36edde69b9cbd4029e153f6d8d21ddad93c021e32fe94f20e9c194db5d207d0",
+        "pipelineNs": "76849900",
+        "mismatchMasks": [
+          0,
+          0
+        ],
+        "ownerRetired": true
+      }
+    ]
+  },
+  "private": {
+    "exe": ".codex/local-test/t833-t854-owner.exe",
+    "exeSHA": "2413419f70cb0abd0604df2b138d12dc08fa05e8c573ec8683602b17e63f39e2",
+    "archive": ".codex/local-test/t833-t854-owner-proof/T854_PRIVATE_WRITES.bin",
+    "properties": {
+      "format": "G13_T854_PRIVATE_V1",
+      "fileBytes": 13894400,
+      "sha256": "67ebbb5712d298bd078ca9ba46ff49f1c254d46f533d6c56e670e6df9b9ee2ee",
+      "segmentsBytes": [
+        198144,
+        198144,
+        597760,
+        74752
+      ],
+      "segments": [
+        "BASE",
+        "CANDIDATE",
+        "WORK",
+        "CTRL"
+      ],
+      "initialSnapshots": 1,
+      "stages": [
+        "BEFORE",
+        "MOTION",
+        "MMS",
+        "LEDGER"
+      ],
+      "cases": [
+        "ACTIVE",
+        "ENTRY_NOOP",
+        "MMS_FAULT"
+      ],
+      "firstNonce": "15645247030327",
+      "ownerTid": 75264,
+      "push": [
+        17,
+        0,
+        1,
+        0,
+        0,
+        10
+      ],
+      "layoutWords": [
+        64,
+        64,
+        4096,
+        8320,
+        49536,
+        149408,
+        65600,
+        5,
+        130,
+        4416,
+        8576,
+        16768,
+        5456,
+        0,
+        0,
+        0,
+        0,
+        8320,
+        16640,
+        24960,
+        33280,
+        41600,
+        49920,
+        58240,
+        66560,
+        74880,
+        83200,
+        94112,
+        105024,
+        115936,
+        126848,
+        130944,
+        135040,
+        139136,
+        143232,
+        145312,
+        0,
+        0,
+        0,
+        0,
+        64,
+        64,
+        0,
+        32,
+        32,
+        4096,
+        16,
+        16,
+        5120,
+        8,
+        8,
+        5376,
+        4,
+        4,
+        5440,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "descriptorObjects": [
+        "2860233471048",
+        "2860233459656",
+        "2860233461080",
+        "2860233468200"
+      ],
+      "privateWord": 149408,
+      "queueSubmit": 0,
+      "fence": 0,
+      "acceptedRoot": null,
+      "productionEquivalent": false
+    },
+    "independentWriteSets": [
+      {
+        "case": "ACTIVE",
+        "result": "ACTIVE_WRITESETS_ONLY",
+        "firstError": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "logicCounts": [
+          1,
+          0
+        ],
+        "mathMask": 0
+      },
+      {
+        "case": "ENTRY_NOOP",
+        "result": "NOOP_WRITESETS_ONLY",
+        "firstError": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "logicCounts": [
+          0,
+          1
+        ],
+        "mathMask": 0
+      },
+      {
+        "case": "MMS_FAULT",
+        "result": "ACTIVE_WRITESETS_ONLY",
+        "firstError": [
+          17,
+          17,
+          0,
+          1,
+          0
+        ],
+        "logicCounts": [
+          1,
+          0
+        ],
+        "mathMask": 4
+      }
+    ],
+    "probedRoles": [
+      {
+        "schema": "PC_G13_STEADY_OP66_V1",
+        "role": "OP17_PRIVATE_MOTION",
+        "moduleSHA": "99725ccb0e6c67702eb913a656beac6145eef0bff06eac79fe1d6da3f0f24e8f",
+        "pid": 13392,
+        "processStartTick": "134398782106679577",
+        "ownerTid": 75264,
+        "pipelineNs": "57923316000",
+        "queueSubmit": 0,
+        "wait": 0,
+        "probeWords": [
+          1065353217,
+          1065353216,
+          1,
+          4194304,
+          7,
+          0,
+          0,
+          1179661106,
+          1065353217,
+          1065353216,
+          1,
+          4194304,
+          7,
+          0,
+          0,
+          1179661106
+        ],
+        "mismatchMasks": [
+          0,
+          0
+        ],
+        "acceptedRoot": null
+      },
+      {
+        "schema": "PC_G13_STEADY_OP66_V1",
+        "role": "OP17_PRIVATE_MMS",
+        "moduleSHA": "4c68c98e631fff9ee70ab0ebce93cbbfa57b557a5939dcd4bde9d33cb582b3eb",
+        "pid": 13392,
+        "processStartTick": "134398782106679577",
+        "ownerTid": 75264,
+        "pipelineNs": "9099849800",
+        "queueSubmit": 0,
+        "wait": 0,
+        "probeWords": [
+          1065353217,
+          1065353216,
+          1,
+          4194304,
+          7,
+          0,
+          0,
+          1179661106,
+          1065353217,
+          1065353216,
+          1,
+          4194304,
+          7,
+          0,
+          0,
+          1179661106
+        ],
+        "mismatchMasks": [
+          0,
+          0
+        ],
+        "acceptedRoot": null
+      },
+      {
+        "schema": "PC_G13_STEADY_OP66_V1",
+        "role": "OP17_PRIVATE_LEDGER",
+        "moduleSHA": "cf3d9addcd9a145abc6cc4ff6d9f3fb6833ecd6f7a14015f09b99b4d904bc830",
+        "pid": 13392,
+        "processStartTick": "134398782106679577",
+        "ownerTid": 75264,
+        "pipelineNs": "61496800",
+        "queueSubmit": 0,
+        "wait": 0,
+        "probeWords": [
+          1065353217,
+          1065353216,
+          1,
+          4194304,
+          7,
+          0,
+          0,
+          1179661106,
+          1065353217,
+          1065353216,
+          1,
+          4194304,
+          7,
+          0,
+          0,
+          1179661106
+        ],
+        "mismatchMasks": [
+          0,
+          0
+        ],
+        "acceptedRoot": null
+      }
+    ]
+  },
+  "frozenProductionLogicalSlots": {
+    "source": 16,
+    "quantum": 820
+  },
+  "sameInputMonolithReference": "MISSING_PC_REFERENCE"
+}

@@ -1,0 +1,115 @@
+{
+  "attemptId": "18fccfb9-4aee-459e-9b25-75b9dcafe703",
+  "role": "OP17_LEDGER_ONLY",
+  "pid": 87700,
+  "reason": "CHILD_EXIT",
+  "lastPipeline": {
+    "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+    "call": "vkCreateComputePipelines",
+    "edge": "EXIT",
+    "role": "OP17_LEDGER_ONLY",
+    "moduleSHA": "c36edde69b9cbd4029e153f6d8d21ddad93c021e32fe94f20e9c194db5d207d0",
+    "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+    "flags": 0,
+    "pipelineCache": null,
+    "pid": 87700,
+    "ownerTid": 75980,
+    "processStartTick": "134398769763721024",
+    "qpcFrequency": "10000000",
+    "qpc": "15632229597088",
+    "vkResult": 0
+  },
+  "exeSHA": "4ab160fb4e7bdbd6a04d12ddaf0667cb45590ee4b39956ea1a18943e4851894e",
+  "stdoutSHA": "82c835e7a93d64b95a3f784f8432279605d6edf3ecb267e97752934d26ff42b4",
+  "supervisorStopQpc": "15632231435878",
+  "qpcFrequency": "10000000",
+  "samples": [
+    {
+      "elapsed": 0.06199999991804361,
+      "qpc": "15632085493328",
+      "ownerTid": null,
+      "alive": true,
+      "processTimes": [
+        "134398769763721024",
+        "0",
+        "0",
+        "0"
+      ],
+      "ownerTimes": null
+    },
+    {
+      "elapsed": 5.108999999938533,
+      "qpc": "15632135905967",
+      "ownerTid": 75980,
+      "alive": true,
+      "processTimes": [
+        "134398769763721024",
+        "0",
+        "1718750",
+        "45156250"
+      ],
+      "ownerTimes": [
+        "134398769764586011",
+        "0",
+        "1562500",
+        "45000000"
+      ]
+    },
+    {
+      "elapsed": 10.140000000130385,
+      "qpc": "15632186148803",
+      "ownerTid": 75980,
+      "alive": true,
+      "processTimes": [
+        "134398769763721024",
+        "0",
+        "2187500",
+        "91718750"
+      ],
+      "ownerTimes": [
+        "134398769764586011",
+        "0",
+        "2031250",
+        "91562500"
+      ]
+    }
+  ],
+  "stackDumps": [],
+  "probe": {
+    "schema": "PC_G13_STEADY_OP66_V1",
+    "role": "OP17_LEDGER_ONLY",
+    "moduleSHA": "c36edde69b9cbd4029e153f6d8d21ddad93c021e32fe94f20e9c194db5d207d0",
+    "pid": 87700,
+    "processStartTick": "134398769763721024",
+    "ownerTid": 75980,
+    "pipelineNs": "76849900",
+    "queueSubmit": 0,
+    "wait": 0,
+    "probeWords": [
+      1065353217,
+      1065353216,
+      1,
+      4194304,
+      7,
+      0,
+      0,
+      1179661106,
+      1065353217,
+      1065353216,
+      1,
+      4194304,
+      7,
+      0,
+      0,
+      1179661106
+    ],
+    "mismatchMasks": [
+      0,
+      0
+    ],
+    "acceptedRoot": null
+  },
+  "forced": false,
+  "exitCode": 0,
+  "ownerRetired": true
+}
