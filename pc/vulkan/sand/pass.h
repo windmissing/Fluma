@@ -14,6 +14,7 @@ struct Pass {
   bool hasModule;
 };
 struct ModuleFile { uint32_t opcode, bytes; const char *name, *sha; };
+struct GraphicsFile { const char *group, *stage; uint32_t bytes; const char *name, *sha; };
 }
 #include "sand_passes.h"
 

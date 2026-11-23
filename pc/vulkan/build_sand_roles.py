@@ -204,6 +204,12 @@ def build(family, compiler, out):
             if role["state"] == "STATIC_SPIRV":
                 header.write(f'  {{{role["op"]},{role["spvBytes"]},"{role["spv"]}","{role["spvSHA"]}"}},\n')
         header.write("};\n")
+        if composite:
+            header.write("inline constexpr GraphicsFile kGraphicsModules[]={\n")
+            for group, entries in data["graphics"].items():
+                for entry in entries:
+                    header.write(f'  {{"{group}","{entry["stage"]}",{entry["spvBytes"]},"{entry["spv"]}","{entry["spvSHA"]}"}},\n')
+            header.write("};\n")
         header.write(f'inline constexpr unsigned kCommonBytes={data["commonBytes"]};\n')
         header.write(f'inline constexpr char kRoleSetSHA[]="{data["roleSetSHA"]}";\n}}\n')
     print(f"{family}: {len(usable)}/{len(roles)} static roles, {data['complete']}")

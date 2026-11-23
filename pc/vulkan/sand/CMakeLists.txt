@@ -31,3 +31,11 @@ if(SAND_FAMILY STREQUAL "r1")
 endif()
 target_include_directories(pc_sand_${SAND_FAMILY} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${VK_INCLUDE}" "${ASSETS}")
 target_compile_options(pc_sand_${SAND_FAMILY} PRIVATE /EHsc /utf-8 /W4)
+add_executable(pc_sand_${SAND_FAMILY}_host host.cpp host_device.cpp
+    "${GPU}/g11vis/parent_adapter.cpp"
+    "${GPU}/g9dm/progress_clock_v3.cpp" "${GPU}/g9dm/quota_snapshot_v3.cpp")
+if(SAND_FAMILY STREQUAL "r1")
+  target_sources(pc_sand_${SAND_FAMILY}_host PRIVATE host_present.cpp)
+endif()
+target_link_libraries(pc_sand_${SAND_FAMILY}_host PRIVATE pc_sand_${SAND_FAMILY} user32)
+target_compile_options(pc_sand_${SAND_FAMILY}_host PRIVATE /EHsc /utf-8 /W4)
