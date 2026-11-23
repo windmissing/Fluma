@@ -88,6 +88,32 @@ void Boot::PrepareM1Quantum(const Candidate &candidate) {
     vk.UpdateDescriptorSets(device,uint32_t(writes.size()),writes.data(),0,nullptr);
   }
   }
+  Checkpoint("M1_QUANTUM_COLD_ANGLES");
+  auto reset=reinterpret_cast<PFN_vkResetCommandPool>(vk.GetDeviceProcAddr(device,"vkResetCommandPool"));
+  Require(reset!=nullptr,"M1_QUANTUM_RESET_FUNCTION");
+  Check(reset(device,commandPool,0),"vkResetCommandPool.M1_ANGLES");
+  vk.DestroyFence(device,fence,nullptr);
+  fence=VK_NULL_HANDLE;
+  VkFenceCreateInfo coldFence{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
+  Check(vk.CreateFence(device,&coldFence,nullptr,&fence),"vkCreateFence.M1_ANGLES");
+  VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+  begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+  Check(vk.BeginCommandBuffer(command,&begin),"vkBeginCommandBuffer.M1_ANGLES");
+  for (size_t at=0;at<sizeof(kAngleWords);at+=65536)
+    vk.CmdUpdateBuffer(command,buffers[kM1QWork].handle,angles*4+at,
+                       std::min<size_t>(65536,sizeof(kAngleWords)-at),
+                       reinterpret_cast<const uint8_t *>(kAngleWords)+at);
+  Barrier(kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT,kCompute,kShaderRW);
+  Check(vk.EndCommandBuffer(command),"vkEndCommandBuffer.M1_ANGLES");
+  VkSubmitInfo upload{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+  upload.commandBufferCount=1;
+  upload.pCommandBuffers=&command;
+  Check(vk.QueueSubmit(queue,1,&upload,fence),"vkQueueSubmit.M1_ANGLES");
+  inFlight=true;
+  const auto waited=vk.WaitForFences(device,1,&fence,VK_TRUE,UINT64_MAX);
+  if (waited==VK_SUCCESS || waited==VK_ERROR_DEVICE_LOST) inFlight=false;
+  Check(waited,"vkWaitForFences.M1_ANGLES");
+  fields << ",\"m1ColdAngleUploadBytes\":" << sizeof(kAngleWords);
 }
 
 bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
@@ -150,9 +176,6 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
   Check(vk.BeginCommandBuffer(command,&begin),"vkBeginCommandBuffer.M1_QUANTUM");
   const auto work=buffers[kM1QWork].handle;
-  for (size_t at=0;at<sizeof(kAngleWords);at+=65536)
-    vk.CmdUpdateBuffer(command,work,angles*4+at,std::min<size_t>(65536,sizeof(kAngleWords)-at),
-                       reinterpret_cast<const uint8_t *>(kAngleWords)+at);
   Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_READ_BIT);
   const VkBufferCopy ledger{(96+4096*64+stateWords)*4,sourceEvents*4,4096*64};
   vk.CmdCopyBuffer(command,buffers[kM1Work].handle,work,1,&ledger);
