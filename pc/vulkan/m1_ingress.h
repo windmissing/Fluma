@@ -57,9 +57,21 @@ class M1Ingress {
  public:
   enum class Code { Pending, Consuming, Accepted, Rejected, Revoked, Full, Conflict, Expired, Invalid, Superseded };
   struct Result { Code code=Code::Invalid; uint64_t root=0; };
-  struct Trace { uint64_t serial=0; SourceOffer offer; Result result; bool terminal=false; const char *reason=nullptr; };
+  struct Trace { uint64_t serial=0; SourceOffer offer; Result result; bool terminal=false; const char *reason=nullptr;
+                 uint64_t checkedNs=0; };
 
   void EnableTrace() { traceEnabled_=true; } // Before either thread starts.
+  void EndIntake() {
+    std::lock_guard lock(mutex_);
+    sealed_=true;
+    for (auto &slot:active_)
+      if (slot.offer.seq && slot.result.code==Code::Pending) Archive(slot,{Code::Revoked},"END_INTAKE");
+    if (waiting_.offer.seq) Archive(waiting_,{Code::Revoked},"END_INTAKE");
+  }
+  uint64_t TraceLoss() {
+    std::lock_guard lock(mutex_);
+    return dropped_;
+  }
   std::size_t PendingCount() {
     std::lock_guard lock(mutex_);
     std::size_t count=0;
@@ -123,6 +135,7 @@ class M1Ingress {
       return result;
     };
     if (!offer.seq) return report({Code::Invalid});
+    if (sealed_) return report({Code::Revoked});
     for (const auto &group : {&active_, &recent_})
       for (const auto &slot : *group)
         if (slot.offer.seq==offer.seq)
@@ -172,29 +185,29 @@ class M1Ingress {
     return first->offer;
   }
 
-  void Finish(uint64_t seq, Result result,const char *reason=nullptr) {
+  void Finish(uint64_t seq, Result result,const char *reason=nullptr,uint64_t checkedNs=0) {
     std::lock_guard lock(mutex_);
     if (claimed_.offer.seq==seq && seq) {
-      Archive(claimed_,result,reason);
+      Archive(claimed_,result,reason,checkedNs);
       return;
     }
     for (auto &slot : active_) if (slot.offer.seq==seq && slot.result.code==Code::Consuming) {
-      Archive(slot, result, reason);
+      Archive(slot, result, reason,checkedNs);
       break;
     }
   }
 
  private:
   struct Slot { SourceOffer offer; Result result; };
-  void Record(const SourceOffer &offer,Result result,bool terminal,const char *reason=nullptr) {
+  void Record(const SourceOffer &offer,Result result,bool terminal,const char *reason=nullptr,uint64_t checkedNs=0) {
     if (!traceEnabled_) return;
     ++traceSerial_;
     if (used_==trace_.size()) { ++dropped_; return; }
-    trace_[(read_+used_)%trace_.size()]={traceSerial_,offer,result,terminal,reason};
+    trace_[(read_+used_)%trace_.size()]={traceSerial_,offer,result,terminal,reason,checkedNs};
     ++used_;
   }
-  void Archive(Slot &slot, Result result,const char *reason=nullptr) {
-    Record(slot.offer,result,true,reason);
+  void Archive(Slot &slot, Result result,const char *reason=nullptr,uint64_t checkedNs=0) {
+    Record(slot.offer,result,true,reason,checkedNs);
     recent_[cursor_]={slot.offer, result};
     cursor_=(cursor_+1)%recent_.size();
     slot={};
@@ -207,6 +220,7 @@ class M1Ingress {
   Slot waiting_{},claimed_{};
   M1Pulse watermark_{};
   bool traceEnabled_=false;
+  bool sealed_=false;
   uint64_t traceSerial_=0, dropped_=0;
   std::size_t read_=0, used_=0;
   std::array<Trace,256> trace_{};

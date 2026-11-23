@@ -37,6 +37,7 @@ class M1HotCapture {
   Code Reserve(const SourceScope &scope,uint64_t request,uint64_t now) {
     std::lock_guard lock(mutex_);
     Expire(now);
+    if (intakeEnded_) return Code::Cancelled;
     if (!request || !(scope==scope_)) return Code::Cancelled;
     if (request==page_.request) return code_;
     if (request<page_.request) return Code::Cancelled;
@@ -44,6 +45,18 @@ class M1HotCapture {
     if (phase_==Phase::Idle) return Code::NotBusy;
     page_={scope,request,now,nonce_,0,0,phase_};
     return code_=Code::Reserved;
+  }
+  uint64_t EndIntake() {
+    std::lock_guard lock(mutex_);
+    intakeEnded_=true;
+    if (!IsLive()) return 0;
+    const auto request=page_.request;
+    Retire(Code::Cancelled);
+    return request;
+  }
+  bool HasLiveRequest() {
+    std::lock_guard lock(mutex_);
+    return IsLive();
   }
   void Safe(uint64_t nonce,const std::array<uint32_t,256> *accepted,uint64_t now) {
     std::lock_guard lock(mutex_);
@@ -147,6 +160,7 @@ class M1HotCapture {
   SourceScope scope_;
   Phase phase_=Phase::Idle;
   Code code_=Code::Idle;
+  bool intakeEnded_=false;
   uint64_t nonce_=0, safe_=0;
   Page page_;
   size_t next_=0;

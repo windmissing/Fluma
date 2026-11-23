@@ -54,7 +54,15 @@ struct Window {
   std::array<std::string,128> outputRows;
   size_t outputRead=0,outputSize=0;
   uint64_t outputDropped=0;
+  uint64_t outputLossTotal=0;
   bool outputDone=false;
+  std::string outputFinal;
+  bool outputFinalWritten=false;
+  std::mutex sourceTraceLock;
+  grs::g13vk::M1D1Intake d1Intake;
+  grs::g13vk::SourceScope d1ReadyScope;
+  uint64_t d1ReadyNs=0;
+  std::chrono::steady_clock::time_point d1ReadyTime;
   bool captureHot=false, captureCold=false, sourceTrace=false;
   bool rootCapture=false;
   std::wstring d1Mode,d1ReplayPrefix;
@@ -69,35 +77,46 @@ struct Window {
 
   void Emit(const std::string &json) {
     std::lock_guard lock(output);
-    if (outputSize==outputRows.size() || json.size()>64*1024) ++outputDropped;
+    if (outputSize==outputRows.size() || json.size()>64*1024) { ++outputDropped; ++outputLossTotal; }
     else outputRows[(outputRead+outputSize++)%outputRows.size()]=json;
     outputReady.notify_one();
   }
   void WriteLogs() {
     for (;;) {
       std::unique_lock lock(output);
-      outputReady.wait(lock,[&] { return outputDone || outputSize || outputDropped; });
-      if (!outputSize && !outputDropped) return;
+      outputReady.wait(lock,[&] { return outputDone || outputSize || outputDropped || !outputFinal.empty(); });
+      if (!outputSize && !outputDropped && outputFinal.empty()) return;
       std::string row;
+      bool final=false;
       if (outputSize) {
         row=std::move(outputRows[outputRead]);
         outputRead=(outputRead+1)%outputRows.size();
         --outputSize;
+      } else if (!outputFinal.empty()) {
+        row=std::move(outputFinal);
+        outputFinal.clear();
+        final=true;
       }
       const auto dropped=std::exchange(outputDropped,0);
       lock.unlock();
       if (dropped) std::cout << "{\"stage\":\"PC_TRACE_INCOMPLETE\",\"dropped\":" << dropped << "}\n";
       if (!row.empty()) std::cout << row << '\n';
       std::cout.flush();
+      if (final) {
+        std::lock_guard done(output);
+        outputFinalWritten=true;
+        outputReady.notify_all();
+      }
     }
   }
-  grs::g13vk::M1Pulse ReceiveM1Pulse(uint64_t ticks,uint64_t ns,uint64_t hz) {
+  grs::g13vk::M1Pulse ReceiveM1Pulse(uint64_t ticks,uint64_t ns,uint64_t hz,uint32_t action=0) {
     const auto receipt=grs::pc::QpcTicks();
-    return m1Pulses.Receive(generation,{0,ticks,receipt,ns,grs::pc::QpcNs(receipt,hz)});
+    return m1Pulses.Receive(generation,{0,ticks,receipt,ns,grs::pc::QpcNs(receipt,hz),0,action});
   }
   bool D1CaptureEnabled() const { return d1Mode==L"ON" || d1Mode==L"REPLAY_ON"; }
   void DrainSourceTrace() {
     if (!sourceTrace) return;
+    std::lock_guard drainLock(sourceTraceLock);
     std::array<grs::g13vk::M1Ingress::Trace,64> batch;
     uint64_t dropped=0;
     size_t count;
@@ -127,13 +146,17 @@ struct Window {
             << "\",\"serial\":\"" << record.serial << "\",\"run\":\"" << o.scope.run
             << "\",\"geometry\":\"" << o.scope.geometry << "\",\"offer\":\"" << o.seq
             << "\",\"actionId\":" << o.action
-            << "\",\"sample\":\"" << o.sample.sequence << "\",\"hold\":\"" << o.sample.hold
+            << ",\"sample\":\"" << o.sample.sequence << "\",\"hold\":\"" << o.sample.hold
             << "\",\"pulseTicks\":\"" << o.pulseTicks << "\",\"sampleTicks\":\"" << o.sampleTicks
             << "\",\"frequency\":\"" << o.frequency << "\",\"pulseNs\":\"" << o.pulseNs
             << "\",\"sampleNs\":\"" << o.sample.timeNs << "\",\"pixelX\":" << o.sample.clientX
             << ",\"pixelY\":" << o.sample.clientY << ",\"material\":" << o.sample.material
-            << ",\"result\":" << int(record.result.code) << ",\"root\":\"" << record.result.root << "\"}";
-        Emit(row.str());
+            << ",\"result\":" << int(record.result.code) << ",\"root\":\"" << record.result.root << "\""
+            << ",\"deltaNs\":\"" << o.deltaNs << "\"";
+        if (record.reason) row << ",\"reason\":\"" << record.reason << "\"";
+        if (record.checkedNs) row << ",\"checkedNs\":\"" << record.checkedNs << "\",\"ageNs\":\""
+                                  << (record.checkedNs>=o.pulseNs ? record.checkedNs-o.pulseNs : 0) << "\"";
+        Emit(row.str()+"}");
       }
     } while (count==batch.size());
     if (droppedTrace!=dropped) {
@@ -141,32 +164,46 @@ struct Window {
       Emit("{\"stage\":\"M1_OFFER_TRACE_INCOMPLETE\",\"dropped\":"+std::to_string(dropped)+"}");
     }
   }
+  void ReportD1(const std::string &details,bool healthy) {
+    if (!d1Intake.MarkReported()) return;
+    DrainSourceTrace();
+    const auto sourceLoss=ingress.TraceLoss();
+    std::lock_guard lock(output);
+    const auto loss=sourceLoss+outputLossTotal;
+    outputFinal="{\"stage\":\"M1_D1_DRAIN\",\"m1D1Drain\":{" + details +
+                ",\"retired\":" + (healthy && !loss ? "true" : "false") +
+                ",\"traceLoss\":" + std::to_string(loss) + "}}";
+    outputReady.notify_one();
+  }
   void RunD1() {
     using namespace grs::g13vk;
     SourceScope readyScope;
     const auto begin=std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point anchor;
     uint64_t ready=0;
     {
       std::unique_lock lock(mutex);
-      d1Ready.wait(lock,[&] { return closing || pointerReady; });
+      d1Ready.wait(lock,[&] { return closing || d1ReadyNs; });
       if (closing) return;
-      readyScope=scope;
-      ready=grs::pc::TimeNs();
+      readyScope=d1ReadyScope;
+      ready=d1ReadyNs;
+      anchor=d1ReadyTime;
     }
-    const auto anchor=std::chrono::steady_clock::now();
     const bool enabled=D1CaptureEnabled();
     const std::string mode(d1Mode.begin(),d1Mode.end());
-    uint64_t previousNs=0,reservation=0;
+    uint64_t previousNs=0,reservation=0,lastPulseSeq=0,lastPulseSession=0;
     D1Action pending{};
     uint64_t createdNs=0,createdTicks=0;
     Emit("{\"stage\":\"M1_D1_READY\",\"readyNs\":\""+std::to_string(ready)+
          "\",\"run\":\""+std::to_string(readyScope.run)+"\",\"mode\":\""+mode+
+         "\",\"qpcFrequency\":\""+std::to_string(grs::pc::QpcFrequency())+
          "\",\"waitMs\":"+std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(anchor-begin).count())+"}");
     for (const auto &action:M1D1Plan()) {
       std::this_thread::sleep_until(anchor+std::chrono::nanoseconds(action.ns));
       const auto ticks=grs::pc::QpcTicks(),hz=grs::pc::QpcFrequency();
       const auto ns=grs::pc::QpcNs(ticks,hz);
       SourceOffer offer;
+      M1Pulse nativePulse;
       bool current;
       {
         std::lock_guard lock(mutex);
@@ -178,7 +215,11 @@ struct Window {
         }
         if (current && action.kind==D1Kind::Pulse) {
           sourcePulse.store(ns,std::memory_order_relaxed);
-          ReceiveM1Pulse(ticks,ns,hz);
+          nativePulse=ReceiveM1Pulse(ticks,ns,hz,action.id);
+          if (nativePulse.seq) {
+            lastPulseSeq=nativePulse.seq;
+            lastPulseSession=nativePulse.session;
+          }
           if (pending.id) {
             const auto serial=++eventSeq;
             held={serial,serial,createdNs,64.5,pending.y,int(64.5*width/128.),
@@ -224,10 +265,21 @@ struct Window {
       }
       Emit("{\"stage\":\"M1_D1_ACTION\",\"id\":"+std::to_string(action.id)+
            ",\"kind\":"+std::to_string(int(action.kind))+",\"scriptNs\":\""+std::to_string(action.ns)+
-           "\",\"actualNs\":\""+std::to_string(ns)+"\",\"state\":\""+state+"\"}");
+           "\",\"actualNs\":\""+std::to_string(ns)+"\",\"callbackQpc\":\""+std::to_string(ticks)+
+           "\",\"nativeReceiptQpc\":\""+std::to_string(nativePulse.receiptTicks)+
+           "\",\"nativeSeq\":\""+std::to_string(nativePulse.seq)+
+           "\",\"session\":\""+std::to_string(nativePulse.session)+"\",\"state\":\""+state+"\"}");
     }
     std::lock_guard lock(mutex);
-    if (!closing) PostMessageW(hwnd,WM_CLOSE,0,0);
+    ingress.EndIntake();
+    const auto cancelled=hotCapture.EndIntake();
+    const auto ended=grs::pc::TimeNs();
+    Emit("{\"stage\":\"END_INTAKE\",\"run\":\""+std::to_string(readyScope.run)+
+         "\",\"geometry\":\""+std::to_string(readyScope.geometry)+"\",\"endNs\":\""+std::to_string(ended)+
+         "\",\"lastPulseSeq\":\""+std::to_string(lastPulseSeq)+"\",\"lastOffer\":\""+std::to_string(offerSeq)+
+         "\",\"lastPulseSession\":\""+std::to_string(lastPulseSession)+
+         "\",\"lastAction\":52,\"cancelledCapture\":\""+std::to_string(cancelled)+"\"}");
+    d1Intake.Seal({ended,lastPulseSeq,offerSeq});
   }
 
   void Size() {
@@ -425,6 +477,12 @@ struct Window {
                                                    if (closing || generation != previous) return false;
                                                    Emit(readyReceipt);
                                                    pointerReady = true;
+                                                   if (!d1Mode.empty() && !d1ReadyNs) {
+                                                     d1ReadyScope=scope;
+                                                     d1ReadyNs=grs::pc::TimeNs();
+                                                     d1ReadyTime=std::chrono::steady_clock::now();
+                                                     d1Intake.Start();
+                                                   }
                                                    d1Ready.notify_one();
                                                  }
                                                  return true;
@@ -469,7 +527,9 @@ struct Window {
                                                  held={};
                                                  scope.permission=0;
                                                  ingress.Authorize(scope,0);
-                                               },sourceTrace,t877Mode},
+                                               },sourceTrace,t877Mode,&d1Intake,[&](const std::string &details,bool healthy) {
+                                                 ReportD1(details,healthy);
+                                               },[&](const std::string &row) { Emit(row); }},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
@@ -493,6 +553,13 @@ struct Window {
         }
       }
       Emit(terminal);
+      if (!d1Mode.empty()) {
+        d1Intake.Await();
+        ReportD1("\"state\":\"OWNER_TERMINATED_BEFORE_DRAIN_PROOF\"",false);
+        std::unique_lock sink(output);
+        outputReady.wait_for(sink,std::chrono::seconds(1),[&] { return outputFinalWritten; });
+        break;
+      }
       const char *qualified = !t833CandidateFile.empty() ?
                               (t833RevokeAt.empty() ? (t833Case=="F02" ?
                                "\"state\":\"T833_PRIVATE_PROJECT_CAPTURED\"" :
@@ -558,7 +625,12 @@ LRESULT CALLBACK Dispatch(HWND hwnd, UINT message, WPARAM w, LPARAM l) {
     KillTimer(hwnd, 1);
     window->Close();
     return 0;
-  case kOwnerFinished: window->DrainSourceTrace(); DestroyWindow(hwnd); return 0;
+  case kOwnerFinished:
+    window->DrainSourceTrace();
+    if (!window->d1Mode.empty())
+      window->Emit("{\"stage\":\"M1_D1_CLOSE\",\"qpc\":\""+std::to_string(grs::pc::QpcTicks())+"\"}");
+    DestroyWindow(hwnd);
+    return 0;
   case WM_DESTROY: PostQuitMessage(0); return 0;
   }
   return DefWindowProcW(hwnd, message, w, l);

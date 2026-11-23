@@ -11,6 +11,7 @@
 #include "m1_hot_capture.h"
 #include "m1_pulse_queue.h"
 #include "g13_candidate_timing.h"
+#include "m1_d1_drain.h"
 #else
 struct NativeWindow;
 #endif
@@ -56,6 +57,9 @@ struct Attempt {
   std::function<void()> disarmM1Input;
   bool m1Trace=false;
   std::string t877Mode;
+  M1D1Intake *d1Intake=nullptr;
+  std::function<void(const std::string &,bool)> d1Report;
+  std::function<void(const std::string &)> d1PulseTrace;
 #else
   NativeWindow *window;
 #endif

@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <array>
 #include <cstring>
+#include <functional>
 #include <mutex>
 #include "../../entry/src/main/cpp/gpu_resident/m1/progress_clock_v2.h"
 
@@ -15,10 +16,12 @@ struct M1PulseScope {
 struct M1Pulse {
   uint64_t seq=0, callbackTicks=0, receiptTicks=0, uiNs=0, receiptNs=0;
   uint64_t session=0;
+  uint32_t action=0;
 };
 
 class M1PulseQueue {
  public:
+  using Observer=std::function<void(const M1Pulse &,const char *)>;
   static constexpr size_t kCapacity=32;
   void Begin(M1PulseScope scope,uint64_t afterTicks) {
     std::lock_guard lock(mutex_);
@@ -46,7 +49,8 @@ class M1PulseQueue {
     return pulse;
   }
 
-  bool Consume(M1PulseScope scope,m1::ProgressClockV2 &clock,M1Pulse &latest,M1Pulse &accepted) {
+  bool Consume(M1PulseScope scope,m1::ProgressClockV2 &clock,M1Pulse &latest,M1Pulse &accepted,
+               const Observer &observe={}) {
     std::array<M1Pulse,kCapacity> batch;
     size_t count;
     {
@@ -60,15 +64,33 @@ class M1PulseQueue {
     }
     for (size_t i=0;i<count;++i) {
       const auto &pulse=batch[i];
-      if (pulse.seq!=clock.sequence+1) { clock.Revoke("PULSE_SEQUENCE_GAP"); return false; }
+      if (pulse.seq!=clock.sequence+1) {
+        if (observe) for (;i<count;++i) observe(batch[i],"PULSE_SEQUENCE_GAP");
+        clock.Revoke("PULSE_SEQUENCE_GAP");
+        return false;
+      }
       const auto status=clock.Pulse(scope.session,pulse.seq,pulse.uiNs,pulse.receiptNs);
+      if (observe) observe(pulse,status);
       if (std::strcmp(status,"PAGE_PULSE_ACCEPTED")!=0) {
+        if (observe) for (++i;i<count;++i) observe(batch[i],"PULSE_REVOKED_AFTER_CLOCK_FAULT");
         if (clock.open) clock.Revoke(status);
         return false;
       }
       accepted=pulse;
     }
     return clock.open;
+  }
+  void RevokeQueued(M1PulseScope scope,const Observer &observe) {
+    std::array<M1Pulse,kCapacity> batch;
+    size_t count;
+    {
+      std::lock_guard lock(mutex_);
+      if (!(scope==scope_)) return;
+      count=size_;
+      std::copy_n(rows_.begin(),count,batch.begin());
+      size_=0;
+    }
+    if (observe) for (size_t i=0;i<count;++i) observe(batch[i],"END_INTAKE_REVOKED");
   }
  private:
   std::mutex mutex_;

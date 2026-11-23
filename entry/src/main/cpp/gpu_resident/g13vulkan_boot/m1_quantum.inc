@@ -145,7 +145,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   // Only same-frame roots can carry the SOURCE event prefix.
   const bool sameFrame = clock.activeRemaining != 0;
   while (!sameFrame) {
-    m1Reject=!attempt.current() ? "WINDOW_REVOKED" : !refresh() ? clock.fault : nullptr;
+    m1Reject=D1Ended() ? "D1_END_INTAKE" : !attempt.current() ? "WINDOW_REVOKED" : !refresh() ? clock.fault : nullptr;
     if (m1Reject) {
       fields << ",\"m1QuantumReject\":" << Quote(m1Reject);
       M1RootTrace("Quantum",0,clock,{},accepted,{});
@@ -242,7 +242,8 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
   submit.commandBufferCount=1;
   submit.pCommandBuffers=&cmd;
-  log.submit=vk.QueueSubmit(queue,1,&submit,fence);
+  SubmitM1Root(submit,0,deadline,nonce,log);
+  if (m1Reject) return reject();
   if (log.submit!=VK_SUCCESS) {
     m1Reject=log.submit==VK_ERROR_DEVICE_LOST ? "DEVICE_LOST" : "SUBMIT_VK_ERROR";
     return reject();
@@ -293,6 +294,8 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
 std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, const grs::AcceptedRoot &accepted,
                             const grs::Words256 &sourceCompletion, uint32_t stateWords,
                             const std::array<uint32_t,32> &sourceCommand,std::optional<M1HotCapture::Page> ticket) {
+  const auto noCapture=[] { return std::async(std::launch::deferred,[] { return M1ColdResult{}; }); };
+  if (D1Ended()) return noCapture();
   Checkpoint("M1_QUANTUM_COLD_CAPTURE");
   const uint32_t eventCount=accepted.completion[53];
   const auto &stored=accepted.completion;
@@ -351,10 +354,45 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
   VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
   submit.commandBufferCount=1;
   submit.pCommandBuffers=&command;
-  Check(vk.QueueSubmit(queue,1,&submit,fence),"vkQueueSubmit.M1_COLD");
+  VkResult submitted=VK_NOT_READY;
+  if (attempt.m1D1) {
+    const bool authorized=attempt.acceptPointer(0,[&] {
+      if (!D1Ended()) submitted=vk.QueueSubmit(queue,1,&submit,fence);
+    });
+    if (!authorized || submitted==VK_NOT_READY) {
+      Require(root.Release(accepted.publication,accepted.publicationGeneration,true)==ControlCode::OK,
+              "M1_COLD_RELEASE");
+      return noCapture();
+    }
+    if (submitted==VK_ERROR_DEVICE_LOST) {
+      d1FenceResult=submitted;
+      root.ContextLost();
+      return noCapture();
+    }
+  } else {
+    submitted=vk.QueueSubmit(queue,1,&submit,fence);
+  }
+  Check(submitted,"vkQueueSubmit.M1_COLD");
   inFlight=true;
+  const auto waitEnter=pc::QpcTicks();
   const auto wait=vk.WaitForFences(device,1,&fence,VK_TRUE,m1::ProgressClockV2::JobNs);
   if (wait==VK_SUCCESS || wait==VK_ERROR_DEVICE_LOST) inFlight=false;
+  if (attempt.m1D1) {
+    d1FenceObject=reinterpret_cast<uintptr_t>(fence);
+    d1FenceNonce=(uint64_t(accepted.nonce.hi)<<32)|accepted.nonce.lo;
+    d1OwnerPoll.reset();
+    d1FenceResult=wait;
+    d1FenceEnter=waitEnter;
+    d1FenceExit=pc::QpcTicks();
+    if (wait==VK_ERROR_DEVICE_LOST) {
+      root.ContextLost();
+      return noCapture();
+    }
+    if (wait!=VK_SUCCESS) {
+      d1CaptureLease.emplace(accepted.publication,accepted.publicationGeneration);
+      return noCapture();
+    }
+  }
   Check(wait,"vkWaitForFences.M1_COLD");
   std::vector<uint8_t> raw(size_t(payload),0);
   void *mapped=nullptr;

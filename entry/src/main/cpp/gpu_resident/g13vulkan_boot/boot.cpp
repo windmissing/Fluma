@@ -315,6 +315,16 @@ private:
   void M1RootTrace(const char *,uint64_t,const m1::ProgressClockV2 &,const m1::PlanGrantV2 &,
                    const grs::AcceptedRoot &,const M1WaitLog &);
   void RetireM1Root(m1::SourceRootOwner &,M1WaitLog &);
+  bool D1Ended() const { return attempt.m1D1 && attempt.d1Intake->Snapshot().ns; }
+  void SubmitM1Root(const VkSubmitInfo &,uint64_t,uint64_t,uint64_t,M1WaitLog &);
+  VkResult d1FenceResult=VK_NOT_READY;
+  VkResult d1DrainProbe=VK_NOT_READY;
+  uint64_t d1FenceEnter=0,d1FenceExit=0;
+  uintptr_t d1FenceObject=0;
+  uint64_t d1FenceNonce=0,d1ProbeQpc=0;
+  std::optional<ControlCode> d1OwnerPoll;
+  std::optional<std::pair<uint32_t,grs::U64>> d1CaptureLease;
+  uint32_t d1WritersCompleted=0;
   VkPipeline M1Pipeline(const std::wstring &, const char *);
   void PrepareM1Quantum(const Candidate &);
   bool RunM1Quantum(const Candidate &, grs::m1::SourceRootOwner &, grs::m1::ProgressClockV2 &,
