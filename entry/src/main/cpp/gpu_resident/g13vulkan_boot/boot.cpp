@@ -244,7 +244,9 @@ private:
   void Dispatch(size_t set, uint32_t op, uint32_t scope);
   std::string Read(const std::array<uint32_t, 18688> &control);
 #ifdef _WIN32
-  void QualifySteady();
+  void QualifySteady(const std::string &roleName);
+  void ObserveT849Reduction(const char *,PFN_vkResetCommandPool);
+  void ObserveT849Writes();
   std::string ProbeM1Source(const Candidate &);
   VkPipeline M1Pipeline(const std::wstring &, const char *);
   void PrepareM1Quantum(const Candidate &);
@@ -760,7 +762,7 @@ std::string Boot::Read(const std::array<uint32_t, 18688> &control) {
 #include "m1_source.inc"
 #include "m1_quantum.inc"
 
-void Boot::QualifySteady() {
+void Boot::QualifySteady(const std::string &roleName) {
   const auto reset = reinterpret_cast<PFN_vkResetCommandPool>(
       vk.GetDeviceProcAddr(device, "vkResetCommandPool"));
   Require(reset != nullptr, "MISSING_vkResetCommandPool");
@@ -768,7 +770,7 @@ void Boot::QualifySteady() {
   // program and consumes only its independently committed 16 probe words.
   size_t qualifiedCount = 0;
   for (const auto &role : pc::kSteadyModules) {
-    if (attempt.steadyRole.empty() ? qualifiedCount >= 5 : attempt.steadyRole != role.name) continue;
+    if (roleName.empty() ? qualifiedCount >= 5 : roleName != role.name) continue;
     Require(Hex(Hash(role.words, role.bytes).data()) == role.sha, "STEADY_MODULE_SHA_MISMATCH");
     if (shader) {
       vk.DestroyShaderModule(device, shader, nullptr);
@@ -870,11 +872,74 @@ void Boot::QualifySteady() {
            << ",\"mismatchMasks\":" << Words(mask) << ",\"acceptedRoot\":null}";
     Require(publish(sample.str()), "ATTEMPT_REVOKED");
     Require(QualifiedProbe(words.data()), "STEADY_FP32_REJECTED");
+    if (roleName == "OP7_REDUCE_ONLY") ObserveT849Reduction(role.sha,reset);
     ++qualifiedCount;
   }
   Require(qualifiedCount != 0, "UNKNOWN_STEADY_ROLE");
-  fields << ",\"steadyRoleCount\":" << qualifiedCount
-         << ",\"sourceRoot\":\"NOT_RUN\",\"quantumRoot\":\"NOT_RUN\"";
+  if (attempt.t849WriteFile.empty())
+    fields << ",\"steadyRoleCount\":" << qualifiedCount
+           << ",\"sourceRoot\":\"NOT_RUN\",\"quantumRoot\":\"NOT_RUN\"";
+}
+
+#include "t849_writes.inc"
+
+void Boot::ObserveT849Reduction(const char *moduleSHA, PFN_vkResetCommandPool reset) {
+  Checkpoint("T849_PRIVATE_REDUCE");
+  constexpr uint32_t thetaBits=0x3fc00000;
+  constexpr std::array<uint32_t,5> empty{UINT32_MAX,UINT32_MAX,UINT32_MAX,UINT32_MAX,UINT32_MAX};
+  constexpr auto firstWord=624u;
+  static_assert(sizeof(empty)==20);
+  constexpr std::array<uint32_t,6> push{7,0,0,0,0,815};
+  Check(reset(device, commandPool, 0), "vkResetCommandPool.T849_REDUCE");
+  vk.DestroyFence(device,fence,nullptr);
+  fence=VK_NULL_HANDLE;
+  VkFenceCreateInfo fenceInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
+  Check(vk.CreateFence(device,&fenceInfo,nullptr,&fence),"vkCreateFence.T849_REDUCE");
+  VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+  begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+  Check(vk.BeginCommandBuffer(command,&begin),"vkBeginCommandBuffer.T849_REDUCE");
+  Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT);
+  vk.CmdUpdateBuffer(command,buffers[1].handle,26*sizeof(uint32_t),sizeof(thetaBits),&thetaBits);
+  vk.CmdUpdateBuffer(command,buffers[kControl].handle,firstWord*sizeof(uint32_t),sizeof(empty),empty.data());
+  Barrier(kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT,kCompute,kShaderRW);
+  vk.CmdBindPipeline(command,VK_PIPELINE_BIND_POINT_COMPUTE,pipeline);
+  vk.CmdBindDescriptorSets(command,VK_PIPELINE_BIND_POINT_COMPUTE,pipelineLayout,0,1,&sets[1],0,nullptr);
+  vk.CmdPushConstants(command,pipelineLayout,VK_SHADER_STAGE_COMPUTE_BIT,0,sizeof(push),push.data());
+  vk.CmdDispatch(command,1,1,1);
+  Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_READ_BIT);
+  const VkBufferCopy copy{firstWord*sizeof(uint32_t),0,sizeof(empty)};
+  const auto &staging=buffers[kStaging];
+  vk.CmdCopyBuffer(command,buffers[kControl].handle,staging.handle,1,&copy);
+  Barrier(kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT,VK_PIPELINE_STAGE_HOST_BIT,VK_ACCESS_HOST_READ_BIT);
+  Check(vk.EndCommandBuffer(command),"vkEndCommandBuffer.T849_REDUCE");
+  VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+  submit.commandBufferCount=1;
+  submit.pCommandBuffers=&command;
+  const auto submitted=vk.QueueSubmit(queue,1,&submit,fence);
+  Check(submitted,"vkQueueSubmit.T849_REDUCE");
+  inFlight=true;
+  const auto waited=vk.WaitForFences(device,1,&fence,VK_TRUE,250000000u);
+  if (waited==VK_SUCCESS || waited==VK_ERROR_DEVICE_LOST) inFlight=false;
+  Check(waited,"vkWaitForFences.T849_REDUCE");
+  void *mapped=nullptr;
+  Check(vk.MapMemory(device,staging.memory,0,VK_WHOLE_SIZE,0,&mapped),"vkMapMemory.T849_REDUCE");
+  VkResult invalidation=VK_SUCCESS;
+  if (!(staging.flags&VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+    VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,nullptr,staging.memory,0,VK_WHOLE_SIZE};
+    invalidation=vk.InvalidateMappedMemoryRanges(device,1,&range);
+  }
+  std::array<uint32_t,5> output{};
+  if (invalidation==VK_SUCCESS) std::memcpy(output.data(),mapped,sizeof(output));
+  vk.UnmapMemory(device,staging.memory);
+  Check(invalidation,"vkInvalidateMappedMemoryRanges.T849_REDUCE");
+  Require(output[0]<=3 && output!=empty,"T849_PRIVATE_REDUCE_UNWRITTEN");
+  std::ostringstream row;
+  row << "{\"schema\":\"PC_G13_T849_REDUCE_V1\",\"role\":\"OP7_REDUCE_ONLY\",\"moduleSHA\":"
+      << Quote(moduleSHA) << ",\"inputF32Word\":" << thetaBits << ",\"push\":" << Words(push)
+      << ",\"ctrlStartWord\":" << firstWord << ",\"words\":" << Words(output)
+      << ",\"queueSubmit\":" << int(submitted) << ",\"wait\":" << int(waited)
+      << ",\"acceptedRoot\":null}";
+  Require(publish(row.str()),"ATTEMPT_REVOKED");
 }
 
 #endif
@@ -916,8 +981,13 @@ std::string Boot::Run() {
   CreatePipeline();
   Checkpoint("BOOT_BUFFERS");
   const auto storage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+#ifdef _WIN32
+  const auto stateTransferRead=attempt.t849WriteFile.empty() ? 0 : VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+#else
+  constexpr auto stateTransferRead=0;
+#endif
   for (size_t i = 0; i < 3; ++i)
-    Allocate(i, profile->sw * 4, storage | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
+    Allocate(i, profile->sw * 4, storage | VK_BUFFER_USAGE_TRANSFER_DST_BIT | stateTransferRead);
   for (size_t i = 3; i < 5; ++i)
     Allocate(i, profile->pw * 4, storage);
   Allocate(kWork, profile->ww * 4, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
@@ -967,7 +1037,13 @@ std::string Boot::Run() {
   const auto numeric = Read(control);
 #ifdef _WIN32
   if (attempt.steadyQualification) {
-    QualifySteady();
+    if (numeric.find("\"state\":\"BOOT_NUMERIC_QUALIFIED\"")==std::string::npos)
+      return numeric;
+    if (!attempt.t849WriteFile.empty()) {
+      ObserveT849Writes();
+      return Receipt("T849_PRIVATE_WRITES_CAPTURED","");
+    }
+    QualifySteady(attempt.steadyRole);
     return Receipt(attempt.steadyRole.empty() ? "STEADY_ROLES_QUALIFIED" : "STEADY_ROLE_QUALIFIED", "");
   }
   if (!attempt.m1SourceModule.empty()) return ProbeM1Source(candidate);

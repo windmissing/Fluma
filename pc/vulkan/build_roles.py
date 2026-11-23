@@ -54,6 +54,36 @@ def t841_arms(emit):
         yield name, [*opcodes,66], raw
 
 
+def t849_arms(emit):
+    def cut_drive(name, text, motion):
+        if name != "drive" or text == "void drive();":
+            return text
+        cut = "uvec4 fq=uvec4(baseState[18],baseState[19],0u,0u);"
+        if text.count(cut) != 1 or not text.startswith("void drive(){if(lane!=0u)return;"):
+            raise ValueError("T849 drive boundary changed")
+        front, tail = text.split(cut)
+        return front+"}" if motion else "void drive(){if(lane!=0u)return;"+cut+tail
+
+    def op7(op, arm):
+        return "if(uOp==7u){lane=gl_LocalInvocationID.x;drive();return;}" if op == 7 else arm
+
+    for name, motion in (("OP7_MOTION_ONLY", True), ("OP7_MMS_FORCE_ONLY", False)):
+        raw, deps = emit((7,), op7, lambda name, text: cut_drive(name, text, motion))
+        assert ("softReduce" in deps) == motion and ("softExp" in deps) != motion
+        yield name, [7,66], raw
+    for name, statement in (("OP17_LEDGER_ONLY", "drive();\n"), ("OP17_DRIVE_CONTEXT", "\nentryLedger();")):
+        raw, deps = emit((17,), lambda op, arm: substitute(arm, statement, "", name) if op == 17 else arm)
+        assert "traceStage" in deps and ("drive" in deps) != ("entryLedger" in deps)
+        yield name, [17,66], raw
+    reduce = ("if(uOp==7u){lane=gl_LocalInvocationID.x;if(lane==0u){uint quadrant;"
+              "Soft reduced=softReduce(softF32(uintBitsToFloat(outState[26])),quadrant);"
+              "uvec4 raw=mathRaw(reduced);c[624]=quadrant;for(uint i=0u;i<4u;++i)c[625u+i]=raw[i];}return;}")
+    raw, deps = emit((7,), lambda op, arm: reduce if op == 7 else arm)
+    assert {"softReduce","softF32","mathRaw"} <= set(deps)
+    assert not {"softPolynomial","softDiv","softExp"} & set(deps)
+    yield "OP7_REDUCE_ONLY", [7,66], raw
+
+
 def build(out, compiler):
     manifest = json.loads((out / "assets_manifest.json").read_bytes())
     assert manifest["variant"] == "DEPENDENCY_SPLIT"
@@ -73,6 +103,7 @@ def build(out, compiler):
         raw, _ = emit(selection)
         sources.append((f"OP_00_{first}_{last}", [*selection, 66], raw))
     sources.extend(t841_arms(emit))
+    sources.extend(t849_arms(emit))
     for name, opcodes, raw in sources:
         src = raw.decode()
         for a, b in (("#version 310 es", DECLARATION),

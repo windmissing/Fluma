@@ -49,12 +49,12 @@ def split_group(raw):
         arms[int(head[4].removesuffix("u"))] = main[tokens[at].start():tokens[end].end()]
         at = end + 1
     assert at == len(tokens) - 1
-    bodies = defaultdict(list)
-    for name, text in units:
-        if name and name != "main":
-            bodies[name].append(text)
-
-    def emit(opcodes, rewrite=None):
+    def emit(opcodes, rewrite=None, rewrite_function=None):
+        parts = [(name, rewrite_function(name, text) if rewrite_function else text) for name, text in units]
+        bodies = defaultdict(list)
+        for name, text in parts:
+            if name and name != "main":
+                bodies[name].append(text)
         entry = "\n".join(rewrite(op, arms[op]) if rewrite else arms[op] for op in (66, *opcodes))
         work = list(CALL.findall(entry))
         deps = set()
@@ -64,7 +64,7 @@ def split_group(raw):
                 deps.add(name)
                 for body in bodies[name]:
                     work.extend(CALL.findall(body))
-        chunks = [text for name, text in units if name is None or name in deps]
+        chunks = [text for name, text in parts if name is None or name in deps]
         chunks.append("void main(){\n" + entry + "\n}")
         uses = set(IDENT.findall("\n".join(chunks)))
         prelude = ["#version 310 es", *(f"#define {key} {value}" for key, value in definitions.items() if key in uses)]

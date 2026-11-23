@@ -26,6 +26,7 @@ struct Window {
   std::wstring m1SourceModule;
   std::wstring m1QuantumCandidate, m1QuantumCommit, m1ColdFile;
   bool m1Present = false;
+  std::wstring t849WriteFile;
   std::atomic<uint64_t> sourcePulse{0};
   bool pointerReady = false;
   grs::g13vk::PointerSample held;
@@ -128,7 +129,7 @@ struct Window {
                                                    return false;
                                                  accept();
                                                  return true;
-                                               }, once},
+                                               }, once, t849WriteFile},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos ||
@@ -147,7 +148,8 @@ struct Window {
           held = {};
         }
       }
-      const char *qualified = m1Present ? "\"state\":\"M1_DRY_SOURCE_PRESENT_RETIRED\"" :
+      const char *qualified = !t849WriteFile.empty() ? "\"state\":\"T849_PRIVATE_WRITES_CAPTURED\"" :
+                              m1Present ? "\"state\":\"M1_DRY_SOURCE_PRESENT_RETIRED\"" :
                               !m1SourceModule.empty() ? "\"state\":\"M1_DRY_SOURCE_ACCEPTED\"" :
                               !steadyRole.empty() ? "\"state\":\"STEADY_ROLE_QUALIFIED\"" :
                               steady ? "\"state\":\"STEADY_ROLES_QUALIFIED\"" :
@@ -222,6 +224,10 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--disable-optimization")) {
       window.disableOptimization = true;
     }
+    else if (!std::wcscmp(argv[i], L"--qualify-t849-writes") && i+1 < argc) {
+      window.t849WriteFile = argv[++i];
+      window.bootOnly = window.steady = true;
+    }
     else if (!std::wcscmp(argv[i], L"--m1-window") && i+3 < argc) {
       window.m1SourceModule = argv[++i];
       window.m1QuantumCandidate = argv[++i];
@@ -241,11 +247,12 @@ int wmain(int argc, wchar_t **argv) {
       std::cerr << "usage: hello_world_pc [--once] [--boot-only | --qualify-steady | "
                    "--qualify-steady-role NAME [--disable-optimization] | --probe-m1-source SPV | "
                    "--present-m1-source SPV | --m1-window SOURCE_SPV CANDIDATE_SPV COMMIT_SPV "
-                   "[--m1-cold FILE]]\n";
+                   "[--m1-cold FILE] | --qualify-t849-writes FILE]\n";
       return 2;
     }
   }
   if (window.disableOptimization && window.steadyRole.empty()) return 2;
+  if (!window.t849WriteFile.empty() && !window.steadyRole.empty()) return 2;
   if (window.steady && !window.m1SourceModule.empty()) return 2;
   if ((!window.m1ColdFile.empty() && window.m1QuantumCandidate.empty()) ||
       (!window.m1QuantumCandidate.empty() && window.bootOnly)) return 2;
