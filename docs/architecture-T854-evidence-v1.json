@@ -1,0 +1,706 @@
+{
+  "schema": "T854_OP17_INDEPENDENT_EVIDENCE_V1",
+  "narrowPE": "49d4f25ee390eba265e8a05091a501f213648a6cb06e539364d3993ad8991c23",
+  "narrowArms": [
+    {
+      "role": "OP7_MOTION_ONLY",
+      "sourceBytes": 16535,
+      "moduleBytes": 73916,
+      "sourceSHA": "09f801ee8152cf5f4bca837bf21bf81034725d825d5b67dfe73fa92686b0ea25",
+      "moduleSHA": "9efb3d5704a436a53cb1abfed30e17a7b934a11d89571186b929f52630b85a40",
+      "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+      "ownerTid": 82184,
+      "pid": 86788,
+      "qpcWindowSeconds": 59.15592,
+      "pipelineNs": "59155831600",
+      "vkResult": 0,
+      "op66Masks": [
+        0,
+        0
+      ],
+      "ownerRetired": true
+    },
+    {
+      "role": "OP7_MMS_FORCE_ONLY",
+      "sourceBytes": 13924,
+      "moduleBytes": 56028,
+      "sourceSHA": "9e4d5c9e2c14c465235c2282eb35a6de9b041b96c934aaae2978b0f27d1a58a1",
+      "moduleSHA": "ccb4049b3d3ea0571f03374140fe8529e17fe6e1dd837a38c8249ae505b001e9",
+      "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+      "ownerTid": 27448,
+      "pid": 33648,
+      "qpcWindowSeconds": 9.4696941,
+      "pipelineNs": "9469616900",
+      "vkResult": 0,
+      "op66Masks": [
+        0,
+        0
+      ],
+      "ownerRetired": true
+    },
+    {
+      "role": "OP17_LEDGER_ONLY",
+      "sourceBytes": 8937,
+      "moduleBytes": 28852,
+      "sourceSHA": "ed110e6dc88b5fb3f9e9868a2be79a023467181cca9e3c858543a7247ed26b6d",
+      "moduleSHA": "c36edde69b9cbd4029e153f6d8d21ddad93c021e32fe94f20e9c194db5d207d0",
+      "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+      "ownerTid": 96124,
+      "pid": 95960,
+      "qpcWindowSeconds": 0.0788942,
+      "pipelineNs": "78824400",
+      "vkResult": 0,
+      "op66Masks": [
+        0,
+        0
+      ],
+      "ownerRetired": true
+    },
+    {
+      "role": "OP17_DRIVE_CONTEXT",
+      "sourceBytes": 19976,
+      "moduleBytes": 92592,
+      "sourceSHA": "4f7121607816414ed6c783d87c025f5d415354d57693e4fa7a58958cce046f0a",
+      "moduleSHA": "599f8ff437e98bf3b39f88471cde123150b330977d59564a4edb4826ea5efb58",
+      "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+      "ownerTid": 81616,
+      "pid": 80984,
+      "qpcWindowSeconds": 60.0587446,
+      "pipelineNs": null,
+      "vkResult": null,
+      "op66Masks": null,
+      "ownerRetired": false
+    }
+  ],
+  "op17StackRun": {
+    "pid": 9016,
+    "ownerTid": 8916,
+    "processStartTick": "134398726816955554",
+    "supervisorStopAfterEnterSeconds": 60.0848464,
+    "sampledOwnerCpuSingleCoreFraction": 0.9084813375386491,
+    "pipelineResult": null,
+    "ownerRetired": false,
+    "dumps": [
+      {
+        "path": ".codex/local-test/t833-t849-stack/OP17_DRIVE_CONTEXT-20s.dmp",
+        "sha256": "5bf95e1c6be47f406f792f3cd86deb38e26d1027a495aa736eaf49bb1d0e2b31",
+        "threadId": 8916,
+        "pid": 9016,
+        "stackBytes": 178832,
+        "rip": "0x7fff85e655e8",
+        "moduleBase": "0x7fff85380000",
+        "rva": "0xae55e8",
+        "module": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+        "version": "31.0.101.2140",
+        "localModuleSHA": "4860329b6002eb01fcc1f46c97f1551fb5acf7d651643bcb888a085f17168dd5",
+        "vulkanIcd": {
+          "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igvk64.dll",
+          "base": "0x7ffe9b060000",
+          "version": "31.0.101.2140",
+          "localModuleSHA": "df10df2b47df8d8742546dbe97b781e272b437e721999b4dc5bf940426d9a907"
+        },
+        "qpcAfterEnterSeconds": 20.085003
+      },
+      {
+        "path": ".codex/local-test/t833-t849-stack/OP17_DRIVE_CONTEXT-45s.dmp",
+        "sha256": "372c39bae92f2f5f6484ef2b1a6cfe2bd22d79cc6dc23eb41c9fc81b202672a3",
+        "threadId": 8916,
+        "pid": 9016,
+        "stackBytes": 169344,
+        "rip": "0x7fff858217de",
+        "moduleBase": "0x7fff85380000",
+        "rva": "0x4a17de",
+        "module": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+        "version": "31.0.101.2140",
+        "localModuleSHA": "4860329b6002eb01fcc1f46c97f1551fb5acf7d651643bcb888a085f17168dd5",
+        "vulkanIcd": {
+          "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igvk64.dll",
+          "base": "0x7ffe9b060000",
+          "version": "31.0.101.2140",
+          "localModuleSHA": "df10df2b47df8d8742546dbe97b781e272b437e721999b4dc5bf940426d9a907"
+        },
+        "qpcAfterEnterSeconds": 45.059493
+      }
+    ]
+  },
+  "wpr": {
+    "command": "wpr -start CPU -filemode",
+    "statusBefore": "Microsoft Windows Performance Recorder Version 10.0.26100 (CoreSystem)\r\nCopyright (c) 2024 Microsoft Corporation. All rights reserved.\r\n\r\nWPR is not recording",
+    "startOutput": "Failed to enable the policy to profile system performance.\r\n\r\n\r\n\tProfile Id: CPU.Verbose.File\r\n\t\r\n\tError code: 0xc5585011\r\n\t\r\n\tFailed to enable the policy to profile system performance.",
+    "startExit": -984068079,
+    "statusAfter": "Microsoft Windows Performance Recorder Version 10.0.26100 (CoreSystem)\r\nCopyright (c) 2024 Microsoft Corporation. All rights reserved.\r\n\r\nWPR is not recording"
+  },
+  "privateCaptures": [
+    {
+      "case": "initial-field-error",
+      "archive": ".codex/local-test/t833-t849-private/T849_PRIVATE_WRITES.bin",
+      "archiveSHA": "7b7cff6fd3ec60ccb7f629a7390da5946d7b40897ade33f245adb3a17be4de6f",
+      "executableSHA": "b71fc49da789cafdfecd4db418c05c35d2dde94f2f6ff298f91931573d8d1d21",
+      "segmentsBytes": [
+        198144,
+        198144,
+        597632,
+        74752
+      ],
+      "stages": [
+        {
+          "stage": "BEFORE",
+          "changesFromPrevious": null,
+          "logicalActive": 0,
+          "logicalNoop": 0,
+          "auditMask": 0,
+          "firstError": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mmsWords": [
+            "0x7fc00042",
+            "0x7fc00043"
+          ]
+        },
+        {
+          "stage": "FIELD",
+          "changesFromPrevious": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              513,
+              514,
+              522,
+              526,
+              733,
+              734,
+              735,
+              744,
+              745,
+              746,
+              748,
+              749,
+              752,
+              766
+            ]
+          },
+          "logicalActive": 1,
+          "logicalNoop": 0,
+          "auditMask": 0,
+          "firstError": [
+            7,
+            35,
+            0,
+            0,
+            0,
+            1,
+            0,
+            3235779345
+          ],
+          "mmsWords": [
+            "0x7fc00042",
+            "0x7fc00043"
+          ]
+        },
+        {
+          "stage": "MOTION",
+          "changesFromPrevious": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              624,
+              625,
+              630,
+              631,
+              632,
+              633,
+              637
+            ]
+          },
+          "logicalActive": 1,
+          "logicalNoop": 0,
+          "auditMask": 0,
+          "firstError": [
+            7,
+            35,
+            0,
+            0,
+            0,
+            1,
+            0,
+            3235779345
+          ],
+          "mmsWords": [
+            "0x7fc00042",
+            "0x7fc00043"
+          ]
+        },
+        {
+          "stage": "MMS",
+          "changesFromPrevious": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              642,
+              643
+            ]
+          },
+          "logicalActive": 1,
+          "logicalNoop": 0,
+          "auditMask": 0,
+          "firstError": [
+            7,
+            35,
+            0,
+            0,
+            0,
+            1,
+            0,
+            3235779345
+          ],
+          "mmsWords": [
+            "0x3e7de023",
+            "0x3dfbc4c9"
+          ]
+        },
+        {
+          "stage": "OP8",
+          "changesFromPrevious": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              522,
+              752
+            ]
+          },
+          "logicalActive": 2,
+          "logicalNoop": 0,
+          "auditMask": 0,
+          "firstError": [
+            7,
+            35,
+            0,
+            0,
+            0,
+            1,
+            0,
+            3235779345
+          ],
+          "mmsWords": [
+            "0x3e7de023",
+            "0x3dfbc4c9"
+          ]
+        }
+      ]
+    },
+    {
+      "case": "matched-mode",
+      "archive": ".codex/local-test/t833-t849-private-matched/T849_PRIVATE_WRITES.bin",
+      "archiveSHA": "f88cd8295d23ed8b95c9517024ef83d2f6e75dc94262d07bfe2f411dbda2d281",
+      "executableSHA": "d0c1f720b1c8d92c619348ed4c32891839eda32ac64ca580ecbbae4792e00731",
+      "segmentsBytes": [
+        198144,
+        198144,
+        597632,
+        74752
+      ],
+      "stages": [
+        {
+          "stage": "BEFORE",
+          "changesFromPrevious": null,
+          "logicalActive": 0,
+          "logicalNoop": 0,
+          "auditMask": 0,
+          "firstError": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mmsWords": [
+            "0x7fc00042",
+            "0x7fc00043"
+          ]
+        },
+        {
+          "stage": "FIELD",
+          "changesFromPrevious": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              513,
+              514,
+              522,
+              526,
+              733,
+              734,
+              735,
+              744,
+              745,
+              746,
+              748,
+              749,
+              752,
+              766
+            ]
+          },
+          "logicalActive": 1,
+          "logicalNoop": 0,
+          "auditMask": 0,
+          "firstError": [
+            7,
+            26,
+            0,
+            0,
+            0,
+            1,
+            0,
+            3235779345
+          ],
+          "mmsWords": [
+            "0x7fc00042",
+            "0x7fc00043"
+          ]
+        },
+        {
+          "stage": "MOTION",
+          "changesFromPrevious": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              624,
+              625,
+              630,
+              631,
+              632,
+              633,
+              637
+            ]
+          },
+          "logicalActive": 1,
+          "logicalNoop": 0,
+          "auditMask": 0,
+          "firstError": [
+            7,
+            26,
+            0,
+            0,
+            0,
+            1,
+            0,
+            3235779345
+          ],
+          "mmsWords": [
+            "0x7fc00042",
+            "0x7fc00043"
+          ]
+        },
+        {
+          "stage": "MMS",
+          "changesFromPrevious": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              642,
+              643
+            ]
+          },
+          "logicalActive": 1,
+          "logicalNoop": 0,
+          "auditMask": 0,
+          "firstError": [
+            7,
+            26,
+            0,
+            0,
+            0,
+            1,
+            0,
+            3235779345
+          ],
+          "mmsWords": [
+            "0x3e7de023",
+            "0x3dfbc4c9"
+          ]
+        },
+        {
+          "stage": "OP8",
+          "changesFromPrevious": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              522,
+              752
+            ]
+          },
+          "logicalActive": 2,
+          "logicalNoop": 0,
+          "auditMask": 0,
+          "firstError": [
+            7,
+            26,
+            0,
+            0,
+            0,
+            1,
+            0,
+            3235779345
+          ],
+          "mmsWords": [
+            "0x3e7de023",
+            "0x3dfbc4c9"
+          ]
+        }
+      ]
+    },
+    {
+      "case": "boot-seeded",
+      "archive": ".codex/local-test/t833-t849-private-seeded/T849_PRIVATE_WRITES.bin",
+      "archiveSHA": "e885143830c6c8eb754312bb657e1bc17fc21365d08083363f8d932def45e7cf",
+      "executableSHA": "fd562769aa7a76879143dd4ee0e572a1a0273b9ca11dbd7c853a5a33a068f4e0",
+      "segmentsBytes": [
+        198144,
+        198144,
+        597632,
+        74752
+      ],
+      "stages": [
+        {
+          "stage": "BEFORE",
+          "changesFromPrevious": null,
+          "logicalActive": 0,
+          "logicalNoop": 0,
+          "auditMask": 0,
+          "firstError": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mmsWords": [
+            "0x7fc00042",
+            "0x7fc00043"
+          ]
+        },
+        {
+          "stage": "FIELD",
+          "changesFromPrevious": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              522,
+              752,
+              755
+            ]
+          },
+          "logicalActive": 1,
+          "logicalNoop": 0,
+          "auditMask": 6,
+          "firstError": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mmsWords": [
+            "0x7fc00042",
+            "0x7fc00043"
+          ]
+        },
+        {
+          "stage": "MOTION",
+          "changesFromPrevious": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              624,
+              625,
+              630,
+              631,
+              632,
+              633,
+              637
+            ]
+          },
+          "logicalActive": 1,
+          "logicalNoop": 0,
+          "auditMask": 6,
+          "firstError": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mmsWords": [
+            "0x7fc00042",
+            "0x7fc00043"
+          ]
+        },
+        {
+          "stage": "MMS",
+          "changesFromPrevious": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              642,
+              643
+            ]
+          },
+          "logicalActive": 1,
+          "logicalNoop": 0,
+          "auditMask": 6,
+          "firstError": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mmsWords": [
+            "0x3e7de023",
+            "0x3dfbc4c9"
+          ]
+        },
+        {
+          "stage": "OP8",
+          "changesFromPrevious": {
+            "BASE": [],
+            "CANDIDATE": [],
+            "WORK": [],
+            "CTRL": [
+              522,
+              752
+            ]
+          },
+          "logicalActive": 2,
+          "logicalNoop": 0,
+          "auditMask": 6,
+          "firstError": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "mmsWords": [
+            "0x3e7de023",
+            "0x3dfbc4c9"
+          ]
+        }
+      ]
+    }
+  ],
+  "productionDispatch": {
+    "source": 16,
+    "quantum": 820,
+    "op17Indices": [
+      10,
+      70,
+      126,
+      186,
+      242,
+      298,
+      354,
+      415,
+      475,
+      531,
+      591,
+      647,
+      703,
+      759
+    ],
+    "newProductionMap": "NOT_OPENED"
+  },
+  "offlineDiagnosticRoles": {
+    "parentGroupSHA": "1b8ce7f6cb7fc077e728dda15102f95d4125efb9cc21a6d95b434ee7146ed2a4",
+    "parentRoleSHA": "4f7121607816414ed6c783d87c025f5d415354d57693e4fa7a58958cce046f0a",
+    "compilerSHA": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d",
+    "roles": [
+      {
+        "role": "OP17_MOTION_CONTEXT",
+        "sourceSHA": "bdc960e88cd4cf2a233a549978f75dc2c459b403d66908d4acd0bf8a49d7e228",
+        "sourceBytes": 18369,
+        "moduleSHA": "c3062c6d47f3851d14af8df1102d68ddef18df6f66cc1923d463b9a1cfdf76e5",
+        "moduleBytes": 84732,
+        "instructions": 5202,
+        "bindings": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "floatModes": [
+          "DenormPreserve",
+          "SignedZeroInfNanPreserve",
+          "RoundingModeRTE"
+        ],
+        "pushBytes": 24,
+        "lanes": 64,
+        "glslLimitBytes": 49152,
+        "validation": "PASS",
+        "pcVulkanRuntime": "NOT_RUN"
+      },
+      {
+        "role": "OP17_MMS_CONTEXT",
+        "sourceSHA": "fdad559c99ff7d9b6e9aac7af1d44e3e59fb1efd69c0a3d39b3d68f14122c804",
+        "sourceBytes": 15758,
+        "moduleSHA": "ece1ae31f44497e594f1209ae796b50d791f4e9a41ea95b2c91a5b04271e7fe8",
+        "moduleBytes": 66844,
+        "instructions": 4020,
+        "bindings": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "floatModes": [
+          "DenormPreserve",
+          "SignedZeroInfNanPreserve",
+          "RoundingModeRTE"
+        ],
+        "pushBytes": 24,
+        "lanes": 64,
+        "glslLimitBytes": 49152,
+        "validation": "PASS",
+        "pcVulkanRuntime": "NOT_RUN"
+      }
+    ]
+  }
+}
