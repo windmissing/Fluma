@@ -1,0 +1,67 @@
+{
+  "schema": "T853_DESCRIPTOR_FIX_BUILD_V1",
+  "build": "WINDOWS_X64_RELEASE_PASS",
+  "compileCommit": "ef2a1c1d",
+  "executable": ".codex/local-test/t853-final.exe",
+  "exeSHA": "9bdbcf7dc59e0ba497364ceadb1eb98830734dbdf4c66e06631980d44b42e15e",
+  "exeMachine": "0x8664",
+  "modules": {
+    "full_source": {
+      "path": ".codex/local-test/t830-m1-20261123/full_source.spv",
+      "sha256": "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162"
+    },
+    "quantum_candidate": {
+      "path": ".codex/local-test/t830-m1-20261123/quantum_candidate.spv",
+      "sha256": "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c"
+    },
+    "quantum_commit": {
+      "path": ".codex/local-test/t830-m1-20261123/quantum_commit.spv",
+      "sha256": "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce"
+    }
+  },
+  "angle": {
+    "bytes": 245776,
+    "sha256": "23b5210055d0b3f51892967170134a6cad14360579b038e26ee48f3ea5bbb368",
+    "fileOffset": 2824960
+  },
+  "checks": [
+    {
+      "case": "fixed",
+      "stdoutSHA": "bba98c3bbde99fce2161c94823022ba19ed5af68585eae604455fc69c2538864",
+      "exitCode": 0,
+      "readyCount": 0,
+      "terminal": "M1_DRY_SOURCE_ACCEPTED",
+      "detail": "",
+      "closeAt": null,
+      "admittedQ20": 131072
+    },
+    {
+      "case": "interactive-init",
+      "stdoutSHA": "f54fb9f444eb4c8c1a1671e84197576b7c1cf95490db12d0515c8aa3e1a0dd00",
+      "exitCode": 1,
+      "readyCount": 1,
+      "terminal": "FAILED",
+      "detail": "ATTEMPT_REVOKED",
+      "closeAt": "M1_POINTER_READY",
+      "anglesFence": 0,
+      "descriptorAllocation": {
+        "expectedSets": 16,
+        "requestedSets": 16,
+        "nonNullSets": 16,
+        "firstNullIndex": null,
+        "vkResult": 0
+      },
+      "descriptorUpdates": 16
+    },
+    {
+      "case": "interactive-revoked",
+      "stdoutSHA": "cc4344873dcca5113793196dc4ec8abe0b37b89988fdcaa626bf4fc5e50939ea",
+      "exitCode": 1,
+      "readyCount": 0,
+      "terminal": "FAILED",
+      "detail": "ATTEMPT_REVOKED",
+      "closeAt": "BOOT_PIPELINE"
+    }
+  ],
+  "nextIndependentPC": "T855"
+}
