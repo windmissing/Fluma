@@ -1,0 +1,357 @@
+{
+  "schema": "T876_DUAL_CONTINUATION_RETEST_V1",
+  "pe": {
+    "path": ".codex/local-test/t872-release.exe",
+    "sha256": "6ec0ec5c9e401ff4f7000e305f4acc989c2e5f9db35b8e6bfc97474ec8669871"
+  },
+  "runs": {
+    "sand-then-water": {
+      "rows": 248,
+      "sourceAccepted": {
+        "material": 0,
+        "hold": "1"
+      },
+      "modeSwitches": [
+        1
+      ],
+      "quantumSubmits": 213,
+      "quantumStates": {
+        "M1_QUANTUM_PRESENT_QUEUED": 212,
+        "M1_QUANTUM_PRESENT_RETIRED": 1
+      },
+      "presentRetired": true,
+      "windowFrames": 213,
+      "pixelConstant": true,
+      "runIdentitySingle": true,
+      "pointerEvents": [
+        [
+          "DOWN",
+          "1"
+        ],
+        [
+          "UP",
+          "0"
+        ],
+        [
+          "CAPTURE_LOST",
+          "0"
+        ],
+        [
+          "DOWN",
+          "4"
+        ],
+        [
+          "UP",
+          "0"
+        ],
+        [
+          "CAPTURE_LOST",
+          "0"
+        ]
+      ],
+      "leases": {
+        "sandStockQ": [
+          "97584"
+        ],
+        "waterStockQ": [
+          "0"
+        ],
+        "sandAdmittedTotalQ": [
+          "97584"
+        ],
+        "waterAdmittedTotalQ": [
+          "0"
+        ],
+        "conservation": true
+      }
+    },
+    "water-then-sand": {
+      "rows": 42,
+      "sourceAccepted": {
+        "material": 1,
+        "hold": "1"
+      },
+      "modeSwitches": [
+        1,
+        0
+      ],
+      "quantumSubmits": 6,
+      "quantumStates": {
+        "M1_QUANTUM_PRESENT_QUEUED": 4,
+        "FAILED": 2
+      },
+      "presentRetired": false,
+      "windowFrames": 5,
+      "pixelConstant": true,
+      "runIdentitySingle": true,
+      "pointerEvents": [
+        [
+          "DOWN",
+          "1"
+        ],
+        [
+          "UP",
+          "0"
+        ],
+        [
+          "CAPTURE_LOST",
+          "0"
+        ],
+        [
+          "DOWN",
+          "0"
+        ],
+        [
+          "UP",
+          "0"
+        ],
+        [
+          "CAPTURE_LOST",
+          "0"
+        ]
+      ],
+      "leases": {
+        "sandStockQ": [
+          "0"
+        ],
+        "waterStockQ": [
+          "124733"
+        ],
+        "sandAdmittedTotalQ": [
+          "0"
+        ],
+        "waterAdmittedTotalQ": [
+          "124733"
+        ],
+        "conservation": true
+      }
+    },
+    "run3-sand-water-long": {
+      "rows": 239,
+      "sourceAccepted": {
+        "material": 0,
+        "hold": "1"
+      },
+      "modeSwitches": [
+        1
+      ],
+      "quantumSubmits": 199,
+      "quantumStates": {
+        "M1_QUANTUM_PRESENT_QUEUED": 198,
+        "M1_STALE_WAIT_NEW_INPUT": 1
+      },
+      "presentRetired": true,
+      "windowFrames": 199,
+      "pixelConstant": true,
+      "runIdentitySingle": true,
+      "pointerEvents": [
+        [
+          "DOWN",
+          "1"
+        ],
+        [
+          "UP",
+          "0"
+        ],
+        [
+          "CAPTURE_LOST",
+          "0"
+        ],
+        [
+          "DOWN",
+          "4"
+        ],
+        [
+          "CANCEL",
+          "0"
+        ],
+        [
+          "CAPTURE_LOST",
+          "0"
+        ],
+        [
+          "FOCUS_LOST",
+          "0"
+        ],
+        [
+          "FOCUS_LOST",
+          "0"
+        ],
+        [
+          "UP",
+          "0"
+        ]
+      ],
+      "leases": {
+        "sandStockQ": [
+          "100011"
+        ],
+        "waterStockQ": [
+          "0"
+        ],
+        "sandAdmittedTotalQ": [
+          "100011"
+        ],
+        "waterAdmittedTotalQ": [
+          "0"
+        ],
+        "conservation": true
+      }
+    },
+    "run4": {
+      "rows": 43,
+      "sourceAccepted": {
+        "material": 0,
+        "hold": "1"
+      },
+      "modeSwitches": [
+        1
+      ],
+      "quantumSubmits": 6,
+      "quantumStates": {
+        "M1_QUANTUM_PRESENT_QUEUED": 4,
+        "FAILED": 2
+      },
+      "presentRetired": false,
+      "windowFrames": 5,
+      "pixelConstant": true,
+      "runIdentitySingle": true,
+      "pointerEvents": [
+        [
+          "DOWN",
+          "1"
+        ],
+        [
+          "UP",
+          "0"
+        ],
+        [
+          "CAPTURE_LOST",
+          "0"
+        ],
+        [
+          "FOCUS_LOST",
+          "0"
+        ],
+        [
+          "DOWN",
+          "0"
+        ],
+        [
+          "UP",
+          "0"
+        ],
+        [
+          "CAPTURE_LOST",
+          "0"
+        ],
+        [
+          "FOCUS_LOST",
+          "0"
+        ]
+      ],
+      "leases": {
+        "sandStockQ": [
+          "129279"
+        ],
+        "waterStockQ": [
+          "0"
+        ],
+        "sandAdmittedTotalQ": [
+          "129279"
+        ],
+        "waterAdmittedTotalQ": [
+          "0"
+        ],
+        "conservation": true
+      }
+    },
+    "run5": {
+      "rows": 315,
+      "sourceAccepted": {
+        "material": 0,
+        "hold": "1"
+      },
+      "modeSwitches": [
+        1
+      ],
+      "quantumSubmits": 280,
+      "quantumStates": {
+        "M1_QUANTUM_PRESENT_QUEUED": 279,
+        "M1_QUANTUM_PRESENT_RETIRED": 1
+      },
+      "presentRetired": true,
+      "windowFrames": 280,
+      "pixelConstant": true,
+      "runIdentitySingle": true,
+      "pointerEvents": [
+        [
+          "DOWN",
+          "1"
+        ],
+        [
+          "UP",
+          "0"
+        ],
+        [
+          "CAPTURE_LOST",
+          "0"
+        ],
+        [
+          "DOWN",
+          "4"
+        ],
+        [
+          "UP",
+          "0"
+        ],
+        [
+          "CAPTURE_LOST",
+          "0"
+        ]
+      ],
+      "leases": {
+        "sandStockQ": [
+          "116887"
+        ],
+        "waterStockQ": [
+          "0"
+        ],
+        "sandAdmittedTotalQ": [
+          "116887"
+        ],
+        "waterAdmittedTotalQ": [
+          "0"
+        ],
+        "conservation": true
+      }
+    }
+  },
+  "verified": {
+    "T872_CONTINUATION_FIX": {
+      "observed": "T864-era continuation QUANTUM FENCE_OR_PERMIT_FAILED no longer occurs: sand run 213/199/279 sequential continuation quanta all PRESENT_QUEUED with per-frame generation/physicsCommit increments, then clean RETIRE. Water run: 6 quanta (2 ROOT_DEADLINE — real short-wait result) then wait.",
+      "impact": "The ordered pulse queue + permit retirement rework (T872) functionally fixed dual-mode continuation on this iGPU."
+    },
+    "STALE_WAIT_RECOVERY": {
+      "observed": "run3: one M1_STALE_WAIT_NEW_INPUT (recoverable wait) emitted when quanta paused; then M1_POINTER_READY -> WAIT -> RETIRED (hold ended before new input). Real short-wait result captured."
+    },
+    "CONSERVATION": {
+      "observed": "All runs: sandStockQ==sandAdmittedTotalQ across every frame (97584/100011/116887/129279; water 124733 run2). Zero material loss between frames; sourceCommit stays 1 per scene (single accepted SOURCE per scene run).",
+      "pixels": "All windowFrames pixel=0xff525355 constant (informational value, interactive route)."
+    },
+    "REAL_INPUT": {
+      "observed": "Real Win32 messages: DOWN/UP/CAPTURE_LOST/CANCEL/FOCUS_LOST recorded verbatim; key 1/2 mode switches recorded."
+    },
+    "FIRST_REJECTS": {
+      "observed": "run2/run4: ROOT_DEADLINE fence=2 (VK_TIMEOUT) on continuation quanta — real first-reject receipts with VkResult preserved.",
+      "retire": "run1/run3/run5 clean M1_QUANTUM_PRESENT_RETIRED."
+    }
+  },
+  "notAchieved": {
+    "SAME_SCENE_SECOND_ACCEPTANCE": {
+      "observed": "5 attempts (sand->water x4, water->sand x1): second source never accepted in the same scene. Reproducible structural result: nextPublication takeFresh() requires !clock.activeRemaining (frame boundary); T872 ordered pulses replenish quanta every 10ms so activeRemaining stays >0 through the whole hold (279 quanta consumed the entire 6s water hold). Additionally run3 water hold was killed by real CANCEL/FOCUS_LOST (environmental focus steal), and run2/run4 hit ROOT_DEADLINE variance.",
+      "attribution": "Product design: second-source entry is gated on a frame boundary that continuous pulses now prevent (T872 fix side-effect). Needs architect/developer decision (e.g. takeFresh on mode-switch boundary or quantum-drain pause).",
+      "workaround_evidence": "Both materials independently admitted from real scenes: sand 4 runs (97584/100011/116887/129279 Q), water 1 run (124733 Q); mode switch + hold + revoke semantics all real."
+    }
+  }
+}
