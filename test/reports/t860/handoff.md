@@ -16,4 +16,12 @@ Windows x64 Release PE `.codex/local-test/t860-paged-release.exe`，SHA256 `b022
 - `--m1-cold-on-busy FILE` 由非 Vulkan owner 的窗口线程预约首个 QUANTUM 的真实 fence 忙段。owner 只为同一已接受根认领 copy，现有 16 MiB 上限随 credit 保留至 writer/reader 退役。writer 封存原字后提供单读者、64 KiB 顺序页、范围校验以及 60 秒 TTL。文件沿 T848 首根格式，页偏移从原 payload 起算。未预约到首 QUANTUM 时明确报告未采。
 - C++ 离线检查覆盖终态日志、过期/背压、同根认领、封页后错游标与重复读取拒绝、顺序完整读取及旧代拒绝，编译和自测通过。
 
-仍属部分交付。完整 D1 尚需独立 52 动作驱动与 OFF/ON 原字对照/重放，D2 后续任意根预约仍需版本化的 backing/arena 和 reader 协议。当前 T848 首根封套只解释首 SOURCE→QUANTUM，继续用于首根证据；跨根重用须由 architect 与 tester 明确新档案语义后再接生产读取。
+## D1 四臂与后续根归档
+
+Windows x64 Release PE `.codex/local-test/t860-d1-release.exe`，SHA256 `f41be707566830dfb13ab126b0e47b1ddea4175f67669ccbd7dd9086dfd20cd6`。
+
+- 在既有 dry `--m1-window` 加 `--m1-d1 OFF|ON|REPLAY_OFF|REPLAY_ON`。Win32 owner READY 后启动独立 producer，使用与 T865 相同的 52 动作，记录声明时刻和实际 QPC 时刻。SOURCE 动作由下一次实际 pulse 通过同一四槽提交，按 actionId 联接 producer 回执和 owner 终态。QUANTUM 收据保实际 UI ns 以回配 pulse。OFF 的 capture 动作为具名空操作。收尾保真实 fence、lease、offer 和许可状态。
+- REPLAY 两臂额外传 `--m1-d1-replay-prefix PATH`，每个已接受 SOURCE/QUANTUM 在原 owner 上从实际 bank、event、publication backing 复制原字，先取 fence 与 invalidate 结果，再允许后续写者。累计原载荷上限 16 MiB，耗尽时保前缀并报码。OFF/ON 主臂没有这条 readback。
+- `--m1-root-on-busy FILE` 在第一张业务图像后预约后来任意 QUANTUM；实际认领根与忙点 nonce 匹配。独立封套 `M1PROOT1` 为 8 字节 magic、8 个 LE U32 长度、32 字节 payload SHA、4 段原载荷（Completion256、已接受 bank、实际 arena 的 `[0,eventEnd)`、同代 publication）。后 4 个长度为零。Completion 绑定 eventStart/end、bank、slot、generation 与提交根；JSONL 补真实 backing 和 fence。T848 的 `M1PCOLD1` 首根路径仍保原解释。
+
+编译及离线调度、队列、封页检查通过。四臂的实际时域等价、原字对照和后续根 reader 由 T865/T869 独立取证。交付的 JSONL 是原始边沿，T865 比对器仍需将其按 schema 联接成四臂证据。

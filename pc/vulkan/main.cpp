@@ -1,4 +1,5 @@
 #include "boot.h"
+#include "m1_d1_plan.h"
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
@@ -44,6 +45,10 @@ struct Window {
   grs::g13vk::M1Ingress ingress;
   grs::g13vk::M1HotCapture hotCapture;
   bool captureHot=false, captureCold=false, sourceTrace=false;
+  bool rootCapture=false;
+  std::wstring d1Mode,d1ReplayPrefix;
+  std::condition_variable d1Ready;
+  std::atomic<unsigned> m1Shown{0};
   uint64_t captureRun=0, captureReserved=0, droppedTrace=0;
   size_t coldOffset=0;
   uint64_t sampleTicks=0, offerSeq=0;
@@ -53,6 +58,7 @@ struct Window {
     std::lock_guard lock(output);
     std::cout << json << std::endl;
   }
+  bool D1CaptureEnabled() const { return d1Mode==L"ON" || d1Mode==L"REPLAY_ON"; }
   void DrainSourceTrace() {
     if (!sourceTrace) return;
     std::array<grs::g13vk::M1Ingress::Trace,64> batch;
@@ -67,6 +73,7 @@ struct Window {
         row << "{\"stage\":\"M1_OFFER_" << (record.terminal ? "TERMINAL" : "RETURN")
             << "\",\"serial\":\"" << record.serial << "\",\"run\":\"" << o.scope.run
             << "\",\"geometry\":\"" << o.scope.geometry << "\",\"offer\":\"" << o.seq
+            << "\",\"actionId\":" << o.action
             << "\",\"sample\":\"" << o.sample.sequence << "\",\"hold\":\"" << o.sample.hold
             << "\",\"pulseTicks\":\"" << o.pulseTicks << "\",\"sampleTicks\":\"" << o.sampleTicks
             << "\",\"frequency\":\"" << o.frequency << "\",\"pulseNs\":\"" << o.pulseNs
@@ -80,6 +87,92 @@ struct Window {
       droppedTrace=dropped;
       Emit("{\"stage\":\"M1_OFFER_TRACE_INCOMPLETE\",\"dropped\":"+std::to_string(dropped)+"}");
     }
+  }
+  void RunD1() {
+    using namespace grs::g13vk;
+    SourceScope readyScope;
+    const auto begin=std::chrono::steady_clock::now();
+    uint64_t ready=0;
+    {
+      std::unique_lock lock(mutex);
+      d1Ready.wait(lock,[&] { return closing || pointerReady; });
+      if (closing) return;
+      readyScope=scope;
+      ready=grs::pc::TimeNs();
+    }
+    const auto anchor=std::chrono::steady_clock::now();
+    const bool enabled=D1CaptureEnabled();
+    const std::string mode(d1Mode.begin(),d1Mode.end());
+    uint64_t previousNs=0,reservation=0;
+    D1Action pending{};
+    uint64_t createdNs=0,createdTicks=0;
+    Emit("{\"stage\":\"M1_D1_READY\",\"readyNs\":\""+std::to_string(ready)+
+         "\",\"run\":\""+std::to_string(readyScope.run)+"\",\"mode\":\""+mode+
+         "\",\"waitMs\":"+std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(anchor-begin).count())+"}");
+    for (const auto &action:M1D1Plan()) {
+      std::this_thread::sleep_until(anchor+std::chrono::nanoseconds(action.ns));
+      const auto ticks=grs::pc::QpcTicks(),ns=grs::pc::TimeNs();
+      SourceOffer offer;
+      bool current;
+      {
+        std::lock_guard lock(mutex);
+        current=!closing && generation==readyScope.geometry && pointerReady;
+        if (current && action.kind==D1Kind::Source) {
+          pending=action;
+          createdNs=ns;
+          createdTicks=ticks;
+        }
+        if (current && action.kind==D1Kind::Pulse) {
+          sourcePulse.store(ns,std::memory_order_relaxed);
+          if (pending.id) {
+            const auto serial=++eventSeq;
+            held={serial,serial,createdNs,64.5,pending.y,int(64.5*width/128.),
+                  int((1.-pending.y/256.)*height),0};
+            scope.permission=held.hold;
+            ingress.Authorize(scope,held.hold);
+            offer={scope,++offerSeq,ns,ticks,createdTicks,grs::pc::QpcFrequency(),held,2,pending.id,
+                   previousNs && ns>previousNs ? ns-previousNs : 0};
+            pending={};
+          }
+          previousNs=ns;
+        }
+      }
+      const char *state="REVOKED";
+      if (current) {
+        switch (action.kind) {
+        case D1Kind::Pulse:
+          state="DELIVERED";
+          if (offer.seq) ingress.OfferSource(offer);
+          break;
+        case D1Kind::Source: state="AWAIT_PULSE"; break;
+        case D1Kind::Reserve:
+          reservation=action.id;
+          state=!enabled ? "OFF_NOOP" :
+            hotCapture.Reserve(readyScope,reservation,ns)==M1HotCapture::Code::Reserved ? "RESERVED" : "NOT_BUSY";
+          break;
+        case D1Kind::End:
+          state=enabled ? "NO_PAGE" : "OFF_NOOP";
+          if (enabled) if (const auto page=hotCapture.Read(readyScope,reservation,ns)) {
+            std::ostringstream record;
+            record << "{\"stage\":\"M1_D1_HOT_PAGE\",\"request\":" << reservation << ",\"root\":\"" << page->busyRoot
+                   << "\",\"safePoint\":\"" << page->safePoint << "\",\"completion\":[";
+            for (size_t i=0;i<page->completion.size();++i) {
+              if (i) record << ',';
+              record << page->completion[i];
+            }
+            Emit(record.str()+"]}");
+            hotCapture.End(readyScope,reservation);
+            state="ENDED";
+          }
+          break;
+        }
+      }
+      Emit("{\"stage\":\"M1_D1_ACTION\",\"id\":"+std::to_string(action.id)+
+           ",\"kind\":"+std::to_string(int(action.kind))+",\"scriptNs\":\""+std::to_string(action.ns)+
+           "\",\"actualNs\":\""+std::to_string(ns)+"\",\"state\":\""+state+"\"}");
+    }
+    std::lock_guard lock(mutex);
+    if (!closing) PostMessageW(hwnd,WM_CLOSE,0,0);
   }
 
   void Size() {
@@ -105,6 +198,7 @@ struct Window {
     const auto ticks = grs::pc::QpcTicks();
     const bool inside = x >= 0 && y >= 0 && x < width && y < height;
     const std::string action(kind);
+    if (!d1Mode.empty() && (action=="DOWN" || action=="MOVE" || action=="UP")) return;
     if (action == "DOWN") {
       held = {};
       if (pointerReady && inside) {
@@ -167,6 +261,7 @@ struct Window {
     captureScope.permission=0;
     const auto request=captureScope.run;
     if (!(captureHot || captureCold) || !request || captureRun==request) return;
+    if (rootCapture && !m1Shown.load(std::memory_order_relaxed)) return;
     using Code=grs::g13vk::M1HotCapture::Code;
     const auto state=hotCapture.Reserve(captureScope,request,ns);
     if (state==Code::Reserved && captureReserved!=request) {
@@ -219,6 +314,7 @@ struct Window {
     ingress.Authorize({},0);
     hotCapture.Authorize({});
     wake.notify_one();
+    d1Ready.notify_all();
   }
 
   void Owner() {
@@ -228,6 +324,7 @@ struct Window {
       wake.wait(lock, [&] { return closing || (generation != previous && width > 0 && height > 0); });
       if (closing) break;
       previous = generation;
+      m1Shown.store(0,std::memory_order_relaxed);
       const auto snapshotDpi = dpi;
       const auto snapshotWidth = width, snapshotHeight = height;
       lock.unlock();
@@ -257,6 +354,7 @@ struct Window {
                                                    std::lock_guard guard(mutex);
                                                    if (closing || generation != previous) return false;
                                                    pointerReady = true;
+                                                   d1Ready.notify_one();
                                                  }
                                                  std::cout << readyReceipt << std::endl;
                                                  return true;
@@ -280,13 +378,16 @@ struct Window {
                                                  scope=next;
                                                  ingress.Authorize(scope,0);
                                                  hotCapture.Authorize(next);
-                                               }, &ingress, (captureHot || captureCold) ? &hotCapture : nullptr,
+                                               }, &ingress, (captureHot || captureCold || D1CaptureEnabled()) ? &hotCapture : nullptr,
                                                dualSource,captureCold,t833CandidateFile,t833RevokeAt,[&] {
                                                  std::lock_guard guard(mutex);
                                                  t833Allowed=false;
-                                               },t833Case,t833ConfigFile,t833SeedFile,t833ForcedJ},
+                                               },t833Case,t833ConfigFile,t833SeedFile,t833ForcedJ,rootCapture,d1ReplayPrefix,
+                                               !d1Mode.empty()},
           [&](const std::string &report) {
             Emit(report);
+            if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
+              m1Shown.fetch_add(1,std::memory_order_relaxed);
             if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos ||
                 report.find("\"state\":\"M1_DRY_SOURCE_PRESENT_QUEUED\"") != std::string::npos ||
                 report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"") != std::string::npos) {
@@ -363,7 +464,7 @@ LRESULT CALLBACK Dispatch(HWND hwnd, UINT message, WPARAM w, LPARAM l) {
     return 0;
   case WM_TIMER:
     if (w == kSourceProbeTimer) {
-      window->Pulse();
+      if (window->d1Mode.empty()) window->Pulse();
       window->DrainSourceTrace();
       return 0;
     }
@@ -431,9 +532,18 @@ int wmain(int argc, wchar_t **argv) {
       window.captureCold=!std::wcscmp(argv[i],L"--m1-cold-on-busy");
       window.m1ColdFile = argv[++i];
     }
+    else if (!std::wcscmp(argv[i],L"--m1-root-on-busy") && i+1 < argc) {
+      window.rootCapture=window.captureCold=true;
+      window.m1ColdFile=argv[++i];
+    }
     else if (!std::wcscmp(argv[i], L"--m1-capture-hot")) window.captureHot=true;
     else if (!std::wcscmp(argv[i], L"--m1-dual-source")) window.dualSource=true;
     else if (!std::wcscmp(argv[i], L"--m1-source-trace")) window.sourceTrace=true;
+    else if (!std::wcscmp(argv[i],L"--m1-d1") && i+1<argc) {
+      window.d1Mode=argv[++i];
+      window.sourceTrace=true;
+    }
+    else if (!std::wcscmp(argv[i],L"--m1-d1-replay-prefix") && i+1<argc) window.d1ReplayPrefix=argv[++i];
     else if ((!std::wcscmp(argv[i], L"--probe-m1-source") ||
               !std::wcscmp(argv[i], L"--present-m1-source")) && i+1 < argc) {
       window.m1Present = !std::wcscmp(argv[i], L"--present-m1-source");
@@ -444,7 +554,9 @@ int wmain(int argc, wchar_t **argv) {
       std::cerr << "usage: hello_world_pc [--once] [--boot-only | --qualify-steady | "
                    "--qualify-steady-role NAME [--disable-optimization] | --probe-m1-source SPV | "
                    "--present-m1-source SPV | --m1-window SOURCE_SPV CANDIDATE_SPV COMMIT_SPV "
-                   "[--m1-cold FILE | --m1-cold-on-busy FILE] [--m1-capture-hot] [--m1-source-trace] "
+                   "[--m1-cold FILE | --m1-cold-on-busy FILE | --m1-root-on-busy FILE] "
+                   "[--m1-capture-hot] [--m1-source-trace] [--m1-d1 OFF|ON|REPLAY_OFF|REPLAY_ON] "
+                   "[--m1-d1-replay-prefix PATH] "
                    "[--m1-dual-source] | --qualify-t849-writes FILE | --g13-candidate FILE "
                    "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] "
                    "[--g13-revoke-before | --g13-revoke-after]]\n";
@@ -456,6 +568,12 @@ int wmain(int argc, wchar_t **argv) {
   if (window.steady && !window.m1SourceModule.empty()) return 2;
   if (window.captureHot && window.m1QuantumCandidate.empty()) return 2;
   if (window.captureHot && window.captureCold) return 2;
+  if (window.rootCapture && window.once) return 2;
+  const bool d1Replay=window.d1Mode==L"REPLAY_OFF" || window.d1Mode==L"REPLAY_ON";
+  if (d1Replay!=!window.d1ReplayPrefix.empty()) return 2;
+  if (!window.d1Mode.empty() && ((!d1Replay && window.d1Mode!=L"OFF" && window.d1Mode!=L"ON") ||
+      window.m1QuantumCandidate.empty() || window.dualSource || window.once ||
+      window.captureHot || !window.m1ColdFile.empty())) return 2;
   if (!window.t833RevokeAt.empty() && window.t833CandidateFile.empty()) return 2;
   if (!window.t833Case.empty() && window.t833CandidateFile.empty()) return 2;
   if (window.t833ForcedJ && window.t833Case!="F03") return 2;
@@ -481,6 +599,8 @@ int wmain(int argc, wchar_t **argv) {
   if (!window.bootOnly || window.m1Present) ShowWindow(hwnd, SW_SHOW);
   window.Size();
   std::thread owner([&] { window.Owner(); });
+  std::thread d1;
+  if (!window.d1Mode.empty()) d1=std::thread([&] { window.RunD1(); });
   MSG message{};
   while (GetMessageW(&message, nullptr, 0, 0) > 0) {
     TranslateMessage(&message);
@@ -488,5 +608,6 @@ int wmain(int argc, wchar_t **argv) {
   }
   window.Close();
   owner.join();
+  if (d1.joinable()) d1.join();
   return window.result;
 }

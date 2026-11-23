@@ -218,6 +218,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   Check(vk.EndCommandBuffer(cmd),"vkEndCommandBuffer.M1_QUANTUM");
   stage="M1_QUANTUM_SUBMIT";
   fields << ",\"m1QuantumNonce\":\"" << nonce << "\",\"m1QuantumDispatches\":" << count
+         << ",\"m1QuantumUiNs\":\"" << clock.uiNs << "\""
          << ",\"m1QuantumEventStart\":" << r.eventStart << ",\"m1QuantumDeadlineNs\":\"" << deadline << "\"";
   const auto current = [&] { return refresh() && clock.Identity(permit.id,permit.session); };
   if (!current() || pc::TimeNs()>=deadline) {
@@ -238,6 +239,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
     now=pc::TimeNs();
     if (waited!=VK_TIMEOUT) break;
   }
+  if (attempt.hotCapture) attempt.hotCapture->StopBusy();
   if (waited==VK_SUCCESS || waited==VK_ERROR_DEVICE_LOST) inFlight=false;
   fields << ",\"m1QuantumFenceVkResult\":" << int(waited)
          << ",\"m1QuantumFenceNs\":\"" << now << "\"";
@@ -281,17 +283,36 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
   Checkpoint("M1_QUANTUM_COLD_CAPTURE");
   const uint32_t eventCount=accepted.completion[53];
   const auto &stored=accepted.completion;
-  const std::array<uint32_t, 8> sizes{1024,stateWords*4,eventCount*256,uint32_t(buffers[kM1QPub].bytes),
-                                    stateWords*4,sourceCompletion[53]*256,1024,128};
+  const bool replay=!attempt.m1ReplayPrefix.empty();
+  const bool rootOnly=attempt.m1RootCapture || replay;
+  const bool sourceRoot=stored[27]==1;
+  const size_t bank=accepted.bank ? kM1Candidate : kM1Base;
+  const size_t publication=sourceRoot ? kM1Pub : accepted.publication ? kM1QPubAlt : kM1QPub;
+  const size_t events=sourceRoot ? kM1Events : kM1QEvents;
+  Require(accepted.bank<=1 && accepted.publication<=1 && root.Bank()==accepted.bank &&
+          (stored[27]==2 || (replay && sourceRoot)) &&
+          stored[32]==1-accepted.bank && stored[35]==accepted.publication &&
+          stored[52]<=eventCount && eventCount<=stored[54] &&
+          eventCount<=buffers[events].bytes/256,"M1_COLD_ROOT_BACKING");
+  const std::array<uint32_t, 8> sizes{1024,stateWords*4,eventCount*256,uint32_t(buffers[publication].bytes),
+                                    rootOnly ? 0u : stateWords*4,rootOnly ? 0u : sourceCompletion[53]*256,
+                                    rootOnly ? 0u : 1024u,rootOnly ? 0u : 128u};
   VkDeviceSize payload=0;
   for (auto bytes : sizes) payload+=bytes;
-  Require(eventCount<=stored[54] && sourceCompletion[53]<=sourceCompletion[54] &&
+  Require((rootOnly || (sourceCompletion[53]<=sourceCompletion[54] && bank==kM1Base &&
+                       publication==kM1QPub)) &&
           payload<=16*1024*1024,"M1_COLD_RANGE");
   const auto gpuBytes=payload-sizes[6]-sizes[7];
+  if (replay && payload>M1HotCapture::kColdLimit-m1ReplayBytes) {
+    fields << ",\"m1ReplayIncomplete\":\"RAW_CREDIT_EXHAUSTED\",\"m1ReplayBytes\":" << m1ReplayBytes;
+    return std::async(std::launch::deferred,[] { return M1ColdResult{}; });
+  }
   PublicationLease lease;
   Require(root.Acquire(accepted.publication,accepted.publicationGeneration,lease)==ControlCode::OK,
           "M1_COLD_LEASE");
-  Allocate(kM1ColdStaging,gpuBytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
+  if (!buffers[kM1ColdStaging].handle)
+    Allocate(kM1ColdStaging,replay ? M1HotCapture::kColdLimit : gpuBytes,
+             VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
   const auto &staging=buffers[kM1ColdStaging];
   auto reset=reinterpret_cast<PFN_vkResetCommandPool>(vk.GetDeviceProcAddr(device,"vkResetCommandPool"));
   Require(reset!=nullptr,"M1_COLD_RESET_FUNCTION");
@@ -304,7 +325,7 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
   begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
   Check(vk.BeginCommandBuffer(command,&begin),"vkBeginCommandBuffer.M1_COLD");
   Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_READ_BIT);
-  const size_t slots[]={kM1Tail,kM1Base,kM1QEvents,kM1QPub,kM1Candidate,kM1Events};
+  const size_t slots[]={kM1Tail,bank,events,publication,kM1Candidate,kM1Events};
   VkDeviceSize at=0;
   for (size_t i=0;i<std::size(slots);++i) {
     if (!sizes[i]) continue;
@@ -336,11 +357,24 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
   Require(root.Release(accepted.publication,accepted.publicationGeneration,true)==ControlCode::OK,
           "M1_COLD_RELEASE");
   Require(std::memcmp(raw.data(),stored.data(),1024)==0,"M1_COLD_COMPLETION_CHANGED");
-  std::memcpy(raw.data()+gpuBytes,sourceCompletion.data(),sizes[6]);
-  std::memcpy(raw.data()+gpuBytes+sizes[6],sourceCommand.data(),sizes[7]);
+  if (!rootOnly) {
+    std::memcpy(raw.data()+gpuBytes,sourceCompletion.data(),sizes[6]);
+    std::memcpy(raw.data()+gpuBytes+sizes[6],sourceCommand.data(),sizes[7]);
+  }
+  fields << (sourceRoot ? ",\"m1SourceColdBacking\":{" : ",\"m1ColdBacking\":{")
+         << "\"format\":" << Quote(rootOnly ? "M1PROOT1" : "M1PCOLD1")
+         << ",\"bankSlot\":" << accepted.bank << ",\"publicationSlot\":" << accepted.publication
+         << ",\"eventArena\":" << stored[51] << ",\"eventEnd\":" << eventCount
+         << ",\"bankBuffer\":\"" << reinterpret_cast<uintptr_t>(buffers[bank].handle)
+         << "\",\"eventBuffer\":\"" << reinterpret_cast<uintptr_t>(buffers[events].handle)
+         << "\",\"publicationBuffer\":\"" << reinterpret_cast<uintptr_t>(buffers[publication].handle)
+         << "\",\"fence\":" << int(wait) << ",\"invalidate\":" << int(invalidation) << '}';
   // The worker owns only sealed CPU bytes and the destination path.
-  return std::async(std::launch::async,[path=attempt.m1ColdFile,sizes,raw=std::move(raw),
-                                       capture=attempt.hotCapture,ticket]() mutable {
+  if (replay) m1ReplayBytes+=size_t(payload);
+  const auto nonce=(uint64_t(accepted.nonce.hi)<<32)|accepted.nonce.lo;
+  const auto outputPath=replay ? attempt.m1ReplayPrefix+L"-"+std::to_wstring(nonce)+L".m1root" : attempt.m1ColdFile;
+  return std::async(std::launch::async,[path=outputPath,sizes,raw=std::move(raw),
+                                       capture=attempt.hotCapture,ticket,rootOnly]() mutable {
     try {
     const auto digest=Hash(raw.data(),raw.size());
     const auto temp=path+L".pending-"+std::to_wstring(GetCurrentProcessId());
@@ -350,7 +384,7 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
       DWORD n=0;
       return WriteFile(out,src,DWORD(bytes),&n,nullptr) ? n : 0;
     };
-    const bool wrote=WriteM1Cold(sizes,digest,raw.data(),raw.size(),write) && FlushFileBuffers(out);
+    const bool wrote=WriteM1Cold(sizes,digest,raw.data(),raw.size(),write,rootOnly) && FlushFileBuffers(out);
     CloseHandle(out);
     const bool finished=wrote && MoveFileExW(temp.c_str(),path.c_str(),MOVEFILE_WRITE_THROUGH);
     if (!finished) DeleteFileW(temp.c_str());

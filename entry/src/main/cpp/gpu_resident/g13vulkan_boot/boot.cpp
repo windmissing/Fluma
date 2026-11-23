@@ -213,6 +213,7 @@ private:
   std::array<VkPipeline,3> t854Pipelines{};
   std::vector<std::pair<std::string_view,VkPipeline>> t833Pipelines;
   std::vector<uint32_t> t833Seed;
+  size_t m1ReplayBytes=0;
   VkDescriptorPool m1QuantumDescriptorPool = VK_NULL_HANDLE;
   std::vector<VkDescriptorSet> m1QuantumSets;
   std::vector<m1::QuantumPassOp> m1QuantumPasses;

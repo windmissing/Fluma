@@ -1,10 +1,15 @@
 #include "../../pc/vulkan/m1_hot_capture.h"
+#include "../../pc/vulkan/m1_d1_plan.h"
 #include <cassert>
 #include <iostream>
 #include <thread>
 
 int main() {
   using namespace grs::g13vk;
+  const auto plan=M1D1Plan();
+  assert(plan[6].kind==D1Kind::Source && plan[6].y==64 && plan[6].ns==plan[7].ns);
+  assert(plan[18].kind==D1Kind::Reserve && plan[28].kind==D1Kind::Source);
+  assert(plan[28].y==128 && plan[42].kind==D1Kind::End);
   using SourceCode=M1Ingress::Code;
   M1Ingress ingress;
   ingress.EnableTrace();

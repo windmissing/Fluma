@@ -25,10 +25,13 @@ struct SourceOffer {
   uint64_t seq=0, pulseNs=0, pulseTicks=0, sampleTicks=0, frequency=0;
   PointerSample sample;
   uint32_t origin=0;
+  uint32_t action=0;
+  uint64_t deltaNs=0;
   bool operator==(const SourceOffer &b) const {
     const auto &a=sample, &s=b.sample;
     return scope==b.scope && seq==b.seq && pulseNs==b.pulseNs && pulseTicks==b.pulseTicks &&
            sampleTicks==b.sampleTicks && frequency==b.frequency && origin==b.origin &&
+           action==b.action && deltaNs==b.deltaNs &&
            a.hold==s.hold && a.sequence==s.sequence && a.timeNs==s.timeNs &&
            a.x==s.x && a.y==s.y && a.clientX==s.clientX && a.clientY==s.clientY &&
            a.material==s.material;
@@ -42,6 +45,12 @@ class M1Ingress {
   struct Trace { uint64_t serial=0; SourceOffer offer; Result result; bool terminal=false; };
 
   void EnableTrace() { traceEnabled_=true; } // Before either thread starts.
+  std::size_t PendingCount() {
+    std::lock_guard lock(mutex_);
+    std::size_t count=0;
+    for (const auto &slot:active_) count+=slot.offer.seq!=0;
+    return count;
+  }
   std::size_t ReadTrace(Trace *out,std::size_t capacity,uint64_t &dropped) {
     std::lock_guard lock(mutex_);
     std::size_t count=0;
@@ -80,7 +89,8 @@ class M1Ingress {
       return report({Code::Revoked});
     if (offer.seq<=last_) return report({Code::Expired});
     const auto &sample=offer.sample;
-    if (sample.material>1 || !std::isfinite(sample.x) || !std::isfinite(sample.y) ||
+    if ((offer.action && (!offer.deltaNs || offer.deltaNs>33333333)) ||
+        sample.material>1 || !std::isfinite(sample.x) || !std::isfinite(sample.y) ||
         sample.x<0 || sample.x>=128 || sample.y<0 || sample.y>256 ||
         !offer.frequency || !sample.sequence || !offer.sampleTicks ||
         offer.pulseTicks<=offer.sampleTicks || offer.pulseNs<=offer.sample.timeNs)

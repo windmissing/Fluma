@@ -41,7 +41,7 @@ set_property(SOURCE wsi.cpp APPEND PROPERTY OBJECT_DEPENDS "${G13_ASSET_DIR}/pc_
     "${CMAKE_CURRENT_SOURCE_DIR}/wsi.h" "${CMAKE_CURRENT_SOURCE_DIR}/m1_hot_capture.h")
 set_property(SOURCE main.cpp APPEND PROPERTY OBJECT_DEPENDS
     "${GPU}/g13vulkan_boot/boot.h" "${CMAKE_CURRENT_SOURCE_DIR}/m1_ingress.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/m1_hot_capture.h")
+    "${CMAKE_CURRENT_SOURCE_DIR}/m1_hot_capture.h" "${CMAKE_CURRENT_SOURCE_DIR}/m1_d1_plan.h")
 set_property(SOURCE "${GPU}/g13vulkan_boot/boot.cpp" APPEND PROPERTY OBJECT_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/m1_ingress.h" "${CMAKE_CURRENT_SOURCE_DIR}/m1_hot_capture.h")
 target_sources(hello_world_pc PRIVATE "${GPU}/m1/source_owner.cpp" "${GPU}/integer.cpp")

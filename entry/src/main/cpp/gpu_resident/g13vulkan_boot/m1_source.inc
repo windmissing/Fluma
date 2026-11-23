@@ -85,7 +85,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   Allocate(kM1Candidate, stateWords*4, storage | copyOut);
   Allocate(kM1Work, workWords*4, storage | upload | copyOut);
   Allocate(kM1Events, (K+1)*64*4, storage | copyOut);
-  Allocate(kM1Pub, pubWords*4, storage);
+  Allocate(kM1Pub, pubWords*4, storage | (attempt.m1ReplayPrefix.empty() ? 0 : copyOut));
   Allocate(kM1Tail, 1024, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
   Allocate(kM1Uniform, stride*passes, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | upload);
   if (interactive) PrepareM1Quantum(candidate);
@@ -200,6 +200,13 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       if (!offer.seq) { Sleep(1); continue; }
       const auto next = offer.sample;
       const auto ns = offer.pulseNs;
+      if (offer.action) {
+        inputSample=next;
+        firstOffer=offer;
+        pulse=ns;
+        delta=offer.deltaNs;
+        break;
+      }
       if (next.hold != hold) {
         hold = next.hold;
         anchor = 0;
@@ -290,12 +297,12 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     std::memcpy(cmd.data()+16, source, sizeof(source));
     if (offer.seq) {
       const auto &s=offer.scope;
-      std::array<uint64_t,23> original{s.run,s.owner,s.context,s.surface,s.geometry,s.config,s.permission,
+      std::array<uint64_t,25> original{s.run,s.owner,s.context,s.surface,s.geometry,s.config,s.permission,
           s.pageSession,offer.seq,offer.pulseNs,offer.pulseTicks,offer.sampleTicks,offer.frequency,offer.origin,
           inputSample.hold,inputSample.sequence,inputSample.timeNs,uint32_t(inputSample.clientX),
-          uint32_t(inputSample.clientY),0,0,inputSample.material,wide(request.nonce)};
+          uint32_t(inputSample.clientY),0,0,inputSample.material,offer.action,offer.deltaNs,wide(request.nonce)};
       std::memcpy(original.data()+19,source,2*sizeof(double));
-      fields << ",\"m1ProducerWords\":" << Words(original)
+      fields << ",\"m1OfferAction\":" << offer.action << ",\"m1ProducerWords\":" << Words(original)
              << ",\"m1ProducerSHA\":" << Quote(Hex(Hash(original.data(),sizeof(original)-8).data()))
              << ",\"m1SourceWords\":" << Words(cmd)
              << ",\"m1SourceWordsSHA\":" << Quote(Hex(Hash(cmd.data(),sizeof(cmd)).data()));
@@ -415,6 +422,10 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     fields << ",\"m1AdmittedQ\":" << tail[61] << ",\"m1PublicationGeneration\":" << accepted.publicationGeneration.lo
            << ",\"m1SourceMaterial\":" << cmd[sourceWire::kind] << ",\"m1SourceOutcome\":" << tail[28]
            << ",\"m1SourceAdmissionClass\":" << tail[158];
+    if (!attempt.m1ReplayPrefix.empty() && accepted.sourceSuccess) {
+      const auto exported=CaptureM1Quantum(root,accepted,tail,stateWords,cmd,{}).get();
+      fields << ",\"m1SourceReplaySHA\":" << Quote(exported.sha);
+    }
     return true;
   };
   const auto consumeSource=[&](const PointerSample &input,uint64_t ns,uint64_t elapsed,const SourceOffer &offer) {
@@ -433,7 +444,13 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   if (interactive && !RunM1Quantum(candidate, root, clock, permit, refresh, accepted, frameSerial, ordinal))
     return Receipt("FAILED", "M1_QUANTUM_NOT_ACCEPTED");
   std::future<M1ColdResult> coldWriter;
-  if (interactive && !attempt.m1ColdFile.empty()) {
+  const auto captureAccepted=[&] {
+    if (!interactive) return;
+    if (!attempt.m1ReplayPrefix.empty()) {
+      const auto exported=CaptureM1Quantum(root,accepted,tail,stateWords,cmd,{}).get();
+      fields << ",\"m1QuantumReplaySHA\":" << Quote(exported.sha);
+    }
+    if (attempt.m1ColdFile.empty()) return;
     const auto ticket=attempt.m1ColdOnBusy
         ? attempt.hotCapture->ClaimCold(wide(accepted.nonce),pc::TimeNs()) : std::optional<M1HotCapture::Page>{};
     if (ticket || !attempt.m1ColdOnBusy) {
@@ -443,10 +460,11 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         if (ticket) attempt.hotCapture->FailCold(*ticket);
         throw;
       }
-    } else {
+    } else if (!attempt.m1RootCapture) {
       fields << ",\"m1ColdReservation\":\"NO_FIRST_QUANTUM_BUSY_RESERVATION\"";
     }
-  }
+  };
+  if (!attempt.m1RootCapture) captureAccepted();
   const auto reportCold=[&] {
     if (!coldWriter.valid()) return;
     const auto exported=coldWriter.get();
@@ -471,7 +489,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     return buffers[!interactive ? kM1Pub : accepted.publication ? kM1QPubAlt : kM1QPub].handle;
   };
   std::function<VkBuffer()> nextPublication;
-  if (interactive && !attempt.m1SinglePresent && attempt.m1ColdFile.empty()) {
+  if (interactive && !attempt.m1SinglePresent && (attempt.m1ColdFile.empty() || attempt.m1RootCapture)) {
     nextPublication=[&]() -> VkBuffer {
       Require(root.Release(accepted.publication,accepted.publicationGeneration,true)==ControlCode::OK,
               "M1_QUANTUM_FRAME_RELEASE");
@@ -492,11 +510,17 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         const auto pointer=offer.sample;
         const auto ui=offer.pulseNs;
         if (offer.seq) {
-          if (pointer.hold!=anchorHold) {
-            anchorHold=pointer.hold;
-            anchor=0;
+          if (offer.action && clock.Claim(pc::TimeNs(),0,pointer.hold,true,permit)) {
+            ++frameSerial;
+            ordinal=0;
+            if (!consumeSource(pointer,ui,offer.deltaNs,offer)) publish(Receipt("M1_SOURCE_REVOKED",""));
           }
-          if (pointer.hold && pointer.hold!=expiredHold && ui>pointer.timeNs) {
+          if (!offer.action) {
+            if (pointer.hold!=anchorHold) {
+              anchorHold=pointer.hold;
+              anchor=0;
+            }
+            if (pointer.hold && pointer.hold!=expiredHold && ui>pointer.timeNs) {
             if (anchor && ui!=anchor) {
               if (ui<anchor || ui-anchor>m1::ProgressClockV2::GapNs) {
                 expiredHold=pointer.hold;
@@ -513,6 +537,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
               }
             }
             anchor=ui;
+            }
           }
           finishOffer(offer,IngressCode::Rejected);
         }
@@ -525,6 +550,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         }
         return VK_NULL_HANDLE;
       }
+      if (attempt.m1RootCapture || !attempt.m1ReplayPrefix.empty()) captureAccepted();
       Require(root.Acquire(accepted.publication,accepted.publicationGeneration,lease)==ControlCode::OK,
               "M1_QUANTUM_FRAME_ACQUIRE");
       leased=true;
@@ -585,6 +611,16 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     root.ContextLost();
   fields << ",\"m1PublicationReleased\":" << (usable ? "true" : "false") << ",\"m1WsiResult\":" << int(frame.error)
          << ",\"m1WsiRetireVkResult\":" << int(frame.retire) << ",\"m1WsiStage\":" << Quote(frame.stage);
+  if (attempt.m1D1) {
+    clock.Revoke("D1_WINDOW_RETIRED");
+    const auto offers=attempt.ingress->PendingCount();
+    const bool retired=frame.retire==VK_SUCCESS && root.State()==FlightState::Idle &&
+                       !root.HasLeases() && !inFlight && !offers && !clock.activeRemaining;
+    fields << ",\"m1D1Drain\":{\"retired\":" << (retired ? "true" : "false")
+           << ",\"offers\":" << offers << ",\"inFlight\":" << int(inFlight)
+           << ",\"leases\":" << int(root.HasLeases()) << ",\"permits\":" << clock.activeRemaining
+           << ",\"retireVkResult\":" << int(frame.retire) << '}';
+  }
   if (nextRootFailed) return Receipt("FAILED","M1_QUANTUM_CONTINUATION_FAILED");
   return frame.error == VK_SUCCESS ? Receipt(interactive ? "M1_QUANTUM_PRESENT_RETIRED" : "M1_DRY_SOURCE_PRESENT_RETIRED", "") :
                                     Receipt("WSI_FAILED", frame.stage);

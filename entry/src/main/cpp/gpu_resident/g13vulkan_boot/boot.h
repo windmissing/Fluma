@@ -44,6 +44,9 @@ struct Attempt {
   std::string t833Case;
   std::wstring t833ConfigFile,t833SeedFile;
   uint32_t t833ForcedJ=0;
+  bool m1RootCapture=false;
+  std::wstring m1ReplayPrefix;
+  bool m1D1=false;
 #else
   NativeWindow *window;
 #endif
