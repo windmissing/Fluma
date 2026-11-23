@@ -1,0 +1,19 @@
+{
+ "revision": "T847_V1_M1_WINDOW_SEGFAULT_V1",
+ "date": "2026-11-23 09:40",
+ "package": {
+  "pe": "t830-held-release-20261123.exe 4ab9ff59 (card-pinned, SHA verified)",
+  "spv": "three modules 1912af9e/b8f0e327/caf0614c (t830-m1-20261123, receipt-matched)"
+ },
+ "runs": {
+  "diag mode (no --m1-window)": "BOOT 16 stages complete, window alive, pixel 0xff00ff00 \u2014 PE itself healthy",
+  "run1 (m1-window)": "22 stages: BOOT 15 + M1_SOURCE_MODULE/PIPELINE + M1_QUANTUM_CANDIDATE_PIPELINE + M1_QUANTUM_COMMIT_PIPELINE + M1_SOURCE_BUFFERS + **M1_QUANTUM_COLD_ANGLES RUNNING -> SEGFAULT**",
+  "run2 (absolute paths)": "same SEGFAULT at M1_QUANTUM_COLD_ANGLES",
+  "run3 (repeat)": "same 22 stages, same crash point \u2014 STABLE REPRO"
+ },
+ "crashPoint": "M1_QUANTUM_COLD_ANGLES checkpoint (m1_quantum.inc:91) \u2014 after descriptor sets update, before/inside angle table upload (vkResetCommandPool/vkCreateFence/CmdUpdateBuffer sequence)",
+ "jsonl": "22 records per run preserved (run1/run2/run3.jsonl) \u2014 original words up to crash",
+ "scope": "per card: Down/SOURCE->QUANTUM->Present/pixel/Up/retirement end-to-end NOT REACHED (crash before M1_POINTER_READY)",
+ "diagnostic": "diag mode PASS proves Vulkan/window/spv-loading all fine; crash specific to M1 QUANTUM cold-angles path",
+ "route": "developer: fix M1_QUANTUM_COLD_ANGLES crash (m1_quantum.inc:91 vicinity \u2014 angle table upload sequence); stable 3/3 repro"
+}
