@@ -1,0 +1,195 @@
+{
+  "window": {
+    "sha256": "21856bcc35df8c725cec65b4f8e43e1f7cf9cb746270594db8c68c939b007b92",
+    "lines": 187,
+    "offerQuoteRepairCount": 0,
+    "queued": 120,
+    "newRoots": 120,
+    "repeat": 0,
+    "newQueueRate": 23.596782620331098,
+    "observedSpanSeconds": 5.0430604,
+    "queueIntervalMs": {
+      "count": 119,
+      "mean": 42.37865882352941,
+      "p95": 49.3253,
+      "p99": 72.0258,
+      "max": 101.3192
+    },
+    "newRootIntervalMs": {
+      "count": 119,
+      "mean": 42.37865882352941,
+      "p95": 49.3253,
+      "p99": 72.0258,
+      "max": 101.3192
+    },
+    "displayState": "PRESENT_EVIDENCE_PENDING",
+    "displayedFps": null,
+    "refreshHz": null,
+    "acceptedSourceRoots": 1,
+    "admittedQ20": 121460,
+    "sourceStartsAtOrAfterUp": [],
+    "sourceFencesAtOrAfterUp": [],
+    "cleanRetire": true,
+    "stockQ20": [
+      121460
+    ],
+    "sceneLeases": 120,
+    "postUpNewRoots": 119,
+    "postUpNonzeroActive": 83,
+    "postUpStockQ20": [
+      121460
+    ],
+    "upQpc": 15922201576150,
+    "firstZeroActiveRelativeToUpMs": 3542.104,
+    "lastNonzeroActiveRelativeToUpMs": 3497.1598,
+    "gaps": [],
+    "fieldState": "MISSING_EVIDENCE",
+    "missing": [
+      "accepted inventory/event timeline",
+      "individual LAND event words",
+      "layer-attributed same-root RGBA probes",
+      "verified display trace / active refresh mode"
+    ],
+    "bulkRetentionSupported": true
+  },
+  "settling": {
+    "upQpc": 15922201576150,
+    "priorRoot": "15922199641890",
+    "priorActive": 1,
+    "priorSampleToUpMs": 60.7862,
+    "firstPostUpActive": 1,
+    "postUpLiveRoots": 83,
+    "firstZeroRoot": "15922236548707",
+    "firstZeroMs": 3542.104,
+    "postUpZeroRoots": 36,
+    "stockQ20": 121460
+  },
+  "cold": {
+    "payloadBytes": 94336,
+    "pageBytes": [
+      65536,
+      28800
+    ],
+    "root": {
+      "acceptedRoot": 15922574654822,
+      "run": 15922573225346,
+      "config": 2,
+      "sourceCommit": 1,
+      "physicsCommit": 2,
+      "generation": 2,
+      "publicationSlot": 0
+    },
+    "lineage": "NEXT_FRAME",
+    "qBefore": 136607,
+    "qAfter": 136607,
+    "sBefore": 0,
+    "sAfter": 136607,
+    "rootEvents": [
+      2,
+      2
+    ],
+    "bedEventCount": [
+      0,
+      0
+    ],
+    "landState": "MISSING_EVIDENCE",
+    "roiState": "MISSING_EVIDENCE"
+  },
+  "historicalOFF": {
+    "state": "OWNER_PULSE_COVERAGE",
+    "left": [
+      {
+        "action": 22,
+        "seq": "20",
+        "session": "1"
+      },
+      {
+        "action": 23,
+        "seq": "21",
+        "session": "1"
+      },
+      {
+        "action": 24,
+        "seq": "22",
+        "session": "1"
+      },
+      {
+        "action": 25,
+        "seq": "23",
+        "session": "1"
+      }
+    ],
+    "right": [
+      {
+        "action": 15,
+        "seq": "14",
+        "session": "1"
+      },
+      {
+        "action": 16,
+        "seq": "15",
+        "session": "1"
+      },
+      {
+        "action": 17,
+        "seq": "16",
+        "session": "1"
+      }
+    ],
+    "source7DeltaNs": [
+      15729600,
+      14961400
+    ],
+    "source7Q20": [
+      131949,
+      125505
+    ],
+    "source7CommandSHA": [
+      "2f95aef88b570941b79560de8f8c9a1340db1e773c4e90faa573ee1f1a1e26b5",
+      "7c7088d79e0d2b2879a9b8eb7cc28a172f4a85fe6e3a1821c175bc9796778b67"
+    ],
+    "firstActionFromReadyNs": [
+      30857400,
+      30246000
+    ]
+  },
+  "tests": {
+    "positive": {
+      "state": "OWNER_SCOPE_CLOSED",
+      "sessions": [
+        {
+          "session": 1,
+          "firstSeq": 1,
+          "lastSeq": 24,
+          "queued": 24,
+          "accepted": 23,
+          "ownerRejected": 0,
+          "ownerRevoked": 1
+        },
+        {
+          "session": 2,
+          "firstSeq": 1,
+          "lastSeq": 24,
+          "queued": 24,
+          "accepted": 24,
+          "ownerRejected": 0,
+          "ownerRevoked": 0
+        }
+      ]
+    },
+    "negatives": [
+      "OWNER_PULSE_COVERAGE",
+      "OWNER_TERMINAL_KEY",
+      "OWNER_TERMINAL_KEY",
+      "OWNER_TERMINAL_TIME",
+      "OWNER_TERMINAL_REASON",
+      "OWNER_DRAIN_COVERAGE",
+      "UP_LIVE_NOT_OBSERVED",
+      "COLD_PAGE_IDENTITY"
+    ]
+  },
+  "pending": {
+    "actualOFF": "T894",
+    "sameRootROI": "T895"
+  }
+}
