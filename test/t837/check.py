@@ -129,6 +129,28 @@ def relative_errors(observed, expected):
 
 def field_reference(case, fields, view, nu, accepted_quantum):
     nx, ny = view["shape"]
+    if case in ("F03","F06") and nx==ny and nx in (32,64,128):
+        h=1/nx
+        if case=="F03" and accepted_quantum==30 and nu in (1/16,1/8):
+            sin_mode=[math.sin(2*math.pi*(j+.5)*h) for j in range(ny)]
+            u=fields["u32"]
+            amplitude=math.fsum(u[j*(nx+1)+i]*sin_mode[j]
+                               for j in range(ny) for i in range(nx))*2/(nx*ny)
+            eigenvalue=4*math.sin(math.pi*h)**2/h**2
+            return dict(amplitude=amplitude,discreteByJ={
+                str(j):.25*(1+nu*eigenvalue/(120*j))**(-30*j) for j in (1,2,4)})
+        if case=="F06" and nu==1/64 and accepted_quantum>=1:
+            time=accepted_quantum/120
+            a=nu*math.pi**2*time
+            tail=.25*math.exp(-a*128**2)/(math.pi*a*128**2)
+            ys=[(j+.5)*h for j in range(ny)]
+            analytic=[.25*y+.5/math.pi*math.fsum((-1)**k*math.sin(k*math.pi*y)*
+                         math.exp(-a*k*k)/k for k in range(1,129)) for y in ys]
+            measured=fields["u32"]
+            return dict(startupTailBound=tail,startupMax=max(
+                abs(measured[j*(nx+1)+i]-analytic[j]) for j in range(ny) for i in range(nx+1)),
+                steadyMax=max(abs(measured[j*(nx+1)+i]-.25*ys[j])
+                              for j in range(ny) for i in range(nx+1)))
     if case == "F10":
         enforce(all(w == .25 for w in fields["u32"]) and all(w == -.125 for w in fields["v32"])
                 and not any(fields["piQ32"]), "F10 uniform periodic field")

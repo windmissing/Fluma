@@ -1,0 +1,213 @@
+{
+  "baseline": {
+    "state": "SYNTHETIC_PASS",
+    "checks": 6,
+    "cases": [
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05",
+      "F06",
+      "F07",
+      "F08",
+      "F09",
+      "F10",
+      "F11",
+      "F12",
+      "F13",
+      "F14",
+      "F15",
+      "F16"
+    ]
+  },
+  "caseFixtures": {
+    "F01": {
+      "reference": {
+        "u": 0,
+        "v": 0,
+        "pi": 0,
+        "totalPressureFromPhi": 0.125
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "sealed_rest_and_gravity_only",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F02": {
+      "reference": {
+        "pressureSample": 0.09223489755733517,
+        "projectionSample": 0,
+        "scope": "PRIVATE_PROJECT"
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "manufactured_pressure_projection_component",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F03": {
+      "reference": {
+        "amplitudeJ124": [
+          0.13582293412194923,
+          0.13540227954880257,
+          0.13519030088636824
+        ],
+        "doubledNu": 0.07333510922804833
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "periodic_viscous_shear_decay",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F04": {
+      "reference": {
+        "amplitude": 0.18365073608215834,
+        "pressureAmplitude": 0.008431898215879644
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "Taylor_Green_full_NS",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F05": {
+      "reference": {
+        "u": 0.09232157060802587,
+        "v": -0.1388052294633297,
+        "pressure": 0.027968838396599412,
+        "motions": [
+          "REST",
+          "RAMP_SPIN"
+        ]
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "closed_box_manufactured_NS_and_rotation",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F06": {
+      "reference": {
+        "startupSample": -2.368383267281615e-13,
+        "tailBound": 2.7120243262812697e-12,
+        "steadyWallShear": 0.00390625
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "Couette_steady_and_startup",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F07": {
+      "reference": {
+        "Q": "1/6",
+        "halfCellBias": 6.103515625e-05
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "Poiseuille_pressure_gradient_equivalent_drive",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F08": {
+      "reference": {
+        "fixtureControl": {
+          "theta": 0.09084505690810465,
+          "omega": 0.5,
+          "alpha": 1.5707963267948966
+        },
+        "scope": "RAMP_SPIN at t=0.5s"
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "ramp_spin_and_stop_physical_demonstration",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F09": {
+      "reference": {
+        "restVelocity": 0,
+        "cayleyEnergy": 25
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "corotating_rest_and_Coriolis_pair",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F10": {
+      "reference": {
+        "u": 0.25,
+        "v": -0.125,
+        "pi": 0
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "uniform_periodic_flow",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F11": {
+      "reference": {
+        "normalWallRaw": 0,
+        "aliasInjection": "NOT_OBSERVABLE"
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "boundary_rhs_and_nullspace_negative_controls",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F12": {
+      "reference": {
+        "windowAcceptedQuanta": 120,
+        "positiveCap": 1
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "external_work_and_energy_budget",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F13": {
+      "reference": {
+        "transaction": "reject leaves base and accepted clock untouched"
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "trial_replay_cancel_late_and_solver_failure",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F14": {
+      "reference": {
+        "L0": 2,
+        "rho0": 1000,
+        "muSI": 4,
+        "nuStar": 0.001
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "configuration_precision_and_domain_gates",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F15": {
+      "reference": {
+        "scope": "accepted root same token and fresh identity"
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "accepted_field_render_and_cold_evidence",
+      "actualPC": "NOT_OBSERVED"
+    },
+    "F16": {
+      "reference": {
+        "sampleFrames": 120,
+        "stale": 12,
+        "seconds": 1,
+        "freshFPS": 108,
+        "rootHardMs": 250
+      },
+      "positive": "PASS",
+      "negative": "REJECTED",
+      "T605": "end_to_end_cost_and_resource_evidence",
+      "actualPC": "NOT_OBSERVED"
+    }
+  },
+  "truncatedArchive": {
+    "state": "INVALID",
+    "error": "PAGE_SCHEMA"
+  },
+  "actualPC": "PENDING_T833",
+  "fixtureOnly": true
+}
