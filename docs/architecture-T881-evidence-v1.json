@@ -1,0 +1,196 @@
+{
+  "schema": "T881_D1_ARCH_RECOUNT_V1",
+  "evidenceRevision": "c512bbca",
+  "sourceRevision": "9e10003d",
+  "peSha256": "f41be707566830dfb13ab126b0e47b1ddea4175f67669ccbd7dd9086dfd20cd6",
+  "arms": [
+    {
+      "mode": "OFF",
+      "path": "test/reports/t875/off2.jsonl",
+      "sha256": "329c7ac79930068b9ea92a9907851d238c23ee86836c82b7697112fe01eb5f40",
+      "lines": 94,
+      "offerQuoteRepairLines": [
+        36,
+        45,
+        65,
+        71
+      ],
+      "sources": [
+        {
+          "actionId": 7,
+          "pulseActionId": 8,
+          "actualPulseDeltaNs": 14571100,
+          "offerLine": 36,
+          "terminalLine": 45,
+          "terminal": 2,
+          "root": "15832671633199",
+          "acceptedQ20": 122231
+        },
+        {
+          "actionId": 29,
+          "pulseActionId": 30,
+          "actualPulseDeltaNs": 16062200,
+          "offerLine": 65,
+          "terminalLine": 71,
+          "terminal": 7,
+          "root": "0",
+          "acceptedQ20": null
+        }
+      ],
+      "terminalLine": 94,
+      "windowState": "M1_QUANTUM_PRESENT_RETIRED",
+      "wsiRetire": 0,
+      "lastQuantumFence": 0,
+      "lastQuantumReject": "FENCE_OR_PERMIT_FAILED",
+      "drain": {
+        "retired": false,
+        "offers": 0,
+        "inFlight": 0,
+        "leases": 0,
+        "permits": 0,
+        "retireVkResult": 0
+      }
+    },
+    {
+      "mode": "ON",
+      "path": "test/reports/t875/on2.jsonl",
+      "sha256": "5f96ae0d984e968e68ee2f4c3454a4195ae83233cbb2b66c78b0d1bda15c431b",
+      "lines": 100,
+      "offerQuoteRepairLines": [
+        36,
+        42,
+        68,
+        81
+      ],
+      "sources": [
+        {
+          "actionId": 7,
+          "pulseActionId": 8,
+          "actualPulseDeltaNs": 16076100,
+          "offerLine": 36,
+          "terminalLine": 42,
+          "terminal": 2,
+          "root": "15832682593823",
+          "acceptedQ20": 134856
+        },
+        {
+          "actionId": 29,
+          "pulseActionId": 30,
+          "actualPulseDeltaNs": 15037600,
+          "offerLine": 68,
+          "terminalLine": 81,
+          "terminal": 7,
+          "root": "0",
+          "acceptedQ20": null
+        }
+      ],
+      "terminalLine": 100,
+      "windowState": "M1_QUANTUM_PRESENT_RETIRED",
+      "wsiRetire": 0,
+      "lastQuantumFence": 0,
+      "lastQuantumReject": "FENCE_OR_PERMIT_FAILED",
+      "drain": {
+        "retired": false,
+        "offers": 0,
+        "inFlight": 0,
+        "leases": 0,
+        "permits": 0,
+        "retireVkResult": 0
+      }
+    },
+    {
+      "mode": "REPLAY_OFF",
+      "path": "test/reports/t875/replay-off2.jsonl",
+      "sha256": "baeca8c190f157534a998ba412ddc24448b2488c6047bee70db1797dc4b63043",
+      "lines": 105,
+      "offerQuoteRepairLines": [
+        36,
+        43,
+        70,
+        87
+      ],
+      "sources": [
+        {
+          "actionId": 7,
+          "pulseActionId": 8,
+          "actualPulseDeltaNs": 16079800,
+          "offerLine": 36,
+          "terminalLine": 43,
+          "terminal": 2,
+          "root": "15832693820756",
+          "acceptedQ20": 134887
+        },
+        {
+          "actionId": 29,
+          "pulseActionId": 30,
+          "actualPulseDeltaNs": 16014300,
+          "offerLine": 70,
+          "terminalLine": 87,
+          "terminal": 7,
+          "root": "0",
+          "acceptedQ20": null
+        }
+      ],
+      "terminalLine": 105,
+      "windowState": "M1_QUANTUM_PRESENT_RETIRED",
+      "wsiRetire": 0,
+      "lastQuantumFence": 0,
+      "lastQuantumReject": null,
+      "drain": {
+        "retired": true,
+        "offers": 0,
+        "inFlight": 0,
+        "leases": 0,
+        "permits": 0,
+        "retireVkResult": 0
+      }
+    },
+    {
+      "mode": "REPLAY_ON",
+      "path": "test/reports/t875/replay-on2.jsonl",
+      "sha256": "c17307239c235b67d8261b5e3172f6a3df8eee9e2abfaf62d76988d9da508e76",
+      "lines": 104,
+      "offerQuoteRepairLines": [
+        36,
+        43,
+        70,
+        88
+      ],
+      "sources": [
+        {
+          "actionId": 7,
+          "pulseActionId": 8,
+          "actualPulseDeltaNs": 16031500,
+          "offerLine": 36,
+          "terminalLine": 43,
+          "terminal": 2,
+          "root": "15832705284059",
+          "acceptedQ20": 134481
+        },
+        {
+          "actionId": 29,
+          "pulseActionId": 30,
+          "actualPulseDeltaNs": 15007800,
+          "offerLine": 70,
+          "terminalLine": 88,
+          "terminal": 7,
+          "root": "0",
+          "acceptedQ20": null
+        }
+      ],
+      "terminalLine": 104,
+      "windowState": "M1_QUANTUM_PRESENT_RETIRED",
+      "wsiRetire": 0,
+      "lastQuantumFence": 2,
+      "lastQuantumReject": "FENCE_OR_PERMIT_FAILED",
+      "drain": {
+        "retired": false,
+        "offers": 0,
+        "inFlight": 1,
+        "leases": 0,
+        "permits": 0,
+        "retireVkResult": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,569 @@
+{
+  "schema": "T880_SOURCE_BOUNDARY_RECOUNT_V1",
+  "evidenceRevision": "f70ed1c9",
+  "sourceRevision": "9101958c",
+  "peSha256": "6ec0ec5c9e401ff4f7000e305f4acc989c2e5f9db35b8e6bfc97474ec8669871",
+  "gapNs": 33333333,
+  "runs": [
+    {
+      "path": "test/reports/t876/sand-then-water.jsonl",
+      "sha256": "72f28e245c41a70f7d91a27f36c64853ebad5055c71b982bd08b544df3d47a85",
+      "lines": 681,
+      "offerQuoteRepairCount": 433,
+      "acceptedSource": [
+        {
+          "line": 36,
+          "offer": "2",
+          "root": "15836347163547",
+          "material": 0
+        }
+      ],
+      "pointer": [
+        {
+          "line": 27,
+          "kind": "DOWN",
+          "hold": "1",
+          "qpc": "15836346865621"
+        },
+        {
+          "line": 283,
+          "kind": "UP",
+          "hold": "0",
+          "qpc": "15836371878676"
+        },
+        {
+          "line": 284,
+          "kind": "CAPTURE_LOST",
+          "hold": "0",
+          "qpc": "15836371886517"
+        },
+        {
+          "line": 318,
+          "kind": "DOWN",
+          "hold": "4",
+          "qpc": "15836384898892"
+        },
+        {
+          "line": 598,
+          "kind": "UP",
+          "hold": "0",
+          "qpc": "15836409900623"
+        },
+        {
+          "line": 599,
+          "kind": "CAPTURE_LOST",
+          "hold": "0",
+          "qpc": "15836409907480"
+        }
+      ],
+      "secondHold": "4",
+      "producerReturns": {
+        "0": 66,
+        "5": 88
+      },
+      "terminals": {
+        "3": 1,
+        "4": 4,
+        "7": 61
+      },
+      "secondHoldPulseSpanNs": 2475537500,
+      "secondHoldMaximumProducerGapNs": 32072700,
+      "wholeRunQueued": 213,
+      "holdQueued": 63,
+      "holdFirstFrame": 21,
+      "holdLastFrame": 37,
+      "holdFrameCount": 17,
+      "sampledStock": [
+        [
+          97584,
+          0
+        ]
+      ],
+      "faults": []
+    },
+    {
+      "path": "test/reports/t876/water-then-sand.jsonl",
+      "sha256": "293c27916427678e06e0f2610ec2fbac3f60c42349f072edfbab8505524a381e",
+      "lines": 96,
+      "offerQuoteRepairCount": 54,
+      "acceptedSource": [
+        {
+          "line": 37,
+          "offer": "2",
+          "root": "15837162571118",
+          "material": 1
+        }
+      ],
+      "pointer": [
+        {
+          "line": 28,
+          "kind": "DOWN",
+          "hold": "1",
+          "qpc": "15837162259357"
+        },
+        {
+          "line": 91,
+          "kind": "UP",
+          "hold": "0",
+          "qpc": "15837192260310"
+        },
+        {
+          "line": 92,
+          "kind": "CAPTURE_LOST",
+          "hold": "0",
+          "qpc": "15837192265064"
+        },
+        {
+          "line": 94,
+          "kind": "DOWN",
+          "hold": "0",
+          "qpc": "15837205278996"
+        },
+        {
+          "line": 95,
+          "kind": "UP",
+          "hold": "0",
+          "qpc": "15837245321981"
+        },
+        {
+          "line": 96,
+          "kind": "CAPTURE_LOST",
+          "hold": "0",
+          "qpc": "15837245329808"
+        }
+      ],
+      "secondHold": "0",
+      "producerReturns": {},
+      "terminals": {},
+      "secondHoldPulseSpanNs": null,
+      "secondHoldMaximumProducerGapNs": null,
+      "wholeRunQueued": 5,
+      "holdQueued": 0,
+      "holdFirstFrame": null,
+      "holdLastFrame": null,
+      "holdFrameCount": 0,
+      "sampledStock": [
+        [
+          0,
+          124733
+        ]
+      ],
+      "faults": [
+        {
+          "line": 89,
+          "state": "FAILED",
+          "detail": "M1_QUANTUM_CONTINUATION_FAILED",
+          "timing": {
+            "m1QuantumReject": "ROOT_DEADLINE",
+            "m1QuantumFenceVkResult": 2,
+            "m1QuantumDeadlineNs": "1583716842288700",
+            "m1QuantumFenceNs": "1583716854929000"
+          }
+        },
+        {
+          "line": 90,
+          "state": "FAILED",
+          "detail": "M1_QUANTUM_CONTINUATION_FAILED",
+          "timing": {
+            "m1QuantumReject": "ROOT_DEADLINE",
+            "m1QuantumFenceVkResult": 2,
+            "m1QuantumDeadlineNs": "1583716842288700",
+            "m1QuantumFenceNs": "1583716854929000",
+            "m1WsiRetireVkResult": 0
+          }
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t876/run3-sand-water-long.jsonl",
+      "sha256": "36dd6b858789b9e3f3a854ebe121b5858aca5006cfe775fcc035471a40c4351c",
+      "lines": 958,
+      "offerQuoteRepairCount": 719,
+      "acceptedSource": [
+        {
+          "line": 36,
+          "offer": "2",
+          "root": "15837622075099",
+          "material": 0
+        }
+      ],
+      "pointer": [
+        {
+          "line": 27,
+          "kind": "DOWN",
+          "hold": "1",
+          "qpc": "15837621749554"
+        },
+        {
+          "line": 242,
+          "kind": "UP",
+          "hold": "0",
+          "qpc": "15837641756413"
+        },
+        {
+          "line": 243,
+          "kind": "CAPTURE_LOST",
+          "hold": "0",
+          "qpc": "15837641763331"
+        },
+        {
+          "line": 255,
+          "kind": "DOWN",
+          "hold": "4",
+          "qpc": "15837644772498"
+        },
+        {
+          "line": 948,
+          "kind": "CANCEL",
+          "hold": "0",
+          "qpc": "15837705703871"
+        },
+        {
+          "line": 949,
+          "kind": "CAPTURE_LOST",
+          "hold": "0",
+          "qpc": "15837705718671"
+        },
+        {
+          "line": 951,
+          "kind": "FOCUS_LOST",
+          "hold": "0",
+          "qpc": "15837705791433"
+        },
+        {
+          "line": 956,
+          "kind": "FOCUS_LOST",
+          "hold": "0",
+          "qpc": "15837740942657"
+        },
+        {
+          "line": 957,
+          "kind": "UP",
+          "hold": "0",
+          "qpc": "15837744773210"
+        }
+      ],
+      "secondHold": "4",
+      "producerReturns": {
+        "0": 154,
+        "5": 234
+      },
+      "terminals": {
+        "4": 2,
+        "7": 152
+      },
+      "secondHoldPulseSpanNs": 6060506700,
+      "secondHoldMaximumProducerGapNs": 32195600,
+      "wholeRunQueued": 199,
+      "holdQueued": 152,
+      "holdFirstFrame": 15,
+      "holdLastFrame": 53,
+      "holdFrameCount": 39,
+      "sampledStock": [
+        [
+          100011,
+          0
+        ]
+      ],
+      "faults": [
+        {
+          "line": 954,
+          "state": "M1_STALE_WAIT_NEW_INPUT",
+          "detail": "CLOCK_GAP",
+          "timing": {
+            "m1QuantumReject": "CLOCK_GAP",
+            "m1QuantumFenceVkResult": 2,
+            "m1QuantumDeadlineNs": "1583770782175000",
+            "m1QuantumFenceNs": "1583770595019400"
+          }
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t876/run4.jsonl",
+      "sha256": "c2c40b9855175433eafdbb69c587259c4b3129c2369a5611c47530e2c92fc78a",
+      "lines": 96,
+      "offerQuoteRepairCount": 53,
+      "acceptedSource": [
+        {
+          "line": 37,
+          "offer": "2",
+          "root": "15838348904322",
+          "material": 0
+        }
+      ],
+      "pointer": [
+        {
+          "line": 27,
+          "kind": "DOWN",
+          "hold": "1",
+          "qpc": "15838348384598"
+        },
+        {
+          "line": 89,
+          "kind": "UP",
+          "hold": "0",
+          "qpc": "15838370388447"
+        },
+        {
+          "line": 90,
+          "kind": "CAPTURE_LOST",
+          "hold": "0",
+          "qpc": "15838370393765"
+        },
+        {
+          "line": 91,
+          "kind": "FOCUS_LOST",
+          "hold": "0",
+          "qpc": "15838376983143"
+        },
+        {
+          "line": 93,
+          "kind": "DOWN",
+          "hold": "0",
+          "qpc": "15838383448723"
+        },
+        {
+          "line": 94,
+          "kind": "UP",
+          "hold": "0",
+          "qpc": "15838443640198"
+        },
+        {
+          "line": 95,
+          "kind": "CAPTURE_LOST",
+          "hold": "0",
+          "qpc": "15838443645684"
+        },
+        {
+          "line": 96,
+          "kind": "FOCUS_LOST",
+          "hold": "0",
+          "qpc": "15838454006305"
+        }
+      ],
+      "secondHold": "0",
+      "producerReturns": {},
+      "terminals": {},
+      "secondHoldPulseSpanNs": null,
+      "secondHoldMaximumProducerGapNs": null,
+      "wholeRunQueued": 5,
+      "holdQueued": 0,
+      "holdFirstFrame": null,
+      "holdLastFrame": null,
+      "holdFrameCount": 0,
+      "sampledStock": [
+        [
+          129279,
+          0
+        ]
+      ],
+      "faults": [
+        {
+          "line": 87,
+          "state": "FAILED",
+          "detail": "M1_QUANTUM_CONTINUATION_FAILED",
+          "timing": {
+            "m1QuantumReject": "ROOT_DEADLINE",
+            "m1QuantumFenceVkResult": 2,
+            "m1QuantumDeadlineNs": "1583835458966400",
+            "m1QuantumFenceNs": "1583835464710300"
+          }
+        },
+        {
+          "line": 88,
+          "state": "FAILED",
+          "detail": "M1_QUANTUM_CONTINUATION_FAILED",
+          "timing": {
+            "m1QuantumReject": "ROOT_DEADLINE",
+            "m1QuantumFenceVkResult": 2,
+            "m1QuantumDeadlineNs": "1583835458966400",
+            "m1QuantumFenceNs": "1583835464710300",
+            "m1WsiRetireVkResult": 0
+          }
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t876/run5.jsonl",
+      "sha256": "27f74a4a889ced575df66f51af6685588ba9b7c82afc1b674436ca98f91656fc",
+      "lines": 1191,
+      "offerQuoteRepairCount": 876,
+      "acceptedSource": [
+        {
+          "line": 37,
+          "offer": "2",
+          "root": "15838968564054",
+          "material": 0
+        }
+      ],
+      "pointer": [
+        {
+          "line": 27,
+          "kind": "DOWN",
+          "hold": "1",
+          "qpc": "15838968123531"
+        },
+        {
+          "line": 186,
+          "kind": "UP",
+          "hold": "0",
+          "qpc": "15838983124863"
+        },
+        {
+          "line": 187,
+          "kind": "CAPTURE_LOST",
+          "hold": "0",
+          "qpc": "15838983131107"
+        },
+        {
+          "line": 212,
+          "kind": "DOWN",
+          "hold": "4",
+          "qpc": "15838991135063"
+        },
+        {
+          "line": 1148,
+          "kind": "UP",
+          "hold": "0",
+          "qpc": "15839076322003"
+        },
+        {
+          "line": 1149,
+          "kind": "CAPTURE_LOST",
+          "hold": "0",
+          "qpc": "15839076332318"
+        }
+      ],
+      "secondHold": "4",
+      "producerReturns": {
+        "0": 200,
+        "5": 343
+      },
+      "terminals": {
+        "4": 4,
+        "7": 196
+      },
+      "secondHoldPulseSpanNs": 8505052700,
+      "secondHoldMaximumProducerGapNs": 31489200,
+      "wholeRunQueued": 280,
+      "holdQueued": 196,
+      "holdFirstFrame": 15,
+      "holdLastFrame": 64,
+      "holdFrameCount": 50,
+      "sampledStock": [
+        [
+          116887,
+          0
+        ]
+      ],
+      "faults": [],
+      "selectedFrameTransitions": [
+        {
+          "prior": {
+            "line": 221,
+            "nonceQpc": 15838991624528,
+            "frame": 15,
+            "ordinal": 4,
+            "sourceCommit": 1,
+            "sandQ": 116887,
+            "waterQ": 0,
+            "presentExitQpc": 15838992023755
+          },
+          "newFrame": {
+            "line": 228,
+            "nonceQpc": 15838992024576,
+            "frame": 16,
+            "ordinal": 1,
+            "sourceCommit": 1,
+            "sandQ": 116887,
+            "waterQ": 0,
+            "presentExitQpc": 15838992428255
+          },
+          "takeWindowQpc": [
+            15838992023755,
+            15838992024576
+          ],
+          "expired": [
+            {
+              "line": 222,
+              "offer": "96",
+              "producerQpc": 15838991170137,
+              "minimumAgeNs": 85361800
+            },
+            {
+              "line": 223,
+              "offer": "97",
+              "producerQpc": 15838991334897,
+              "minimumAgeNs": 68885800
+            },
+            {
+              "line": 224,
+              "offer": "98",
+              "producerQpc": 15838991484342,
+              "minimumAgeNs": 53941300
+            },
+            {
+              "line": 225,
+              "offer": "99",
+              "producerQpc": 15838991642600,
+              "minimumAgeNs": 38115500
+            }
+          ]
+        },
+        {
+          "prior": {
+            "line": 239,
+            "nonceQpc": 15838993246931,
+            "frame": 16,
+            "ordinal": 4,
+            "sourceCommit": 1,
+            "sandQ": 116887,
+            "waterQ": 0,
+            "presentExitQpc": 15838993650742
+          },
+          "newFrame": {
+            "line": 247,
+            "nonceQpc": 15838993651900,
+            "frame": 17,
+            "ordinal": 1,
+            "sourceCommit": 1,
+            "sandQ": 116887,
+            "waterQ": 0,
+            "presentExitQpc": 15838994058095
+          },
+          "takeWindowQpc": [
+            15838993650742,
+            15838993651900
+          ],
+          "expired": [
+            {
+              "line": 240,
+              "offer": "102",
+              "producerQpc": 15838992114465,
+              "minimumAgeNs": 153627700
+            },
+            {
+              "line": 241,
+              "offer": "103",
+              "producerQpc": 15838992269942,
+              "minimumAgeNs": 138080000
+            },
+            {
+              "line": 242,
+              "offer": "104",
+              "producerQpc": 15838992441055,
+              "minimumAgeNs": 120968700
+            },
+            {
+              "line": 243,
+              "offer": "105",
+              "producerQpc": 15838992593893,
+              "minimumAgeNs": 105684900
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
