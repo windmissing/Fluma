@@ -1,0 +1,119 @@
+{
+  "schema": "T869_ASYNC_HOT_PAGE_V1",
+  "pe": {
+    "cold-on-busy/paged": {
+      "path": ".codex/local-test/t860-paged-release.exe",
+      "sha256": "b02294dcdd5daa88c434cb444f0ce48882a21bd44a51908fcf9ad89f96e8c7e4"
+    },
+    "root-on-busy/d1": {
+      "path": ".codex/local-test/t860-d1-release.exe",
+      "sha256": "f41be707566830dfb13ab126b0e47b1ddea4175f67669ccbd7dd9086dfd20cd6"
+    }
+  },
+  "runs": {
+    "runA_cold_on_busy": {
+      "rows": 38,
+      "pointer": [
+        "DOWN",
+        "UP",
+        "CAPTURE_LOST"
+      ],
+      "busyReservation": "15814204974592",
+      "pagedReads": [
+        {
+          "offset": 0,
+          "count": 65536,
+          "sha": "8d104d4157d515a3"
+        },
+        {
+          "offset": 65536,
+          "count": 28800,
+          "sha": "8d104d4157d515a3"
+        }
+      ],
+      "coldFile": {
+        "bytes": 94408,
+        "envelope": 72,
+        "digest32B": true,
+        "digest": "8d104d4157d515a3f532e1756490679a9f536b1bad98741c30a474eeaab7d02b"
+      },
+      "presentRetired": true,
+      "t848JoinExit": 0
+    },
+    "runB_root_on_busy": {
+      "rows": 40,
+      "reservation": {
+        "request": "15823389530611",
+        "requestNs": "1582339386605600"
+      },
+      "pagedRead": [
+        {
+          "root": "15823393860401",
+          "offset": 0,
+          "count": 62720,
+          "sha": "069160171a0af967"
+        }
+      ],
+      "rootFile": {
+        "bytes": 62792,
+        "magic": "M1PROOT1",
+        "sizes": [
+          1024,
+          29696,
+          256,
+          31744,
+          0,
+          0,
+          0,
+          0
+        ],
+        "segments": [
+          "Completion256",
+          "acceptedBank",
+          "eventArena[0,eventEnd)",
+          "publication"
+        ],
+        "digestMatch": true
+      },
+      "busyRootMatchesQuantumNonce": "15823393860401",
+      "quantumFence": 0,
+      "coldBacking": {
+        "format": "M1PROOT1",
+        "bankSlot": 1,
+        "publicationSlot": 1,
+        "eventArena": 1,
+        "eventEnd": 1,
+        "bankBuffer": "1629942938760",
+        "eventBuffer": "1630209851496",
+        "publicationBuffer": "1630209861464",
+        "fence": 0,
+        "invalidate": 0
+      },
+      "terminal": "M1_QUANTUM_CONTINUATION_FAILED (post-capture; same iGPU 250ms continuation limit as T864)"
+    },
+    "runC_capture_hot": {
+      "rows": 75,
+      "hotPage": {
+        "request": "15826595911759",
+        "root": "15826598056792",
+        "blocker": 1,
+        "requestedNs": "1582659818594900",
+        "frozenNs": "1582659883693600",
+        "busySegmentMs": 65.0987,
+        "safePoint": "1",
+        "completionWords": 256
+      },
+      "t865HotChecker": "PASS (FROZEN_HOT_PAGE, HOT_ONLY scope)"
+    }
+  },
+  "findings": {
+    "D1_ROOT_ON_BUSY_COMBINATION": {
+      "observed": "--m1-d1 and --m1-root-on-busy are mutually exclusive (d1 validation requires m1ColdFile empty; root-on-busy sets it) — usage exit 2. Four-arm D1 and root capture must run in separate processes.",
+      "attribution": "Usage-level constraint documented; not a defect."
+    },
+    "CONTINUATION_QUANTUM_LIMIT": {
+      "observed": "runB post-capture continuation quanta fail FENCE_OR_PERMIT_FAILED (VK_TIMEOUT, fenceNs<deadline) — same iGPU timing limit as T864 single-source-after-first-present continuations. The captured root evidence itself is complete (fence=0, owner=0).",
+      "attribution": "Intel UHD 630 hardware constraint; discrete GPU pending."
+    }
+  }
+}
