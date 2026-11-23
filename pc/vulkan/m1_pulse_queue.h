@@ -14,6 +14,7 @@ struct M1PulseScope {
 };
 struct M1Pulse {
   uint64_t seq=0, callbackTicks=0, receiptTicks=0, uiNs=0, receiptNs=0;
+  uint64_t session=0;
 };
 
 class M1PulseQueue {
@@ -29,18 +30,20 @@ class M1PulseQueue {
   }
   void Close() { Begin({},0); }
 
-  void Receive(uint64_t geometry,M1Pulse pulse) {
+  M1Pulse Receive(uint64_t geometry,M1Pulse pulse) {
     std::lock_guard lock(mutex_);
-    if (!scope_.session || geometry!=scope_.geometry || pulse.callbackTicks<=after_) return;
+    if (!scope_.session || geometry!=scope_.geometry || pulse.callbackTicks<=after_) return {};
     pulse.seq=latest_.seq+1;
+    pulse.session=scope_.session;
     latest_=pulse;
-    if (rejected_) return;
-    if (size_==rows_.size()) { rejected_="PULSE_QUEUE_OVERFLOW"; return; }
+    if (rejected_) return {};
+    if (size_==rows_.size()) { rejected_="PULSE_QUEUE_OVERFLOW"; return {}; }
     if (!pulse.seq || pulse.receiptTicks<pulse.callbackTicks || pulse.receiptNs<pulse.uiNs) {
       rejected_="PULSE_RECEIPT_INVALID";
-      return;
+      return {};
     }
     rows_[size_++]=pulse;
+    return pulse;
   }
 
   bool Consume(M1PulseScope scope,m1::ProgressClockV2 &clock,M1Pulse &latest,M1Pulse &accepted) {

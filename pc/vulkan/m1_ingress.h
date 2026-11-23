@@ -1,4 +1,5 @@
 #pragma once
+#include "m1_pulse_queue.h"
 #include <array>
 #include <cmath>
 #include <cstdint>
@@ -27,28 +28,43 @@ struct SourceOffer {
   uint32_t origin=0;
   uint32_t action=0;
   uint64_t deltaNs=0;
+  M1Pulse previous{}, current{};
   bool operator==(const SourceOffer &b) const {
     const auto &a=sample, &s=b.sample;
     return scope==b.scope && seq==b.seq && pulseNs==b.pulseNs && pulseTicks==b.pulseTicks &&
            sampleTicks==b.sampleTicks && frequency==b.frequency && origin==b.origin &&
            action==b.action && deltaNs==b.deltaNs &&
+           previous.seq==b.previous.seq && current.seq==b.current.seq &&
+           previous.session==b.previous.session && current.session==b.current.session &&
+           previous.uiNs==b.previous.uiNs && previous.receiptNs==b.previous.receiptNs &&
+           previous.callbackTicks==b.previous.callbackTicks && previous.receiptTicks==b.previous.receiptTicks &&
+           current.uiNs==b.current.uiNs && current.receiptNs==b.current.receiptNs &&
+           current.callbackTicks==b.current.callbackTicks && current.receiptTicks==b.current.receiptTicks &&
            a.hold==s.hold && a.sequence==s.sequence && a.timeNs==s.timeNs &&
            a.x==s.x && a.y==s.y && a.clientX==s.clientX && a.clientY==s.clientY &&
            a.material==s.material;
   }
 };
 
+inline bool AdjacentSourcePulses(const M1Pulse &a,const M1Pulse &b) {
+  constexpr auto gap=m1::ProgressClockV2::GapNs;
+  return a.seq && b.seq && a.seq+1==b.seq && a.session && a.session==b.session &&
+         b.callbackTicks>a.callbackTicks && b.receiptTicks>a.receiptTicks &&
+         b.uiNs>a.uiNs && b.uiNs-a.uiNs<=gap && b.receiptNs>a.receiptNs && b.receiptNs-a.receiptNs<=gap;
+}
+
 class M1Ingress {
  public:
-  enum class Code { Pending, Consuming, Accepted, Rejected, Revoked, Full, Conflict, Expired, Invalid };
+  enum class Code { Pending, Consuming, Accepted, Rejected, Revoked, Full, Conflict, Expired, Invalid, Superseded };
   struct Result { Code code=Code::Invalid; uint64_t root=0; };
-  struct Trace { uint64_t serial=0; SourceOffer offer; Result result; bool terminal=false; };
+  struct Trace { uint64_t serial=0; SourceOffer offer; Result result; bool terminal=false; const char *reason=nullptr; };
 
   void EnableTrace() { traceEnabled_=true; } // Before either thread starts.
   std::size_t PendingCount() {
     std::lock_guard lock(mutex_);
     std::size_t count=0;
     for (const auto &slot:active_) count+=slot.offer.seq!=0;
+    count+=(waiting_.offer.seq!=0)+(claimed_.offer.seq!=0);
     return count;
   }
   std::size_t ReadTrace(Trace *out,std::size_t capacity,uint64_t &dropped) {
@@ -67,6 +83,9 @@ class M1Ingress {
     std::lock_guard lock(mutex_);
     if (scope==scope_ && hold==hold_) return;
     for (auto &slot : active_) if (slot.offer.seq) Archive(slot, {Code::Revoked});
+    if (waiting_.offer.seq) Archive(waiting_,{Code::Revoked},"AUTHORITY_CHANGED");
+    if (claimed_.offer.seq) Archive(claimed_,{Code::Revoked},"AUTHORITY_CHANGED");
+    watermark_={};
     if (scope.run!=scope_.run || scope.owner!=scope_.owner || scope.context!=scope_.context) {
       recent_={}; cursor_=0; last_=0;
     }
@@ -75,6 +94,29 @@ class M1Ingress {
   }
 
   Result OfferSource(const SourceOffer &offer) {
+    return Offer(offer,false);
+  }
+  Result OfferLatest(const SourceOffer &offer) {
+    return Offer(offer,true);
+  }
+  SourceOffer TakeLatest(uint64_t now,uint64_t afterTicks,uint64_t session) {
+    std::lock_guard lock(mutex_);
+    if (claimed_.offer.seq || !waiting_.offer.seq) return {};
+    const auto &o=waiting_.offer;
+    const char *why=o.current.session!=session || o.previous.callbackTicks<=afterTicks ? "OLD_BASELINE" :
+        now<o.pulseNs ? "CLOCK_REVERSED" :
+        now-o.pulseNs>m1::ProgressClockV2::GapNs ? "STALE_ENDPOINT" : nullptr;
+    if (why) {
+      Archive(waiting_,{Code::Expired},why);
+      return {};
+    }
+    claimed_=waiting_;
+    claimed_.result={Code::Consuming};
+    waiting_={};
+    return claimed_.offer;
+  }
+ private:
+  Result Offer(const SourceOffer &offer,bool latest) {
     std::lock_guard lock(mutex_);
     const auto report=[&](Result result) {
       Record(offer,result,false);
@@ -85,6 +127,9 @@ class M1Ingress {
       for (const auto &slot : *group)
         if (slot.offer.seq==offer.seq)
           return report(slot.offer==offer ? slot.result : Result{Code::Conflict});
+    for (const auto *slot:{&waiting_,&claimed_})
+      if (slot->offer.seq==offer.seq)
+        return report(slot->offer==offer ? slot->result : Result{Code::Conflict});
     if (!(offer.scope==scope_) || !hold_ || offer.sample.hold!=hold_)
       return report({Code::Revoked});
     if (offer.seq<=last_) return report({Code::Expired});
@@ -95,6 +140,18 @@ class M1Ingress {
         !offer.frequency || !sample.sequence || !offer.sampleTicks ||
         offer.pulseTicks<=offer.sampleTicks || offer.pulseNs<=offer.sample.timeNs)
       return report({Code::Invalid});
+    if (latest) {
+      if (offer.action || !AdjacentSourcePulses(offer.previous,offer.current) ||
+          offer.current.uiNs!=offer.pulseNs || offer.current.callbackTicks!=offer.pulseTicks ||
+          offer.deltaNs!=offer.current.uiNs-offer.previous.uiNs ||
+          (watermark_.session==offer.current.session && offer.previous.seq<watermark_.seq))
+        return report({Code::Invalid});
+      if (waiting_.offer.seq) Archive(waiting_,{Code::Superseded},"NEWER_ADJACENT_INTERVAL");
+      last_=offer.seq;
+      watermark_=offer.current;
+      waiting_={offer,{Code::Pending}};
+      return report(waiting_.result);
+    }
     for (auto &slot : active_) if (!slot.offer.seq) {
       last_=offer.seq;
       slot={offer, {Code::Pending}};
@@ -103,6 +160,7 @@ class M1Ingress {
     return report({Code::Full});
   }
 
+ public:
   SourceOffer Take() {
     std::lock_guard lock(mutex_);
     Slot *first=nullptr;
@@ -114,25 +172,29 @@ class M1Ingress {
     return first->offer;
   }
 
-  void Finish(uint64_t seq, Result result) {
+  void Finish(uint64_t seq, Result result,const char *reason=nullptr) {
     std::lock_guard lock(mutex_);
+    if (claimed_.offer.seq==seq && seq) {
+      Archive(claimed_,result,reason);
+      return;
+    }
     for (auto &slot : active_) if (slot.offer.seq==seq && slot.result.code==Code::Consuming) {
-      Archive(slot, result);
+      Archive(slot, result, reason);
       break;
     }
   }
 
  private:
   struct Slot { SourceOffer offer; Result result; };
-  void Record(const SourceOffer &offer,Result result,bool terminal) {
+  void Record(const SourceOffer &offer,Result result,bool terminal,const char *reason=nullptr) {
     if (!traceEnabled_) return;
     ++traceSerial_;
     if (used_==trace_.size()) { ++dropped_; return; }
-    trace_[(read_+used_)%trace_.size()]={traceSerial_,offer,result,terminal};
+    trace_[(read_+used_)%trace_.size()]={traceSerial_,offer,result,terminal,reason};
     ++used_;
   }
-  void Archive(Slot &slot, Result result) {
-    Record(slot.offer,result,true);
+  void Archive(Slot &slot, Result result,const char *reason=nullptr) {
+    Record(slot.offer,result,true,reason);
     recent_[cursor_]={slot.offer, result};
     cursor_=(cursor_+1)%recent_.size();
     slot={};
@@ -142,6 +204,8 @@ class M1Ingress {
   uint64_t hold_=0, last_=0;
   std::size_t cursor_=0;
   std::array<Slot, 4> active_{}, recent_{};
+  Slot waiting_{},claimed_{};
+  M1Pulse watermark_{};
   bool traceEnabled_=false;
   uint64_t traceSerial_=0, dropped_=0;
   std::size_t read_=0, used_=0;

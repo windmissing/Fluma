@@ -63,6 +63,8 @@ struct Window {
   uint64_t captureRun=0, captureReserved=0, droppedTrace=0;
   size_t coldOffset=0;
   uint64_t sampleTicks=0, offerSeq=0;
+  grs::g13vk::M1Pulse sourceAnchor{};
+  uint64_t sourceAnchorHold=0;
   int result = 1;
 
   void Emit(const std::string &json) {
@@ -89,9 +91,9 @@ struct Window {
       std::cout.flush();
     }
   }
-  void ReceiveM1Pulse(uint64_t ticks,uint64_t ns,uint64_t hz) {
+  grs::g13vk::M1Pulse ReceiveM1Pulse(uint64_t ticks,uint64_t ns,uint64_t hz) {
     const auto receipt=grs::pc::QpcTicks();
-    m1Pulses.Receive(generation,{0,ticks,receipt,ns,grs::pc::QpcNs(receipt,hz)});
+    return m1Pulses.Receive(generation,{0,ticks,receipt,ns,grs::pc::QpcNs(receipt,hz)});
   }
   bool D1CaptureEnabled() const { return d1Mode==L"ON" || d1Mode==L"REPLAY_ON"; }
   void DrainSourceTrace() {
@@ -105,6 +107,22 @@ struct Window {
         const auto &record=batch[i];
         const auto &o=record.offer;
         std::ostringstream row;
+        if (o.current.seq) {
+          row << "{\"stage\":\"M1_RESERVATION_" << (record.terminal ? "TERMINAL" : "RETURN")
+              << "\",\"serial\":\"" << record.serial << "\",\"run\":\"" << o.scope.run
+              << "\",\"geometry\":\"" << o.scope.geometry << "\",\"offer\":\"" << o.seq
+              << "\",\"hold\":\"" << o.sample.hold << "\",\"material\":" << o.sample.material
+              << ",\"session\":\"" << o.current.session << "\",\"previousSeq\":\"" << o.previous.seq
+              << "\",\"currentSeq\":\"" << o.current.seq << "\",\"deltaNs\":\"" << o.deltaNs
+              << "\",\"previousCallbackQpc\":\"" << o.previous.callbackTicks
+              << "\",\"currentCallbackQpc\":\"" << o.current.callbackTicks
+              << "\",\"previousReceiptQpc\":\"" << o.previous.receiptTicks
+              << "\",\"currentReceiptQpc\":\"" << o.current.receiptTicks
+              << "\",\"result\":" << int(record.result.code) << ",\"root\":\"" << record.result.root << "\"";
+          if (record.reason) row << ",\"reason\":\"" << record.reason << "\"";
+          Emit(row.str()+"}");
+          continue;
+        }
         row << "{\"stage\":\"M1_OFFER_" << (record.terminal ? "TERMINAL" : "RETURN")
             << "\",\"serial\":\"" << record.serial << "\",\"run\":\"" << o.scope.run
             << "\",\"geometry\":\"" << o.scope.geometry << "\",\"offer\":\"" << o.seq
@@ -298,13 +316,17 @@ struct Window {
     grs::g13vk::SourceOffer offer;
     {
       std::lock_guard lock(mutex);
-      if (!closing && !m1SourceModule.empty()) ReceiveM1Pulse(ticks,ns,hz);
+      const auto pulse=!closing && !m1SourceModule.empty() ? ReceiveM1Pulse(ticks,ns,hz) : grs::g13vk::M1Pulse{};
       if (closing || !pointerReady) return;
       offer.scope=scope;
-      if (held.hold)
-        offer={scope, ++offerSeq, ns, ticks, sampleTicks, grs::pc::QpcFrequency(), held, 1};
+      if (sourceAnchorHold!=held.hold) { sourceAnchorHold=held.hold; sourceAnchor={}; }
+      if (held.hold && pulse.seq) {
+        if (grs::g13vk::AdjacentSourcePulses(sourceAnchor,pulse) && pulse.uiNs>held.timeNs)
+          offer={scope,++offerSeq,ns,ticks,sampleTicks,hz,held,1,0,pulse.uiNs-sourceAnchor.uiNs,sourceAnchor,pulse};
+        sourceAnchor=pulse;
+      }
     }
-    if (offer.seq) ingress.OfferSource(offer);
+    if (offer.seq) ingress.OfferLatest(offer);
     auto captureScope=offer.scope;
     captureScope.permission=0;
     const auto request=captureScope.run;
