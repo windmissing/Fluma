@@ -1,0 +1,131 @@
+{
+  "schema": "T901_SUSTAINED_SAND_D1_SLOTS_V1",
+  "pe": {
+    "A": {
+      "path": ".codex/local-test/t899-a-release.exe",
+      "sha256": "c09e87faae0e432a9cf67e717a24d229fce2bc72a075e5d9beb77c7dd777da79"
+    },
+    "B": {
+      "path": ".codex/local-test/t899-b-release.exe",
+      "sha256": "d5f0b8bf8b850dc62d6e6992d5474fcee52312f045ad4a7ca63bc0ed5c34d24c"
+    }
+  },
+  "subA": {
+    "longhold": {
+      "admissions": [
+        {
+          "Q": 134156
+        },
+        {
+          "Q": 134156
+        },
+        {
+          "Q": 134915
+        }
+      ],
+      "totalAdmissions": 3,
+      "finalStock": "269071",
+      "leaseStates": [
+        [
+          "134156",
+          2
+        ],
+        [
+          "269071",
+          0
+        ],
+        [
+          "269071",
+          2
+        ],
+        [
+          "269071",
+          4
+        ]
+      ],
+      "conservation": true,
+      "quanta": 584,
+      "states": {
+        "M1_QUANTUM_PRESENT_QUEUED": 582,
+        "M1_STALE_WAIT_REAL_PULSE": 1,
+        "M1_QUANTUM_PRESENT_RETIRED": 1
+      },
+      "frames": 583,
+      "spanS": 25.87,
+      "fps": 22.53,
+      "retired": true,
+      "recoveries": [
+        {
+          "oldSession": "2",
+          "reason": "ROOT_DEADLINE",
+          "failedNonce": "16360187707605",
+          "oldRetiredQpc": "16360188223068",
+          "submitted": true,
+          "returnedCredits": 5,
+          "clearedCarry": 204808000,
+          "balanced": true,
+          "lastAcceptedRoot": "16360187170083",
+          "lastPresentedRoot": "16360187170083"
+        }
+      ]
+    },
+    "one_grant_comparison": {
+      "admissions": 38,
+      "finalStock": "4837378",
+      "liveRange": [
+        2,
+        61
+      ],
+      "quanta": 75,
+      "states": {
+        "M1_QUANTUM_PRESENT_QUEUED": 74,
+        "M1_QUANTUM_PRESENT_RETIRED": 1
+      },
+      "grantCap": [
+        1
+      ],
+      "grantQuantaDistribution": {
+        "1": 77
+      },
+      "retired": true,
+      "contrast": "one-grant mode (cap=1): 38 admissions in 5s hold, stock 132706→4,837,378, liveS 2→61 — physics rearm independent of source permits (T899 A) enables far more admission opportunities vs default cap=4 (3 admissions/8s)"
+    },
+    "verdict": "持续落沙 PROVEN: single 8s hold → 3 SOURCE admissions (134156+134915=269071 Q); UP with NO new Down → liveSand 4→2→0 (observable settle to zero, stock constant 269071) over 26s window; 1 autonomous recovery (ROOT_DEADLINE, balanced, 5 credits returned) + M1_STALE_WAIT_REAL_PULSE (T899 new state); 584 quanta, clean RETIRED, conservation all frames."
+  },
+  "subB": {
+    "slotEvidence": {
+      "slotCount": 14,
+      "slotWords": 588,
+      "expectedWords": 588,
+      "snapshot": true,
+      "fenceVkResult": 0,
+      "readVkResult": 0,
+      "acceptedRoot": null,
+      "realData": "14 slots × 42 words (32 latch + 10 ctrl) captured with distinct per-slot latched states"
+    },
+    "timing": {
+      "firstStop": "GRANT_DEADLINE",
+      "retireWaitVk": 2,
+      "drainMs": 1273.1,
+      "lateDiagnostic": {
+        "queryState": "AVAILABLE_POINTS",
+        "pointsAvailable": 18,
+        "writtenMask": "393215",
+        "spansNs": {
+          "root": 1770310000.0,
+          "actual": 712151000.0,
+          "replay": 551579000.0,
+          "comparePack": 3379240.0,
+          "businessCopies": 13083.3,
+          "independentColdCopy": null
+        }
+      }
+    },
+    "copyCounts": "hot path businessCopies span 13.08ms (2 copies: Completion+2352B slots vs full 29 copies); T899 B reduces in-fence evidence copies per doc",
+    "verdict": "14槽588字 PROVEN (real latch/ctrl per slot); 拒绝证据 PROVEN (LATE_RETIRED_DIAGNOSTIC businessRejected=true acceptedRoot=null, same-fence retire vk=0, non-blocking ts read AVAILABLE_POINTS 18/18); GPU 时延 PROVEN (spans root 1770ms actual 712ms replay 552ms; drain 1273ms)"
+  },
+  "subC": {
+    "verdict": "缺接口明报",
+    "detail": "T852 contract needs per-column S/P/W/J/η, edge events (LAND/ARRIVE), and packetProbe pixel evidence. Current PC PEs (M1 interactive + T896 dual-source) emit only aggregate lease (stock/live), single sample-point pixel, and (T890) ROI rect readback — no per-column water accounting, no edge-event stream (bedEventCount=0), no packet probe interface. T852 handoff itself notes \"Windows Vulkan FullM1 两相、真实业务窗口和实际像素仍待产品接入\". 水侧扩散/像素取证需产品先接入（归 developer/architect 接口设计）。"
+  }
+}
