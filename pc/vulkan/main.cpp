@@ -24,8 +24,11 @@ struct Window {
   std::string steadyRole;
   bool disableOptimization = false;
   std::wstring m1SourceModule;
+  std::wstring m1QuantumCandidate, m1QuantumCommit, m1ColdFile;
   bool m1Present = false;
   std::atomic<uint64_t> sourcePulse{0};
+  bool pointerReady = false;
+  grs::g13vk::PointerSample held;
   int result = 1;
 
   void Emit(const std::string &json) {
@@ -42,23 +45,41 @@ struct Window {
     if (IsIconic(hwnd)) width = height = 0;
     dpi = GetDpiForWindow(hwnd);
     ++generation;
+    pointerReady = false;
+    held = {};
     wake.notify_one();
   }
 
   void Input(const char *kind, int x, int y) {
     std::lock_guard lock(mutex);
     if (closing) return;
-    Emit("{\"stage\":\"WIN32_POINTER\",\"kind\":\"" + std::string(kind) +
+    const auto sequence = ++eventSeq;
+    const bool inside = x >= 0 && y >= 0 && x < width && y < height;
+    const std::string action(kind);
+    if (action == "DOWN") {
+      held = {};
+      if (pointerReady && inside) held.hold = sequence;
+    } else if (action != "MOVE" || !inside) {
+      held = {};
+    }
+    if (held.hold) {
+      held.sequence = sequence;
+      held.timeNs = grs::pc::TimeNs();
+      held.x = (double(x)+0.5)*128/width;
+      held.y = (1-(double(y)+0.5)/height)*256;
+    }
+    Emit("{\"stage\":\"WIN32_POINTER\",\"kind\":\"" + action +
          "\",\"geometry\":\"" + std::to_string(generation) +
-         "\",\"seq\":\"" + std::to_string(++eventSeq) +
+         "\",\"seq\":\"" + std::to_string(sequence) +
          "\",\"qpc\":\"" + std::to_string(grs::pc::QpcTicks()) +
          "\",\"x\":" + std::to_string(x) + ",\"y\":" + std::to_string(y) +
-         ",\"dpi\":" + std::to_string(dpi) + ",\"admitted\":false}");
+         ",\"dpi\":" + std::to_string(dpi) + ",\"hold\":\"" + std::to_string(held.hold) + "\"}");
   }
 
   void Close() {
     std::lock_guard lock(mutex);
     closing = true;
+    held = {};
     wake.notify_one();
   }
 
@@ -90,17 +111,42 @@ struct Window {
            ",\"modeHz\":" + (haveMode ? std::to_string(mode.dmDisplayFrequency) : "null") + "}");
       const auto terminal = grs::g13vk::RunBoot({previous, 1, previous, hwnd, !bootOnly || m1Present, current, steady,
                                                steadyRole, disableOptimization, m1SourceModule,
-                                               [&] { return sourcePulse.load(std::memory_order_relaxed); }},
+                                               [&] { return sourcePulse.load(std::memory_order_relaxed); },
+                                               m1QuantumCandidate, m1QuantumCommit, m1ColdFile,
+                                               [&] {
+                                                 std::lock_guard guard(mutex);
+                                                 pointerReady = !closing && generation == previous;
+                                               },
+                                               [&] {
+                                                 std::lock_guard guard(mutex);
+                                                 return !closing && generation == previous ? held :
+                                                     grs::g13vk::PointerSample{};
+                                               },
+                                               [&](uint64_t hold, const std::function<void()> &accept) {
+                                                 std::lock_guard guard(mutex);
+                                                 if (closing || generation != previous || (hold && held.hold != hold))
+                                                   return false;
+                                                 accept();
+                                                 return true;
+                                               }},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos ||
-                report.find("\"state\":\"M1_DRY_SOURCE_PRESENT_QUEUED\"") != std::string::npos) {
+                report.find("\"state\":\"M1_DRY_SOURCE_PRESENT_QUEUED\"") != std::string::npos ||
+                report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"") != std::string::npos) {
               result = 0;
               PostMessageW(hwnd, kFirstPresent, 0, 0);
             }
             return current();
           });
       Emit(terminal);
+      if (!m1QuantumCandidate.empty()) {
+        std::lock_guard guard(mutex);
+        if (generation == previous) {
+          pointerReady = false;
+          held = {};
+        }
+      }
       const char *qualified = m1Present ? "\"state\":\"M1_DRY_SOURCE_PRESENT_RETIRED\"" :
                               !m1SourceModule.empty() ? "\"state\":\"M1_DRY_SOURCE_ACCEPTED\"" :
                               !steadyRole.empty() ? "\"state\":\"STEADY_ROLE_QUALIFIED\"" :
@@ -139,7 +185,7 @@ LRESULT CALLBACK Dispatch(HWND hwnd, UINT message, WPARAM w, LPARAM l) {
   case WM_LBUTTONUP: window->Input("UP", GET_X_LPARAM(l), GET_Y_LPARAM(l)); ReleaseCapture(); return 0;
   case WM_CANCELMODE: window->Input("CANCEL", 0, 0); if (GetCapture() == hwnd) ReleaseCapture(); return 0;
   case WM_CAPTURECHANGED: window->Input("CAPTURE_LOST", 0, 0); return 0;
-  case WM_KILLFOCUS: if (GetCapture() == hwnd) ReleaseCapture(); return 0;
+  case WM_KILLFOCUS: window->Input("FOCUS_LOST", 0, 0); if (GetCapture() == hwnd) ReleaseCapture(); return 0;
   case WM_CLOSE: window->Close(); return 0;
   case kFirstPresent:
     if (window->once) SetTimer(hwnd, 1, 700, nullptr);
@@ -176,6 +222,15 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--disable-optimization")) {
       window.disableOptimization = true;
     }
+    else if (!std::wcscmp(argv[i], L"--m1-window") && i+3 < argc) {
+      window.m1SourceModule = argv[++i];
+      window.m1QuantumCandidate = argv[++i];
+      window.m1QuantumCommit = argv[++i];
+      window.m1Present = true;
+    }
+    else if (!std::wcscmp(argv[i], L"--m1-cold") && i+1 < argc) {
+      window.m1ColdFile = argv[++i];
+    }
     else if ((!std::wcscmp(argv[i], L"--probe-m1-source") ||
               !std::wcscmp(argv[i], L"--present-m1-source")) && i+1 < argc) {
       window.m1Present = !std::wcscmp(argv[i], L"--present-m1-source");
@@ -185,12 +240,15 @@ int wmain(int argc, wchar_t **argv) {
     else {
       std::cerr << "usage: hello_world_pc [--once] [--boot-only | --qualify-steady | "
                    "--qualify-steady-role NAME [--disable-optimization] | --probe-m1-source SPV | "
-                   "--present-m1-source SPV]\n";
+                   "--present-m1-source SPV | --m1-window SOURCE_SPV CANDIDATE_SPV COMMIT_SPV "
+                   "[--m1-cold FILE]]\n";
       return 2;
     }
   }
   if (window.disableOptimization && window.steadyRole.empty()) return 2;
   if (window.steady && !window.m1SourceModule.empty()) return 2;
+  if ((!window.m1ColdFile.empty() && window.m1QuantumCandidate.empty()) ||
+      (!window.m1QuantumCandidate.empty() && window.bootOnly)) return 2;
   SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
   HINSTANCE instance = GetModuleHandleW(nullptr);
   WNDCLASSW type{};
@@ -199,7 +257,8 @@ int wmain(int argc, wchar_t **argv) {
   type.lpszClassName = L"HelloWorldPcVulkanBoot";
   type.hCursor = LoadCursorW(nullptr, MAKEINTRESOURCEW(32512));
   if (!RegisterClassW(&type)) return 3;
-  HWND hwnd = CreateWindowExW(0, type.lpszClassName, L"HelloWorld Vulkan BOOT diagnostic",
+  HWND hwnd = CreateWindowExW(0, type.lpszClassName,
+      window.m1QuantumCandidate.empty() ? L"HelloWorld Vulkan BOOT diagnostic" : L"HelloWorld Vulkan M1",
       WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 800, 500, nullptr, nullptr, instance, &window);
   if (!hwnd) return 4;
   if (!window.m1SourceModule.empty() && !SetTimer(hwnd, kSourceProbeTimer, 10, nullptr)) return 5;

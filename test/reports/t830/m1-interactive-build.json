@@ -1,0 +1,27 @@
+{
+  "schema": "T830_M1_INTERACTIVE_BUILD_V1",
+  "build": "PASS",
+  "machine": "0x8664",
+  "exe": ".codex/local-test/t830-pc-20261123/hello_world_pc.exe",
+  "exeBytes": 2434048,
+  "exeSHA": "d09b88100b2632482c32a10481425bc41dacc59c219834f2915ebb9676fdb1d6",
+  "sourceBinaries": ".codex/local-test/t830-m1-20261123",
+  "modules": {
+    "full_source": {
+      "spvSHA": "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162",
+      "sourceBytes": 28694,
+      "blockBytes": 80
+    },
+    "quantum_candidate": {
+      "spvSHA": "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c",
+      "sourceBytes": 23810,
+      "blockBytes": 192
+    },
+    "quantum_commit": {
+      "spvSHA": "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce",
+      "sourceBytes": 34067,
+      "blockBytes": 192
+    }
+  },
+  "pcRuntime": "PENDING_INDEPENDENT_VERIFICATION"
+}

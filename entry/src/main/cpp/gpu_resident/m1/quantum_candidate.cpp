@@ -25,20 +25,7 @@ uint32_t QuantumCandidate::ExpectedDispatches()const{auto l=[](uint32_t n){uint3
 // color=0xFFFFFFFF: no uColor. sortK=0: plain Pass. bind3/out: see header.
 void QuantumCandidate::BuildPassTable(){
  passTable.clear();
- auto pass=[&](uint32_t stage,uint32_t n){passTable.push_back({stage,n,0xFFFFFFFFu,0,0,0,0});};
- auto colorPass=[&](uint32_t stage,uint32_t n,uint32_t color){passTable.push_back({stage,n,color,0,0,0,0});};
- auto sort=[&](uint32_t stage,uint32_t n){for(uint32_t k=2;k<=n;k*=2)for(uint32_t j=k/2;j;j/=2)passTable.push_back({stage,n,0xFFFFFFFFu,k,j,0,0});};
- pass(0,words);pass(1,1);
- for(uint32_t color=0;color<2;color++){colorPass(2,127,color);colorPass(3,1,color);colorPass(4,127,color);}
- pass(5,128);pass(6,pad);sort(7,pad);pass(8,Kw);sort(9,Kw);pass(10,1);pass(11,1);
- for(uint32_t color=0;color<3;color++){colorPass(12,127,color);colorPass(13,1,color);colorPass(14,127,color);}
- pass(15,1);pass(16,Kw);sort(17,Kw);pass(18,1);pass(19,1);pass(20,words);
- // SubmitQuantum tail: binding-3 and traceOutputBytes switches included.
- pass(21,1);pass(22,words);pass(23,1);pass(24,1);
- passTable.push_back({28,words,0xFFFFFFFFu,0,0,1,1});          // other bank, out=words
- passTable.push_back({25,1,0xFFFFFFFFu,0,0,2,2});             // publication, out=pub
- pass(26,1);
- passTable.push_back({27,1,0xFFFFFFFFu,0,0,3,3});             // results, out=1024
+ EachQuantumPass(words,pad,Kw,[&](QuantumPassOp op){passTable.push_back(op);});
 }
 // Executes the planned slice with the original side effects. bind3 channels
 // map to the buffers the transport staged at Enqueue time; the transport is

@@ -2,11 +2,12 @@
 #include "../control.h"
 #include "profile.h"
 namespace grs {namespace m1 {
-// A revision2 SOURCE-only owner. It cannot accept M0 or QUANTUM completions.
+// Revision 2 owner for SOURCE and the FullM1 QUANTUM transport.
 class SourceRootOwner {
 public:
  ControlCode Initialize(const Identity&,uint32_t K,uint32_t Kw);
  ControlCode Begin(const RootRequest&,const std::array<uint32_t,32>&);
+ ControlCode BeginQuantum(const RootRequest&,int requestedAngle);
  ControlCode Poll(FenceState,const uint32_t*,size_t,uint32_t,AcceptedRoot&);
  ControlCode Stop();void ContextLost();
  ControlCode Acquire(uint32_t,U64,PublicationLease&);ControlCode Release(uint32_t,U64,bool);
@@ -18,7 +19,6 @@ private:
  friend class FullM1Transport;
  friend class SourceCoreTransport;
  friend struct FullM1HostAccess;
- ControlCode BeginQuantum(const RootRequest&,int requestedAngle);
  bool ValidQuantum(const uint32_t*,size_t,uint32_t)const;int quantumAngle=0;
  bool fullWaterContract=false;
  bool Valid(const uint32_t*,size_t,uint32_t)const;

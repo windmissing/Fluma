@@ -29,11 +29,14 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
     "${ROOT}/tools/g13/vulkan_boot_assets.py" "${CMAKE_CURRENT_SOURCE_DIR}/build_view.py"
     "${CMAKE_CURRENT_SOURCE_DIR}/build_roles.py"
     "${CMAKE_CURRENT_SOURCE_DIR}/boot_view.vert" "${CMAKE_CURRENT_SOURCE_DIR}/boot_view.frag"
-    "${CMAKE_CURRENT_SOURCE_DIR}/m1_source_view.frag")
+    "${CMAKE_CURRENT_SOURCE_DIR}/m1_source_view.frag" "${CMAKE_CURRENT_SOURCE_DIR}/m1_dry_scene.frag")
 add_executable(hello_world_pc main.cpp wsi.cpp "${GPU}/g13vulkan_boot/boot.cpp")
 set_property(SOURCE "${GPU}/g13vulkan_boot/boot.cpp" APPEND PROPERTY OBJECT_DEPENDS
-    "${GPU}/g13vulkan_boot/m1_source.inc")
+    "${GPU}/g13vulkan_boot/m1_source.inc" "${GPU}/g13vulkan_boot/m1_quantum.inc"
+    "${GPU}/m1/quantum_passes.h")
 target_sources(hello_world_pc PRIVATE "${GPU}/m1/source_owner.cpp" "${GPU}/integer.cpp")
+set_property(SOURCE "${GPU}/m1/source_owner.cpp" APPEND PROPERTY OBJECT_DEPENDS
+    "${GPU}/m1/source_owner.h" "${GPU}/m1/quantum_owner.inc")
 target_compile_features(hello_world_pc PRIVATE cxx_std_17)
 target_compile_definitions(hello_world_pc PRIVATE VK_NO_PROTOTYPES NOMINMAX WIN32_LEAN_AND_MEAN)
 target_compile_options(hello_world_pc PRIVATE /EHsc /fp:strict /utf-8)

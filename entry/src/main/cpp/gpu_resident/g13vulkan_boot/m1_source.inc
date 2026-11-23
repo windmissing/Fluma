@@ -1,4 +1,6 @@
-// Explicit dry SOURCE diagnostic on the same PC device.
+constexpr char kM1CandidateSHA[] = "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c";
+constexpr char kM1CommitSHA[] = "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce";
+
 std::string Boot::ProbeM1Source(const Candidate &candidate) {
   constexpr uint32_t K = 192, Kw = 128, kColumn = 16*(K+Kw);
   constexpr uint32_t headerAt = kColumn+16*128, stateWords = headerAt+256;
@@ -9,6 +11,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   constexpr auto upload = VK_BUFFER_USAGE_TRANSFER_DST_BIT;
   constexpr auto block = 20*sizeof(uint32_t);
   constexpr char sourceSHA[] = "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162";
+  const bool interactive = !attempt.m1QuantumCandidate.empty();
   auto narrow = [](uint64_t value) { return grs::U64{uint32_t(value), uint32_t(value >> 32)}; };
   auto digestWords = [](const char *hex, auto &words) {
     for (size_t i = 0; i < 32; ++i) {
@@ -29,7 +32,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   Require(bool(input.read(reinterpret_cast<char *>(module.data()), size)) &&
           Hex(Hash(module.data(), size_t(size)).data()) == sourceSHA, "M1_MODULE_SHA");
   fields << ",\"m1SourceModuleSHA\":" << Quote(sourceSHA)
-         << ",\"inputKind\":\"PC_DIAGNOSTIC_DRY_SOURCE\"";
+         << ",\"inputKind\":" << Quote(interactive ? "WIN32_POINTER_HOLD" : "PC_DIAGNOSTIC_DRY_SOURCE");
   vk.DestroyPipeline(device, pipeline, nullptr);
   vk.DestroyShaderModule(device, shader, nullptr);
   pipeline = VK_NULL_HANDLE;
@@ -48,15 +51,25 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   fields << ",\"m1PipelineVkResult\":" << int(built);
   Checkpoint("M1_SOURCE_PIPELINE_EXIT");
   Check(built, "vkCreateComputePipelines.M1_SOURCE");
+  if (interactive) {
+    fields << ",\"m1QuantumCandidateSHA\":" << Quote(kM1CandidateSHA)
+           << ",\"m1QuantumCommitSHA\":" << Quote(kM1CommitSHA);
+    Checkpoint("M1_QUANTUM_CANDIDATE_PIPELINE");
+    m1QuantumPipelines[0] = M1Pipeline(attempt.m1QuantumCandidate, kM1CandidateSHA);
+    Checkpoint("M1_QUANTUM_COMMIT_PIPELINE");
+    m1QuantumPipelines[1] = M1Pipeline(attempt.m1QuantumCommit, kM1CommitSHA);
+  }
 
   Checkpoint("M1_SOURCE_BUFFERS");
-  Allocate(kM1Base, stateWords*4, storage | upload);
-  Allocate(kM1Candidate, stateWords*4, storage);
-  Allocate(kM1Work, workWords*4, storage | upload);
-  Allocate(kM1Events, (K+1)*64*4, storage);
+  const auto copyOut = interactive ? VK_BUFFER_USAGE_TRANSFER_SRC_BIT : 0;
+  Allocate(kM1Base, stateWords*4, storage | upload | copyOut);
+  Allocate(kM1Candidate, stateWords*4, storage | copyOut);
+  Allocate(kM1Work, workWords*4, storage | upload | copyOut);
+  Allocate(kM1Events, (K+1)*64*4, storage | copyOut);
   Allocate(kM1Pub, pubWords*4, storage);
   Allocate(kM1Tail, 1024, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
   Allocate(kM1Uniform, stride*passes, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | upload);
+  if (interactive) PrepareM1Quantum(candidate);
 
   vk.DestroyDescriptorPool(device, descriptorPool, nullptr);
   descriptorPool = VK_NULL_HANDLE;
@@ -104,7 +117,12 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   identity.context = identity.config = narrow(attempt.ticket);
   identity.surface = narrow(attempt.surface);
   identity.geometry = narrow(attempt.geometry);
-  digestWords(sourceSHA, identity.shaderSha);
+  if (interactive) {
+    const std::string set = std::string(sourceSHA) + kM1CandidateSHA + kM1CommitSHA;
+    digestWords(Hex(Hash(set.data(), set.size()).data()).c_str(), identity.shaderSha);
+  } else {
+    digestWords(sourceSHA, identity.shaderSha);
+  }
   digestWords(kAngleSha256, identity.angleSha);
   digestWords(m1::manifestSha, identity.layoutSha);
   m1::SourceRootOwner root;
@@ -113,7 +131,38 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   m1::ProgressClockV2 clock;
   Require(clock.BeginSession(), "M1_SOURCE_SESSION");
   clock.ready = true;
-  const uint64_t pulse = attempt.sourcePulse();
+  PointerSample inputSample{};
+  uint64_t pulse = attempt.sourcePulse();
+  uint64_t delta = 0;
+  if (interactive) {
+    Checkpoint("M1_POINTER_READY");
+    attempt.pointerReady();
+    uint64_t anchor = 0, hold = 0, expired = 0;
+    while (attempt.current()) {
+      const auto next = attempt.pointer();
+      const auto ns = attempt.sourcePulse();
+      if (next.hold != hold) {
+        hold = next.hold;
+        anchor = 0;
+      }
+      if (hold && hold != expired && ns > next.timeNs) {
+        if (anchor && ns != anchor) {
+          if (ns > anchor && ns-anchor <= m1::ProgressClockV2::GapNs) {
+            inputSample = next;
+            pulse = ns;
+            delta = ns-anchor;
+            break;
+          }
+          expired = hold;
+        }
+        anchor = ns;
+      }
+      Sleep(1);
+    }
+    Require(inputSample.hold != 0, "ATTEMPT_REVOKED");
+    fields << ",\"m1Hold\":\"" << inputSample.hold << "\",\"m1PointerSeq\":\"" << inputSample.sequence
+           << "\",\"m1PointerNs\":\"" << inputSample.timeNs << "\",\"m1SourceDeltaNs\":\"" << delta << "\"";
+  }
   const uint64_t received = pc::TimeNs();
   Require(pulse != 0 && received >= pulse && received-pulse <= m1::ProgressClockV2::GapNs,
           "M1_SOURCE_UI_PULSE_ABSENT");
@@ -146,8 +195,17 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   cmd[12] = identity.geometry.lo; cmd[13] = identity.geometry.hi;
   cmd[24] = uint32_t(pulse); cmd[25] = uint32_t(pulse >> 32);
   cmd[27] = 1;
+  if (interactive) {
+    // Original producer: UI ns, sample sequence, diagnostic-position flags.
+    cmd[22] = uint32_t(pulse);
+    cmd[23] = uint32_t(pulse >> 32);
+    cmd[24] = 1;
+    cmd[25] = 0;
+    cmd[26] = 1;
+  }
   cmd[28] = identity.config.lo; cmd[29] = identity.config.hi;
-  const double source[] = {64.5, 0.0, 0.125};
+  const double source[] = {interactive ? inputSample.x : 64.5, interactive ? inputSample.y : 0.0,
+                           interactive ? 8.0*double(delta)/1000000000.0 : 0.125};
   std::memcpy(cmd.data()+16, source, sizeof(source));
   Require(root.Begin(request, cmd) == ControlCode::OK, "M1_SOURCE_OWNER_BEGIN");
   const auto deadline = permit.grantedNs+m1::ProgressClockV2::JobNs;
@@ -178,7 +236,10 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   Barrier(kTransfer, VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_HOST_BIT, VK_ACCESS_HOST_READ_BIT);
   Check(vk.EndCommandBuffer(command), "vkEndCommandBuffer.M1_SOURCE");
   Checkpoint("M1_SOURCE_SUBMIT");
-  Require(refresh() && pc::TimeNs() < deadline, "M1_SOURCE_EXPIRED_BEFORE_SUBMIT");
+  const auto sourceCurrent = [&] {
+    return refresh() && (!interactive || attempt.pointer().hold == inputSample.hold);
+  };
+  Require(sourceCurrent() && pc::TimeNs() < deadline, "M1_SOURCE_EXPIRED_BEFORE_SUBMIT");
   VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
   submit.commandBufferCount = 1;
   submit.pCommandBuffers = &command;
@@ -188,13 +249,13 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
          << "\",\"m1DeadlineNs\":\"" << deadline << "\",\"m1PulseNs\":\"" << pulse << "\"";
   VkResult waited = VK_NOT_READY;
   uint64_t fenceNs = pc::TimeNs();
-  while (fenceNs < deadline && refresh()) {
+  while (fenceNs < deadline && sourceCurrent()) {
     waited = vk.WaitForFences(device, 1, &fence, VK_TRUE, std::min<uint64_t>(deadline-fenceNs, 2000000));
     fenceNs = pc::TimeNs();
     if (waited != VK_TIMEOUT) break;
   }
   if (waited == VK_SUCCESS || waited == VK_ERROR_DEVICE_LOST) inFlight = false;
-  const bool fresh = refresh();
+  const bool fresh = sourceCurrent();
   fields << ",\"m1FenceVkResult\":" << int(waited) << ",\"m1FenceNs\":\"" << fenceNs
          << "\",\"m1PulseCount\":" << clock.pulses << ",\"m1PulseFault\":"
          << (clock.open ? "null" : Quote(clock.fault));
@@ -216,12 +277,19 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   if (invalidation == VK_SUCCESS) std::memcpy(tail.data(), mapped, sizeof(tail));
   vk.UnmapMemory(device, staging.memory);
   Check(invalidation, "vkInvalidateMappedMemoryRanges.M1_SOURCE");
-  Require(pc::TimeNs() <= deadline && refresh(), "M1_SOURCE_REVOKED_AT_ACCEPT");
+  Require(pc::TimeNs() <= deadline && sourceCurrent(), "M1_SOURCE_REVOKED_AT_ACCEPT");
   AcceptedRoot accepted;
-  const auto result = root.Poll(FenceState::Signaled, tail.data(), tail.size(), 0, accepted);
+  auto result = ControlCode::STALE;
+  const auto accept = [&] {
+    if (pc::TimeNs() <= deadline)
+      result = root.Poll(FenceState::Signaled, tail.data(), tail.size(), 0, accepted);
+  };
+  if (!attempt.acceptPointer(inputSample.hold, accept)) root.Stop();
   fields << ",\"m1Completion\":" << Words(tail) << ",\"m1OwnerCode\":" << int(result);
   Require(result == ControlCode::OK && accepted.sourceSuccess && tail[61] != 0, "M1_SOURCE_NOT_ADMITTED");
   fields << ",\"m1AdmittedQ\":" << tail[61] << ",\"m1PublicationGeneration\":" << accepted.publicationGeneration.lo;
+  if (interactive && !RunM1Quantum(candidate, root, clock, permit, refresh, accepted, cmd))
+    return Receipt("FAILED", "M1_QUANTUM_NOT_ACCEPTED");
   if (!attempt.presentBoot) return Receipt("M1_DRY_SOURCE_ACCEPTED", "");
 
   Checkpoint("M1_SOURCE_WSI");
@@ -229,11 +297,14 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   Require(root.Acquire(accepted.publication, accepted.publicationGeneration, lease) == ControlCode::OK,
           "M1_SOURCE_PUBLICATION_ACQUIRE");
   const auto frame = pc::PresentBoot(vk, instance, candidate.physical, device, queue, candidate.family,
-      surface, buffers[kM1Pub].handle, staging.handle, staging.memory, staging.flags, attempt.window,
+      surface, buffers[interactive ? kM1QPub : kM1Pub].handle, staging.handle, staging.memory, staging.flags, attempt.window,
       attempt.current, [&](const pc::Frame &visible) {
-        fields << ",\"windowFrame\":{\"kind\":\"M1_DRY_SOURCE_DIAGNOSTIC\",\"acceptedRoot\":\""
-               << ((uint64_t(lease.nonce.hi)<<32) | lease.nonce.lo) << "\",\"publicationSlot\":" << accepted.publication
-               << ",\"generation\":\"" << ((uint64_t(lease.generation.hi)<<32) | lease.generation.lo)
+        const auto wide = [](grs::U64 value) { return (uint64_t(value.hi)<<32) | value.lo; };
+        fields << ",\"windowFrame\":{\"kind\":" << Quote(interactive ? "M1_QUANTUM_WINDOW" : "M1_DRY_SOURCE_DIAGNOSTIC")
+               << ",\"acceptedRoot\":\"" << wide(lease.nonce) << "\",\"publicationSlot\":" << accepted.publication
+               << ",\"run\":\"" << wide(lease.identity.run) << "\",\"config\":\"" << wide(lease.identity.config)
+               << "\",\"sourceCommit\":\"" << wide(lease.source) << "\",\"physicsCommit\":\"" << wide(lease.physics)
+               << "\",\"generation\":\"" << wide(lease.generation)
                << "\",\"imageIndex\":" << visible.imageIndex << ",\"width\":" << visible.width
                << ",\"height\":" << visible.height << ",\"format\":" << visible.format
                << ",\"acquire\":" << int(visible.acquire) << ",\"submit\":" << int(visible.submit)
@@ -241,12 +312,16 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
                << ",\"imagePresent\":" << int(visible.imagePresent) << ",\"pixel\":" << visible.pixel
                << ",\"presentEnterQpc\":\"" << visible.presentEnter << "\",\"presentExitQpc\":\""
                << visible.presentExit << "\"}";
-        publish(Receipt("M1_DRY_SOURCE_PRESENT_QUEUED", ""));
-      }, buffers[kM1Pub].bytes);
-  Require(root.Release(accepted.publication, accepted.publicationGeneration, true) == ControlCode::OK,
-          "M1_SOURCE_PUBLICATION_RELEASE");
-  fields << ",\"m1PublicationReleased\":true,\"m1WsiResult\":" << int(frame.error)
-         << ",\"m1WsiStage\":" << Quote(frame.stage);
-  return frame.error == VK_SUCCESS ? Receipt("M1_DRY_SOURCE_PRESENT_RETIRED", "") :
+        publish(Receipt(interactive ? "M1_QUANTUM_PRESENT_QUEUED" : "M1_DRY_SOURCE_PRESENT_QUEUED", ""));
+      }, buffers[kM1Pub].bytes, !interactive);
+  const bool usable = frame.retire != VK_ERROR_DEVICE_LOST && frame.error != VK_ERROR_DEVICE_LOST;
+  if (usable)
+    Require(root.Release(accepted.publication, accepted.publicationGeneration, true) == ControlCode::OK,
+            "M1_SOURCE_PUBLICATION_RELEASE");
+  else
+    root.ContextLost();
+  fields << ",\"m1PublicationReleased\":" << (usable ? "true" : "false") << ",\"m1WsiResult\":" << int(frame.error)
+         << ",\"m1WsiRetireVkResult\":" << int(frame.retire) << ",\"m1WsiStage\":" << Quote(frame.stage);
+  return frame.error == VK_SUCCESS ? Receipt(interactive ? "M1_QUANTUM_PRESENT_RETIRED" : "M1_DRY_SOURCE_PRESENT_RETIRED", "") :
                                     Receipt("WSI_FAILED", frame.stage);
 }

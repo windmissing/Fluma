@@ -2,19 +2,9 @@
 #include "../submit_observer.h"
 #include "../uniform_locations.h"
 #include "source_transport.h"
+#include "quantum_passes.h"
 #include <vector>
 namespace grs {namespace m1 {
-// Candidate values remain PENDING_CALIBRATION (T237); not a validated speed law.
-struct QuantumParameters {uint32_t gravity=512u*1048576u,settle=8u*1048576u,kAir=0,kFlight=0,kWet=24,kappa=24,soft=557537,flux=24u*1048576u;int32_t requestedAngle=0;};
-// T324 §2.1: one planned dispatch of the fixed pass sequence. A batch is a
-// contiguous slice of this table; the table order is the original
-// Enqueue+SubmitQuantum dispatch order bit-for-bit (INV-3: no reorder, no
-// skip). Extra channels reproduce the side effects that used to sit between
-// passes in the monolithic submit: uColor (color!=0xFFFFFFFF), sort k/j
-// (sortK!=0), binding-3 switch (bind3: 0=events,1=other bank,2=publication,
-// 3=results), traceOutputBytes channel selector (out: 0=events,1=words,2=pub,
-// 3=results1024), and the uploadedBytes+uUploaded set at op 33.
-struct QuantumPassOp {uint32_t stage;uint32_t n;uint32_t color;uint32_t sortK;uint32_t sortJ;uint32_t bind3;uint32_t out;};
 // Native-only staging certificate. Never supplied by page/command data.
 struct LedgerPrefixStage {
  Identity identity{}; U64 source{},physics{},nonce{};

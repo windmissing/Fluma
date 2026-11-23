@@ -11,6 +11,12 @@ struct NativeWindow;
 #endif
 
 namespace grs::g13vk {
+#ifdef _WIN32
+struct PointerSample {
+  uint64_t hold=0, sequence=0, timeNs=0;
+  double x=0, y=0;
+};
+#endif
 struct Attempt {
   uint64_t ticket;
   uint64_t surface;
@@ -24,6 +30,10 @@ struct Attempt {
   bool disableOptimization = false;
   std::wstring m1SourceModule;
   std::function<uint64_t()> sourcePulse;
+  std::wstring m1QuantumCandidate, m1QuantumCommit, m1ColdFile;
+  std::function<void()> pointerReady;
+  std::function<PointerSample()> pointer;
+  std::function<bool(uint64_t, const std::function<void()> &)> acceptPointer;
 #else
   NativeWindow *window;
 #endif

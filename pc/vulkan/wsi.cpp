@@ -76,8 +76,9 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
                   VkDeviceMemory stagingMemory, VkMemoryPropertyFlags memoryFlags,
                   HWND window, const std::function<bool()> &current,
                   const std::function<void(const Frame &)> &published,
-                  VkDeviceSize m1PublicationBytes) {
+                  VkDeviceSize m1PublicationBytes, bool requireDiagnosticPixel) {
   Frame frame;
+  const bool dryScene=m1PublicationBytes && !requireDiagnosticPixel;
   Presentation wsi{vk, device};
   try {
     wsi.Load(instance);
@@ -182,6 +183,11 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     VkPipelineLayoutCreateInfo layout{VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO};
     layout.setLayoutCount = 1;
     layout.pSetLayouts = &wsi.descriptors;
+    const VkPushConstantRange extentPush{VK_SHADER_STAGE_FRAGMENT_BIT,0,12};
+    if (dryScene) {
+      layout.pushConstantRangeCount = 1;
+      layout.pPushConstantRanges = &extentPush;
+    }
     Check(vk.CreatePipelineLayout(device, &layout, nullptr, &wsi.layout), "vkCreatePipelineLayout.GRAPHICS");
 
     auto shader = [&](const auto &words, VkShaderModule &module) {
@@ -191,7 +197,9 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       Check(vk.CreateShaderModule(device, &info, nullptr, &module), "vkCreateShaderModule.GRAPHICS");
     };
     shader(kBootViewVertex, wsi.vertex);
-    if (m1PublicationBytes)
+    if (dryScene)
+      shader(kM1DrySceneFragment, wsi.fragment);
+    else if (m1PublicationBytes)
       shader(kM1SourceViewFragment, wsi.fragment);
     else
       shader(kBootViewFragment, wsi.fragment);
@@ -280,6 +288,13 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     wsi.CmdBeginRenderPass(command, &draw, VK_SUBPASS_CONTENTS_INLINE);
     vk.CmdBindPipeline(command, VK_PIPELINE_BIND_POINT_GRAPHICS, wsi.pipeline);
     vk.CmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, wsi.layout, 0, 1, &set, 0, nullptr);
+    if (dryScene) {
+      const bool unorm=found->format==VK_FORMAT_B8G8R8A8_UNORM || found->format==VK_FORMAT_R8G8B8A8_UNORM;
+      struct FramePush { float width,height; uint32_t encode; };
+      const FramePush values{float(extent.width),float(extent.height),uint32_t(unorm)};
+      static_assert(sizeof(values)==12);
+      vk.CmdPushConstants(command,wsi.layout,VK_SHADER_STAGE_FRAGMENT_BIT,0,sizeof(values),&values);
+    }
     wsi.CmdDraw(command, 3, 1, 0, 0);
     wsi.CmdEndRenderPass(command);
 
@@ -332,7 +347,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     vk.UnmapMemory(device, stagingMemory);
     Check(invalidation, "vkInvalidateMappedMemoryRanges.PIXEL");
     frame.pixelRead = true;
-    if (frame.pixel != 0xff00ff00u)
+    if (requireDiagnosticPixel && frame.pixel != 0xff00ff00u)
       throw Stop{m1PublicationBytes ? "M1_SOURCE_PIXEL_MISMATCH" : "BOOT_FRAGMENT_PIXEL_MISMATCH", VK_ERROR_UNKNOWN};
     if (!current()) {
       frame.stale = true;
@@ -348,12 +363,16 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     frame.presentEnter = QpcTicks();
     frame.present = wsi.QueuePresentKHR(queue, &present);
     frame.presentExit = QpcTicks();
+    wsi.inFlight = frame.present == VK_SUCCESS || frame.present == VK_SUBOPTIMAL_KHR;
     if (frame.present != VK_SUBOPTIMAL_KHR) Check(frame.present, "vkQueuePresentKHR");
     if (frame.imagePresent != VK_SUBOPTIMAL_KHR) Check(frame.imagePresent, "PRESENT_IMAGE_RESULT");
     frame.stage = "DIAGNOSTIC_PRESENT_QUEUED";
     published(frame);
     // Keep the one-shot swapchain alive until the UI revokes this generation.
     while (current()) Sleep(16);
+    frame.retire = vk.DeviceWaitIdle(device);
+    if (frame.retire == VK_SUCCESS || frame.retire == VK_ERROR_DEVICE_LOST) wsi.inFlight = false;
+    Check(frame.retire, "vkDeviceWaitIdle.PRESENT_RETIRE");
   } catch (const Stop &failure) {
     frame.stage = failure.stage;
     frame.error = failure.code;

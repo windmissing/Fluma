@@ -7,6 +7,7 @@
 #include "root_plan.h"
 #include "../angles_generated.h"
 #include "../m1/progress_clock_v2.h"
+#include "../m1/quantum_passes.h"
 #include "../m1/source_owner.h"
 #include <filesystem>
 #else
@@ -32,7 +33,8 @@ constexpr size_t kLayoutBytes = 80 * 16, kPushBytes = 6 * 4;
 constexpr size_t kWork = 5, kControl = 6, kLayout = 7, kStaging = 8;
 #ifdef _WIN32
 constexpr size_t kM1Base = 9, kM1Candidate = 10, kM1Work = 11, kM1Events = 12, kM1Pub = 13,
-                 kM1Tail = 14, kM1Uniform = 15, kBufferCount = 16;
+                 kM1Tail = 14, kM1Uniform = 15, kM1QScratch = 16, kM1QWork = 17, kM1QEvents = 18,
+                 kM1QUniform = 19, kM1QPub = 20, kM1ColdStaging = 21, kBufferCount = 22;
 #else
 constexpr size_t kBufferCount = 9;
 #endif
@@ -136,6 +138,11 @@ public:
       vk.DestroyPipeline(device, pipeline, nullptr);
     if (shader)
       vk.DestroyShaderModule(device, shader, nullptr);
+#ifdef _WIN32
+    for (auto p : m1QuantumPipelines)
+      if (p) vk.DestroyPipeline(device, p, nullptr);
+    if (m1QuantumDescriptorPool) vk.DestroyDescriptorPool(device, m1QuantumDescriptorPool, nullptr);
+#endif
     if (pipelineLayout)
       vk.DestroyPipelineLayout(device, pipelineLayout, nullptr);
     if (descriptorPool)
@@ -177,6 +184,10 @@ private:
   VulkanApi vk{};
 #ifdef _WIN32
   HMODULE loader = nullptr;
+  std::array<VkPipeline,2> m1QuantumPipelines{};
+  VkDescriptorPool m1QuantumDescriptorPool = VK_NULL_HANDLE;
+  std::vector<VkDescriptorSet> m1QuantumSets;
+  std::vector<m1::QuantumPassOp> m1QuantumPasses;
 #else
   void *loader = nullptr;
 #endif
@@ -235,6 +246,13 @@ private:
 #ifdef _WIN32
   void QualifySteady();
   std::string ProbeM1Source(const Candidate &);
+  VkPipeline M1Pipeline(const std::wstring &, const char *);
+  void PrepareM1Quantum(const Candidate &);
+  bool RunM1Quantum(const Candidate &, grs::m1::SourceRootOwner &, grs::m1::ProgressClockV2 &,
+                   grs::m1::PlanGrantV2, const std::function<bool()> &, grs::AcceptedRoot &,
+                   const std::array<uint32_t,32> &);
+  void CaptureM1Quantum(grs::m1::SourceRootOwner &, const grs::AcceptedRoot &, const grs::Words256 &,
+                        uint32_t, const std::array<uint32_t,32> &);
 #endif
 };
 
@@ -740,6 +758,7 @@ std::string Boot::Read(const std::array<uint32_t, 18688> &control) {
 
 #ifdef _WIN32
 #include "m1_source.inc"
+#include "m1_quantum.inc"
 
 void Boot::QualifySteady() {
   const auto reset = reinterpret_cast<PFN_vkResetCommandPool>(

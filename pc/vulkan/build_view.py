@@ -15,7 +15,7 @@ root = Path(__file__).resolve().parent
 lines = ["#pragma once", "#include <cstdint>", "namespace grs::pc {"]
 receipt = {}
 for file, name in (("boot_view.vert", "kBootViewVertex"), ("boot_view.frag", "kBootViewFragment"),
-                   ("m1_source_view.frag", "kM1SourceViewFragment")):
+                   ("m1_source_view.frag", "kM1SourceViewFragment"), ("m1_dry_scene.frag", "kM1DrySceneFragment")):
     source = root / file
     spv = args.out / (file+".spv")
     subprocess.run([str(args.compiler), "-V", "--target-env", "vulkan1.1", "--spirv-val",
