@@ -1,0 +1,82 @@
+{
+  "schema": "T848_T863_STRICT_RECHECK_V1",
+  "archiveSHA256": "bcc416608996be5c8b7fb92642a28d6776ac32a9104c31ef7291bc6de628aff2",
+  "jsonlSHA256": "5290e30273af7f040b7d297480108f5de3c8e2e54620c830e47cc533be68b4f8",
+  "rows": 36,
+  "strictJoin": {
+    "root": {
+      "acceptedRoot": 15700005297258,
+      "run": 15700003181043,
+      "config": 2,
+      "sourceCommit": 1,
+      "physicsCommit": 2,
+      "generation": 2,
+      "publicationSlot": 0
+    },
+    "scope": {
+      "pid": 6804,
+      "processStartTick": "134398837280197850",
+      "ticket": "2",
+      "ownerTid": 87884,
+      "surface": "1",
+      "geometry": "2",
+      "m1SourceModuleSHA": "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162"
+    },
+    "payloadSHA256": "a2ca440b3f9a30670ee2bd98b09ccb0f7f25f932374bbbf62539ee6a8426fbee",
+    "lineage": "NEXT_FRAME",
+    "sourceFrame": 1,
+    "quantumFrame": 2,
+    "sourcePermit": 1,
+    "quantumPermit": 2,
+    "sourceEventEnd": 2,
+    "quantumEventStart": 0,
+    "quantumEventEnd": 2,
+    "container": "FULL_SHA256",
+    "receiptBytes": 94408,
+    "decodedBytes": 94408,
+    "sections": {
+      "quantum_completion": {
+        "bytes": 1024,
+        "sha256": "de1b2e8717524ec859f88cc2796bb33c3409ffb46586c32e1fd0d09322843519"
+      },
+      "quantum_bank": {
+        "bytes": 29696,
+        "sha256": "c315db0771afcb55ab3be0472b6430cca79bbad9b7790ab32704d355bcfc4c45"
+      },
+      "quantum_events": {
+        "bytes": 512,
+        "sha256": "415af3d17876e430aa4234822be253da79498c0a151c95088c58449c5382f2a2"
+      },
+      "quantum_publication": {
+        "bytes": 31744,
+        "sha256": "ee1722f4b8fda3926eba46f9d27f4ef384743280eee1d13e6ac1f2101bdbf4c4"
+      },
+      "source_bank": {
+        "bytes": 29696,
+        "sha256": "c7ed6d209bc9a6d8a57d5769a779c5358e8273d27d4c0f8bf13d50bab5febc53"
+      },
+      "source_events": {
+        "bytes": 512,
+        "sha256": "bfa00cfaad5dcee979f56421525d14c339df686ae0235dba01aa4f1a764c2aa4"
+      },
+      "source_completion": {
+        "bytes": 1024,
+        "sha256": "35af73027cab86cf19cbe9de445b8d776ae57d1171cbd8cfcffc659ef7af049f"
+      },
+      "source_command": {
+        "bytes": 128,
+        "sha256": "153286b059625408720bc7def5c8daeb1d0589f20b9d64bc066f62826f7b8151"
+      }
+    }
+  },
+  "negativesOnCopies": [
+    "PAYLOAD_SHA",
+    "TRUNCATED_PAYLOAD",
+    "NONCE_OR_GPU_WORDS",
+    "OWNER_OR_FENCE",
+    "RETIRE_OR_SCOPE"
+  ],
+  "peSHA256Checked": "4898a30ed3206628b49a73819893533fa40c6b0ca2ebaabbaac0464e3b32d11a",
+  "sourceSPVSHA256Checked": "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162",
+  "t863SummarySourceFingerprintMatches": false
+}
