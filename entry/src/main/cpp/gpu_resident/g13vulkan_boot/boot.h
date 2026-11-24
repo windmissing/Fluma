@@ -81,6 +81,8 @@ struct Attempt {
   bool m1PrivateObserve=false;
   std::function<uint64_t(pc::CompactView &)> presentedCompact;
   std::function<void(const SourceOffer &,uint32_t,bool)> compactSourceResult;
+  bool g13SplitOp48=false;
+  bool m1ParallelInventory=false;
 #else
   NativeWindow *window;
 #endif

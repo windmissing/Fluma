@@ -61,6 +61,8 @@ struct Window {
   bool g13CompileTrace=false;
   bool m1Compact=false;
   bool m1Integrated=false,m1AuditBreakdown=false;
+  bool g13SplitOp48=false;
+  bool m1ParallelInventory=false;
   std::wstring m1PrivateReference,m1PrivateOutput;
   bool m1PrivateObserve=false;
   bool compactRequestAtLimit=false;
@@ -900,7 +902,7 @@ struct Window {
                                                [&](grs::pc::CompactView &view) {return SetCompactPresented(view);},
                                                [&](const grs::g13vk::SourceOffer &offer,uint32_t reason,bool admitted) {
                                                  CompactSourceResult(offer,reason,admitted);
-                                               }},
+                                               },g13SplitOp48,m1ParallelInventory},
           [&](const std::string &report) {
             Emit(report);
             const bool retiring=report.find("\"stage\":\"M1_RETIRE_PENDING\"")!=std::string::npos;
@@ -1120,9 +1122,11 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--g13-compile-trace")) window.g13CompileTrace=true;
     else if (!std::wcscmp(argv[i], L"--g13-tail-timing")) window.g13TailTiming=true;
     else if (!std::wcscmp(argv[i], L"--g13-seal-v1")) window.g13SealV1=true;
+    else if (!std::wcscmp(argv[i], L"--g13-split-op48")) window.g13SplitOp48=true;
     else if (!std::wcscmp(argv[i], L"--m1-stage-timing")) window.m1StageTiming=true;
     else if (!std::wcscmp(argv[i],L"--m1-inventory-v1")) window.m1InventoryV1=true;
     else if (!std::wcscmp(argv[i],L"--m1-integrated")) window.m1Integrated=true;
+    else if (!std::wcscmp(argv[i],L"--m1-parallel-inventory")) window.m1ParallelInventory=true;
     else if (!std::wcscmp(argv[i],L"--m1-audit-breakdown")) {
       window.m1Integrated=true;
       window.m1StageTiming=true;
@@ -1203,14 +1207,17 @@ int wmain(int argc, wchar_t **argv) {
       window.captureHot || !window.m1ColdFile.empty())) return 2;
   if (!window.t833RevokeAt.empty() && window.t833CandidateFile.empty()) return 2;
   if (!window.t833Case.empty() && window.t833CandidateFile.empty()) return 2;
+  if (window.g13SplitOp48 && window.t833CandidateFile.empty()) return 2;
   if (window.t833ForcedJ && window.t833Case!="F03") return 2;
   if (window.t833F05Rest && window.t833Case!="F05") return 2;
   if (!window.t877Mode.empty() && window.t833CandidateFile.empty()) return 2;
   if ((window.g13TailTiming || window.g13SealV1) && window.t877Mode.empty()) return 2;
   if ((window.m1StageTiming || window.m1InventoryV1) && window.m1QuantumCandidate.empty()) return 2;
   if (window.m1AngleWitness && (window.m1QuantumCandidate.empty() || window.m1InventoryV1)) return 2;
+  if (window.m1Integrated && !window.m1PrivateReference.empty()) window.m1Compact=true;
   if (window.m1Compact && (window.m1AngleWitness || (window.observation.packetId && !window.m1Integrated))) return 2;
   if (window.m1Integrated && (!window.m1Compact || window.m1InventoryV1 || !window.d1Mode.empty())) return 2;
+  if (window.m1ParallelInventory && (!window.m1Integrated || window.m1QuantumCandidate.empty())) return 2;
   if (!window.m1PrivateReference.empty() &&
       (window.m1QuantumCandidate.empty() || window.m1Preview || window.dualSource ||
        !window.m1ColdFile.empty() || !window.d1Mode.empty() || window.captureHot ||

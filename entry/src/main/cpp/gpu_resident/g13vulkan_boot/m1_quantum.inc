@@ -198,7 +198,7 @@ void Boot::PrepareM1Quantum(const Candidate &candidate) {
 bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
                         m1::ProgressClockV2 &clock, m1::PlanGrantV2 &permit,
                         const std::function<bool()> &refresh, grs::AcceptedRoot &accepted,
-                        uint64_t &frameSerial, uint32_t &ordinal) {
+                        uint64_t &frameSerial, uint32_t &ordinal, std::optional<uint32_t> frozenCarry) {
   using namespace m1pc;
   m1Retirement={};
   m1::QuantumParameters p;
@@ -252,7 +252,9 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   r.eventStart=sameFrame && frameSerial==previousFrame ? previous[53] : 0;
   r.eventCapacity=capacity;
   r.dispatchCount=r.barrierCount=count;
-  r.carry=uint32_t(permit.carry);
+  // The private comparison freezes the shader projection. Deadline and
+  // authorization always use the grant just obtained from the real clock.
+  r.carry=frozenCarry.value_or(uint32_t(permit.carry));
   // Match the original scalar-uniform accounting in the native Completion ABI.
   r.uploadedBytes=26*4+28+8*4+4;
   for (const auto &op : passes)

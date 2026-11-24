@@ -288,8 +288,10 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   constexpr uint32_t headerAt = kColumn+16*128, stateWords = headerAt+256;
   constexpr char privateReferenceSHA[]="922ddef7e9e26010f394068841df8f1d7551a1e501f685366eea17661ebd6951";
   const bool privateOff=!attempt.m1PrivateReference.empty();
+  const bool compactPrivate=privateOff && attempt.m1Integrated;
   std::array<uint32_t,32> referenceCommand{};
   uint64_t referenceDelta=0,referenceAdmitted=0;
+  std::optional<uint32_t> sourceCarry,quantumCarry;
   std::filesystem::path privateDir(attempt.m1PrivateOutput);
   if (privateOff) {
     std::ifstream reference(std::filesystem::path(attempt.m1PrivateReference),std::ios::binary);
@@ -302,6 +304,20 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     std::memcpy(&referenceAdmitted,bytes.data()+96,8);
     Require(referenceDelta==15026700 && referenceAdmitted==126053 && referenceCommand[2]==0 &&
         std::filesystem::create_directory(privateDir),"M1_PRIVATE_REFERENCE_LAYOUT");
+    if (compactPrivate) {
+      // The historical reference is at y=64, outside the compact box.
+      // Preserve its amount and x, and seal a common interior y for both arms.
+      const double y=pc::kCompactNozzleHeight;
+      std::memcpy(referenceCommand.data()+18,&y,sizeof(y));
+      grs::Words256 sourceTail{},quantumTail{};
+      std::memcpy(sourceTail.data(),bytes.data()+432,sizeof(sourceTail));
+      std::memcpy(quantumTail.data(),bytes.data()+1456,sizeof(quantumTail));
+      sourceCarry=sourceTail[108];
+      quantumCarry=quantumTail[108];
+      Require(sourceTail[109]==0 && quantumTail[109]==0 &&
+              *sourceCarry<m1::ProgressClockV2::Denominator &&
+              *quantumCarry<m1::ProgressClockV2::Denominator,"M1_COMPACT_PRIVATE_CARRY");
+    }
     std::ofstream copy(privateDir/"reference.bin",std::ios::binary);
     Require(bool(copy.write(reinterpret_cast<const char *>(bytes.data()),bytes.size())), "M1_PRIVATE_REFERENCE_WRITE");
   }
@@ -317,12 +333,16 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   constexpr auto block = 20*sizeof(uint32_t);
   const char *sourceSHA=attempt.m1Compact ? "e9c7c123747c77350545b9d11abcfbd9b0b2e85948cde854f2592b97957f292c" :
       "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162";
-  const char *commitSHA=attempt.m1AuditBreakdown ? "d46888f259eb18beeb4a8f3d4f5b2891a82d171e7e0b1098c1a4b50088f1445c" :
+  const char *commitSHA=attempt.m1ParallelInventory ?
+      (attempt.m1AuditBreakdown ? "b8cd9b2af625a0f20f47462d9f5c25276e077b709ba36489503a91341c6baa62" :
+                                 "f4f105b7b4714475f9a8314aebcded8b1bfd11aaf4ae788bcb9bdf0bb642d43b") :
+      attempt.m1AuditBreakdown ? "d46888f259eb18beeb4a8f3d4f5b2891a82d171e7e0b1098c1a4b50088f1445c" :
       attempt.m1Integrated ? "64ba25f41818b8c55fc117ce44fce52b5a55bdd0ebc5e3d458a9bb1380f43a01" :
       attempt.m1Compact ? "1383f353018da0f67bbd4faadc3906eb193fd3f5234cc2d060891ebede30ef0e" : kM1CommitSHA;
   const bool interactive = !attempt.m1QuantumCandidate.empty();
   const bool groupSort=attempt.m1Compact && (attempt.m1InventoryV1 || attempt.m1Integrated);
-  const char *candidateSHA=attempt.m1Integrated ? "bf024ac5c580be0549aee02369a58bdb7b500ea3165b2588922936331edb285f" :
+  const char *candidateSHA=attempt.m1ParallelInventory ? "90b33a3b21c6a597df715471fbf36d8e7a9914b6df814e8537e36fcda0bf5b6c" :
+      attempt.m1Integrated ? "bf024ac5c580be0549aee02369a58bdb7b500ea3165b2588922936331edb285f" :
       groupSort ? "1792a1a3d5dc26eb2cc575f733c5f005db9fa16397aae4b8314091fdabb9d579" :
       attempt.m1Compact ? "78139c8f3d53e2a175d9409cb88d646ce3d5ef2ebce04319ddc5d5ed259233a9" :
       attempt.m1InventoryV1 ? kM1InventoryV1SHA :
@@ -349,7 +369,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   Require(bool(input.read(reinterpret_cast<char *>(module.data()), size)) &&
           Hex(Hash(module.data(), size_t(size)).data()) == sourceSHA, "M1_MODULE_SHA");
   fields << ",\"m1SourceModuleSHA\":" << Quote(sourceSHA)
-         << ",\"inputKind\":" << Quote(privateOff ? "T927_PRIVATE_POST_FREEZE" :
+         << ",\"inputKind\":" << Quote(compactPrivate ? "T946_COMPACT_PRIVATE_FROZEN" :
+             privateOff ? "T927_PRIVATE_POST_FREEZE" :
              interactive ? "WIN32_POINTER_HOLD" : "PC_DIAGNOSTIC_DRY_SOURCE")
          << ",\"m1InputProfile\":" << Quote(fullM1 ? "FULL_M1_V2" : "DRY_M1_V2")
          << ",\"m1CompactDemo\":" << (attempt.m1Compact ? "true" : "false")
@@ -376,6 +397,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     fields << ",\"m1QuantumCandidateSHA\":" << Quote(candidateSHA)
            << ",\"m1InventoryV1\":" << (attempt.m1InventoryV1 ? "true" : "false")
            << ",\"m1Integrated\":" << (attempt.m1Integrated ? "true" : "false")
+           << ",\"m1ParallelInventory\":" << (attempt.m1ParallelInventory ? "true" : "false")
            << ",\"m1AuditBreakdown\":" << (attempt.m1AuditBreakdown ? "true" : "false")
            << ",\"m1QuantumCommitSHA\":" << Quote(commitSHA);
     Checkpoint("M1_QUANTUM_CANDIDATE_PIPELINE");
@@ -737,7 +759,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     request.dispatchCount = passes;
     request.barrierCount = 9;
     request.uploadedBytes = 128+12*4+3*8+8*4;
-    request.carry = uint32_t(permit.carry);
+    request.carry = sourceCarry.value_or(uint32_t(permit.carry));
     cmd = {};
     cmd[0] = 1129534023;
     cmd[1] = 2;
@@ -1065,6 +1087,9 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     fields << ",\"acceptedRoot\":null,\"m1PrivateReferenceSHA\":" << Quote(privateReferenceSHA)
            << ",\"m1PrivateReferenceDeltaNs\":\"" << referenceDelta << "\",\"m1PrivateObservation\":"
            << (attempt.m1PrivateObserve ? "true" : "false");
+    if (compactPrivate)
+      fields << ",\"m1PrivateSourceCarry\":" << *sourceCarry << ",\"m1PrivateQuantumCarry\":" << *quantumCarry
+             << ",\"m1PrivateNozzleY\":" << pc::kCompactNozzleHeight;
     struct Span { size_t slot; VkDeviceSize offset,bytes; const char *file; };
     const auto write=[&](const char *name,const void *bytes,size_t size) {
       std::ofstream output(privateDir/name,std::ios::binary);
@@ -1150,7 +1175,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     const auto source=accepted;
     write("source-command.u32le",cmd.data(),sizeof(cmd));
     write("source-completion.u32le",tail.data(),sizeof(tail));
-    if (!RunM1Quantum(candidate,root,clock,permit,refresh,accepted,frameSerial,ordinal))
+    if (!RunM1Quantum(candidate,root,clock,permit,refresh,accepted,frameSerial,ordinal,quantumCarry))
       return Receipt("FAILED","M1_PRIVATE_QUANTUM");
     Require(accepted.completion[52]==0 && accepted.completion[26]==1 && clock.accepted==1 &&
             clock.Balanced(),"M1_PRIVATE_QUANTUM_SCOPE");

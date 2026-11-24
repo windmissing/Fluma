@@ -24,14 +24,22 @@ enum T877Point {
   ActualPressureBegin, ActualPressureEnd, ActualViscosityBegin, ActualViscosityEnd,
   ReplayPressureBegin, ReplayPressureEnd, ReplayViscosityBegin, ReplayViscosityEnd,
   CompareEnd, PackEnd, BeforeTail, BusinessCopiesEnd, ColdCopiesEnd, RootBegin, ColdCopiesBegin,
-  FinalAuditBegin, FinalAuditEnd, TimePrepareEnd, PackViewEnd, SealBegin, SealEnd, TransferReady, PointCount
+  FinalAuditBegin, FinalAuditEnd, TimePrepareEnd, PackViewEnd, SealBegin, SealEnd, TransferReady, PackAuditEnd,
+  ActualJ1ViscosityBegin, ActualJ1ViscosityEnd, ActualJ1PressureBegin, ActualJ1PressureEnd,
+  ReplayJ1ViscosityBegin, ReplayJ1ViscosityEnd, ReplayJ1PressureBegin, ReplayJ1PressureEnd,
+  PointCount
 };
 constexpr const char *kT877PointNames[]{
     "UPLOAD_DONE","ACTUAL_BEGIN","ACTUAL_END","REPLAY_BEGIN","REPLAY_END",
     "ACTUAL_PRESSURE_SPAN_BEGIN","ACTUAL_PRESSURE_SPAN_END","ACTUAL_VISCOSITY_SPAN_BEGIN","ACTUAL_VISCOSITY_SPAN_END",
     "REPLAY_PRESSURE_SPAN_BEGIN","REPLAY_PRESSURE_SPAN_END","REPLAY_VISCOSITY_SPAN_BEGIN","REPLAY_VISCOSITY_SPAN_END",
     "COMPARE_DONE","PACK_DONE","BEFORE_TAIL","BUSINESS_COPIES_DONE","COLD_COPIES_DONE","ROOT_BEGIN","COLD_COPIES_BEGIN",
-    "FINAL_AUDIT_BEGIN","FINAL_AUDIT_END","TIME_PREPARE_END","PACK_VIEW_END","SEAL_BEGIN","SEAL_END","TAIL_TRANSFER_READY"};
+    "FINAL_AUDIT_BEGIN","FINAL_AUDIT_END","TIME_PREPARE_END","PACK_VIEW_END","SEAL_BEGIN","SEAL_END","TAIL_TRANSFER_READY",
+    "PACK_AUDIT_END",
+    "ACTUAL_J1_MICRO0_VISC_BLOCK0_BEGIN","ACTUAL_J1_MICRO0_VISC_BLOCK0_END",
+    "ACTUAL_J1_MICRO0_PRESSURE_CYCLE0_BEGIN","ACTUAL_J1_MICRO0_PRESSURE_CYCLE0_END",
+    "REPLAY_J1_MICRO0_VISC_BLOCK0_BEGIN","REPLAY_J1_MICRO0_VISC_BLOCK0_END",
+    "REPLAY_J1_MICRO0_PRESSURE_CYCLE0_BEGIN","REPLAY_J1_MICRO0_PRESSURE_CYCLE0_END"};
 static_assert(std::size(kT877PointNames)==PointCount);
 
 bool T833TailMatches(const Completion &tail,const Permit &permit,uint64_t quantum,uint64_t sourceSeq) {
@@ -179,6 +187,11 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
   const bool t877=!attempt.t877Mode.empty(),hot=attempt.t877Mode=="hot";
   const bool snapshot=attempt.t899SlotSnapshot;
   const auto evidenceRole=[&](std::string_view role,uint32_t op) {
+    if (attempt.g13SplitOp48 && role=="OP_48") {
+      if (op==48) return std::string_view("OP48_VISCOSITY");
+      if (op==49) return std::string_view("OP49_PRESSURE");
+      return std::string_view("OP48_REMAINDER");
+    }
     if (attempt.g13SealV1 && op==11 && role=="OP_00_9_11")
       return std::string_view("OP_00_9_11_SEAL_V1");
     return snapshot && role=="OP17_PRIVATE_LEDGER" ? std::string_view("OP17_PRIVATE_LEDGER_SNAPSHOT") : role;
@@ -187,6 +200,7 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
          << ",\"candidateInput\":" << Quote(attempt.t833Case.empty() ? "REST_BOOT_RAMP_SOURCE" : attempt.t833Case)
          << ",\"candidateRoute\":" << Quote(privateProject ? "PRIVATE_PROJECT" : "PC_SPLIT_CANDIDATE")
          << ",\"t899SlotSnapshot\":" << (snapshot ? "true" : "false")
+         << ",\"t946SplitOp48\":" << (attempt.g13SplitOp48 ? "true" : "false")
          << ",\"t909SealV1\":" << (attempt.g13SealV1 ? "true" : "false");
   const auto prepare=[&](bool source,const auto &plan) {
     for (size_t i=0;i<std::size(plan);++i) {
@@ -461,17 +475,30 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
         }
         if (binding.phase==RootPhase::Compare) positions[CompareEnd]=i;
         if (binding.phase==RootPhase::Pack) positions[PackEnd]=i;
+        if (privateProject && attempt.g13TailTiming && plan[i].J==1 && plan[i].micro==0 && plan[i].block==0) {
+          if (binding.phase==RootPhase::Actual && plan[i].op==OP_VISC_BLOCK)
+            span(i,ActualJ1ViscosityBegin,ActualJ1ViscosityEnd);
+          if (binding.phase==RootPhase::Actual && plan[i].op==OP_PRESSURE_V)
+            span(i,ActualJ1PressureBegin,ActualJ1PressureEnd);
+          if (binding.phase==RootPhase::Replay && plan[i].op==OP_VISC_BLOCK)
+            span(i,ReplayJ1ViscosityBegin,ReplayJ1ViscosityEnd);
+          if (binding.phase==RootPhase::Replay && plan[i].op==OP_PRESSURE_V)
+            span(i,ReplayJ1PressureBegin,ReplayJ1PressureEnd);
+        }
       }
     }
     constexpr T877Point beforePoints[]{ActualBegin,ReplayBegin,ActualPressureBegin,ActualViscosityBegin,
-                                       ReplayPressureBegin,ReplayViscosityBegin,FinalAuditBegin,SealBegin};
+                                       ReplayPressureBegin,ReplayViscosityBegin,FinalAuditBegin,SealBegin,
+                                       ActualJ1ViscosityBegin,ActualJ1PressureBegin,ReplayJ1ViscosityBegin,ReplayJ1PressureBegin};
     constexpr T877Point afterPoints[]{ActualEnd,ReplayEnd,ActualPressureEnd,ActualViscosityEnd,
                                       ReplayPressureEnd,ReplayViscosityEnd,CompareEnd,PackEnd,
-                                      FinalAuditEnd,TimePrepareEnd,PackViewEnd,SealEnd};
+                                      FinalAuditEnd,TimePrepareEnd,PackViewEnd,PackAuditEnd,SealEnd,
+                                      ActualJ1ViscosityEnd,ActualJ1PressureEnd,ReplayJ1ViscosityEnd,ReplayJ1PressureEnd};
     if (t877Queries && attempt.g13TailTiming && !source) {
       positions[FinalAuditBegin]=positions[FinalAuditEnd]=815;
       positions[TimePrepareEnd]=816;
       positions[PackViewEnd]=817;
+      positions[PackAuditEnd]=818;
       positions[SealBegin]=positions[SealEnd]=819;
     }
     for (size_t ordinal=0;ordinal<std::size(plan);++ordinal) {

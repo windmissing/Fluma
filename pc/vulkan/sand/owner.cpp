@@ -34,6 +34,24 @@ constexpr VkDeviceSize bootReadbackBytes=auditBytes;
 #endif
 constexpr size_t kQueryCount=std::size(kSourceBoundaries)+3;
 constexpr size_t kFineQueryCount=2*std::size(kSource)+3;
+#ifndef PC_SAND_G11_R1
+constexpr size_t kQuantumBoundaries[]{3,23,55,111,215,415,807,808,1201,2006,2399,2403};
+constexpr const char *kQuantumSpans[]{"CLEAR", "DISCOVERY_J1", "DISCOVERY_J2", "DISCOVERY_J4",
+  "DISCOVERY_J8", "DISCOVERY_J16", "DISCOVERY_J32", "SELECTED", "AUTHORITATIVE",
+  "REJECTED_PREFIX", "REPLAY", "COMPARE_PACK_SEAL"};
+constexpr bool ValidQuantumTiming() {
+  if (std::size(kQuantum)!=2404 || std::size(kQuantumSpans)!=std::size(kQuantumBoundaries)) return false;
+  constexpr uint32_t ops[]{15,35,35,35,35,35,35,36,35,35,35,43};
+  for (size_t i=0;i<std::size(ops);++i)
+    if (kQuantum[kQuantumBoundaries[i]].opcode!=ops[i]) return false;
+  return true;
+}
+static_assert(ValidQuantumTiming());
+#else
+constexpr size_t kQuantumBoundaries[]{0};
+constexpr const char *kQuantumSpans[]{"UNSUPPORTED"};
+#endif
+constexpr size_t kQuantumQueryCount=std::size(kQuantumBoundaries)+3;
 static_assert(kSourceBoundaries[std::size(kSourceBoundaries)-1]+1==std::size(kSource));
 static_assert(std::size(kSourceBoundaries)==std::size(kSourceSpans));
 #ifdef PC_SAND_G11_R1
@@ -493,7 +511,8 @@ VkResult VulkanOwner::OpenPipelines(const Context &context,const std::vector<uin
   fence.sType=VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
   r=api_->CreateFence(context.device,&fence,nullptr,&fence_);
   opened_=r==VK_SUCCESS;
-  if (opened_ && context.sourceTimestamps && context.timestampBits && context.timestampBits<=64) {
+  if (opened_ && (context.sourceTimestamps || context.quantumTimestamps) &&
+      context.timestampBits && context.timestampBits<=64) {
 #define QUERY(name) api_->name=reinterpret_cast<PFN_vk##name>(context.load(context.device,"vk" #name))
     QUERY(CreateQueryPool); QUERY(DestroyQueryPool); QUERY(CmdResetQueryPool);
     QUERY(CmdWriteTimestamp); QUERY(GetQueryPoolResults);
@@ -502,7 +521,7 @@ VkResult VulkanOwner::OpenPipelines(const Context &context,const std::vector<uin
         api_->CmdWriteTimestamp && api_->GetQueryPoolResults) {
       VkQueryPoolCreateInfo query{VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO};
       query.queryType=VK_QUERY_TYPE_TIMESTAMP;
-      query.queryCount=uint32_t(context.sourceDetail ? kFineQueryCount : kQueryCount);
+      query.queryCount=uint32_t(std::max(kFineQueryCount,kQuantumQueryCount));
       queryCreate_=api_->CreateQueryPool(context.device,&query,nullptr,&sourceQueries_);
       if (queryCreate_!=VK_SUCCESS) sourceQueries_=VK_NULL_HANDLE;
     }
@@ -579,7 +598,7 @@ VkResult VulkanOwner::PrepareRetiredSource(CommandPreparation &receipt) {
   return result;
 }
 
-VkResult VulkanOwner::Begin(const Upload *uploads,size_t count,bool timestamp,bool prewarmed,RootReceipt::Timeline *timing,
+VkResult VulkanOwner::Begin(const Upload *uploads,size_t count,uint32_t queryCount,bool prewarmed,RootReceipt::Timeline *timing,
                             CommandPreparation *commands,bool usePreparedCommands) {
   if (!opened_ || !OnOwner() || inFlight_ || (count && !uploads) || generation_==UINT64_MAX)
     return VK_ERROR_INITIALIZATION_FAILED;
@@ -609,8 +628,8 @@ VkResult VulkanOwner::Begin(const Upload *uploads,size_t count,bool timestamp,bo
     if (result!=VK_SUCCESS) return result;
   }
   ++generation_;
-  if (timestamp) {
-    api_->CmdResetQueryPool(command_,sourceQueries_,0,uint32_t(context_.sourceDetail ? kFineQueryCount : kQueryCount));
+  if (queryCount) {
+    api_->CmdResetQueryPool(command_,sourceQueries_,0,queryCount);
     api_->CmdWriteTimestamp(command_,VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,sourceQueries_,0);
   }
   const auto uploadEnter=timing ? pc::TimeNs() : 0;
@@ -630,7 +649,7 @@ VkResult VulkanOwner::Begin(const Upload *uploads,size_t count,bool timestamp,bo
   api_->CmdPipelineBarrier(command_,VK_PIPELINE_STAGE_TRANSFER_BIT,
                             VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT|VK_PIPELINE_STAGE_TRANSFER_BIT,0,
                             1,&sync,0,nullptr,0,nullptr);
-  if (timestamp) api_->CmdWriteTimestamp(command_,VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,sourceQueries_,1);
+  if (queryCount) api_->CmdWriteTimestamp(command_,VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,sourceQueries_,1);
   if (timing) timing->uploadRecordNs=pc::TimeNs()-uploadEnter;
   return VK_SUCCESS;
 }
@@ -677,6 +696,9 @@ VkResult VulkanOwner::ReadRawEnvelope(const RootReceipt &root,const StorageSlots
       !std::equal(storage.begin(),storage.end(),rawSubmittedStorage_.begin(),same) || !staging.words || !timeout)
     return VK_ERROR_INITIALIZATION_FAILED;
   auto result=inFlight_ ? Retire(timeout) : api_->WaitForFences(context_.device,1,&fence_,VK_TRUE,0);
+  if (submittedQuantum_ && submittedSource_ && !inFlight_ &&
+      (result==VK_SUCCESS || result==VK_ERROR_DEVICE_LOST))
+    ReportSourceGpu(result==VK_SUCCESS ? "LATE_RETIRED_DIAGNOSTIC" : "DEVICE_LOST",result,false);
   if (result!=VK_SUCCESS) return result;
   std::array<CopySpan,8> copies{};
   VkDeviceSize total=0;
@@ -699,18 +721,22 @@ void VulkanOwner::ReportSourceGpu(const char *state,VkResult retired,bool accept
   const auto id=*submittedSource_;
   submittedSource_.reset();
   struct Query { uint64_t tick=0,available=0; };
-  std::array<Query,kFineQueryCount> points{};
-  const size_t pointCount=context_.sourceDetail ? kFineQueryCount : kQueryCount;
+  std::array<Query,std::max(kFineQueryCount,kQuantumQueryCount)> points{};
+  const bool detail=!submittedQuantum_ && context_.sourceDetail;
+  const size_t pointCount=submittedQuantum_ ? kQuantumQueryCount : detail ? kFineQueryCount : kQueryCount;
   const bool readable=retired==VK_SUCCESS && sourceQueries_ && !inFlight_;
   std::ostringstream row;
   row << "{\"stage\":\"ROOT_GPU_TIMESTAMPS\",\"family\":\"" << kSandFamily
       << "\",\"state\":\"" << state << "\",\"run\":\"" << id.run << "\",\"nonce\":\"" << id.nonce
+      << "\",\"kind\":\"" << (submittedQuantum_ ? "QUANTUM" : "SOURCE")
+      << "\",\"queryResetSerial\":\"" << generation_ << "\",\"deadlineNs\":\"" << submittedDeadline_
       << "\",\"plan\":\"" << id.plan << "\",\"device\":\"" << reinterpret_cast<uintptr_t>(context_.device)
       << "\",\"queue\":\"" << reinterpret_cast<uintptr_t>(context_.queue)
       << "\",\"fence\":\"" << reinterpret_cast<uintptr_t>(fence_) << "\",\"fenceGeneration\":\"" << generation_
       << "\",\"acceptedRoot\":" << (accepted ? std::to_string(id.nonce) : "null")
       << ",\"fenceVkResult\":" << int(retired) << ",\"timestampRequested\":"
-      << (context_.sourceTimestamps ? "true" : "false") << ",\"queryCreateVkResult\":" << int(queryCreate_)
+      << ((submittedQuantum_ ? context_.quantumTimestamps : context_.sourceTimestamps) ? "true" : "false")
+      << ",\"queryCreateVkResult\":" << int(queryCreate_)
       << ",\"queryPool\":\"" << reinterpret_cast<uintptr_t>(sourceQueries_)
       << "\",\"validBits\":" << context_.timestampBits
       << ",\"periodNs\":" << context_.limits.timestampPeriod << ",\"points\":[";
@@ -722,7 +748,7 @@ void VulkanOwner::ReportSourceGpu(const char *state,VkResult retired,bool accept
     if (i) row << ',';
     row << "{\"i\":" << i << ",\"vkResult\":" << int(vk) << ",\"available\":" << (point.available ? "true" : "false")
         << ",\"tick\":" << (point.available ? "\""+std::to_string(point.tick)+"\"" : "null");
-    if (context_.sourceDetail && i>=2 && i+1<pointCount) {
+    if (detail && i>=2 && i+1<pointCount) {
       const auto slot=(i-2)/2;
       row << ",\"slot\":" << slot << ",\"opcode\":" << kSource[slot].opcode
           << ",\"role\":" << kSource[slot].role << ",\"edge\":\""
@@ -742,7 +768,9 @@ void VulkanOwner::ReportSourceGpu(const char *state,VkResult retired,bool accept
     row << '}';
   };
   span("UPLOAD",0);
-  if (context_.sourceDetail) {
+  if (submittedQuantum_) {
+    for (size_t i=0;i<std::size(kQuantumSpans);++i) span(kQuantumSpans[i],i+1);
+  } else if (detail) {
     for (size_t i=0;i<std::size(kSource);++i) {
       const auto name="SLOT_"+std::to_string(i);
       span(name+"_INPUT_READY",i*2+1);
@@ -945,8 +973,10 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
       if (!SliceFits(capture->discovery[i],arenaBytes)) return result;
   }
 #endif
-  const bool timestamps=root==Root::Source && trace && sourceQueries_;
-  const bool detail=timestamps && context_.sourceDetail;
+  const bool source=root==Root::Source;
+  const bool timestamps=trace && sourceQueries_ && (source ? context_.sourceTimestamps : context_.quantumTimestamps);
+  const bool detail=timestamps && source && context_.sourceDetail;
+  const auto queryCount=timestamps ? uint32_t(source ? (detail ? kFineQueryCount : kQueryCount) : kQuantumQueryCount) : 0;
   const auto measure=context_.sourceDetail ? timeline : nullptr;
   const auto same=[](const Slice &a,const Slice &b) {
     return a.buffer==b.buffer && a.generation==b.generation && a.offset==b.offset && a.bytes==b.bytes;
@@ -958,7 +988,7 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
     timing.recordEnter=now();
     timing.stop="RECORD_REJECT";
   }
-  result.result=Begin(uploads,count,timestamps,prewarmed,measure,trace ? &timing.commands : nullptr,
+  result.result=Begin(uploads,count,queryCount,prewarmed,measure,trace ? &timing.commands : nullptr,
                       root==Root::Source && sourcePreparedCommands_.has_value());
   if (result.result!=VK_SUCCESS) return result;
   result.generation=generation_;
@@ -967,9 +997,10 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
 #ifndef PC_SAND_G11_R1
   acceptedNonce_=0;
 #endif
-  const bool source=root==Root::Source;
   const auto rows=source ? kSource : kQuantum;
   const auto n=source ? std::size(kSource) : std::size(kQuantum);
+  const auto *boundaries=source ? kSourceBoundaries : kQuantumBoundaries;
+  const auto boundaryCount=source ? std::size(kSourceBoundaries) : std::size(kQuantumBoundaries);
   std::array<std::pair<std::array<uint8_t,4>,VkDescriptorSet>,16> cache{};
   size_t used=0;
   size_t span=0;
@@ -1062,7 +1093,7 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
     }
     if (detail) {
       api_->CmdWriteTimestamp(command_,VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,sourceQueries_,uint32_t(3+i*2));
-    } else if (timestamps && span<std::size(kSourceBoundaries) && i==kSourceBoundaries[span]) {
+    } else if (timestamps && span<boundaryCount && i==boundaries[span]) {
       api_->CmdWriteTimestamp(command_,VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,sourceQueries_,uint32_t(span+2));
       ++span;
     }
@@ -1085,7 +1116,7 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
 #endif
   if (timestamps)
     api_->CmdWriteTimestamp(command_,VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,sourceQueries_,
-                            uint32_t((detail ? kFineQueryCount : kQueryCount)-1));
+                            queryCount-1);
   const auto submitCurrent=current();
   const auto preSubmit=submitCurrent || trace ? now() : 0;
   if (!submitCurrent || preSubmit>=deadline) {
@@ -1101,7 +1132,11 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
   }
   rawSubmittedStorage_=storage;
   rawSubmittedGeneration_=result.generation;
-  if (source && trace) submittedSource_=*diagnostic;
+  if (trace && (source || context_.quantumTimestamps)) {
+    submittedSource_=*diagnostic;
+    submittedQuantum_=!source;
+    submittedDeadline_=deadline;
+  }
   uint64_t fenceNs=0;
   for (;;) {
     const auto at=now();

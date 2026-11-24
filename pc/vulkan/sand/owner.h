@@ -23,6 +23,7 @@ class VulkanOwner {
     uint32_t timestampBits=0;
     bool sourceTimestamps=false;
     bool sourceDetail=false;
+    bool quantumTimestamps=false;
   };
   struct Readback {
     Slice buffer;
@@ -154,6 +155,8 @@ class VulkanOwner {
   VkQueryPool sourceQueries_=VK_NULL_HANDLE;
   VkResult queryCreate_=VK_NOT_READY;
   std::optional<RootIdentity> submittedSource_;
+  bool submittedQuantum_=false;
+  uint64_t submittedDeadline_=0;
   StorageSlots sourceWarmStorage_{};
   Slice sourceWarmCommon_{};
   std::array<VkDescriptorSet,std::size(kSource)> sourceWarmSets_{};
@@ -177,7 +180,7 @@ class VulkanOwner {
   VkBuffer qualifiedBuffer_=VK_NULL_HANDLE;
   bool inFlight_=false,eligible_=false,opened_=false;
   bool OnOwner() const { return thread_==std::this_thread::get_id(); }
-  VkResult Begin(const Upload *,size_t,bool timestamp=false,bool prewarmed=false,RootReceipt::Timeline *timing=nullptr,
+  VkResult Begin(const Upload *,size_t,uint32_t queryCount=0,bool prewarmed=false,RootReceipt::Timeline *timing=nullptr,
                  CommandPreparation *commands=nullptr,bool usePreparedCommands=false);
   VkResult ResetForRecording(CommandPreparation *);
   VkResult Submit(RootReceipt::Timeline *timing=nullptr);

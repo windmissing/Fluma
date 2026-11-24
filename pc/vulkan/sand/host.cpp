@@ -54,6 +54,7 @@ struct Options {
   int32_t g15End=0;
   int32_t g15Dune=0;
   bool full=false,present=false,sourceTimestamps=false,sourceDetail=false,sourcePrewarm=false,sourcePrepareRetired=false;
+  bool quantumTimestamps=false;
 };
 
 Options Args(int argc,wchar_t **argv) {
@@ -76,6 +77,9 @@ Options Args(int argc,wchar_t **argv) {
       out.sourceTimestamps=true;
     }
     else if (key==L"--source-timestamps-detail") out.sourceDetail=true;
+#ifndef PC_SAND_G11_R1
+    else if (key==L"--quantum-timestamps") out.quantumTimestamps=true;
+#endif
     else if (key==L"--source-prewarm") out.sourcePrewarm=true;
     else if (key==L"--source-prepare-retired") out.sourcePrepareRetired=true;
     else if (key==L"--g15-dune" || key==L"--g15-dune-mirror") {
@@ -116,6 +120,7 @@ Options Args(int argc,wchar_t **argv) {
   RequireHost(!(out.sourceTimestamps || out.sourceDetail || out.sourcePrewarm || out.sourcePrepareRetired) ||
               !out.source.empty(),"SOURCE_DIAGNOSTIC_NEEDS_SOURCE");
   RequireHost(out.rawEnvelope.empty() || out.steps || !out.source.empty(),"RAW_ENVELOPE_NEEDS_ROOT");
+  RequireHost(!out.quantumTimestamps || out.steps,"QUANTUM_DIAGNOSTIC_NEEDS_STEPS");
   RequireHost(!kG15Dm2 || (!out.angle && !out.full && out.archive.empty()),"G15_NEEDS_V1_PROFILE_AND_RAW_ENVELOPE");
   return out;
 }
@@ -235,6 +240,10 @@ class PulseClock {
   unsigned Fault() {
     std::lock_guard lock(mutex_);
     return unsigned(clock.fault);
+  }
+  uint32_t ActiveRemaining() {
+    std::lock_guard lock(mutex_);
+    return clock.activeRemaining;
   }
   bool BeginRoot(bool source) {
     std::lock_guard lock(mutex_);
@@ -436,7 +445,18 @@ void SealRawEnvelope(const std::filesystem::path &dest,VulkanOwner &owner,const 
            << ",\"eventSealed\":" << tail[44] << ",\"pathSealed\":" << tail[46]
            << ",\"eventCapacity\":" << layout.eventCapacity << ",\"pathCapacity\":" << layout.pathCapacity
            << ",\"rootVkResult\":" << int(raw.result) << ",\"expectedSHA\":\"" << HexDigest(expected.hash)
-           << "\",\"inputSHA\":\"" << HexDigest(permit.inputSha) << "\",\"permit\":{";
+           << "\",\"inputSHA\":\"" << HexDigest(permit.inputSha) << '"';
+#ifndef PC_SAND_G11_R1
+  if (permit.kind==2 && tail[3]==g9dm::kSeal && accept647::Pair(tail,8)==permit.nonce) {
+    const auto j=tail[37];
+    manifest << ",\"selectedJ\":" << j << ",\"firstErrorOpcode\":" << tail[48]
+             << ",\"firstErrorMicro\":" << tail[49] << ",\"scheduledTailMicroSlots\":";
+    // This is the prearranged AUTH/REPLAY tail, not proof of zero side effects.
+    if (j && j<=32 && !(j&(j-1))) manifest << 2*12*(32-j);
+    else manifest << "null";
+  }
+#endif
+  manifest << ",\"permit\":{";
   const auto number=[&](const char *name,uint64_t value) { manifest << std::quoted(name) << ":\"" << value << "\","; };
   number("run",scope.run); number("owner",scope.owner); number("context",scope.context);
   number("inputEpoch",scope.inputEpoch); number("pageSession",scope.pageSession); number("permission",scope.permission);
@@ -534,7 +554,7 @@ int Run(const Options &opt) {
             << HexBytes(gpu.deviceId.driverUUID,VK_UUID_SIZE) << "\"}\n";
   VulkanOwner owner;
   RequireVk(owner.Open({gpu.device,gpu.queue,gpu.family,gpu.deviceProc,gpu.properties.limits,
-                        gpu.timestampBits,opt.sourceTimestamps || opt.sourceDetail,opt.sourceDetail},opt.modules),
+                        gpu.timestampBits,opt.sourceTimestamps || opt.sourceDetail,opt.sourceDetail,opt.quantumTimestamps},opt.modules),
             "VULKAN_ROLE_PIPELINES");
   Scope scope{HostDevice::Now(),GetCurrentThreadId(),reinterpret_cast<uintptr_t>(gpu.device),
               1,1,1,gpu.window ? reinterpret_cast<uintptr_t>(gpu.window) : 1,1,
@@ -727,6 +747,7 @@ int Run(const Options &opt) {
     permit.nonce=permit.frame=permit.control=uint64_t(n)+1;
     permit.plan=pacing.grant.id;
     const auto rootBegin=pacing.grant.grantedNs;
+    const auto activeRemaining=opt.quantumTimestamps && !source ? pacing.ActiveRemaining() : 0;
     permit.deadline=rootBegin+Clock::RootNs;
 #ifndef PC_SAND_G11_R1
     permit.rootBeginNs=rootBegin;
@@ -787,7 +808,7 @@ int Run(const Options &opt) {
     const VulkanOwner::RootIdentity diagnostic{scope.run,permit.nonce,permit.plan};
     const auto raw=owner.Run(root,storage,common,tail,uploads.data(),uploads.size(),current,
                              permit.deadline,HostDevice::Now,captureOn ? &capture : nullptr,
-                             source || envelopeReadback.words ? &diagnostic : nullptr);
+                             source || opt.quantumTimestamps || envelopeReadback.words ? &diagnostic : nullptr);
     const auto before=storage;
     const auto beforeBanks=banks;
     const auto beforeVisGeneration=visGeneration,beforeVisTicks=visTicks;
@@ -827,6 +848,16 @@ int Run(const Options &opt) {
       owner.FinishSourceDiagnostic(raw,accepted.has_value(),Clock::RootNs);
       SourceTimeline(gpu,owner,diagnostic,before,common,tail.buffer,rootBegin,permit.deadline,frozenNs,expectedNs,
                      pulse,raw,gateTiming,promoteEnter,promoteExit,accepted.has_value());
+    } else if (opt.quantumTimestamps)
+    {
+      std::cout << "{\"stage\":\"QUANTUM_TIMELINE\",\"run\":\"" << scope.run
+                << "\",\"nonce\":\"" << permit.nonce << "\",\"plan\":\"" << permit.plan
+                << "\",\"fenceGeneration\":\"" << raw.generation << "\",\"grantNs\":\"" << rootBegin
+                << "\",\"activeRemaining\":" << activeRemaining << ",\"recordEnterNs\":\"" << raw.timing.recordEnter
+                << "\",\"submitEnterNs\":\"" << raw.timing.submitEnter << "\",\"submitExitNs\":\""
+                << raw.timing.submitExit << "\",\"stopNs\":\"" << raw.timing.stopNs << "\",\"stop\":\""
+                << raw.timing.stop << "\",\"tailRead\":" << (raw.read ? "true" : "false") << "}\n";
+      owner.FinishSourceDiagnostic(raw,accepted.has_value(),Clock::RootNs);
     }
     const auto sealEnvelope=[&] {
       if (!envelopeReadback.words) return;

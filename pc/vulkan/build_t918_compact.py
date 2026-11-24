@@ -44,24 +44,56 @@ def integrated_arithmetic(root):
     return root[:start] + Path(__file__).with_name("m1_fast_divide.glsl").read_text() + root[end:]
 
 
-def integrated_audit(root, breakdown):
-    inventory = compact_inventory()
+def unique_inventory(inventory):
     inventory = once(inventory,
         "for(uint next=n+1u;next<live[ns];++next)if(C[at(ns,5u,liveSlot[start+next])]==id){qfail(15u);return false;}",
         "auditKey[n]=id;")
     inventory = once(inventory, "auditKey[n]=id;\n  }\n }",
                      "auditKey[n]=id;\n  }\n  if(!uniqueAuditKeys(live[ns])){qfail(15u);return false;}\n }")
-    start = root.index("bool inventory(){")
-    end = root.index("\n}", start) + 2
-    root = root[:start] + Path(__file__).with_name("m1_audit_keys.glsl").read_text() + inventory + root[end:]
-    start = root.index("int first=15361,last=-1;", root.index("bool quantumAudit(){"))
-    end = root.index("if(!requireQ(first<=last", start)
+    return Path(__file__).with_name("m1_audit_keys.glsl").read_text() + inventory
+
+
+def parallel_inventory(inventory):
+    start = inventory.index(" if(C[uHeader]")
+    end = inventory.index(" uvec2 sand=", start)
+    inventory = inventory[:start] + """ if(!inventoryHeader()){qfail(1u);return false;}
+ bool malformed=false;
+ for(uint i=0u;i<640u;++i)malformed=malformed||slotError[i]==1u;
+""" + inventory[end:]
+    inventory = inventory.replace("massByColumn", "slotColumnMass")
+    start = inventory.index(" for(uint ns=0u;ns<2u;++ns)")
+    end = inventory.index(" uvec2 es,ew;", start)
+    inventory = inventory[:start] + """ for(uint ns=0u;ns<2u;++ns){
+  uint begin=ns==0u?0u:512u,count=0u;
+  for(uint i=begin;i<(ns==0u?512u:640u);++i){
+   if(slotError[i]==2u){qfail(15u);return false;}
+   if(slotKey[i]!=0u)auditKey[count++]=slotKey[i];
+  }
+  if(!uniqueAuditKeys(count)){qfail(15u);return false;}
+ }
+""" + inventory[end:]
+    return Path(__file__).with_name("m1_inventory_parallel.glsl").read_text() + inventory
+
+
+def angle_bounds(root, start, end):
     bound = """int first=0,end=15361;
  while(first<end){int mid=first+(end-first)/2;if(int(W[uAngles+4u*uint(mid)])<low)first=mid+1;else end=mid;}
  int last=first;end=15361;
  while(last<end){int mid=last+(end-last)/2;if(int(W[uAngles+4u*uint(mid)])<=high)last=mid+1;else end=mid;}
  --last;"""
-    root = root[:start] + bound + root[end:]
+    return root[:start] + bound + root[end:]
+
+
+def integrated_audit(root, breakdown, parallel):
+    inventory = unique_inventory(compact_inventory())
+    if parallel:
+        inventory = parallel_inventory(inventory)
+    start = root.index("bool inventory(){")
+    end = root.index("\n}", start) + 2
+    root = root[:start] + inventory + root[end:]
+    start = root.index("int first=15361,last=-1;", root.index("bool quantumAudit(){"))
+    end = root.index("if(!requireQ(first<=last", start)
+    root = angle_bounds(root, start, end)
     if breakdown:
         root = once(root, "bool quantumAudit(){\n if(!inventory())return false;",
                     "bool auditEntryAngle(){")
@@ -76,10 +108,27 @@ def integrated_audit(root, breakdown):
  if(uPass==31u){if(i==0u)auditSource();return;}
  if(uPass==21u)""")
         root = once(root, "W[2]=uPass;", "W[2]=uPass>=29u?21u:uPass;")
+    if parallel and breakdown:
+        root = once(root, "if(uPass==29u){if(i==0u)", "if(uPass==29u){inventoryExtract(inventoryHeader());if(i==0u)")
+    elif parallel:
+        root = once(root, "if(uPass==21u){if(i==0u)", "if(uPass==21u){inventoryExtract(inventoryHeader());if(i==0u)")
     return root
 
 
-def build(assembled, compiler, out, optimized=False, integrated=False, breakdown=False):
+def parallel_prepare(root):
+    start = root.index("bool inventory(){")
+    end = root.index("void prepare(){", start)
+    inventory = parallel_inventory(unique_inventory(root[start:end]))
+    root = root[:start] + inventory + root[end:]
+    root = once(root, "if(uPass==1u){if(i==0u)prepare();return;}",
+                "if(uPass==1u){inventoryExtract((uK==192u||uK==512u)&&"
+                "(uKw==64u||uKw==128u)&&inventoryHeader());if(i==0u)prepare();return;}")
+    start = root.index("int first=15361,last=-1;", root.index("void prepare(){"))
+    end = root.index("if(first>last)", start)
+    return angle_bounds(root, start, end)
+
+
+def build(assembled, compiler, out, optimized=False, integrated=False, breakdown=False, parallel=False):
     header = Path(__file__).with_name("m1_compact.h").read_text()
     lo, hi, height = (int(re.search(rf"\b{name}=(\d+);", header)[1]) for name in
                       ("kCompactFirstColumn", "kCompactEndColumn", "kCompactHeight"))
@@ -126,10 +175,11 @@ def build(assembled, compiler, out, optimized=False, integrated=False, breakdown
         units[0] = candidate
     if integrated:
         name, passes, raw = units[0]
-        units[0] = name, passes, integrated_arithmetic(raw.decode()).encode()
+        candidate = integrated_arithmetic(raw.decode())
+        units[0] = name, passes, (parallel_prepare(candidate) if parallel else candidate).encode()
         name, passes, raw = units[1]
         units[1] = name, passes + ([29, 30, 31] if breakdown else []), integrated_audit(
-            integrated_arithmetic(raw.decode()), breakdown).encode()
+            integrated_arithmetic(raw.decode()), breakdown, parallel).encode()
     for name, passes, raw in units:
         roles[name] = dict(compile_stage(compiler, Path(name + ".comp"), out, raw=raw, bounded=True), passes=passes)
     if roles["quantum_candidate"]["offsets"] != roles["quantum_commit"]["offsets"]:
@@ -148,6 +198,9 @@ if __name__ == "__main__":
     variant.add_argument("--fast-candidate", action="store_true")
     variant.add_argument("--integrated", action="store_true")
     variant.add_argument("--audit-breakdown", action="store_true")
+    parser.add_argument("--parallel-inventory", action="store_true")
     args = parser.parse_args()
+    if args.parallel_inventory and not (args.integrated or args.audit_breakdown):
+        parser.error("--parallel-inventory requires --integrated or --audit-breakdown")
     build(args.assembled, args.compiler, args.out, args.fast_candidate,
-          args.integrated or args.audit_breakdown, args.audit_breakdown)
+          args.integrated or args.audit_breakdown, args.audit_breakdown, args.parallel_inventory)

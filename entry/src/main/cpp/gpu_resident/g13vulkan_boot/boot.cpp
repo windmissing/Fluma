@@ -401,7 +401,7 @@ private:
   void PrepareM1Quantum(const Candidate &);
   bool RunM1Quantum(const Candidate &, grs::m1::SourceRootOwner &, grs::m1::ProgressClockV2 &,
                    grs::m1::PlanGrantV2 &, const std::function<bool()> &, grs::AcceptedRoot &,
-                   uint64_t &, uint32_t &);
+                   uint64_t &, uint32_t &, std::optional<uint32_t> frozenCarry={});
   std::future<M1ColdResult> CaptureM1Quantum(grs::m1::SourceRootOwner &, const grs::AcceptedRoot &, const grs::Words256 &,
                             uint32_t, const std::array<uint32_t,32> &, std::optional<M1HotCapture::Page>,
                             const std::wstring &observationPrefix={});

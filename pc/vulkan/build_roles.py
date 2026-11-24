@@ -192,6 +192,13 @@ def build(out, compiler):
         raw = (out / role["entry"]).read_bytes()
         assert sha(raw) == role["sha256"] and len(raw) == role["bytes"]
         sources.append((role["role"], role["opcodes"], raw))
+    emit_48, opcodes_48 = split_group(sources[3][2])
+    split_48 = (("OP48_VISCOSITY", (48,)), ("OP49_PRESSURE", (49,)),
+                ("OP48_REMAINDER", (52, 54, 55, 56, 57, 58, 59, 60, 62)))
+    assert set(opcodes_48) == {op for _, ops in split_48 for op in ops}
+    for role, selection in split_48:
+        raw, _ = emit_48(selection)
+        sources.append((role, [*selection, 66], raw))
     emit, opcodes = split_group(sources[0][2])
     assert opcodes == tuple(range(18))
     for first, last in ((0, 5), (6, 11), (12, 17), (6, 8), (9, 11), (7, 7)):

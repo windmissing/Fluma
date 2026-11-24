@@ -608,7 +608,8 @@ int RunG16Multi(int argc,wchar_t **argv) {
   }
   p.module=ReadWords(argv[2],256*1024);
   const auto moduleSHA=Hex(Hash(p.module.data(),p.module.size()*4));
-  RequireHost(moduleSHA=="786bb1db9b8d3a679042bdc36d014226d68647913770d503192c297e0c10e361","G16_MODULE_SHA");
+  RequireHost(moduleSHA=="792f5986328b796aa4bea47b601899cce55aef83e5f0e76ed3d29afe7b718cda" ||
+              moduleSHA=="786bb1db9b8d3a679042bdc36d014226d68647913770d503192c297e0c10e361","G16_MODULE_SHA");
   p.seed=ReadWords(argv[3],52*64);
   const auto seedSHA=Hex(Hash(p.seed.data(),p.seed.size()*4));
   if(seedSHA=="d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168")p.disks=13;
