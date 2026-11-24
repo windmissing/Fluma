@@ -207,6 +207,8 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   while (!sameFrame) {
     m1Reject=D1Ended() ? "D1_END_INTAKE" : !attempt.current() ? "WINDOW_REVOKED" : !refresh() ? clock.fault : nullptr;
     if (m1Reject) {
+      if (SuspendM1Hold(clock,root) && root.State()==FlightState::Idle && !root.HasLeases())
+        m1Retirement={0,pc::QpcTicks(),false,true}; // No new GPU submission.
       fields << ",\"m1QuantumReject\":" << Quote(m1Reject);
       M1RootTrace("Quantum",0,clock,{},accepted,{});
       return false;
@@ -326,7 +328,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   log.recordEnd=pc::QpcTicks();
   const auto reject=[&] {
     log.stopQpc=pc::QpcTicks();
-    attempt.disarmM1Input();
+    if (!SuspendM1Hold(clock,root)) attempt.disarmM1Input();
     RetireM1Root(root,nonce,log);
     if (!inFlight) ReportM1Timing(log.retireEnter ? log.retire : log.last,false);
     fields << ",\"m1QuantumReject\":" << Quote(m1Reject);

@@ -70,6 +70,10 @@ struct Attempt {
   uint32_t m1Kappa=24;
   bool m1StageTiming=false,g13TailTiming=false,m1InventoryV1=false,g13SealV1=false;
   bool m1AngleWitness=false;
+  std::function<void(uint64_t)> suspendM1Hold;
+  std::function<void(uint64_t,uint64_t,const M1Pulse &)> resumeM1Hold;
+  std::function<bool(const SourceOffer &,const std::function<void()> &)> authorizeM1Offer;
+  bool g13CompileTrace=false;
 #else
   NativeWindow *window;
 #endif

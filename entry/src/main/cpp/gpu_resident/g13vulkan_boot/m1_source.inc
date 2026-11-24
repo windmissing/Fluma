@@ -11,6 +11,25 @@ bool Boot::ClaimM1(m1::ProgressClockV2 &clock,uint64_t hold,bool source,m1::Plan
   return true;
 }
 
+bool Boot::ClaimM1Source(m1::ProgressClockV2 &clock,uint64_t hold,const SourceOffer &offer,m1::PlanGrantV2 &grant) {
+  if (!offer.current.seq || !attempt.authorizeM1Offer) return ClaimM1(clock,hold,true,grant);
+  auto sample=attempt.m1Gravity ? attempt.m1Gravity() : pc::M1Gravity{};
+  if (sample.geometry!=attempt.geometry || !pc::ValidM1Angle(sample.angle)) sample={};
+  bool claimed=false;
+  return attempt.authorizeM1Offer(offer,[&] {
+    claimed=clock.Claim(pc::TimeNs(),sample.angle,hold,true,grant,attempt.m1OneQuantumGrant ? 1u : 4u);
+    if (claimed) m1GrantGravity=sample;
+  }) && claimed;
+}
+
+bool Boot::SuspendM1Hold(const m1::ProgressClockV2 &clock,const m1::SourceRootOwner &root) {
+  if (attempt.m1D1 || attempt.m1SinglePresent || !attempt.m1ColdFile.empty() ||
+      !attempt.suspendM1Hold || !root.AcceptedCount() || clock.open || !m1Reject ||
+      std::strcmp(m1Reject,"CLOCK_GAP")!=0 || !attempt.current()) return false;
+  attempt.suspendM1Hold(clock.session);
+  return true;
+}
+
 void Boot::SubmitM1Root(const VkSubmitInfo &submit,uint64_t hold,uint64_t deadline,uint64_t nonce,M1WaitLog &log) {
   const auto queueSubmit=[&] {
     log.submitEnter=pc::QpcTicks();
@@ -422,6 +441,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
              << "\",\"m1RecoveryBaselineSeq\":\"" << m1Consumed.seq
              << "\",\"m1RecoveryBaselineCallbackQpc\":\"" << m1Consumed.callbackTicks
              << "\",\"m1RecoveryBaselineReceiptQpc\":\"" << m1Consumed.receiptTicks << '"';
+      if (autonomous && attempt.resumeM1Hold)
+        attempt.resumeM1Hold(clock.session,m1Retirement.exitQpc,m1Consumed);
     }
     if (autonomous) clock.ready=clock.baseline=true;
     return attempt.pointerReady(Receipt(autonomous ? "M1_READY_PHYSICS" : "RUNNING",""));
@@ -688,13 +709,16 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       if (!refresh()) return clock.fault;
       if (!clock.Identity(permit.id,permit.session)) return "PLAN_SESSION_MISMATCH";
       if (!interactive) return nullptr;
+      if (offer.current.seq && attempt.authorizeM1Offer)
+        return attempt.authorizeM1Offer(offer,[]{}) ? nullptr : "SOURCE_HOLD_REVOKED";
       const auto held=attempt.pointer();
       return held.hold==inputSample.hold && held.material==inputSample.material ? nullptr : "SOURCE_HOLD_REVOKED";
     };
     log.recordEnd=pc::QpcTicks();
     const auto reject=[&] {
       log.stopQpc=pc::QpcTicks();
-      if (!clock.open || std::strcmp(m1Reject,"SOURCE_HOLD_REVOKED")!=0) attempt.disarmM1Input();
+      if ((!clock.open || std::strcmp(m1Reject,"SOURCE_HOLD_REVOKED")!=0) &&
+          !SuspendM1Hold(clock,root)) attempt.disarmM1Input();
       RetireM1Root(root,wide(request.nonce),log);
       if (root.State()!=FlightState::Idle) attempt.disarmM1Input();
       fields << ",\"m1SourceReject\":" << Quote(m1Reject);
@@ -706,7 +730,14 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
     submit.commandBufferCount = 1;
     submit.pCommandBuffers = &command;
-    SubmitM1Root(submit,inputSample.hold,deadline,wide(request.nonce),log);
+    const auto submitRoot=[&] {
+      if (pc::TimeNs()>=deadline) m1Reject="ROOT_DEADLINE";
+      else SubmitM1Root(submit,inputSample.hold,deadline,wide(request.nonce),log);
+    };
+    if (offer.current.seq && attempt.authorizeM1Offer) {
+      if (!attempt.authorizeM1Offer(offer,submitRoot))
+        m1Reject=attempt.current() ? "SOURCE_HOLD_REVOKED" : "WINDOW_REVOKED";
+    } else SubmitM1Root(submit,inputSample.hold,deadline,wide(request.nonce),log);
     if (m1Reject) return reject();
     if (log.submit!=VK_SUCCESS) {
       m1Reject=log.submit==VK_ERROR_DEVICE_LOST ? "DEVICE_LOST" : "SUBMIT_VK_ERROR";
@@ -752,7 +783,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       }
     };
     m1Reject=sourceGuard();
-    if (!m1Reject && !attempt.acceptPointer(inputSample.hold,accept))
+    if (!m1Reject && !(offer.current.seq && attempt.authorizeM1Offer ?
+        attempt.authorizeM1Offer(offer,accept) : attempt.acceptPointer(inputSample.hold,accept)))
       m1Reject=attempt.current() ? "SOURCE_HOLD_REVOKED" : "WINDOW_REVOKED";
     if (!m1Reject && result!=ControlCode::OK) m1Reject="TAIL_REJECTED";
     if (m1Reject) return reject();
@@ -790,10 +822,15 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   uint64_t lastPresentedRoot=0;
   pc::M1GravityDisplay displayedGravity{attempt.geometry};
   const auto recover=[&]() {
-      attempt.disarmM1Input();
+      const bool suspended=SuspendM1Hold(clock,root);
+      if (!suspended) attempt.disarmM1Input();
       const bool ordinary=interactive && !attempt.m1D1 && !attempt.m1SinglePresent && attempt.m1ColdFile.empty();
       if (!pc::CanRearmM1(m1Reject,ordinary,attempt.current(),root.State()==FlightState::Idle,
-                         inFlight,root.HasLeases(),clock.open,m1Retirement.proven)) return false;
+                         inFlight,root.HasLeases(),clock.open,m1Retirement.proven) ||
+          (suspended && !m1Retirement.proven)) {
+        attempt.disarmM1Input();
+        return false;
+      }
       const auto oldSession=clock.session;
       const auto returned=clock.revoked,cleared=clock.clearedCarry;
       clock.Revoke(m1Reject);
@@ -830,7 +867,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       }
       if (!awaitSource(true) || !primeClock()) return false;
       clock.ready=clock.baseline=true;
-      if (!ClaimM1(clock,inputSample.hold,true,permit)) return false;
+      if (!ClaimM1Source(clock,inputSample.hold,firstOffer,permit)) return false;
       ++frameSerial;
       ordinal=0;
       stage="M1_RECOVERED_SOURCE";
@@ -851,7 +888,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     }
     if (!interactive) pulse=clock.uiNs;
     clock.ready=clock.baseline=true;
-    if (!ClaimM1(clock,interactive ? inputSample.hold : 1,true,permit)) {
+    if (!ClaimM1Source(clock,interactive ? inputSample.hold : 1,firstOffer,permit)) {
       finishOffer(firstOffer,IngressCode::Rejected,0,"M1_SOURCE_PERMIT",pc::TimeNs());
       return "M1_SOURCE_PERMIT";
     }
@@ -1027,11 +1064,13 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         const auto offer=takeFresh();
         fields << ",\"m1SourceBoundary\":{\"active\":" << clock.activeRemaining
                << ",\"pending\":" << clock.pending << ",\"frame\":\"" << frameSerial
-               << "\",\"offer\":\"" << offer.seq << "\",\"previousPulse\":\"" << offer.previous.seq
+               << "\",\"offer\":\"" << offer.seq << "\",\"hold\":\"" << offer.sample.hold
+               << "\",\"authorityEpoch\":\"" << offer.scope.permission
+               << "\",\"session\":\"" << offer.current.session << "\",\"previousPulse\":\"" << offer.previous.seq
                << "\",\"currentPulse\":\"" << offer.current.seq << "\",\"deltaNs\":\"" << offer.deltaNs
                << "\",\"ageNs\":\"" << (offer.seq && observed>=offer.pulseNs ? observed-offer.pulseNs : 0) << "\"}";
         if (offer.seq) {
-          if (ClaimM1(clock,offer.sample.hold,true,permit)) {
+          if (ClaimM1Source(clock,offer.sample.hold,offer,permit)) {
             ++frameSerial;
             ordinal=0;
             if (!consumeSource(offer.sample,offer.pulseNs,offer.deltaNs,offer)) reportSourceReject();

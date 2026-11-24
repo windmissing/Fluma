@@ -55,6 +55,7 @@ struct Window {
   std::array<grs::pc::CandidatePulse,32> g13PulseHistory{};
   std::string t877Mode;
   bool t899SlotSnapshot=false;
+  bool g13CompileTrace=false;
   size_t g13PulseWrite=0;
   bool t833Allowed=true;
   std::atomic<uint64_t> sourcePulse{0};
@@ -90,6 +91,10 @@ struct Window {
   uint64_t sampleTicks=0, offerSeq=0;
   grs::g13vk::M1Pulse sourceAnchor{};
   uint64_t sourceAnchorHold=0;
+  struct HeldRecovery {
+    uint64_t hold=0,geometry=0,run=0,oldSession=0,newSession=0,boundary=0;
+    uint32_t material=0;
+  } heldRecovery;
   int result = 1;
 
   void Emit(const std::string &json) {
@@ -149,7 +154,8 @@ struct Window {
           row << "{\"stage\":\"M1_RESERVATION_" << (record.terminal ? "TERMINAL" : "RETURN")
               << "\",\"serial\":\"" << record.serial << "\",\"run\":\"" << o.scope.run
               << "\",\"geometry\":\"" << o.scope.geometry << "\",\"offer\":\"" << o.seq
-              << "\",\"hold\":\"" << o.sample.hold << "\",\"material\":" << o.sample.material
+              << "\",\"hold\":\"" << o.sample.hold << "\",\"authorityEpoch\":\"" << o.scope.permission
+              << "\",\"material\":" << o.sample.material
               << ",\"session\":\"" << o.current.session << "\",\"previousSeq\":\"" << o.previous.seq
               << "\",\"currentSeq\":\"" << o.current.seq << "\",\"deltaNs\":\"" << o.deltaNs
               << "\",\"previousCallbackQpc\":\"" << o.previous.callbackTicks
@@ -350,6 +356,70 @@ struct Window {
     d1Intake.Seal({ended,lastPulseSeq,offerSeq});
   }
 
+  void HoldRecoveryTrace(const char *event,uint64_t session,uint64_t qpc,
+                         const grs::g13vk::M1Pulse &baseline={}) {
+    Emit("{\"stage\":\"M1_HOLD_RECOVERY\",\"event\":\""+std::string(event)+
+         "\",\"reason\":\"CLOCK_GAP\",\"run\":\""+std::to_string(heldRecovery.run)+
+         "\",\"geometry\":\""+std::to_string(heldRecovery.geometry)+
+         "\",\"hold\":\""+std::to_string(heldRecovery.hold)+
+         "\",\"authorityEpoch\":\""+std::to_string(scope.permission)+
+         "\",\"material\":"+std::to_string(heldRecovery.material)+
+         ",\"session\":\""+std::to_string(session)+"\",\"qpc\":\""+std::to_string(qpc)+
+         "\",\"baselineSeq\":\""+std::to_string(baseline.seq)+
+         "\",\"baselineCallbackQpc\":\""+std::to_string(baseline.callbackTicks)+
+         "\",\"baselineReceiptQpc\":\""+std::to_string(baseline.receiptTicks)+"\"}");
+  }
+
+  void ClearSourceAnchor() {
+    sourceAnchor={};
+    sourceAnchorHold=0;
+  }
+
+  void CancelHeld() {
+    heldRecovery={};
+    held={};
+    scope.permission=0;
+    ClearSourceAnchor();
+    ingress.Authorize(scope,0);
+  }
+
+  void SuspendHeld(uint64_t session) {
+    pointerReady=false;
+    if (heldRecovery.oldSession==session) return;
+    heldRecovery={held.hold,generation,scope.run,session,0,0,held.material};
+    HoldRecoveryTrace("SUSPEND",session,grs::pc::QpcTicks());
+    scope.permission=0;
+    ClearSourceAnchor();
+    ingress.Authorize(scope,0);
+  }
+
+  void ResumeHeld(uint64_t session,uint64_t retired,const grs::g13vk::M1Pulse &baseline) {
+    if (!heldRecovery.oldSession) return;
+    if (session<=heldRecovery.oldSession || !retired || !grs::g13vk::SourcePulseAfter(baseline,session,retired)) {
+      CancelHeld();
+      return;
+    }
+    HoldRecoveryTrace("RETIRED",heldRecovery.oldSession,retired);
+    heldRecovery.newSession=session;
+    heldRecovery.boundary=baseline.receiptTicks;
+    HoldRecoveryTrace("NEW_BASELINE",session,baseline.receiptTicks,baseline);
+  }
+
+  void RevalidateHeld(const grs::g13vk::M1Pulse &pulse) {
+    if (!heldRecovery.newSession || scope.permission || !pulse.seq || pulse.session!=heldRecovery.newSession) return;
+    if (!held.hold || held.hold!=heldRecovery.hold || generation!=heldRecovery.geometry ||
+        scope.run!=heldRecovery.run || held.material!=heldRecovery.material || material!=held.material ||
+        held.clientX<0 || held.clientX>=width || held.clientY<0 || held.clientY>=height || GetCapture()!=hwnd) {
+      CancelHeld();
+      return;
+    }
+    scope.permission=++eventSeq;
+    heldRecovery.boundary=grs::pc::QpcTicks(); // Excludes the pulse used for UI capture revalidation.
+    ClearSourceAnchor();
+    ingress.Authorize(scope,held.hold);
+    HoldRecoveryTrace("HOLD_REVALIDATED",pulse.session,heldRecovery.boundary);
+  }
+
   void Size() {
     RECT r{};
     if (!GetClientRect(hwnd, &r)) return;
@@ -361,7 +431,7 @@ struct Window {
     ++generation;
     gravity={generation};
     pointerReady = false;
-    held = {};
+    CancelHeld();
     ingress.Authorize({},0);
     hotCapture.Authorize({});
     m1Pulses.Close();
@@ -379,13 +449,14 @@ struct Window {
     if (action=="FOCUS_LOST" && m1GravityEnabled)
       gravity={generation,sequence,ticks,0};
     if (action == "DOWN") {
-      held = {};
-      if (pointerReady && inside) {
+      CancelHeld();
+      if (pointerReady && inside && GetCapture()==hwnd) {
         held.hold = sequence;
         held.material = material;
+        scope.permission=sequence;
       }
     } else if (action != "MOVE" || !inside) {
-      held = {};
+      CancelHeld();
     }
     if (held.hold) {
       held.sequence = sequence;
@@ -396,8 +467,7 @@ struct Window {
       held.clientY = y;
       sampleTicks = ticks;
     }
-    scope.permission=held.hold;
-    ingress.Authorize(scope,held.hold);
+    ingress.Authorize(scope,scope.permission ? held.hold : 0);
     const auto geometry=generation, hold=held.hold;
     const auto inputReady=pointerReady;
     const auto readyQpc=pointerReadyQpc;
@@ -424,9 +494,7 @@ struct Window {
     const auto revoked=held.hold;
     const auto old=material;
     material=next;
-    held={};
-    scope.permission=0;
-    ingress.Authorize(scope,0);
+    CancelHeld();
     Emit("{\"stage\":\"M1_SOURCE_MODE\",\"kind\":\"MODE_CHANGED\",\"geometry\":\""+std::to_string(generation)+
          "\",\"seq\":\""+std::to_string(++eventSeq)+"\",\"qpc\":\""+std::to_string(grs::pc::QpcTicks())+
          "\",\"revokedHold\":\""+std::to_string(revoked)+"\",\"oldMaterial\":"+std::to_string(old)+
@@ -510,9 +578,12 @@ struct Window {
       std::lock_guard lock(mutex);
       const auto pulse=!closing && !m1SourceModule.empty() ? ReceiveM1Pulse(ticks,ns,hz).pulse : grs::g13vk::M1Pulse{};
       if (closing || !pointerReady) return;
+      RevalidateHeld(pulse);
       offer.scope=scope;
       if (sourceAnchorHold!=held.hold) { sourceAnchorHold=held.hold; sourceAnchor={}; }
-      if (held.hold && pulse.seq) {
+      if (held.hold && scope.permission && pulse.seq &&
+          (!heldRecovery.newSession ||
+           grs::g13vk::SourcePulseAfter(pulse,heldRecovery.newSession,heldRecovery.boundary))) {
         if (grs::g13vk::AdjacentSourcePulses(sourceAnchor,pulse) && pulse.uiNs>held.timeNs)
           offer={scope,++offerSeq,ns,ticks,sampleTicks,hz,held,1,0,pulse.uiNs-sourceAnchor.uiNs,sourceAnchor,pulse};
         sourceAnchor=pulse;
@@ -572,7 +643,7 @@ struct Window {
   void Close() {
     std::lock_guard lock(mutex);
     closing = true;
-    held = {};
+    CancelHeld();
     ingress.Authorize({},0);
     hotCapture.Authorize({});
     m1Pulses.Close();
@@ -644,6 +715,7 @@ struct Window {
                                                [&](grs::g13vk::SourceScope next) {
                                                  std::lock_guard guard(mutex);
                                                  if (closing || generation != previous) return;
+                                                 CancelHeld();
                                                  scope=next;
                                                  ingress.Authorize(scope,0);
                                                  hotCapture.Authorize(next);
@@ -665,9 +737,7 @@ struct Window {
                                                  std::lock_guard guard(mutex);
                                                  if (generation!=previous) return;
                                                  pointerReady=false;
-                                                 held={};
-                                                 scope.permission=0;
-                                                 ingress.Authorize(scope,0);
+                                                 CancelHeld();
                                                },sourceTrace,t877Mode,&d1Intake,[&](const std::string &details,bool healthy) {
                                                  ReportD1(details,healthy);
                                                },m1Preview || (!d1Mode.empty() && !d1ColdReanchor),[&] {
@@ -677,7 +747,25 @@ struct Window {
                                                },observation,m1OneQuantumGrant,t899SlotSnapshot,
                                                m1GravityEnabled ? std::function<void(grs::pc::M1GravityDisplay)>(
                                                    [&](grs::pc::M1GravityDisplay value) { SetGravityDisplay(value); }) : nullptr,
-                                               m1Kappa,m1StageTiming,g13TailTiming,m1InventoryV1,g13SealV1,m1AngleWitness},
+                                               m1Kappa,m1StageTiming,g13TailTiming,m1InventoryV1,g13SealV1,m1AngleWitness,
+                                               [&](uint64_t session) {
+                                                 std::lock_guard guard(mutex);
+                                                 if (!closing && generation==previous) SuspendHeld(session);
+                                               },
+                                               [&](uint64_t session,uint64_t retired,const grs::g13vk::M1Pulse &baseline) {
+                                                 std::lock_guard guard(mutex);
+                                                 if (!closing && generation==previous) ResumeHeld(session,retired,baseline);
+                                               },
+                                               [&](const grs::g13vk::SourceOffer &offer,const std::function<void()> &act) {
+                                                 std::lock_guard guard(mutex);
+                                                 if (closing || generation!=previous || !t833Allowed || !pointerReady ||
+                                                     !scope.permission || !(offer.scope==scope) || offer.sample.hold!=held.hold ||
+                                                     offer.sample.material!=held.material ||
+                                                     (heldRecovery.newSession && offer.current.session!=heldRecovery.newSession))
+                                                   return false;
+                                                 act();
+                                                 return true;
+                                               },g13CompileTrace},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
@@ -694,7 +782,7 @@ struct Window {
         std::lock_guard guard(mutex);
         if (generation == previous) {
           pointerReady = false;
-          held = {};
+          CancelHeld();
           ingress.Authorize({},0);
           hotCapture.Authorize({});
           m1Pulses.Close();
@@ -875,6 +963,7 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--m1-manual-gravity")) window.m1GravityEnabled=true;
     else if (!std::wcscmp(argv[i], L"--m1-one-quantum-grant")) window.m1OneQuantumGrant=true;
     else if (!std::wcscmp(argv[i], L"--g13-slot-snapshot")) window.t899SlotSnapshot=true;
+    else if (!std::wcscmp(argv[i], L"--g13-compile-trace")) window.g13CompileTrace=true;
     else if (!std::wcscmp(argv[i], L"--g13-tail-timing")) window.g13TailTiming=true;
     else if (!std::wcscmp(argv[i], L"--g13-seal-v1")) window.g13SealV1=true;
     else if (!std::wcscmp(argv[i], L"--m1-stage-timing")) window.m1StageTiming=true;
@@ -927,7 +1016,7 @@ int wmain(int argc, wchar_t **argv) {
                    "[--m1-empty-preview] [--m1-manual-gravity] [--m1-observe REQUEST PREFIX] [--m1-observe-series REQUEST PREFIX] "
                    "[--m1-one-quantum-grant] [--m1-stage-timing] [--m1-observe-kappa-zero] [--m1-inventory-v1] [--m1-angle-witness-v1] "
                    "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] [--g13-f05-rest] "
-                   "[--g13-revoke-before | --g13-revoke-after] [--g13-diagnostics full|hot] [--g13-slot-snapshot] [--g13-tail-timing] [--g13-seal-v1]]\n";
+                   "[--g13-revoke-before | --g13-revoke-after] [--g13-diagnostics full|hot] [--g13-slot-snapshot] [--g13-tail-timing] [--g13-seal-v1]] [--g13-compile-trace]\n";
       return 2;
     }
   }

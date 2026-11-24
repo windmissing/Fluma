@@ -45,7 +45,8 @@ def write_stack_dump(dbghelp, kernel, pid, path):
     return dict(file=path.name, bytes=path.stat().st_size, sha256=hashlib.sha256(path.read_bytes()).hexdigest())
 
 
-def supervise(exe, role, out, disable, stack_dumps=False, private_writes=False):
+def supervise(exe, role, out, disable, stack_dumps=False, private_writes=False, *,
+              argv=None, cwd=None, observe_modules=None, watched_role=None):
     kernel = ctypes.WinDLL("kernel32", use_last_error=True)
     kernel.OpenProcess.argtypes = kernel.OpenThread.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
     kernel.OpenProcess.restype = kernel.OpenThread.restype = wintypes.HANDLE
@@ -68,6 +69,8 @@ def supervise(exe, role, out, disable, stack_dumps=False, private_writes=False):
         invocation = [str(exe.resolve()), flag, str(stem.with_suffix(".bin").resolve())]
     if disable:
         invocation.append("--disable-optimization")
+    if argv is not None:
+        invocation = [str(exe.resolve()), *argv]
     samples, rows = [], []
     dumps, remaining_dumps = [], [20, 45] if stack_dumps else []
     build = None
@@ -75,7 +78,7 @@ def supervise(exe, role, out, disable, stack_dumps=False, private_writes=False):
     created = time.monotonic()
     offset, next_sample = 0, 0
     with stdout.open("xb") as output, stderr.open("xb") as error:
-        with subprocess.Popen(invocation, stdout=output, stderr=error) as child:
+        with subprocess.Popen(invocation, cwd=cwd, stdout=output, stderr=error) as child:
             process = kernel.OpenProcess(0x1000, False, child.pid)
             try:
                 owner = None
@@ -91,7 +94,8 @@ def supervise(exe, role, out, disable, stack_dumps=False, private_writes=False):
                             row = json.loads(line)
                             rows.append(row)
                             owner = row.get("ownerTid", owner)
-                            if row.get("call") == "vkCreateComputePipelines":
+                            if row.get("call") == "vkCreateComputePipelines" and (
+                                    watched_role is None or row.get("role") == watched_role):
                                 build = row
                                 if int(row["qpcFrequency"]) != frequency:
                                     raise ValueError("child and supervisor QPC frequency differ")
@@ -122,6 +126,8 @@ def supervise(exe, role, out, disable, stack_dumps=False, private_writes=False):
                         capture = write_stack_dump(dbghelp, kernel, child.pid, dump)
                         dumps.append(dict(targetSeconds=mark, beginQpc=str(tick),
                                           endQpc=str(qpc(kernel, "QueryPerformanceCounter")), ownerTid=owner, **capture))
+                    if observe_modules and alive:
+                        observe_modules(child.pid, tick)
                     time.sleep(0.1)
                 stop_tick = qpc(kernel,"QueryPerformanceCounter")
                 forced = child.poll() is None
@@ -144,6 +150,11 @@ def supervise(exe, role, out, disable, stack_dumps=False, private_writes=False):
                    probe=probe, forced=forced, exitCode=exit_code, ownerRetired=retired)
     if private_writes:
         receipt.update(probes=probes, privateWrites=final.get("t854PrivateWrites",final.get("t849PrivateWrites")))
+    if argv is not None:
+        receipt.update(argv=invocation, cwd=str(cwd), final=final,
+                       observation="CENSORED" if forced else "EXITED",
+                       stderrSHA=hashlib.sha256(stderr.read_bytes()).hexdigest(),
+                       modules=observe_modules.receipts() if observe_modules else [])
     stem.with_suffix(".receipt.json").write_text(json.dumps(receipt, indent=2)+"\n", encoding="utf8")
     return receipt
 

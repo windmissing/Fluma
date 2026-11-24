@@ -282,6 +282,7 @@ private:
     uint32_t slotCount=0;
   } t877Late;
   uint64_t t877FenceGeneration=0;
+  uint64_t compileRoleGeneration=0;
   void ReportLateCandidate(VkResult,VkResult,uint64_t,uint64_t);
   std::vector<uint32_t> t833Seed;
   size_t m1ReplayBytes=0;
@@ -371,6 +372,8 @@ private:
   const char *m1Reject=nullptr;
   pc::M1Gravity m1GrantGravity{};
   bool ClaimM1(m1::ProgressClockV2 &,uint64_t,bool,m1::PlanGrantV2 &);
+  bool ClaimM1Source(m1::ProgressClockV2 &,uint64_t,const SourceOffer &,m1::PlanGrantV2 &);
+  bool SuspendM1Hold(const m1::ProgressClockV2 &,const m1::SourceRootOwner &);
   const char *AwaitM1Fence(uint64_t,const std::function<const char *()> &,M1WaitLog &);
   void M1RootTrace(const char *,uint64_t,const m1::ProgressClockV2 &,const m1::PlanGrantV2 &,
                    const grs::AcceptedRoot &,const M1WaitLog &);
@@ -938,6 +941,7 @@ void Boot::QualifySteady(const std::string &roleName) {
     VkComputePipelineCreateInfo compute{VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO};
     compute.flags = attempt.disableOptimization ? VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT : 0;
     compute.layout = pipelineLayout;
+    const auto compileGeneration=++compileRoleGeneration;
     auto edge = [&](const char *call, const char *phase, const char *result) {
       std::ostringstream row;
       row << "{\"schema\":\"PC_G13_PIPELINE_PROGRESS_V1\",\"call\":" << Quote(call)
@@ -945,8 +949,23 @@ void Boot::QualifySteady(const std::string &roleName) {
           << ",\"layoutSHA\":" << Quote(kHash_layoutSHA) << ",\"flags\":" << compute.flags << ",\"pipelineCache\":null"
           << ",\"pid\":" << GetCurrentProcessId() << ",\"ownerTid\":" << GetCurrentThreadId()
           << ",\"processStartTick\":" << Quote(ProcessStart()) << ",\"qpcFrequency\":\"" << pc::QpcFrequency() << "\""
-          << ",\"qpc\":\"" << pc::QpcTicks() << "\",\"vkResult\":" << result << '}';
-      return publish(row.str());
+          << ",\"qpc\":\"" << pc::QpcTicks() << "\",\"vkResult\":" << result;
+      if (attempt.g13CompileTrace) {
+        row << ",\"compileV2\":{\"deviceGeneration\":1,\"layoutGeneration\":1,\"roleGeneration\":" << compileGeneration
+            << ",\"retainedCandidatePipelines\":" << t833Pipelines.size()
+            << ",\"workBytes\":" << buffers[kWork].bytes << ",\"snapshot\":"
+            << (attempt.t899SlotSnapshot ? "true" : "false")
+            << ",\"moduleBytes\":" << module.codeSize << ",\"moduleFlags\":" << module.flags
+            << ",\"modulePNext\":" << (module.pNext ? "true" : "false")
+            << ",\"stage\":" << compute.stage.stage << ",\"stageFlags\":" << compute.stage.flags
+            << ",\"entry\":" << Quote(compute.stage.pName ? compute.stage.pName : "")
+            << ",\"specialization\":" << (compute.stage.pSpecializationInfo ? "true" : "false")
+            << ",\"baseIndex\":" << compute.basePipelineIndex
+            << ",\"basePipeline\":" << (compute.basePipelineHandle ? "true" : "false")
+            << ",\"cache\":null,\"allocator\":null,\"bindings\":[0,1,2,3,4],\"pushBytes\":" << kPushBytes
+            << ",\"computePNext\":" << (compute.pNext ? "true" : "false") << '}';
+      }
+      return publish(row.str()+"}");
     };
     Require(edge("vkCreateShaderModule", "ENTER", "null"), "ATTEMPT_REVOKED");
     const auto loaded = vk.CreateShaderModule(device, &module, nullptr, &shader);

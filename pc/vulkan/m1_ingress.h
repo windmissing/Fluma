@@ -53,6 +53,10 @@ inline bool AdjacentSourcePulses(const M1Pulse &a,const M1Pulse &b) {
          b.uiNs>a.uiNs && b.uiNs-a.uiNs<=gap && b.receiptNs>a.receiptNs && b.receiptNs-a.receiptNs<=gap;
 }
 
+inline bool SourcePulseAfter(const M1Pulse &pulse,uint64_t session,uint64_t boundary) {
+  return pulse.seq && pulse.session==session && pulse.callbackTicks>boundary && pulse.receiptTicks>boundary;
+}
+
 class M1Ingress {
  public:
   enum class Code { Pending, Consuming, Accepted, Rejected, Revoked, Full, Conflict, Expired, Invalid, Superseded };
