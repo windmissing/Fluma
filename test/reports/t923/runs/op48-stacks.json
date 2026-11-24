@@ -1,0 +1,167 @@
+{
+  "arms": 2,
+  "ownerIpModules": {
+    "igc64.dll": 4
+  },
+  "captures": [
+    {
+      "arm": "g13-op48-default\\01",
+      "pid": 20504,
+      "tid": 97384,
+      "observedSeconds": 50.6468824,
+      "ownerCpuSeconds": 48.984375,
+      "processCpuSeconds": 48.984375,
+      "loaded": {
+        "C:\\Windows\\SYSTEM32\\vulkan-1.dll": {
+          "sha256": "591d4c316a0a39f96792979ce5ebb1bb380f0015c30707ba7ac611b35ae01cfc",
+          "version": "1.3.300.0"
+        },
+        "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll": {
+          "sha256": "4860329b6002eb01fcc1f46c97f1551fb5acf7d651643bcb888a085f17168dd5",
+          "version": "31.0.101.2140"
+        },
+        "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igvk64.dll": {
+          "sha256": "df10df2b47df8d8742546dbe97b781e272b437e721999b4dc5bf940426d9a907",
+          "version": "31.0.101.2140"
+        }
+      },
+      "dumps": [
+        {
+          "seconds": 20,
+          "sha256": "5cbb8f6133bcff087d71c1302c3a5e4ba884a0012953af0783558a904916404c",
+          "ip": {
+            "module": "igc64.dll",
+            "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+            "rva": "0x410f7e",
+            "imageTimeDateStamp": 1762350066
+          },
+          "firstStackReferences": [
+            {
+              "offset": 120,
+              "module": "igc64.dll",
+              "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+              "rva": "0xab7929",
+              "imageTimeDateStamp": 1762350066
+            },
+            {
+              "offset": 144,
+              "module": "igc64.dll",
+              "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+              "rva": "0x2651cc0",
+              "imageTimeDateStamp": 1762350066
+            },
+            {
+              "offset": 216,
+              "module": "igc64.dll",
+              "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+              "rva": "0xab9a23",
+              "imageTimeDateStamp": 1762350066
+            }
+          ]
+        },
+        {
+          "seconds": 45,
+          "sha256": "a3e22af802d424306a92d4ba134728a098c999a74560f5462a581d9cc84cff6e",
+          "ip": {
+            "module": "igc64.dll",
+            "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+            "rva": "0x411080",
+            "imageTimeDateStamp": 1762350066
+          },
+          "firstStackReferences": [
+            {
+              "offset": 144,
+              "module": "igc64.dll",
+              "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+              "rva": "0x2651cc0",
+              "imageTimeDateStamp": 1762350066
+            },
+            {
+              "offset": 216,
+              "module": "igc64.dll",
+              "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+              "rva": "0xab9a23",
+              "imageTimeDateStamp": 1762350066
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "arm": "g13-op48-default\\02",
+      "pid": 26120,
+      "tid": 19416,
+      "observedSeconds": 50.691978,
+      "ownerCpuSeconds": 47.53125,
+      "processCpuSeconds": 47.53125,
+      "loaded": {
+        "C:\\Windows\\SYSTEM32\\vulkan-1.dll": {
+          "sha256": "591d4c316a0a39f96792979ce5ebb1bb380f0015c30707ba7ac611b35ae01cfc",
+          "version": "1.3.300.0"
+        },
+        "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll": {
+          "sha256": "4860329b6002eb01fcc1f46c97f1551fb5acf7d651643bcb888a085f17168dd5",
+          "version": "31.0.101.2140"
+        },
+        "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igvk64.dll": {
+          "sha256": "df10df2b47df8d8742546dbe97b781e272b437e721999b4dc5bf940426d9a907",
+          "version": "31.0.101.2140"
+        }
+      },
+      "dumps": [
+        {
+          "seconds": 20,
+          "sha256": "bd07a18cb3b782fd521f7ec4f472bf818906294537d896de7949460d75af95c0",
+          "ip": {
+            "module": "igc64.dll",
+            "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+            "rva": "0xb20498",
+            "imageTimeDateStamp": 1762350066
+          },
+          "firstStackReferences": [
+            {
+              "offset": 168,
+              "module": "igc64.dll",
+              "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+              "rva": "0xb1bbbc",
+              "imageTimeDateStamp": 1762350066
+            },
+            {
+              "offset": 216,
+              "module": "igc64.dll",
+              "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+              "rva": "0xab58d6",
+              "imageTimeDateStamp": 1762350066
+            }
+          ]
+        },
+        {
+          "seconds": 45,
+          "sha256": "77f90e342d2408d7ae2a0a957f60bd58205d59ac0ae0a51bd517b9020f17e51f",
+          "ip": {
+            "module": "igc64.dll",
+            "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+            "rva": "0x411085",
+            "imageTimeDateStamp": 1762350066
+          },
+          "firstStackReferences": [
+            {
+              "offset": 144,
+              "module": "igc64.dll",
+              "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+              "rva": "0x2651cc0",
+              "imageTimeDateStamp": 1762350066
+            },
+            {
+              "offset": 216,
+              "module": "igc64.dll",
+              "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\iigd_dch.inf_amd64_130547712612821e\\igc64.dll",
+              "rva": "0xab9a23",
+              "imageTimeDateStamp": 1762350066
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

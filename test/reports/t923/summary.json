@@ -1,0 +1,77 @@
+{
+ "schema": "T923_SAND_V2_ROOTS_OP48_PACKET_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "item1": {
+  "checkPackage": "both PASS",
+  "negatives": {
+   "truncate": "FILE_LENGTH opcode=896 expected/actual bytes+SHA in row",
+   "shaFlip": "FILE_SHA opcode=896"
+  },
+  "dm2": {
+   "sourceDispatches": 14,
+   "typedTail": "14/14/14",
+   "finePoints": 31,
+   "acceptedRun": "dm2-v2-steps1 stop=243.7ms TAIL_ACCEPTED",
+   "quantum": "same-process 2404-slot plan vkResult=2 (deadline)",
+   "raw": {
+    "acceptedFiles": 20,
+    "inputGpuIdentical": true,
+    "actualReplayIdentical": true,
+    "shaInput": "31d7ebcc...",
+    "shaActualReplay": "74ba27b6..."
+   },
+   "gpuDispatchSumMs": 209.7
+  },
+  "r1": {
+   "sourceDispatches": 27,
+   "accepted": false,
+   "rawDiagnosticFiles": 22,
+   "r1Specific": [
+    "VISUAL_DEVICE_SEED",
+    "VISUAL_MAPS",
+    "VISUAL_MARKERS",
+    "WORK"
+   ],
+   "rootVkResult": 2,
+   "diagnosticGeneration": 3
+  },
+  "t924SealedBaselineV1": "PENDING developer card - two-sided comparison deferred"
+ },
+ "item2": {
+  "arms": 4,
+  "all": "CALL_UNRETURNED (CENSORED)",
+  "divergence": "NONE between default/noopt",
+  "rip45s": "igc64.dll+0x411080/0x411085 all arms",
+  "rip20s": [
+   "igc64+0x410f7e",
+   "igc64+0xb20498",
+   "igc64+0xdc6f5d",
+   "ntdll+0x27388"
+  ],
+  "ownerCpu": {
+   "min": 45.8,
+   "max": 49.0,
+   "window": "50.6-50.8s"
+  },
+  "cacheIsolation": "UNKNOWN",
+  "bisection": "DEFERRED per T915 contract (no divergence)"
+ },
+ "item3": {
+  "pe": "t909-r2 d37e45b9",
+  "request": "1 120 2 1",
+  "framesWithPacket": 357,
+  "centerInRoi": "138/138 mass-bearing frames",
+  "readerVerdict": "46 sameRoot packet-in-archive+center-ROI / 74 absent post-ARRIVE",
+  "arrive": 33,
+  "sourceBirths": 33,
+  "waterEdge": 2488,
+  "massFirstQ": 126483,
+  "disappearance": "mass=0 at sample frames after ARRIVE",
+  "closesT912": "remaining missing item"
+ },
+ "canvasFallback": "none"
+}
