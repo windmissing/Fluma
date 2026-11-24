@@ -1,0 +1,72 @@
+{
+ "schema": "T947_DEMO_G15_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "demo": {
+  "package": "t942-integrated-demo manifest verified (PE 0aec55d0, source/candidate/commit same as T933)",
+  "center4sPile": {
+   "holdSeconds": 4.1,
+   "quanta": 191,
+   "pixelFrame50": {
+    "296x308": 1,
+    "312x308": 3,
+    "328x308": 0
+   }
+  },
+  "60sPlus": {
+   "quanta": 1773,
+   "finalProbes": 2210,
+   "note": "no admission collapse"
+  },
+  "angles": {
+   "requests256": [
+    -1280,
+    -2560,
+    -3840,
+    -5120,
+    -3840,
+    -2560,
+    -1280,
+    0,
+    1280,
+    2560,
+    3840,
+    5120,
+    0
+   ],
+   "grantedFollows": true,
+   "boxAngleDrawnTimeline": [
+    0,
+    -668,
+    0,
+    668,
+    0
+   ],
+   "compactView": "2253/2253 mapped, transformRevisions 1-5, rotation/center/scale/dpi recorded"
+  },
+  "freefall": {
+   "positiveAngle": "+20deg sand flows to screen lower-right (48/45 px at 360/400x320)",
+   "negativeAngle": "-20deg sand flows to screen lower-left (48/48 px at 224/264x320) \u2014 symmetric mirror",
+   "verdict": "gravity projects to screen-down along tilted box both directions"
+  },
+  "birthCriterion": {
+   "xComponent": "word26=67260919 -> screen x=312.5000 vs pointer 312.5, error 0.00004px PASS",
+   "yComponent": "word27=586753 -> screen y=323.9 vs pointer 215.5, 108.4px: birth at bed level (y=0.56) not pointer height (32)",
+   "oldBaseline": "T935 y=16 clamp 55.168px offset",
+   "verdict": "x PASS; y misses <=1px letter of T940 (bed-level birth semantics) \u2014 architect/developer ruling needed"
+  },
+  "reset": "R key and angle timeline return to 0",
+  "recovery": "1 full chain"
+ },
+ "g15": {
+  "package": "t942-g15-package roleSet 1bb757fc, check-package PASS",
+  "pipelineQualification": "FIXED: 45 ROLE_PIPELINE_ENTER/EXIT all return (OpSourceExtension removal live-verified, T927 hang gone), BOOT reached, ROOT submitted",
+  "typedQuantum": "BLOCKED on iGPU: 6/6 (pos x3 neg x3) QUANTUM 2404-dispatch vk=2 timeout; submit@48ms + ~202ms fence wait > 250ms gate; same DM2 full-plan pattern as T914/T923",
+  "conservationAndScene": "not reachable without accepted root; --present frames not produced",
+  "raw": "diagnostic envelope sealed (neg arm) rootVkResult=2",
+  "handoff": "dGPU or reduced-dispatch variant for typed acceptance; conservation/same-root scene blocked"
+ }
+}

@@ -1,0 +1,16 @@
+{
+  "command": [
+    ".codex/local-test/t942-integrated-demo/hello_world_pc.exe",
+    "--m1-window",
+    ".codex/local-test/t942-integrated-demo/full_source.spv",
+    ".codex/local-test/t942-integrated-demo/quantum_candidate.spv",
+    ".codex/local-test/t942-integrated-demo/quantum_commit.spv",
+    "--m1-compact-demo",
+    "--m1-integrated",
+    "--m1-dual-source",
+    "--m1-source-trace",
+    "--m1-observe",
+    "test/reports/t947/runs/pixel-birth/req.txt",
+    "test/reports/t947/runs/pixel-birth/root"
+  ]
+}
