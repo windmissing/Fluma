@@ -1,0 +1,135 @@
+{
+  "synthetic": {
+    "order": {
+      "j": 2,
+      "control16": 2404,
+      "logicalSlots": 2404,
+      "physicalDispatches": 2403,
+      "saved": 1
+    },
+    "allRejected": {
+      "j": 0,
+      "control16": 2404,
+      "logicalSlots": 2404,
+      "physicalDispatches": 2404,
+      "saved": 0
+    },
+    "grid": {
+      "pressurePa": [
+        9.5,
+        10.5,
+        11.5,
+        12.5
+      ],
+      "wallShearPa": [
+        0.03999999910593033,
+        0.03999999910593033,
+        0.03999999910593033,
+        0.03999999910593033,
+        0.03999999910593033,
+        0.03999999910593033,
+        0.03999999910593033,
+        0.03999999910593033
+      ],
+      "root": 2
+    },
+    "motion": {
+      "frames": 3,
+      "state": "SAME_PARTICLE_SCREEN_FREE_FALL"
+    }
+  },
+  "negative": [
+    "LATCH_SCOPE",
+    "ORDER_CONTROL16",
+    "ORDER_RAW_DIFF:REJECTED_PREFIX",
+    "ORDER_REPLAY_OR_REJECT",
+    "ALL_REJECTED_PUBLISHED",
+    "GRIDVIEW_LATE_OR_SCOPE",
+    "GRIDVIEW_LATE_OR_SCOPE",
+    "GRIDVIEW_COORDINATE_OR_UNITS",
+    "GRIDVIEW_COORDINATE_OR_UNITS",
+    "GRIDVIEW_PHYSICAL_PRESSURE",
+    "GRIDVIEW_WALL_SHEAR",
+    "DEMO_BEFORE_DOWN",
+    "DEMO_ROI_OR_LINEAGE",
+    "DEMO_ROI_OR_LINEAGE",
+    "DEMO_MOVE_RAW_LINEAGE"
+  ],
+  "originals": {
+    "dm2": {
+      "control16": 2404,
+      "stateHeaderLastNonce": [
+        1,
+        2
+      ],
+      "selectedJ": 1,
+      "sealedEvents": 260,
+      "sealedPaths": 1,
+      "businessAccepted": false
+    },
+    "f02": {
+      "rolesObserved": {
+        "OP48_VISCOSITY": "812db31f801cd56c68800e66252c45cb5a2edb50da78a656c778f7353c099d58",
+        "OP49_PRESSURE": "ca603a59b5d09ad9ac27ab4720420335d6a13a73bf622b44e43148b67aea2ec2"
+      },
+      "businessAccepted": false,
+      "firstStop": "GRANT_DEADLINE"
+    },
+    "demo": {
+      "births": [
+        {
+          "slot": 3,
+          "generation": 2,
+          "id": 50,
+          "origin": 13,
+          "q20": 131072,
+          "xy": [
+            67260919,
+            33554432
+          ]
+        },
+        {
+          "slot": 46,
+          "generation": 1,
+          "id": 51,
+          "origin": 13,
+          "q20": 131072,
+          "xy": [
+            67260919,
+            33554432
+          ]
+        },
+        {
+          "slot": 47,
+          "generation": 1,
+          "id": 52,
+          "origin": 13,
+          "q20": 131072,
+          "xy": [
+            67260919,
+            33554432
+          ]
+        },
+        {
+          "slot": 48,
+          "generation": 1,
+          "id": 53,
+          "origin": 13,
+          "q20": 111254,
+          "xy": [
+            67260919,
+            33554432
+          ]
+        }
+      ],
+      "sourceXY": [
+        64.14501159282618,
+        32.0
+      ],
+      "sourceAmount": 0.4811008,
+      "oldMoveId": 5,
+      "roiAtBirth": false,
+      "freeTrajectory": "MISSING_ALIGNED_PIXELS"
+    }
+  }
+}
