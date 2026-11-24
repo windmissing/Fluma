@@ -1,0 +1,600 @@
+{
+ "dm2-baseline": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline"
+  ],
+  "exit": 1,
+  "seconds": 2.1,
+  "rows": 191,
+  "roots": 1
+ },
+ "dm2-t913-v1": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-t913-v1\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-t913-v1\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-t913-v1"
+  ],
+  "exit": 0,
+  "seconds": 1.8,
+  "rows": 191,
+  "roots": 1
+ },
+ "dm2-t913-split-v2": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-t913-split-v2\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-t913-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-t913-split-v2"
+  ],
+  "exit": 0,
+  "seconds": 1.8,
+  "rows": 203,
+  "roots": 1
+ },
+ "dm2-t913-split-v2-at-t921": {
+  "cmd": [
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-t913-split-v2-at-t921"
+  ],
+  "exit": 1,
+  "seconds": 1.9,
+  "rows": 203,
+  "roots": 1
+ },
+ "r1-baseline": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\r1-baseline\\pc_sand_r1_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\r1-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-r1-baseline"
+  ],
+  "exit": 1,
+  "seconds": 2.9,
+  "rows": 212,
+  "roots": 1
+ },
+ "r1-t913-v1": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\r1-t913-v1\\pc_sand_r1_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\r1-t913-v1\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-r1-t913-v1"
+  ],
+  "exit": 1,
+  "seconds": 2.1,
+  "rows": 213,
+  "roots": 1
+ },
+ "r1-t913-split-v2": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\r1-t913-split-v2\\pc_sand_r1_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\r1-t913-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-r1-t913-split-v2"
+  ],
+  "exit": 1,
+  "seconds": 2.2,
+  "rows": 241,
+  "roots": 1
+ },
+ "r1-t913-split-v2-at-t921": {
+  "cmd": [
+   ".codex\\local-test\\t921-release\\r1-split-v2\\pc_sand_r1_host.exe",
+   "--modules",
+   ".codex\\local-test\\t921-release\\r1-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-r1-t913-split-v2-at-t921"
+  ],
+  "exit": 1,
+  "seconds": 2.1,
+  "rows": 241,
+  "roots": 1
+ },
+ "dm2-baseline-r1": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-r1"
+  ],
+  "exit": 1,
+  "accepted": false
+ },
+ "dm2-baseline-r2": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-r2"
+  ],
+  "exit": 1,
+  "accepted": false
+ },
+ "dm2-baseline-r3": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-r3"
+  ],
+  "exit": 1,
+  "accepted": false
+ },
+ "dm2-baseline-r4": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-r4"
+  ],
+  "exit": 1,
+  "accepted": false
+ },
+ "dm2-t913-split-v2-at-t921-r1": {
+  "cmd": [
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-t913-split-v2-at-t921-r1"
+  ],
+  "exit": 1,
+  "accepted": false
+ },
+ "dm2-t913-split-v2-at-t921-r2": {
+  "cmd": [
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-t913-split-v2-at-t921-r2"
+  ],
+  "exit": 1,
+  "accepted": false
+ },
+ "dm2-t913-split-v2-at-t921-r3": {
+  "cmd": [
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-t913-split-v2-at-t921-r3"
+  ],
+  "exit": 1,
+  "accepted": false
+ },
+ "dm2-t913-split-v2-at-t921-r4": {
+  "cmd": [
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-t913-split-v2-at-t921-r4"
+  ],
+  "exit": 1,
+  "accepted": false
+ },
+ "dm2-baseline-r5": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-r5"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 251.7
+ },
+ "dm2-baseline-r6": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-r6"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 252.6
+ },
+ "dm2-baseline-r7": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-r7"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 250.9
+ },
+ "dm2-baseline-r8": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-r8"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 263.8
+ },
+ "dm2-baseline-r9": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-r9"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 252.4
+ },
+ "dm2-baseline-r10": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-r10"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 250.0
+ },
+ "dm2-baseline-r11": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-r11"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 320.9
+ },
+ "dm2-baseline-r12": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-r12"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 252.3
+ },
+ "dm2-baseline-steps1-r1": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--steps",
+   "1",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-steps1-r1"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 260.4
+ },
+ "dm2-baseline-steps1-r2": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--steps",
+   "1",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-steps1-r2"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 251.4
+ },
+ "dm2-baseline-steps1-r3": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--steps",
+   "1",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-steps1-r3"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 251.6
+ },
+ "dm2-baseline-steps1-r4": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--steps",
+   "1",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-steps1-r4"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 255.5
+ },
+ "dm2-t913-split-v2-at-t921-steps1-r1": {
+  "cmd": [
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--steps",
+   "1",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-t913-split-v2-at-t921-steps1-r1"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 250.0
+ },
+ "dm2-t913-split-v2-at-t921-steps1-r2": {
+  "cmd": [
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t921-release\\dm2-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--steps",
+   "1",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-t913-split-v2-at-t921-steps1-r2"
+  ],
+  "exit": 1,
+  "accepted": true,
+  "stopMs": 232.6
+ },
+ "dm2-baseline-plain-r1": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-plain-r1"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 251.9
+ },
+ "dm2-baseline-plain-r2": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-plain-r2"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 251.1
+ },
+ "dm2-baseline-plain-r3": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-plain-r3"
+  ],
+  "exit": 1,
+  "accepted": false,
+  "stopMs": 263.5
+ },
+ "dm2-baseline-plain-r4": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-baseline\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-baseline\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--raw-envelope",
+   "test\\reports\\t923\\runs\\t924-runs\\raw-dm2-baseline-plain-r4"
+  ],
+  "exit": 0,
+  "accepted": true,
+  "stopMs": 245.0
+ },
+ "dm2-prep-default": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-t913-split-v2\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-t913-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm"
+  ],
+  "exit": 1
+ },
+ "dm2-prep-prepare-retired": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\dm2-t913-split-v2\\pc_sand_dm2_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\dm2-t913-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--source-prepare-retired"
+  ],
+  "exit": 0
+ },
+ "r1-prep-default": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\r1-t913-split-v2\\pc_sand_r1_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\r1-t913-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm"
+  ],
+  "exit": 1
+ },
+ "r1-prep-prepare-retired": {
+  "cmd": [
+   ".codex\\local-test\\t924-release\\r1-t913-split-v2\\pc_sand_r1_host.exe",
+   "--modules",
+   ".codex\\local-test\\t924-release\\r1-t913-split-v2\\sand_assets",
+   "--source",
+   ".codex\\local-test\\t894-model-source.u32le",
+   "--source-timestamps-detail",
+   "--source-prewarm",
+   "--source-prepare-retired"
+  ],
+  "exit": 1
+ }
+}

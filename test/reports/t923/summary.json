@@ -1,5 +1,5 @@
 {
- "schema": "T923_SAND_V2_ROOTS_OP48_PACKET_V1",
+ "schema": "T923_SAND_V2_ROOTS_OP48_PACKET_V2",
  "gpu": {
   "pci": "8086:3e98",
   "driver": "31.0.101.2140",
@@ -39,7 +39,28 @@
    "rootVkResult": 2,
    "diagnosticGeneration": 3
   },
-  "t924SealedBaselineV1": "PENDING developer card - two-sided comparison deferred"
+  "t924SealedBaselineV1": {
+   "status": "MEASURED (follow-up 2026-11-24)",
+   "packages": "six t924-release packages, all T922 package PASS (issues=[])",
+   "negatives": "dm2-baseline truncate FILE_LENGTH opcode=1 (88416 vs 88160) + r1-v1 shaflip FILE_SHA opcode=1; host --check-package exit=1 ROLE_REJECT, reject.jsonl kept",
+   "dm2AcceptedRoots": {
+    "baseline": "plain-r4 stop=245.0ms (12 dispatches, 20 rejected attempts at 250-321ms edge)",
+    "t913-v1": "first attempt accepted, record->submit 39.4ms",
+    "t913-split-v2@t924": "first attempt accepted, 14 dispatches",
+    "t913-split-v2@t921": "steps1-r2 accepted 232.6ms (accepted+diagnostic dual seal)"
+   },
+   "semanticComparison": {
+    "t922DiffCommand": "REJECTED UNCLASSIFIED_HISTORICAL_ORIGINS both arms: real host seed BASE carries base[19]=1 origin; T922 diff contract assumes empty-origin seed (base[19]==0) -> command cannot certify real seals",
+    "normalizedPairs": "6/6 semanticEqual (baseline vs v1 vs split-v2@t924 vs split-v2@t921): input/base/actual/event/result all byte-identical after mapping-zero normalization incl. origin-row digest at origin+16*base[19]",
+    "identity": "INPUT128==GPU_INPUT128 and ACTUAL==REPLAY per seal (4/4); FIXTURE128 sha=3580ccb1a419 (frozen input)"
+   },
+   "r1": {
+    "accepted": "0/4 arms (baseline/v1/split-v2@t924/split-v2@t921), vk=2, stop 250.6-263.7ms vs 250ms deadline",
+    "diagnosticSeals": "4/4 sealed 22 files each incl. VISUAL_DEVICE_SEED(271104B)/VISUAL_MAPS(524288B)/VISUAL_MARKERS(786432B), rootVkResult=2",
+    "dispatches": "19/19/27/27, fine points 41/57 where queries landed (baseline arm query row absent on early timeout path)"
+   },
+   "timelineChecks": "8/8 PASS (4 dm2 + 4 r1 arms)"
+  }
  },
  "item2": {
   "arms": 4,
@@ -73,5 +94,21 @@
   "disappearance": "mass=0 at sample frames after ARRIVE",
   "closesT912": "remaining missing item"
  },
- "canvasFallback": "none"
+ "canvasFallback": "none",
+ "item4": {
+  "schema": "T924_PREPARE_RETIRED_MEASUREMENT",
+  "checker": "pc/vulkan/check_t924_command_preparation.py 4/4 PASS (COMMAND_CALL_SEQUENCE/COMMAND_OBJECT_GENERATION/RETIRED_PREPARATION_SCOPE)",
+  "dm2": {
+   "default": "record->submit 39.44ms (commandReset 39.2ms in grant), accepted 0/3",
+   "prepareRetired": "record->submit 0.33ms (0.26-2.05ms over 3 runs), accepted 3/3",
+   "gain": "~39-52ms removed from grant window; vkResetCommandPool 39-44ms moved before grant with retire proof (fence generation n -> n+1)"
+  },
+  "r1": {
+   "default": "record->submit 47.98ms, accepted 0/3",
+   "prepareRetired": "record->submit 0.24-1.10ms, accepted 0/3 (submit->stop still 205.6-249.9ms: iGPU fence wait dominates)",
+   "note": "preparation gain real but R1 deadline failure is GPU-side wait, consistent with T914/T923"
+  },
+  "outsideGrant": true,
+  "retireProof": "vkResult=0, enter/exit before grant, fence useGeneration==priorGeneration+1"
+ }
 }

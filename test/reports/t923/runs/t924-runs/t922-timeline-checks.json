@@ -1,0 +1,34 @@
+{
+ "timeline-dm2-baseline": {
+  "exit": 0,
+  "out": "{\n  \"family\": \"DM2\",\n  \"accepted\": false,\n  \"dispatches\": 12,\n  \"queryPoints\": 27\n}"
+ },
+ "timeline-dm2-t913-v1": {
+  "exit": 0,
+  "out": "{\n  \"family\": \"DM2\",\n  \"accepted\": true,\n  \"dispatches\": 12,\n  \"queryPoints\": 27\n}"
+ },
+ "timeline-dm2-t913-split-v2": {
+  "exit": 0,
+  "out": "{\n  \"family\": \"DM2\",\n  \"accepted\": true,\n  \"dispatches\": 14,\n  \"queryPoints\": 31\n}"
+ },
+ "timeline-dm2-t913-split-v2-at-t921": {
+  "exit": 0,
+  "out": "{\n  \"family\": \"DM2\",\n  \"accepted\": false,\n  \"dispatches\": 14,\n  \"queryPoints\": 31\n}"
+ },
+ "timeline-r1-baseline": {
+  "exit": 0,
+  "out": "{\n  \"family\": \"R1\",\n  \"accepted\": false,\n  \"dispatches\": 19,\n  \"queryPoints\": null\n}"
+ },
+ "timeline-r1-t913-v1": {
+  "exit": 0,
+  "out": "{\n  \"family\": \"R1\",\n  \"accepted\": false,\n  \"dispatches\": 19,\n  \"queryPoints\": 41\n}"
+ },
+ "timeline-r1-t913-split-v2": {
+  "exit": 0,
+  "out": "{\n  \"family\": \"R1\",\n  \"accepted\": false,\n  \"dispatches\": 27,\n  \"queryPoints\": 57\n}"
+ },
+ "timeline-r1-t913-split-v2-at-t921": {
+  "exit": 0,
+  "out": "{\n  \"family\": \"R1\",\n  \"accepted\": false,\n  \"dispatches\": 27,\n  \"queryPoints\": 57\n}"
+ }
+}

@@ -1,0 +1,134 @@
+{
+ "dm2-prep-default": {
+  "accepted": false,
+  "vk": 2,
+  "outsideGrant": false,
+  "pool": "2015786839544",
+  "fence": "2015666903640",
+  "priorGeneration": "1",
+  "useGeneration": "2",
+  "calls": {
+   "vkResetCommandPool": {
+    "enter": "1663378816168900",
+    "exit": "1663378855403500",
+    "vk": 0
+   },
+   "vkResetFences": {
+    "enter": "1663378855403500",
+    "exit": "1663378855404500",
+    "vk": 0
+   },
+   "vkBeginCommandBuffer": {
+    "enter": "1663378855404600",
+    "exit": "1663378855408600",
+    "vk": 0
+   }
+  },
+  "retireProof": {
+   "enterNs": "0",
+   "exitNs": "0",
+   "vkResult": null
+  },
+  "checker": "{\n  \"outsideGrant\": false,\n  \"grantNs\": 1663378816092400,\n  \"prepareToSubmitNs\": 202900,\n  \"durations\": {\n    \"vkResetCommandPool\": 39234600,\n    \"vkResetFences\": 1000,\n    \"vkBeginCommandBuffer\": 4000\n  }\n}",
+  "checkerExit": 0
+ },
+ "dm2-prep-prepare-retired": {
+  "accepted": true,
+  "vk": 0,
+  "outsideGrant": true,
+  "pool": "1826543486808",
+  "fence": "1826464031480",
+  "priorGeneration": "1",
+  "useGeneration": "2",
+  "calls": {
+   "vkResetCommandPool": {
+    "enter": "1663380025713400",
+    "exit": "1663380069395300",
+    "vk": 0
+   },
+   "vkResetFences": {
+    "enter": "1663380069395300",
+    "exit": "1663380069396100",
+    "vk": 0
+   },
+   "vkBeginCommandBuffer": {
+    "enter": "1663380069396200",
+    "exit": "1663380069399500",
+    "vk": 0
+   }
+  },
+  "retireProof": {
+   "enterNs": "1663380025711700",
+   "exitNs": "1663380025713300",
+   "vkResult": 0
+  },
+  "checker": "{\n  \"outsideGrant\": true,\n  \"grantNs\": 1663380086173400,\n  \"prepareToSubmitNs\": 17154100,\n  \"durations\": {\n    \"vkResetCommandPool\": 43681900,\n    \"vkResetFences\": 800,\n    \"vkBeginCommandBuffer\": 3300\n  }\n}",
+  "checkerExit": 0
+ },
+ "r1-prep-default": {
+  "accepted": false,
+  "vk": 2,
+  "outsideGrant": false,
+  "pool": "2626811399384",
+  "fence": "2626691291288",
+  "priorGeneration": "1",
+  "useGeneration": "2",
+  "calls": {
+   "vkResetCommandPool": {
+    "enter": "1663381429317800",
+    "exit": "1663381477069500",
+    "vk": 0
+   },
+   "vkResetFences": {
+    "enter": "1663381477069600",
+    "exit": "1663381477070500",
+    "vk": 0
+   },
+   "vkBeginCommandBuffer": {
+    "enter": "1663381477070500",
+    "exit": "1663381477074500",
+    "vk": 0
+   }
+  },
+  "retireProof": {
+   "enterNs": "0",
+   "exitNs": "0",
+   "vkResult": null
+  },
+  "checker": "{\n  \"outsideGrant\": false,\n  \"grantNs\": 1663381429222400,\n  \"prepareToSubmitNs\": 218400,\n  \"durations\": {\n    \"vkResetCommandPool\": 47751700,\n    \"vkResetFences\": 900,\n    \"vkBeginCommandBuffer\": 4000\n  }\n}",
+  "checkerExit": 0
+ },
+ "r1-prep-prepare-retired": {
+  "accepted": false,
+  "vk": 2,
+  "outsideGrant": true,
+  "pool": "2431133538296",
+  "fence": "2431133080440",
+  "priorGeneration": "1",
+  "useGeneration": "2",
+  "calls": {
+   "vkResetCommandPool": {
+    "enter": "1663382791489900",
+    "exit": "1663382830658500",
+    "vk": 0
+   },
+   "vkResetFences": {
+    "enter": "1663382830658600",
+    "exit": "1663382830659400",
+    "vk": 0
+   },
+   "vkBeginCommandBuffer": {
+    "enter": "1663382830659400",
+    "exit": "1663382830663000",
+    "vk": 0
+   }
+  },
+  "retireProof": {
+   "enterNs": "1663382791488700",
+   "exitNs": "1663382791489800",
+   "vkResult": 0
+  },
+  "checker": "{\n  \"outsideGrant\": true,\n  \"grantNs\": 1663382843670500,\n  \"prepareToSubmitNs\": 13340000,\n  \"durations\": {\n    \"vkResetCommandPool\": 39168600,\n    \"vkResetFences\": 800,\n    \"vkBeginCommandBuffer\": 3600\n  }\n}",
+  "checkerExit": 0
+ }
+}

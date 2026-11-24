@@ -1,0 +1,26 @@
+{
+ "dm2-baseline-truncate": {
+  "stage": "ROLE_REJECT",
+  "phase": "FILE_LENGTH",
+  "opcode": 1,
+  "path": "test/reports/t923/runs/t924-negatives/dm2-baseline-truncate/sand_assets/role_00000001.spv",
+  "expectedBytes": 88416,
+  "actualBytes": 88160,
+  "expectedSHA": "c0e1ad544ad1bc9d9d019543d52ba930aaf7557e1365e16ff9be2b47d08b15a1",
+  "actualSHA": "4a688a06a295355560c068a40a22c6a76ae2c185da152bc91aac25b0e92dc909",
+  "moduleVkResult": null,
+  "pipelineVkResult": null
+ },
+ "r1-v1-shaflip": {
+  "stage": "ROLE_REJECT",
+  "phase": "FILE_SHA",
+  "opcode": 1,
+  "path": "test/reports/t923/runs/t924-negatives/r1-v1-shaflip/sand_assets/role_00000001.spv",
+  "expectedBytes": 85944,
+  "actualBytes": 85944,
+  "expectedSHA": "2bb6f72f6bb51a2a39937d554a23829bba65ac182e6d86279e13d951d3e08ee8",
+  "actualSHA": "03f90fae14874a925e1e076e8a8243618e7c271432a50cccb505fd4fba9a276d",
+  "moduleVkResult": null,
+  "pipelineVkResult": null
+ }
+}
