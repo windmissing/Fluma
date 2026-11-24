@@ -49,7 +49,7 @@ struct Options {
   uint32_t steps=0;
   int32_t angle=0;
   int32_t g15End=0;
-  bool full=false,present=false,sourceTimestamps=false,sourceDetail=false,sourcePrewarm=false;
+  bool full=false,present=false,sourceTimestamps=false,sourceDetail=false,sourcePrewarm=false,sourcePrepareRetired=false;
 };
 
 Options Args(int argc,wchar_t **argv) {
@@ -73,6 +73,7 @@ Options Args(int argc,wchar_t **argv) {
     }
     else if (key==L"--source-timestamps-detail") out.sourceDetail=true;
     else if (key==L"--source-prewarm") out.sourcePrewarm=true;
+    else if (key==L"--source-prepare-retired") out.sourcePrepareRetired=true;
     else {
       RequireHost(i+1<argc,"MISSING_ARGUMENT");
       const auto *value=argv[++i];
@@ -104,7 +105,8 @@ Options Args(int argc,wchar_t **argv) {
               (!out.full || (out.steps && !out.archive.empty())) &&
               (out.archive.empty() || out.steps || !out.source.empty()),"DM2_CAPABILITIES");
 #endif
-  RequireHost(!(out.sourceTimestamps || out.sourceDetail || out.sourcePrewarm) || !out.source.empty(),"SOURCE_DIAGNOSTIC_NEEDS_SOURCE");
+  RequireHost(!(out.sourceTimestamps || out.sourceDetail || out.sourcePrewarm || out.sourcePrepareRetired) ||
+              !out.source.empty(),"SOURCE_DIAGNOSTIC_NEEDS_SOURCE");
   RequireHost(out.rawEnvelope.empty() || out.steps || !out.source.empty(),"RAW_ENVELOPE_NEEDS_ROOT");
   RequireHost(!kG15Dm2 || (!out.angle && !out.full && out.archive.empty()),"G15_NEEDS_V1_PROFILE_AND_RAW_ENVELOPE");
   return out;
@@ -261,6 +263,23 @@ class PulseClock {
   std::thread worker_;
 };
 
+void WriteCommandPreparation(std::ostream &out,const VulkanOwner::CommandPreparation &r) {
+  const auto call=[&](const VulkanOwner::CommandPreparation::Call &edge) {
+    out << "{\"enterNs\":\"" << edge.enter << "\",\"exitNs\":\"" << edge.exit
+        << "\",\"vkResult\":" << (edge.enter ? std::to_string(int(edge.result)) : "null") << '}';
+  };
+  out << "{\"outsideGrant\":" << (r.outsideGrant?"true":"false") << ",\"pool\":\"" << r.pool
+      << "\",\"fence\":\"" << r.fence << "\",\"priorGeneration\":\"" << r.priorGeneration
+      << "\",\"useGeneration\":\"" << r.useGeneration << "\",\"retireProof\":";
+  call(r.retireProof);
+  const char *names[]={"vkResetCommandPool","vkResetFences","vkBeginCommandBuffer"};
+  for (size_t i=0;i<r.calls.size();++i) {
+    out << ",\"" << names[i] << "\":";
+    call(r.calls[i]);
+  }
+  out << '}';
+}
+
 void SourceTimeline(const HostDevice &gpu,const VulkanOwner &owner,const VulkanOwner::RootIdentity &id,
                     const StorageSlots &storage,const Slice &common,const Slice &tail,
                     uint64_t grant,uint64_t deadline,uint64_t frozen,uint64_t expected,
@@ -314,7 +333,8 @@ void SourceTimeline(const HostDevice &gpu,const VulkanOwner &owner,const VulkanO
     if (i) row << ',';
     range(storage[i]);
   }
-  row << "],\"common\":"; range(common);
+  row << "],\"commandPreparation\":"; WriteCommandPreparation(row,t.commands);
+  row << ",\"common\":"; range(common);
   row << ",\"staging\":"; range(tail);
   std::cout << row.str() << "}\n";
 }
@@ -644,6 +664,15 @@ int Run(const Options &opt) {
               << "\",\"vkResult\":" << int(warmed) << "}\n";
     RequireVk(warmed,"SOURCE_DESCRIPTOR_PREWARM");
   }
+  if (opt.sourcePrepareRetired) {
+    VulkanOwner::CommandPreparation commands;
+    const auto result=owner.PrepareRetiredSource(commands);
+    std::cout << "{\"stage\":\"SOURCE_COMMAND_PREPARED\",\"family\":\"" << family
+              << "\",\"run\":\"" << scope.run << "\",\"vkResult\":" << int(result) << ",\"commandPreparation\":";
+    WriteCommandPreparation(std::cout,commands);
+    std::cout << "}\n";
+    RequireVk(result,"SOURCE_COMMAND_PREPARED");
+  }
   PulseClock pacing(scope,opt.angle);
   uint64_t commit=0,quanta=0;
   for (uint32_t n=0;n<total;++n) {
@@ -857,7 +886,7 @@ int Run(const Options &opt) {
 int wmain(int argc,wchar_t **argv) {
   using namespace grs::pc::sand;
   if (argc==2 && std::wstring_view(argv[1])==L"--help") {
-    std::cout << "pc_sand_" << family << " --modules DIR [--source INPUT128.u32le [--source-timestamps|--source-timestamps-detail] [--source-prewarm]] [--steps N] [--angle-index N] "
+    std::cout << "pc_sand_" << family << " --modules DIR [--source INPUT128.u32le [--source-timestamps|--source-timestamps-detail] [--source-prewarm] [--source-prepare-retired]] [--steps N] [--angle-index N] "
               << (kind==grs::g11vis::ParentKind::DM ? "[--archive FILE [--full]]" : "[--witness FILE] [--present]")
               << " [--raw-envelope DIRECTORY]" << (kG15Dm2?" [--g15-tilt-q8 ANGLE] [--present]":"")
               << "\n  --check-package DIRECTORY\n";
@@ -868,7 +897,7 @@ int wmain(int argc,wchar_t **argv) {
     if (argc==3 && std::wstring_view(argv[1])==L"--check-package")
       return VulkanOwner::CheckRolePackage(argv[2]) ? 0 : 1;
     const auto options=Args(argc,argv);
-    std::cout << "{\"stage\":\"ROLE_LAUNCH\",\"cwd\":" << std::quoted(std::filesystem::current_path().generic_u8string())
+    std::cout << "{\"stage\":\"ROLE_LAUNCH\",\"hostReceipt\":\"T924_V1\",\"cwd\":" << std::quoted(std::filesystem::current_path().generic_u8string())
               << ",\"argv\":[";
     for (int i=0;i<argc;++i) {
       if (i) std::cout << ',';

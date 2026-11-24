@@ -49,6 +49,14 @@ class VulkanOwner {
     const Slice *discovery=nullptr; // Six DM2 arenas reserved before the root.
 #endif
   };
+  struct CommandPreparation {
+    struct Call { uint64_t enter=0,exit=0; VkResult result=VK_NOT_READY; };
+    std::array<Call,3> calls{};
+    uint64_t priorGeneration=0,useGeneration=0;
+    uintptr_t pool=0,fence=0;
+    Call retireProof{};
+    bool outsideGrant=false;
+  };
   struct RootReceipt {
     VkResult result=VK_NOT_READY;
     VkFence fence=VK_NULL_HANDLE;
@@ -66,6 +74,7 @@ class VulkanOwner {
       uint64_t readEnter=0,readExit=0;
       uint64_t descriptorNs=0,commandResetNs=0,uploadRecordNs=0,dispatchRecordNs=0,copyRecordNs=0,endCommandNs=0;
       bool descriptorPrewarmed=false;
+      CommandPreparation commands{};
       VkResult submit=VK_NOT_READY,readFence=VK_NOT_READY,invalidate=VK_NOT_READY;
       const char *stop="PRECONDITION";
     } timing;
@@ -101,6 +110,7 @@ class VulkanOwner {
                   const std::function<uint64_t()> &nowNs,const Capture *capture=nullptr,
                   const RootIdentity *diagnostic=nullptr);
   VkResult PrewarmSource(const StorageSlots &,const Slice &common);
+  VkResult PrepareRetiredSource(CommandPreparation &);
   void FinishSourceDiagnostic(const RootReceipt &,bool accepted,uint64_t retireTimeoutNs);
   VkResult ReadRawEnvelope(const RootReceipt &,const StorageSlots &,const Readback &,uint64_t timeoutNs);
   VkResult Retire(uint64_t timeoutNs);
@@ -144,6 +154,7 @@ class VulkanOwner {
   Slice sourceWarmCommon_{};
   std::array<VkDescriptorSet,std::size(kSource)> sourceWarmSets_{};
   bool sourceWarm_=false;
+  std::optional<CommandPreparation> sourcePreparedCommands_;
   StorageSlots rawSubmittedStorage_{};
   uint64_t rawSubmittedGeneration_=0;
   std::vector<Pipeline> pipelines_;
@@ -162,7 +173,9 @@ class VulkanOwner {
   VkBuffer qualifiedBuffer_=VK_NULL_HANDLE;
   bool inFlight_=false,eligible_=false,opened_=false;
   bool OnOwner() const { return thread_==std::this_thread::get_id(); }
-  VkResult Begin(const Upload *,size_t,bool timestamp=false,bool prewarmed=false,RootReceipt::Timeline *timing=nullptr);
+  VkResult Begin(const Upload *,size_t,bool timestamp=false,bool prewarmed=false,RootReceipt::Timeline *timing=nullptr,
+                 CommandPreparation *commands=nullptr,bool usePreparedCommands=false);
+  VkResult ResetForRecording(CommandPreparation *);
   VkResult Submit(RootReceipt::Timeline *timing=nullptr);
   VkResult MapReady(const Readback &, VkDeviceSize, RootReceipt::Timeline *timing=nullptr);
   void ReportSourceGpu(const char *,VkResult,bool accepted);

@@ -481,8 +481,53 @@ VkResult VulkanOwner::PrewarmSource(const StorageSlots &storage,const Slice &com
   return VK_SUCCESS;
 }
 
-VkResult VulkanOwner::Begin(const Upload *uploads,size_t count,bool timestamp,bool prewarmed,RootReceipt::Timeline *timing) {
+VkResult VulkanOwner::ResetForRecording(CommandPreparation *trace) {
+  if (trace) {
+    trace->priorGeneration=generation_;
+    trace->useGeneration=generation_+1;
+    trace->pool=reinterpret_cast<uintptr_t>(pool_);
+    trace->fence=reinterpret_cast<uintptr_t>(fence_);
+  }
+  const auto record=[&](size_t i,const auto &call) {
+    if (!trace) return call();
+    auto &edge=trace->calls[i];
+    edge.enter=pc::TimeNs();
+    edge.result=call();
+    edge.exit=pc::TimeNs();
+    return edge.result;
+  };
+  auto r=record(0,[&]{ return api_->ResetCommandPool(context_.device,pool_,0); });
+  if (r!=VK_SUCCESS) return r;
+  r=record(1,[&]{ return api_->ResetFences(context_.device,1,&fence_); });
+  if (r!=VK_SUCCESS) return r;
+  VkCommandBufferBeginInfo begin{};
+  begin.sType=VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+  return record(2,[&]{ return api_->BeginCommandBuffer(command_,&begin); });
+}
+
+VkResult VulkanOwner::PrepareRetiredSource(CommandPreparation &receipt) {
+  receipt={};
+  receipt.outsideGrant=true;
+  if (!opened_ || !eligible_ || !OnOwner() || inFlight_ || prepared_ ||
+      sourcePreparedCommands_ || !generation_ || generation_==UINT64_MAX) return VK_ERROR_INITIALIZATION_FAILED;
+  receipt.retireProof.enter=pc::TimeNs();
+  receipt.retireProof.result=api_->WaitForFences(context_.device,1,&fence_,VK_TRUE,0);
+  receipt.retireProof.exit=pc::TimeNs();
+  if (receipt.retireProof.result!=VK_SUCCESS) return receipt.retireProof.result;
+  const auto result=ResetForRecording(&receipt);
+  if (result==VK_SUCCESS) sourcePreparedCommands_=receipt;
+  return result;
+}
+
+VkResult VulkanOwner::Begin(const Upload *uploads,size_t count,bool timestamp,bool prewarmed,RootReceipt::Timeline *timing,
+                            CommandPreparation *commands,bool usePreparedCommands) {
   if (!opened_ || !OnOwner() || inFlight_ || (count && !uploads) || generation_==UINT64_MAX)
+    return VK_ERROR_INITIALIZATION_FAILED;
+  if (sourcePreparedCommands_.has_value()!=usePreparedCommands ||
+      (usePreparedCommands && (sourcePreparedCommands_->priorGeneration!=generation_ ||
+        sourcePreparedCommands_->pool!=reinterpret_cast<uintptr_t>(pool_) ||
+        sourcePreparedCommands_->fence!=reinterpret_cast<uintptr_t>(fence_))))
     return VK_ERROR_INITIALIZATION_FAILED;
   for (size_t i=0;i<count;++i)
     if (!uploads[i].words || !uploads[i].destination.bytes ||
@@ -495,17 +540,15 @@ VkResult VulkanOwner::Begin(const Upload *uploads,size_t count,bool timestamp,bo
     if (timing) timing->descriptorNs+=pc::TimeNs()-before;
     if (reset!=VK_SUCCESS) return reset;
   }
-  const auto resetEnter=timing ? pc::TimeNs() : 0;
-  auto r=api_->ResetCommandPool(context_.device,pool_,0);
-  if (r!=VK_SUCCESS) return r;
-  r=api_->ResetFences(context_.device,1,&fence_);
-  if (r!=VK_SUCCESS) return r;
-  VkCommandBufferBeginInfo begin{};
-  begin.sType=VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-  begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-  r=api_->BeginCommandBuffer(command_,&begin);
-  if (r!=VK_SUCCESS) return r;
-  if (timing) timing->commandResetNs=pc::TimeNs()-resetEnter;
+  if (usePreparedCommands) {
+    if (commands) *commands=*sourcePreparedCommands_;
+    sourcePreparedCommands_.reset();
+  } else {
+    const auto resetEnter=timing ? pc::TimeNs() : 0;
+    const auto result=ResetForRecording(commands);
+    if (timing) timing->commandResetNs=pc::TimeNs()-resetEnter;
+    if (result!=VK_SUCCESS) return result;
+  }
   ++generation_;
   if (timestamp) {
     api_->CmdResetQueryPool(command_,sourceQueries_,0,uint32_t(context_.sourceDetail ? kFineQueryCount : kQueryCount));
@@ -856,7 +899,8 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
     timing.recordEnter=now();
     timing.stop="RECORD_REJECT";
   }
-  result.result=Begin(uploads,count,timestamps,prewarmed,measure);
+  result.result=Begin(uploads,count,timestamps,prewarmed,measure,trace ? &timing.commands : nullptr,
+                      root==Root::Source && sourcePreparedCommands_.has_value());
   if (result.result!=VK_SUCCESS) return result;
   result.generation=generation_;
   result.fence=fence_;
