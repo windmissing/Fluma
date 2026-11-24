@@ -46,11 +46,11 @@ bool correction(uint original,uint reconstructed,uint gn,uvec4 denominator,out u
         g9SDiv(a,denominator,1u,a)&&g9I64(a,impulse);
 }
 
-OutputFace evaluate(uint i){
+OutputFace evaluate(uint i,InputFace f){
  OutputFace outFace=OutputFace(0,1u,0u,0u,uvec2(0u),uvec2(0u),uvec2(0u),groupAngle,tick,uvec2(0u),uvec2(0u));
  if(!groupValid||faceCount<2u||faceCount>129u||width<=0||width>16777216||
     muQ16>65536u||gravity<120u||gravity>1073741824u||j==0u||j>32u||(j&(j-1u))!=0u||projection.length()!=23041)return outFace;
- InputFace f=faces[i];bool leftWall=i==0u,rightWall=i==faceCount-1u;
+ bool leftWall=i==0u,rightWall=i==faceCount-1u;
  if(leftWall){f.bedL=f.bedR;f.flowL=f.flowR;}
  if(rightWall){f.bedR=f.bedL;f.flowR=f.flowL;}
  if(f.bedL>Cap||f.bedR>Cap||f.flowL>Cap-f.bedL||f.flowR>Cap-f.bedR)return outFace;
@@ -91,9 +91,49 @@ OutputFace evaluate(uint i){
  outFace.status=0u;
  return outFace;
 }
+
+#ifdef G15_CORRECTOR
+uint midpoint(uint c,uint flow,inout ivec2 momentum){
+ OutputFace left=evaluate(c,faces[c]),right=evaluate(c+1u,faces[c+1u]);
+ // Keep F immutable, as in the parent. Round (pEntry + pPredict) / 2 once.
+ if(left.status!=0u)return left.status;
+ if(right.status!=0u)return right.status;
+ uvec4 p=g9S64(uvec2(momentum)),change,bed,mid,bound,speed,depthWave;
+ uvec2 words;
+ if(!g9SSub(g9S64(left.impulse),g9S64(right.impulse),change)||
+    !g9SSub(g9S64(left.correctionR),g9S64(right.correctionL),bed)||
+    !g9SAdd(p,p,mid)||!g9SAdd(mid,change,mid)||!g9SAdd(mid,bed,mid)||
+    !g9SDiv(mid,g9U32(2u),1u,mid)||!g9UMul(g9U32(flow),g9U32(1073741824u),bound)||
+    g9UCmp(g9Magnitude(mid),bound)>0||!g9I64(mid,words))return 1u;
+ if(flow!=0u){
+  uint gn=uint(roundEven(int64_t(gravity)*projection[groupAngle+11520].y,Q20)),wave;
+  if(!g9SDiv(g9Magnitude(mid),g9U32(flow),3u,speed)||!g9UMul(g9U32(gn),g9U32(flow),depthWave)||
+     !g9CeilSqrt64(depthWave.xy,wave))return 1u;
+  if(20l*(int64_t(speed.x)+wave)>9l*int64_t(width)*120l*int64_t(j))return 3u;
+ }
+ momentum=ivec2(words);
+ return 0u;
+}
+
+OutputFace correct(uint i){
+ InputFace f=faces[i];
+ uint reason=i==0u?0u:midpoint(i-1u,f.flowL,f.pL);
+ if(reason==0u&&i+1u<faceCount)reason=midpoint(i,f.flowR,f.pR);
+ if(reason!=0u)
+  return OutputFace(0,reason,0u,0u,uvec2(0u),uvec2(0u),uvec2(0u),groupAngle,tick,uvec2(0u),uvec2(0u));
+ return evaluate(i,f);
+}
+#endif
+
 void main(){
  if(gl_LocalInvocationIndex==0u)groupValid=poseAt(groupAngle);
  barrier();
  uint i=gl_GlobalInvocationID.x;
- if(i<faceCount&&i<faces.length()&&i<result.length())result[i]=evaluate(i);
+ if(i<faceCount&&i<faces.length()&&i<result.length()){
+#ifdef G15_CORRECTOR
+  result[i]=correct(i);
+#else
+  result[i]=evaluate(i,faces[i]);
+#endif
+ }
 }

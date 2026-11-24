@@ -45,13 +45,23 @@ def build(compiler, directory):
     (directory / "g15_angle_q20.i32le").write_bytes(raw)
     result = {"angleTable": {"sha256": sha256(raw).hexdigest(), "rows": len(angles), "bytes": len(raw)}}
     for name, count in (("g15_support_v1", 3), ("g16_isolated_contact_v1", 2), ("g15_pose_v1", 3),
-                        ("g15_flux_v1", 3), ("g15_origin_v1", 4)):
+                        ("g15_flux_v1", 3), ("g15_corrector_v1", 3), ("g15_origin_v1", 4)):
         if name == "g15_pose_v1":
             source = directory / (name + ".comp")
             original = Path(__file__).with_name("g15_support_v1.comp").read_text()
             source.write_bytes(original.replace("#version 450\n", "#version 450\n#define G15_POSE\n", 1).encode())
-        elif name == "g15_flux_v1":
-            template = Path(__file__).with_name(name + ".comp").read_text()
+        elif name in ("g15_flux_v1", "g15_corrector_v1"):
+            template = Path(__file__).with_name("g15_flux_v1.comp").read_text()
+            if name == "g15_corrector_v1":
+                template = template.replace("#version 450\n", "#version 450\n#define G15_CORRECTOR\n", 1)
+            else:
+                # Keep the shipped standalone face module byte-compatible.
+                template = re.sub(r"\n#ifdef G15_CORRECTOR\nuint midpoint.*?\n#endif\n", "", template, flags=re.S)
+                template = re.sub(r" if\(i<faceCount&&i<faces.length\(\)&&i<result.length\(\)\)\{.*?\n }",
+                                  " if(i<faceCount&&i<faces.length()&&i<result.length())result[i]=evaluate(i);",
+                                  template, flags=re.S)
+                template = template.replace("evaluate(uint i,InputFace f)", "evaluate(uint i)")
+                template = template.replace(" bool leftWall=i==0u", " InputFace f=faces[i];bool leftWall=i==0u", 1)
             parent = Path(__file__).resolve().parents[2] / "entry/src/main/cpp/gpu_resident/g9dm/frozen_t647/corrected_reference.comp"
             wide = parent.read_text(encoding="utf-8").split("bool g9Zero(", 1)[1].split("struct G9EnergyInterval", 1)[0]
             support = Path(__file__).with_name("g15_support_v1.comp").read_text()

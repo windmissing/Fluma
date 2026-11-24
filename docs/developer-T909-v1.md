@@ -71,3 +71,11 @@ $exe = '.codex/local-test/t909-r4-dm2-release/t909_angle_probe.exe'
 输入来源列每列 1040 B，头 LE `<IIII>` 为 `flow,occupied,count,reserved=0`，随后 64 个 `<IIII>` 为来源 ID 低字、来源 ID 高字、generation、质量。沿父流层定点库存，来源 ID 高字为零，非零来源按键升序。结果头 LE `<IIiI>` 为状态、首错列（成功为 0xffffffff）、取样 Q8 角、tick。状态 1 为入口账或布局、2 为面身份、3 为分账算术或质量、4 为占位、5 为来源段容量，257/258/259 依次透传面输入或算术、支撑、CFL 拒绝。每列 1040 B，头 LE `<IIii>` 是 F、新来源段数、左 q、右 q，随后同格式来源段。样本三列的预计算面 q 依次为 `0,-119,119,0`，F 为 `16503,130834,16503`。两个 119 依次按来源键分出 `60+59` 与 `59+60`，可用 T910 独立口径比对 GPU 原件。各模式仍报 `acceptedRoot:null`。
 
 Windows DM2 Release 已构建，SPIR-V 验证通过，T910 离线自检和截短来源输入拒绝通过。开发交付限于中点输入到来源候选的连接。正式 DM2 profile 的动员、预测/中点构造、动量与能量账、typed 提交和 shader 场景仍待接入，开发 PC GPU 取证由 effector 执行。T912 尚未交 G16 孤立阶段正式报告与多盘接口回执。
+
+## 单微步预测与修正
+
+`g15-step CORRECTOR INPUT ANGLES ORIGIN_MODULE ORIGIN_INPUT OUTPUT` 从同一不可变入口列态在 GPU 计算预测面、半步中点动量和修正面，随后在同一次提交将修正 q 接给来源分账。中点保 F，按父 DM2 的单次 RNE 计算 `(pEntry+pPredict)/2`，加入两侧压力修正和壁面冲量，保 0.45 CFL 与动量界。等效床已含角向重力，本段无额外显式重力冲量。可用 `g15-corrector CORRECTOR INPUT ANGLES OUTPUT` 独立读修正面原字。两模式均核相邻面输入的列身份。
+
+使用 `.codex/local-test/t909-r5-dm2-release/t909_angle_probe.exe`（SHA-256 `083e47faaf5d332e140509e3a789fb62a5c2814b7ef2e0f9b0f9c27dc134f35f`）和 `.codex/local-test/t909-r5-angle/g15_corrector_v1.spv`（SHA-256 `7f0af4e5aeea143dc1fa1d066a575f8f811512c9241e642272835d3cb25248b9`）。同目录包含角表、旧面与来源模块、三列入口夹具。修正面及来源结果沿已登记 ABI。独立旧面模块的 SPIR-V 保持同字。
+
+Windows Release、SPIR-V、主机 ABI 负控和 T910 离线自检通过。预测计算为独立微步工件，尚未接入正式 DM2 的动员、动量/能量账、typed 提交和场景。T912 已交孤立算子 GPU 原件，G16 多盘仍等待小域接口回执。
