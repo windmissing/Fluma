@@ -33,6 +33,33 @@ def manifests(base, candidate):
     return list(sorted(changes))
 
 
+def split_schedule(v1, v2):
+    a, b = (json.loads((folder / "roles.json").read_bytes()) for folder in (v1, v2))
+    assert a["family"] == b["family"] and b["roleVariant"] == "t913-split-v2"
+    assert a["roleSetSHA"] != b["roleSetSHA"] and all(b["complete"].values())
+    for key in ("parentSHA", "constants", "commonBytes", "push", "masks", "graphics"):
+        assert a[key] == b[key], key
+    assert a["passes"]["Quantum"] == b["passes"]["Quantum"]
+    aliases = {int(op): parent for op, parent in b["sourceBindingAliases"].items()}
+    assert set(aliases) == ({896, 897, 898} if a["family"] == "dm2" else {896, 897, 898, 912, 913, 914, 915})
+    old = iter(a["passes"]["Source"])
+    rows = b["passes"]["Source"]
+    i = 0
+    for original in old:
+        op = original[0]
+        stages = sorted(k for k, v in aliases.items() if v == op) or [op]
+        assert rows[i:i+len(stages)] == [[stage, *original[1:]] for stage in stages]
+        i += len(stages)
+    assert i == len(rows) == (14 if a["family"] == "dm2" else 27)
+    old_modules = {m["op"]: m for m in a["roles"]}
+    for m in b["roles"]:
+        module = (v2 / m["spv"]).read_bytes()
+        assert hashlib.sha256(module).hexdigest() == m["spvSHA"]
+        if m["op"] in old_modules:
+            assert m == old_modules[m["op"]]
+    return dict(sourceCount=i, continuations=sorted(aliases))
+
+
 def checks():
     random_gen = random.Random(913)
     for words in (0, 1, 63, 64, 65, 147968):
@@ -65,6 +92,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("base", type=Path)
     parser.add_argument("candidate", type=Path)
+    parser.add_argument("--split", action="store_true")
     args = parser.parse_args()
     checks()
-    print(json.dumps({"changedRoles": manifests(args.base, args.candidate), "orderChecks": "PASS"}))
+    result = split_schedule(args.base, args.candidate) if args.split else {"changedRoles": manifests(args.base, args.candidate)}
+    print(json.dumps(dict(result,orderChecks="PASS")))

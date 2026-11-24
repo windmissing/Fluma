@@ -41,6 +41,7 @@ struct ProgramFacts {
 class ExpectedContract;
 class ActiveProgramIdentity {
  ProgramFacts facts_;Family family_;
+ bool pcSourceScheduleV2_=false;
  ActiveProgramIdentity(const ProgramFacts& facts,Family family):facts_(facts),family_(family){}
  static ActiveProgramIdentity ForDefaultDm(const ProgramFacts& facts){return ActiveProgramIdentity(facts,Family::DM_DEFAULT);}
  static ActiveProgramIdentity ForComposite(const ProgramFacts& facts,uint32_t parentKind){return ActiveProgramIdentity(facts,parentKind==1?Family::G11_R1:Family::G11_DM);}

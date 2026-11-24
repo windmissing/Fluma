@@ -12,6 +12,7 @@ struct Pass {
   int32_t micro;
   uint32_t visual, phase;
   bool hasModule;
+  uint32_t bindingOpcode=UINT32_MAX;
 };
 struct ModuleFile { uint32_t opcode, bytes; const char *name, *sha; };
 struct GraphicsFile { const char *group, *stage; uint32_t bytes; const char *name, *sha; };

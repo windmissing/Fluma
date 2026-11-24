@@ -16,6 +16,8 @@
 
 每行目录在 `.codex/local-test/` 下。可执行文件是相应族的 `pc_sand_dm2_host.exe` 或 `pc_sand_r1_host.exe`，匹配同目录的 `sand_assets`。
 
+下表是 v1 交付时的 PE 摘要。baseline 两目录已用 v2 同期源码重编译，当前 PE 摘要见后文。两族 baseline 角色表和 shader 文件的摘要沿原值。
+
 | 目录 | PE SHA-256 | 角色集 SHA-256 |
 | --- | --- | --- |
 | `t913-dm2-baseline` | `149b1f4cd046507b4b5fe8bc0397a997168c0eb9ee35f1631391a7db1936b980` | `3639e57f834308bab001ca783f321b6a503c232caa924e04b1d8f1d7e3333ca6` |
@@ -41,3 +43,23 @@ foreach ($family in 'dm2','r1') {
 ```
 
 保每次首错、真实短等与同代退役。晚根时间戳继续只作诊断，接受仍以原门裁定。逐区间时间是同队列 GPU tick 差，宿主时标另算。
+
+## SOURCE 槽内拆分 v2
+
+构建开关 `-DSAND_ROLE_VARIANT=t913-split-v2`。保留 baseline 与 t913-v1 独立工件。旧 DM2/R1 槽位如下。
+
+| 原槽 | v2 实际派发 | 保留的身份 |
+| --- | --- | --- |
+| DM2 8，R1 12 | BASE 拷贝 → 独立重放事务 → 重放 mass、momentum、stream 审计 | 事务胶接在同一 Work 的 StageDiagnostic 保留原 event count 和完成字，审计后清除。原事件 opcode 与首错职责沿父角色。 |
+| R1 8、13 | 单 scope map 拷贝 → resolve / transfer 审计 → marker apply → refill / 封存 | 两次调用各用原 role、bank 及对应的独立状态。MAP 与 refill 之间保真实 compute 写读依赖。 |
+
+物理计数 DM2 **14**、R1 **27**。新派发逐个推进 GPU 工作计数，host 记录真实派发和 barrier。Windows owner 通过版本化模块集合接入 T647 的本地 SOURCE 扩展行，绑定新合同摘要、原 audit mask、实际 tail 各计数与同 fence 准入。QUANTUM 表保持原字。期限、接受判据和 1,024 B 热尾大小照旧。 `ROOT` 在实际读到尾后输出尾执行/期望/barrier 三个值，晚完成沿原诊断。细时标新增阶段来自真实 dispatch 边界，DM2 31 点、R1 57 点。R1 resolve 与 transfer 审计仍共一个阶段，DM2 槽 10 保原完整打包。
+
+| Windows x64 Release 目录 | PE SHA-256 | 角色表 SHA-256 |
+| --- | --- | --- |
+| `.codex/local-test/t913-dm2-t913-split-v2` | `2b13c952b40ad0c447ca032d2b46bbc0f4c5ed18740cec6ff1235d9b7910d2bf` | `f51229f446032a95144594151d75fd8500716086774e01ed630c6d06bcdf3f3f` |
+| `.codex/local-test/t913-r1-t913-split-v2` | `e15d25813ae552b8c956293cfde843f82200f97653130485c4d5f9e19013f21a` | `58c999caf018194bb22917fce8668838e6381174ab53c708233332fb71787327` |
+
+同期 baseline PE SHA-256 为 DM2 `c709d183777b3ac8781d1c118e1ae18e2059e529d0cd4f1aa08ef545c337af19`，R1 `5839b002649620c64d656a89330988cd804f84c4d28cc178ea9f7f93ff2c6a64`。
+
+两族 v2 及 baseline Windows Release 编译通过。v2 测试对照 v1 角色原字、源槽映射、QUANTUM 表、掩码、原有模块 SHA 和新模块指纹。原 T905 负控及两个 v2 的 T890 owner 对照通过。T914 用新版独立判据接收 14/27 计数和新版角色标识，保 T905 历史 12/19 工件。实际原字等价和设备耗时继续由 effector 验证。

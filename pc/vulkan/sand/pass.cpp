@@ -14,6 +14,7 @@ std::optional<Command> Plan(Root root,size_t ordinal) {
   const auto count=source ? std::size(kSource) : std::size(kQuantum);
   if (ordinal>=count) return {};
   const auto &p=rows[ordinal];
+  const auto bindingOpcode=p.bindingOpcode==UINT32_MAX ? p.opcode : p.bindingOpcode;
   if (!p.hasModule) return {};
   constexpr uint32_t current=0,candidate=2; // Both parent owners rotate handles in the slots.
   uint32_t read=1,write=candidate,event=6;
@@ -24,26 +25,26 @@ std::optional<Command> Plan(Root root,size_t ordinal) {
   constexpr uint32_t freeze=13, validate=1, final=34, scopeSeal=35, compare=40, audit=8, sourceCompare=9;
   constexpr uint32_t sourceSeal=11, rootSeal=43, selection=36;
 #endif
-  if (!p.visual && (p.opcode==freeze || p.opcode==validate)) {
+  if (!p.visual && (bindingOpcode==freeze || bindingOpcode==validate)) {
     read=current;
     write=source ? candidate : 1;
   }
   if (p.role==3 || p.role==4) write=4;
-  if (!p.visual && p.opcode==final && (p.role==2 || p.role==4)) {
+  if (!p.visual && bindingOpcode==final && (p.role==2 || p.role==4)) {
     read=7;
     write=6;
     event=1;
   }
-  if (!p.visual && p.opcode==scopeSeal && p.role==4) { read=candidate; write=4; }
-  if (!p.visual && p.opcode==compare) { read=3; write=candidate; }
-  if (!p.visual && p.opcode==audit) { read=current; write=4; }
-  if (!p.visual && p.opcode==sourceCompare) { read=candidate; write=4; }
-  if (!p.visual && (p.opcode==sourceSeal || p.opcode==rootSeal)) { read=1; write=candidate; }
+  if (!p.visual && bindingOpcode==scopeSeal && p.role==4) { read=candidate; write=4; }
+  if (!p.visual && bindingOpcode==compare) { read=3; write=candidate; }
+  if (!p.visual && bindingOpcode==audit) { read=current; write=4; }
+  if (!p.visual && bindingOpcode==sourceCompare) { read=candidate; write=4; }
+  if (!p.visual && (bindingOpcode==sourceSeal || bindingOpcode==rootSeal)) { read=1; write=candidate; }
   if (p.visual && source && p.role==4) read=current;
   if (read==write || read==event || write==event) return {};
   Command result{{uint8_t(read),uint8_t(write),5,uint8_t(event)},
                  {p.opcode,p.role,p.j,uint32_t(p.micro),uint32_t(ordinal)},
-                 source && ordinal==0,!p.visual && p.opcode==selection};
+                 source && ordinal==0,!p.visual && bindingOpcode==selection};
 #ifdef PC_SAND_G11_R1
   result.push[5]=p.phase;
   result.push[6]=result.push[7]=p.role==4 ? 2 : 1;

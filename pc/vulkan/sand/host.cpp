@@ -152,7 +152,7 @@ Common Uniforms(const ParentLayout &l,const PhysicalPermit &p,int32_t angle,
   const auto at=size_t(angle+7680)*4;
   U(uAngleSin,kAngleWords[at+1]); U(uAngleCos,kAngleWords[at+2]);
 #ifdef PC_SAND_G11_R1
-  U(uRequiredPasses,p.kind==1 ? 19 : 2543); U(uRequiredAudits,0xcffff);
+  U(uRequiredPasses,p.kind==1 ? std::size(kSource) : std::size(kQuantum)); U(uRequiredAudits,0xcffff);
   U(uVisMarkerCurrent,visual.visual[visualBanks[0]]/4);
   U(uVisMarkerActual,visual.visual[visualBanks[1]]/4);
   U(uVisMarkerReplay,visual.visual[visualBanks[2]]/4);
@@ -163,7 +163,7 @@ Common Uniforms(const ParentLayout &l,const PhysicalPermit &p,int32_t angle,
   W(uVisTicks,visualTicks+(p.kind==2 ? 256 : 0));
 #else
   (void)visualBanks; (void)visualGeneration; (void)visualTicks;
-  U(uRequiredPasses,p.kind==1 ? 12 : 2404); U(uRequiredAudits,p.kind==1 ? 0xffff : 0x3ffff);
+  U(uRequiredPasses,p.kind==1 ? std::size(kSource) : std::size(kQuantum)); U(uRequiredAudits,p.kind==1 ? 0xffff : 0x3ffff);
   U(uDmBase,(l.workBytes-24576)/4);
 #endif
 #undef U
@@ -402,7 +402,9 @@ int Run(const Options &opt) {
   const auto bootStarted=HostDevice::Now();
   const auto bootAudit=owner.Qualify(storage,common,boot,uploads.data(),uploads.size(),surface,2000000000);
   const auto bootRetired=HostDevice::Now();
-  std::cout << "{\"stage\":\"BOOT\",\"family\":\"" << family << "\",\"roleSetSHA\":\"" << owner.RoleSetSHA()
+  std::cout << "{\"stage\":\"BOOT\",\"family\":\"" << family << "\",\"sourceSchedule\":\""
+            << (kSplitSourceSchedule ? "T913_SPLIT_V2" : "V1") << "\",\"sourceDispatches\":" << std::size(kSource)
+            << ",\"roleSetSHA\":\"" << owner.RoleSetSHA()
             << "\",\"vendor\":" << gpu.properties.vendorID << ",\"device\":" << gpu.properties.deviceID
             << ",\"driver\":" << gpu.properties.driverVersion << ",\"run\":\"" << scope.run
             << "\",\"deviceType\":" << gpu.properties.deviceType << ",\"queueFamily\":" << gpu.family
@@ -570,6 +572,9 @@ int Run(const Options &opt) {
               << "\",\"fence\":\"" << reinterpret_cast<uintptr_t>(raw.fence) << "\",\"fenceGeneration\":\""
               << raw.generation << "\",\"deadlineNs\":\"" << permit.deadline << "\",\"vkResult\":" << int(raw.result)
               << ",\"dispatches\":" << raw.dispatches << ",\"tailRead\":" << (raw.read?"true":"false")
+              << ",\"tailExecutionCount\":" << (raw.read ? std::to_string(raw.tail[39]) : "null")
+              << ",\"tailExpectedCount\":" << (raw.read ? std::to_string(raw.tail[40]) : "null")
+              << ",\"tailBarrierCount\":" << (raw.read ? std::to_string(raw.tail[41]) : "null")
               << ",\"outcome\":" << raw.tail[6] << ",\"reason\":" << raw.tail[7]
               << ",\"clockFault\":" << pacing.Fault()
               << ",\"accepted\":" << (accepted?"true":"false") << ",\"inputSHA\":\"" << HexDigest(permit.inputSha)

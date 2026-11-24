@@ -16,7 +16,7 @@ constexpr uint32_t warmOpcode=0x7fffff00;
 constexpr VkDeviceSize stateBytes=591872, controlsOffset=1166976, tailOffset=1171072;
 #ifdef PC_SAND_G11_R1
 constexpr const char *kSandFamily="R1";
-constexpr size_t kSourceBoundaries[]{5,10,13,18};
+constexpr size_t kSourceBoundaries[]{5,kSplitSourceSchedule ? 13u : 10u,kSplitSourceSchedule ? 21u : 13u,std::size(kSource)-1};
 constexpr const char *kSourceSpans[]{"PREPARE","ACTUAL_WRITER","REPLAY_AUDIT_APPLY","COMPARE_PACK_AUDIT_SEAL"};
 constexpr VkDeviceSize arenaBytes=11718656, workBytes=4825728, auditBytes=512;
 constexpr uint32_t coldOpcode=0x7fffff01, goodSeal=0xc01d0002;
@@ -25,7 +25,7 @@ constexpr VkDeviceSize seedBytes=512+visual.v*128+8192+256;
 constexpr VkDeviceSize bootReadbackBytes=auditBytes+seedBytes;
 #else
 constexpr const char *kSandFamily="DM2";
-constexpr size_t kSourceBoundaries[]{4,7,11};
+constexpr size_t kSourceBoundaries[]{4,7,std::size(kSource)-1};
 constexpr const char *kSourceSpans[]{"PREPARE","SOURCE_WRITER","AUDIT_COMPARE_PACK_SEAL"};
 constexpr VkDeviceSize arenaBytes=12767232, workBytes=1311360, auditBytes=8;
 constexpr uint32_t coldOpcode=warmOpcode, goodSeal=0x641647;
@@ -35,6 +35,11 @@ constexpr size_t kQueryCount=std::size(kSourceBoundaries)+3;
 constexpr size_t kFineQueryCount=2*std::size(kSource)+3;
 static_assert(kSourceBoundaries[std::size(kSourceBoundaries)-1]+1==std::size(kSource));
 static_assert(std::size(kSourceBoundaries)==std::size(kSourceSpans));
+#ifdef PC_SAND_G11_R1
+static_assert(std::size(kSource)==(kSplitSourceSchedule ? 27 : 19));
+#else
+static_assert(std::size(kSource)==(kSplitSourceSchedule ? 14 : 12));
+#endif
 constexpr uint64_t maxJobNs=250000000;
 constexpr uint64_t pollNs=2000000;
 
@@ -151,6 +156,7 @@ std::optional<VulkanOwner::PreparedWords> VulkanOwner::Prepare(const Permit &per
   prepared_=std::make_unique<Prepared>(permit,accept647::ActiveProgramIdentity::ForDefaultDm(facts));
   const auto &frozen=prepared_->permit;
 #endif
+  prepared_->active.pcSourceScheduleV2_=kSplitSourceSchedule && root==Root::Source;
   prepared_->expected=accept647::ExpectedForActivePipeline(prepared_->active,
       accept647::PermitView::Of(frozen,begin),parentKind);
   if (!prepared_->expected) { prepared_.reset(); return {}; }
