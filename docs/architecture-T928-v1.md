@@ -40,6 +40,8 @@
 
 ## 4. 多触点、原子根与 shader lease
 
+2026-11-24 · T943 修订。候选邻接先列潜在边。TOI 以误差区间证明首个向内根或具名未隔离。接触求解使用有真实接触、持续支撑或预测非穿透证据的边，正间隙只有符合预测条件时进入。仍保相同物理、残差、容量和原子性门。 [T943 工程修订](architecture-T943-v1.md)
+
 1. **调度。** FREEZE → PREDICT → BUCKET → CANDIDATE/TOI → ADJACENCY → CONTACT_PREPARE → JACOBI Edge/Gather → INTEGRATE → AUDIT → PACK/SEAL。相邻实际写读用 Vulkan stage/access barrier，跨队列另做 semaphore 和 queue-family 转移。每轮所有边从同一 v/ω 快照算接触增量，再按固定 CSR 归集到下一快照。几何接触点、两端等反冲量、自转矩和墙功都用实际世界接触点。迭代区输出暂存的本轮增量，封存时物化实际总量。每段最多 16 轮、每微步最多两个段、每根 J≤256。TOI 同容差事件一起处理，碰后推进余时并防止重复冲量。22560 是路径的逻辑 ceiling，实际 dispatch、barrier 和独立重放另计。
 2. **残差及原字。** 48 B KeyBracket 输出 key、flag、双 TOI、gap、法向与趋近界；SolverResidual 输出 λn/λt、前后 vN/vT、目标法向、zN、补偿乘积、切向残差和有效逆质量；GeometryWork 输出真实接触点、壁速、合冲量、墙功、耗散、两端扭矩。保持 T906 的 εgap=min(50 µm,0.02d_min)、zN≥−1e−3 m/s、abs(λn·zN)≤1e−3 m/s·λn+1e−10 J。静摩擦取实际切向残差≤1e−3 m/s，动摩擦核边界及反向耗散，λn≥0。记录实际最大穿透和段后速度。相对功以更新前后速度复算，粒对只计一次。段尾审计从实际冲量独立求 ΔP、ΔL、Δ(K+U)、墙功与耗散。故障分类保未夹根、过穿透、容量、非有限数、未收敛、守恒、对象/范围与时限，按阶段、微步、段、首 key 输出。
 3. **事务。** FREEZE 固定 scope、run/owner/context、nonce、plan/live permit、窗口/geometry、BASE bank 和代、各版本 SHA、真实 deadline。根在私有 bank 写，失败前缀只读诊断。GPU 最后封存绑定 2 byte 350,208 的 Completion256，热读仅 1,024 B。ABI 给出字段的字偏移、阶段码和 GPU 首因。主机独立记提交/退役 VkResult、实际 fence 句柄/代、拒绝前后状态及场景发布身份。严格核同 fence、当前 permit、相同输入字和 typed 收据后，owner 一次更新 BASE/commit/acceptedQuanta/publication。成功根 commit 和 acceptedQuanta 各加 1。拒绝、错代、迟退役保原 bank、commit、物理时间与 CURRENT，保已提交老根资源并按同 fence 独立退役。算子 probe 和私有验证根仅消费私有 commit，`acceptedRoot=null`。业务模式继续用真墙钟、原 250 ms/cadence 和窗口有效性。
