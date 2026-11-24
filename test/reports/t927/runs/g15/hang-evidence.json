@@ -1,0 +1,7 @@
+{
+ "stage": "ROLE_PIPELINE_ENTER",
+ "opcode": 23,
+ "pid": 77240,
+ "rowsAt45s": 121,
+ "note": "g15 host hung at ROLE_PIPELINE_ENTER opcode 23 pipeline compile >45s; reproduced with --g15-dune, without g15 flags, and with view_assets build; same hang family as OP_48 CALL_UNRETURNED (igc64), machine/driver-state dependent"
+}

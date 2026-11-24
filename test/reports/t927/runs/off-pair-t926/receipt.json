@@ -1,0 +1,69 @@
+{
+  "mode": "NATURAL_OFF_PAIR",
+  "argv": [
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t926-ninja\\hello_world_pc.exe",
+    "--m1-window",
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t918-shaders\\full_source.spv",
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t918-shaders\\quantum_candidate.spv",
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t918-shaders\\quantum_commit.spv",
+    "--m1-d1",
+    "OFF",
+    "--m1-source-trace"
+  ],
+  "cwd": "D:\\hmprojects\\HelloWorld",
+  "inputs": [
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t926-ninja\\hello_world_pc.exe",
+      "bytes": 4025856,
+      "sha256": "38aa0c162a7df69dade76c3cf77f78c5d240cd1726d5732e53bc5536126f911c"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t918-shaders\\full_source.spv",
+      "bytes": 181216,
+      "sha256": "e9c7c123747c77350545b9d11abcfbd9b0b2e85948cde854f2592b97957f292c"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t918-shaders\\quantum_candidate.spv",
+      "bytes": 176192,
+      "sha256": "78139c8f3d53e2a175d9409cb88d646ce3d5ef2ebce04319ddc5d5ed259233a9"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t918-shaders\\quantum_commit.spv",
+      "bytes": 254944,
+      "sha256": "1383f353018da0f67bbd4faadc3906eb193fd3f5234cc2d060891ebede30ef0e"
+    }
+  ],
+  "attempts": [
+    {
+      "pid": 86848,
+      "state": "CHILD_EXIT",
+      "exitCode": 1,
+      "stdout": {
+        "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t927\\runs\\off-pair-t926\\off-1.jsonl",
+        "bytes": 32129,
+        "sha256": "af53f53883d17570567167b75f7358040d6adb91c6f0f3e2e0089eeb2ad3508b"
+      },
+      "stderr": {
+        "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t927\\runs\\off-pair-t926\\off-1.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "pid": 90944,
+      "state": "CHILD_EXIT",
+      "exitCode": 1,
+      "stdout": {
+        "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t927\\runs\\off-pair-t926\\off-2.jsonl",
+        "bytes": 32143,
+        "sha256": "9d939b0723b9ebd6cf65d2f4a6ddc0d7d5319660746daf22e9a881fbcd4f4c80"
+      },
+      "stderr": {
+        "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t927\\runs\\off-pair-t926\\off-2.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "checkerExit": 1
+}

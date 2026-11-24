@@ -47,7 +47,8 @@ PE `t926-ninja/hello_world_pc.exe`（sha `38aa0c162a7df69d…`，commit a7fd38b0
 ## 其余子项状态（按卡面顺序）
 
 - ② DM2/R1 封存六包双侧比对：**已在 T923 续作（commit 6bda4c0c，2026-11-24 下午）完成**——六包 T922 资格核+负控、四 DM2 接受根归一化语义 6 对全等、R1 四臂 diagnostic 封存、prepare-retired 实测收益（DM2 接受 0/3→3/3）。本卡不再重复采证，直接引用。
-- ① G15 dune 正反 ±45° 与 ③ OFF 双臂：**未开工**（本轮时间耗尽于优先子项的长程+像素+候选三线实测）。前置：G15 需要 t909 Release G15 dune 入口实采（`--g15-dune/--g15-dune-mirror`，kG15Dm2 宿主）；OFF 双臂沿 `run_t909_d1_off_pair.py`。两项均无阻塞，纯采证工作量，交下轮 effector 或本角色续卡。
+- ③ OFF 双臂（off-pair-t926-full）：**完成**。t926 PE + t830-m1-20261123 全量档模块（非 compact 合同 SHA 1912af9e/b8f0e327/caf0614c 各验证过），两跑自然 OFF，`test/t897/check.py --off` checkerExit=0（M1_D1_READY/END_INTAKE/ACTION 表/覆盖收据全过），pair 报告 `CLOCK_OR_INPUT_DIFFERENCE`——首个动作 delivery 时差左 27.2ms/右 22.9ms（真实输入时域两跑分布，T891/T496 合同口径）。负控留档：首次用 t918-shaders（compact SPIR-V）跑 OFF 被宿主 `M1_MODULE_SHA` 拒（期望非 compact SHA 1912af9e）——off-pair-t926/ 作为模块档位负证据。
+- ① G15 dune 正反沙丘：**受阻（如实登记）**。t909-g15-dune-release 宿主（307e5248，`--check-package` 通过）`--source … [--g15-dune]` 恒挂 `ROLE_PIPELINE_ENTER opcode 23` 管线编译（5 次复现：dune/plain、release/view_assets 两构建、45–240s 等待，行数恒停 121）——与 OP_48 CALL_UNRETURNED 同族（Intel igc64 编译挂死，机器/驱动态相关，T912/T921/T923 已三证该模式）。`hang-evidence.json`+四份日志在档。已试：重试×5、换 view_assets 构建、离线 smoke 二进制（通过，仅覆盖离线部分）。**未完成项**：±45° 正反沙丘 typed QUANTUM、质量/来源/能量、原子拒绝与同根画面。**前置**：机器/驱动态复位后重试，或 developer 出异步管线/重建宿主变体；单角色 `qualify_role supervise` 栈取证可定位 igc64 帧。**接手角色**：developer（宿主侧）或 effector（换机/换时重试）。
 
 ## 结论
 
@@ -58,6 +59,7 @@ PE `t926-ninja/hello_world_pc.exe`（sha `38aa0c162a7df69d…`，commit a7fd38b0
 | T926 2-4s 见堆 | **完成**：帧 50 真实像素沙色 2+5px，归档床 940,389Q 对账 |
 | T926 候选 35 派发 | **完成**：127→35 实测；record→stop -27%；同窗接受 +45.8%；窄业务字段 6/6 等价（中间步差异记录） |
 | DM2/R1 封存 | **引用 T923 续作成果**（同日 6bda4c0c） |
-| G15 dune / OFF 双臂 | **未开工**，无阻塞，交下轮 |
+| OFF 双臂 | **完成**：checkerExit=0，CLOCK_OR_INPUT_DIFFERENCE 双跑时域（27.2/22.9ms）；compact 档负控 M1_MODULE_SHA 留档 |
+| G15 dune | **受阻**：宿主 ROLE_PIPELINE_ENTER opcode 23 管线编译恒挂（5 次复现，igc64 同族）；±45°/typed QUANTUM/质量能量未采，前置与接手已登记 |
 
 GPU 驻留、shader 渲染全程；250ms typed 门原值。

@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "D:\hmprojects\HelloWorld\test\t897\check.py", line 360, in <module>
+    main()
+    ~~~~^^
+  File "D:\hmprojects\HelloWorld\test\t897\check.py", line 344, in main
+    a,b = (d1(read(path)) for path in args.off)
+    ^^^
+  File "D:\hmprojects\HelloWorld\test\t897\check.py", line 344, in <genexpr>
+    a,b = (d1(read(path)) for path in args.off)
+           ~~^^^^^^^^^^^^
+  File "D:\hmprojects\HelloWorld\test\t897\check.py", line 157, in d1
+    ready, seal = (exactly(rows,s) for s in ('M1_D1_READY','END_INTAKE'))
+    ^^^^^^^^^^^
+  File "D:\hmprojects\HelloWorld\test\t897\check.py", line 157, in <genexpr>
+    ready, seal = (exactly(rows,s) for s in ('M1_D1_READY','END_INTAKE'))
+                   ~~~~~~~^^^^^^^^
+  File "D:\hmprojects\HelloWorld\test\t888\check.py", line 37, in exactly
+    need(len(match)==1,'MISSING_OR_DUPLICATE_'+stage)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\hmprojects\HelloWorld\test\t865\check.py", line 20, in need
+    raise ValueError(code)
+ValueError: MISSING_OR_DUPLICATE_M1_D1_READY

@@ -1,0 +1,69 @@
+{
+  "mode": "NATURAL_OFF_PAIR",
+  "argv": [
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t926-ninja\\hello_world_pc.exe",
+    "--m1-window",
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t830-m1-20261123\\full_source.spv",
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t830-m1-20261123\\quantum_candidate.spv",
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t830-m1-20261123\\quantum_commit.spv",
+    "--m1-d1",
+    "OFF",
+    "--m1-source-trace"
+  ],
+  "cwd": "D:\\hmprojects\\HelloWorld",
+  "inputs": [
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t926-ninja\\hello_world_pc.exe",
+      "bytes": 4025856,
+      "sha256": "38aa0c162a7df69dade76c3cf77f78c5d240cd1726d5732e53bc5536126f911c"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t830-m1-20261123\\full_source.spv",
+      "bytes": 180584,
+      "sha256": "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t830-m1-20261123\\quantum_candidate.spv",
+      "bytes": 174912,
+      "sha256": "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t830-m1-20261123\\quantum_commit.spv",
+      "bytes": 254040,
+      "sha256": "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce"
+    }
+  ],
+  "attempts": [
+    {
+      "pid": 29876,
+      "state": "CHILD_EXIT",
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t927\\runs\\off-pair-t926-full\\off-1.jsonl",
+        "bytes": 137945,
+        "sha256": "b0b4209a1d28d739f8a396ce0f9ee81e2c12dce42796dc3660a145bd27ec1007"
+      },
+      "stderr": {
+        "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t927\\runs\\off-pair-t926-full\\off-1.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "pid": 17464,
+      "state": "CHILD_EXIT",
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t927\\runs\\off-pair-t926-full\\off-2.jsonl",
+        "bytes": 210695,
+        "sha256": "48fe8b25209b1b5d285ed0d076025ef30687bb16182e9d5b2e8dbde1b4b83547"
+      },
+      "stderr": {
+        "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t927\\runs\\off-pair-t926-full\\off-2.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "checkerExit": 0
+}

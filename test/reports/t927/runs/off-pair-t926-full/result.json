@@ -1,0 +1,14 @@
+{
+ "arms": 2,
+ "checkerExit": 0,
+ "pairState": "CLOCK_OR_INPUT_DIFFERENCE",
+ "firstAction": {
+  "leftDeltaNs": 27220900,
+  "rightDeltaNs": 22925800
+ },
+ "both": "DELIVERED, PAGE_PULSE_ACCEPTED",
+ "mode": "OFF (natural, no user input)",
+ "modules": "t830-m1-20261123 full-source/candidate/commit (non-compact contract SHAs 1912af9e/b8f0e327/caf0614c)",
+ "pe": "t926-ninja 38aa0c162a7df69d",
+ "note": "first attempt with t918-shaders failed M1_MODULE_SHA (compact SPIR-V vs non-compact contract) \u2014 diagnosis: OFF pair requires full-container baseline profile, kept in off-pair-t926 as negative evidence"
+}

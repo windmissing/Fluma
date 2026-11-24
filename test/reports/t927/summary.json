@@ -79,5 +79,27 @@
   "dm2r1": "covered by T923 follow-up 6bda4c0c same day",
   "g15Dune": "not started, no blocker",
   "offPair": "not started, no blocker"
+ },
+ "offPair": {
+  "pe": "t926-ninja 38aa0c162a7df69d",
+  "modules": "t830-m1-20261123 (non-compact 1912af9e/b8f0e327/caf0614c)",
+  "arms": 2,
+  "checkerExit": 0,
+  "pairState": "CLOCK_OR_INPUT_DIFFERENCE",
+  "firstActionDeltaNs": {
+   "left": 27220900,
+   "right": 22925800
+  },
+  "both": "DELIVERED PAGE_PULSE_ACCEPTED",
+  "negative": "first attempt with t918 compact shaders failed M1_MODULE_SHA (compact SPIR-V vs non-compact contract) \u2014 off-pair-t926 kept as diagnostic"
+ },
+ "g15Dune": {
+  "status": "BLOCKED",
+  "reproduction": "host --source ... [--g15-dune] hangs at ROLE_PIPELINE_ENTER opcode 23 pipeline compile, 5 attempts (with/without dune, release/view_assets builds, 45-240s waits)",
+  "evidence": "test/reports/t927/runs/g15/hang-evidence.json + hang-probe.jsonl + 4 run logs, all stop at row 121 opcode 23",
+  "suspect": "Intel igc64 shader-compile hang (OP_48 CALL_UNRETURNED family, machine/driver-state dependent \u2014 T912/T921/T923 pattern)",
+  "tried": "retry x5, view_assets build, g15-dune/plain, check-package PASS, smoke binary offline PASS",
+  "blocker": "pipeline compile of role opcode 23 never returns on this machine today",
+  "handoff": "developer (rebuild or async-pipeline variant) or re-run after driver state change; single-role stack capture (qualify_role supervise) would identify the exact igc64 frame"
  }
 }
