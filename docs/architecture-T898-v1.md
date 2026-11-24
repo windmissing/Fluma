@@ -1,5 +1,7 @@
 # T898 · PC 持续落沙与自主续帧首次归因
 
+> 2026-11-24 修订：T899 A 在用户复试中的负载、实收 SOURCE/累计 LAND、重力限角和回正沿 [T908](architecture-T908-v1.md)。T898 的退役/许可和同根可见性合同继续适用，LAND 取证使用实际 kind 8 行。
+
 2026-11-23 · architect · P5 · Windows Vulkan · 用户现场日志离线复核
 
 **连续入料曾经发生，停住后的自动恢复仍缺一段。** 现场一个 630 ms 的长按实际受理了三笔沙源，松手到下一次按下前还有八个自主 QUANTUM。主要中断是 `ROOT_DEADLINE`。T894 A 能安全退役并恢复输入 READY，但把仿真恢复放在 `awaitSource(true)` 后面，必须再按一下并成功入料才继续。固定四步共享 grant 加剧超期，尾部也有首个量子得到近完整 250 ms 仍未完成的原件，需分别解决。 [机器复算](architecture-T898-evidence-v1.json)

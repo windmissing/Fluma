@@ -1,5 +1,7 @@
 # T832 v1 · PC 沙水输入与双态合成工程接续
 
+> 2026-11-24 修订：实际水侧扩散与飞包原件按 [T907](architecture-T907-water-v1.md) 接入。PC Demo 落沙可见门、接受角反馈、回正与负载对照按 [T908](architecture-T908-v1.md)。
+
 2026-11-22 · architect · 目标 7 → 8 · Windows x64 Vulkan · PC 工程合同
 
 ## 1. 接入条件与交付边界
