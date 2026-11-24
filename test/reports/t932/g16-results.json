@@ -1,0 +1,43 @@
+{
+ "g16a": {
+  "gpu": {
+   "vendor": 32902,
+   "device": 16024,
+   "driver": 1656924
+  },
+  "module": "g16_isolated_contact_v2.spv 7e1dae62 (23020B)",
+  "exe": "t909-g16-dm2-release/t909_angle_probe.exe b14678b7",
+  "input": "t909-g16-fixtures/rotate.bin (T912 frozen 52B)",
+  "fenceVkResult": 0,
+  "elapsedNs": 587600,
+  "t930check": {
+   "errors": [],
+   "errorMs": -0.00014224201019819027,
+   "toi": 0.17887421765476044,
+   "observedTOI": 0.17887407541275024,
+   "nearRootSigns": [
+    "+2.6907e-8",
+    "-2.6907e-8"
+   ],
+   "outputGapsM": [
+    "+1.9789e-7",
+    "-1.9023e-7"
+   ]
+  },
+  "verdict": "PASS: TOI within 0.05ms gate by 350x margin (0.000142ms), near-root bracket sign-determined both ends, output gaps +0.198/-0.190 um straddle zero"
+ },
+ "g16b": {
+  "attempts": [
+   "13/static",
+   "52/static",
+   "13/hold",
+   "13/fast"
+  ],
+  "allResult": "exit 3, firstReason=2 firstStage=1 disk=1, acceptedRoot=null",
+  "rootCause": "shader freeze() asserts disk64 word13 (flags)==0; T928 contract seeds pack flags=1 (test/t928/fixtures.py DISK.pack(...,1,0,0)) per architecture-T928-abi-v1.json records.disk64.fields word13=flags",
+  "gate": "host binds seedSHA (d74e...13 / eca4...52) \u2014 modified seed rejected at G16_SEED_SHA, no bypass",
+  "base_export": "base.disk64 exported verbatim seed (valid identity); candidate all zero (fail before copy loop completes)",
+  "verdict": "BLOCKED at developer boundary: conservation/impulse residual/same-root window not reachable until shader assertion or seed ABI reconciled",
+  "handoff": "developer (fix freeze() word13 assertion or repack seeds with flags=0 and new SHA gate)"
+ }
+}

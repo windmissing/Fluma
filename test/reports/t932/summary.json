@@ -1,0 +1,48 @@
+{
+ "schema": "T932_GOAL2_G16_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "goal2": {
+  "verdict": "CLOSABLE",
+  "generations": {
+   "gen2": "624x431, 47 quanta",
+   "gen3": "784x461 after resize, 40 quanta",
+   "gen4": "iconic, zero presents (wake gate)",
+   "gen5": "restored, 49 quanta"
+  },
+  "newGenFirstFrame": "physicsCommit restarts at 2 per generation",
+  "oldGenRevoked": "3 WINDOW_REVOKED in-flight roots at resize; AUTHORITY_CHANGED x25",
+  "wsiPlusPixels": "M1_QUANTUM_PRESENT_QUEUED (WSI queue) + FENCED_READBACK real ROI pixels per generation",
+  "recovery": "SUSPEND39/RETIRED22/NEW_BASELINE22/HOLD_REVALIDATED22"
+ },
+ "g16a": {
+  "verdict": "PASS",
+  "probe": "PRIVATE_ANGLE_PROBE fenceVkResult=0 elapsed 587.6us",
+  "t930": {
+   "errors": [],
+   "errorMs": -0.000142,
+   "toi": 0.17887421765,
+   "nearRootGapsM": [
+    "+2.6907e-8",
+    "-2.6907e-8"
+   ],
+   "outputGapsUm": [
+    "+0.1979",
+    "-0.1902"
+   ]
+  },
+  "gate": "0.05ms TOI tolerance passed with 350x margin",
+  "vsV1": "old artifact +0.080503ms -> v2 -0.000142ms (fixed)"
+ },
+ "g16b": {
+  "verdict": "BLOCKED (atomic rejection captured)",
+  "attempts": "13/52 x static/hold/fast = 4/4 exit 3 reason 2 stage 1 disk 1",
+  "rootCause": "shader freeze() asserts disk64 word13(flags)==0; T928 seeds pack flags=1 per architecture-T928-abi-v1.json",
+  "bypass": "host seedSHA gate rejects modified seeds",
+  "missing": "conservation/impulse residuals, same-root window, present scene",
+  "handoff": "developer: fix word13 assertion or repack seeds; then effector re-captures with same commands"
+ }
+}

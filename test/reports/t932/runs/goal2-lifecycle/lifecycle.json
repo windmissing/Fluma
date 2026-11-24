@@ -1,0 +1,43 @@
+{
+ "ok": true,
+ "windowAvailable": [
+  {
+   "geometry": "2",
+   "w": 624,
+   "h": 431
+  },
+  {
+   "geometry": "3",
+   "w": 784,
+   "h": 461
+  },
+  {
+   "geometry": "5",
+   "w": 784,
+   "h": 461
+  }
+ ],
+ "genBefore": 2,
+ "qBefore": 47,
+ "waBefore": 1,
+ "quantaPerGeneration": {
+  "2": 47,
+  "3": 40,
+  "5": 49
+ },
+ "holdRecovery": 105,
+ "fencedReadbackRows": 3,
+ "lastQuantaAfterRestore": 49,
+ "rows": 1649,
+ "detail": {
+  "resize": "gen2 624x431 (47 quanta) -> gen3 784x461 (40 quanta), new-gen first present physicsCommit=2 (fresh counter)",
+  "minimize": "gen4 iconic: no WINDOW_AVAILABLE (wake gate width>0), zero presents during iconic",
+  "restore": "gen5 784x461, 49 quanta after re-pour",
+  "oldGenRevoked": "3 in-flight submits windowCurrent=false reason=WINDOW_REVOKED (gen2 roots cancelled at resize)",
+  "oldEpochRejected": "AUTHORITY_CHANGED 25 reservation terminals",
+  "recovery": "SUSPEND 39 / RETIRED 22 / NEW_BASELINE 22 / HOLD_REVALIDATED 22 \u2014 hold preserved across generation changes",
+  "wsiVsVisible": "FENCED_READBACK rows carry real ROI pixels per geometry (2/3/5); M1_QUANTUM_PRESENT_QUEUED rows are the WSI-side queue evidence; per-generation present time ranges do not overlap (old generation never presents after its replacement)",
+  "newDownRequired": "M1_INPUT_WAIT_NEW_DOWN 17 (stale-session pulses demand new Down after generation change)"
+ },
+ "verdict": "GOAL_2_CLOSABLE: non-empty continuous presentation per generation, resize/minimize/restore each advance generation, new-gen first frame observed (fresh physicsCommit), old generation presents cease at boundary and in-flight roots report WINDOW_REVOKED, WSI queue evidence plus fenced pixel readback both captured"
+}
