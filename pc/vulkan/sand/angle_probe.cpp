@@ -146,20 +146,23 @@ struct Commands {
 int wmain(int argc,wchar_t **argv) {
   using namespace grs::pc::sand;
   try {
-    const bool pose=argc>=2 && std::wstring_view(argv[1])==L"g15-pose";
-    const bool g15=pose || (argc>=2 && std::wstring_view(argv[1])==L"g15");
+    const auto mode=argc>=2 ? std::wstring_view(argv[1]) : std::wstring_view{};
+    const bool pose=mode==L"g15-pose",flux=mode==L"g15-flux";
+    const bool g15=pose || flux || mode==L"g15";
     const bool g16=argc>=2 && std::wstring_view(argv[1])==L"g16";
-    RequireHost((g15 && argc==6)||(g16 && argc==5),"USE: (g15|g15-pose MODULE INPUT ANGLES OUTPUT) | (g16 MODULE INPUT OUTPUT)");
+    RequireHost((g15 && argc==6)||(g16 && argc==5),"USE: (g15|g15-pose|g15-flux MODULE INPUT ANGLES OUTPUT) | (g16 MODULE INPUT OUTPUT)");
     const auto module=Read(argv[2],64*1024);
-    RequireHost(Digest(module)==(pose ? "21452cbf2441d19b0feb386488548bc7d3833d6587e871b631c3df6954ee5086" :
+    RequireHost(Digest(module)==(flux ? "41d52e58b47e70afca62491a8c76fadb398419275852dd585939ab86615d1826" :
+                                pose ? "21452cbf2441d19b0feb386488548bc7d3833d6587e871b631c3df6954ee5086" :
                                 g15 ? "0744d45f428c56064089cff52dafa08e189f80bed0eaca817e13fbb4ad069fd0" :
                                     "cc1c655f6ac151fb499c9b3e2894233a4d713482633f4986e08601b03117dc8b"),"PROBE_MODULE_SHA");
-    std::vector<std::vector<uint32_t>> input{Read(argv[3],(6+127)*4)};
+    std::vector<std::vector<uint32_t>> input{Read(argv[3],flux ? (8+129*8)*4 : (6+127)*4)};
     const auto &body=input.front();
-    const size_t header=pose ? 6 : 4;
-    const uint32_t faces=g15 && body.size()>=header ? body[header-1] : 0;
-    RequireHost(g15 ? faces && faces<=127 && body.size()==header+faces : body.size()==13,"PROBE_INPUT_ABI");
-    const size_t bytes=g15 ? size_t(faces)*(pose ? 32 : 24) : 36;
+    const size_t header=flux ? 8 : pose ? 6 : 4;
+    const uint32_t faces=g15 && body.size()>=header ? body[flux ? 5 : header-1] : 0;
+    RequireHost(g15 ? faces && faces<=(flux ? 129u : 127u) && (!flux || faces>=2u) &&
+                      body.size()==header+faces*(flux ? 8u : 1u) : body.size()==13,"PROBE_INPUT_ABI");
+    const size_t bytes=g15 ? size_t(faces)*(flux ? 64 : pose ? 32 : 24) : 36;
     if (g15) {
       input.push_back(Read(argv[4],184328));
       RequireHost(Digest(input.back())=="6278b4a06d704df8439b3291b1c3abff608a42049c4837720e6745a4b272ad61","ANGLE_TABLE_SHA");

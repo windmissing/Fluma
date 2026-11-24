@@ -46,3 +46,11 @@ Windows 两条 Release 构建通过，新增 shader 完成 SPIR-V 验证，最�
 - `g15-pose` 使用 T843 一秒 quintic 的端点和 T907 的整数 1/7680 s 时间，GPU 两肢计算后 RNE 到 Q8，读取同一 ±45° 角表并写定点面支撑结果。静止/正反向端点及 85°/s 边界有具名输入范围。新诊断宿主 `.codex/local-test/t909-r2-dm2-release/t909_angle_probe.exe` 的 SHA-256 为 `fd76d1991562195954066a2ce1472684658a4eaffbf30d1d8988ea8dcbcfb781`。同上构建脚本输出 `g15_pose_v1.spv`。输入 LE `<iiiIII`（列宽、起止角 Q8、局部时间 tick、摩擦 Q16、面数）随后是有符号床差。输出每面 `<qqiIiI`（驱动力、法向、方向、状态、取样角、取样 tick）。
 
 两条 Release 构建、SPIR-V 验证和 T910 回归通过。G15 连续姿态和面支撑已能合并诊断，DM2 物理事务中的搬移、来源与能量审计、typed 接受及场景仍待接入。G16 多盘扩域按清单等待 T912 孤立算子实测及接口回执。新增候选的端到端 PC 原件由 effector 复采。
+
+## 连续姿态下的干沙面通量算子
+
+`g15-flux` 复用 T843 的整数时间姿态和 T647 宽算术。按同一取样角用带符号等效床重构左右深度，再计算共享质量与动量通量、两侧压力修正。墙面的质量流归零，保留动量反力。静摩擦约束只在无已有水平动量的支撑面对质量流生效。计算前核坡面、承托和初态容量，核原整数宽度、0.45 CFL 和收窄。
+
+用 `build_t909_angle_probes.py` 编译 `g15_flux_v1.spv`（SHA-256 `41d52e58b47e70afca62491a8c76fadb398419275852dd585939ab86615d1826`），再用 `t909_angle_probe.exe g15-flux MODULE INPUT ANGLES OUTPUT`。输入头 LE `<iiiIIIII`（列宽、段起止 Q8 角、局部 tick、摩擦 Q16、面数、重力、J），随后每面 `<IIIIqq`（左右床/流层高度与左右水平动量），最前和最后为墙。输出每面 64 B，字段次序见 shader。输出 status 0 为算子通过、1 为输入或算术拒绝、2 为支撑域拒绝、3 为 CFL 拒绝。拒根不消费动量和通量。
+
+本算子只接收给定的预测或中点态，尚未接入原 DM2 的 predictor/corrector 调度、Hamilton 来源、能量账和 typed 接受。T912 已有孤立接触原字，G16 多盘仍缺完整接口回执与小域阶段独立判定。

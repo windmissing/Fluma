@@ -44,11 +44,19 @@ def build(compiler, directory):
     assert len(raw) == 184328
     (directory / "g15_angle_q20.i32le").write_bytes(raw)
     result = {"angleTable": {"sha256": sha256(raw).hexdigest(), "rows": len(angles), "bytes": len(raw)}}
-    for name, count in (("g15_support_v1", 3), ("g16_isolated_contact_v1", 2), ("g15_pose_v1", 3)):
+    for name, count in (("g15_support_v1", 3), ("g16_isolated_contact_v1", 2), ("g15_pose_v1", 3), ("g15_flux_v1", 3)):
         if name == "g15_pose_v1":
             source = directory / (name + ".comp")
             original = Path(__file__).with_name("g15_support_v1.comp").read_text()
             source.write_bytes(original.replace("#version 450\n", "#version 450\n#define G15_POSE\n", 1).encode())
+        elif name == "g15_flux_v1":
+            template = Path(__file__).with_name(name + ".comp").read_text()
+            parent = Path(__file__).resolve().parents[2] / "entry/src/main/cpp/gpu_resident/g9dm/frozen_t647/corrected_reference.comp"
+            wide = parent.read_text(encoding="utf-8").split("bool g9Zero(", 1)[1].split("struct G9EnergyInterval", 1)[0]
+            support = Path(__file__).with_name("g15_support_v1.comp").read_text()
+            pose = support[support.index("u64vec2 mulWord"):support.index("shared bool groupValid;")+len("shared bool groupValid;")]
+            source = directory / (name + ".comp")
+            source.write_bytes(template.replace("/* T647_WIDE */", "bool g9Zero(" + wide).replace("/* G15_POSE */", pose).encode())
         else:
             source = Path(__file__).with_name(name + ".comp")
         module = directory / (name + ".spv")
