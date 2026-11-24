@@ -11,6 +11,7 @@ const uint config=86528u,receipt=87552u,heads=88576u,velocity0=90624u,velocity1=
 const uint bucket=65536u,order=78336u,sweep=107008u,pairs=123392u,witness=139776u;
 const uint solver=98304u,geometry=196608u,invalid=0xffffffffu;
 const uint capEdges=8192u,capDegree=16u;
+const uint kDiskActiveFlag=1u;
 const float radiansPerMilliDeg=.000017453292519943296;
 const float gapRound=.00000025;
 const float residualSpeed=.001;
@@ -623,7 +624,7 @@ void freeze() {
         if(state[a]!=i+1u||state[a+1u]!=1u||state[a+2u]!=i+1u||state[a+3u]!=1u||
             d.r!=expectedRadius||d.m!=expectedMass||
             abs(d.inertia-0.5*d.m*d.r*d.r)>2e-14||!finite(d.inertia)||
-            state[a+13u]!=0u||state[a+14u]!=0u||state[a+15u]!=0u) {
+            state[a+13u]!=kDiskActiveFlag||state[a+14u]!=0u||state[a+15u]!=0u) {
             fail(2u,1u,invalid,i+1u,invalid,invalid);return;
         }
         for(uint k=0u;k<16u;++k)state[b+k]=state[a+k];

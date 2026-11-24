@@ -8,6 +8,7 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <string_view>
 
@@ -71,6 +72,12 @@ void Write(const std::filesystem::path &path,const void *data,size_t bytes) {
 }
 
 enum class Motion { Static,Fast,Slow,Hold };
+#ifdef PC_G16_FREEZE_FIXTURE
+struct FreezeFault {
+  uint32_t disk,word,value;
+  VkDeviceSize Offset(uint32_t bank) const {return bank*stateStride+(disk-1)*64u+word*4u;}
+};
+#endif
 struct Program {
   std::vector<uint32_t> module,seed;
   std::filesystem::path out;
@@ -78,6 +85,9 @@ struct Program {
   uint32_t j=128,roots=0,disks=0;
   bool mirror=false,present=false;
   Motion motion=Motion::Static;
+#ifdef PC_G16_FREEZE_FIXTURE
+  std::optional<FreezeFault> fault;
+#endif
 
   void BuildPose() {
     const auto add=[&](uint32_t ms,int left,int right) {
@@ -201,6 +211,11 @@ class Owner {
   uint64_t fenceGeneration_=0,previousNonce_=0;
   Head head_{};
   bool scenePinned_=false;
+#ifdef PC_G16_FREEZE_FIXTURE
+  HostDevice::Memory fixtureState_{};
+  bool fixtureBound_=false;
+  void RecordFreezeFault(const FreezeFault &,uint32_t bank);
+#endif
 };
 
 #define VKFN(name) Proc<PFN_vk##name>("vk" #name)
@@ -259,7 +274,41 @@ void Owner::Prepare(const Program &p) {
   RequireVk(VKFN(AllocateCommandBuffers)(device,&cmdInfo,&command_),"G16_COMMAND");
   const VkFenceCreateInfo fenceInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
   RequireVk(VKFN(CreateFence)(device,&fenceInfo,nullptr,&fence_),"G16_FENCE");
+#ifdef PC_G16_FREEZE_FIXTURE
+  if(p.fault)
+    fixtureState_=gpu_.Allocate(storageBytes[0],VK_BUFFER_USAGE_STORAGE_BUFFER_BIT|
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT|VK_BUFFER_USAGE_TRANSFER_DST_BIT);
+#endif
 }
+
+#ifdef PC_G16_FREEZE_FIXTURE
+void Owner::RecordFreezeFault(const FreezeFault &fault,uint32_t bank) {
+  const auto &base=resources_[0].slice;
+  const auto &fixture=fixtureState_.slice;
+  // BASE comes from the first transfer upload or an already retired compute root.
+  const VkMemoryBarrier input{VK_STRUCTURE_TYPE_MEMORY_BARRIER,nullptr,
+    VK_ACCESS_TRANSFER_WRITE_BIT|VK_ACCESS_SHADER_WRITE_BIT,VK_ACCESS_TRANSFER_READ_BIT};
+  VKFN(CmdPipelineBarrier)(command_,VK_PIPELINE_STAGE_TRANSFER_BIT|VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+    VK_PIPELINE_STAGE_TRANSFER_BIT,0,1,&input,0,nullptr,0,nullptr);
+  const VkBufferCopy copy{0,0,base.bytes};
+  VKFN(CmdCopyBuffer)(command_,base.buffer,fixture.buffer,1,&copy);
+  const VkMemoryBarrier copied{VK_STRUCTURE_TYPE_MEMORY_BARRIER,nullptr,
+    VK_ACCESS_TRANSFER_WRITE_BIT,VK_ACCESS_TRANSFER_WRITE_BIT};
+  VKFN(CmdPipelineBarrier)(command_,VK_PIPELINE_STAGE_TRANSFER_BIT,VK_PIPELINE_STAGE_TRANSFER_BIT,
+    0,1,&copied,0,nullptr,0,nullptr);
+  VKFN(CmdUpdateBuffer)(command_,fixture.buffer,fault.Offset(bank),sizeof(fault.value),&fault.value);
+  const VkDescriptorBufferInfo range{fixture.buffer,0,fixture.bytes};
+  const VkWriteDescriptorSet bind{VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,nullptr,set_,0,0,1,
+    VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,nullptr,&range,nullptr};
+  VKFN(UpdateDescriptorSets)(gpu_.device,1,&bind,0,nullptr);
+  fixtureBound_=true;
+  std::cout<<"{\"stage\":\"G16_FREEZE_FIXTURE_INPUT\",\"bank\":"<<bank<<",\"disk\":"<<fault.disk
+    <<",\"word\":"<<fault.word<<",\"value\":"<<fault.value<<",\"offset\":"<<fault.Offset(bank)
+    <<",\"trustedBuffer\":\""<<reinterpret_cast<uintptr_t>(base.buffer)<<"\",\"fixtureBuffer\":\""
+    <<reinterpret_cast<uintptr_t>(fixture.buffer)<<"\",\"bindingOffset\":0,\"bindingRange\":"<<fixture.bytes
+    <<",\"bindingGeneration\":\""<<fixture.generation<<"\",\"acceptedRoot\":null}\n";
+}
+#endif
 
 VkResult Owner::Submit(uint64_t until,const HostDevice::Memory &destination,VkDeviceSize bytes,
                        VkResult &submit,VkResult &retire) {
@@ -289,7 +338,11 @@ void Owner::Export(const Program &p,const Config &config,const Completion &r,boo
   const VkDeviceSize noteBytes=witnessBytes+r[64]*8u,headBytes=p.disks*8u,adjBytes=r[56]*16u;
   const VkDeviceSize arrays=2*stateBytes+sceneBytes+noteBytes;
   const VkDeviceSize journalAt=arrays+3*edgeBytes+headBytes+adjBytes;
-  const VkDeviceSize bytes=journalAt+journalRowBytes*journalCapacity;
+  const VkDeviceSize ordinaryBytes=journalAt+journalRowBytes*journalCapacity;
+  VkDeviceSize bytes=ordinaryBytes;
+#ifdef PC_G16_FREEZE_FIXTURE
+  if(fixtureBound_)bytes+=3*stateStride;
+#endif
   const auto capture=gpu_.Allocate(bytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
   const auto device=gpu_.device;
   RequireHost(!pending_,"G16_COLD_IN_FLIGHT");
@@ -304,9 +357,16 @@ void Owner::Export(const Program &p,const Config &config,const Completion &r,boo
     slice.offset=source;slice.bytes=size;
     return CopySpan{slice,target};
   };
+  auto base=span(0,config[40]*stateStride,stateBytes,0);
+  auto candidate=span(0,config[41]*stateStride,stateBytes,stateBytes);
+#ifdef PC_G16_FREEZE_FIXTURE
+  if(fixtureBound_) {
+    base.source.buffer=candidate.source.buffer=fixtureState_.slice.buffer;
+    base.source.generation=candidate.source.generation=fixtureState_.slice.generation;
+  }
+#endif
   std::vector<CopySpan> ranges{
-    span(0,config[40]*stateStride,stateBytes,0),
-    span(0,config[41]*stateStride,stateBytes,stateBytes),
+    base,candidate,
     span(2,witnessOffset,noteBytes,stateBytes*2+sceneBytes),
     span(2,354304,headBytes,arrays+3*edgeBytes),
     span(2,journalOffset,journalRowBytes*journalCapacity,journalAt)};
@@ -314,6 +374,16 @@ void Owner::Export(const Program &p,const Config &config,const Completion &r,boo
   for(uint32_t i=0;i<3 && edgeBytes;++i)
     ranges.push_back(span(1,i*maxEdgePlane,edgeBytes,arrays+i*edgeBytes));
   if(adjBytes)ranges.push_back(span(2,0,adjBytes,arrays+3*edgeBytes+headBytes));
+#ifdef PC_G16_FREEZE_FIXTURE
+  if(fixtureBound_) {
+    ranges.push_back(span(0,config[40]*stateStride,stateStride,ordinaryBytes));
+    auto faulty=base.source;
+    auto privateCandidate=candidate.source;
+    faulty.bytes=privateCandidate.bytes=stateStride;
+    ranges.push_back({faulty,ordinaryBytes+stateStride});
+    ranges.push_back({privateCandidate,ordinaryBytes+2*stateStride});
+  }
+#endif
   RequireHost(RecordReadback(VKFN(CmdPipelineBarrier),VKFN(CmdCopyBuffer),command_,capture.slice,ranges.data(),ranges.size()),
     "G16_COLD_RECORD");
   RequireHost(MakeHostVisible(VKFN(CmdPipelineBarrier),command_,capture.slice),"G16_COLD_HOST_BARRIER");
@@ -328,6 +398,25 @@ void Owner::Export(const Program &p,const Config &config,const Completion &r,boo
   const auto *words=capture.words;
   Write(p.out/"base.disk64",words,stateBytes);
   Write(p.out/"candidate.disk64",words+stateBytes/4,stateBytes);
+#ifdef PC_G16_FREEZE_FIXTURE
+  if(fixtureBound_) {
+    const auto *trusted=words+ordinaryBytes/4;
+    const auto *faulty=trusted+stateStride/4;
+    const auto *privateCandidate=faulty+stateStride/4;
+    const auto changed=((p.fault->disk-1)*16u)+p.fault->word;
+    RequireHost(trusted[changed]!=p.fault->value && faulty[changed]==p.fault->value &&
+        std::equal(trusted,trusted+changed,faulty) &&
+        std::equal(trusted+changed+1,trusted+stateStride/4,faulty+changed+1),
+        "G16_FREEZE_FIXTURE_DELTA");
+    Write(p.out/"trusted-base-bank.disk64",trusted,stateStride);
+    Write(p.out/"fixture-base-bank.disk64",faulty,stateStride);
+    Write(p.out/"fixture-candidate-bank.disk64",privateCandidate,stateStride);
+    std::cout<<"{\"stage\":\"G16_FREEZE_FIXTURE_BYTES\",\"nonce\":\""<<Wide(config,16)
+      <<"\",\"trustedBaseSHA\":\""<<Hex(Hash(trusted,stateStride))
+      <<"\",\"faultyBaseSHA\":\""<<Hex(Hash(faulty,stateStride))
+      <<"\",\"privateCandidateSHA\":\""<<Hex(Hash(privateCandidate,stateStride))<<"\",\"acceptedRoot\":null}\n";
+  }
+#endif
   if(accepted)Write(p.out/"scene.scene32",words+stateBytes*2/4,sceneBytes);
   const auto *notes=words+(stateBytes*2+sceneBytes)/4;
   Write(p.out/"witness.u32le",notes,noteBytes);
@@ -425,6 +514,13 @@ bool Owner::Run(const Program &p) {
       VKFN(CmdPipelineBarrier)(command_,VK_PIPELINE_STAGE_TRANSFER_BIT,VK_PIPELINE_STAGE_TRANSFER_BIT,0,1,&clear,0,nullptr,0,nullptr);
       VKFN(CmdUpdateBuffer)(command_,state.buffer,0,p.seed.size()*4,p.seed.data());
     }
+    bool faultArmed=false;
+#ifdef PC_G16_FREEZE_FIXTURE
+    if(p.fault && i+1==p.roots) {
+      RecordFreezeFault(*p.fault,config[40]);
+      faultArmed=true;
+    }
+#endif
     VKFN(CmdUpdateBuffer)(command_,resources_[2].slice.buffer,configOffset,sizeof(config),config.data());
     writeBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT|VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
         VK_ACCESS_TRANSFER_WRITE_BIT|VK_ACCESS_SHADER_WRITE_BIT);
@@ -456,7 +552,7 @@ bool Owner::Run(const Program &p) {
         (receipt[40]==1 || (receipt[40]==2 && receipt[41]>=1 && receipt[41]<=17));
     const bool current=gpu_.Current();
     const bool fresh=HostDevice::Now()<=begin+budget;
-    const bool accepted=valid && current && fresh && CanCommit(config,receipt);
+    const bool accepted=!faultArmed && valid && current && fresh && CanCommit(config,receipt);
     if(accepted)
       head_={config[41],config[43],Wide(receipt,20),Wide(receipt,28),Wide(receipt,32)};
     std::cout<<"{\"stage\":\"G16_PRIVATE_ROOT\",\"run\":\""<<Wide(config,8)<<"\",\"nonce\":\""<<Wide(config,16)
@@ -473,6 +569,21 @@ bool Owner::Run(const Program &p) {
       RequireHost(bool(stream.write(reinterpret_cast<const char *>(receipt.data()),sizeof(receipt))),"G16_COMPLETION_WRITE");
     if(!accepted || i+1==p.roots) {
       if(valid)Export(p,config,receipt,accepted);
+#ifdef PC_G16_FREEZE_FIXTURE
+      if(faultArmed) {
+        const bool passed=valid && current && fresh && receipt[40]==2 && receipt[41]==2 && receipt[42]==1 &&
+            receipt[45]==p.fault->disk && receipt[63]==0x801 && receipt[62]==0 &&
+            receipt[54]==0 && receipt[56]==0 && receipt[58]==0 && receipt[59]==0 &&
+            Wide(receipt,20)==0 && Wide(receipt,24)==0 &&
+            head_.bank==config[40] && head_.scene==config[42] && head_.commit==Wide(config,22) &&
+            head_.stateGeneration==Wide(config,26) && head_.sceneGeneration==Wide(config,30);
+        std::cout<<"{\"stage\":\"G16_FREEZE_FIXTURE_RESULT\",\"passed\":"<<(passed?"true":"false")
+          <<",\"baseBank\":"<<head_.bank<<",\"privateCommit\":\""<<head_.commit
+          <<"\",\"stateGeneration\":\""<<head_.stateGeneration<<"\",\"sceneGeneration\":\""<<head_.sceneGeneration
+          <<"\",\"firstDisk\":"<<receipt[45]<<",\"acceptedRoot\":null}\n";
+        return passed;
+      }
+#endif
       return accepted;
     }
   }
@@ -483,9 +594,13 @@ bool Owner::Run(const Program &p) {
 
 int RunG16Multi(int argc,wchar_t **argv) {
   Program p;
-  RequireHost(argc>=8 && argc<=10,
+  bool faultMode=false;
+#ifdef PC_G16_FREEZE_FIXTURE
+  faultMode=argc==12 && std::wstring_view(argv[8])==L"--freeze-fault";
+#endif
+  RequireHost(faultMode || (argc>=8 && argc<=10),
       "USE: g16-multi MODULE SEED (static|fast|slow|hold) (128|256) ROOTS OUT [mirror] [present]");
-  for(int i=8;i<argc;++i) {
+  for(int i=8;!faultMode && i<argc;++i) {
     const std::wstring_view flag(argv[i]);
     if(flag==L"mirror" && !p.mirror)p.mirror=true;
     else if(flag==L"present" && !p.present)p.present=true;
@@ -493,7 +608,7 @@ int RunG16Multi(int argc,wchar_t **argv) {
   }
   p.module=ReadWords(argv[2],256*1024);
   const auto moduleSHA=Hex(Hash(p.module.data(),p.module.size()*4));
-  RequireHost(moduleSHA=="0f9b9e756216caa22c21e8fc66896ec561bcdc992681ab60b33126a6d858ef98","G16_MODULE_SHA");
+  RequireHost(moduleSHA=="786bb1db9b8d3a679042bdc36d014226d68647913770d503192c297e0c10e361","G16_MODULE_SHA");
   p.seed=ReadWords(argv[3],52*64);
   const auto seedSHA=Hex(Hash(p.seed.data(),p.seed.size()*4));
   if(seedSHA=="d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168")p.disks=13;
@@ -509,6 +624,23 @@ int RunG16Multi(int argc,wchar_t **argv) {
       std::all_of(rootCount.begin(),rootCount.end(),[](wchar_t c){return c>=L'0' && c<=L'9';}),"G16_ROOT_COUNT");
   p.roots=uint32_t(std::stoul(argv[6]));
   RequireHost(p.roots && p.roots<=1200,"G16_ROOT_COUNT");
+#ifdef PC_G16_FREEZE_FIXTURE
+  if(faultMode) {
+    const auto decimal=[](const wchar_t *raw) {
+      const std::wstring_view digits(raw);
+      RequireHost(!digits.empty() && digits.size()<=2 &&
+          std::all_of(digits.begin(),digits.end(),[](wchar_t c){return c>=L'0' && c<=L'9';}),"G16_FIXTURE_NUMBER");
+      return uint32_t(std::stoul(raw));
+    };
+    const auto disk=decimal(argv[9]),value=decimal(argv[11]);
+    const std::wstring_view field(argv[10]);
+    const auto word=field==L"flags"?13u:field==L"reserved0"?14u:field==L"reserved1"?15u:
+      field==L"generation"?1u:field==L"origin"?2u:field==L"material"?3u:UINT32_MAX;
+    RequireHost((p.roots==1 || p.roots==2) && disk>=1 && disk<=p.disks && value<=3 && word!=UINT32_MAX &&
+        value!=(word>=14?0u:word==2?disk:1u),"G16_FIXTURE_ARGUMENTS");
+    p.fault=FreezeFault{disk,word,value};
+  }
+#endif
   p.out=argv[7];
   if(p.mirror)for(uint32_t i=0;i<p.disks;++i)
     for(uint32_t w: {4u,6u,8u,9u}) p.seed[i*16u+w]^=0x80000000u;
