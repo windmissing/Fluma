@@ -1,0 +1,127 @@
+{
+  "synthetic": {
+    "m1": {
+      "state": "RAW_WORD_MATCH",
+      "firstDiff": null,
+      "firstAuditEqual": true,
+      "inventory": [
+        {
+          "sandQ20": 123,
+          "waterQ20": 0,
+          "activeSand": 1,
+          "activeWater": 0
+        },
+        {
+          "sandQ20": 123,
+          "waterQ20": 0,
+          "activeSand": 1,
+          "activeWater": 0
+        }
+      ],
+      "timing": {
+        "base": {
+          "timing": {
+            "kind": "QUANTUM",
+            "durationNs": 32,
+            "accepted": true,
+            "missing": []
+          }
+        },
+        "candidate": {
+          "timing": {
+            "kind": "QUANTUM",
+            "durationNs": 32,
+            "accepted": true,
+            "missing": []
+          }
+        }
+      }
+    },
+    "dm2": {
+      "selectedJ": 2,
+      "removed": 1,
+      "logical": 2404,
+      "physical": 2403
+    },
+    "g13": {
+      "n": 64,
+      "pressureRMS": 6.614433853624436e-11,
+      "pressureMax": 1.1606045291490119e-10,
+      "pressureContinuousRMS": 1.2550734384501978e-05,
+      "divergenceRMS": 0.0,
+      "viscosityRMS": 0.0,
+      "businessAccepted": false
+    },
+    "sourceTiming": {
+      "base": {
+        "timing": {
+          "kind": "SOURCE",
+          "durationNs": 32,
+          "accepted": true,
+          "missing": []
+        }
+      },
+      "candidate": {
+        "timing": {
+          "kind": "SOURCE",
+          "durationNs": 32,
+          "accepted": true,
+          "missing": []
+        }
+      }
+    }
+  },
+  "controls": [
+    "M1_UNEQUAL_INPUT",
+    "TIMING_IDENTITY",
+    "M1_STATE_RANGE",
+    "DM2_LATCH",
+    "DM2_REPLAY_INDEPENDENCE",
+    "DM2_WORD_DIFF:REJECTED_PREFIX",
+    "DM2_ACTIVE_OR_UNPROVEN_SLOT",
+    "G13_CLOSURE",
+    "G13_BINDING_RANGE",
+    "G13_FIELD_SCOPE",
+    "F02_GAUGE",
+    "G13_VISCOSITY_CERT"
+  ],
+  "history": {
+    "m1": {
+      "SOURCE": {
+        "samples": 25,
+        "p50Ms": 27.201724526,
+        "p95Ms": 30.225629097,
+        "rejected": 1
+      },
+      "QUANTUM": {
+        "samples": 1074,
+        "p50Ms": 14.984190063,
+        "p95Ms": 18.594758954,
+        "rejected": 1
+      }
+    },
+    "dm2": {
+      "acceptedRoot": null,
+      "businessVkResult": 2,
+      "state": "LATE_PRIVATE_DIAGNOSTIC",
+      "dispatches": [
+        2404,
+        2404,
+        2404
+      ],
+      "eventSealed": 260,
+      "pathSealed": 1,
+      "sourceBaseJoined": true
+    },
+    "g13": {
+      "firstStop": "GRANT_DEADLINE",
+      "acceptedRoot": null,
+      "gpuSpanNs": 1770310000.0,
+      "f02": {
+        "config128": "295c075ebaaab6d857088cf5ff36ebd636cfa3680851fd42068fd52cd24f8bd3",
+        "state": "e1c6b49ef4a23700e483649f43766c29c96366259be5110c2e8ff00c422d1fb1"
+      }
+    }
+  },
+  "candidateHardware": "PENDING_T946"
+}
