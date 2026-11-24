@@ -1,0 +1,5 @@
+{"stage":"G15_QUALIFY_DEVICE","device":"8680983e020000000000000000000000","driverUUID":"33312e302e3130312e32313430000000","vendor":32902,"deviceId":16024,"driver":1656924,"queueFamily":0,"ownerTid":7396}
+{"stage":"ROLE_SHADER_MODULE","opcode":23,"enterNs":"1671074484998500","exitNs":"1671074485123700","moduleVkResult":0}
+{"stage":"ROLE_PIPELINE_ENTER","opcode":23,"flags":0,"cache":null,"pushBytes":20,"commonBytes":240,"layoutSHA":"a35e2f4d13d0a5759b1fc8e4e64e563d60abf464096ee86a125cb9ffed0b750b","enterNs":"1671074485169400","moduleSHA":"5f8fcc775e1c1bd0fae0078ec979a011655531e7b708891c94f9085a77d34c01","moduleBytes":123644,"entryPoint":"main","call":"vkCreateComputePipelines","edge":"ENTER","role":"OP_23","ownerTid":7396,"qpc":"16710744861700","qpcFrequency":"10000000"}
+{"stage":"ROLE_PIPELINE_EXIT","opcode":23,"exitNs":"1671074488180300","pipelineVkResult":0,"call":"vkCreateComputePipelines","edge":"EXIT","role":"OP_23","ownerTid":7396,"qpc":"16710744882068","qpcFrequency":"10000000"}
+{"state":"G15_OP23_QUALIFIED","acceptedRoot":null}

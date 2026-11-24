@@ -1,0 +1,33 @@
+{
+  "exe": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t933-g15-release\\pc_sand_dm2_host.exe",
+  "exeSHA": "9aea6572f100bfede070dcc788e67b38be9774b3d9efde1e8687e54e25957271",
+  "targetSHA": {
+    "original": "29e0d466a922536acce6727cb4a768a974f333ecaa7faa1875a77202a0ee3e24",
+    "stripped": "5f8fcc775e1c1bd0fae0078ec979a011655531e7b708891c94f9085a77d34c01"
+  },
+  "prefixSHA": {
+    "dm2": "d5367cd29c885e797fe350c0ea76fa358772983f9c8c3ec3a33a80d27fc03ff8",
+    "g15": "bf03a518742740996c7b8741e9dc54865a7ba212147b809a66b67c78b4d7c880"
+  },
+  "arms": {
+    "source-extension": {
+      "A": [
+        "D:\\hmprojects\\HelloWorld\\G15_OP23_RUN\\op23-original.spv"
+      ],
+      "B": [
+        "D:\\hmprojects\\HelloWorld\\G15_OP23_RUN\\op23-stripped.spv"
+      ]
+    },
+    "prefix": {
+      "A": [
+        "D:\\hmprojects\\HelloWorld\\G15_OP23_RUN\\op23-stripped.spv",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t924-dm2-baseline\\sand_assets"
+      ],
+      "B": [
+        "D:\\hmprojects\\HelloWorld\\G15_OP23_RUN\\op23-stripped.spv",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t909-g15-dune-release\\sand_assets"
+      ]
+    }
+  },
+  "order": "ABBA"
+}

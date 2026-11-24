@@ -1,0 +1,66 @@
+{
+  "attemptId": "4485ecb3-7d42-4f7b-9ef9-2454c993d237",
+  "role": "OP_23",
+  "pid": 90632,
+  "reason": "CHILD_EXIT",
+  "lastPipeline": {
+    "stage": "ROLE_PIPELINE_EXIT",
+    "opcode": 23,
+    "exitNs": "1671137243022700",
+    "pipelineVkResult": 0,
+    "call": "vkCreateComputePipelines",
+    "edge": "EXIT",
+    "role": "OP_23",
+    "ownerTid": 33888,
+    "qpc": "16711372430483",
+    "qpcFrequency": "10000000"
+  },
+  "exeSHA": "9aea6572f100bfede070dcc788e67b38be9774b3d9efde1e8687e54e25957271",
+  "stdoutSHA": "0239043005a62de1193f250c20c19857b9f73258564a4124f82f9507eb52db35",
+  "supervisorStopQpc": "16711373947438",
+  "qpcFrequency": "10000000",
+  "samples": [
+    {
+      "elapsed": 0.019556800136342645,
+      "qpc": "16711370906065",
+      "ownerTid": null,
+      "alive": true,
+      "processTimes": [
+        "134399849049778715",
+        "0",
+        "0",
+        "0"
+      ],
+      "ownerTimes": null
+    }
+  ],
+  "stackDumps": [],
+  "probe": null,
+  "forced": false,
+  "exitCode": 0,
+  "ownerRetired": true,
+  "argv": [
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t933-g15-release\\pc_sand_dm2_host.exe",
+    "--qualify-g15-op23",
+    "D:\\hmprojects\\HelloWorld\\G15_OP23_RUN\\op23-stripped.spv",
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t924-dm2-baseline\\sand_assets"
+  ],
+  "cwd": "D:\\hmprojects\\HelloWorld\\G15_OP23_RUN",
+  "final": {
+    "state": "G15_OP23_QUALIFIED",
+    "acceptedRoot": null
+  },
+  "observation": "EXITED",
+  "stderrSHA": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "modules": {
+    "samples": [
+      {
+        "qpc": "16711370906065",
+        "paths": [],
+        "missing": 0,
+        "truncated": false
+      }
+    ],
+    "loaderAndDriverCandidates": {}
+  }
+}

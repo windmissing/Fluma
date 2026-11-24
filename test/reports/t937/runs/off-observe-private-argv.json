@@ -1,0 +1,14 @@
+{
+  "command": [
+    ".codex/local-test/t933-integrated-demo/hello_world_pc.exe",
+    "--m1-window",
+    ".codex/local-test/t830-m1-20261123/full_source.spv",
+    ".codex/local-test/t830-m1-20261123/quantum_candidate.spv",
+    ".codex/local-test/t830-m1-20261123/quantum_commit.spv",
+    "--m1-private-off",
+    ".codex/local-test/t933-off-reference.bin",
+    "test/reports/t937/runs/off-observe-private",
+    "ON"
+  ],
+  "exit": 1
+}

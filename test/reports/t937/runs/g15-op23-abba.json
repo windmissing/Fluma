@@ -1,0 +1,100 @@
+{
+ "G15_OP23_RUN\\source-extension-1-A": {
+  "exitCode": 1,
+  "forced": true,
+  "lastPipeline": {
+   "moduleSHA": "29e0d466a922536acce6727cb4a768a974f333ecaa7faa1875a77202a0ee3e24",
+   "flags": 0,
+   "cache": null,
+   "ownerTid": 89552
+  },
+  "final": {
+   "moduleSHA": "29e0d466a922536acce6727cb4a768a974f333ecaa7faa1875a77202a0ee3e24"
+  }
+ },
+ "G15_OP23_RUN\\source-extension-2-B": {
+  "exitCode": 0,
+  "forced": false,
+  "lastPipeline": {
+   "pipelineVkResult": 0,
+   "ownerTid": 7396
+  },
+  "final": {
+   "state": "G15_OP23_QUALIFIED"
+  }
+ },
+ "G15_OP23_RUN\\source-extension-3-B": {
+  "exitCode": 0,
+  "forced": false,
+  "lastPipeline": {
+   "pipelineVkResult": 0,
+   "ownerTid": 85168
+  },
+  "final": {
+   "state": "G15_OP23_QUALIFIED"
+  }
+ },
+ "G15_OP23_RUN\\source-extension-4-A": {
+  "exitCode": 1,
+  "forced": true,
+  "lastPipeline": {
+   "moduleSHA": "29e0d466a922536acce6727cb4a768a974f333ecaa7faa1875a77202a0ee3e24",
+   "flags": 0,
+   "cache": null,
+   "ownerTid": 87728
+  },
+  "final": {
+   "moduleSHA": "29e0d466a922536acce6727cb4a768a974f333ecaa7faa1875a77202a0ee3e24"
+  }
+ },
+ "G15_OP23_RUN\\prefix-1-A": {
+  "exitCode": 0,
+  "forced": false,
+  "lastPipeline": {
+   "pipelineVkResult": 0,
+   "ownerTid": 83840
+  },
+  "final": {
+   "state": "G15_OP23_QUALIFIED"
+  }
+ },
+ "G15_OP23_RUN\\prefix-2-B": {
+  "exitCode": 0,
+  "forced": false,
+  "lastPipeline": {
+   "pipelineVkResult": 0,
+   "ownerTid": 54368
+  },
+  "final": {
+   "state": "G15_OP23_QUALIFIED"
+  }
+ },
+ "G15_OP23_RUN\\prefix-3-B": {
+  "exitCode": 0,
+  "forced": false,
+  "lastPipeline": {
+   "pipelineVkResult": 0,
+   "ownerTid": 90752
+  },
+  "final": {
+   "state": "G15_OP23_QUALIFIED"
+  }
+ },
+ "G15_OP23_RUN\\prefix-4-A": {
+  "exitCode": 0,
+  "forced": false,
+  "lastPipeline": {
+   "pipelineVkResult": 0,
+   "ownerTid": 33888
+  },
+  "final": {
+   "state": "G15_OP23_QUALIFIED"
+  }
+ },
+ "verdict": {
+  "sourceExtensionGroup": "ABBA divergence: original module (with OpSourceExtension) hangs (forced kill, A arms 1&4), stripped module (identical except removed 52B OpSourceExtension) passes (B arms 2&3, G15_OP23_QUALIFIED)",
+  "prefixGroup": "4/4 qualified regardless of DM2/G15 prefix \u2014 prefix is not a factor",
+  "attribution": "OpSourceExtension record in opcode 23 module triggers the igc64 compile hang; removal unblocks pipeline creation",
+  "implication": "G15 dune pipeline can proceed with stripped modules (developer to decide canonical packaging); this explains T927 g15 hang"
+ }
+}

@@ -1,0 +1,48 @@
+{
+ "schema": "T937_G15_QUALIFY_OFF_REPLAY_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "g15op23": {
+  "sourceExtensionABBA": {
+   "A1": "hang (forced kill)",
+   "B2": "G15_OP23_QUALIFIED",
+   "B3": "G15_OP23_QUALIFIED",
+   "A4": "hang (forced kill)"
+  },
+  "prefixABBA": "4/4 G15_OP23_QUALIFIED (DM2/G15 prefix irrelevant)",
+  "attribution": "OpSourceExtension record (52B) in opcode 23 module triggers igc64 compile hang; identical module minus that record passes \u2014 explains T927 g15 host hang",
+  "artifacts": "G15_OP23_RUN/ (plan.json, op23-original/stripped.spv, 8 arm receipts)",
+  "implication": "G15 dune positive capture can proceed once developer canonicalizes stripped-module packaging; qualification gate now identified"
+ },
+ "offPrivateReplay": {
+  "reference": "t933-off-reference.bin (922ddef7) from T927 off-1 action 7: deltaNs 15026700, admittedQ20 126053",
+  "off1": {
+   "result": "M1_PRIVATE_OFF_COMPLETE",
+   "acceptedRoot": null,
+   "sourceFenceVk": 0,
+   "quantumFenceVk": 0,
+   "admittedQ": 126053,
+   "dispatches": 127
+  },
+  "off2": {
+   "result": "M1_PRIVATE_OFF_COMPLETE",
+   "acceptedRoot": null,
+   "sourceFenceVk": 0,
+   "quantumFenceVk": 0,
+   "admittedQ": 126053,
+   "dispatches": 127
+  },
+  "onObserve": {
+   "result": "M1_PRIVATE_OFF_COMPLETE + M1_QUANTUM_COLD_CAPTURE",
+   "acceptedRoot": null,
+   "observeArchive": "observe-16713673733571.m1root",
+   "note": "first attempt failed M1_PRIVATE_REAL_PULSE (pulse race, immediate check); second run with settle wait passed"
+  },
+  "admittedMatchesReference": true,
+  "t496": "raw files: quantum-base/candidate/completion/events/independent/publication + source-base/command/completion + reference.bin per arm",
+  "scope": "private evidence for T496 verification; not the formal four-arm OFF comparison"
+ }
+}
