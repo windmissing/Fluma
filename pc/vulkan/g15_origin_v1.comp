@@ -1,0 +1,176 @@
+#version 450
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
+layout(local_size_x=128) in;
+
+const uint Capacity=268435456u, Ranks=64u;
+// Each entry is (source low word, source high word, generation, mass).
+struct Column {
+ uint flow,occupied,count,reserved;
+ uvec4 origin[Ranks];
+};
+struct Face {
+ int q; uint status,leftDepth,rightDepth;
+ uvec2 impulse,correctionL,correctionR;
+ int angleQ8; uint poseTick; uvec2 drive,normal;
+};
+layout(std430,binding=0) readonly buffer Base { Column base[]; };
+layout(std430,binding=1) readonly buffer Faces { Face face[]; };
+// status, first failing column, sampled angle, sampled tick; then column records.
+// Candidate records are only written when every column passes preflight.
+struct Candidate {
+ uint flow,count; int leftQ,rightQ;
+ uvec4 origin[Ranks];
+};
+layout(std430,binding=2) writeonly buffer Result { uvec4 header; Candidate result[]; };
+layout(std430,binding=3) coherent buffer Reservation { uvec2 shares[]; };
+
+shared uint issue[128];
+shared uint outgoingLeft[128],outgoingRight[128];
+shared bool valid;
+
+bool less(uvec3 a,uvec3 b) {
+ if(a.y!=b.y)return a.y<b.y;
+ if(a.x!=b.x)return a.x<b.x;
+ return a.z<b.z;
+}
+
+uint validate(uint c,uint columns) {
+ Column old=base[c];
+ if(old.count>Ranks||old.occupied>Capacity||old.flow>old.occupied||old.reserved!=0u)return 1u;
+ uint sum=0u;
+ for(uint i=0u;i<old.count;++i) {
+  uvec4 entry=old.origin[i];
+  if(entry.x==0u||entry.y!=0u||entry.z==0u||entry.w==0u||entry.w>old.flow-sum)return 1u;
+  if(i>0u&&!less(old.origin[i-1u].xyz,entry.xyz))return 1u;
+  sum+=entry.w;
+ }
+ if(sum!=old.flow)return 1u;
+ Face left=face[c],right=face[c+1u];
+ if(left.status!=0u)return 256u+left.status;
+ if(right.status!=0u)return 256u+right.status;
+ if(left.angleQ8!=face[0].angleQ8||right.angleQ8!=face[0].angleQ8||
+    left.poseTick!=face[0].poseTick||right.poseTick!=face[0].poseTick||
+    left.q < -int(Capacity)||left.q > int(Capacity)||right.q < -int(Capacity)||right.q > int(Capacity)||
+    (c==0u&&left.q!=0)||(c+1u==columns&&right.q!=0))return 2u;
+ return 0u;
+}
+
+// Hamilton floors and stable descending remainders, using the donor's
+// remaining immutable-source shares after its earlier face.
+bool reserve(uint c,uint side,uint q,uint total,inout uint remaining[Ranks]) {
+ uint count=base[c].count;
+ uint part[Ranks],remainder[Ranks],sum=0u;
+ if(q==0u) {
+  for(uint i=0u;i<count;++i)shares[c*Ranks+i][side]=0u;
+  return true;
+ }
+ for(uint i=0u;i<count;++i) {
+  uint64_t product=uint64_t(q)*remaining[i];
+  part[i]=uint(product/total);
+  remainder[i]=uint(product%total);
+  sum+=part[i];
+ }
+ for(uint n=0u;n<q-sum;++n) {
+  uint best=count, greatest=0u;
+  for(uint i=0u;i<count;++i)if(remainder[i]>greatest){best=i;greatest=remainder[i];}
+  if(best==count)return false;
+  ++part[best];
+  remainder[best]=0u;
+ }
+ for(uint i=0u;i<count;++i) {
+  if(part[i]>remaining[i])return false;
+  remaining[i]-=part[i];
+  shares[c*Ranks+i][side]=part[i];
+ }
+ return true;
+}
+
+void resolve(uint columns) {
+ if(gl_LocalInvocationID.x==0u) {
+  valid=true;
+  for(uint c=0u;c<columns;++c)if(issue[c]!=0u) {
+   header=uvec4(issue[c],c,uint(face[0].angleQ8),face[0].poseTick);
+   valid=false;
+   break;
+  }
+ }
+ barrier();
+}
+
+void main() {
+ uint c=gl_LocalInvocationID.x,columns=uint(base.length());
+ if(columns==0u||columns>128u||face.length()!=int(columns+1u)||
+    result.length()!=int(columns)||shares.length()!=int(columns*Ranks)) {
+  if(c==0u)header=uvec4(1u,0u,0u,0u);
+  return;
+ }
+ uint remaining[Ranks];
+ if(c<columns) {
+  issue[c]=validate(c,columns);
+  if(issue[c]==0u) {
+   uint total=base[c].flow;
+   uint left=min(uint(max(-face[c].q,0)),total);
+   uint right=min(uint(max(face[c+1u].q,0)),total-left);
+   outgoingLeft[c]=left;
+   outgoingRight[c]=right;
+   for(uint i=0u;i<base[c].count;++i)remaining[i]=base[c].origin[i].w;
+   if(!reserve(c,0u,left,total,remaining)||!reserve(c,1u,right,total-left,remaining))issue[c]=3u;
+  }
+ }
+ memoryBarrierBuffer();
+ barrier();
+ resolve(columns);
+ if(!valid)return;
+ Candidate next;
+ if(c<columns) {
+  uint fromLeft=c==0u?0u:outgoingRight[c-1u];
+  uint fromRight=c+1u==columns?0u:outgoingLeft[c+1u];
+  uint retained=base[c].flow-outgoingLeft[c]-outgoingRight[c];
+  next.flow=retained+fromLeft+fromRight;
+  next.count=0u;
+  next.leftQ=int(fromLeft)-int(outgoingLeft[c]);
+  next.rightQ=int(outgoingRight[c])-int(fromRight);
+  if(next.flow>Capacity-(base[c].occupied-base[c].flow))issue[c]=4u;
+  if(issue[c]==0u) {
+   // Merge the sorted retained, left donor, and right donor streams.
+   uvec3 cursor=uvec3(0u);
+   uvec3 limits=uvec3(base[c].count,fromLeft>0u?base[c-1u].count:0u,fromRight>0u?base[c+1u].count:0u);
+   uint sum=0u;
+   while(any(lessThan(cursor,limits))) {
+    uvec3 key=uvec3(0xffffffffu);
+    uvec4 entry[3];
+    for(uint stream=0u;stream<3u;++stream) {
+     if(cursor[stream]==limits[stream])continue;
+     uint donor=stream==0u?c:stream==1u?c-1u:c+1u;
+     entry[stream]=base[donor].origin[cursor[stream]];
+     if(less(entry[stream].xyz,key))key=entry[stream].xyz;
+    }
+    uint mass=0u;
+    for(uint stream=0u;stream<3u;++stream) {
+     if(cursor[stream]==limits[stream]||any(notEqual(entry[stream].xyz,key)))continue;
+     uint rank=cursor[stream]++;
+     if(stream==0u)mass+=remaining[rank];
+     else if(stream==1u)mass+=shares[(c-1u)*Ranks+rank].y;
+     else mass+=shares[(c+1u)*Ranks+rank].x;
+    }
+    if(mass==0u)continue;
+    if(next.count==Ranks){issue[c]=5u;break;}
+    next.origin[next.count++]=uvec4(key,mass);
+    sum+=mass;
+   }
+   if(issue[c]==0u&&sum!=next.flow)issue[c]=3u;
+  }
+ }
+ barrier();
+ resolve(columns);
+ if(c==0u&&valid)header=uvec4(0u,0xffffffffu,uint(face[0].angleQ8),face[0].poseTick);
+ // Clear rejected payloads deterministically so the host never reads stale bytes.
+ if(c<columns) {
+  if(!valid){next.flow=0u;next.count=0u;next.leftQ=0;next.rightQ=0;}
+  result[c].flow=next.flow;
+  result[c].count=next.count;
+  result[c].leftQ=next.leftQ;
+  result[c].rightQ=next.rightQ;
+  for(uint i=0u;i<Ranks;++i)result[c].origin[i]=i<next.count?next.origin[i]:uvec4(0u);
+ }
+}

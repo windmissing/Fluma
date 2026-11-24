@@ -54,3 +54,20 @@ Windows 两条 Release 构建通过，新增 shader 完成 SPIR-V 验证，最�
 用 `build_t909_angle_probes.py` 编译 `g15_flux_v1.spv`（SHA-256 `41d52e58b47e70afca62491a8c76fadb398419275852dd585939ab86615d1826`），再用 `t909_angle_probe.exe g15-flux MODULE INPUT ANGLES OUTPUT`。输入头 LE `<iiiIIIII`（列宽、段起止 Q8 角、局部 tick、摩擦 Q16、面数、重力、J），随后每面 `<IIIIqq`（左右床/流层高度与左右水平动量），最前和最后为墙。输出每面 64 B，字段次序见 shader。输出 status 0 为算子通过、1 为输入或算术拒绝、2 为支撑域拒绝、3 为 CFL 拒绝。拒根不消费动量和通量。
 
 本算子只接收给定的预测或中点态，尚未接入原 DM2 的 predictor/corrector 调度、Hamilton 来源、能量账和 typed 接受。T912 已有孤立接触原字，G16 多盘仍缺完整接口回执与小域阶段独立判定。
+
+## G15 面通量与逐来源搬移
+
+`g15-origin` 用同一 Vulkan 命令缓冲和 fence 执行面通量与来源分账。两次派发之间通过 storage buffer 和 compute barrier 传递实际面数据。中点夹具的相邻面必须给出一致的列态。来源分账由事务入口的 F 库存和来源段出发，按实际可用量裁剪，供料列先左后右。Hamilton 余数相等时按原来源序。入流只参与最终列合并，不能参与同一微步的出流。两端记录同一有符号 q。每列检查 S/F/P 总占位、结果来源段数及合并质量，任一列失败时输出全零候选行和首错头。
+
+- 宿主 `.codex/local-test/t909-r4-dm2-release/t909_angle_probe.exe` 的 SHA-256 为 `6c9151519d09f18703cd0d48f3e0ff749023fef5f79bcb18d2c003492201d464`。
+- 新模块 `.codex/local-test/t909-r4-angle/g15_origin_v1.spv` 的 SHA-256 为 `e129edcbaa2380fc5b0a9c69f0cc696eedf6ce6be0ed0c47ca1defb71d0b6516`。同目录保编译收据与三列样本原件。
+
+```powershell
+$p = '.codex/local-test/t909-r4-angle'
+$exe = '.codex/local-test/t909-r4-dm2-release/t909_angle_probe.exe'
+& $exe g15-origin "$p/g15_flux_v1.spv" "$p/g15-origin-flux-input.bin" "$p/g15_angle_q20.i32le" "$p/g15_origin_v1.spv" "$p/g15-origin-base.bin" "$p/g15-origin-out.bin"
+```
+
+输入来源列每列 1040 B，头 LE `<IIII>` 为 `flow,occupied,count,reserved=0`，随后 64 个 `<IIII>` 为来源 ID 低字、来源 ID 高字、generation、质量。沿父流层定点库存，来源 ID 高字为零，非零来源按键升序。结果头 LE `<IIiI>` 为状态、首错列（成功为 0xffffffff）、取样 Q8 角、tick。状态 1 为入口账或布局、2 为面身份、3 为分账算术或质量、4 为占位、5 为来源段容量，257/258/259 依次透传面输入或算术、支撑、CFL 拒绝。每列 1040 B，头 LE `<IIii>` 是 F、新来源段数、左 q、右 q，随后同格式来源段。样本三列的预计算面 q 依次为 `0,-119,119,0`，F 为 `16503,130834,16503`。两个 119 依次按来源键分出 `60+59` 与 `59+60`，可用 T910 独立口径比对 GPU 原件。各模式仍报 `acceptedRoot:null`。
+
+Windows DM2 Release 已构建，SPIR-V 验证通过，T910 离线自检和截短来源输入拒绝通过。开发交付限于中点输入到来源候选的连接。正式 DM2 profile 的动员、预测/中点构造、动量与能量账、typed 提交和 shader 场景仍待接入，开发 PC GPU 取证由 effector 执行。T912 尚未交 G16 孤立阶段正式报告与多盘接口回执。

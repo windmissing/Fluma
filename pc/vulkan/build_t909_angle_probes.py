@@ -44,7 +44,8 @@ def build(compiler, directory):
     assert len(raw) == 184328
     (directory / "g15_angle_q20.i32le").write_bytes(raw)
     result = {"angleTable": {"sha256": sha256(raw).hexdigest(), "rows": len(angles), "bytes": len(raw)}}
-    for name, count in (("g15_support_v1", 3), ("g16_isolated_contact_v1", 2), ("g15_pose_v1", 3), ("g15_flux_v1", 3)):
+    for name, count in (("g15_support_v1", 3), ("g16_isolated_contact_v1", 2), ("g15_pose_v1", 3),
+                        ("g15_flux_v1", 3), ("g15_origin_v1", 4)):
         if name == "g15_pose_v1":
             source = directory / (name + ".comp")
             original = Path(__file__).with_name("g15_support_v1.comp").read_text()
@@ -60,8 +61,11 @@ def build(compiler, directory):
         else:
             source = Path(__file__).with_name(name + ".comp")
         module = directory / (name + ".spv")
-        asm = subprocess.run([str(compiler), "-V", "--target-env", "vulkan1.1", "--spirv-val", "--spirv-dis",
-                              "-o", str(module), str(source)], text=True, capture_output=True, check=True).stdout
+        compilation = subprocess.run([str(compiler), "-V", "--target-env", "vulkan1.1", "--spirv-val", "--spirv-dis",
+                                      "-o", str(module), str(source)], text=True, capture_output=True)
+        if compilation.returncode:
+            raise RuntimeError(compilation.stdout + compilation.stderr)
+        asm = compilation.stdout
         assert source.stat().st_size <= 49152
         assert sorted(re.findall(r"OpDecorate %\S+ Binding (\d+)", asm)) == list(map(str, range(count)))
         assert name != "g16_isolated_contact_v1" or "NoContraction" in asm
