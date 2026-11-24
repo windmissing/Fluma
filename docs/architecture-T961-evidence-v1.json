@@ -1,0 +1,1208 @@
+{
+  "schema": "T961_OFFLINE_EVIDENCE_V1",
+  "dm2": {
+    "control": {
+      "path": "test/reports/t954/runs/goal9/control-r3.jsonl",
+      "sha": "59241a991f96d3152f0c44e0148237dc7d42b5b53755bea62f79c53c35811de2",
+      "lines": [
+        203,
+        204,
+        206,
+        207
+      ],
+      "archive": "test/reports/t954/runs/goal9/raw-control-r3/diagnostic/1690450892621700-2/envelope.json",
+      "archiveFileCount": 16,
+      "missingFiles": [
+        "AUTHORITY_ARENA.bin",
+        "SELECTED_ARENA.bin"
+      ],
+      "identity": {
+        "run": "1690450892621700",
+        "nonce": "2",
+        "plan": "2",
+        "fence": "1617638580024",
+        "fenceGeneration": "4"
+      },
+      "gpuMs": {
+        "UPLOAD": 0.0096666,
+        "CLEAR": 36.5632704,
+        "DISCOVERY_J1": 365.8037868,
+        "DISCOVERY_J2": 0.1810826,
+        "DISCOVERY_J4": 0.2752489,
+        "DISCOVERY_J8": 0.5165813,
+        "DISCOVERY_J16": 0.9968293,
+        "DISCOVERY_J32": 1.9314923,
+        "SELECTED": 1.4138277,
+        "AUTHORITATIVE": 329.5583484,
+        "REJECTED_PREFIX": 4.0344839,
+        "REPLAY": 361.3575546,
+        "COMPARE_PACK_SEAL": 55.9938594,
+        "TAIL_COPY": 0.0088333
+      },
+      "gpuTotalMs": 1158.6448655,
+      "grantToSubmitExitMs": 1.9032,
+      "gpuWindowAtSubmitExitMs": 248.0968,
+      "grantToBusinessStopMs": 263.9528,
+      "completionGPUWords6To9": [
+        1,
+        0,
+        2,
+        0
+      ],
+      "selectedJ": 1,
+      "eventWordsAndPaths": [
+        260,
+        1
+      ],
+      "jointActiveScopesMs": 1056.71969,
+      "lastObservedDM48": {
+        "evalCalls": 256,
+        "bisectionIterations": 0,
+        "closedFormColumns": 128
+      }
+    },
+    "indirect": {
+      "path": "test/reports/t954/runs/goal9/replay-indirect-r1.jsonl",
+      "sha": "a79e25697216bc44501209332c56cfb233145197cd8db59f4f581c59978e63d1",
+      "lines": [
+        203,
+        204,
+        206,
+        207
+      ],
+      "archive": "test/reports/t954/runs/goal9/raw-replay-indirect-r1/diagnostic/1690458467900800-2/envelope.json",
+      "archiveFileCount": 16,
+      "missingFiles": [
+        "AUTHORITY_ARENA.bin",
+        "SELECTED_ARENA.bin"
+      ],
+      "identity": {
+        "run": "1690458467900800",
+        "nonce": "2",
+        "plan": "2",
+        "fence": "2355047716200",
+        "fenceGeneration": "4"
+      },
+      "gpuMs": {
+        "UPLOAD": 0.0236666,
+        "CLEAR": 39.3777592,
+        "DISCOVERY_J1": 371.1063489,
+        "DISCOVERY_J2": 0.1724993,
+        "DISCOVERY_J4": 0.2702489,
+        "DISCOVERY_J8": 0.502498,
+        "DISCOVERY_J16": 0.9775794,
+        "DISCOVERY_J32": 1.8992424,
+        "SELECTED": 1.412411,
+        "AUTHORITATIVE": 320.4378016,
+        "REJECTED_PREFIX": 4.089067,
+        "REPLAY": 349.3978524,
+        "COMPARE_PACK_SEAL": 54.760781,
+        "TAIL_COPY": 0.0075833
+      },
+      "gpuTotalMs": 1144.435339,
+      "grantToSubmitExitMs": 18.5565,
+      "gpuWindowAtSubmitExitMs": 231.4435,
+      "grantToBusinessStopMs": 261.8952,
+      "completionGPUWords6To9": [
+        1,
+        0,
+        2,
+        0
+      ],
+      "selectedJ": 1,
+      "eventWordsAndPaths": [
+        260,
+        1
+      ],
+      "jointActiveScopesMs": 1040.942003,
+      "lastObservedDM48": {
+        "evalCalls": 256,
+        "bisectionIterations": 0,
+        "closedFormColumns": 128
+      }
+    },
+    "neg": {
+      "path": "test/reports/t959/runs/g15/neg.jsonl",
+      "sha": "f81cdaaa058aa5af5f6999c58b7a998edd1384b0cb8b12c29723302fe585df51",
+      "lines": [
+        187,
+        188,
+        190,
+        191
+      ],
+      "archive": "test/reports/t959/runs/g15/neg/diagnostic/1692059216324700-1/envelope.json",
+      "archiveFileCount": 18,
+      "missingFiles": [],
+      "identity": {
+        "run": "1692059216324700",
+        "nonce": "1",
+        "plan": "1",
+        "fence": "3125810813144",
+        "fenceGeneration": "2"
+      },
+      "gpuMs": {
+        "UPLOAD": 0.0165833,
+        "CLEAR": 70.6892172,
+        "DISCOVERY_J1": 557.6480194,
+        "DISCOVERY_J2": 0.1784993,
+        "DISCOVERY_J4": 0.2738322,
+        "DISCOVERY_J8": 0.5103313,
+        "DISCOVERY_J16": 0.9798294,
+        "DISCOVERY_J32": 1.9263256,
+        "SELECTED": 1.415411,
+        "AUTHORITATIVE": 425.8542966,
+        "REJECTED_PREFIX": 4.1233168,
+        "REPLAY": 449.9847834,
+        "COMPARE_PACK_SEAL": 58.6025156,
+        "TAIL_COPY": 0.0075833
+      },
+      "gpuTotalMs": 1572.2105444,
+      "grantToSubmitExitMs": 75.8402,
+      "gpuWindowAtSubmitExitMs": 174.15980000000002,
+      "grantToBusinessStopMs": 265.3415,
+      "completionGPUWords6To9": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "selectedJ": 1,
+      "eventWordsAndPaths": [
+        561,
+        0
+      ],
+      "jointActiveScopesMs": 1433.487099,
+      "lastObservedDM48": {
+        "evalCalls": 256,
+        "bisectionIterations": 0,
+        "closedFormColumns": 128
+      }
+    },
+    "pos": {
+      "path": "test/reports/t959/runs/g15/pos.jsonl",
+      "sha": "ac1f9d8a5a6ee5a7420409b5fc411f12f4d619b23a43fa08df7f55c55848c82f",
+      "lines": [
+        187,
+        188,
+        190,
+        191
+      ],
+      "archive": "test/reports/t959/runs/g15/pos/diagnostic/1692156530518300-1/envelope.json",
+      "archiveFileCount": 18,
+      "missingFiles": [],
+      "identity": {
+        "run": "1692156530518300",
+        "nonce": "1",
+        "plan": "1",
+        "fence": "1504747526808",
+        "fenceGeneration": "2"
+      },
+      "gpuMs": {
+        "UPLOAD": 0.0164999,
+        "CLEAR": 71.507464,
+        "DISCOVERY_J1": 574.4296189,
+        "DISCOVERY_J2": 0.1762493,
+        "DISCOVERY_J4": 0.2747489,
+        "DISCOVERY_J8": 0.5098313,
+        "DISCOVERY_J16": 0.9774961,
+        "DISCOVERY_J32": 1.9128257,
+        "SELECTED": 1.4155777,
+        "AUTHORITATIVE": 423.5396392,
+        "REJECTED_PREFIX": 4.0502338,
+        "REPLAY": 450.3082821,
+        "COMPARE_PACK_SEAL": 59.4289289,
+        "TAIL_COPY": 0.0074166
+      },
+      "gpuTotalMs": 1588.5548124,
+      "grantToSubmitExitMs": 44.5448,
+      "gpuWindowAtSubmitExitMs": 205.4552,
+      "grantToBusinessStopMs": 250.0143,
+      "completionGPUWords6To9": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "selectedJ": 1,
+      "eventWordsAndPaths": [
+        561,
+        0
+      ],
+      "jointActiveScopesMs": 1448.27754,
+      "lastObservedDM48": {
+        "evalCalls": 256,
+        "bisectionIterations": 0,
+        "closedFormColumns": 128
+      }
+    },
+    "neg2": {
+      "path": "test/reports/t959/runs/g15/neg2.jsonl",
+      "sha": "abbc2e8812059d5447ce7a1f177410ae41d9c73927214f025043950f1bf386b9",
+      "lines": [
+        187,
+        188,
+        190,
+        191
+      ],
+      "archive": "test/reports/t959/runs/g15/neg2/envelope.json",
+      "archiveFileCount": 1,
+      "missingFiles": [
+        "CURRENT_BASE.bin",
+        "BASE.bin",
+        "ACTUAL.bin",
+        "SELECTED.bin",
+        "REPLAY.bin",
+        "WORK.bin",
+        "AUTHORITY_ARENA.bin",
+        "SELECTED_ARENA.bin",
+        "INPUT128.bin",
+        "GPU_INPUT128.bin",
+        "FIXTURE128.bin",
+        "EXPECTED224.bin",
+        "CONFIG128.bin",
+        "COMMON.bin",
+        "SEED.bin",
+        "EVENT.bin",
+        "PATH.bin"
+      ],
+      "identity": {
+        "run": "1692171071555200",
+        "nonce": "1",
+        "plan": "1",
+        "fence": "1755793896120",
+        "fenceGeneration": "2"
+      },
+      "gpuMs": {
+        "UPLOAD": 0.0166666,
+        "CLEAR": 70.8545499,
+        "DISCOVERY_J1": 584.6938279,
+        "DISCOVERY_J2": 0.1881659,
+        "DISCOVERY_J4": 0.2786656,
+        "DISCOVERY_J8": 0.5152479,
+        "DISCOVERY_J16": 0.990746,
+        "DISCOVERY_J32": 1.9410756,
+        "SELECTED": 1.4140777,
+        "AUTHORITATIVE": 425.0732164,
+        "REJECTED_PREFIX": 4.0386505,
+        "REPLAY": 449.491952,
+        "COMPARE_PACK_SEAL": 58.5737657,
+        "TAIL_COPY": 0.0071666
+      },
+      "gpuTotalMs": 1598.0777743,
+      "grantToSubmitExitMs": 47.2041,
+      "gpuWindowAtSubmitExitMs": 202.79590000000002,
+      "grantToBusinessStopMs": 251.1531,
+      "completionGPUWords6To9": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "selectedJ": 1,
+      "eventWordsAndPaths": [
+        561,
+        0
+      ],
+      "jointActiveScopesMs": 1459.258996
+    },
+    "pos2": {
+      "path": "test/reports/t959/runs/g15/pos2.jsonl",
+      "sha": "98389f77556ff1e0444b669693465c47a1c9880cb9b1aef0c2c88ad441c5c932",
+      "lines": [
+        187,
+        188,
+        190,
+        191
+      ],
+      "archive": "test/reports/t959/runs/g15/pos2/envelope.json",
+      "archiveFileCount": 1,
+      "missingFiles": [
+        "CURRENT_BASE.bin",
+        "BASE.bin",
+        "ACTUAL.bin",
+        "SELECTED.bin",
+        "REPLAY.bin",
+        "WORK.bin",
+        "AUTHORITY_ARENA.bin",
+        "SELECTED_ARENA.bin",
+        "INPUT128.bin",
+        "GPU_INPUT128.bin",
+        "FIXTURE128.bin",
+        "EXPECTED224.bin",
+        "CONFIG128.bin",
+        "COMMON.bin",
+        "SEED.bin",
+        "EVENT.bin",
+        "PATH.bin"
+      ],
+      "identity": {
+        "run": "1692174845883300",
+        "nonce": "1",
+        "plan": "1",
+        "fence": "2113690893528",
+        "fenceGeneration": "2"
+      },
+      "gpuMs": {
+        "UPLOAD": 0.01,
+        "CLEAR": 33.3168667,
+        "DISCOVERY_J1": 455.6410941,
+        "DISCOVERY_J2": 0.177666,
+        "DISCOVERY_J4": 0.2746656,
+        "DISCOVERY_J8": 0.5089146,
+        "DISCOVERY_J16": 0.9795794,
+        "DISCOVERY_J32": 1.9165757,
+        "SELECTED": 1.415911,
+        "AUTHORITATIVE": 425.0444665,
+        "REJECTED_PREFIX": 4.1418168,
+        "REPLAY": 449.1737866,
+        "COMPARE_PACK_SEAL": 58.7289318,
+        "TAIL_COPY": 0.0075833
+      },
+      "gpuTotalMs": 1431.3378581,
+      "grantToSubmitExitMs": 197.9778,
+      "gpuWindowAtSubmitExitMs": 52.0222,
+      "grantToBusinessStopMs": 250.0036,
+      "completionGPUWords6To9": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "selectedJ": 1,
+      "eventWordsAndPaths": [
+        561,
+        0
+      ],
+      "jointActiveScopesMs": 1329.859347
+    }
+  },
+  "arenaDigestsReported": {
+    "AUTHORITY_ARENA.bin": "b23b6803d87266a6e26dfde70b1b0036c1dc3f0c9c919e613701c22f91582945",
+    "SELECTED_ARENA.bin": "0f2f7bf185f2100f722e80d42e9485886715d8cf8860cb90ff0d185a0676c085"
+  },
+  "g13": {
+    "t955-f02-a": {
+      "path": "test/reports/t954/runs/goal13/t955-f02-a.jsonl",
+      "sha": "c195f386ca57cccc73257cd86cdb44996ce2d43a25c07ada70207e59aa5c17e3",
+      "archive": "test/reports/t954/runs/goal13/t955-f02-a.quantum",
+      "archiveSHA": "c2b9f92f51d58faa282b2885748bf8f69bf99a12423f94858e9b464aa0d344a4",
+      "lines": [
+        196,
+        197,
+        198,
+        199,
+        203
+      ],
+      "identity": {
+        "nonce": "16911421995451",
+        "ticket": "1",
+        "geometry": "1",
+        "device": "3020301180744",
+        "queue": "3020301342840",
+        "fence": "3020287539448",
+        "fenceGeneration": "1",
+        "queryPool": "3020301460024"
+      },
+      "flags": {
+        "t909SealV1": true,
+        "t955StagedSeal": false,
+        "t955CycleScope": "actual",
+        "t955CycleOperator": "PRESSURE"
+      },
+      "spansMs": {
+        "root": 1904.2617163,
+        "actual": 778.1860539,
+        "replay": 583.0307512,
+        "seal": 535.5527744,
+        "sealPrepare": null,
+        "sealSHA": null,
+        "sealPublish": null,
+        "audit815": 0.4918314,
+        "packAudit818": 1.2380784,
+        "actualFirstPCycle": 127.0659084,
+        "replayFirstPCycle": 54.15845,
+        "ACTUALJ2": 0.9430796,
+        "ACTUALJ4": 1.6096602,
+        "REPLAYJ2": 1.082329,
+        "REPLAYJ4": 1.7827429
+      },
+      "perTimedSlotMs": [
+        127.0620751,
+        0.0398332,
+        0.0175833,
+        0.0181666,
+        0.0176666,
+        0.0174999,
+        0.0176666,
+        0.0175833,
+        0.0176666,
+        0.0175833,
+        0.0176666,
+        0.0175833,
+        0.0175833,
+        0.0176666,
+        0.0176666,
+        0.0176666
+      ],
+      "j1Trace": {
+        "actual": {
+          "pressure": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 0,
+              "flags": 33,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 68
+            },
+            {
+              "firstBlock": 1,
+              "lastBlock": 15,
+              "flags": 36,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "viscosity": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 7,
+              "flags": 48,
+              "passWord": 0,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "J1TrialHash": "4d8903612fa9d26a35b23ba4ec202561ea592229e7e726b11cdfe2ca98f055da"
+        },
+        "replay": {
+          "pressure": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 0,
+              "flags": 33,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 68
+            },
+            {
+              "firstBlock": 1,
+              "lastBlock": 15,
+              "flags": 36,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "viscosity": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 7,
+              "flags": 48,
+              "passWord": 0,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "J1TrialHash": "4d8903612fa9d26a35b23ba4ec202561ea592229e7e726b11cdfe2ca98f055da"
+        }
+      },
+      "completionWords5To7": [
+        7,
+        0,
+        0
+      ],
+      "completionPhysicalAuditWords104To110": [
+        0,
+        0,
+        0,
+        0,
+        821428224,
+        775523194,
+        0
+      ],
+      "nativeError": 9,
+      "acceptedRoot": null,
+      "canonicalDigest": "eda266f9da11807042715dba222f5ca9c4b9d2bda3c745f055d46c85ba9e02e0",
+      "fieldNonZeroCounts": {
+        "piNonzero": 0,
+        "uvNonzero": 0
+      },
+      "grantToSubmitExitMs": 0.8113,
+      "grantToBusinessStopMs": 251.347,
+      "grantToLateFenceConfirmMs": 1905.9463,
+      "plan": {
+        "logical": 820,
+        "dispatches": 850,
+        "computeBarriers": 850,
+        "copies": 2,
+        "pipelineBinds": 161,
+        "descriptorBinds": 6,
+        "businessCopyBytes": 3376,
+        "recordBeginQpc": "16911421995451",
+        "recordEndQpc": "16911422002864",
+        "nonce": "16911421995451",
+        "grantNs": "1691142199545100",
+        "deadlineNs": "1691142449545100"
+      },
+      "sameStateCandidateReplay": false,
+      "stateFieldDiffWords": 0
+    },
+    "t955-f02-b": {
+      "path": "test/reports/t954/runs/goal13/t955-f02-b.jsonl",
+      "sha": "75b4ce21acff390e801c7f55cbcb91a22e176fa84dd7e3280d77a33eee1f91e2",
+      "archive": "test/reports/t954/runs/goal13/t955-f02-b.quantum",
+      "archiveSHA": "69ef70a62b0ecba703a34335c5df6a2a181d8fceb5211039a96a624e7c8d4acc",
+      "lines": [
+        216,
+        217,
+        218,
+        219,
+        223
+      ],
+      "identity": {
+        "nonce": "16911498037161",
+        "ticket": "1",
+        "geometry": "1",
+        "device": "2101822799816",
+        "queue": "2101822943992",
+        "fence": "2101775139064",
+        "fenceGeneration": "1",
+        "queryPool": "2101992273080"
+      },
+      "flags": {
+        "t909SealV1": false,
+        "t955StagedSeal": true,
+        "t955CycleScope": "actual",
+        "t955CycleOperator": "PRESSURE"
+      },
+      "spansMs": {
+        "root": 1834.0289139,
+        "actual": 713.6115622,
+        "replay": 595.2978688,
+        "seal": 518.993174,
+        "sealPrepare": 0.0279999,
+        "sealSHA": 518.9541742,
+        "sealPublish": 0.011,
+        "audit815": 0.5724977,
+        "packAudit818": 1.008746,
+        "actualFirstPCycle": 94.9678701,
+        "replayFirstPCycle": 60.2769256,
+        "ACTUALJ2": 1.1462454,
+        "ACTUALJ4": 2.071075,
+        "REPLAYJ2": 0.911413,
+        "REPLAYJ4": 1.6014936
+      },
+      "perTimedSlotMs": [
+        94.9650368,
+        0.0324165,
+        0.0132499,
+        0.0135833,
+        0.0132499,
+        0.0131666,
+        0.0132499,
+        0.0132499,
+        0.0132499,
+        0.0134166,
+        0.0322499,
+        0.0131666,
+        0.0132499,
+        0.0302499,
+        0.0131666,
+        0.0132499
+      ],
+      "j1Trace": {
+        "actual": {
+          "pressure": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 0,
+              "flags": 33,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 68
+            },
+            {
+              "firstBlock": 1,
+              "lastBlock": 15,
+              "flags": 36,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "viscosity": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 7,
+              "flags": 48,
+              "passWord": 0,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "J1TrialHash": "4d8903612fa9d26a35b23ba4ec202561ea592229e7e726b11cdfe2ca98f055da"
+        },
+        "replay": {
+          "pressure": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 0,
+              "flags": 33,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 68
+            },
+            {
+              "firstBlock": 1,
+              "lastBlock": 15,
+              "flags": 36,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "viscosity": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 7,
+              "flags": 48,
+              "passWord": 0,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "J1TrialHash": "4d8903612fa9d26a35b23ba4ec202561ea592229e7e726b11cdfe2ca98f055da"
+        }
+      },
+      "completionWords5To7": [
+        7,
+        0,
+        0
+      ],
+      "completionPhysicalAuditWords104To110": [
+        0,
+        0,
+        0,
+        0,
+        821428224,
+        775523194,
+        0
+      ],
+      "nativeError": 9,
+      "acceptedRoot": null,
+      "canonicalDigest": "7569e86c6140bf61883cd796792bd8ad47d6f98dc8d24f4f33c42dd3853523ed",
+      "fieldNonZeroCounts": {
+        "piNonzero": 0,
+        "uvNonzero": 0
+      },
+      "grantToSubmitExitMs": 1.0387,
+      "grantToBusinessStopMs": 253.8886,
+      "grantToLateFenceConfirmMs": 1835.9398,
+      "plan": {
+        "logical": 820,
+        "dispatches": 852,
+        "computeBarriers": 852,
+        "copies": 2,
+        "pipelineBinds": 163,
+        "descriptorBinds": 6,
+        "businessCopyBytes": 3376,
+        "recordBeginQpc": "16911498037162",
+        "recordEndQpc": "16911498046806",
+        "nonce": "16911498037161",
+        "grantNs": "1691149803716000",
+        "deadlineNs": "1691150053716000"
+      },
+      "sameStateCandidateReplay": false,
+      "stateFieldDiffWords": 0
+    },
+    "t955-f02-replay": {
+      "path": "test/reports/t954/runs/goal13/t955-f02-replay.jsonl",
+      "sha": "3fb2fe0004405a0f7b8eab8f8530f492c685b107f8b4390af7cb860a85efd46c",
+      "archive": "test/reports/t954/runs/goal13/t955-f02-replay.quantum",
+      "archiveSHA": "66c6030013d4eef7543ec9225c512e78f997221bf53ac7c10b58be92fc63590c",
+      "lines": [
+        216,
+        217,
+        218,
+        219,
+        223
+      ],
+      "identity": {
+        "nonce": "16911521571073",
+        "ticket": "1",
+        "geometry": "1",
+        "device": "3242494879960",
+        "queue": "3242500214664",
+        "fence": "3242508054824",
+        "fenceGeneration": "1",
+        "queryPool": "3242508392680"
+      },
+      "flags": {
+        "t909SealV1": false,
+        "t955StagedSeal": true,
+        "t955CycleScope": "replay",
+        "t955CycleOperator": "PRESSURE"
+      },
+      "spansMs": {
+        "root": 1695.0615531,
+        "actual": 582.4690868,
+        "replay": 587.4187336,
+        "seal": 519.3631725,
+        "sealPrepare": 0.0477498,
+        "sealSHA": 519.3065894,
+        "sealPublish": 0.0088333,
+        "audit815": 0.4863314,
+        "packAudit818": 1.7887428,
+        "actualFirstPCycle": 50.426215,
+        "replayFirstPCycle": 50.5477978,
+        "ACTUALJ2": 1.0222459,
+        "ACTUALJ4": 2.0606584,
+        "REPLAYJ2": 0.7843302,
+        "REPLAYJ4": 1.5237439
+      },
+      "perTimedSlotMs": [
+        50.5455478,
+        0.0214999,
+        0.0074166,
+        0.0073333,
+        0.0074166,
+        0.0075,
+        0.0213332,
+        0.0070833,
+        0.00675,
+        0.0068333,
+        0.0068333,
+        0.0068333,
+        0.00675,
+        0.0070833,
+        0.0070833,
+        0.0068333
+      ],
+      "j1Trace": {
+        "actual": {
+          "pressure": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 0,
+              "flags": 33,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 68
+            },
+            {
+              "firstBlock": 1,
+              "lastBlock": 15,
+              "flags": 36,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "viscosity": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 7,
+              "flags": 48,
+              "passWord": 0,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "J1TrialHash": "4d8903612fa9d26a35b23ba4ec202561ea592229e7e726b11cdfe2ca98f055da"
+        },
+        "replay": {
+          "pressure": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 0,
+              "flags": 33,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 68
+            },
+            {
+              "firstBlock": 1,
+              "lastBlock": 15,
+              "flags": 36,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "viscosity": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 7,
+              "flags": 48,
+              "passWord": 0,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "J1TrialHash": "4d8903612fa9d26a35b23ba4ec202561ea592229e7e726b11cdfe2ca98f055da"
+        }
+      },
+      "completionWords5To7": [
+        7,
+        0,
+        0
+      ],
+      "completionPhysicalAuditWords104To110": [
+        0,
+        0,
+        0,
+        0,
+        821428224,
+        775523194,
+        0
+      ],
+      "nativeError": 9,
+      "acceptedRoot": null,
+      "canonicalDigest": "c392856c3766f05c1e2faa74b263498211a635e10d45fbc178f843bf979e92a0",
+      "fieldNonZeroCounts": {
+        "piNonzero": 0,
+        "uvNonzero": 0
+      },
+      "grantToSubmitExitMs": 0.9593,
+      "grantToBusinessStopMs": 255.6768,
+      "grantToLateFenceConfirmMs": 1696.4344,
+      "plan": {
+        "logical": 820,
+        "dispatches": 852,
+        "computeBarriers": 852,
+        "copies": 2,
+        "pipelineBinds": 163,
+        "descriptorBinds": 6,
+        "businessCopyBytes": 3376,
+        "recordBeginQpc": "16911521571073",
+        "recordEndQpc": "16911521580151",
+        "nonce": "16911521571073",
+        "grantNs": "1691152157107200",
+        "deadlineNs": "1691152407107200"
+      },
+      "sameStateCandidateReplay": false,
+      "stateFieldDiffWords": 0
+    },
+    "t955-f03-actual": {
+      "path": "test/reports/t954/runs/goal13/t955-f03-actual.jsonl",
+      "sha": "b88ff559a3757772e30b3d7da9806da2c412688ff46f13993d48f0cca838f0ec",
+      "archive": "test/reports/t954/runs/goal13/t955-f03-actual.quantum.1",
+      "archiveSHA": "b1ea95670ff1c9b8712e48dcd58788cc76da7cffaaaba1fd66449417b4947602",
+      "lines": [
+        186,
+        187,
+        188,
+        189,
+        193
+      ],
+      "identity": {
+        "nonce": "16911542301954",
+        "ticket": "1",
+        "geometry": "1",
+        "device": "2097774395896",
+        "queue": "2097774465992",
+        "fence": "2097768486504",
+        "fenceGeneration": "1",
+        "queryPool": "2097780090952"
+      },
+      "flags": {
+        "t909SealV1": false,
+        "t955StagedSeal": false,
+        "t955CycleScope": "actual",
+        "t955CycleOperator": "VISCOSITY"
+      },
+      "spansMs": {
+        "root": 1756.742973,
+        "actual": 625.985246,
+        "replay": 606.3797411,
+        "seal": 518.4745094,
+        "sealPrepare": null,
+        "sealSHA": null,
+        "sealPublish": null,
+        "audit815": 0.5983309,
+        "packAudit818": 1.6503267,
+        "actualFirstPCycle": null,
+        "replayFirstPCycle": null,
+        "ACTUALJ2": 0.8032468,
+        "ACTUALJ4": 1.2802449,
+        "REPLAYJ2": 1.0393292,
+        "REPLAYJ4": 1.5692437
+      },
+      "perTimedSlotMs": [
+        17.4887634,
+        0.0139999,
+        0.0060833,
+        0.006,
+        0.0060833,
+        0.006,
+        0.006,
+        0.006
+      ],
+      "j1Trace": {
+        "actual": {
+          "pressure": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 0,
+              "flags": 33,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 68
+            },
+            {
+              "firstBlock": 1,
+              "lastBlock": 15,
+              "flags": 36,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "viscosity": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 0,
+              "flags": 33,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 16
+            },
+            {
+              "firstBlock": 1,
+              "lastBlock": 7,
+              "flags": 36,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "J1TrialHash": "3f382895ede9376335889fc4342b063a0a8848b0495429c96550d2e9a535df02"
+        },
+        "replay": {
+          "pressure": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 0,
+              "flags": 33,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 68
+            },
+            {
+              "firstBlock": 1,
+              "lastBlock": 15,
+              "flags": 36,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "viscosity": [
+            {
+              "firstBlock": 0,
+              "lastBlock": 0,
+              "flags": 33,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 16
+            },
+            {
+              "firstBlock": 1,
+              "lastBlock": 7,
+              "flags": 36,
+              "passWord": 1,
+              "error": 0,
+              "bodyIterations": 0
+            }
+          ],
+          "J1TrialHash": "3f382895ede9376335889fc4342b063a0a8848b0495429c96550d2e9a535df02"
+        }
+      },
+      "completionWords5To7": [
+        1,
+        0,
+        0
+      ],
+      "completionPhysicalAuditWords104To110": [
+        895239799,
+        900333568,
+        0,
+        0,
+        804651008,
+        767134586,
+        0
+      ],
+      "nativeError": 9,
+      "acceptedRoot": null,
+      "canonicalDigest": "8d00766111455dd43b6297daf117f49e3db04a5b355153b3bafa00edec028c1a",
+      "fieldNonZeroCounts": {
+        "piNonzero": 0,
+        "uvNonzero": 4160
+      },
+      "grantToSubmitExitMs": 0.6997,
+      "grantToBusinessStopMs": 251.4911,
+      "grantToLateFenceConfirmMs": 1757.8513,
+      "plan": {
+        "logical": 820,
+        "dispatches": 850,
+        "computeBarriers": 850,
+        "copies": 2,
+        "pipelineBinds": 160,
+        "descriptorBinds": 6,
+        "businessCopyBytes": 3376,
+        "recordBeginQpc": "16911542301954",
+        "recordEndQpc": "16911542308376",
+        "nonce": "16911542301954",
+        "grantNs": "1691154230195200",
+        "deadlineNs": "1691154480195200"
+      },
+      "sameStateCandidateReplay": false,
+      "stateFieldDiffWords": 0
+    }
+  },
+  "qualification": {
+    "OP48_REMAINDER": {
+      "path": "test/reports/t954/runs/qualify-g13/OP48_REMAINDER.receipt.json",
+      "reason": "CALL_UNRETURNED",
+      "role": "OP48_REMAINDER",
+      "boundary": [
+        "vkCreateComputePipelines",
+        "ENTER"
+      ],
+      "moduleSHA": "64101778ebe0c4a6c66073bf1bb70859f4fcac6aa3bbafdb6ea755160fd9e82e",
+      "peSHA": "d9e6f89ca1591bafbf941e8d86286895be6c84e3b6d301f3c8eef5b318d46140",
+      "observedCallToStopMs": 60031.7311
+    },
+    "OP48_VISCOSITY": {
+      "path": "test/reports/t954/runs/qualify-g13/OP48_VISCOSITY.receipt.json",
+      "reason": "CHILD_EXIT",
+      "role": "OP48_VISCOSITY",
+      "boundary": [
+        "vkCreateComputePipelines",
+        "EXIT"
+      ],
+      "moduleSHA": "812db31f801cd56c68800e66252c45cb5a2edb50da78a656c778f7353c099d58",
+      "peSHA": "d9e6f89ca1591bafbf941e8d86286895be6c84e3b6d301f3c8eef5b318d46140",
+      "observedCallToStopMs": 100.7412
+    },
+    "OP49_PRESSURE": {
+      "path": "test/reports/t954/runs/qualify-g13/OP49_PRESSURE.receipt.json",
+      "reason": "CHILD_EXIT",
+      "role": "OP49_PRESSURE",
+      "boundary": [
+        "vkCreateComputePipelines",
+        "EXIT"
+      ],
+      "moduleSHA": "ca603a59b5d09ad9ac27ab4720420335d6a13a73bf622b44e43148b67aea2ec2",
+      "peSHA": "d9e6f89ca1591bafbf941e8d86286895be6c84e3b6d301f3c8eef5b318d46140",
+      "observedCallToStopMs": 142.5861
+    },
+    "OP_48": {
+      "path": "test/reports/t954/runs/qualify-g13/OP_48.receipt.json",
+      "reason": "CALL_UNRETURNED",
+      "role": "OP_48",
+      "boundary": [
+        "vkCreateComputePipelines",
+        "ENTER"
+      ],
+      "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+      "peSHA": "d9e6f89ca1591bafbf941e8d86286895be6c84e3b6d301f3c8eef5b318d46140",
+      "observedCallToStopMs": 60010.0956
+    }
+  },
+  "sourceSplitOffline": [
+    {
+      "role": "OP52_62_GUARD",
+      "opcodes": [
+        52,
+        62,
+        66
+      ],
+      "sourceBytes": 8600,
+      "sourceSHA": "7e28ee69ba3d26f4785586fd74fb375d9d09367fdc4f51c64d11df71801ec5c2",
+      "moduleBytes": 27900,
+      "moduleSHA": "f8687678e82efcae0041917819938f1de08307b9e17129b7d86262018a41e8b1"
+    },
+    {
+      "role": "OP54_57_COPY",
+      "opcodes": [
+        54,
+        57,
+        66
+      ],
+      "sourceBytes": 7186,
+      "sourceSHA": "dfa2bb2209549de392be6122bb2c671a27c039ce087f43ee65a44a4749563ace",
+      "moduleBytes": 18720,
+      "moduleSHA": "6c6f5acc1012a843a05c49dd5ecdebba5fb02a844fcb60bad0aeae5590ac50fc"
+    },
+    {
+      "role": "OP55_58_INSTALL",
+      "opcodes": [
+        55,
+        58,
+        66
+      ],
+      "sourceBytes": 20709,
+      "sourceSHA": "1fb1a41adccccacbd2a244bc0c5dba5d0356842738b351dccb9604fc1231d3ad",
+      "moduleBytes": 94676,
+      "moduleSHA": "a65151fa7c19f0c7b583be5873bad2e33a6488fefd6888661203ca1da7aabd7b"
+    },
+    {
+      "role": "OP56_59_AUDIT",
+      "opcodes": [
+        56,
+        59,
+        66
+      ],
+      "sourceBytes": 27438,
+      "sourceSHA": "6e3e74a7d1c000cba86853671b4c705b934e7ed002cf90c7ccda4bf28f27ded4",
+      "moduleBytes": 131536,
+      "moduleSHA": "7b7e98073e73066d57bc2c60fc3a5fe1df7d2195a77030dd70798c37237e79e9"
+    },
+    {
+      "role": "OP60_COMPARE",
+      "opcodes": [
+        60,
+        66
+      ],
+      "sourceBytes": 7726,
+      "sourceSHA": "df76fe2bb6f93d4cfd9b22c5798dac15339f7b6912d277b574244fcfe138bac2",
+      "moduleBytes": 21984,
+      "moduleSHA": "f44390d71844660cf6a44e3889bc210cfc4d32e01b130c3b4189c69ce6338a4b"
+    }
+  ],
+  "sealScalarRingOffline": {
+    "role": "OP11_SHA_SCALAR_RING",
+    "opcodes": [
+      9,
+      10,
+      11,
+      66
+    ],
+    "sourceBytes": 34626,
+    "sourceSHA": "1b4a3accef56eb864d90b0aa5040687268fd5617c58c927f2700ba84adb67982",
+    "moduleBytes": 225072,
+    "moduleSHA": "b34d442cd014c1f074a18c8f6f6f003229a79b5d1bd8721401dd099bacde3d06"
+  },
+  "packetAuditHistogramOffline": {
+    "archivedStateCases": 16,
+    "generatedCases": 256,
+    "maxMass": 268435456,
+    "overflowSentinel": 268435457
+  },
+  "F02NonzeroInputPreview": {
+    "scope": "OFFLINE_MANUFACTURED_INPUT_PREVIEW",
+    "J": 1,
+    "n": 64,
+    "maxAbsInputSpeed": 0.006543013267219067,
+    "maxAbsDivergence": 0.04109445959329605,
+    "inputValidWallNormal": true,
+    "inputPiNonzero": 0,
+    "inputUandVNonzero": 8064,
+    "outputZeroPressureRMS": 0.12501255073302295,
+    "stateSHA": "e0b27e56b7178f421b6fe17aa06401d6842a3a110bfa5b053867f3abf891fade",
+    "configSHA": "0f4b4639ae372655a731a1af3dde13dae52590dbd76277c83c071691e5d82f0f"
+  }
+}
