@@ -1,0 +1,86 @@
+{
+ "schema": "T935_INTEGRATED_DEMO_QUALIFICATION_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "package": {
+  ".codex/local-test/t933-integrated-demo": "manifest verified: PE 4a40a141, source e9c7c123, candidate bf024ac5, commit 64ba25f4, launcher 8494cb8d",
+  "argv": "--m1-compact-demo --m1-integrated --m1-dual-source --m1-source-trace (launcher contract, no diagnostic variants)"
+ },
+ "round1_default_argv": {
+  "emptyBoxReady": "WINDOW_AVAILABLE + M1_POINTER_READY before first Down",
+  "pile2to4s": {
+   "holdSeconds": 3.01,
+   "quantaAtSettle": 140,
+   "pixelFrame": null
+  },
+  "pixelRound": {
+   "frame": 50,
+   "sandPx": {
+    "296x308": 4,
+    "312x308": 9,
+    "328x308": 0
+   },
+   "color": "BGR(89,145,184) same as T920 criterion",
+   "quanta3s": 256
+  },
+  "downToFirst": {
+   "acceptedGrantMs": 99,
+   "firstPresentMs": 140
+  },
+  "late60s": {
+   "wallSeconds": 106.7,
+   "quanta": 2059,
+   "ratePerS": 19.3
+  },
+  "finalProbesStillPour": {
+   "quantaTotal": 2616
+  },
+  "settleRetained": true,
+  "conservation": {
+   "sandAdmittedTotalQ": 66961882,
+   "sandStockQ": 66961882,
+   "activeSandFinal": 0,
+   "identity": "admitted == stock + live (all settled)"
+  },
+  "boxTurns": {
+   "requestedAngles256": [
+    -1280,
+    -2560,
+    -3840,
+    -5120,
+    -6400,
+    -7680,
+    -6400,
+    -5120,
+    -3840,
+    -2560,
+    -1280,
+    0,
+    1280,
+    2560,
+    3840,
+    5120,
+    0,
+    0
+   ],
+   "grantedFollowsRequest": true,
+   "boundaryReverse": true,
+   "reset": true,
+   "gravityInputRows": 18,
+   "boxViewPresents": 2
+  },
+  "lateRetirementRecovery": {
+   "SUSPEND": 4,
+   "RETIRED": 1,
+   "NEW_BASELINE": 1,
+   "HOLD_REVALIDATED": 1,
+   "fullChain": "one complete first-timeout->same-fence-success->new-session chain"
+  },
+  "noDuplicateOldLedger": "AUTHORITY_CHANGED/new-session revalidation semantics as T927; no duplicate admission rows"
+ },
+ "dGPU sustained fps": "deferred to user target environment per card",
+ "canvasFallback": "none"
+}

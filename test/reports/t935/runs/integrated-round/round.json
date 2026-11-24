@@ -1,0 +1,41 @@
+{
+ "ok": true,
+ "downToFirstPresentWall": null,
+ "pilePhase": {
+  "holdSeconds": 3.01,
+  "quantaAtSettle": 140,
+  "settleRetained": true
+ },
+ "late60s": {
+  "wallSeconds": 106.7,
+  "quantaDuring": 2059
+ },
+ "finalProbes": {
+  "quantaTotal": 2616
+ },
+ "boxTurns": {
+  "requestedAngles": [],
+  "actualAngles": [],
+  "gravityRows": 0
+ },
+ "recovery": {
+  "SUSPEND": 4,
+  "RETIRED": 1,
+  "NEW_BASELINE": 1,
+  "HOLD_REVALIDATED": 1
+ },
+ "stages": {
+  "M1_SOURCE_WSI": 2,
+  "M1_POINTER_READY": 6,
+  "WIN32_POINTER": 321,
+  "M1_RESERVATION_RETURN": 3702,
+  "M1_RESERVATION_TERMINAL": 3702,
+  "M1_QUANTUM_SUBMIT": 6234,
+  "M1_HOLD_RECOVERY": 7,
+  "M1_INPUT_WAIT_NEW_DOWN": 3,
+  "M1_GRAVITY_INPUT": 18,
+  "M1_BOX_VIEW_PRESENT_QUEUED": 2
+ },
+ "rows": 14023,
+ "firstPresentQpc": "16707306573931"
+}
