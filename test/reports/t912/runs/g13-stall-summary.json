@@ -1,0 +1,22 @@
+{
+ "exe": ".codex/local-test/t909-pc-ninja/hello_world_pc.exe",
+ "exeSHA256": "f742cf6a9ba0b422824c06d4ad76de54bd07cc078d90e17902d4abf7fbebc484",
+ "attempts": 4,
+ "budgetsNs": [
+  240000000000.0,
+  420000000000.0,
+  400000000000.0,
+  870000000000.0
+ ],
+ "stallPoint": "vkCreateComputePipelines ENTER role=OP_48 moduleSHA=f01959cc0f2fdecff46c953cf6c6073498f53d91bec0ae7d900b35c4c18aceb",
+ "linesBeforeStall": 99,
+ "controlExe": ".codex/local-test/t890-observation-timing-release.exe",
+ "controlResult": "completes 181 lines, OP_48 pipeline compile 1.036s, reaches LATE_RETIRED_DIAGNOSTIC (250ms deadline, iGPU)",
+ "controlLog": "test/reports/t912/runs/g13-control-t890.jsonl",
+ "flagsTried": [
+  "--g13-diagnostics hot --g13-slot-snapshot --g13-tail-timing",
+  "--g13-diagnostics hot --g13-slot-snapshot (no tail-timing)",
+  "with/without window styles; with/without pipe drain"
+ ],
+ "conclusion": "t909 exe build deterministically stalls inside Intel UHD 630 driver compiling OP_48 pipeline; same module SHA passes on t890 exe. Blocker for G13 seal-v1/tail-timing pairing on this exe. Hand to developer."
+}

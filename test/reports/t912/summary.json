@@ -1,0 +1,75 @@
+{
+  "schema": "T912_PC_DEMO_GRAVITY_PILE_CANDIDATE_ANGLE_V1",
+  "pe": {
+    "path": ".codex/local-test/t909-pc-ninja/hello_world_pc.exe",
+    "sha256": "f742cf6a9ba0b422824c06d4ad76de54bd07cc078d90e17902d4abf7fbebc484"
+  },
+  "angleProbe": ".codex/local-test/t909-dm2-release/t909_angle_probe.exe",
+  "gpu": {
+    "name": "Intel UHD 630",
+    "pci": "8086:3e98",
+    "driverVersion": 1656924,
+    "driver": "31.0.101.2140",
+    "window": "784x461@60"
+  },
+  "scenarioRuns": {
+    "gravityEmpty": "runs/1-gravity-empty",
+    "gravityEmptyHold": "runs/1b-gravity-empty-hold",
+    "gravityMobileBed": "runs/1c-gravity-mobile-bed",
+    "sandObserve": "runs/2a-sand-observe",
+    "waterDefault": "runs/2b-water-default",
+    "waterKappaZero": "runs/2c-water-kappa-zero",
+    "m1BaselineTiming": "runs/3a-m1-baseline-timing",
+    "m1InventoryTiming": "runs/3b-m1-inventory-timing",
+    "g13Stall": "runs/g13-stall-evidence.jsonl",
+    "g13ControlT890": "runs/g13-control-t890.jsonl"
+  },
+  "item1": {
+    "verdict": "PASS",
+    "emptyBedInputs": "9/9 ACCEPTED_INPUT (R/+15/+30/R/Home/-15/-30/button x2)",
+    "mobileBed": "428 same-root m1GravityFrame rows; +30 clamped 6182-7385 with BED_SHAPE; post-UP +15 clamped 838->3840 as bed relaxed; R/Home/button all return 0",
+    "buttonNoSand": true,
+    "pixelProbeSandColor": "181,151,111 at col64 bottom after bed forms"
+  },
+  "item2Sand": {
+    "verdict": "4s GATE NOT MET (quantified)",
+    "sourcesAdmitted": "31 SOURCE, 2064374 Q20 = 1.97 model units in 8s hold",
+    "perSecond": "t0 0.73u, t1 0.76u, t2 0.49u, then 0",
+    "clockGapAt": "2.69s, session 1->2, balanced",
+    "newFinding": "post-CLOCK_GAP source offers stay 0 for remaining 5.3s of hold (sourceAnchor holds old-session pulse; AdjacentSourcePulses requires session match) - candidate defect, hand developer",
+    "land": "54 kind-8 LAND, 65 kind-9 BED_EDGE, all accounting identities pass, mass 2064374 Q20 equals stock delta",
+    "settleAfterUp": "2.61s to zero active sand; stock retained",
+    "roi": "120 frames same-root bound; first sand-colored pixels at t=6.03s (4px), peak 42/768px; S64 max height 1.81px < 6px gate",
+    "gateCauses": ["effective admission 0.73u/s < required 2.5u/s", "sim clock ~0.16 s/s", "CLOCK_GAP interruption"]
+  },
+  "item2Water": {
+    "verdict": "PASS (kappa attribution) / visibility NOT MET (same rate cause)",
+    "default": {"sources": 44, "admittedQ": 5494544, "arrive": 44, "waterEdge": 2478, "columns": 53},
+    "kappaZero": {"sources": 48, "admittedQ": 6751972, "arrive": 48, "waterEdge": 0, "columns": 1},
+    "probePixel": "eta col64 ~0.78px; alpha ~1.3%; bottom pixel shows edge color both arms",
+    "packetTracking": "MISSING - --m1-observe-packet absent from t909 release exe (uncommitted rebuild), hand developer"
+  },
+  "item3M1": {
+    "verdict": "PASS (stage timing pair) / equivalence unproven",
+    "baseline": {"roots": 121, "totalMs": {"p50": 128.27, "p95": 162.72, "max": 167.94}},
+    "inventoryV1": {"roots": 152, "totalMs": {"p50": 97.62, "p95": 128.05, "max": 134.54}},
+    "stageDeltas": {"UPLOAD": "22.6->4.3ms (-81%)", "ARRIVE": "18.6->0.99ms (-95%)", "SORT": "~21-23 both (untouched)", "TOTAL": "-24%"},
+    "equivalence": "live interactive runs admit different masses per second; same-input word equivalence needs deterministic replay (developer)"
+  },
+  "item3G13": {
+    "verdict": "BLOCKED",
+    "stall": "t909 exe deterministic (4/4) hang inside vkCreateComputePipelines at role OP_48 (moduleSHA f01959cc, layoutSHA b9390359) after 99 lines / 0.17s; budgets 240-870s; stderr empty",
+    "control": "t890 exe same fixture/module/machine completes 181 lines, OP_48 compile 1.036s, reaches LATE_RETIRED_DIAGNOSTIC",
+    "flagsTried": ["hot+snapshot+tail", "hot+snapshot (no tail)", "window styles", "pipe vs file drain", "warm rerun"],
+    "handoff": "developer"
+  },
+  "item4": {
+    "verdict": "PASS (isolated operators)",
+    "g15": {"gpu": {"drive": 74145500, "normal": 74145500, "direction": 1, "state": 0}, "analyticMatch": true, "elapsedNs": 19548500},
+    "g16Translate": {"gpu": {"status": 1, "toi": 0.061922550201416016, "impulse": 0.01556412409991026, "velocity": 0.17074602842330933}, "analyticDelta": "<=3e-9", "elapsedNs": 4320600},
+    "g16Rotate": {"gpu": {"status": 1, "toi": 0.17895472049713135, "bracket": [0.17895470559597015, 0.17895472049713135], "impulse": 0.0005918041570112109}, "analytic48Iter": 0.17887429615860828, "elapsedNs": 1947900},
+    "boundary": "operator pass does not imply continuous product scenario; G15 pose profile / G16 multi-disk not wired (T907 contract to developer)"
+  },
+  "canvasFallback": "none",
+  "commit": "pending"
+}

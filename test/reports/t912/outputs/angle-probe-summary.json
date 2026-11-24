@@ -1,0 +1,59 @@
+{
+ "g15": {
+  "input": "dx=100 angleQ8=11520 muQ16=32768 faces=1 slope=[0]",
+  "analytic": {
+   "drive": 74145500,
+   "normal": 74145500,
+   "direction": 1,
+   "state": 0
+  },
+  "gpu": {
+   "drive": 74145500,
+   "normal": 74145500,
+   "direction": 1,
+   "state": 0
+  },
+  "match": true,
+  "elapsedNs": 19548500,
+  "fenceVkResult": 0,
+  "vendor": 32902,
+  "device": 16024,
+  "driver": 1656924
+ },
+ "g16_translate": {
+  "input": "m=.02 r=.004 gap=.025 vn=0 wall=.1 acc=-9.81 e=.1 horizon=.25 mode=0",
+  "analytic": {
+   "toi": 0.061922553132819545,
+   "impulse": 0.015564125417125117,
+   "velocity": 0.17074602462329602,
+   "wallWork": 0.0015564125417125117
+  },
+  "gpu": {
+   "status": 1,
+   "toi": 0.061922550201416016,
+   "impulse": 0.01556412409991026,
+   "velocity": 0.17074602842330933,
+   "wallWork": 0.0015564124332740903
+  },
+  "deltaToi": 3e-09,
+  "match": true,
+  "elapsedNs": 4320600
+ },
+ "g16_rotate": {
+  "input": "x=.07 y=.04 r=.004 offset=.08 omega=1 mode=1",
+  "analytic48": {
+   "toi": 0.17887429615860828,
+   "wallNormalSpeed": 0.026907248094147445,
+   "impulse": 0.0005919594580712439
+  },
+  "gpu24": {
+   "status": 1,
+   "toi": 0.17895472049713135,
+   "bracketLo": 0.17895470559597015,
+   "bracketHi": 0.17895472049713135,
+   "impulse": 0.0005918041570112109
+  },
+  "note": "24-iter bisection vs T910 48-iter analytic; bracket width 1.49e-8; GPU toi within bracket",
+  "elapsedNs": 1947900
+ }
+}

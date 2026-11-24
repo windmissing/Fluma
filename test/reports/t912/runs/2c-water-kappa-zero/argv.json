@@ -1,0 +1,18 @@
+{
+  "command": [
+    ".codex/local-test/t909-pc-ninja/hello_world_pc.exe",
+    "--m1-window",
+    ".codex/local-test/t830-m1-bounded\\full_source.spv",
+    ".codex/local-test/t830-m1-bounded\\quantum_candidate.spv",
+    ".codex/local-test/t830-m1-bounded\\quantum_commit.spv",
+    "--m1-empty-preview",
+    "--m1-manual-gravity",
+    "--m1-one-quantum-grant",
+    "--m1-dual-source",
+    "--m1-observe-series",
+    "test/reports/t912/runs/water-roi.txt",
+    "test/reports/t912/runs/2c-water-kappa-zero/root",
+    "--m1-observe-kappa-zero"
+  ],
+  "scenario": "hold-material"
+}
