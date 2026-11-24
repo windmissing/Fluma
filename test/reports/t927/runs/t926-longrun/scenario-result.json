@@ -1,0 +1,22 @@
+{
+ "ok": true,
+ "wallSeconds": 175.2,
+ "scenario": "10 cycles (6s hold+4s idle) + 10s settle + 6 probes (6s hold+4s idle)",
+ "quantumSubmits": 558,
+ "accepted": 25,
+ "rejectReasons": {
+  "ROOT_DEADLINE": 513,
+  "LATE_FENCE_SIGNAL": 15,
+  "CLOCK_GAP": 5
+ },
+ "acceptedOverloadRange": "18..615 (first ~2 cycles)",
+ "rejectedOverloadRange": "483..13819 (monotonic growth)",
+ "holdRecovery": {
+  "SUSPEND": 536,
+  "RETIRED": 247,
+  "NEW_BASELINE": 247,
+  "HOLD_REVALIDATED": 247
+ },
+ "waitNewDown": 285,
+ "verdict": "late-retirement recovery works (247 chains revalidated, hold preserved), but admission collapse under load persists (T920 signature: overload monotonic, ROOT_DEADLINE waitCount<=16, 250ms budget exhausted); final probes admit 0 \u2014 regression NOT fixed by T926 (matches T926 doc scope: recovery only)"
+}

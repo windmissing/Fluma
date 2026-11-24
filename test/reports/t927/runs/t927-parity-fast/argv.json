@@ -1,0 +1,13 @@
+{
+  "command": [
+    ".codex/local-test/t926-ninja/hello_world_pc.exe",
+    "--m1-window",
+    ".codex/local-test/t926-shaders/full_source.spv",
+    ".codex/local-test/t926-shaders/quantum_candidate.spv",
+    ".codex/local-test/t926-shaders/quantum_commit.spv",
+    "--m1-inventory-v1",
+    "--m1-source-trace",
+    "--m1-dual-source",
+    "--m1-compact-demo"
+  ]
+}

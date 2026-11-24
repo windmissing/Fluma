@@ -1,0 +1,83 @@
+{
+ "schema": "T927_T926_DEMO_PRIORITY_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "pe": "t926-ninja 38aa0c162a7df69d (a7fd38b0)",
+ "recovery": {
+  "chain": "SUSPEND->RETIRED->NEW_BASELINE->HOLD_REVALIDATED x29",
+  "singleDownHold": "14s, one Down one Up",
+  "acceptedQuantum": 27,
+  "acrossSessions": [
+   "1",
+   "2",
+   "7",
+   "8",
+   "9",
+   "10"
+  ],
+  "liveSandProgression": "5->115 monotonic, hold id=1 constant",
+  "authorityChangedRejects": 30,
+  "newerAdjacent": 704,
+  "waitNewDown": 13
+ },
+ "longrun": {
+  "wallSeconds": 175.2,
+  "submits": 558,
+  "accepted": 25,
+  "rejectReasons": {
+   "ROOT_DEADLINE": 513,
+   "LATE_FENCE_SIGNAL": 15,
+   "CLOCK_GAP": 5
+  },
+  "recoveryChains": 247,
+  "acceptedOverloadRange": "18..615",
+  "rejectedOverloadRange": "483..13819",
+  "finalProbesAdmit": 0,
+  "verdict": "recovery fixed (247/247 revalidated); admission collapse persists (T920 signature, developer scope)"
+ },
+ "pile": {
+  "frame": 50,
+  "state": "FENCED_READBACK",
+  "sandPixels": {
+   "296x308": 2,
+   "312x308": 5,
+   "328x308": 0
+  },
+  "sandColorBGR": [
+   89,
+   145,
+   184
+  ],
+  "bedCols": {
+   "63": 138252,
+   "64": 679837,
+   "65": 122300
+  },
+  "bedTotalQ": 940389,
+  "liveSandPeak": 84
+ },
+ "parity": {
+  "t918": {
+   "dispatches": 127,
+   "accepted": 59,
+   "recordStopMedianMs": 112.5,
+   "sandStockFinal": "4560212"
+  },
+  "fast": {
+   "dispatches": 35,
+   "accepted": 86,
+   "recordStopMedianMs": 82.6,
+   "sandStockFinal": "5445557"
+  },
+  "narrowBusinessKey": "6/6 identical at liveSand 5/11/16/21/26/31; >=32 diverge (7-sand intermediate steps)",
+  "sourceCommitShasIdentical": true
+ },
+ "deferred": {
+  "dm2r1": "covered by T923 follow-up 6bda4c0c same day",
+  "g15Dune": "not started, no blocker",
+  "offPair": "not started, no blocker"
+ }
+}

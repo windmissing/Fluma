@@ -1,0 +1,32 @@
+{
+ "t918_127": {
+  "accepted": 59,
+  "recordStopMsMedian": 112.5,
+  "liveSandFinal": 41,
+  "eventsTotal": 2050,
+  "sandStockFinal": "4560212"
+ },
+ "fast_35": {
+  "accepted": 86,
+  "recordStopMsMedian": 82.6,
+  "liveSandFinal": 31,
+  "eventsTotal": 3361,
+  "sandStockFinal": "5445557"
+ },
+ "input": "4s hold at window center, 6s settle, no grant cap, dual-source, compact demo",
+ "note": "liveSand sequences identical progression (5\u21925\u21927\u219211\u219216\u219221\u219226\u219231...); fast arm admits more quanta (86 vs 59) in same wall window; dispatch count 127 vs 35 confirmed",
+ "narrowBusinessKey": "liveSand 5/11/16/21/26/31 states: (liveSand,liveWater,events,motionRows,arrivalRows) all equal 6/6; >=32 states diverge on event counts (fast arm has 7-sand intermediate steps from single-workgroup bitonic batches)",
+ "dispatchCounts": {
+  "t918": "127",
+  "fastCandidate": "35 (measured)"
+ },
+ "performance": {
+  "t918_recordStopMedianMs": 112.5,
+  "fast_recordStopMedianMs": 82.6,
+  "fastAdmits": "86 vs 59 quanta in same 4s hold window"
+ },
+ "shas": {
+  "t918_quantum_candidate": "78139c8f...",
+  "fast_candidate": "1792a1a3... (t926-shaders)"
+ }
+}

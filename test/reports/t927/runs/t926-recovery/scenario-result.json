@@ -1,0 +1,23 @@
+{
+ "ok": true,
+ "holdRecoveryEvents": 129,
+ "chain": "SUSPEND\u2192RETIRED\u2192NEW_BASELINE\u2192HOLD_REVALIDATED \u00d729",
+ "distinctHold": 1,
+ "input": "single DOWN, 14s hold, single UP",
+ "acceptedQuantum": 27,
+ "acceptedSessions": [
+  "1111111111111111111111",
+  "2",
+  "7",
+  "8",
+  "9",
+  "10"
+ ],
+ "liveSand progression": "5\u2192115 monotonic across sessions (same hold id 1)",
+ "reservationRejects": {
+  "AUTHORITY_CHANGED": 30,
+  "NEWER_ADJACENT_INTERVAL": 704
+ },
+ "waitNewDown": 13,
+ "notes": "27 accepted quanta continue across session 1\u21922\u21927..10 under one Down hold; 29 full recovery chains; old-epoch offers rejected (AUTHORITY_CHANGED)"
+}
