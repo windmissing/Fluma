@@ -1,0 +1,2637 @@
+{
+  "source": "T927 e4af5ea3/aaddf168",
+  "demonstrations": {
+    "t926-longrun": {
+      "log": "test/reports/t927/runs/t926-longrun/demo.jsonl",
+      "sha256": "c4cd191883ae91f96198d8fdff5af76b9871fcaf3d4ed14d64ba10fb9e7aadbf",
+      "lines": 11298,
+      "firstDownQpc": 16640846189736,
+      "command": [
+        ".codex/local-test/t926-ninja/hello_world_pc.exe",
+        "--m1-window",
+        ".codex/local-test/t918-shaders\\full_source.spv",
+        ".codex/local-test/t918-shaders\\quantum_candidate.spv",
+        ".codex/local-test/t918-shaders\\quantum_commit.spv",
+        "--m1-source-trace",
+        "--m1-dual-source",
+        "--m1-compact-demo",
+        "--m1-one-quantum-grant"
+      ],
+      "qSubmitted": 558,
+      "qAccepted": 25,
+      "srcAccepted": 26,
+      "srcMass": 13270305,
+      "timelineEndSec": 175.4588585,
+      "dispatches": [
+        127
+      ],
+      "resultCounts": {
+        "ACCEPTED": 25,
+        "LATE_FENCE_SIGNAL": 15,
+        "ROOT_DEADLINE": 513,
+        "CLOCK_GAP": 5
+      },
+      "lastQ": {
+        "line": 806,
+        "t": 5.8506701,
+        "nonce": "16640902205404",
+        "run": "16640845551261",
+        "session": "5",
+        "plan": "30",
+        "state": "M1_QUANTUM_PRESENT_QUEUED",
+        "reason": null,
+        "submitted": 0,
+        "retire": 1,
+        "pending": false,
+        "fence": "2576652548200",
+        "grantCap": 1,
+        "grant": 1,
+        "budget": 249626800,
+        "recorded": 127,
+        "accepted": true,
+        "live": 113,
+        "events": 113,
+        "stock": 12733911,
+        "serial": 25,
+        "sourceCommit": 25,
+        "recMs": 0.322,
+        "submitMs": 0.0432,
+        "submitStopMs": 248.7325,
+        "firstBusinessWaitVk": 2,
+        "lastBusinessWaitVk": 0,
+        "businessWaitN": 16,
+        "retireWaitMs": null,
+        "hostGraphicsMs": 3.0515,
+        "counters": {
+          "generated": 664,
+          "quantaAccepted": 25,
+          "overload": 615,
+          "revoked": 20,
+          "pending": 4,
+          "active": 0
+        }
+      },
+      "lastSource": {
+        "line": 832,
+        "run": "16640845551261",
+        "t": 5.8923463,
+        "hold": "1",
+        "mass": 536394,
+        "stock": 13270305,
+        "commit": 26,
+        "live": 118,
+        "timeMs": 38.1975,
+        "inputSHA": "8a6b5a014e08783fd0d89973e5f01a3ff7d87ab97f544e4788c7f5784e744dbd"
+      },
+      "terminal": {
+        "line": 11298,
+        "t": 175.4588585,
+        "nonce": "16642598268318",
+        "run": "16640845551261",
+        "session": "556",
+        "plan": "559",
+        "state": "M1_QUANTUM_PRESENT_RETIRED",
+        "reason": "ROOT_DEADLINE",
+        "submitted": 0,
+        "retire": 0,
+        "pending": false,
+        "fence": "2576652547080",
+        "grantCap": 1,
+        "grant": 1,
+        "budget": 249719400,
+        "recorded": 127,
+        "accepted": false,
+        "live": null,
+        "events": null,
+        "stock": null,
+        "serial": null,
+        "sourceCommit": null,
+        "recMs": 0.2233,
+        "submitMs": 0.0372,
+        "submitStopMs": 250.7347,
+        "firstBusinessWaitVk": 2,
+        "lastBusinessWaitVk": 2,
+        "businessWaitN": 16,
+        "retireWaitMs": 77.9415,
+        "hostGraphicsMs": null,
+        "counters": {
+          "generated": 16507,
+          "quantaAccepted": 25,
+          "overload": 13819,
+          "revoked": 2658,
+          "pending": 4,
+          "active": 1
+        }
+      },
+      "holdEvents": {
+        "SUSPEND": 536,
+        "RETIRED": 247,
+        "NEW_BASELINE": 247,
+        "HOLD_REVALIDATED": 247
+      },
+      "retireStages": {},
+      "reservation": {
+        "NEWER_ADJACENT_INTERVAL": 3743,
+        "2": 26,
+        "AUTHORITY_CHANGED": 256
+      },
+      "gpuQueryRows": 0,
+      "liveMax": 113,
+      "sourceHolds": [
+        {
+          "line": 30,
+          "t": 0.0,
+          "hold": "1",
+          "n": 26
+        },
+        {
+          "line": 883,
+          "t": 10.027916900000001,
+          "hold": "39",
+          "n": 0
+        },
+        {
+          "line": 1685,
+          "t": 20.1301871,
+          "hold": "93",
+          "n": 0
+        },
+        {
+          "line": 2493,
+          "t": 30.1856306,
+          "hold": "147",
+          "n": 0
+        },
+        {
+          "line": 3299,
+          "t": 40.263068,
+          "hold": "200",
+          "n": 0
+        },
+        {
+          "line": 4091,
+          "t": 50.421084,
+          "hold": "253",
+          "n": 0
+        },
+        {
+          "line": 4860,
+          "t": 60.5453008,
+          "hold": "306",
+          "n": 0
+        },
+        {
+          "line": 5592,
+          "t": 70.64508590000001,
+          "hold": "0",
+          "n": 0
+        },
+        {
+          "line": 5753,
+          "t": 80.8054662,
+          "hold": "391",
+          "n": 0
+        },
+        {
+          "line": 6517,
+          "t": 90.9608514,
+          "hold": "444",
+          "n": 0
+        },
+        {
+          "line": 7350,
+          "t": 111.0926695,
+          "hold": "495",
+          "n": 0
+        },
+        {
+          "line": 8107,
+          "t": 121.1118809,
+          "hold": "548",
+          "n": 0
+        },
+        {
+          "line": 8887,
+          "t": 131.12565669999998,
+          "hold": "602",
+          "n": 0
+        },
+        {
+          "line": 9689,
+          "t": 141.13822330000002,
+          "hold": "0",
+          "n": 0
+        },
+        {
+          "line": 9843,
+          "t": 151.1539773,
+          "hold": "689",
+          "n": 0
+        },
+        {
+          "line": 10543,
+          "t": 161.1662902,
+          "hold": "740",
+          "n": 0
+        }
+      ],
+      "windows": [
+        {
+          "start": 0,
+          "attempts": 75,
+          "q": 25,
+          "source": 26,
+          "sourceQ": 13270305,
+          "lastOverload": 1772
+        },
+        {
+          "start": 20,
+          "attempts": 66,
+          "q": 0,
+          "source": 0,
+          "sourceQ": 0,
+          "lastOverload": 3428
+        },
+        {
+          "start": 40,
+          "attempts": 64,
+          "q": 0,
+          "source": 0,
+          "sourceQ": 0,
+          "lastOverload": 5017
+        },
+        {
+          "start": 60,
+          "attempts": 61,
+          "q": 0,
+          "source": 0,
+          "sourceQ": 0,
+          "lastOverload": 6528
+        },
+        {
+          "start": 80,
+          "attempts": 60,
+          "q": 0,
+          "source": 0,
+          "sourceQ": 0,
+          "lastOverload": 8043
+        },
+        {
+          "start": 100,
+          "attempts": 65,
+          "q": 0,
+          "source": 0,
+          "sourceQ": 0,
+          "lastOverload": 9654
+        },
+        {
+          "start": 120,
+          "attempts": 65,
+          "q": 0,
+          "source": 0,
+          "sourceQ": 0,
+          "lastOverload": 11280
+        },
+        {
+          "start": 140,
+          "attempts": 57,
+          "q": 0,
+          "source": 0,
+          "sourceQ": 0,
+          "lastOverload": 12700
+        },
+        {
+          "start": 160,
+          "attempts": 45,
+          "q": 0,
+          "source": 0,
+          "sourceQ": 0,
+          "lastOverload": 13819
+        }
+      ],
+      "causeSpans": {
+        "ACCEPTED": {
+          "n": 25,
+          "firstBudgetMs": [
+            196.4552,
+            218.1854,
+            249.6936,
+            249.7388
+          ],
+          "budget245": 5,
+          "recordMs": [
+            0.1855,
+            0.1916,
+            0.322,
+            0.6058
+          ],
+          "submitMs": [
+            0.0172,
+            0.0207,
+            0.035,
+            0.0432
+          ],
+          "submitStopMs": [
+            71.274,
+            147.211,
+            244.1746,
+            248.7325
+          ],
+          "retireMs": null,
+          "terminalWaits": {
+            "0": 25
+          },
+          "retireVk": {
+            "1": 25
+          },
+          "pending": 0
+        },
+        "LATE_FENCE_SIGNAL": {
+          "n": 15,
+          "firstBudgetMs": [
+            214.6701,
+            249.7171,
+            249.7611,
+            249.7611
+          ],
+          "budget245": 14,
+          "recordMs": [
+            0.1893,
+            0.2414,
+            0.3623,
+            0.3623
+          ],
+          "submitMs": [
+            0.0169,
+            0.0334,
+            0.1138,
+            0.1138
+          ],
+          "submitStopMs": [
+            224.8348,
+            259.5201,
+            263.0056,
+            263.0056
+          ],
+          "retireMs": null,
+          "terminalWaits": {
+            "0": 15
+          },
+          "retireVk": {
+            "0": 15
+          },
+          "pending": 0
+        },
+        "ROOT_DEADLINE": {
+          "n": 513,
+          "firstBudgetMs": [
+            208.7023,
+            249.7056,
+            249.7538,
+            249.781
+          ],
+          "budget245": 509,
+          "recordMs": [
+            0.1854,
+            0.2497,
+            0.4018,
+            1.1519
+          ],
+          "submitMs": [
+            0.0175,
+            0.0327,
+            0.077,
+            0.6351
+          ],
+          "submitStopMs": [
+            208.7385,
+            251.3688,
+            262.583,
+            274.7769
+          ],
+          "retireMs": [
+            0.0014,
+            16.9649,
+            71.8124,
+            96.2898
+          ],
+          "terminalWaits": {
+            "2": 513
+          },
+          "retireVk": {
+            "0": 513
+          },
+          "pending": 0
+        },
+        "CLOCK_GAP": {
+          "n": 5,
+          "firstBudgetMs": [
+            249.1416,
+            249.6831,
+            249.7505,
+            249.7505
+          ],
+          "budget245": 5,
+          "recordMs": [
+            0.2136,
+            0.2822,
+            0.7398,
+            0.7398
+          ],
+          "submitMs": [
+            0.026,
+            0.0396,
+            0.0936,
+            0.0936
+          ],
+          "submitStopMs": [
+            31.7871,
+            206.9793,
+            221.0388,
+            221.0388
+          ],
+          "retireMs": [
+            40.3877,
+            86.3533,
+            237.8014,
+            237.8014
+          ],
+          "terminalWaits": {
+            "2": 5
+          },
+          "retireVk": {
+            "0": 5
+          },
+          "pending": 0
+        }
+      }
+    },
+    "t926-recovery": {
+      "log": "test/reports/t927/runs/t926-recovery/demo.jsonl",
+      "sha256": "984fda5e886e576ef168b1c2ac63067f71110e69ea28cade4bb6e180ede43d1c",
+      "lines": 1885,
+      "firstDownQpc": 16639365621877,
+      "command": [
+        ".codex/local-test/t926-ninja/hello_world_pc.exe",
+        "--m1-window",
+        ".codex/local-test/t918-shaders\\full_source.spv",
+        ".codex/local-test/t918-shaders\\quantum_candidate.spv",
+        ".codex/local-test/t918-shaders\\quantum_commit.spv",
+        "--m1-source-trace",
+        "--m1-dual-source",
+        "--m1-compact-demo",
+        "--m1-one-quantum-grant"
+      ],
+      "qSubmitted": 70,
+      "qAccepted": 27,
+      "srcAccepted": 28,
+      "srcMass": 13910822,
+      "timelineEndSec": 18.072434,
+      "dispatches": [
+        127
+      ],
+      "resultCounts": {
+        "ACCEPTED": 27,
+        "ROOT_DEADLINE": 39,
+        "LATE_FENCE_SIGNAL": 3,
+        "WINDOW_REVOKED": 1
+      },
+      "lastQ": {
+        "line": 1053,
+        "t": 7.8032391,
+        "nonce": "16639441163297",
+        "run": "16639364124434",
+        "session": "10",
+        "plan": "37",
+        "state": "M1_QUANTUM_PRESENT_QUEUED",
+        "reason": null,
+        "submitted": 0,
+        "retire": 1,
+        "pending": false,
+        "fence": "2015597264024",
+        "grantCap": 1,
+        "grant": 1,
+        "budget": 249681200,
+        "recorded": 127,
+        "accepted": true,
+        "live": 115,
+        "events": 115,
+        "stock": 13377240,
+        "serial": 27,
+        "sourceCommit": 27,
+        "recMs": 0.265,
+        "submitMs": 0.0471,
+        "submitStopMs": 248.7804,
+        "firstBusinessWaitVk": 2,
+        "lastBusinessWaitVk": 0,
+        "businessWaitN": 16,
+        "retireWaitMs": null,
+        "hostGraphicsMs": 1.8891,
+        "counters": {
+          "generated": 873,
+          "quantaAccepted": 27,
+          "overload": 797,
+          "revoked": 45,
+          "pending": 4,
+          "active": 0
+        }
+      },
+      "lastSource": {
+        "line": 1088,
+        "run": "16639364124434",
+        "t": 7.8433206,
+        "hold": "1",
+        "mass": 533582,
+        "stock": 13910822,
+        "commit": 28,
+        "live": 120,
+        "timeMs": 36.5685,
+        "inputSHA": "28e7b7b52aa2833cb4d7ced2412962b605479f0388d2e6060d8324a6a30c8e10"
+      },
+      "terminal": {
+        "line": 1885,
+        "t": 18.072434,
+        "nonce": "16639544471981",
+        "run": "16639364124434",
+        "session": "47",
+        "plan": "71",
+        "state": "M1_QUANTUM_PRESENT_RETIRED",
+        "reason": "WINDOW_REVOKED",
+        "submitted": 0,
+        "retire": 0,
+        "pending": false,
+        "fence": "2015597261784",
+        "grantCap": 1,
+        "grant": 1,
+        "budget": 249747100,
+        "recorded": 127,
+        "accepted": false,
+        "live": null,
+        "events": null,
+        "stock": null,
+        "serial": null,
+        "sourceCommit": null,
+        "recMs": 0.2214,
+        "submitMs": 0.0266,
+        "submitStopMs": 187.1716,
+        "firstBusinessWaitVk": 2,
+        "lastBusinessWaitVk": 2,
+        "businessWaitN": 12,
+        "retireWaitMs": 77.9374,
+        "hostGraphicsMs": null,
+        "counters": {
+          "generated": 1883,
+          "quantaAccepted": 27,
+          "overload": 1641,
+          "revoked": 210,
+          "pending": 4,
+          "active": 1
+        }
+      },
+      "holdEvents": {
+        "SUSPEND": 42,
+        "RETIRED": 29,
+        "NEW_BASELINE": 29,
+        "HOLD_REVALIDATED": 29
+      },
+      "retireStages": {},
+      "reservation": {
+        "NEWER_ADJACENT_INTERVAL": 704,
+        "2": 28,
+        "AUTHORITY_CHANGED": 30
+      },
+      "gpuQueryRows": 0,
+      "liveMax": 115,
+      "sourceHolds": [
+        {
+          "line": 30,
+          "t": 0.0,
+          "hold": "1",
+          "n": 28
+        }
+      ],
+      "windows": [
+        {
+          "start": 0,
+          "attempts": 70,
+          "q": 27,
+          "source": 28,
+          "sourceQ": 13910822,
+          "lastOverload": 1641
+        }
+      ],
+      "causeSpans": {
+        "ACCEPTED": {
+          "n": 27,
+          "firstBudgetMs": [
+            197.9756,
+            218.7477,
+            249.7264,
+            249.7332
+          ],
+          "budget245": 6,
+          "recordMs": [
+            0.1884,
+            0.2157,
+            0.265,
+            0.3524
+          ],
+          "submitMs": [
+            0.0189,
+            0.0249,
+            0.0349,
+            0.0471
+          ],
+          "submitStopMs": [
+            74.6705,
+            154.4353,
+            241.8334,
+            248.7804
+          ],
+          "retireMs": null,
+          "terminalWaits": {
+            "0": 27
+          },
+          "retireVk": {
+            "1": 27
+          },
+          "pending": 0
+        },
+        "ROOT_DEADLINE": {
+          "n": 39,
+          "firstBudgetMs": [
+            211.4256,
+            249.7168,
+            249.755,
+            249.7614
+          ],
+          "budget245": 33,
+          "recordMs": [
+            0.1964,
+            0.2283,
+            0.4216,
+            0.5891
+          ],
+          "submitMs": [
+            0.0234,
+            0.0331,
+            0.1165,
+            0.1367
+          ],
+          "submitStopMs": [
+            214.52,
+            250.5743,
+            254.4824,
+            254.9569
+          ],
+          "retireMs": [
+            2.9361,
+            10.4573,
+            32.6208,
+            50.3
+          ],
+          "terminalWaits": {
+            "2": 39
+          },
+          "retireVk": {
+            "0": 39
+          },
+          "pending": 0
+        },
+        "LATE_FENCE_SIGNAL": {
+          "n": 3,
+          "firstBudgetMs": [
+            249.3971,
+            249.7379,
+            249.7499,
+            249.7499
+          ],
+          "budget245": 3,
+          "recordMs": [
+            0.2114,
+            0.222,
+            0.4319,
+            0.4319
+          ],
+          "submitMs": [
+            0.0235,
+            0.0422,
+            0.15,
+            0.15
+          ],
+          "submitStopMs": [
+            249.7815,
+            260.9094,
+            262.1033,
+            262.1033
+          ],
+          "retireMs": null,
+          "terminalWaits": {
+            "0": 3
+          },
+          "retireVk": {
+            "0": 3
+          },
+          "pending": 0
+        },
+        "WINDOW_REVOKED": {
+          "n": 1,
+          "firstBudgetMs": [
+            249.7471,
+            249.7471,
+            249.7471,
+            249.7471
+          ],
+          "budget245": 1,
+          "recordMs": [
+            0.2214,
+            0.2214,
+            0.2214,
+            0.2214
+          ],
+          "submitMs": [
+            0.0266,
+            0.0266,
+            0.0266,
+            0.0266
+          ],
+          "submitStopMs": [
+            187.1716,
+            187.1716,
+            187.1716,
+            187.1716
+          ],
+          "retireMs": [
+            77.9374,
+            77.9374,
+            77.9374,
+            77.9374
+          ],
+          "terminalWaits": {
+            "2": 1
+          },
+          "retireVk": {
+            "0": 1
+          },
+          "pending": 0
+        }
+      }
+    },
+    "t926-fastcandidate": {
+      "log": "test/reports/t927/runs/t926-fastcandidate/demo.jsonl",
+      "sha256": "1772fa77cf903794620e43417b4da5355a0f7dfaff4303e6553b3a89fafac37d",
+      "lines": 700,
+      "firstDownQpc": 16653199643664,
+      "command": [
+        ".codex/local-test/t926-ninja/hello_world_pc.exe",
+        "--m1-window",
+        ".codex/local-test/t926-shaders/full_source.spv",
+        ".codex/local-test/t926-shaders/quantum_candidate.spv",
+        ".codex/local-test/t926-shaders/quantum_commit.spv",
+        "--m1-one-quantum-grant",
+        "--m1-source-trace",
+        "--m1-dual-source",
+        "--m1-inventory-v1",
+        "--m1-compact-demo",
+        "--m1-stage-timing"
+      ],
+      "qSubmitted": 57,
+      "qAccepted": 56,
+      "srcAccepted": 26,
+      "srcMass": 11850649,
+      "timelineEndSec": 10.0169828,
+      "dispatches": [
+        35
+      ],
+      "resultCounts": {
+        "ACCEPTED": 56,
+        "WINDOW_REVOKED": 1
+      },
+      "lastQ": {
+        "line": 698,
+        "t": 9.9452104,
+        "nonce": "16653297423711",
+        "run": "16653198855504",
+        "session": "1",
+        "plan": "57",
+        "state": "M1_QUANTUM_PRESENT_QUEUED",
+        "reason": null,
+        "submitted": 0,
+        "retire": 1,
+        "pending": false,
+        "fence": "2564579911128",
+        "grantCap": 1,
+        "grant": 1,
+        "budget": 249840400,
+        "recorded": 35,
+        "accepted": true,
+        "live": 96,
+        "events": 96,
+        "stock": 11850649,
+        "serial": 56,
+        "sourceCommit": 26,
+        "recMs": 0.1256,
+        "submitMs": 0.0133,
+        "submitStopMs": 167.0652,
+        "firstBusinessWaitVk": 2,
+        "lastBusinessWaitVk": 0,
+        "businessWaitN": 12,
+        "retireWaitMs": null,
+        "hostGraphicsMs": 1.1972,
+        "counters": {
+          "generated": 1190,
+          "quantaAccepted": 56,
+          "overload": 1130,
+          "revoked": 0,
+          "pending": 4,
+          "active": 0
+        }
+      },
+      "lastSource": {
+        "line": 638,
+        "run": "16653198855504",
+        "t": 3.9945778,
+        "hold": "1",
+        "mass": 533438,
+        "stock": 11850649,
+        "commit": 26,
+        "live": 107,
+        "timeMs": 43.7004,
+        "inputSHA": "7d43854717a0315a7fcfba3d797e10656ddca50f08c07cd10efc8ecc19df9fd4"
+      },
+      "terminal": {
+        "line": 700,
+        "t": 10.0169828,
+        "nonce": "16653299111123",
+        "run": "16653198855504",
+        "session": "1",
+        "plan": "58",
+        "state": "M1_QUANTUM_PRESENT_RETIRED",
+        "reason": "WINDOW_REVOKED",
+        "submitted": 0,
+        "retire": 0,
+        "pending": false,
+        "fence": "2564579905304",
+        "grantCap": 1,
+        "grant": 1,
+        "budget": 249843200,
+        "recorded": 35,
+        "accepted": false,
+        "live": null,
+        "events": null,
+        "stock": null,
+        "serial": null,
+        "sourceCommit": null,
+        "recMs": 0.1235,
+        "submitMs": 0.031,
+        "submitStopMs": 70.0808,
+        "firstBusinessWaitVk": 2,
+        "lastBusinessWaitVk": 2,
+        "businessWaitN": 5,
+        "retireWaitMs": 116.6834,
+        "hostGraphicsMs": null,
+        "counters": {
+          "generated": 1195,
+          "quantaAccepted": 56,
+          "overload": 1134,
+          "revoked": 0,
+          "pending": 4,
+          "active": 1
+        }
+      },
+      "holdEvents": {},
+      "retireStages": {},
+      "reservation": {
+        "NEWER_ADJACENT_INTERVAL": 227,
+        "2": 26,
+        "AUTHORITY_CHANGED": 1
+      },
+      "gpuQueryRows": 83,
+      "liveMax": 107,
+      "sourceHolds": [
+        {
+          "line": 30,
+          "t": 0.0,
+          "hold": "1",
+          "n": 26
+        }
+      ],
+      "windows": [
+        {
+          "start": 0,
+          "attempts": 57,
+          "q": 56,
+          "source": 26,
+          "sourceQ": 11850649,
+          "lastOverload": 1134
+        }
+      ],
+      "causeSpans": {
+        "ACCEPTED": {
+          "n": 56,
+          "firstBudgetMs": [
+            199.9868,
+            249.812,
+            249.9139,
+            249.9195
+          ],
+          "budget245": 31,
+          "recordMs": [
+            0.0654,
+            0.09685,
+            0.1744,
+            0.4142
+          ],
+          "submitMs": [
+            0.0102,
+            0.0174,
+            0.0373,
+            0.0778
+          ],
+          "submitStopMs": [
+            55.9891,
+            182.8518,
+            202.2488,
+            207.509
+          ],
+          "retireMs": null,
+          "terminalWaits": {
+            "0": 56
+          },
+          "retireVk": {
+            "1": 56
+          },
+          "pending": 0
+        },
+        "WINDOW_REVOKED": {
+          "n": 1,
+          "firstBudgetMs": [
+            249.8432,
+            249.8432,
+            249.8432,
+            249.8432
+          ],
+          "budget245": 1,
+          "recordMs": [
+            0.1235,
+            0.1235,
+            0.1235,
+            0.1235
+          ],
+          "submitMs": [
+            0.031,
+            0.031,
+            0.031,
+            0.031
+          ],
+          "submitStopMs": [
+            70.0808,
+            70.0808,
+            70.0808,
+            70.0808
+          ],
+          "retireMs": [
+            116.6834,
+            116.6834,
+            116.6834,
+            116.6834
+          ],
+          "terminalWaits": {
+            "2": 1
+          },
+          "retireVk": {
+            "0": 1
+          },
+          "pending": 0
+        }
+      }
+    },
+    "t927-parity-t918": {
+      "log": "test/reports/t927/runs/t927-parity-t918/demo.jsonl",
+      "sha256": "732fb5e2fef5e348c8ee6ef0f5ccaa74cc63fdaaea6561efec6c4cb0350580df",
+      "lines": 630,
+      "firstDownQpc": 16653445283866,
+      "command": [
+        ".codex/local-test/t926-ninja/hello_world_pc.exe",
+        "--m1-window",
+        ".codex/local-test/t918-shaders/full_source.spv",
+        ".codex/local-test/t918-shaders/quantum_candidate.spv",
+        ".codex/local-test/t918-shaders/quantum_commit.spv",
+        "--m1-source-trace",
+        "--m1-dual-source",
+        "--m1-compact-demo"
+      ],
+      "qSubmitted": 80,
+      "qAccepted": 59,
+      "srcAccepted": 8,
+      "srcMass": 4560212,
+      "timelineEndSec": 9.9680251,
+      "dispatches": [
+        127
+      ],
+      "resultCounts": {
+        "ACCEPTED": 59,
+        "ROOT_DEADLINE": 20,
+        "LATE_FENCE_SIGNAL": 1
+      },
+      "lastQ": {
+        "line": 628,
+        "t": 9.938086,
+        "nonce": "16653543524647",
+        "run": "16653443218871",
+        "session": "23",
+        "plan": "40",
+        "state": "M1_QUANTUM_PRESENT_QUEUED",
+        "reason": null,
+        "submitted": 0,
+        "retire": 1,
+        "pending": false,
+        "fence": "2478560829080",
+        "grantCap": 4,
+        "grant": 4,
+        "budget": 136528900,
+        "recorded": 127,
+        "accepted": true,
+        "live": 32,
+        "events": 67,
+        "stock": 4560212,
+        "serial": 59,
+        "sourceCommit": 8,
+        "recMs": 0.1634,
+        "submitMs": 0.0138,
+        "submitStopMs": 113.8284,
+        "firstBusinessWaitVk": 2,
+        "lastBusinessWaitVk": 0,
+        "businessWaitN": 8,
+        "retireWaitMs": null,
+        "hostGraphicsMs": 0.726,
+        "counters": {
+          "generated": 989,
+          "quantaAccepted": 59,
+          "overload": 794,
+          "revoked": 130,
+          "pending": 4,
+          "active": 2
+        }
+      },
+      "lastSource": {
+        "line": 546,
+        "run": "16653443218871",
+        "t": 3.9143402000000003,
+        "hold": "1",
+        "mass": 539387,
+        "stock": 4560212,
+        "commit": 8,
+        "live": 41,
+        "timeMs": 37.8422,
+        "inputSHA": "850a5bad8ddf8be8b8d805e8a39e5e69055864b273e79846a25e02a4d2dbed6c"
+      },
+      "terminal": {
+        "line": 630,
+        "t": 9.9680251,
+        "nonce": "16653544674764",
+        "run": "16653443218871",
+        "session": "23",
+        "plan": "40",
+        "state": "M1_QUANTUM_PRESENT_RETIRED",
+        "reason": "ROOT_DEADLINE",
+        "submitted": 0,
+        "retire": 0,
+        "pending": false,
+        "fence": "2478560829976",
+        "grantCap": 4,
+        "grant": 4,
+        "budget": 21387400,
+        "recorded": 127,
+        "accepted": false,
+        "live": null,
+        "events": null,
+        "stock": null,
+        "serial": null,
+        "sourceCommit": null,
+        "recMs": 0.2784,
+        "submitMs": 0.0287,
+        "submitStopMs": 28.626,
+        "firstBusinessWaitVk": 2,
+        "lastBusinessWaitVk": 2,
+        "businessWaitN": 2,
+        "retireWaitMs": 79.2816,
+        "hostGraphicsMs": null,
+        "counters": {
+          "generated": 989,
+          "quantaAccepted": 59,
+          "overload": 794,
+          "revoked": 136,
+          "pending": 0,
+          "active": 0
+        }
+      },
+      "holdEvents": {
+        "SUSPEND": 22,
+        "RETIRED": 9,
+        "NEW_BASELINE": 9,
+        "HOLD_REVALIDATED": 9
+      },
+      "retireStages": {},
+      "reservation": {
+        "NEWER_ADJACENT_INTERVAL": 189,
+        "2": 8,
+        "AUTHORITY_CHANGED": 10
+      },
+      "gpuQueryRows": 0,
+      "liveMax": 41,
+      "sourceHolds": [
+        {
+          "line": 30,
+          "t": 0.0,
+          "hold": "1",
+          "n": 8
+        }
+      ],
+      "windows": [
+        {
+          "start": 0,
+          "attempts": 80,
+          "q": 59,
+          "source": 8,
+          "sourceQ": 4560212,
+          "lastOverload": 794
+        }
+      ],
+      "causeSpans": {
+        "ACCEPTED": {
+          "n": 59,
+          "firstBudgetMs": [
+            99.0378,
+            249.5389,
+            249.7994,
+            249.8203
+          ],
+          "budget245": 32,
+          "recordMs": [
+            0.1616,
+            0.2505,
+            0.4227,
+            0.4476
+          ],
+          "submitMs": [
+            0.0123,
+            0.0205,
+            0.0655,
+            0.0792
+          ],
+          "submitStopMs": [
+            68.2413,
+            112.2522,
+            133.7471,
+            138.5564
+          ],
+          "retireMs": null,
+          "terminalWaits": {
+            "0": 59
+          },
+          "retireVk": {
+            "1": 59
+          },
+          "pending": 0
+        },
+        "ROOT_DEADLINE": {
+          "n": 20,
+          "firstBudgetMs": [
+            10.8445,
+            42.8718,
+            114.2954,
+            116.1899
+          ],
+          "budget245": 0,
+          "recordMs": [
+            0.1607,
+            0.2343,
+            0.3126,
+            0.347
+          ],
+          "submitMs": [
+            0.0122,
+            0.01445,
+            0.0556,
+            0.0574
+          ],
+          "submitStopMs": [
+            12.1294,
+            52.4034,
+            123.8759,
+            127.7074
+          ],
+          "retireMs": [
+            4.8294,
+            46.7444,
+            100.082,
+            102.3436
+          ],
+          "terminalWaits": {
+            "2": 20
+          },
+          "retireVk": {
+            "0": 20
+          },
+          "pending": 0
+        },
+        "LATE_FENCE_SIGNAL": {
+          "n": 1,
+          "firstBudgetMs": [
+            121.1278,
+            121.1278,
+            121.1278,
+            121.1278
+          ],
+          "budget245": 0,
+          "recordMs": [
+            0.1689,
+            0.1689,
+            0.1689,
+            0.1689
+          ],
+          "submitMs": [
+            0.0143,
+            0.0143,
+            0.0143,
+            0.0143
+          ],
+          "submitStopMs": [
+            121.726,
+            121.726,
+            121.726,
+            121.726
+          ],
+          "retireMs": null,
+          "terminalWaits": {
+            "0": 1
+          },
+          "retireVk": {
+            "0": 1
+          },
+          "pending": 0
+        }
+      }
+    },
+    "t927-parity-fast": {
+      "log": "test/reports/t927/runs/t927-parity-fast/demo.jsonl",
+      "sha256": "a4376e9acea922a0da2449e807e43071fd5dfc77b29271aaf549fe7ac2028e09",
+      "lines": 657,
+      "firstDownQpc": 16653678544193,
+      "command": [
+        ".codex/local-test/t926-ninja/hello_world_pc.exe",
+        "--m1-window",
+        ".codex/local-test/t926-shaders/full_source.spv",
+        ".codex/local-test/t926-shaders/quantum_candidate.spv",
+        ".codex/local-test/t926-shaders/quantum_commit.spv",
+        "--m1-inventory-v1",
+        "--m1-source-trace",
+        "--m1-dual-source",
+        "--m1-compact-demo"
+      ],
+      "qSubmitted": 109,
+      "qAccepted": 86,
+      "srcAccepted": 10,
+      "srcMass": 5445557,
+      "timelineEndSec": 10.0110967,
+      "dispatches": [
+        35
+      ],
+      "resultCounts": {
+        "ACCEPTED": 86,
+        "ROOT_DEADLINE": 21,
+        "LATE_FENCE_SIGNAL": 1,
+        "WINDOW_REVOKED": 1
+      },
+      "lastQ": {
+        "line": 656,
+        "t": 9.972961999999999,
+        "nonce": "16653777513974",
+        "run": "16653676439131",
+        "session": "23",
+        "plan": "43",
+        "state": "M1_QUANTUM_PRESENT_QUEUED",
+        "reason": null,
+        "submitted": 0,
+        "retire": 1,
+        "pending": false,
+        "fence": "1510602101592",
+        "grantCap": 4,
+        "grant": 4,
+        "budget": 249910300,
+        "recorded": 35,
+        "accepted": true,
+        "live": 32,
+        "events": 32,
+        "stock": 5445557,
+        "serial": 86,
+        "sourceCommit": 10,
+        "recMs": 0.0716,
+        "submitMs": 0.0155,
+        "submitStopMs": 75.8951,
+        "firstBusinessWaitVk": 2,
+        "lastBusinessWaitVk": 0,
+        "businessWaitN": 6,
+        "retireWaitMs": null,
+        "hostGraphicsMs": 0.719,
+        "counters": {
+          "generated": 1009,
+          "quantaAccepted": 86,
+          "overload": 793,
+          "revoked": 123,
+          "pending": 4,
+          "active": 3
+        }
+      },
+      "lastSource": {
+        "line": 553,
+        "run": "16653676439131",
+        "t": 3.9831233999999998,
+        "hold": "1",
+        "mass": 978967,
+        "stock": 5445557,
+        "commit": 10,
+        "live": 43,
+        "timeMs": 34.3004,
+        "inputSHA": "0937dad1baf978e872a83db002a9885997d16ee4907c0d6a4f8dfead2bf249fd"
+      },
+      "terminal": {
+        "line": 657,
+        "t": 10.0110967,
+        "nonce": "16653778283950",
+        "run": "16653676439131",
+        "session": "23",
+        "plan": "43",
+        "state": "M1_QUANTUM_PRESENT_RETIRED",
+        "reason": "WINDOW_REVOKED",
+        "submitted": 0,
+        "retire": 0,
+        "pending": false,
+        "fence": "1510602102040",
+        "grantCap": 4,
+        "grant": 4,
+        "budget": 172844200,
+        "recorded": 35,
+        "accepted": false,
+        "live": null,
+        "events": null,
+        "stock": null,
+        "serial": null,
+        "sourceCommit": null,
+        "recMs": 0.124,
+        "submitMs": 0.0312,
+        "submitStopMs": 36.9637,
+        "firstBusinessWaitVk": 2,
+        "lastBusinessWaitVk": 2,
+        "businessWaitN": 3,
+        "retireWaitMs": 41.0171,
+        "hostGraphicsMs": null,
+        "counters": {
+          "generated": 1011,
+          "quantaAccepted": 86,
+          "overload": 795,
+          "revoked": 123,
+          "pending": 4,
+          "active": 3
+        }
+      },
+      "holdEvents": {
+        "SUSPEND": 22,
+        "RETIRED": 8,
+        "NEW_BASELINE": 8,
+        "HOLD_REVALIDATED": 8
+      },
+      "retireStages": {},
+      "reservation": {
+        "NEWER_ADJACENT_INTERVAL": 188,
+        "2": 10,
+        "AUTHORITY_CHANGED": 9
+      },
+      "gpuQueryRows": 0,
+      "liveMax": 41,
+      "sourceHolds": [
+        {
+          "line": 30,
+          "t": 0.0,
+          "hold": "1",
+          "n": 10
+        }
+      ],
+      "windows": [
+        {
+          "start": 0,
+          "attempts": 109,
+          "q": 86,
+          "source": 10,
+          "sourceQ": 5445557,
+          "lastOverload": 795
+        }
+      ],
+      "causeSpans": {
+        "ACCEPTED": {
+          "n": 86,
+          "firstBudgetMs": [
+            52.8864,
+            191.86175,
+            249.8706,
+            249.9103
+          ],
+          "budget245": 33,
+          "recordMs": [
+            0.065,
+            0.1098,
+            0.1808,
+            0.2806
+          ],
+          "submitMs": [
+            0.0112,
+            0.02245,
+            0.071,
+            0.1285
+          ],
+          "submitStopMs": [
+            39.8876,
+            82.51435,
+            95.2077,
+            98.3415
+          ],
+          "retireMs": null,
+          "terminalWaits": {
+            "0": 86
+          },
+          "retireVk": {
+            "1": 86
+          },
+          "pending": 0
+        },
+        "ROOT_DEADLINE": {
+          "n": 21,
+          "firstBudgetMs": [
+            1.2795,
+            48.9468,
+            69.2174,
+            81.9605
+          ],
+          "budget245": 0,
+          "recordMs": [
+            0.0649,
+            0.0995,
+            0.1647,
+            0.1704
+          ],
+          "submitMs": [
+            0.0114,
+            0.0146,
+            0.033,
+            0.0367
+          ],
+          "submitStopMs": [
+            6.3988,
+            51.4238,
+            79.4557,
+            85.5814
+          ],
+          "retireMs": [
+            0.0012,
+            23.8893,
+            68.1351,
+            74.5299
+          ],
+          "terminalWaits": {
+            "2": 21
+          },
+          "retireVk": {
+            "0": 21
+          },
+          "pending": 0
+        },
+        "LATE_FENCE_SIGNAL": {
+          "n": 1,
+          "firstBudgetMs": [
+            83.523,
+            83.523,
+            83.523,
+            83.523
+          ],
+          "budget245": 0,
+          "recordMs": [
+            0.1761,
+            0.1761,
+            0.1761,
+            0.1761
+          ],
+          "submitMs": [
+            0.0125,
+            0.0125,
+            0.0125,
+            0.0125
+          ],
+          "submitStopMs": [
+            84.8036,
+            84.8036,
+            84.8036,
+            84.8036
+          ],
+          "retireMs": null,
+          "terminalWaits": {
+            "0": 1
+          },
+          "retireVk": {
+            "0": 1
+          },
+          "pending": 0
+        },
+        "WINDOW_REVOKED": {
+          "n": 1,
+          "firstBudgetMs": [
+            172.8442,
+            172.8442,
+            172.8442,
+            172.8442
+          ],
+          "budget245": 0,
+          "recordMs": [
+            0.124,
+            0.124,
+            0.124,
+            0.124
+          ],
+          "submitMs": [
+            0.0312,
+            0.0312,
+            0.0312,
+            0.0312
+          ],
+          "submitStopMs": [
+            36.9637,
+            36.9637,
+            36.9637,
+            36.9637
+          ],
+          "retireMs": [
+            41.0171,
+            41.0171,
+            41.0171,
+            41.0171
+          ],
+          "terminalWaits": {
+            "2": 1
+          },
+          "retireVk": {
+            "0": 1
+          },
+          "pending": 0
+        }
+      }
+    }
+  },
+  "fastCandidateDevice": {
+    "samples": 83,
+    "roles": {
+      "SOURCE": 26,
+      "QUANTUM": 57
+    },
+    "sourceRootMs": [
+      31.76029,
+      38.509138,
+      49.382636,
+      82.336671
+    ],
+    "bands": {
+      "0-31": {
+        "n": 9,
+        "baseSand": [
+          4,
+          16,
+          31,
+          31
+        ],
+        "liveSand": [
+          4,
+          16,
+          31,
+          31
+        ],
+        "events": [
+          4,
+          16,
+          31,
+          31
+        ],
+        "rootMs": [
+          55.510361,
+          61.916169,
+          76.903442,
+          76.903442
+        ],
+        "phases": {
+          "UPLOAD_DONE": [
+            0.07925,
+            0.10925,
+            0.202249,
+            0.202249
+          ],
+          "PREPARE_DONE": [
+            4.127817,
+            5.314729,
+            9.695878,
+            9.695878
+          ],
+          "WATER_DONE": [
+            0.109083,
+            0.126916,
+            0.406332,
+            0.406332
+          ],
+          "FROZEN_DONE": [
+            0.006333,
+            0.00725,
+            0.034,
+            0.034
+          ],
+          "SORT_DONE": [
+            0.090583,
+            0.113166,
+            2.873572,
+            2.873572
+          ],
+          "MOTION_DONE": [
+            6.712056,
+            9.665378,
+            15.920186,
+            15.920186
+          ],
+          "BED_DONE": [
+            0.08575,
+            0.10775,
+            0.206416,
+            0.206416
+          ],
+          "ARRIVAL_SORT_DONE": [
+            0.161249,
+            0.195916,
+            0.305999,
+            0.305999
+          ],
+          "ARRIVE_DONE": [
+            0.0435,
+            0.049083,
+            0.111083,
+            0.111083
+          ],
+          "FINAL_AUDIT_DONE": [
+            0.584414,
+            0.717497,
+            1.322661,
+            1.322661
+          ],
+          "REPLAY_BEGIN": [
+            19.955254,
+            22.110745,
+            32.300371,
+            32.300371
+          ],
+          "REPLAY_DONE": [
+            12.043702,
+            17.702263,
+            28.008638,
+            28.008638
+          ],
+          "PACK_DONE": [
+            0.563414,
+            0.623164,
+            1.047662,
+            1.047662
+          ],
+          "SEAL_DONE": [
+            1.153245,
+            1.243828,
+            2.256908,
+            2.256908
+          ],
+          "TAIL_COPY_DONE": [
+            0.006667,
+            0.007167,
+            0.01575,
+            0.01575
+          ]
+        },
+        "actualGraphicsMs": [
+          0.283916,
+          0.317249,
+          0.414498,
+          0.414498
+        ]
+      },
+      "32-63": {
+        "n": 7,
+        "baseSand": [
+          36,
+          49,
+          63,
+          63
+        ],
+        "liveSand": [
+          36,
+          49,
+          63,
+          63
+        ],
+        "events": [
+          36,
+          49,
+          63,
+          63
+        ],
+        "rootMs": [
+          91.568717,
+          103.530253,
+          134.621212,
+          134.621212
+        ],
+        "phases": {
+          "UPLOAD_DONE": [
+            0.078916,
+            0.082,
+            1.803909,
+            1.803909
+          ],
+          "PREPARE_DONE": [
+            4.329649,
+            4.832397,
+            5.545978,
+            5.545978
+          ],
+          "WATER_DONE": [
+            0.11075,
+            0.126833,
+            0.140083,
+            0.140083
+          ],
+          "FROZEN_DONE": [
+            0.0065,
+            0.007,
+            0.007333,
+            0.007333
+          ],
+          "SORT_DONE": [
+            0.090833,
+            0.091583,
+            0.126999,
+            0.126999
+          ],
+          "MOTION_DONE": [
+            20.8265,
+            24.372653,
+            33.395283,
+            33.395283
+          ],
+          "BED_DONE": [
+            0.087333,
+            0.127166,
+            0.161166,
+            0.161166
+          ],
+          "ARRIVAL_SORT_DONE": [
+            0.220916,
+            0.333165,
+            0.488915,
+            0.488915
+          ],
+          "ARRIVE_DONE": [
+            0.0435,
+            0.074083,
+            0.08375,
+            0.08375
+          ],
+          "FINAL_AUDIT_DONE": [
+            0.896663,
+            1.205829,
+            1.804993,
+            1.804993
+          ],
+          "REPLAY_BEGIN": [
+            24.752234,
+            27.41639,
+            33.488533,
+            33.488533
+          ],
+          "REPLAY_DONE": [
+            36.379771,
+            44.413906,
+            57.984351,
+            57.984351
+          ],
+          "PACK_DONE": [
+            0.613331,
+            0.73533,
+            0.85108,
+            0.85108
+          ],
+          "SEAL_DONE": [
+            1.190495,
+            1.371328,
+            1.670327,
+            1.670327
+          ],
+          "TAIL_COPY_DONE": [
+            0.00675,
+            0.007083,
+            0.00725,
+            0.00725
+          ]
+        },
+        "actualGraphicsMs": [
+          0.573248,
+          0.698164,
+          1.042246,
+          1.042246
+        ]
+      },
+      "64-95": {
+        "n": 7,
+        "baseSand": [
+          67,
+          82,
+          93,
+          93
+        ],
+        "liveSand": [
+          67,
+          82,
+          93,
+          93
+        ],
+        "events": [
+          67,
+          82,
+          93,
+          93
+        ],
+        "rootMs": [
+          130.485728,
+          160.001443,
+          183.260934,
+          183.260934
+        ],
+        "phases": {
+          "UPLOAD_DONE": [
+            0.077833,
+            0.08075,
+            0.101583,
+            0.101583
+          ],
+          "PREPARE_DONE": [
+            4.994147,
+            5.347395,
+            8.926131,
+            8.926131
+          ],
+          "WATER_DONE": [
+            0.109416,
+            0.113083,
+            0.169499,
+            0.169499
+          ],
+          "FROZEN_DONE": [
+            0.0065,
+            0.00675,
+            0.0075,
+            0.0075
+          ],
+          "SORT_DONE": [
+            0.090416,
+            0.091416,
+            0.124,
+            0.124
+          ],
+          "MOTION_DONE": [
+            31.64279,
+            41.194502,
+            44.825737,
+            44.825737
+          ],
+          "BED_DONE": [
+            0.0845,
+            0.096083,
+            0.161333,
+            0.161333
+          ],
+          "ARRIVAL_SORT_DONE": [
+            0.349332,
+            0.396832,
+            0.567331,
+            0.567331
+          ],
+          "ARRIVE_DONE": [
+            0.043333,
+            0.04375,
+            0.0815,
+            0.0815
+          ],
+          "FINAL_AUDIT_DONE": [
+            1.504327,
+            1.904742,
+            2.551073,
+            2.551073
+          ],
+          "REPLAY_BEGIN": [
+            32.130705,
+            35.319692,
+            39.924757,
+            39.924757
+          ],
+          "REPLAY_DONE": [
+            56.437941,
+            74.074287,
+            88.949978,
+            88.949978
+          ],
+          "PACK_DONE": [
+            0.648997,
+            0.708497,
+            0.991496,
+            0.991496
+          ],
+          "SEAL_DONE": [
+            1.210328,
+            1.264912,
+            1.749243,
+            1.749243
+          ],
+          "TAIL_COPY_DONE": [
+            0.00675,
+            0.006917,
+            0.00825,
+            0.00825
+          ]
+        },
+        "actualGraphicsMs": [
+          0.732997,
+          0.965079,
+          1.137745,
+          1.137745
+        ]
+      },
+      "96-193": {
+        "n": 33,
+        "baseSand": [
+          96,
+          101,
+          107,
+          107
+        ],
+        "liveSand": [
+          96,
+          100,
+          107,
+          107
+        ],
+        "events": [
+          96,
+          129,
+          190,
+          195
+        ],
+        "rootMs": [
+          166.668083,
+          190.094823,
+          201.995609,
+          207.089088
+        ],
+        "phases": {
+          "UPLOAD_DONE": [
+            0.077416,
+            0.086,
+            0.132749,
+            0.144416
+          ],
+          "PREPARE_DONE": [
+            5.270396,
+            5.946726,
+            9.333546,
+            12.331034
+          ],
+          "WATER_DONE": [
+            0.108833,
+            0.112083,
+            0.183416,
+            0.222749
+          ],
+          "FROZEN_DONE": [
+            0.00625,
+            0.0065,
+            0.014,
+            0.025083
+          ],
+          "SORT_DONE": [
+            0.090333,
+            0.091333,
+            0.126999,
+            0.127666
+          ],
+          "MOTION_DONE": [
+            41.583917,
+            48.402473,
+            53.755785,
+            53.981117
+          ],
+          "BED_DONE": [
+            0.08425,
+            0.147333,
+            0.258166,
+            0.262999
+          ],
+          "ARRIVAL_SORT_DONE": [
+            0.412748,
+            0.793413,
+            1.827826,
+            2.197491
+          ],
+          "ARRIVE_DONE": [
+            0.043416,
+            0.043833,
+            0.081833,
+            0.08325
+          ],
+          "FINAL_AUDIT_DONE": [
+            1.986159,
+            2.188408,
+            4.776064,
+            5.608728
+          ],
+          "REPLAY_BEGIN": [
+            36.876852,
+            39.851091,
+            44.21049,
+            47.450894
+          ],
+          "REPLAY_DONE": [
+            75.394782,
+            88.620396,
+            95.317369,
+            100.804347
+          ],
+          "PACK_DONE": [
+            0.710497,
+            0.92433,
+            1.065079,
+            1.082496
+          ],
+          "SEAL_DONE": [
+            1.249578,
+            1.361411,
+            3.482569,
+            3.512653
+          ],
+          "TAIL_COPY_DONE": [
+            0.006667,
+            0.007,
+            0.007833,
+            0.026417
+          ]
+        },
+        "actualGraphicsMs": [
+          0.991246,
+          1.142162,
+          1.482827,
+          1.518577
+        ]
+      },
+      "0-193": {
+        "n": 56,
+        "baseSand": [
+          4,
+          98.0,
+          107,
+          107
+        ],
+        "liveSand": [
+          4,
+          98.0,
+          107,
+          107
+        ],
+        "events": [
+          4,
+          106.5,
+          190,
+          195
+        ],
+        "rootMs": [
+          55.510361,
+          181.614732,
+          200.792113,
+          207.089088
+        ],
+        "phases": {
+          "UPLOAD_DONE": [
+            0.077416,
+            0.084917,
+            0.144416,
+            1.803909
+          ],
+          "PREPARE_DONE": [
+            4.127817,
+            5.548353,
+            9.333546,
+            12.331034
+          ],
+          "WATER_DONE": [
+            0.108833,
+            0.113083,
+            0.183416,
+            0.406332
+          ],
+          "FROZEN_DONE": [
+            0.00625,
+            0.006667,
+            0.014,
+            0.034
+          ],
+          "SORT_DONE": [
+            0.090333,
+            0.0915,
+            0.127666,
+            2.873572
+          ],
+          "MOTION_DONE": [
+            6.712056,
+            44.550405,
+            53.532453,
+            53.981117
+          ],
+          "BED_DONE": [
+            0.08425,
+            0.137916,
+            0.228749,
+            0.262999
+          ],
+          "ARRIVAL_SORT_DONE": [
+            0.161249,
+            0.504998,
+            1.694577,
+            2.197491
+          ],
+          "ARRIVE_DONE": [
+            0.043333,
+            0.043833,
+            0.08325,
+            0.111083
+          ],
+          "FINAL_AUDIT_DONE": [
+            0.584414,
+            2.087867,
+            3.225154,
+            5.608728
+          ],
+          "REPLAY_BEGIN": [
+            19.955254,
+            38.329097,
+            43.843658,
+            47.450894
+          ],
+          "REPLAY_DONE": [
+            12.043702,
+            83.646207,
+            95.289786,
+            100.804347
+          ],
+          "PACK_DONE": [
+            0.563414,
+            0.793413,
+            1.049662,
+            1.082496
+          ],
+          "SEAL_DONE": [
+            1.153245,
+            1.322536,
+            3.429403,
+            3.512653
+          ],
+          "TAIL_COPY_DONE": [
+            0.006667,
+            0.007083,
+            0.012833,
+            0.026417
+          ]
+        },
+        "actualGraphicsMs": [
+          0.283916,
+          1.042871,
+          1.453578,
+          1.518577
+        ]
+      }
+    },
+    "late": [
+      {
+        "line": 699,
+        "rootLine": 700,
+        "nonce": "16653299111123",
+        "kind": "QUANTUM",
+        "accepted": false,
+        "work": null,
+        "graphicsMs": null,
+        "rootMs": 186.55642,
+        "spans": {
+          "UPLOAD_DONE": 0.0785,
+          "PREPARE_DONE": 5.212979,
+          "WATER_DONE": 0.109166,
+          "FROZEN_DONE": 0.006333,
+          "SORT_DONE": 0.09025,
+          "MOTION_DONE": 47.146145,
+          "BED_DONE": 0.145333,
+          "ARRIVAL_SORT_DONE": 2.015575,
+          "ARRIVE_DONE": 0.080166,
+          "FINAL_AUDIT_DONE": 2.125408,
+          "REPLAY_BEGIN": 39.304176,
+          "REPLAY_DONE": 87.852815,
+          "PACK_DONE": 0.903496,
+          "SEAL_DONE": 1.479161,
+          "TAIL_COPY_DONE": 0.006917
+        }
+      }
+    ]
+  },
+  "pile": {
+    "logSHA": "896c412f2c21b183b0b0db4d88e737f981a201d191aea2e56e61279a2b13cb10",
+    "downLine": 31,
+    "upLine": 571,
+    "observedLine": 609,
+    "root": "16652445941034",
+    "frame": "50",
+    "downQpc": "16652335066771",
+    "upQpc": "16652375142070",
+    "presentExitQpc": 16652448007377,
+    "pressMs": 4007.5299,
+    "presentAfterDownMs": 11294.0606,
+    "presentAfterUpMs": 7286.5307,
+    "picture": {
+      "frame": "50",
+      "root": "16652445941034",
+      "sandPerRoi": {
+        "296x308": 2,
+        "312x308": 5,
+        "328x308": 0
+      },
+      "bedCols": {
+        "63": 138252,
+        "64": 679837,
+        "65": 122300
+      },
+      "bedTotal": 940389
+    },
+    "archiveSHA": "15af135ee1e092e5a084dc961b2d1a1537947c460c533eab1208fca60c9988c2"
+  },
+  "g15": {
+    "artifacts": [
+      {
+        "pe": ".codex/local-test/t924-release/dm2-baseline/pc_sand_dm2_host.exe",
+        "peSHA": "fab0f13fa16cc0651aaf4530f4b0b1aa85fbc8dc15907441734c874620d4b68c",
+        "roleSet": "3639e57f834308bab001ca783f321b6a503c232caa924e04b1d8f1d7e3333ca6",
+        "op": {
+          "op": 23,
+          "name": "G9_OP_FLIGHT_PATH",
+          "sourceBytes": 38483,
+          "sourceSHA": "572a8eead980d5e3573aead9008f997007ca709f56560e1389e49cb471de21c9",
+          "state": "STATIC_SPIRV",
+          "spv": "role_00000017.spv",
+          "spvBytes": 123644,
+          "spvSHA": "5f8fcc775e1c1bd0fae0078ec979a011655531e7b708891c94f9085a77d34c01"
+        },
+        "strippedSHA": "5f8fcc775e1c1bd0fae0078ec979a011655531e7b708891c94f9085a77d34c01",
+        "extensions": []
+      },
+      {
+        "pe": ".codex/local-test/t909-g15-dune-release/pc_sand_dm2_host.exe",
+        "peSHA": "307e524850a69102a805b8df666803934d070e3d059818d029b11b777230f76e",
+        "roleSet": "3354ab32a7e89c03a119a8bd25fb80135095d0b4a41bbf472b6200828360dd21",
+        "op": {
+          "op": 23,
+          "name": "G9_OP_FLIGHT_PATH",
+          "sourceBytes": 38550,
+          "sourceSHA": "0e21d56573a54b2ec12258e57ff9c5ae6f2a5d0a55c6ffd216a1a56db7638a27",
+          "state": "STATIC_SPIRV",
+          "spv": "role_00000017.spv",
+          "spvBytes": 123696,
+          "spvSHA": "29e0d466a922536acce6727cb4a768a974f333ecaa7faa1875a77202a0ee3e24"
+        },
+        "strippedSHA": "5f8fcc775e1c1bd0fae0078ec979a011655531e7b708891c94f9085a77d34c01",
+        "extensions": [
+          "GL_EXT_shader_explicit_arithmetic_types_int64"
+        ]
+      }
+    ],
+    "traces": [
+      {
+        "file": "test/reports/t927/runs/g15/g15dune-retry.jsonl",
+        "sha": "db18e7a3e51ae41e493d1825fb02d1cbd4c50b9da3c1b4d487fee568b23f3abc",
+        "lines": 121,
+        "last": {
+          "stage": "ROLE_PIPELINE_ENTER",
+          "opcode": 23,
+          "flags": 0,
+          "cache": null,
+          "pushBytes": 20,
+          "commonBytes": 240,
+          "layoutSHA": "a35e2f4d13d0a5759b1fc8e4e64e563d60abf464096ee86a125cb9ffed0b750b",
+          "enterNs": "1667134310206900"
+        },
+        "fileRow": {
+          "stage": "ROLE_FILE",
+          "phase": "VERIFIED",
+          "opcode": 23,
+          "path": ".codex/local-test/t909-g15-dune-release/sand_assets/role_00000017.spv",
+          "expectedBytes": 123696,
+          "actualBytes": 123696,
+          "expectedSHA": "29e0d466a922536acce6727cb4a768a974f333ecaa7faa1875a77202a0ee3e24",
+          "actualSHA": "29e0d466a922536acce6727cb4a768a974f333ecaa7faa1875a77202a0ee3e24",
+          "moduleVkResult": null,
+          "pipelineVkResult": null
+        },
+        "module": {
+          "stage": "ROLE_SHADER_MODULE",
+          "opcode": 23,
+          "enterNs": "1667134310174800",
+          "exitNs": "1667134310198000",
+          "moduleVkResult": 0
+        }
+      },
+      {
+        "file": "test/reports/t927/runs/g15/hang-probe.jsonl",
+        "sha": "fb534c95ec26ff70b7eec19b9a176af9dbad5ce2229368019fe542c04c710b23",
+        "lines": 121,
+        "last": {
+          "stage": "ROLE_PIPELINE_ENTER",
+          "opcode": 23,
+          "flags": 0,
+          "cache": null,
+          "pushBytes": 20,
+          "commonBytes": 240,
+          "layoutSHA": "a35e2f4d13d0a5759b1fc8e4e64e563d60abf464096ee86a125cb9ffed0b750b",
+          "enterNs": "1667078529065300"
+        },
+        "fileRow": {
+          "stage": "ROLE_FILE",
+          "phase": "VERIFIED",
+          "opcode": 23,
+          "path": ".codex/local-test/t909-g15-dune-release/sand_assets/role_00000017.spv",
+          "expectedBytes": 123696,
+          "actualBytes": 123696,
+          "expectedSHA": "29e0d466a922536acce6727cb4a768a974f333ecaa7faa1875a77202a0ee3e24",
+          "actualSHA": "29e0d466a922536acce6727cb4a768a974f333ecaa7faa1875a77202a0ee3e24",
+          "moduleVkResult": null,
+          "pipelineVkResult": null
+        },
+        "module": {
+          "stage": "ROLE_SHADER_MODULE",
+          "opcode": 23,
+          "enterNs": "1667078529029700",
+          "exitNs": "1667078529056000",
+          "moduleVkResult": 0
+        }
+      }
+    ],
+    "baselineControls": [
+      {
+        "file": "test/reports/t923/runs/t924-runs/dm2-baseline-plain-r1.jsonl",
+        "sha": "810d616fe191cf43522e16b02aad56388e0e84a5d5505140fe94567dc024f770",
+        "ms": 1.2462,
+        "layoutSHA": "a35e2f4d13d0a5759b1fc8e4e64e563d60abf464096ee86a125cb9ffed0b750b"
+      },
+      {
+        "file": "test/reports/t923/runs/t924-runs/dm2-baseline-plain-r4.jsonl",
+        "sha": "2e2d910cb6bf45d6a42c42cf19f6d7b0ece63b63c99c7640e7510810aca71617",
+        "ms": 1.1205,
+        "layoutSHA": "a35e2f4d13d0a5759b1fc8e4e64e563d60abf464096ee86a125cb9ffed0b750b"
+      },
+      {
+        "file": "test/reports/t923/runs/t924-runs/dm2-prep-prepare-retired.jsonl",
+        "sha": "e1e6b80a70f2a15bc2cc62dc986a864ecd700d21c09a485f042b92e9fc2ced21",
+        "ms": 1.229,
+        "layoutSHA": "a35e2f4d13d0a5759b1fc8e4e64e563d60abf464096ee86a125cb9ffed0b750b"
+      }
+    ],
+    "semanticallyDifferentEarlierModules": [
+      17,
+      18,
+      20,
+      21,
+      22
+    ]
+  },
+  "off": {
+    "pair": {
+      "state": "CLOCK_OR_INPUT_DIFFERENCE",
+      "action": 1,
+      "left": [
+        1,
+        "DELIVERED",
+        27220900,
+        [
+          1,
+          1,
+          0,
+          0,
+          23,
+          714,
+          "accepted",
+          "PAGE_PULSE_ACCEPTED",
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "right": [
+        1,
+        "DELIVERED",
+        22925800,
+        [
+          1,
+          1,
+          0,
+          0,
+          6,
+          156206,
+          "accepted",
+          "PAGE_PULSE_ACCEPTED",
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "arms": [
+      {
+        "file": "test/reports/t927/runs/off-pair-t926-full/off-1.jsonl",
+        "sha": "b0b4209a1d28d739f8a396ce0f9ee81e2c12dce42796dc3660a145bd27ec1007",
+        "run": "16657905043507",
+        "firstReady": {
+          "stage": "M1_D1_READY",
+          "readyNs": "1665790537152500",
+          "run": "16657905043507",
+          "mode": "OFF",
+          "qpcFrequency": "10000000",
+          "waitMs": 192
+        },
+        "firstAction": {
+          "stage": "M1_D1_ACTION",
+          "id": 1,
+          "kind": 0,
+          "scriptNs": "17000000",
+          "actualNs": "1665790564373400",
+          "callbackQpc": "16657905643734",
+          "nativeReceiptQpc": "16657905643757",
+          "nativeSeq": "1",
+          "session": "1",
+          "state": "DELIVERED"
+        },
+        "firstOwner": {
+          "stage": "M1_D1_PULSE_OWNER",
+          "actionId": 1,
+          "run": "16657905043507",
+          "geometry": "2",
+          "session": "1",
+          "seq": "1",
+          "callbackQpc": "16657905643734",
+          "nativeReceiptQpc": "16657905643757",
+          "ownerQpc": "16657905644471",
+          "outcome": "ACCEPTED",
+          "state": "PAGE_PULSE_ACCEPTED",
+          "generated": 0,
+          "pending": 0,
+          "carry": 0,
+          "overload": 0
+        },
+        "source": {
+          "7": {
+            "outcome": "ACCEPTED",
+            "offer": "1",
+            "root": "16657906729137",
+            "admittedQ20": 126053,
+            "requested": 0.1202136,
+            "deltaNs": 15026700,
+            "commandSHA": "c2387d6e8a02138a2822f5e0c8b2f81b3cdd8c48b78232ffe01748bc4c26ae72"
+          },
+          "29": {
+            "outcome": "REVOKED",
+            "offer": "2"
+          }
+        },
+        "sourceWordSHAs": [
+          [
+            73,
+            "c2387d6e8a02138a2822f5e0c8b2f81b3cdd8c48b78232ffe01748bc4c26ae72",
+            16657906729137
+          ]
+        ],
+        "ownerCoverage": {
+          "revision": "M1_D1_OWNER_COVERAGE_V1",
+          "complete": true,
+          "loss": 0,
+          "producerQueued": 29,
+          "sessions": [
+            {
+              "session": "1",
+              "queued": 29,
+              "accepted": 28,
+              "rejected": 0,
+              "revoked": 1,
+              "queuedMask": "536870911",
+              "terminalMask": "536870911"
+            }
+          ]
+        },
+        "retire": 0
+      },
+      {
+        "file": "test/reports/t927/runs/off-pair-t926-full/off-2.jsonl",
+        "sha": "48fe8b25209b1b5d285ed0d076025ef30687bb16182e9d5b2e8dbde1b4b83547",
+        "run": "16657916336679",
+        "firstReady": {
+          "stage": "M1_D1_READY",
+          "readyNs": "1665791658633600",
+          "run": "16657916336679",
+          "mode": "OFF",
+          "qpcFrequency": "10000000",
+          "waitMs": 142
+        },
+        "firstAction": {
+          "stage": "M1_D1_ACTION",
+          "id": 1,
+          "kind": 0,
+          "scriptNs": "17000000",
+          "actualNs": "1665791681559400",
+          "callbackQpc": "16657916815594",
+          "nativeReceiptQpc": "16657916815600",
+          "nativeSeq": "1",
+          "session": "1",
+          "state": "DELIVERED"
+        },
+        "firstOwner": {
+          "stage": "M1_D1_PULSE_OWNER",
+          "actionId": 1,
+          "run": "16657916336679",
+          "geometry": "2",
+          "session": "1",
+          "seq": "1",
+          "callbackQpc": "16657916815594",
+          "nativeReceiptQpc": "16657916815600",
+          "ownerQpc": "16657916971806",
+          "outcome": "ACCEPTED",
+          "state": "PAGE_PULSE_ACCEPTED",
+          "generated": 0,
+          "pending": 0,
+          "carry": 0,
+          "overload": 0
+        },
+        "source": {
+          "7": {
+            "outcome": "ACCEPTED",
+            "offer": "1",
+            "root": "16657917912881",
+            "admittedQ20": 135686,
+            "requested": 0.1294008,
+            "deltaNs": 16175100,
+            "commandSHA": "bd7cff053f772698427e42249daa6b9985e9063a6d49cea7c324b30a01f1df49"
+          },
+          "29": {
+            "outcome": "EXPIRED",
+            "offer": "2",
+            "reason": "STALE_ENDPOINT",
+            "ageNs": 139978600
+          }
+        },
+        "sourceWordSHAs": [
+          [
+            62,
+            "bd7cff053f772698427e42249daa6b9985e9063a6d49cea7c324b30a01f1df49",
+            16657917912881
+          ]
+        ],
+        "ownerCoverage": {
+          "revision": "M1_D1_OWNER_COVERAGE_V1",
+          "complete": true,
+          "loss": 0,
+          "producerQueued": 48,
+          "sessions": [
+            {
+              "session": "1",
+              "queued": 48,
+              "accepted": 48,
+              "rejected": 0,
+              "revoked": 0,
+              "queuedMask": "281474976710655",
+              "terminalMask": "281474976710655"
+            }
+          ]
+        },
+        "retire": 0
+      }
+    ]
+  }
+}
