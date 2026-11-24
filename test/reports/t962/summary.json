@@ -1,0 +1,84 @@
+{
+ "schema": "T962_G14_ANALYTIC_GPU_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924,
+  "shaderFloat64": true
+ },
+ "packages": {
+  "pe": "t957-dm2-baseline 8168be2d (manifest 51cb1aaf, geometry f002ef06, transport e4d49107, audit 7c3589b5 \u2014 all SHA verified)"
+ },
+ "capabilityGate": "HostDevice::Open(requireFloat64) G14_FLOAT64_UNAVAILABLE path live-checked; UHD 630 shaderFloat64=true recorded in G14_DEVICE row; FREEZE 1+2^-30 split verified by zero first-error on all positive arms",
+ "positives": {
+  "A": {
+   "state": "ANALYTIC_SEALED",
+   "dispatches": 8,
+   "interval": "c0149571 sealed",
+   "params": "L=0.1 H=0.025 rho=1000 mu=0.01 P0=1.0 ref=0.2"
+  },
+  "A-reverse": {
+   "state": "ANALYTIC_SEALED"
+  },
+  "A-gauge": {
+   "state": "ANALYTIC_SEALED",
+   "note": "gauge variant accepted (vs A-bad-gauge reason 9 \u2014 gauge check live)"
+  },
+  "B": {
+   "state": "MANUFACTURED_SEALED",
+   "kind": "MANUFACTURED",
+   "openFaceFlux": "entries at FLUX_BASE with sign bits + Q24 positions live"
+  },
+  "C-20x10": {
+   "state": "ANALYTIC_SEALED",
+   "roots": 25,
+   "totalIntervals": 30,
+   "durationSec": 0.9
+  },
+  "C-40x20": {
+   "state": "ANALYTIC_SEALED",
+   "roots": 50,
+   "totalIntervals": 73,
+   "durationSec": 2.4
+  },
+  "common": "producerFence VkResult=0, read/retired vk=0, identity=true, reason=0, typedToken/commit/acceptedRoot all null (private no-publish), children sealed with SHA"
+ },
+ "negatives": {
+  "A-bad-gauge": {
+   "exit": 1,
+   "state": "GPU_REJECTED",
+   "reason": 9,
+   "snapshot": "d0149571",
+   "detail": "measured/expected Real64 pair captured"
+  },
+  "B-closed": {
+   "exit": 1,
+   "reason": 6,
+   "snapshot": "d0149571"
+  },
+  "B-closed-flux": {
+   "exit": 1,
+   "reason": 4,
+   "snapshot": "d0149571"
+  },
+  "B-wrong-sign": {
+   "exit": 1,
+   "reason": 10,
+   "snapshot": "d0149571"
+  },
+  "B-wrong-time": {
+   "exit": 1,
+   "reason": 3,
+   "snapshot": "none (FREEZE-stage rejection)"
+  },
+  "B-wrong-generation": {
+   "exit": 1,
+   "reason": 2,
+   "snapshot": "none (identity rejection)"
+  },
+  "note": "six independent rejection reasons 9/6/4/10/3/2 \u2014 no cross-talk"
+ },
+ "conservation": "GPU-side: interval seals + zero first-error + per-root children SHA; numeric reference (3.56e-20/1.74e-20 m^2 max balances) verified offline by T957 developer; same-root originals archived",
+ "scope": "analytic small-domain only; no CPU material or static substitution; formal T611 still gated on goal-13",
+ "verdict": "PASS: capability gate + 6/6 positive seals + 6/6 independent negative rejections + real fence + private no-publish"
+}
