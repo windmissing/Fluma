@@ -1,5 +1,6 @@
 constexpr char kM1CandidateSHA[] = "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c";
 constexpr char kM1InventoryV1SHA[] = "9b2ceaa612225e28e9f472ed59e53670b6edf2dbbd108e3b43bb8f38e01bc8ed";
+constexpr char kM1AngleWitnessSHA[] = "993836a50157c2f2d87cfc1f6c786ed05ed6beff09880a613f8b69bd5f0626da";
 constexpr char kM1CommitSHA[] = "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce";
 
 bool Boot::ClaimM1(m1::ProgressClockV2 &clock,uint64_t hold,bool source,m1::PlanGrantV2 &grant) {
@@ -203,7 +204,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   constexpr auto block = 20*sizeof(uint32_t);
   constexpr char sourceSHA[] = "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162";
   const bool interactive = !attempt.m1QuantumCandidate.empty();
-  const char *candidateSHA=attempt.m1InventoryV1 ? kM1InventoryV1SHA : kM1CandidateSHA;
+  const char *candidateSHA=attempt.m1InventoryV1 ? kM1InventoryV1SHA :
+      attempt.m1AngleWitness ? kM1AngleWitnessSHA : kM1CandidateSHA;
   const bool fullM1=interactive && attempt.m1DualSource;
   const uint32_t emitQ=fullM1 ? 16u*1048576u : 1048576u;
   auto narrow = [](uint64_t value) { return grs::U64{uint32_t(value), uint32_t(value >> 32)}; };
@@ -919,9 +921,12 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     return buffers[preview || !interactive ? kM1Pub : accepted.publication ? kM1QPubAlt : kM1QPub].handle;
   };
   bool roiPending=false,roiTerminal=false;
+  bool havePacketRegions=false;
+  std::array<pc::M1Rect,3> packetRegions{};
   const auto roiWanted=[&] { return attempt.m1Observation.Includes(businessPresents+1); };
   pc::PresentObservations wsiObservation{preview};
   wsiObservation.timing=attempt.m1Trace || attempt.m1OneQuantumGrant || attempt.m1StageTiming;
+  if (attempt.m1StageTiming) wsiObservation.timestampBits=candidate.timestampBits;
   if (attempt.gravityDisplay) wsiObservation.gravityIndicator=[&] {
     if (!leased || accepted.completion[27]!=2) return std::array<int32_t,3>{0,0,1};
     const auto angle=int32_t(accepted.completion[107]);
@@ -934,8 +939,24 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     const auto align=std::max<VkDeviceSize>(4,candidate.properties.limits.optimalBufferCopyOffsetAlignment);
     wsiObservation.roiStride=(1024+align-1)/align*align;
     Allocate(kM1PixelStaging,4*wsiObservation.roiStride,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
-    wsiObservation.requestedRoi=[&]() -> const std::array<pc::M1Rect,3>* {
-      return roiWanted() && leased ? &attempt.m1Observation.regions : nullptr;
+    wsiObservation.requestedRoi=[&](uint32_t width,uint32_t height) -> const std::array<pc::M1Rect,3>* {
+      if (!roiWanted() || !leased) return nullptr;
+      if (!attempt.m1Observation.packetId) return &attempt.m1Observation.regions;
+      if (m1PacketSample.nonce!=wide(lease.nonce) || width<24 || height<8) return nullptr;
+      if (!m1PacketSample.mass) return havePacketRegions ? &packetRegions : nullptr;
+      float x=0,y=0;
+      std::memcpy(&x,&m1PacketSample.xBits,4);
+      std::memcpy(&y,&m1PacketSample.yBits,4);
+      if (!std::isfinite(x) || !std::isfinite(y) || x<0 || x>=128 || y<0 || y>256) return nullptr;
+      const auto cx=uint32_t(x/128*width), cy=uint32_t((1-y/256)*height);
+      const auto radius=uint32_t(std::ceil(2*std::sqrt(m1PacketSample.mass/131072.)));
+      const auto left=std::clamp<int64_t>(int64_t(cx)-4,0,width-8);
+      const auto top=std::clamp<int64_t>(int64_t(cy)-4,0,height-8);
+      const auto neighbor=cx+radius+9<width ? cx+radius+1 : cx>radius+8 ? cx-radius-8 : width-8;
+      packetRegions={pc::M1Rect{uint32_t(left),uint32_t(top),8,8},
+                     pc::M1Rect{neighbor,uint32_t(top),8,8},pc::M1Rect{uint32_t(left),height-8,8,8}};
+      havePacketRegions=true;
+      return &packetRegions;
     };
     fields << ",\"m1ObservationRequestedFrame\":\"" << attempt.m1Observation.frame << "\"";
     fields << ",\"m1ObservationSeries\":" << attempt.m1Observation.series << ",\"m1Kappa\":" << attempt.m1Kappa;
@@ -1083,9 +1104,9 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
           return;
         }
         reportCold();
-        if (roiWanted() && visible.roi.state) {
+        if (roiWanted() && (visible.roi.state || attempt.m1Observation.packetId)) {
           const auto &r=visible.roi;
-          fields << ",\"m1Observation\":{\"state\":" << Quote(r.state)
+          fields << ",\"m1Observation\":{\"state\":" << Quote(r.state ? r.state : "PACKET_ROI_UNAVAILABLE")
                  << ",\"frame\":\"" << businessPresents+1 << '"'
                  << ",\"root\":\"" << wide(lease.nonce) << "\",\"slot\":" << accepted.publication
                  << ",\"generation\":\"" << wide(lease.generation) << "\",\"geometry\":\"" << attempt.geometry
@@ -1101,7 +1122,14 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
             if (i) fields << ',';
             fields << '[' << rect.x << ',' << rect.y << ',' << rect.width << ',' << rect.height << ']';
           }
-          fields << "]}";
+          fields << ']';
+          if (attempt.m1Observation.packetId)
+            fields << ",\"packetId\":" << attempt.m1Observation.packetId
+                   << ",\"packetGeneration\":" << attempt.m1Observation.packetGeneration
+                   << ",\"packetSampleRoot\":\"" << m1PacketSample.nonce
+                   << "\",\"packetMass\":" << m1PacketSample.mass
+                   << ",\"packetXBits\":" << m1PacketSample.xBits << ",\"packetYBits\":" << m1PacketSample.yBits;
+          fields << '}';
           roiPending=r.size!=0 || attempt.m1Observation.series;
           roiTerminal=!roiPending;
         }
@@ -1150,6 +1178,13 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
                   << "\",\"graphicsSubmitExitQpc\":\"" << visible.graphicsSubmitExit
                   << "\",\"graphicsFenceExitQpc\":\"" << visible.graphicsFenceExit << '"';
          fields << "}";
+        if (attempt.m1StageTiming)
+          fields << ",\"m1GraphicsGpu\":{\"nonce\":\"" << wide(lease.nonce)
+                 << "\",\"generation\":\"" << wide(lease.generation) << "\",\"fence\":\"" << visible.graphicsFence
+                 << "\",\"validBits\":" << candidate.timestampBits << ",\"periodNs\":" << candidate.properties.limits.timestampPeriod
+                 << ",\"queryVkResult\":" << int(visible.graphicsQueryResult)
+                 << ",\"drawBeginDrawEndCopyEndTicks\":" << Words(visible.graphicsTicks)
+                 << ",\"available\":" << Words(visible.graphicsAvailable) << '}';
         publish(Receipt(interactive ? "M1_QUANTUM_PRESENT_QUEUED" : "M1_DRY_SOURCE_PRESENT_QUEUED", ""));
       }, buffers[kM1Pub].bytes, !interactive, nextPublication, fullM1, captureBusy,wsiObservation);
   reportCold();

@@ -36,3 +36,13 @@ $exe = '.codex/local-test/t909-dm2-release/t909_angle_probe.exe'
 ## 核证与交接
 
 Windows 两条 Release 构建通过，新增 shader 完成 SPIR-V 验证，最大新增完整 shader 输入 24,056 B。G13 原 30 个模块 SHA 保持一致。现有 T910 离线自检通过，读取 T904 的 10 份已封存原档通过，PowerShell 和 Python 脚本语法通过。未取得本轮集显/目标独显 GPU 原件。effector 可先采①–④及孤立大角度算子；其余实现沿 T907/T908 由 developer 接续。滴答搜索 T909 无结果，本地保留回执。
+
+## 续接交付
+
+- Win32 新工件 `.codex/local-test/t909-r2-ninja/hello_world_pc.exe`，SHA-256 `d37e45b9f2a2832ab41b6141335b92bf5de24d51e66baa87558863997cb30124`。此前工件保留供 T912 对照。
+- `--m1-angle-witness-v1` 配套 `.codex/local-test/t909-angle-witness/quantum_candidate_angle_witness_v1.spv`。该候选保留原角表与裁限判据，独立写 12 个 GPU 证据字，含 nonce、合法角上下界、两侧首个限制面、四个前态床高及切线界。面号 127 表示默认角表界。收据只在同根接受后给出，Completion 和独立 replay 兼容。与库存候选分臂，构建使用原 inventory 生成器加 `--angle-witness`。
+- `--m1-observe-packet REQUEST PREFIX` 的请求文件含 `firstFrame count packetId generation` 四个整数，搭配 `--m1-dual-source`。根据已接受 publication 的位置定 8×8 包中心、近邻及底部 ROI，包离开后复采上一次位置。原件另记 packet 样本根、mass 和 FP32 字。包出现、同根和是否被遮挡由独立 checker 分别判。
+- `--m1-stage-timing` 新增真实图形提交内 draw 起止和 copy 尾的设备原始 tick。收据绑定同根、publication 代及 graphics fence，缺点位保可用位和原 VkResult。
+- `g15-pose` 使用 T843 一秒 quintic 的端点和 T907 的整数 1/7680 s 时间，GPU 两肢计算后 RNE 到 Q8，读取同一 ±45° 角表并写定点面支撑结果。静止/正反向端点及 85°/s 边界有具名输入范围。新诊断宿主 `.codex/local-test/t909-r2-dm2-release/t909_angle_probe.exe` 的 SHA-256 为 `fd76d1991562195954066a2ce1472684658a4eaffbf30d1d8988ea8dcbcfb781`。同上构建脚本输出 `g15_pose_v1.spv`。输入 LE `<iiiIII`（列宽、起止角 Q8、局部时间 tick、摩擦 Q16、面数）随后是有符号床差。输出每面 `<qqiIiI`（驱动力、法向、方向、状态、取样角、取样 tick）。
+
+两条 Release 构建、SPIR-V 验证和 T910 回归通过。G15 连续姿态和面支撑已能合并诊断，DM2 物理事务中的搬移、来源与能量审计、typed 接受及场景仍待接入。G16 多盘扩域按清单等待 T912 孤立算子实测及接口回执。新增候选的端到端 PC 原件由 effector 复采。

@@ -59,7 +59,7 @@ struct Commands {
   }
 
   VkResult Run(const std::vector<uint32_t> &module,const std::vector<std::vector<uint32_t>> &input,
-               const VulkanOwner::Readback &output) {
+               const VulkanOwner::Readback &output,uint32_t groups) {
     const auto d=gpu.device;
     const uint32_t count=uint32_t(input.size()+1);
     std::array<VkDescriptorSetLayoutBinding,3> bindings{};
@@ -116,7 +116,7 @@ struct Commands {
     barrier(VK_PIPELINE_STAGE_TRANSFER_BIT,VK_ACCESS_TRANSFER_WRITE_BIT,VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,VK_ACCESS_SHADER_READ_BIT);
     F(CmdBindPipeline)(command,VK_PIPELINE_BIND_POINT_COMPUTE,pipeline);
     F(CmdBindDescriptorSets)(command,VK_PIPELINE_BIND_POINT_COMPUTE,layout,0,1,&set,0,nullptr);
-    F(CmdDispatch)(command,count==3 ? (input.front()[3]+63)/64 : 1,1,1);
+    F(CmdDispatch)(command,groups,1,1);
     barrier(VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,VK_ACCESS_SHADER_WRITE_BIT,VK_PIPELINE_STAGE_HOST_BIT,VK_ACCESS_HOST_READ_BIT);
     RequireVk(F(EndCommandBuffer)(command),"PROBE_END");
     VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
@@ -146,16 +146,20 @@ struct Commands {
 int wmain(int argc,wchar_t **argv) {
   using namespace grs::pc::sand;
   try {
-    const bool g15=argc>=2 && std::wstring_view(argv[1])==L"g15";
+    const bool pose=argc>=2 && std::wstring_view(argv[1])==L"g15-pose";
+    const bool g15=pose || (argc>=2 && std::wstring_view(argv[1])==L"g15");
     const bool g16=argc>=2 && std::wstring_view(argv[1])==L"g16";
-    RequireHost((g15 && argc==6)||(g16 && argc==5),"USE: (g15 MODULE INPUT ANGLES OUTPUT) | (g16 MODULE INPUT OUTPUT)");
+    RequireHost((g15 && argc==6)||(g16 && argc==5),"USE: (g15|g15-pose MODULE INPUT ANGLES OUTPUT) | (g16 MODULE INPUT OUTPUT)");
     const auto module=Read(argv[2],64*1024);
-    RequireHost(Digest(module)==(g15 ? "0744d45f428c56064089cff52dafa08e189f80bed0eaca817e13fbb4ad069fd0" :
+    RequireHost(Digest(module)==(pose ? "21452cbf2441d19b0feb386488548bc7d3833d6587e871b631c3df6954ee5086" :
+                                g15 ? "0744d45f428c56064089cff52dafa08e189f80bed0eaca817e13fbb4ad069fd0" :
                                     "cc1c655f6ac151fb499c9b3e2894233a4d713482633f4986e08601b03117dc8b"),"PROBE_MODULE_SHA");
-    std::vector<std::vector<uint32_t>> input{Read(argv[3],(4+127)*4)};
+    std::vector<std::vector<uint32_t>> input{Read(argv[3],(6+127)*4)};
     const auto &body=input.front();
-    RequireHost(g15 ? body.size()>=5 && body[3]<=127 && body.size()==4+body[3] : body.size()==13,"PROBE_INPUT_ABI");
-    const size_t bytes=g15 ? size_t(body[3])*24 : 36;
+    const size_t header=pose ? 6 : 4;
+    const uint32_t faces=g15 && body.size()>=header ? body[header-1] : 0;
+    RequireHost(g15 ? faces && faces<=127 && body.size()==header+faces : body.size()==13,"PROBE_INPUT_ABI");
+    const size_t bytes=g15 ? size_t(faces)*(pose ? 32 : 24) : 36;
     if (g15) {
       input.push_back(Read(argv[4],184328));
       RequireHost(Digest(input.back())=="6278b4a06d704df8439b3291b1c3abff608a42049c4837720e6745a4b272ad61","ANGLE_TABLE_SHA");
@@ -166,7 +170,7 @@ int wmain(int argc,wchar_t **argv) {
     gpu.Open(false);
     const auto output=gpu.Allocate(bytes,VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,true).Readback();
     Commands commands{gpu};
-    RequireVk(commands.Run(module,input,output),"PROBE_RESULT");
+    RequireVk(commands.Run(module,input,output,g15 ? (faces+63)/64 : 1),"PROBE_RESULT");
     std::ofstream file(destination,std::ios::binary);
     RequireHost(bool(file.write(reinterpret_cast<const char *>(output.words),bytes)),"PROBE_OUTPUT_WRITE");
     return 0;

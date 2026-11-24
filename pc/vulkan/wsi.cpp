@@ -34,6 +34,8 @@ struct Presentation {
   VkShaderModule vertex = VK_NULL_HANDLE, fragment = VK_NULL_HANDLE;
   VkCommandPool commandPool = VK_NULL_HANDLE;
   VkFence acquired = VK_NULL_HANDLE, submitted = VK_NULL_HANDLE;
+  VkQueryPool timestamps=VK_NULL_HANDLE;
+  PFN_vkDestroyQueryPool destroyTimestamps=nullptr;
   bool inFlight = false;
 
 #define DECLARE(n) PFN_vk##n n = nullptr;
@@ -54,6 +56,7 @@ struct Presentation {
 
   ~Presentation() {
     if (inFlight) vk.DeviceWaitIdle(device);
+    if (timestamps) destroyTimestamps(device,timestamps,nullptr);
     if (submitted) vk.DestroyFence(device, submitted, nullptr);
     if (acquired) vk.DestroyFence(device, acquired, nullptr);
     if (commandPool) vk.DestroyCommandPool(device, commandPool, nullptr);
@@ -267,6 +270,18 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     VkFenceCreateInfo fence{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
     Check(vk.CreateFence(device,&fence,nullptr,&wsi.acquired),"vkCreateFence.ACQUIRE");
     Check(vk.CreateFence(device,&fence,nullptr,&wsi.submitted),"vkCreateFence.GRAPHICS");
+    auto createQueries=reinterpret_cast<PFN_vkCreateQueryPool>(vk.GetDeviceProcAddr(device,"vkCreateQueryPool"));
+    auto resetQueries=reinterpret_cast<PFN_vkCmdResetQueryPool>(vk.GetDeviceProcAddr(device,"vkCmdResetQueryPool"));
+    auto markQuery=reinterpret_cast<PFN_vkCmdWriteTimestamp>(vk.GetDeviceProcAddr(device,"vkCmdWriteTimestamp"));
+    auto readQueries=reinterpret_cast<PFN_vkGetQueryPoolResults>(vk.GetDeviceProcAddr(device,"vkGetQueryPoolResults"));
+    wsi.destroyTimestamps=reinterpret_cast<PFN_vkDestroyQueryPool>(vk.GetDeviceProcAddr(device,"vkDestroyQueryPool"));
+    if (observation.timestampBits && createQueries && resetQueries && markQuery && readQueries && wsi.destroyTimestamps) {
+      VkQueryPoolCreateInfo info{VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO};
+      info.queryType=VK_QUERY_TYPE_TIMESTAMP;
+      info.queryCount=3;
+      frame.graphicsQueryResult=createQueries(device,&info,nullptr,&wsi.timestamps);
+      if (frame.graphicsQueryResult!=VK_SUCCESS) wsi.timestamps=VK_NULL_HANDLE;
+    }
     VkCommandPoolCreateInfo pool{VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO};
     pool.queueFamilyIndex = family;
     Check(vk.CreateCommandPool(device, &pool, nullptr, &wsi.commandPool), "vkCreateCommandPool.GRAPHICS");
@@ -293,6 +308,10 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
       begin.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
       Check(vk.BeginCommandBuffer(command, &begin), "vkBeginCommandBuffer.GRAPHICS");
+      if (wsi.timestamps) {
+        resetQueries(command,wsi.timestamps,0,3);
+        markQuery(command,VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,wsi.timestamps,0);
+      }
       VkMemoryBarrier compute{VK_STRUCTURE_TYPE_MEMORY_BARRIER, nullptr,
                               VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT};
       vk.CmdPipelineBarrier(command, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
@@ -314,6 +333,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       }
       wsi.CmdDraw(command, 3, 1, 0, 0);
       wsi.CmdEndRenderPass(command);
+      if (wsi.timestamps) markQuery(command,VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,wsi.timestamps,1);
 
       VkImageMemoryBarrier imageBarrier{VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER};
       imageBarrier.srcQueueFamilyIndex = imageBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
@@ -334,7 +354,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       ++frame.serial;
       frame.graphicsFence=reinterpret_cast<uintptr_t>(wsi.submitted);
       frame.roi={};
-      const auto *regions=!frame.empty && observation.requestedRoi ? observation.requestedRoi() : nullptr;
+      const auto *regions=!frame.empty && observation.requestedRoi ? observation.requestedRoi(extent.width,extent.height) : nullptr;
       if (regions) {
         frame.roi.regions=*regions;
         bool fits=observation.roiStride>=1024 && observation.roiStride%4==0;
@@ -362,6 +382,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       vk.CmdPipelineBarrier(command, VK_PIPELINE_STAGE_TRANSFER_BIT,
                             VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
                             0, 1, &host, 0, nullptr, 1, &imageBarrier);
+      if (wsi.timestamps) markQuery(command,VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,wsi.timestamps,2);
       Check(vk.EndCommandBuffer(command), "vkEndCommandBuffer.GRAPHICS");
       if (!current()) {
         frame.stale = true;
@@ -380,6 +401,15 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       if (observation.timing) frame.graphicsFenceExit=QpcTicks();
       if (captureBusy) captureBusy(BusyPhase::GraphicsFence,false,frame.fence==VK_SUCCESS && current());
       Check(frame.fence, "vkWaitForFences.GRAPHICS");
+      if (wsi.timestamps) {
+        std::array<std::array<uint64_t,2>,3> samples{};
+        frame.graphicsQueryResult=readQueries(device,wsi.timestamps,0,3,sizeof(samples),samples.data(),sizeof(samples[0]),
+                                               VK_QUERY_RESULT_64_BIT|VK_QUERY_RESULT_WITH_AVAILABILITY_BIT);
+        for (size_t i=0;i<samples.size();++i) {
+          frame.graphicsTicks[i]=samples[i][0];
+          frame.graphicsAvailable[i]=samples[i][1];
+        }
+      }
       void *mapped = nullptr;
       Check(vk.MapMemory(device, stagingMemory, 0, VK_WHOLE_SIZE, 0, &mapped), "vkMapMemory.PIXEL");
       VkResult invalidation = VK_SUCCESS;

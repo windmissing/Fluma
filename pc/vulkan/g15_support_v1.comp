@@ -2,16 +2,73 @@
 #extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
 layout(local_size_x=64) in;
 // SI-derived slope and width must use the same integer length unit.
+#ifdef G15_POSE
+layout(std430,binding=0) readonly buffer Input {
+    int width,startQ8,endQ8; uint tick,muQ16,faceCount; int slope[];
+};
+#else
 layout(std430,binding=0) readonly buffer Input { int width; int angleQ8; uint muQ16; uint faceCount; int slope[]; };
+#endif
 layout(std430,binding=1) readonly buffer Angles { ivec2 projection[]; };
-struct Face { int64_t drive; int64_t normal; int direction; uint state; };
+struct Face { int64_t drive; int64_t normal; int direction; uint state;
+#ifdef G15_POSE
+    int sampledAngleQ8; uint sampledTick;
+#endif
+};
 layout(std430,binding=2) writeonly buffer Output { Face face[]; };
 const int64_t Q20=1048576l;
 
+#ifdef G15_POSE
+// The T843 one-second quintic is sampled on the T907 1/7680 s grid.
+// All products fit the two-limb domain before rounding to the angle table.
+u64vec2 mulWord(u64vec2 a,uint b) {
+    uint64_t low=(a.x&0xfffffffful)*b, upper=(a.x>>32)*b;
+    uint64_t word=low+(upper<<32);
+    return u64vec2(word,a.y*b+(upper>>32)+uint64_t(word<low));
+}
+int compareWide(u64vec2 a,u64vec2 b) {
+    if(a.y!=b.y)return a.y<b.y?-1:1;
+    return a.x==b.x?0:a.x<b.x?-1:1;
+}
+bool poseAt(out int angle) {
+    angle=0;
+    if(tick>7680u||startQ8< -11520||startQ8>11520||endQ8< -11520||endQ8>11520)return false;
+    int delta=endQ8-startQ8,sign=delta<0?-1:1;
+    uint size=uint(abs(delta)),d=7680u,n=tick;
+    if(15u*size>8u*85u*256u)return false;
+    uint m=d-n;
+    // 10 d² - 15 d n + 6 n² = d² + 3 d m + 6 m².
+    uint factor=d*d+3u*d*m+6u*m*m;
+    u64vec2 numerator=mulWord(mulWord(u64vec2(uint64_t(n)*n*n,0ul),factor),size);
+    u64vec2 denominator=mulWord(u64vec2(uint64_t(d)*d*d*d,0ul),d);
+    uint lo=0u,hi=size+1u;
+    while(hi-lo>1u){
+        uint mid=lo+(hi-lo)/2u;
+        if(compareWide(mulWord(denominator,mid),numerator)<=0)lo=mid;else hi=mid;
+    }
+    angle=startQ8+sign*int(lo);
+    int halfCompare=compareWide(mulWord(numerator,2u),mulWord(denominator,2u*lo+1u));
+    if(halfCompare>0||(halfCompare==0&&(angle&1)!=0))angle+=sign;
+    return true;
+}
+shared int groupAngle;
+shared bool groupValid;
+#endif
+
 void main() {
+#ifdef G15_POSE
+    if(gl_LocalInvocationIndex==0u)groupValid=poseAt(groupAngle);
+    barrier();
+    int angleQ8=groupAngle;
+#endif
     uint i=gl_GlobalInvocationID.x;
     if (i>=faceCount||i>=face.length()) return;
+#ifdef G15_POSE
+    Face result=Face(0l,0l,0,1u,angleQ8,tick);
+    if(!groupValid){face[i]=result;return;}
+#else
     Face result=Face(0l,0l,0,1u);
+#endif
     if (faceCount<=127u && i<slope.length() && projection.length()==23041 &&
         angleQ8>= -11520 && angleQ8<=11520 && width>0 && width<=16777216 && muQ16<=65536u) {
         int64_t dx=int64_t(width), db=int64_t(slope[i]);

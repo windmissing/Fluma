@@ -36,6 +36,7 @@ struct Window {
   bool dualSource = false;
   bool m1Preview=false, m1GravityEnabled=false;
   bool gravityClick=false,m1StageTiming=false,g13TailTiming=false,m1InventoryV1=false,g13SealV1=false;
+  bool m1AngleWitness=false;
   uint32_t m1Kappa=24;
   bool m1OneQuantumGrant=false;
   grs::pc::M1Gravity gravity;
@@ -676,7 +677,7 @@ struct Window {
                                                },observation,m1OneQuantumGrant,t899SlotSnapshot,
                                                m1GravityEnabled ? std::function<void(grs::pc::M1GravityDisplay)>(
                                                    [&](grs::pc::M1GravityDisplay value) { SetGravityDisplay(value); }) : nullptr,
-                                               m1Kappa,m1StageTiming,g13TailTiming,m1InventoryV1,g13SealV1},
+                                               m1Kappa,m1StageTiming,g13TailTiming,m1InventoryV1,g13SealV1,m1AngleWitness},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
@@ -878,17 +879,25 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--g13-seal-v1")) window.g13SealV1=true;
     else if (!std::wcscmp(argv[i], L"--m1-stage-timing")) window.m1StageTiming=true;
     else if (!std::wcscmp(argv[i],L"--m1-inventory-v1")) window.m1InventoryV1=true;
+    else if (!std::wcscmp(argv[i],L"--m1-angle-witness-v1")) window.m1AngleWitness=true;
     else if (!std::wcscmp(argv[i], L"--m1-observe-kappa-zero")) window.m1Kappa=0;
-    else if ((!std::wcscmp(argv[i], L"--m1-observe") || !std::wcscmp(argv[i], L"--m1-observe-series")) && i+2<argc) {
+    else if ((!std::wcscmp(argv[i], L"--m1-observe") || !std::wcscmp(argv[i], L"--m1-observe-series") ||
+              !std::wcscmp(argv[i], L"--m1-observe-packet")) && i+2<argc) {
       if (window.observation.frame) return 2;
-      const bool series=!std::wcscmp(argv[i],L"--m1-observe-series");
+      const bool packet=!std::wcscmp(argv[i], L"--m1-observe-packet");
+      const bool series=packet || !std::wcscmp(argv[i],L"--m1-observe-series");
       std::ifstream request{std::filesystem::path(argv[++i])};
       if (!(request >> window.observation.frame) || !window.observation.frame ||
           window.observation.frame>1000000) return 2;
       if (series && (!(request >> window.observation.series) || !window.observation.series ||
                      window.observation.series>120)) return 2;
-      for (auto &r:window.observation.regions)
-        if (!(request >> r.x >> r.y >> r.width >> r.height) || !grs::pc::Fits(r,INT_MAX,INT_MAX)) return 2;
+      if (packet) {
+        if (!(request >> window.observation.packetId >> window.observation.packetGeneration) ||
+            !window.observation.packetId || !window.observation.packetGeneration) return 2;
+      } else {
+        for (auto &r:window.observation.regions)
+          if (!(request >> r.x >> r.y >> r.width >> r.height) || !grs::pc::Fits(r,INT_MAX,INT_MAX)) return 2;
+      }
       std::string extra;
       if (request >> extra) return 2;
       window.observation.archivePrefix=argv[++i];
@@ -916,7 +925,7 @@ int wmain(int argc, wchar_t **argv) {
                    "[--m1-d1-replay-prefix PATH] "
                    "[--m1-dual-source] | --qualify-t849-writes FILE | --g13-candidate FILE "
                    "[--m1-empty-preview] [--m1-manual-gravity] [--m1-observe REQUEST PREFIX] [--m1-observe-series REQUEST PREFIX] "
-                   "[--m1-one-quantum-grant] [--m1-stage-timing] [--m1-observe-kappa-zero] [--m1-inventory-v1] "
+                   "[--m1-one-quantum-grant] [--m1-stage-timing] [--m1-observe-kappa-zero] [--m1-inventory-v1] [--m1-angle-witness-v1] "
                    "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] [--g13-f05-rest] "
                    "[--g13-revoke-before | --g13-revoke-after] [--g13-diagnostics full|hot] [--g13-slot-snapshot] [--g13-tail-timing] [--g13-seal-v1]]\n";
       return 2;
@@ -943,7 +952,9 @@ int wmain(int argc, wchar_t **argv) {
   if (!window.t877Mode.empty() && window.t833CandidateFile.empty()) return 2;
   if ((window.g13TailTiming || window.g13SealV1) && window.t877Mode.empty()) return 2;
   if ((window.m1StageTiming || window.m1InventoryV1) && window.m1QuantumCandidate.empty()) return 2;
+  if (window.m1AngleWitness && (window.m1QuantumCandidate.empty() || window.m1InventoryV1)) return 2;
   if (window.observation.series && !window.d1Mode.empty()) return 2;
+  if (window.observation.packetId && !window.dualSource) return 2;
   if (window.m1Kappa==0 && (!window.dualSource || !window.observation.frame)) return 2;
   if (window.t899SlotSnapshot && window.t877Mode.empty()) return 2;
   if (!window.t833CandidateFile.empty() && (window.steady || !window.m1SourceModule.empty())) return 2;

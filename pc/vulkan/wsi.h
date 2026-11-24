@@ -17,6 +17,8 @@ struct Frame {
   uint32_t width = 0, height = 0, format = 0, images = 0, imageIndex = UINT32_MAX;
   uint64_t presentEnter = 0, presentExit = 0;
   uint64_t graphicsSubmitEnter=0,graphicsSubmitExit=0,graphicsFenceExit=0;
+  std::array<uint64_t,3> graphicsTicks{},graphicsAvailable{};
+  VkResult graphicsQueryResult=VK_NOT_READY;
   uint32_t pixel = 0;
   bool pixelRead = false, stale = false;
   bool empty=false;
@@ -35,8 +37,9 @@ using PresentBusy = std::function<void(g13vk::M1HotCapture::Phase,bool,bool)>;
 struct PresentObservations {
   bool emptyFirst=false;
   bool timing=false;
+  uint32_t timestampBits=0;
   VkDeviceSize roiStride=0;
-  std::function<const std::array<M1Rect,3>*()> requestedRoi;
+  std::function<const std::array<M1Rect,3>*(uint32_t width,uint32_t height)> requestedRoi;
   std::function<std::array<int32_t,3>()> gravityIndicator; // sin/cos Q20 and state
 };
 Frame PresentBoot(g13vk::VulkanApi &, VkInstance, VkPhysicalDevice, VkDevice, VkQueue,

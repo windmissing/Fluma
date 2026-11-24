@@ -30,6 +30,8 @@ constexpr uint32_t header = column+2048, stateWords = header+256;
 constexpr uint32_t sandIndex=32, waterIndex=sandIndex+pad, arrival=waterIndex+kw, edges=arrival+kw;
 constexpr uint32_t frozen=edges+127*16, rows=frozen+512, angles=rows+k+kw;
 constexpr uint32_t sourceEvents=angles+61444, spare=sourceEvents+4096*16, replay=spare+stateWords;
+constexpr uint32_t angleWitnessWord=replay+256, angleWitnessWords=12;
+constexpr uint32_t packetPublicationWords=20*kw;
 constexpr uint32_t capacity=4*(48*k+16*kw+254)+k;
 constexpr uint32_t block=192;
 constexpr auto storage=VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
@@ -101,11 +103,14 @@ void Boot::PrepareM1Quantum(const Candidate &candidate) {
   const auto copyOut = attempt.m1ColdFile.empty() && attempt.m1ReplayPrefix.empty() && !attempt.m1Observation.frame
       ? 0 : VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
   Allocate(kM1QScratch, stateWords*4, storage);
-  Allocate(kM1QWork, (replay+256)*4, storage | transferDst);
+  Allocate(kM1QWork, (angleWitnessWord+(attempt.m1AngleWitness ? angleWitnessWords : 0))*4,
+           storage | transferDst | (attempt.m1AngleWitness ? VK_BUFFER_USAGE_TRANSFER_SRC_BIT : 0));
   Allocate(kM1QEvents, capacity*256ull, storage | transferDst | copyOut);
   Allocate(kM1QUniform, stride*passes.size(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | transferDst);
   Allocate(kM1QPub, pubBytes, storage | copyOut);
   Allocate(kM1QPubAlt, pubBytes, storage | copyOut);
+  if (attempt.m1Observation.packetId)
+    Allocate(kM1PacketStaging,packetPublicationWords*4,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
 
   const uint32_t count = uint32_t(passes.size());
   const VkDescriptorPoolSize sizes[] = {{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,count*8},
@@ -296,6 +301,15 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   const VkBufferCopy tailCopy{0,0,1024};
   const auto &staging=buffers[kStaging];
   vk.CmdCopyBuffer(cmd,buffers[kM1Tail].handle,staging.handle,1,&tailCopy);
+  if (attempt.m1AngleWitness) {
+    const VkBufferCopy witness{angleWitnessWord*4ull,1024,angleWitnessWords*4ull};
+    Require(staging.bytes>=witness.dstOffset+witness.size,"M1_ANGLE_WITNESS_RANGE");
+    vk.CmdCopyBuffer(cmd,work,staging.handle,1,&witness);
+  }
+  if (attempt.m1Observation.packetId) {
+    const VkBufferCopy waterPublication{16*k*4,0,packetPublicationWords*4};
+    vk.CmdCopyBuffer(cmd,buffers[pubs[r.publicationSlot]].handle,buffers[kM1PacketStaging].handle,1,&waterPublication);
+  }
   Barrier(kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT,VK_PIPELINE_STAGE_HOST_BIT,VK_ACCESS_HOST_READ_BIT);
   mark(uint32_t(std::size(timingPoints)-1));
   Check(vk.EndCommandBuffer(cmd),"vkEndCommandBuffer.M1_QUANTUM");
@@ -349,7 +363,12 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
     invalidation=vk.InvalidateMappedMemoryRanges(device,1,&range);
   }
   Words256 tail{};
-  if (invalidation==VK_SUCCESS) std::memcpy(tail.data(),mapped,sizeof(tail));
+  std::array<uint32_t,angleWitnessWords> angleWitness{};
+  if (invalidation==VK_SUCCESS) {
+    std::memcpy(tail.data(),mapped,sizeof(tail));
+    if (attempt.m1AngleWitness)
+      std::memcpy(angleWitness.data(),static_cast<const uint8_t *>(mapped)+sizeof(tail),sizeof(angleWitness));
+  }
   vk.UnmapMemory(device,staging.memory);
   Check(invalidation,"vkInvalidateMappedMemoryRanges.M1_QUANTUM");
   ControlCode result=ControlCode::STALE;
@@ -375,6 +394,38 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   if (m1Reject) return reject();
   log.stopQpc=pc::QpcTicks();
   M1RootTrace("Quantum",nonce,clock,permit,accepted,log);
+  if (attempt.m1Observation.packetId) {
+    m1PacketSample={};
+    const auto &packet=buffers[kM1PacketStaging];
+    void *packetWords=nullptr;
+    const auto mappedPacket=vk.MapMemory(device,packet.memory,0,VK_WHOLE_SIZE,0,&packetWords);
+    if (mappedPacket==VK_SUCCESS) {
+      const VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,nullptr,packet.memory,0,VK_WHOLE_SIZE};
+      const auto invalidated=(packet.flags&VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) ? VK_SUCCESS :
+          vk.InvalidateMappedMemoryRanges(device,1,&range);
+      if (invalidated==VK_SUCCESS) {
+        const auto *w=static_cast<const uint32_t *>(packetWords);
+        m1PacketSample.nonce=nonce;
+        for (uint32_t i=0;i<std::min(kw,tail[90]);++i)
+          if (w[i] && w[5*kw+i]==attempt.m1Observation.packetId && w[11*kw+i]==attempt.m1Observation.packetGeneration) {
+            m1PacketSample={nonce,w[i],w[16*kw+i],w[17*kw+i]};
+            break;
+          }
+      }
+      vk.UnmapMemory(device,packet.memory);
+    }
+  }
+  if (attempt.m1AngleWitness) {
+    const int32_t lo=int32_t(angleWitness[2]), hi=int32_t(angleWitness[3]);
+    const bool valid=g13::U64(angleWitness.data())==nonce && pc::ValidM1Angle(lo) && pc::ValidM1Angle(hi) &&
+        lo<=hi && angleWitness[4]<=127 && angleWitness[5]<=127 &&
+        std::clamp(permit.angle,lo,hi)==int32_t(tail[107]);
+    fields << ",\"m1AngleWitness\":{\"state\":" << Quote(valid ? "SAME_ROOT" : "IDENTITY_OR_RANGE_MISMATCH")
+           << ",\"nonce\":\"" << nonce << "\",\"slot\":" << accepted.publication
+           << ",\"generation\":\"" << g13::U64(tail.data()+36)
+           << "\",\"requestedAngle256\":" << permit.angle << ",\"acceptedAngle256\":" << int32_t(tail[107])
+           << ",\"rawWords\":" << (valid ? Words(angleWitness) : "null") << '}';
+  }
   ReportM1Timing(VK_SUCCESS,true);
   return true;
 }

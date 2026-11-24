@@ -20,6 +20,7 @@
 #endif
 
 #include <chrono>
+#include <cmath>
 #include <fstream>
 #include <thread>
 #include <utility>
@@ -66,7 +67,7 @@ constexpr size_t kWork = 5, kControl = 6, kLayout = 7, kStaging = 8;
 constexpr size_t kM1Base = 9, kM1Candidate = 10, kM1Work = 11, kM1Events = 12, kM1Pub = 13,
                  kM1Tail = 14, kM1Uniform = 15, kM1QScratch = 16, kM1QWork = 17, kM1QEvents = 18,
                  kM1QUniform = 19, kM1QPub = 20, kM1ColdStaging = 21, kM1QPubAlt = 22,
-                 kM1PixelStaging = 23, kBufferCount = 24;
+                 kM1PixelStaging = 23, kM1PacketStaging=24, kBufferCount = 25;
 #else
 constexpr size_t kBufferCount = 9;
 #endif
@@ -356,6 +357,7 @@ private:
     uintptr_t object=0;
   } m1AcceptedFence;
   std::array<uint64_t,5> m1LastReplay{};
+  struct M1PacketSample { uint64_t nonce=0; uint32_t mass=0,xBits=0,yBits=0; } m1PacketSample;
   VkQueryPool m1TimingPool=VK_NULL_HANDLE;
   VkFence m1TimedFence=VK_NULL_HANDLE;
   uint64_t m1TimedNonce=0,m1TimingMask=0;

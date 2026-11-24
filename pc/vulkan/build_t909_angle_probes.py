@@ -44,8 +44,13 @@ def build(compiler, directory):
     assert len(raw) == 184328
     (directory / "g15_angle_q20.i32le").write_bytes(raw)
     result = {"angleTable": {"sha256": sha256(raw).hexdigest(), "rows": len(angles), "bytes": len(raw)}}
-    for name, count in (("g15_support_v1", 3), ("g16_isolated_contact_v1", 2)):
-        source = Path(__file__).with_name(name + ".comp")
+    for name, count in (("g15_support_v1", 3), ("g16_isolated_contact_v1", 2), ("g15_pose_v1", 3)):
+        if name == "g15_pose_v1":
+            source = directory / (name + ".comp")
+            original = Path(__file__).with_name("g15_support_v1.comp").read_text()
+            source.write_bytes(original.replace("#version 450\n", "#version 450\n#define G15_POSE\n", 1).encode())
+        else:
+            source = Path(__file__).with_name(name + ".comp")
         module = directory / (name + ".spv")
         asm = subprocess.run([str(compiler), "-V", "--target-env", "vulkan1.1", "--spirv-val", "--spirv-dis",
                               "-o", str(module), str(source)], text=True, capture_output=True, check=True).stdout

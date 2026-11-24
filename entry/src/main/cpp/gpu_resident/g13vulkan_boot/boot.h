@@ -69,6 +69,7 @@ struct Attempt {
   std::function<void(pc::M1GravityDisplay)> gravityDisplay;
   uint32_t m1Kappa=24;
   bool m1StageTiming=false,g13TailTiming=false,m1InventoryV1=false,g13SealV1=false;
+  bool m1AngleWitness=false;
 #else
   NativeWindow *window;
 #endif

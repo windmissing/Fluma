@@ -26,6 +26,7 @@ struct M1Observation {
   std::array<M1Rect,3> regions{};
   std::wstring archivePrefix;
   uint32_t series=0;
+  uint32_t packetId=0,packetGeneration=0;
   bool Includes(uint64_t index) const { return frame && index>=frame && index-frame<(series ? series : 1); }
 };
 }
