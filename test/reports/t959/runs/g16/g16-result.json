@@ -1,0 +1,105 @@
+{
+ "module": "t955-g16-shaders 6d4beb5e (diagnostics entry)",
+ "seeds": "t955-g16-seeds regenerated (d74e416c/eca4c474 \u2014 T928 contract SHAs match)",
+ "arms": {
+  "b13-static": {
+   "exit": 3,
+   "reason": 11,
+   "stage": 9,
+   "B": 200,
+   "C": 27,
+   "Ic": 32,
+   "durMs": 19.1,
+   "fresh": true,
+   "remainingV1": {
+    "record0": {
+     "micro": 15,
+     "segment": 0,
+     "remainingIn": 948471945,
+     "hit": 940253321,
+     "remainingOut": 939913353,
+     "journal": "[0..9]",
+     "candidates": 27
+    },
+    "record1": {
+     "micro": 15,
+     "segment": 1,
+     "remainingIn": 939913353,
+     "hit": 935867717,
+     "remainingOut": 923228058,
+     "journal": "[9..18]",
+     "candidates": 27
+    },
+    "completedMicrosteps": 15,
+    "rescanState": 1,
+    "word63": 0
+   },
+   "timeEvidence": {
+    "originalGeneration": 1,
+    "coldGeneration": 2,
+    "acceptedRoot": null,
+    "evidenceSHA": "fb663e5b..."
+   }
+  },
+  "b52-static": {
+   "exit": 3,
+   "fresh": false,
+   "durMs": 255.9,
+   "lateTail": {
+    "identityOK": true,
+    "firstReason": 11,
+    "firstStage": 9,
+    "segments": 87,
+    "iterations": 464,
+    "candidates": 134,
+    "acceptedRoot": null
+   },
+   "lateCompletion": "late-completion.u32le 1024B sealed (words 40-47: 2,11,9,58,1 \u2014 reason 11 stage 9 micro 58)",
+   "remainingV1": {
+    "micro": 58,
+    "record0": {
+     "hit": 0
+    },
+    "record1": {
+     "hit": 940006615,
+     "remainingOut": 882235648
+    },
+    "completedMicrosteps": 58,
+    "rescanState": 2
+   },
+   "timing": {
+    "waitMs": 254.96,
+    "lateWaitMs": 114.6,
+    "lateVkResult": 0,
+    "periodNs": 83.333,
+    "validBits": 36,
+    "points": "ROOT_BEGIN/FREEZE_END/MICRO_32_END/... full segment set"
+   }
+  },
+  "b52-fast": {
+   "exit": 3,
+   "reason": 11,
+   "stage": 9,
+   "B": 800,
+   "C": 134,
+   "Ic": 464,
+   "durMs": 239.6,
+   "fresh": true,
+   "remainingV1": {
+    "micro": 58,
+    "record1": {
+     "hit": 940006492,
+     "remainingOut": 882251392
+    },
+    "completedMicrosteps": 58,
+    "rescanState": 2
+   },
+   "timeEvidence": {
+    "coldGeneration": 2,
+    "acceptedRoot": null
+   }
+  }
+ },
+ "noPromotion": "all arms exit 3, acceptedRoot null, hot fence generation 1 vs cold generation 2 separately recorded (T955 contract)",
+ "verdict": "PASS: B13 full-domain remaining-time captured (two event-segment records + rescan state 1 free-drift lead), B52 original-fence late tail captured (LATE_TAIL row + late-completion.u32le + 114.6ms late wait vk=0), GPU fine segments with 83.333ns/36bit timing; no late-root promotion"
+}

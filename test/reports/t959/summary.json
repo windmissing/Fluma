@@ -1,0 +1,87 @@
+{
+ "schema": "T959_G15_DRYFRONT_G16_LATETAIL_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "packages": {
+  "g15": "t955-g15-package bd66e841 roleSet 7d92f63e (ops 25/27/29 recandidate)",
+  "g16": "t955-g16-release 4e619c8e + t955-g16-shaders 6d4beb5e",
+  "seeds": "regenerated d74e416c/eca4c474 (T928 contract match)"
+ },
+ "g15": {
+  "negArm": {
+   "business": "vk=2 GRANT_DEADLINE (2404 disp)",
+   "completion_6_7": [
+    1,
+    0
+   ],
+   "firstError": "all zero",
+   "oldBaseline": "T947 (4,7) stage26/micro0/col19/operand40 \u2014 ELIMINATED",
+   "colsF": [
+    0,
+    805,
+    42473,
+    42473
+   ],
+   "face19": "zeroed (dry-front shared zero impulse)",
+   "face21_wet": "impulse 1924219444 legal carrier",
+   "selectedJ": 1
+  },
+  "stability": "neg/pos/neg2/pos2 4/4: no physics rejection, iGPU window only",
+  "sameRootScene": "not reachable (250ms iGPU window) \u2014 needs dGPU/reduced dispatch",
+  "verdict": "DRY-FRONT GATE CLEARED live: T952 staged-flux rule eliminates 4/7"
+ },
+ "g16": {
+  "b13": {
+   "reason": "11/9",
+   "B": 200,
+   "C": 27,
+   "Ic": 32,
+   "durMs": 19.1,
+   "fresh": true,
+   "remaining": {
+    "rec0": "hit 940253321ns -> out 939913353",
+    "rec1": "journal[9..18] hit 935867717 -> out 923228058",
+    "completedMicrosteps": 15,
+    "rescanState": 1
+   }
+  },
+  "b52-static": {
+   "durMs": 255.9,
+   "fresh": false,
+   "lateTail": {
+    "identityOK": true,
+    "firstReason": 11,
+    "firstStage": 9,
+    "segments": 87,
+    "iterations": 464,
+    "candidates": 134
+   },
+   "lateCompletion": "late-completion.u32le sealed (2,11,9,58,1)",
+   "timing": {
+    "waitMs": 254.96,
+    "lateWaitMs": 114.6,
+    "lateVkResult": 0,
+    "periodNs": 83.333,
+    "bits": 36
+   }
+  },
+  "b52-fast": {
+   "reason": "11/9",
+   "B": 800,
+   "C": 134,
+   "Ic": 464,
+   "durMs": 239.6,
+   "fresh": true,
+   "remaining": {
+    "rec1": "hit 940006492 -> out 882251392",
+    "completedMicrosteps": 58,
+    "rescanState": 2
+   }
+  },
+  "noPromotion": "all arms exit 3, acceptedRoot null, hot gen 1 vs cold gen 2 separate (T955 contract)",
+  "verdict": "PASS"
+ }
+}

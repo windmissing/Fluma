@@ -1,0 +1,32 @@
+{
+ "package": "t955-g15-package bd66e841 / roleSet 7d92f63e (check-package PASS; ops 25/27/29 recandidate: G9_OP_PREDICTOR_FACE/CORRECTOR_FACE/FLOW_PAIR_APPLY)",
+ "negArm": {
+  "business": "QUANTUM vk=2 GRANT_DEADLINE (2404 dispatches, 24.2s wall)",
+  "completion_6_7": "(1, 0) \u2014 trim-type rejection, reason 0",
+  "firstError": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "OLD_T947_baseline": "(4,7) stage 26 micro 0 col 19 operand 40 dry-front rejection \u2014 ELIMINATED",
+  "cols18_21_F": "(0, 805, 42473, 42473) \u2014 front evolved beyond frozen reference (no stall)",
+  "face19": "all-zero entry/trial/end (old -64868 impulse gone)",
+  "face21_wet": "impulse 1924219444 carried on two-sided wet face (\u5408\u6cd5\u6e7f\u8fb9\u627f\u8f7d\u4f53)",
+  "selectedJ": 1,
+  "JTable": "J1=(1,1,0,0,0,0) others zero"
+ },
+ "posArm": {
+  "business": "vk=2 same",
+  "completion_6_7": [
+   1,
+   0
+  ],
+  "firstError": "zero \u2014 no physics rejection"
+ },
+ "stability": "neg2/pos2 identical pattern (4/4 runs: no 4/7, only iGPU 250ms window)",
+ "dryFrontOriginalWords": "T952-style WORK reads captured: face 19 zeroed (dry-front shared zero-impulse rule live), column-stage 19 trial 0, derived midpoint 0",
+ "sameRootScene": "NOT REACHABLE: typed acceptance requires 2404 dispatches within 250ms on iGPU (T947/T954 pattern x3 confirmed) \u2014 needs dGPU or reduced-dispatch variant",
+ "verdict": "PHYSICS GATE CLEARED: T952 dry-front flux rule eliminates the 4/7 rejection in live GPU run (col-19 zero-impulse + wet-face 21 legal carrier); business window remains iGPU-bound"
+}
