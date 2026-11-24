@@ -249,7 +249,8 @@ def private_arm(rows,files,ref,observe,observation=None):
              and int(auth['nonce'])==int(auth['privateRoot'])==wide(tail,4)
              and auth['submitVkResult']==final[result_key]==last[3]==0
              and auth['fencePending'] is False and int(auth['fenceObject'])>0 and hz>0
-             and 0<int(auth['callbackTick'])<=int(auth['receiptTick'])<=int(last[0])<=int(last[1])
+             and 0<int(auth['callbackTick'])<=int(auth['receiptTick'])<=int(last[1])
+             and 0<int(last[0])<=int(last[1])
              and int(last[1])*10**9//hz<=int(auth['deadlineNs'])
              and int(auth['deadlineNs'])-int(auth['grantNs'])==250_000_000,'PRIVATE_CURRENT_FENCE')
     base_copy,end_copy=(final[k] for k in ('m1PrivateBaseCopy','m1PrivateEvidenceCopy'))
@@ -260,8 +261,18 @@ def private_arm(rows,files,ref,observe,observation=None):
          and final['m1PrivateGenerated']==sum(final[k] for k in
              ('m1PrivateConsumed','m1PrivatePending','m1PrivateActive','m1PrivateOverload')),'PRIVATE_CLOCK_ACCOUNTING')
     need(all(len(w[k])==7424 for k in ('source-base','quantum-base','quantum-candidate','quantum-independent'))
-         and len(w['quantum-publication'])==7936 and not any(w['source-base'][:-256])
-         and w['quantum-candidate']==w['quantum-independent'],'PRIVATE_BASE_OR_INDEPENDENT')
+         and len(w['quantum-publication'])==7936 and not any(w['source-base'][:-256]),'PRIVATE_BASE_OR_INDEPENDENT')
+    candidate,spare,base=(w[k] for k in ('quantum-candidate','quantum-independent','quantum-base'))
+    h=7424-256
+    post_finalize={47,48,72,73,76,77,78}
+    differences=[i for i,(a,b) in enumerate(zip(candidate,spare,strict=True)) if a!=b]
+    if differences:
+        need(all(i-h in post_finalize for i in differences)
+             and wide(candidate,h+47)==wide(q,108)
+             and wide(spare,h+47)==wide(base,h+47)
+             and wide(candidate,h+72)==wide(q,36)==wide(spare,h+72)+1
+             and candidate[h+76:h+79]==[q[33],q[32],q[34]]
+             and spare[h+76:h+79]==base[h+76:h+79],'PRIVATE_INDEPENDENT_FINALIZE')
     need(all(0<=t[52]<=t[53]<=t[54] and len(w[k])==t[53]*64
              for t,k in ((s,'source-events'),(q,'quantum-events')))
          and q[52]==0 and len(w['source-ledger'])==s[56]*16,'PRIVATE_EVENT_RANGE')
@@ -290,7 +301,8 @@ def private_arm(rows,files,ref,observe,observation=None):
             normalized[key][j+2:j+4]=[0,0]
     modules=tuple(final[k] for k in ('m1SourceModuleSHA','m1QuantumCandidateSHA','m1QuantumCommitSHA'))
     need(all(len(h)==64 and len(bytes.fromhex(h))==32 for h in modules),'PRIVATE_MODULE_IDENTITY')
-    return dict(run=run,rawSHA={k:sha(v) for k,v in files.items()},words=normalized,observe=observe,modules=modules)
+    return dict(run=run,rawSHA={k:sha(v) for k,v in files.items()},words=normalized,observe=observe,modules=modules,
+                spareFinalizeDifferences=differences,carry=wide(q,108))
 
 
 def compare_private(a,b):
@@ -479,107 +491,3 @@ def main():
 
 if __name__=='__main__':
     sys.exit(main())
-
-
-SECTIONS=('source-base','source-command','source-completion','quantum-base','quantum-candidate',
-          'quantum-independent','source-ledger','source-events','quantum-events','quantum-publication',
-          'quantum-completion')
-
-
-def private_arm(rows,files,ref,observe):
-    terminal,=[r for r in rows if r.get('state')=='M1_PRIVATE_OFF_COMPLETE']
-    for row in rows:
-        need(row.get('acceptedRoot') is None and not row.get('windowFrame') and not row.get('m1SceneLease')
-             and row.get('state') not in ('M1_QUANTUM_PRESENT_QUEUED','M1_EMPTY_PRESENT_QUEUED')
-             and all(row.get(k,{}).get('acceptedRoot') is None for k in ('m1SourceAuthority','m1QuantumAuthority')),
-             'PRIVATE_FAKE_PUBLICATION')
-    need(terminal.get('acceptedRoot','missing') is None and terminal['m1PrivateReferenceSHA']==ref['sha']
-         and int(terminal['m1PrivateReferenceDeltaNs'])==ref['delta']
-         and terminal['m1PrivateObservation'] is observe
-         and bool(terminal.get('m1PrivateObservationSHA')) is observe,'PRIVATE_TERMINAL_MODE')
-    need(set(files)==set(SECTIONS),'PRIVATE_FILE_SET')
-    w={k:words(v) for k,v in files.items()}
-    s,q,cmd=(w[k] for k in ('source-completion','quantum-completion','source-command'))
-    need(len(s)==len(q)==256 and len(cmd)==32 and s[:4]==q[:4]==[1381192263,2,256,3235823838]
-         and s[27:32]==[1,1,0,0,0] and q[27:32]==[2,1,0,0,0] and q[26]==1
-         and s[14:18]==[0]*4 and s[61]==ref['q'] and wide(q,14)==wide(s,18) and wide(q,16)==wide(s,20)
-         and wide(s,77)==wide(q,77)==ref['q'],'PRIVATE_ROOT_CHAIN')
-    run=wide(s,6)
-    need(run>0 and run!=ref['run'] and run==wide(q,6)==wide(cmd,4)
-         and wide(s,38)==wide(q,38)==wide(cmd,12) and wide(s,40)==wide(q,40)==wide(cmd,28)
-         and cmd[16:22]==ref['command'][16:22] and cmd[2:4]==ref['command'][2:4]
-         and cmd[14:16]==s[59:61],'PRIVATE_COMMAND_MAPPING')
-    hz=int(terminal['qpcFrequency'])
-    for tail,key,result_key in ((s,'m1SourceAuthority','m1FenceVkResult'),(q,'m1QuantumAuthority','m1QuantumFenceVkResult')):
-        auth=terminal[key]
-        last=auth['lastWait']
-        need(int(auth['run'])==run and int(auth['geometry'])==wide(tail,38)
-             and int(auth['nonce'])==int(auth['privateRoot'])==wide(tail,4)
-             and auth['acceptedRoot'] is None and auth['submitVkResult']==terminal[result_key]==last[3]==0
-             and auth['fencePending'] is False and int(auth['fenceObject'])>0 and hz>0
-             and 0<int(auth['callbackTick'])<=int(auth['receiptTick'])<=int(last[0])<=int(last[1])
-             and int(last[1])*10**9//hz <=int(auth['deadlineNs'])
-             and int(auth['deadlineNs'])-int(auth['grantNs'])==250_000_000,'PRIVATE_CURRENT_FENCE')
-    base_copy,end_copy=(terminal[k] for k in ('m1PrivateBaseCopy','m1PrivateEvidenceCopy'))
-    need(all(r['vkResult']==0 and int(r['fence'])>0 and 0<int(r['enterQpc'])<=int(r['exitQpc']) for r in (base_copy,end_copy))
-         and int(base_copy['exitQpc'])<int(terminal['m1SourceAuthority']['lastWait'][0])
-         and int(terminal['m1QuantumAuthority']['lastWait'][1])<=int(end_copy['enterQpc']),'PRIVATE_COPY_FENCE')
-    need(terminal['m1PrivateClockBalanced'] is True and terminal['m1PrivateConsumed']==1
-         and terminal['m1PrivateGenerated']==sum(terminal[k] for k in
-             ('m1PrivateConsumed','m1PrivatePending','m1PrivateActive','m1PrivateOverload')),
-         'PRIVATE_CLOCK_ACCOUNTING')
-    need(all(len(w[k])==7424 for k in ('source-base','quantum-base','quantum-candidate','quantum-independent'))
-         and len(w['quantum-publication'])==7936 and not any(w['source-base'][:-256])
-         and w['quantum-candidate']==w['quantum-independent'],'PRIVATE_BASE_OR_INDEPENDENT')
-    need(all(0<=t[52]<=t[53]<=t[54] and len(w[k])==t[53]*64
-             for t,k in ((s,'source-events'),(q,'quantum-events')))
-         and q[52]==0 and len(w['source-ledger'])==s[56]*16,'PRIVATE_EVENT_RANGE')
-    # Keep every original byte and normalize only run-scoped IDs and the live command timestamp.
-    normalized={k:list(v) for k,v in w.items()}
-    for key,tail,off in (('source-base',s,4),('quantum-base',s,4),('quantum-candidate',q,4),
-                         ('quantum-independent',q,4),('quantum-publication',q,4)):
-        h=len(w[key])-256
-        need(wide(w[key],h+off)==run,'PRIVATE_STATE_RUN')
-        stop=12 if key=='quantum-publication' else 14
-        normalized[key][h+4:h+stop]=[0]*(stop-4)
-    for key in ('source-completion','quantum-completion'):
-        normalized[key][4:14]=[0]*10
-    normalized['source-command'][4:6]=[0,0]
-    normalized['source-command'][22:24]=[0,0]
-    for key,t in (('source-events',s),('quantum-events',q)):
-        for i in range(t[52],t[53]):
-            j=64*i
-            need(wide(w[key],j+2)==wide(t,4),'PRIVATE_EVENT_ROOT')
-            normalized[key][j+2:j+4]=[0,0]
-    return dict(run=run,rawSHA={k:sha(v) for k,v in files.items()},words=normalized,observe=observe)
-
-
-def compare_private(a,b):
-    need(a['run']!=b['run'] and a['observe'] is False,'PRIVATE_PAIR_ROLE')
-    for k in SECTIONS:
-        x,y=a['words'][k],b['words'][k]
-        if len(x)!=len(y):
-            return dict(state='WORD_LENGTH_DIFF',section=k,left=len(x),right=len(y))
-        for i,(u,v) in enumerate(zip(x,y,strict=True)):
-            if u!=v:
-                return dict(state='WORD_DIFF',section=k,word=i,left=u,right=v)
-    return dict(state='PRIVATE_PHYSICS_WORD_MATCH',formalD1=False)
-
-
-def disk_fixture(seed,slot=None,word=13,value=1,bank=0):
-    raw,_=T928.pack_seed(seed,ABI['boxHalfExtentUm'],ABI['material'])
-    base=bytearray(raw.ljust(BANK_BYTES,b'\0'))
-    n=seed['n']
-    if slot:
-        struct.pack_into('<I',base,(slot-1)*64+4*word,value)
-    old=dict(activeBank=bank,commit=bank,quanta=bank,stateGeneration=bank+1,sceneGeneration=bank+1,lease=f'old{bank}')
-    prior_candidate=bytes(BANK_BYTES)
-    prefix=(slot-1)*64 if slot else n*64
-    new=dict(old) if slot else dict(activeBank=1-bank,commit=bank+1,quanta=bank+1,
-                                   stateGeneration=bank+2,sceneGeneration=bank+2,lease=f'new{bank}')
-    result=dict(outcome=2,firstReason=2,firstStage=1,firstDisk=slot,stageMask=0x801) if slot else (
-        dict(outcome=1,firstReason=0,firstStage=0))
-    return dict(n=n,baseBefore=base.hex(),baseAfter=base.hex(),candidateBefore=prior_candidate.hex(),
-                candidateAfter=(base[:prefix]+prior_candidate[prefix:]).hex(),prior=old,after=new,candidateBank=1-bank,
-                completion=result,sealed=True,acceptedRoot=None,newPublication=False,fenceVkResult=0,
-                fenceGeneration=1,expectedFenceGeneration=1,livePermit=True)

@@ -1,0 +1,285 @@
+{
+  "reference": {
+    "sha": "922ddef7e9e26010f394068841df8f1d7551a1e501f685366eea17661ebd6951",
+    "delta": 15026700,
+    "q": 126053,
+    "pulses": [
+      16657906421389,
+      16657906571656,
+      16657906421412,
+      16657906571658
+    ],
+    "frequency": 10000000
+  },
+  "arms": {
+    "off-1-private": {
+      "run": 16712869927404,
+      "processExit": 0,
+      "traceSHA": "2980d7a54d399cf3292975dd83529ce355f6bce24b7c826b0620c7af4c2bac9a",
+      "rawSHA": {
+        "source-base": "bdfe831ff31d4dbbeb9f41d9cd612db5c0dab167cb3fdff486b6036b9a3c6404",
+        "source-command": "41ad6d6d7c002e24eaf4cc64b41e4f74123c411c64e6839eb9834a588c8a31b2",
+        "source-completion": "7ca2bf618a0dca15f517c015e540cd2573695d04e8e23a08e052bf2650688bf5",
+        "quantum-base": "378ddf9011c6c2c1bc2ddb8ad3e62f6e65e6b1129d7895097d2c811bb253593a",
+        "quantum-candidate": "cd863bd43aa917e2d3c74f898e58dfd8e0b64c8a13ce6606cfcc46c645c76c82",
+        "quantum-independent": "f1634aee29aca4ed9bf3a4ebefebc0e83e8665c0d61e7d828693ffe959c1a6c2",
+        "source-ledger": "7deca5bec6d35f6acc4a434275b206cfb59bc8fadf85c297f22b99dd85bd4bff",
+        "source-events": "4c3550a86710dcd88ff83bf0f7a31de5c9bcce5defcb0511b70460036a125603",
+        "quantum-events": "72226e5e68991a44997819361509a56507be7df510a01155cdfa68366b76233e",
+        "quantum-publication": "7f880f955944aa894d4ffdc78c315b9579db381327a3f715c6bb92a2b2ec59fe",
+        "quantum-completion": "47c709e3e51835bf6ef44efc75fda34da1e28d9c0ef18871c6941db8b4f9acfd"
+      },
+      "admittedQ20": 126053,
+      "carry": 480228000,
+      "spareFinalizeDifferences": [
+        7215,
+        7240,
+        7244,
+        7245
+      ],
+      "sourcePulseNs": "1671287010995900",
+      "copyFences": [
+        {
+          "fence": "2301844498232",
+          "enterQpc": "16712869960256",
+          "exitQpc": "16712869971672",
+          "vkResult": 0
+        },
+        {
+          "fence": "2301844498232",
+          "enterQpc": "16712871983681",
+          "exitQpc": "16712871988023",
+          "vkResult": 0
+        }
+      ],
+      "roots": {
+        "m1SourceAuthority": {
+          "nonce": "16712870267438",
+          "fenceObject": "2301844498232",
+          "grantNs": "1671287026660600",
+          "deadlineNs": "1671287276660600",
+          "lastWait": [
+            "16712870890095",
+            "16712870956136",
+            2000000,
+            0
+          ]
+        },
+        "m1QuantumAuthority": {
+          "nonce": "16712871041065",
+          "fenceObject": "2301844498232",
+          "grantNs": "1671287104106300",
+          "deadlineNs": "1671287354106300",
+          "lastWait": [
+            "16712871840686",
+            "16712871981830",
+            2000000,
+            0
+          ]
+        }
+      },
+      "observation": null
+    },
+    "off-2-private": {
+      "run": 16712874897435,
+      "processExit": 0,
+      "traceSHA": "1a86f3e0f111a2c993279650dc7d3e38abcec3ac799973399e7b60f42167825e",
+      "rawSHA": {
+        "source-base": "e70a0fe83f936da4eb4348a452b026f00d0f1e869e6ffdbdabd667f7477dc9ea",
+        "source-command": "2a5a240925e3348d84cf744f7da15b94ff441d23dc7d5961dfd37faf63ea4b5a",
+        "source-completion": "f109b1a505518f85f656a13dfd6e2865157c1fc12cba1d9ac634a32ffc369bed",
+        "quantum-base": "9e08faeee7c35975def6128354d7bdfe99eee4c2c0ea33d8648e811691f44ff8",
+        "quantum-candidate": "fccbf0ddf00c238f50e13799d1e61a9f8d1fc3d20d9794d3f5d5a9c277f00e4e",
+        "quantum-independent": "54fe275cbbe394fa2187f54a4879fe005306e5de1b012abd718044d3b7ea31f4",
+        "source-ledger": "7deca5bec6d35f6acc4a434275b206cfb59bc8fadf85c297f22b99dd85bd4bff",
+        "source-events": "fd18d0e79d4e2a313cb0fd16cfb7f468577e8387a36d6145e7b8854cdc032d6f",
+        "quantum-events": "4182aade57538031627775184708b121312f58f4bedb0e8398bc2e8fa8ffba31",
+        "quantum-publication": "c810baf225c08bf2a796428f877372ee84138886e5b8b1924fc5cb502ae7dd2c",
+        "quantum-completion": "662b45f20010bf4e00ff76524b4b1f0a196cb437c51f2442cdfedf94a214b34d"
+      },
+      "admittedQ20": 126053,
+      "carry": 489240000,
+      "spareFinalizeDifferences": [
+        7215,
+        7240,
+        7244,
+        7245
+      ],
+      "sourcePulseNs": "1671287515493300",
+      "copyFences": [
+        {
+          "fence": "1630908279192",
+          "enterQpc": "16712874912197",
+          "exitQpc": "16712874921619",
+          "vkResult": 0
+        },
+        {
+          "fence": "1630908280984",
+          "enterQpc": "16712876913771",
+          "exitQpc": "16712876918918",
+          "vkResult": 0
+        }
+      ],
+      "roots": {
+        "m1SourceAuthority": {
+          "nonce": "16712875313730",
+          "fenceObject": "1630908281880",
+          "grantNs": "1671287531299900",
+          "deadlineNs": "1671287781299900",
+          "lastWait": [
+            "16712875782897",
+            "16712875890327",
+            2000000,
+            0
+          ]
+        },
+        "m1QuantumAuthority": {
+          "nonce": "16712875976858",
+          "fenceObject": "1630908281656",
+          "grantNs": "1671287597685600",
+          "deadlineNs": "1671287847685600",
+          "lastWait": [
+            "16712876879856",
+            "16712876911732",
+            2000000,
+            0
+          ]
+        }
+      },
+      "observation": null
+    },
+    "off-observe-private2": {
+      "run": 16713670939749,
+      "processExit": null,
+      "traceSHA": "4de03a9ffaeedbaf843a3816aa41f94b5fe619198718f5c340febcb01f5a757f",
+      "rawSHA": {
+        "source-base": "3dbde2243e831e3134035717e291372e2afa9537f29b6266bf258cfedd125e82",
+        "source-command": "94edd254157f8f50d442fdb5dfb331ba94fa4a9a56644992926801bebb3480dc",
+        "source-completion": "920e6730414a9869c672e1c1a4b6ae7ef8fe9720c85d6260a1d982abbdc925e5",
+        "quantum-base": "6353ecd79f95cc0a3a3d31a2eef6d049ad675859c2d75a0cc8b1d9e4e0d2051d",
+        "quantum-candidate": "9ab138c72f101476957b3267468353777edb9b96e33c2c9e7e458d050bfd3f02",
+        "quantum-independent": "fcc368f3f7035af5f9f143957acfc2791ac6a57f08081adc27b7484cca48c20f",
+        "source-ledger": "7deca5bec6d35f6acc4a434275b206cfb59bc8fadf85c297f22b99dd85bd4bff",
+        "source-events": "2e31a6c624b1256681ed0b1369fe1709cc5c4dadff26780cc21df30b144a0567",
+        "quantum-events": "e26408cc190e5fd73024337ee2833e5d78a3733fec7ea2c232c25622f634346c",
+        "quantum-publication": "e7c5f5fa5e77f49af3664a43f21504329ec9ab1a9ed6d3ca5dd0630bb37d1506",
+        "quantum-completion": "2f93ca7e2260ce32b63599097e5a6c8a8986dcc0bc54ec503ddbbcf1df82fde3"
+      },
+      "admittedQ20": 126053,
+      "carry": 713508000,
+      "spareFinalizeDifferences": [
+        7215,
+        7240,
+        7244,
+        7245
+      ],
+      "sourcePulseNs": "1671367130740100",
+      "copyFences": [
+        {
+          "fence": "2087070257352",
+          "enterQpc": "16713670975414",
+          "exitQpc": "16713671102305",
+          "vkResult": 0
+        },
+        {
+          "fence": "2087070256680",
+          "enterQpc": "16713675664737",
+          "exitQpc": "16713675669988",
+          "vkResult": 0
+        }
+      ],
+      "roots": {
+        "m1SourceAuthority": {
+          "nonce": "16713671441612",
+          "fenceObject": "2087070257352",
+          "grantNs": "1671367144121300",
+          "deadlineNs": "1671367394121300",
+          "lastWait": [
+            "16713673613864",
+            "16713673631504",
+            2000000,
+            0
+          ]
+        },
+        "m1QuantumAuthority": {
+          "nonce": "16713673733571",
+          "fenceObject": "2087070255560",
+          "grantNs": "1671367373356900",
+          "deadlineNs": "1671367623356900",
+          "lastWait": [
+            "16713675634295",
+            "16713675662353",
+            2000000,
+            0
+          ]
+        }
+      },
+      "observation": {
+        "nonce": "16713673733571",
+        "fence": "2087070258472",
+        "waitQpc": [
+          "16713676115921",
+          "16713676372269"
+        ],
+        "payloadSHA": "44b802ecd6ee1d39dac47311c83aa938908b853b45a22b2ba929825b32365445"
+      }
+    }
+  },
+  "pairs": {
+    "OFF_OFF": {
+      "first": {
+        "state": "WORD_DIFF",
+        "section": "quantum-candidate",
+        "word": 7215,
+        "left": 480228000,
+        "right": 489240000
+      },
+      "allDifferences": [
+        {
+          "section": "quantum-candidate",
+          "word": 7215,
+          "left": 480228000,
+          "right": 489240000
+        },
+        {
+          "section": "quantum-completion",
+          "word": 108,
+          "left": 480228000,
+          "right": 489240000
+        }
+      ],
+      "physicalPayloadFirst": null
+    },
+    "OFF_ON": {
+      "first": {
+        "state": "WORD_DIFF",
+        "section": "quantum-candidate",
+        "word": 7215,
+        "left": 480228000,
+        "right": 713508000
+      },
+      "allDifferences": [
+        {
+          "section": "quantum-candidate",
+          "word": 7215,
+          "left": 480228000,
+          "right": 713508000
+        },
+        {
+          "section": "quantum-completion",
+          "word": 108,
+          "left": 480228000,
+          "right": 713508000
+        }
+      ],
+      "physicalPayloadFirst": null
+    }
+  },
+  "negatives": [
+    "OBSERVATION_COPY_WAIT",
+    "PRIVATE_FAKE_PUBLICATION"
+  ],
+  "firstOnFailure": "M1_PRIVATE_REAL_PULSE",
+  "formalFourArm": "MISSING_COMPARABLE_ARMS",
+  "t504": "NOT_RELEASED"
+}
