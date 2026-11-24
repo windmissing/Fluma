@@ -64,6 +64,18 @@ endif()
 target_link_libraries(pc_sand_${SAND_FAMILY}_host PRIVATE pc_sand_${SAND_FAMILY} user32)
 target_compile_options(pc_sand_${SAND_FAMILY}_host PRIVATE /EHsc /utf-8 /W4)
 if(SAND_FAMILY STREQUAL "dm2")
+  set(G14_ASSETS "${CMAKE_CURRENT_BINARY_DIR}/g14_assets")
+  add_custom_command(OUTPUT "${G14_ASSETS}/g14_layout.h" "${G14_ASSETS}/modules.json"
+      COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/../build_g14_boundary.py"
+              --compiler "${G13_GLSLANG}" --out "${G14_ASSETS}"
+      DEPENDS "${G13_GLSLANG}" "${CMAKE_CURRENT_SOURCE_DIR}/../build_g14_boundary.py"
+              "${CMAKE_CURRENT_SOURCE_DIR}/../g14_boundary.comp" "${REPO}/docs/architecture-T956-abi-v1.json"
+      VERBATIM)
+  add_executable(pc_g14_boundary_probe g14_boundary.cpp host_device.cpp "${G14_ASSETS}/g14_layout.h")
+  set_property(SOURCE g14_boundary.cpp APPEND PROPERTY OBJECT_DEPENDS "${G14_ASSETS}/g14_layout.h")
+  target_include_directories(pc_g14_boundary_probe PRIVATE "${G14_ASSETS}")
+  target_link_libraries(pc_g14_boundary_probe PRIVATE pc_sand_dm2 user32)
+  target_compile_options(pc_g14_boundary_probe PRIVATE /EHsc /utf-8 /W4)
   set(VIEW "${CMAKE_CURRENT_BINARY_DIR}/view_assets")
   add_custom_command(OUTPUT "${VIEW}/pc_view_spirv.h"
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${VIEW}"

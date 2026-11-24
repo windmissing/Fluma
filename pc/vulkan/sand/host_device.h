@@ -35,7 +35,7 @@ class HostDevice {
   HostDevice(const HostDevice &)=delete;
   HostDevice &operator=(const HostDevice &)=delete;
   ~HostDevice();
-  void Open(bool present,const wchar_t *title=L"G11 R1 Vulkan prototype");
+  void Open(bool present,const wchar_t *title=L"G11 R1 Vulkan prototype",bool requireFloat64=false);
   Memory Allocate(VkDeviceSize bytes,VkBufferUsageFlags usage,bool host=false);
   bool Current();
   static uint64_t Now();

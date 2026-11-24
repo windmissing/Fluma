@@ -31,7 +31,7 @@ bool HostDevice::Current() {
          bounds.right==client_.right && bounds.bottom==client_.bottom;
 }
 
-void HostDevice::Open(bool present,const wchar_t *title) {
+void HostDevice::Open(bool present,const wchar_t *title,bool requireFloat64) {
   if (present) {
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
     WNDCLASSW type{};
@@ -112,6 +112,8 @@ void HostDevice::Open(bool present,const wchar_t *title) {
   features(physical,&supported);
   VkPhysicalDeviceFeatures enabled{};
   enabled.shaderInt64=supported.shaderInt64;
+  RequireHost(!requireFloat64 || supported.shaderFloat64,"G14_FLOAT64_UNAVAILABLE");
+  enabled.shaderFloat64=requireFloat64 ? VK_TRUE : VK_FALSE;
   const float priority=1.f;
   const VkDeviceQueueCreateInfo queueInfo{VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,nullptr,0,family,1,&priority};
   const char *extensions[]={VK_KHR_SWAPCHAIN_EXTENSION_NAME};

@@ -1,0 +1,501 @@
+#version 450
+#extension GL_ARB_gpu_shader_fp64 : require
+/* GENERATED_LAYOUT */
+layout(local_size_x=64) in;
+layout(set=0,binding=0,std430) readonly buffer Input { uint I[]; };
+layout(set=0,binding=1,std430) buffer Geometry { uint G[]; };
+layout(set=0,binding=2,std430) buffer Audit { uint A[]; };
+layout(set=0,binding=3,std430) buffer Snapshot { uint O[]; };
+layout(push_constant) uniform Dispatch { uint op,child,count,genLo,genHi,outputWordBase,pad0,pad1; };
+
+const uint invalid=0xffffffffu;
+const uint magic=0x47313452u, seal=0xc0149571u;
+const double cNode[8]=double[8](.01985507175123188LF,.10166676129318664LF,.23723379504183551LF,
+ .40828267875217510LF,.59171732124782490LF,.76276620495816449LF,.89833323870681336LF,.98014492824876812LF);
+const double cWeight[8]=double[8](.05061426814518813LF,.11119051722668724LF,.15685332293894364LF,
+ .18134189168918099LF,.18134189168918099LF,.15685332293894364LF,.11119051722668724LF,.05061426814518813LF);
+const double sNode[4]=double[4](.06943184420297371LF,.33000947820757187LF,.66999052179242813LF,.93056815579702629LF);
+const double sWeight[4]=double[4](.17392742256872693LF,.32607257743127307LF,.32607257743127307LF,.17392742256872693LF);
+
+uint nx(){return I[3];}
+uint ny(){return I[4];}
+uint nc(){return nx()*ny();}
+uint verticalCount(){return (nx()+1u)*ny();}
+uint nf(){return verticalCount()+nx()*(ny()+1u);}
+uint slot(){return CHILD_BASE+child*INPUT_STEP;}
+double start(){return double(I[slot()])/double(I[slot()+1u]);}
+double end(){return double(I[slot()+2u])/double(I[slot()+3u]);}
+double arg(uint i){return packDouble2x32(uvec2(I[ARGS_BASE+2u*i],I[ARGS_BASE+2u*i+1u]));}
+double lengthX(){return arg(0u);}
+double heightY(){return arg(1u);}
+double dx(){return lengthX()/double(nx());}
+double dy(){return heightY()/double(ny());}
+double mixD(double a,double b,double x){return a+(b-a)*x;}
+uint bits(double x){return floatBitsToUint(float(x));}
+uvec2 real64(double x){
+    float hi=float(x);
+    return uvec2(floatBitsToUint(hi),floatBitsToUint(float(x-double(hi))));
+}
+double unpackReal(uint hi,uint lo){return double(uintBitsToFloat(hi))+double(uintBitsToFloat(lo));}
+void storeG(uint at,double x){uvec2 v=real64(x);G[at]=v.x;G[at+1u]=v.y;}
+void storeA(uint at,double x){uvec2 v=real64(x);A[at]=v.x;A[at+1u]=v.y;}
+double getG(uint at){return unpackReal(G[at],G[at+1u]);}
+double getA(uint at){return unpackReal(A[at],A[at+1u]);}
+uint cellAt(uint i){return CELL_BASE+i*CELL_STRIDE;}
+uint faceAt(uint i){return FACE_BASE+i*FACE_STRIDE;}
+uint loadAt(uint i){return LOAD_BASE+i*LOAD_STRIDE;}
+uint fluxAt(uint i){return FLUX_BASE+i*FLUX_STRIDE;}
+bool finite(double x){return !isnan(x)&&!isinf(x);}
+double bed(double x,double t,uint col){
+    if(I[2]==1u)return .010LF;
+    if(I[2]==2u)return .0025LF+(col==0u?1.:-1.)*.125LF*t;
+    return .010LF+.020LF*t*(2.*x/lengthX()-1.);
+}
+double wallSpeed(double x,uint col){
+    if(I[2]==1u)return 0.;
+    if(I[2]==2u)return col==0u?.125LF:-.125LF;
+    return .020LF*(2.*x/lengthX()-1.);
+}
+double slope(double t){return I[2]==3u?.040LF*t/lengthX():0.;}
+dvec2 above(double a,double b,double threshold){
+    if(a>=threshold&&b>=threshold)return dvec2(0,1);
+    if(a<=threshold&&b<=threshold)return dvec2(0);
+    double p=clamp((threshold-a)/(b-a),0.,1.);
+    return a>b?dvec2(0,p):dvec2(p,1);
+}
+dvec2 wallSpan(uint x,uint y,double t){
+    double a=bed(double(x)*dx(),t,x),b=bed(double(x+1u)*dx(),t,x),lower=double(y)*dy();
+    if(a==b && a==lower+dy())return dvec2(0);
+    dvec2 lo=above(a,b,lower),hi=above(-a,-b,-lower-dy());
+    double from=max(lo.x,hi.x),to=min(lo.y,hi.y);
+    return dvec2(from,max(from,to));
+}
+struct Face { uint minus,plus; bool vertical,closed,alias; uint x,y; };
+Face faceFor(uint id){
+    if(id<verticalCount()){
+        uint x=id%(nx()+1u),y=id/(nx()+1u);
+        bool periodic=I[2]==1u,alias=periodic&&x==nx();
+        uint minus=x==0u?(periodic?y*nx()+nx()-1u:invalid):y*nx()+x-1u;
+        uint plus=x==nx()?invalid:y*nx()+x;
+        bool closed=(!periodic&&(x==0u||x==nx()))||alias||(I[2]==2u&&(I[6]&1u)!=0u);
+        return Face(minus,plus,true,closed,alias,x,y);
+    }
+    uint k=id-verticalCount(),x=k%nx(),y=k/nx();
+    return Face(y==0u?invalid:(y-1u)*nx()+x,y==ny()?invalid:y*nx()+x,false,y==0u||y==ny(),false,x,y);
+}
+dvec2 opening(Face f,double t){
+    if(f.closed)return dvec2(0);
+    double x=double(f.x)*dx(),y=double(f.y)*dy();
+    if(f.vertical){
+        uint a=f.x==0u?nx()-1u:f.x-1u;
+        double bottom=max(bed(x,t,a),bed(x,t,f.x));
+        return dvec2(clamp((bottom-y)/dy(),0.,1.),1.);
+    }
+    double a=bed(x,t,f.x),b=bed(x+dx(),t,f.x);
+    if(abs(a-y)<1e-16LF && abs(b-y)<1e-16LF)return dvec2(0);
+    return above(-a,-b,-y);
+}
+double pressure(double x,double y){
+    if(I[2]==2u)return 0.;
+    double ref=arg(5u),gauge=arg(6u);
+    double pi=I[2]==1u?gauge:4.*(x/lengthX()-.5LF)+4.*(y/heightY()-.5LF);
+    double stored=roundEven(pi*4294967296.LF)/4294967296.LF;
+    return ref+arg(4u)*stored-((I[6]&4u)==0u?gauge:0.)+arg(2u)*arg(7u);
+}
+struct Forces { dvec2 p,normal,shear; };
+Forces wallForce(double x,double y,double t){
+    double s=slope(t),metric=sqrt(1.+s*s),h=heightY()-y;
+    dvec2 normal=dvec2(-s,1)/metric,tangent=dvec2(1,s)/metric;
+    double viscN=0.,viscT=0.;
+    if(I[2]==1u)viscT=arg(3u)*((I[6]&1u)==0u?.030LF:-.030LF)/h;
+    if(I[2]==3u){
+        double xi=x/lengthX(),a=6.*lengthX()*.020LF*(xi*xi-xi)/(h*h),c=.040LF/lengthX();
+        viscN=-2.*arg(3u)*s*c/(1.+s*s);
+        viscT=arg(3u)*((1.+s*s)*a+(1.-s*s)*c/(1.+s*s));
+    }
+    return Forces(-pressure(x,y)*normal,viscN*normal,viscT*tangent);
+}
+
+#if ROLE == 0
+dvec3 wet(uint x,uint y,double time){
+    double x0=double(x)*dx(),y0=double(y)*dy();
+    double a=bed(x0,time,x)-y0,b=bed(x0+dx(),time,x)-y0;
+    double cuts[4]=double[4](0.,1.,1.,1.);
+    if(a!=b){cuts[1]=clamp(-a/(b-a),0.,1.);cuts[2]=clamp((dy()-a)/(b-a),0.,1.);}
+    if(cuts[1]>cuts[2]){double swap=cuts[1];cuts[1]=cuts[2];cuts[2]=swap;}
+    dvec3 total=dvec3(0);
+    for(uint panel=0;panel<3;++panel)for(uint q=0;q<4;++q){
+        double s=mixD(cuts[panel],cuts[panel+1u],sNode[q]);
+        double low=clamp(mixD(a,b,s),0.,dy()),h=dy()-low;
+        double area=h*dx()*(cuts[panel+1u]-cuts[panel])*sWeight[q];
+        total+=area*dvec3(1.,x0+s*dx(),y0+(dy()+low)*.5LF);
+    }
+    return total;
+}
+void cutCell(uint id){
+    uint x=id%nx(),y=id/nx(),at=cellAt(id);
+    double t0=start(),t1=end(),duration=t1-t0, swept=0.;
+    dvec3 a=wet(x,y,t0),b=wet(x,y,t1);
+    for(uint q=0;q<8;++q){
+        dvec2 p=wallSpan(x,y,mixD(t0,t1,cNode[q]));
+        double xa=(double(x)+p.x)*dx(),xb=(double(x)+p.y)*dx();
+        swept+=cWeight[q]*(xb-xa)*wallSpeed((xa+xb)*.5LF,x);
+    }
+    uint state=uint(a.x>1e-18LF)|2u*uint(b.x>1e-18LF);
+    G[at]=id;G[at+1u]=state!=0u?id:invalid;G[at+2u]=state;G[at+3u]=id;
+    storeG(at+4u,a.x);storeG(at+6u,b.x);storeG(at+8u,duration*swept);
+    G[at+10u]=bits(a.x>0.?a.y/a.x:0.);G[at+11u]=bits(a.x>0.?a.z/a.x:0.);
+    G[at+12u]=bits(b.x>0.?b.y/b.x:0.);G[at+13u]=bits(b.x>0.?b.z/b.x:0.);
+    G[at+14u]=invalid;
+}
+void cutFace(uint id){
+    uint at=faceAt(id);
+    Face f=faceFor(id);
+    double t0=start(),t1=end(),sum=0.,coarse=0.,measure=f.vertical?dy():dx();
+    dvec2 lo=opening(f,t0),hi=opening(f,t1);
+    for(uint q=0;q<8;++q){
+        dvec2 p=opening(f,mixD(t0,t1,cNode[q]));
+        sum+=cWeight[q]*(p.y-p.x);
+    }
+    for(uint q=0;q<4;++q){
+        dvec2 p=opening(f,mixD(t0,t1,sNode[q]));
+        coarse+=sWeight[q]*(p.y-p.x);
+    }
+    G[at]=id;G[at+1u]=f.minus;G[at+2u]=f.plus;
+    G[at+3u]=uint(f.vertical)|2u*uint(f.closed)|4u*uint(f.alias)|8u*uint(sum>0.);
+    G[at+4u]=bits(lo.x);G[at+5u]=bits(lo.y);G[at+6u]=bits(hi.x);G[at+7u]=bits(hi.y);
+    G[at+8u]=sum>0.?child:invalid;G[at+9u]=sum>0.?child+1u:invalid;
+    storeG(at+10u,sum*measure*(t1-t0));storeG(at+12u,abs(sum-coarse)*measure*(t1-t0));
+    G[at+14u]=f.alias?f.y*(nx()+1u):invalid;
+}
+void cutPiece(uint id){
+    uint at=BEDPIECE_BASE+id*BEDPIECE_STRIDE,x=id%nx(),y=id/nx();
+    double t0=start(),t1=end(),mid=(t0+t1)*.5LF,s=slope(mid),scale=sqrt(1.+s*s);
+    dvec2 a=wallSpan(x,y,t0),b=wallSpan(x,y,t1),m=wallSpan(x,y,mid);
+    bool owned=m.y>m.x;
+    G[cellAt(id)+14u]=owned?id:invalid;
+    G[at]=id;G[at+1u]=id;G[at+2u]=x;G[at+3u]=uint(owned);
+    G[at+4u]=bits(a.x);G[at+5u]=bits(a.y);G[at+6u]=bits(b.x);G[at+7u]=bits(b.y);
+    G[at+8u]=bits(-s/scale);G[at+9u]=bits(1./scale);G[at+10u]=bits(1./scale);G[at+11u]=bits(s/scale);
+    G[at+12u]=bits(wallSpeed((double(x)+m.x)*dx(),x));G[at+13u]=bits(wallSpeed((double(x)+m.y)*dx(),x));
+    G[at+14u]=1u;
+}
+#endif
+
+#if ROLE == 2
+void fail(uint stage,uint reason,uint entity,uint key,double value,double bound){
+    if(O[16]!=0u)return;
+    O[16]=reason;O[17]=stage;O[18]=child;O[19]=entity;O[20]=key;
+    uvec2 v=real64(value),b=real64(bound);
+    O[21]=v.x;O[22]=v.y;O[23]=b.x;O[24]=b.y;
+}
+ivec2 fractionAt(uint index,uint side){
+    uint at=CHILD_BASE+index*INPUT_STEP+2u*side;
+    return ivec2(I[at],I[at+1u]);
+}
+int compareRatio(ivec2 a,ivec2 b){return a.x*b.y-b.x*a.y;}
+void freeze(){
+    O[0]=magic;O[1]=1u;O[2]=I[2];O[3]=I[7];O[4]=genLo;O[5]=genHi;O[6]=count;
+    O[7]=I[3];O[8]=I[4];O[9]=I[6];O[10]=I[10];O[11]=I[11];O[12]=I[8];O[13]=I[9];
+    uvec2 witness=real64(1.LF+0.000000000931322574615478515625LF);
+    O[26]=witness.x;O[27]=witness.y;
+    if(any(notEqual(witness,uvec2(0x3f800000u,0x30800000u)))){
+        fail(0u,1u,0u,0u,0.,0.);return;
+    }
+    if(I[0]!=0x47313449u||I[1]!=1u||I[2]<1u||I[2]>3u||nx()==0u||nx()>40u||ny()==0u||ny()>20u||
+       count==0u||count>4u||count!=I[5]||genLo!=I[8]||genHi!=I[9]||pad0!=0u||pad1!=0u){
+        fail(0u,2u,0u,0u,double(I[8]),double(genLo));return;
+    }
+    if(lengthX()!=(I[2]==2u?.02LF:.1LF)||heightY()!=(I[2]==2u?.01LF:.025LF)||
+       arg(2u)!=1000.||arg(3u)!=.01LF||arg(4u)!=1.||arg(7u)!=0.){
+        fail(0u,3u,0u,0u,lengthX(),heightY());return;
+    }
+    for(uint i=0;i<=nx();++i)if(I[64u+8u*i]!=i||I[65u+8u*i]!=nx()){
+        fail(0u,3u,0u,i,0.,0.);return;
+    }
+    for(uint i=0;i<count;++i){
+        ivec2 lo=fractionAt(i,0),hi=fractionAt(i,1);
+        if(lo.x<0||hi.x<0||lo.x>8192||hi.x>8192||lo.y<1||hi.y<1||lo.y>8192||hi.y>8192){
+            fail(0u,3u,0u,i,double(lo.y),8192.);return;
+        }
+    }
+    for(uint i=0;i<count;++i){
+        uint a=CHILD_BASE+i*INPUT_STEP;
+        if(compareRatio(fractionAt(i,0),fractionAt(i,1))>=0 ||
+           (i!=0u&&compareRatio(fractionAt(i-1u,1),fractionAt(i,0))!=0) ||
+           I[a+4u]!=i||I[a+5u]!=I[7]){
+            fail(0u,3u,0u,i,double(I[a+5u]),double(I[7]));return;
+        }
+    }
+    ivec2 from=fractionAt(0,0),to=fractionAt(count-1u,1);
+    if(I[2]!=3u){
+        if(count!=1u||compareRatio(from,ivec2(0,1))!=0||compareRatio(to,ivec2(1,100))!=0)
+            fail(0u,3u,0u,0u,0.,0.);
+        return;
+    }
+    int step=nx()==20u?100:200;
+    if(I[7]<1u||I[7]>uint(step/4)||compareRatio(from,ivec2(int(I[7])-1,step))!=0||
+       compareRatio(to,ivec2(int(I[7]),step))!=0){
+        fail(0u,3u,0u,0u,0.,0.);return;
+    }
+    uint hits=0u;
+    for(uint i=0u;i<=nx();++i)for(uint j=0u;j<=ny();++j){
+        int n=(5*int(j)-2*int(ny()))*int(nx()),d=4*int(ny())*(2*int(i)-int(nx()));
+        if(d==0)continue; // A sustained coincidence is an identity, not a duration.
+        if(d<0){n=-n;d=-d;}
+        ivec2 eventTime=ivec2(n,d);
+        if(compareRatio(eventTime,from)<=0||compareRatio(eventTime,to)>=0)continue;
+        bool found=false;
+        for(uint c=1u;c<count;++c)if(compareRatio(eventTime,fractionAt(c,0))==0){
+            hits|=1u<<(c-1u);found=true;
+        }
+        if(!found){fail(0u,3u,0u,i*(ny()+1u)+j,double(n)/double(d),0.);return;}
+    }
+    if(hits!=((1u<<(count-1u))-1u))fail(0u,3u,0u,0u,double(hits),double((1u<<(count-1u))-1u));
+}
+uint representative(uint i){
+    uint next=G[cellAt(i)+3u];
+    while(next!=i){i=next;next=G[cellAt(i)+3u];}
+    return i;
+}
+uint componentAt(uint i){return COMPONENT_BASE+i*COMPONENT_STRIDE;}
+void audit(){
+    G[0]=I[7];G[1]=child;G[2]=nc();G[3]=nf();G[4]=nc();
+    G[6]=I[slot()];G[7]=I[slot()+1u];G[8]=I[slot()+2u];G[9]=I[slot()+3u];
+    for(uint i=0u;i<nc();++i){
+        uint at=componentAt(i);
+        A[at]=invalid;A[at+1u]=0u;storeA(at+2u,0.);
+    }
+    for(uint i=0u;i<nf();++i){
+        Face f=faceFor(i);
+        double openLength=getG(faceAt(i)+10u),q=getA(fluxAt(i)+2u);
+        if(!finite(openLength)||!finite(q)||(f.closed&&q!=0.) ||
+           (openLength==0.&&q!=0.)||G[faceAt(i)]!=i||A[fluxAt(i)]!=i){
+            fail(5u,4u,2u,i,q,0.);return;
+        }
+        if((A[fluxAt(i)+1u]&4u)!=0u){fail(5u,11u,2u,i,q,0.);return;}
+        if(openLength<=0.||f.minus==invalid||f.plus==invalid)continue;
+        uint a=representative(f.minus),b=representative(f.plus);
+        G[cellAt(max(a,b))+3u]=min(a,b);
+    }
+    double sums[12],opposite[12];
+    for(uint i=0u;i<12u;++i){sums[i]=0.;opposite[i]=0.;}
+    uint pieces=0u, firstTransport=invalid;
+    double firstResidual=0.;
+    for(uint i=0u;i<nc();++i){
+        uint g=cellAt(i),p=CELLAUDIT_BASE+i*CELLAUDIT_STRIDE,
+             x=i%nx(),y=i/nx(),state=G[g+2u],root=representative(i);
+        G[g+3u]=root;
+        A[p]=i;A[p+1u]=state;A[p+6u]=invalid;A[p+7u]=state!=0u?root:invalid;
+        double swept=getG(g+8u),area=getG(g+4u)-getG(g+6u);
+        double geom=area-swept;
+        storeA(p+2u,geom);
+        if(!finite(geom)||abs(geom)>1e-12LF){fail(5u,5u,1u,i,geom,1e-12LF);return;}
+        uint left=y*(nx()+1u)+x,right=left+1u,down=verticalCount()+i,up=down+nx();
+        if(I[2]==1u&&x==nx()-1u)right=y*(nx()+1u);
+        dvec4 q=dvec4(-getA(fluxAt(left)+2u),getA(fluxAt(right)+2u),
+                      -getA(fluxAt(down)+2u),getA(fluxAt(up)+2u));
+        double residual=q.x+q.y+q.z+q.w-swept;
+        storeA(p+4u,residual);
+        if(!finite(residual)||abs(residual)>1e-10LF){
+            if(firstTransport==invalid){firstTransport=i;firstResidual=residual;}
+        }
+        uint neg=A[fluxAt(left)+1u]|A[fluxAt(down)+1u],pos=A[fluxAt(right)+1u]|A[fluxAt(up)+1u];
+        bool inward=(neg&1u)!=0u || (pos&2u)!=0u;
+        bool outward=(neg&2u)!=0u || (pos&1u)!=0u;
+        if(state==2u&&!inward){fail(5u,7u,1u,i,residual,0.);return;}
+        if(state==1u&&!outward){fail(5u,8u,1u,i,residual,0.);return;}
+        if(state!=0u){
+            uint a=componentAt(root);
+            A[a]=root;A[a+1u]++;
+            storeA(a+2u,getA(a+2u)+swept);
+        }
+        uint l=loadAt(i);
+        if(A[l+1u]==0u)continue;
+        if((A[l+1u]&2u)!=0u){fail(5u,9u,3u,i,0.,0.);return;}
+        pieces++;
+        for(uint k=0u;k<12u;++k){
+            double value=getA(l+4u+2u*k);
+            if(!finite(value)){fail(5u,9u,3u,i,value,0.);return;}
+            sums[k]+=value;opposite[k]-=value;
+        }
+    }
+    for(uint i=0u;i<nc();++i){
+        uint a=componentAt(i);
+        if(G[cellAt(i)+2u]==0u)G[cellAt(i)+3u]=invalid;
+        double value=getA(a+2u);
+        if(A[a]!=invalid&&abs(value)>1e-10LF){fail(5u,6u,4u,i,value,1e-10LF);return;}
+    }
+    if(firstTransport!=invalid){fail(5u,10u,1u,firstTransport,firstResidual,1e-10LF);return;}
+    for(uint i=0u;i<12u;++i){
+        if(sums[i]+opposite[i]!=0.){fail(5u,9u,3u,i,sums[i]+opposite[i],0.);return;}
+        storeA(8u+2u*i,sums[i]);storeA(32u+2u*i,opposite[i]);
+    }
+    if(I[2]==1u){
+        double duration=end()-start(), pressure=sums[1]/duration, shear=sums[4]/duration;
+        if(abs(pressure+.020LF)>1e-8LF){fail(5u,9u,3u,0u,pressure,-.020LF);return;}
+        double target=(I[6]&1u)!=0u?-.002LF:.002LF;
+        if(abs(shear-target)>1e-8LF){fail(5u,9u,3u,1u,shear,target);return;}
+    }
+    for(uint i=56u;i<64u;++i)A[i]=0u;
+    if(I[2]==3u && I[7]==1u && child==0u){
+        dvec3 initial=dvec3(0);
+        for(uint col=0u;col<nx();++col)for(uint q=0u;q<8u;++q){
+            double x=(double(col)+cNode[q])*dx(),y=bed(x,0.,col);
+            Forces f=wallForce(x,y,0.);
+            dvec2 sum=f.p+f.normal+f.shear;
+            initial+=dx()*cWeight[q]*dvec3(sum,-sum.y*wallSpeed(x,col));
+        }
+        const dvec3 reference=dvec3(-.00848888888888889LF,.040LF,.001333333333333333LF);
+        for(uint i=0u;i<3u;++i){
+            storeA(56u+2u*i,initial[i]);
+            if(abs(initial[i]-reference[i])>1e-8LF){fail(5u,9u,3u,i,initial[i],reference[i]);return;}
+        }
+        A[62]=1u;
+    }
+    G[5]=pieces;
+    A[0]=I[7];A[1]=child;A[2]=pieces;A[3]=pieces;A[4]=1u;
+}
+void sealInterval(){
+    if(outputWordBase!=64u+child*SNAPSHOT_STEP||child>=count){if(gl_LocalInvocationIndex==0u)fail(6u,3u,0u,child,0.,0.);return;}
+    uint i=gl_GlobalInvocationID.x;
+    if(i<B1_BYTES/4u)O[outputWordBase+i]=G[i];
+    if(i<B2_BYTES/4u)O[outputWordBase+SNAPSHOT_AUDIT+i]=A[i];
+    if(i==0u)O[32u+child]=O[16]==0u?seal:0xd0149571u;
+}
+void sealRoot(){
+    if(O[16]!=0u)return;
+    for(uint i=0u;i<count;++i)if(O[32u+i]!=seal){fail(7u,3u,0u,i,0.,0.);return;}
+    O[14]=2u+6u*count;O[15]=I[2]==2u?2u:1u;O[63]=seal;
+}
+#endif
+
+#if ROLE == 1
+void transport(uint id);
+void traction(uint id);
+#endif
+void main(){
+    uint i=gl_GlobalInvocationID.x;
+#if ROLE == 2
+    if(op==0u){if(i==0u)freeze();return;}
+    if(op==7u){if(i==0u)sealRoot();return;}
+    if(op==6u && (O[16]==0u || (O[17]==5u&&O[18]==child))){sealInterval();return;}
+#endif
+    if(O[16]!=0u||child>=count)return;
+#if ROLE == 0
+    if(op==1u&&i<nc())cutCell(i);
+    if(op==2u){if(i<nf())cutFace(i);if(i<nc())cutPiece(i);}
+#elif ROLE == 1
+    if(op==3u&&i<nf())transport(i);
+    if(op==4u&&i<nc())traction(i);
+#else
+    if(op==5u&&i==0u)audit();
+#endif
+}
+
+#if ROLE == 1
+double psi(double x,double y,double t,uint col){
+    double b=bed(x,t,col),h=heightY()-b;
+    if(I[2]==1u){
+        double speed=(I[6]&1u)==0u?.030LF:-.030LF;
+        return speed*(y-b)*(y-b)/(2.*h);
+    }
+    double xi=x/lengthX(),eta=clamp((y-b)/h,0.,1.);
+    return -lengthX()*.020LF*(xi*xi-xi)*(1.-3.*eta*eta+2.*eta*eta*eta);
+}
+double faceRate(Face f,double t){
+    if(I[2]==2u&&(I[6]&16u)!=0u&&f.vertical&&f.x==1u)return .00125LF;
+    if(f.closed)return 0.;
+    if(I[2]==2u)return f.vertical&&f.x==1u?((I[6]&2u)==0u?.00125LF:-.00125LF):0.;
+    dvec2 p=opening(f,t);
+    if(p.x>=p.y)return 0.;
+    double x=double(f.x)*dx(), y=double(f.y)*dy();
+    if(f.vertical)return psi(x,y+p.y*dy(),t,min(f.x,nx()-1u))-psi(x,y+p.x*dy(),t,min(f.x,nx()-1u));
+    return psi(x+p.x*dx(),y,t,f.x)-psi(x+p.y*dx(),y,t,f.x);
+}
+void transport(uint id){
+    Face f=faceFor(id);
+    double t0=start(),t1=end(),sum=0.,coarse=0.,split=t1,previous=t0;
+    uint first=0u,last=0u,transitions=0u;
+    // For the frozen slope family, resolve the open horizontal face's
+    // observed sign changes separately from events that change topology.
+    uint subdivisions=I[2]==3u&&!f.vertical&&!f.closed?32u:1u;
+    for(uint q=0u;q<=subdivisions;++q){
+        double t=mixD(t0,t1,double(q)/double(subdivisions)),v=faceRate(f,t);
+        uint signId=v>1e-18LF?1u:v< -1e-18LF?2u:0u;
+        if(signId==0u)continue;
+        if(first==0u)first=signId;
+        if(last!=0u&&signId!=last){
+            transitions++;
+            if(transitions==1u){
+                double lo=previous,hi=t;
+                for(uint r=0u;r<32u;++r){
+                    double mid=(lo+hi)*.5LF;
+                    if((faceRate(f,mid)>0.)==(last==1u))lo=mid;else hi=mid;
+                }
+                split=(lo+hi)*.5LF;
+            }
+        }
+        last=signId;previous=t;
+    }
+    uint signMask=first|last|(transitions>1u?4u:0u),panels=transitions==1u?2u:1u;
+    for(uint panel=0u;panel<panels;++panel){
+        double lo=panel==0u?t0:split,hi=panel==0u&&panels==2u?split:t1;
+        for(uint q=0;q<8;++q){
+            double v=faceRate(f,mixD(lo,hi,cNode[q]));
+            uint signId=v>1e-18LF?1u:v< -1e-18LF?2u:0u;
+            uint expected=panels==2u?(panel==0u?first:last):first;
+            if(signId!=0u && signId!=expected)signMask|=4u;
+            sum+=(hi-lo)*cWeight[q]*v;
+        }
+        for(uint q=0;q<4;++q)coarse+=(hi-lo)*sWeight[q]*faceRate(f,mixD(lo,hi,sNode[q]));
+    }
+    uint at=fluxAt(id);
+    A[at]=id;A[at+1u]=signMask;
+    storeA(at+2u,sum);storeA(at+4u,abs(sum-coarse));
+    A[at+6u]=(first<<30u)|(last<<28u)|(panels==2u?uint(round((split-t0)/(t1-t0)*16777216.)):0u);
+    A[at+7u]=8u*panels;
+}
+void traction(uint id){
+    uint at=loadAt(id),col=id%nx(),row=id/nx();
+    bool present=G[BEDPIECE_BASE+id*BEDPIECE_STRIDE+3u]!=0u;
+    double total[12],coarse[12];
+    for(uint i=0u;i<12u;++i){total[i]=0.;coarse[i]=0.;}
+    double t0=start(),t1=end(),duration=t1-t0;
+    bool normalMismatch=false;
+    if(present)for(uint rule=0u;rule<2u;++rule){
+        uint n=rule==0u?8u:4u;
+        for(uint q=0u;q<n;++q){
+            double t=mixD(t0,t1,rule==0u?cNode[q]:sNode[q]),s=slope(t),metric=sqrt(1.+s*s);
+            dvec2 clipped=wallSpan(col,row,t);
+            for(uint r=0u;r<n;++r){
+                double local=mixD(clipped.x,clipped.y,rule==0u?cNode[r]:sNode[r]);
+                double x=(double(col)+local)*dx(),y=bed(x,t,col),xi=x/lengthX();
+                double weight=metric*dx()*(clipped.y-clipped.x)*duration*
+                    (rule==0u?cWeight[q]*cWeight[r]:sWeight[q]*sWeight[r]);
+                if(I[2]==3u){
+                    // -∂x psi at eta=0, where the eta derivative vanishes.
+                    double flowV=(lengthX()*.020LF)*(2.*xi-1.)/lengthX();
+                    normalMismatch=normalMismatch||abs((flowV-wallSpeed(x,col))/metric)>1e-12LF;
+                }
+                Forces f=wallForce(x,y,t);
+                dvec2 force[3]=dvec2[3](f.p,f.normal,f.shear);
+                for(uint k=0u;k<3u;++k){
+                    double values[4]=double[4](force[k].x,force[k].y,x*force[k].y-y*force[k].x,
+                                               wallSpeed(x,col)*force[k].y);
+                    for(uint field=0u;field<4u;++field){
+                        uint i=field<2u?2u*k+field:6u+3u*(field-2u)+k;
+                        if(rule==0u)total[i]+=weight*values[field];else coarse[i]+=weight*values[field];
+                    }
+                }
+            }
+        }
+    }
+    A[at]=id;A[at+1u]=uint(present)|2u*uint(normalMismatch);A[at+2u]=present?8u:0u;A[at+3u]=present?8u:0u;
+    for(uint i=0u;i<12u;++i)storeA(at+4u+2u*i,total[i]);
+    double forceError=0.,powerError=0.;
+    for(uint i=0u;i<6u;++i)forceError+=abs(total[i]-coarse[i]);
+    for(uint i=9u;i<12u;++i)powerError+=abs(total[i]-coarse[i]);
+    storeA(at+28u,forceError/duration);storeA(at+30u,powerError/duration);
+}
+#endif
