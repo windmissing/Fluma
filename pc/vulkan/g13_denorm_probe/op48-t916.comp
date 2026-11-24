@@ -1,0 +1,458 @@
+#version 450
+#extension GL_EXT_spirv_intrinsics : require
+spirv_execution_mode(extensions = ["SPV_KHR_float_controls"], capabilities = [4464, 4466, 4467], 4459, 32);
+spirv_execution_mode(4461, 32);
+spirv_execution_mode(4462, 32);
+#define OP_ROOT_SCOPE_COMPARE 6u
+#define OP_ROOT_FINAL_FIELD_AUDIT 7u
+#define OP_ROOT_TIME_PREPARE 8u
+#define OP_VISC_BLOCK 48u
+#define OP_PRESSURE_V 49u
+#define OP_SOURCE_ACTUAL_AUDIT 56u
+precision highp float;
+precision highp int;
+layout(local_size_x=64) in;
+layout(std430,binding=0) readonly buffer Base {uint baseState[];};
+layout(std430,binding=1) coherent buffer Candidate {uint outState[];};
+layout(std430,binding=2) coherent buffer Work {uint w[];};
+layout(std430,binding=3) coherent buffer Control {uint c[];};
+layout(push_constant) uniform Dispatch {uint uOp,uScope,uJ,uMicro,uBlock,uIndex;};
+layout(std140,set=0,binding=4) uniform LayoutWords {uint uL[80];};
+shared float sharedSum[64],sharedMax[64];
+shared uvec4 sharedWide[64];
+shared uint errorAtEntry,selectedAtEntry,convergedAtEntry;
+uint lane;
+bool softDomain=false;
+uint localMathStatus=0u,localMathFunction=0u,localMathObserved=0u,localRounded=0u;
+uvec4 localArg0=uvec4(0u),localArg1=uvec4(0u),localSoftResult=uvec4(0u);
+bool expContext=false;
+void syncAll(){memoryBarrierBuffer();memoryBarrierShared();barrier();}
+void failDetail(uint e,uint detail){uint old=atomicCompSwap(c[514],0u,e);if(old==0u){c[513]=uOp;c[515]=uScope;c[516]=uJ;c[517]=uMicro;c[526]=1u;c[750]=detail;if(uOp<64u){c[733]=c[136];c[734]=c[137];c[735]=detail!=0u?localMathFunction:0u;c[736]=detail!=0u?localMathObserved:0u;for(uint i=0u;i<4u;++i){c[737u+i]=detail!=0u&&(localMathObserved&1u)!=0u?localArg0[i]:0u;c[741u+i]=detail!=0u&&(localMathObserved&4u)!=0u?localSoftResult[i]:0u;c[746u+i]=detail!=0u&&(localMathObserved&2u)!=0u?localArg1[i]:0u;}c[745]=detail!=0u&&(localMathObserved&8u)!=0u?localRounded:0u;}memoryBarrierBuffer();c[766]=0xc0de1311u;}}
+void fail(uint e){failDetail(e,0u);}
+void failMath(uint invocationDetail){failDetail(17u,invocationDetail);}
+void checkVelocity(float x){if(isnan(x)||isinf(x))fail(16u);else{atomicMax(c[676],floatBitsToUint(abs(x)));if(abs(x)>2.)fail(35u);}}
+void reducePair(float sum,float mx){sharedSum[lane]=sum;sharedMax[lane]=mx;syncAll();for(uint stride=32u;stride>0u;stride>>=1u){if(lane<stride){sharedSum[lane]+=sharedSum[lane+stride];sharedMax[lane]=max(sharedMax[lane],sharedMax[lane+stride]);}syncAll();}}
+struct U256 { uvec4 lo; uvec4 hi; };
+bool wzero(uvec4 a){return all(equal(a,uvec4(0u)));}
+bool wlt(uvec4 a,uvec4 b){for(int i=3;i>=0;--i){if(a[i]!=b[i])return a[i]<b[i];}return false;}
+uvec4 wadd(uvec4 a,uvec4 b){uint c=0u;for(int i=0;i<4;++i){uint t=a[i]+b[i],c0=uint(t<a[i]);uint z=t+c;c=c0|uint(z<t);a[i]=z;}return a;}
+uvec4 wneg(uvec4 a){return wadd(~a,uvec4(1u,0u,0u,0u));}
+uvec4 wsub(uvec4 a,uvec4 b){return wadd(a,wneg(b));}
+bool wbit(uvec4 a,uint b){return b<128u&&((a[b/32u]>>(b%32u))&1u)!=0u;}
+uvec4 wshl(uvec4 a,uint s){if(s>=128u)return uvec4(0u);uvec4 r=uvec4(0u);for(uint i=0u;i<4u;++i){if(i>=s/32u){r[i]=a[i-s/32u]<<(s%32u);if(s%32u!=0u&&i>s/32u)r[i]|=a[i-s/32u-1u]>>(32u-s%32u);}}return r;}
+uvec4 wshr(uvec4 a,uint s){if(s>=128u)return uvec4(0u);uvec4 r=uvec4(0u);for(uint i=0u;i<4u;++i){if(i+s/32u<4u){r[i]=a[i+s/32u]>>(s%32u);if(s%32u!=0u&&i+s/32u+1u<4u)r[i]|=a[i+s/32u+1u]<<(32u-s%32u);}}return r;}
+int wtop(uvec4 a){for(int i=3;i>=0;--i)if(a[i]!=0u)return i*32+findMSB(a[i]);return -1;}
+bool wlow(uvec4 a,uint bits){if(bits>=128u)return !wzero(a);return !wzero(wsub(a,wshl(wshr(a,bits),bits)));}
+uvec4 wrne(uvec4 a,uint bits){if(bits==0u)return a;uvec4 q=wshr(a,bits);bool guard=wbit(a,bits-1u);if(guard&&(wlow(a,bits-1u)||(q.x&1u)!=0u))q=wadd(q,uvec4(1u,0u,0u,0u));return q;}
+U256 wmul(uvec4 a,uvec4 b){uint r[8];for(int i=0;i<8;++i)r[i]=0u;for(int i=0;i<4;++i)for(int j=0;j<4;++j){uint hi,lo;umulExtended(a[i],b[j],hi,lo);int k=i+j;uint old=r[k];r[k]+=lo;uint carry=uint(r[k]<old);++k;old=r[k];r[k]+=hi;uint c2=uint(r[k]<old);old=r[k];r[k]+=carry;carry=c2|uint(r[k]<old);for(int t=k+1;t<8;++t){old=r[t];r[t]+=carry;carry=uint(r[t]<old);}}return U256(uvec4(r[0],r[1],r[2],r[3]),uvec4(r[4],r[5],r[6],r[7]));}
+uvec4 wdiv(uvec4 a,uvec4 b,out uvec4 rem){uvec4 q=uvec4(0u);rem=uvec4(0u);for(int i=127;i>=0;--i){bool over=(rem.w&0x80000000u)!=0u;rem=wshl(rem,1u);rem.x|=uint(wbit(a,uint(i)));if(over||!wlt(rem,b)){rem=wsub(rem,b);q[uint(i)/32u]|=1u<<(uint(i)%32u);}}return q;}
+uvec4 wisqrt(uvec4 x){uvec4 root=uvec4(0u);for(int i=63;i>=0;--i){uvec4 q=root;q[uint(i)/32u]|=1u<<(uint(i)%32u);U256 p=wmul(q,q);if(wzero(p.hi)&&!wlt(x,p.lo))root=q;}return root;}
+bool sneg(uvec4 a){return (a.w&0x80000000u)!=0u;}
+uvec4 sabs(uvec4 a){return sneg(a)?wneg(a):a;}
+uvec4 s64(uvec2 a){return uvec4(a,(a.y&0x80000000u)!=0u?uvec2(0xffffffffu):uvec2(0u));}
+uvec4 si(int x){return uvec4(uint(x),x<0?uvec3(0xffffffffu):uvec3(0u));}
+uvec4 smulsmall(uvec4 a,uint b){bool n=sneg(a);U256 p=wmul(sabs(a),uvec4(b,0u,0u,0u));return n?wneg(p.lo):p.lo;}
+uvec4 sdivrne(uvec4 a,uint den){bool n=sneg(a);uvec4 rem;uvec4 q=wdiv(sabs(a),uvec4(den,0u,0u,0u),rem);uint twice=rem.x*2u;if(twice>den||(twice==den&&(q.x&1u)!=0u))q=wadd(q,uvec4(1u,0u,0u,0u));return n?wneg(q):q;}
+uvec4 sdivtz(uvec4 a,uint den){uvec4 rem;uvec4 q=wdiv(sabs(a),uvec4(den,0u,0u,0u),rem);return sneg(a)?wneg(q):q;}
+bool sfits64(uvec4 a){uint fill=(a.y&0x80000000u)!=0u?0xffffffffu:0u;return a.z==fill&&a.w==fill;}
+float sfloat(uvec4 a,int binaryScale){uvec4 mag=sabs(a);int top=wtop(mag);if(top<0)return 0.;int exponent=top+binaryScale;if(exponent>127){fail(17u);return 0.;}uvec4 significand=top>23?wrne(mag,uint(top-23)):wshl(mag,uint(23-top));if(significand.x>=0x1000000u){significand=wshr(significand,1u);++exponent;}if(exponent< -126){int shift= -149-binaryScale;significand=shift>0?wrne(mag,uint(shift)):wshl(mag,uint(-shift));return uintBitsToFloat(significand.x|(sneg(a)?0x80000000u:0u));}uint bits=(uint(exponent+127)<<23u)|(significand.x&0x7fffffu);return uintBitsToFloat(bits|(sneg(a)?0x80000000u:0u));}
+uvec4 floatFixed(float value,int fractionBits){uint bits=floatBitsToUint(value);uint raw=(bits>>23u)&255u;if(raw==0u&&((bits&0x7fffffu)==0u))return uvec4(0u);uint sig=(bits&0x7fffffu)|(raw==0u?0u:0x800000u);int shift=(raw==0u?-126:int(raw)-127)-23+fractionBits;uvec4 v=uvec4(sig,0u,0u,0u);v=shift>=0?wshl(v,uint(shift)):wrne(v,uint(-shift));return (bits&0x80000000u)!=0u?wneg(v):v;}
+const uvec4 SOFT_SIN[13]=uvec4[](uvec4(0u,0u,0u,1073676288u),uvec4(1431655765u,1431655765u,1431655765u,3220985173u),uvec4(286331153u,286331153u,286331153u,1073221905u),uvec4(436314138u,2686058912u,27269633u,3220348954u),uvec4(2296709143u,955952156u,978676851u,1072460254u),uvec4(1266908615u,956200062u,1451185230u,3219500644u),uvec4(488877928u,2546612275u,1631225552u,1071538468u),uvec4(2968423600u,4045243990u,1047739265u,3218517631u),uvec4(2541165312u,2796707921u,1996688084u,1070503212u),uvec4(997955189u,1917624812u,3026719765u,3217436489u),uvec4(4243484229u,415166790u,4016951127u,1069380024u),uvec4(1305998888u,2643966064u,1093755777u,3216274971u),uvec4(427257617u,2370716836u,3453052410u,1068187452u));
+const uvec4 SOFT_COS[13]=uvec4[](uvec4(0u,0u,0u,1073676288u),uvec4(0u,0u,0u,3221094400u),uvec4(1431655765u,1431655765u,1431655765u,1073370453u),uvec4(381774871u,1813430636u,3245086401u,3220532246u),uvec4(436314138u,2686058912u,27269633u,1072668698u),uvec4(3555354233u,3341742102u,4218915317u,3219728356u),uvec4(2276261509u,2069122473u,2399112585u,1071783661u),uvec4(1172284389u,3523980785u,1250691017u,3218772887u),uvec4(2968423600u,4045243990u,1047739265u,1070771839u),uvec4(2258813611u,2008744008u,2252052441u,3217713191u),uvec4(737734843u,1350212781u,3124764706u,1069671746u),uvec4(3086170348u,692391056u,2530967429u,3216575715u),uvec4(1741331850u,2093632320u,26685271u,1068495567u));
+const uvec4 SOFT_EXP[21]=uvec4[](uvec4(0u,0u,0u,1073676288u),uvec4(0u,0u,0u,1073676288u),uvec4(0u,0u,0u,1073610752u),uvec4(1431655765u,1431655765u,1431655765u,1073501525u),uvec4(1431655765u,1431655765u,1431655765u,1073370453u),uvec4(286331153u,286331153u,286331153u,1073221905u),uvec4(381774871u,1813430636u,3245086401u,1073048598u),uvec4(436314138u,2686058912u,27269633u,1072865306u),uvec4(436314138u,2686058912u,27269633u,1072668698u),uvec4(2296709143u,955952156u,978676851u,1072460254u),uvec4(3555354233u,3341742102u,4218915317u,1072244708u),uvec4(1266908615u,956200062u,1451185230u,1072016996u),uvec4(2276261509u,2069122473u,2399112585u,1071783661u),uvec4(488877928u,2546612275u,1631225552u,1071538468u),uvec4(1172284389u,3523980785u,1250691017u,1071289239u),uvec4(2968423600u,4045243990u,1047739265u,1071033983u),uvec4(2968423600u,4045243990u,1047739265u,1070771839u),uvec4(2541165312u,2796707921u,1996688084u,1070503212u),uvec4(2258813611u,2008744008u,2252052441u,1070229543u),uvec4(997955189u,1917624812u,3026719765u,1069952841u),uvec4(737734843u,1350212781u,3124764706u,1069671746u));
+const uvec4 SOFT_piBinary128=uvec4(3306619320u,2221509004u,3041149649u,1073779231u);
+const uvec4 SOFT_ln2Binary128=uvec4(1731200998u,4082602951u,804234142u,1073636068u);
+const uint SOFT_twoOverPi[16]=uint[](784024708u,3900847605u,2972297022u,4263373596u,164729372u,105459434u,1112396512u,3072618042u,3736847713u,4266746795u,1011060801u,3680671129u,4113882560u,4230436817u,1313084713u,2734261102u);
+struct Soft {uvec4 sig; int exponent; bool negative;};
+uvec4 mathRaw(Soft a){if(wzero(a.sig))return uvec4(0u,0u,0u,a.negative?0x80000000u:0u);uvec4 s=a.sig;s.w=(s.w&65535u)|(uint(a.exponent+16383)<<16u)|(a.negative?0x80000000u:0u);return s;}
+void mathDomain(uint detail){softDomain=true;localMathStatus|=detail;atomicOr(c[751],detail);failMath(localMathStatus);}
+Soft softZero(){return Soft(uvec4(0u),0,false);}
+Soft softUnpack(uvec4 raw){uint e=(raw.w>>16u)&32767u;bool n=(raw.w&0x80000000u)!=0u;raw.w&=65535u;if(e!=0u)raw.w|=65536u;return Soft(raw,int(e==0u?1u:e)-16383,n);}
+Soft softNormalize(uvec4 sig,int e,bool n){int top=wtop(sig);if(top<0)return softZero();if(top>112){sig=wrne(sig,uint(top-112));e+=top-112;if(wtop(sig)>112){sig=wshr(sig,1u);++e;}}else if(top<112){sig=wshl(sig,uint(112-top));e-=112-top;}return Soft(sig,e,n);}
+Soft softInt(uint n){return softNormalize(uvec4(n,0u,0u,0u),112,false);}
+Soft softU64(uvec2 n){return softNormalize(uvec4(n,0u,0u),112,false);}
+Soft softF32(float f){uint b=floatBitsToUint(f),e=(b>>23u)&255u;uvec4 s=wshl(uvec4((b&0x7fffffu)|(e==0u?0u:0x800000u),0u,0u,0u),89u);return softNormalize(s,e==0u?-126:int(e)-127,(b&0x80000000u)!=0u);}
+Soft softNeg(Soft a){a.negative=!a.negative;return a;}
+Soft softAdd(Soft a,Soft b){if(wzero(a.sig))return b;if(wzero(b.sig))return a;if(a.exponent<b.exponent){Soft t=a;a=b;b=t;}uint shift=uint(min(a.exponent-b.exponent,128));uvec4 x=wshl(a.sig,3u),y=wshl(b.sig,3u);bool sticky=wlow(y,shift);y=wshr(y,shift);if(sticky)y.x|=1u;uvec4 s;bool n=a.negative;if(a.negative==b.negative)s=wadd(x,y);else if(wlt(x,y)){s=wsub(y,x);n=b.negative;}else s=wsub(x,y);int top=wtop(s);if(top<0)return softZero();int move=top-115;int e=a.exponent+move;if(move>0){bool st=wlow(s,uint(move));s=wshr(s,uint(move));if(st)s.x|=1u;}else s=wshl(s,uint(-move));s=wrne(s,3u);return softNormalize(s,e,n);}
+Soft softMul(Soft a,Soft b){if(wzero(a.sig)||wzero(b.sig))return softZero();U256 p=wmul(a.sig,b.sig);uint shift=wbit(p.hi,97u)?113u:112u;uvec4 s=wshr(p.lo,shift)|wshl(p.hi,128u-shift);bool guard=wbit(p.lo,shift-1u),sticky=wlow(p.lo,shift-1u);if(guard&&(sticky||(s.x&1u)!=0u))s=wadd(s,uvec4(1u,0u,0u,0u));return softNormalize(s,a.exponent+b.exponent+int(shift)-112,a.negative!=b.negative);}
+Soft softDiv(Soft a,Soft b){if(wzero(b.sig)){if(!expContext){localMathFunction=1u;localArg0=mathRaw(a);localArg1=mathRaw(b);localMathObserved=3u;}mathDomain(1u);return softZero();}if(wzero(a.sig))return softZero();uvec4 rem=a.sig,q=uvec4(0u);int e=a.exponent-b.exponent;if(wlt(rem,b.sig)){rem=wshl(rem,1u);--e;}for(int i=115;i>=0;--i){if(!wlt(rem,b.sig)){rem=wsub(rem,b.sig);q[uint(i)/32u]|=1u<<(uint(i)%32u);}rem=wshl(rem,1u);}if(!wzero(rem))q.x|=1u;q=wrne(q,3u);return softNormalize(q,e,a.negative!=b.negative);}
+float softFloat(Soft a){if(!expContext){localMathFunction=3u;localArg0=mathRaw(a);localArg1=uvec4(0u);localSoftResult=mathRaw(a);localMathObserved=5u;}if(wzero(a.sig)){localRounded=a.negative?0x80000000u:0u;localMathObserved|=8u;return uintBitsToFloat(localRounded);}int e=a.exponent;uint sign=a.negative?0x80000000u:0u;if(e>127){localRounded=0x7f800000u|sign;localMathObserved|=8u;mathDomain(expContext?4u:2u);return uintBitsToFloat(localRounded);}if(e< -150){localRounded=sign;localMathObserved|=8u;return uintBitsToFloat(localRounded);}uint shift=89u+uint(max(-126-e,0));uvec4 q=wrne(a.sig,shift);if(e>=-126&&q.x>=0x1000000u){q.x>>=1u;++e;}if(e>127){localRounded=0x7f800000u|sign;localMathObserved|=8u;mathDomain(expContext?4u:2u);return uintBitsToFloat(localRounded);}uint bits=e>=-126?(uint(e+127)<<23u)|(q.x&0x7fffffu):q.x;localRounded=bits|sign;localMathObserved|=8u;return uintBitsToFloat(localRounded);}
+Soft softHalf(Soft a){--a.exponent;return a;}
+Soft softPolynomial(Soft x,uint which){Soft z=softMul(x,x);if(which==0u){Soft y=softUnpack(SOFT_SIN[12]);for(int i=11;i>=0;--i)y=softAdd(softMul(y,z),softUnpack(SOFT_SIN[i]));return softMul(x,y);}Soft y=softUnpack(SOFT_COS[12]);for(int i=11;i>=0;--i)y=softAdd(softMul(y,z),softUnpack(SOFT_COS[i]));return y;}
+Soft softReduce(Soft a,out uint quadrant){if(wzero(a.sig)||a.exponent< -2){quadrant=0u;return a;}uint acc[20];for(int i=0;i<20;++i)acc[i]=0u;for(int i=0;i<4;++i)for(int j=0;j<16;++j){uint hi,lo;umulExtended(a.sig[i],SOFT_twoOverPi[j],hi,lo);int k=i+j;uint old=acc[k];acc[k]+=lo;uint carry=uint(acc[k]<old);++k;old=acc[k];acc[k]+=hi;uint cc=uint(acc[k]<old);old=acc[k];acc[k]+=carry;carry=cc|uint(acc[k]<old);for(int z=k+1;z<20;++z){old=acc[z];acc[z]+=carry;carry=uint(acc[z]<old);}}
+ int cut=624-a.exponent;uint q=0u;for(int i=0;i<2;++i){int at=cut+i;if(at>=0&&at<640)q|=((acc[at/32]>>uint(at%32))&1u)<<uint(i);}bool guard=false,sticky=false;if(cut>0&&cut<=640)guard=((acc[(cut-1)/32]>>uint((cut-1)%32))&1u)!=0u;for(int i=0;i<20;++i){int count=clamp(cut-1-i*32,0,32);if(count==32)sticky=sticky||acc[i]!=0u;else if(count>0)sticky=sticky||((acc[i]&((1u<<uint(count))-1u))!=0u);}bool up=guard&&(sticky||(q&1u)!=0u);uvec4 frac=uvec4(0u);for(int i=0;i<116;++i){int at=cut-116+i;if(at>=0&&at<640)frac[uint(i)/32u]|=((acc[at/32]>>uint(at%32))&1u)<<(uint(i)%32u);}bool fractionalSticky=false;for(int i=0;i<20;++i){int count=clamp(cut-116-i*32,0,32);if(count==32)fractionalSticky=fractionalSticky||acc[i]!=0u;else if(count>0)fractionalSticky=fractionalSticky||((acc[i]&((1u<<uint(count))-1u))!=0u);}if(fractionalSticky)frac.x|=1u;Soft r=softNormalize(wrne(frac,3u),-1,false);if(up){r=softAdd(r,softNeg(softInt(1u)));q=(q+1u)&3u;}r=softMul(r,softHalf(softUnpack(SOFT_piBinary128)));if(a.negative){r=softNeg(r);q=(4u-q)&3u;}quadrant=q;return r;}
+Soft softSin(Soft x){uint q;Soft r=softReduce(x,q);Soft y=softPolynomial(r,q%2u);if(q>=2u)y=softNeg(y);return y;}
+Soft softCos(Soft x){uint q;Soft r=softReduce(x,q);Soft y=softPolynomial(r,1u-q%2u);if(q==1u||q==2u)y=softNeg(y);return y;}
+Soft softExp(Soft x){expContext=true;localMathFunction=4u;localArg0=mathRaw(x);localArg1=uvec4(0u);localSoftResult=uvec4(0u);localMathObserved=1u;localRounded=0u;Soft ln=softUnpack(SOFT_ln2Binary128);Soft ratio=softDiv(x,ln);if(ratio.exponent>15){mathDomain(4u);expContext=false;return softZero();}uvec4 qi=wrne(ratio.sig,uint(112-ratio.exponent));int n=int(qi.x)*(ratio.negative?-1:1);Soft nf=softInt(uint(abs(n)));nf.negative=n<0;Soft r=softAdd(x,softNeg(softMul(nf,ln)));Soft y=softUnpack(SOFT_EXP[20]);for(int i=19;i>=0;--i)y=softAdd(softMul(y,r),softUnpack(SOFT_EXP[i]));y.exponent+=n;localSoftResult=mathRaw(y);localMathObserved|=4u;float rounded=softFloat(y);if(rounded==0.||isnan(rounded)||isinf(rounded))mathDomain(4u);else{Soft error=softAdd(y,softNeg(softF32(rounded)));error.negative=false;Soft bound=softInt(1u);bound.exponent-=90;Soft total=softInt(1u);total.exponent-=20;Soft conversion=softDiv(softAdd(total,softNeg(bound)),softAdd(softInt(1u),bound));Soft allowance=softMul(y,conversion);allowance.negative=false;if(!wzero(error.sig)&&(error.exponent>allowance.exponent||(error.exponent==allowance.exponent&&wlt(allowance.sig,error.sig))))mathDomain(4u);}expContext=false;return y;}
+uint nx(){return uL[0];}
+uint ny(){return uL[1];}
+uint nc(){return uL[2];}
+uint nf(){return uL[3];}
+uint nuFaces(){return (nx()+1u)*ny();}
+float h(){return uintBitsToFloat(c[10]);}
+float dt(){return 1.0/(120.0*float(max(uJ,1u)));}
+uint work(uint i){return uL[16u+i];}
+bool periodicX(){return c[6]==2u||c[6]==3u;}
+bool periodicY(){return c[6]==2u;}
+int wrapIndex(int i,int n){return (i%n+n)%n;}
+bool activeFace(uint f){if(f<nuFaces()){uint x=f%(nx()+1u);return periodicX()?x<nx():x>0u&&x<nx();}uint y=(f-nuFaces())/nx();return periodicY()?y<ny():y>0u&&y<ny();}
+uint faceIndex(bool vertical,int x,int y){return vertical?nuFaces()+uint(y)*nx()+uint(x):uint(y)*(nx()+1u)+uint(x);}
+float fieldRead(uint array,bool vertical,int x,int y){int X=int(nx()),Y=int(ny());if(periodicX())x=wrapIndex(x,X);if(periodicY())y=wrapIndex(y,Y);
+ bool normal=vertical?(y==0||y==Y)&&!periodicY():(x==0||x==X)&&!periodicX();if(normal)return 0.;
+ float sign=1.,offset=0.;if(!vertical&&!periodicX()){if(x<0){x=-x;sign=-1.;}if(x>X){x=2*X-x;sign=-1.;}}if(vertical&&!periodicY()){if(y<0){y=-y;sign=-1.;}if(y>Y){y=2*Y-y;sign=-1.;}}if(vertical&&!periodicX()){if(x<0){x=-1-x;sign=-1.;}if(x>=X){x=2*X-1-x;sign=-1.;}}
+ if(!vertical&&!periodicY()){if(y<0){y=-1-y;sign=-1.;offset=2.*uintBitsToFloat(c[32]);}if(y>=Y){y=2*Y-1-y;sign=-1.;offset=2.*uintBitsToFloat(c[33]);}}
+ uint index=faceIndex(vertical,x,y);uint bits=array==0xffffffffu?outState[256u+index]:(array==0xfffffffeu?baseState[256u+index]:w[array+index]);return sign*uintBitsToFloat(bits)+offset;}
+uvec4 loadQ(uint array,uint cell){return s64(uvec2(w[array+2u*cell],w[array+2u*cell+1u]));}
+void storeQ(uint array,uint cell,uvec4 value){if(!sfits64(value))fail(17u);w[array+2u*cell]=value.x;w[array+2u*cell+1u]=value.y;}
+uint pressureCell(int x,int y,uint X,uint Y){x=periodicX()?wrapIndex(x,int(X)):clamp(x,0,int(X)-1);y=periodicY()?wrapIndex(y,int(Y)):clamp(y,0,int(Y)-1);return uint(y)*X+uint(x);}
+uvec4 pressureAt(uint array,uint level,int x,int y){uint X=uL[40u+3u*level],Y=uL[41u+3u*level],start=uL[42u+3u*level];return loadQ(array,start+pressureCell(x,y,X,Y));}
+const uint SHA_K[64]=uint[](0x428a2f98u,0x71374491u,0xb5c0fbcfu,0xe9b5dba5u,0x3956c25bu,0x59f111f1u,0x923f82a4u,0xab1c5ed5u,0xd807aa98u,0x12835b01u,0x243185beu,0x550c7dc3u,0x72be5d74u,0x80deb1feu,0x9bdc06a7u,0xc19bf174u,0xe49b69c1u,0xefbe4786u,0x0fc19dc6u,0x240ca1ccu,0x2de92c6fu,0x4a7484aau,0x5cb0a9dcu,0x76f988dau,0x983e5152u,0xa831c66du,0xb00327c8u,0xbf597fc7u,0xc6e00bf3u,0xd5a79147u,0x06ca6351u,0x14292967u,0x27b70a85u,0x2e1b2138u,0x4d2c6dfcu,0x53380d13u,0x650a7354u,0x766a0abbu,0x81c2c92eu,0x92722c85u,0xa2bfe8a1u,0xa81a664bu,0xc24b8b70u,0xc76c51a3u,0xd192e819u,0xd6990624u,0xf40e3585u,0x106aa070u,0x19a4c116u,0x1e376c08u,0x2748774cu,0x34b0bcb5u,0x391c0cb3u,0x4ed8aa4au,0x5b9cca4fu,0x682e6ff3u,0x748f82eeu,0x78a5636fu,0x84c87814u,0x8cc70208u,0x90befffau,0xa4506cebu,0xbef9a3f7u,0xc67178f2u);
+uint traceBase(){return uScope==0u?2048u:10240u;}
+uint microBase(){return traceBase()+1024u*(uJ+uMicro);}
+void traceVisc(float rms,float mx,bool noop){uint p=microBase()+384u+16u*uBlock;c[p]=uBlock;c[p+1u]=32u|(noop?4u:1u);c[p+2u]=c[525];c[p+3u]=c[514];c[p+4u]=floatBitsToUint(rms);c[p+5u]=floatBitsToUint(mx);c[p+15u]=0xc0de1301u;}
+void tracePressure(uvec4 sum,uvec4 U,bool pass,bool noop){uint p=microBase()+128u+16u*uBlock;c[p]=uBlock;c[p+1u]=32u|(noop?4u:1u);c[p+2u]=uint(pass);c[p+3u]=c[514];for(uint i=0u;i<4u;++i)c[p+4u+i]=sum[i];c[p+8u]=c[665];c[p+9u]=c[666];c[p+10u]=c[618];c[p+11u]=c[619];c[p+12u]=c[620];c[p+13u]=c[621];c[p+14u]=noop?0u:8u*uL[7]+28u;c[p+15u]=0xc0de1301u;}
+void traceStage(bool noop){if(lane!=0u||uOp<16u||uOp>47u)return;uint p=microBase()+512u+8u*(uOp-16u);c[p]=uOp;c[p+1u]=32u|(noop?(c[514]!=0u?8u:(c[762]==1u||c[768u+uScope]!=0u?16u:2u)):1u);c[p+2u]=c[514];c[p+3u]=noop?0u:nf();c[p+4u]=floatBitsToUint(max(uintBitsToFloat(c[584]),uintBitsToFloat(c[586])));c[p+5u]=c[676];c[p+6u]=c[546];c[p+7u]=0xc0de1301u;}
+uvec2 pairSub(uvec2 a,uvec2 b){return uvec2(a.x-b.x,a.y-b.y-uint(a.x<b.x));}
+uvec4 softPack(Soft a){if(wzero(a.sig))return uvec4(0u);uvec4 s=a.sig;s.w=(s.w&65535u)|(uint(a.exponent+16383)<<16u)|(a.negative?0x80000000u:0u);return s;}
+Soft acceptedTime(){uvec2 q=pairSub(uvec2(baseState[18],baseState[19]),uvec2(outState[24],outState[25]));Soft t=softDiv(softU64(q),softInt(120u));if(uOp>=50u||c[520]>=50u)return t;if(uOp==OP_ROOT_FINAL_FIELD_AUDIT||uOp==OP_ROOT_TIME_PREPARE)return softAdd(t,softDiv(softInt(1u),softInt(120u)));Soft micro=softDiv(softInt(2u*uMicro+1u),softInt(240u*max(uJ,1u)));return softAdd(t,micro);}
+void drive(){if(lane!=0u)return;Soft pi=softUnpack(SOFT_piBinary128),T=softF32(uintBitsToFloat(outState[28])),Om=softF32(uintBitsToFloat(outState[27])),time=acceptedTime(),theta0=softF32(uintBitsToFloat(outState[26]));uint q0;theta0=softReduce(theta0,q0);theta0=softAdd(theta0,softMul(softInt(q0),softHalf(pi)));Soft angle=theta0,omega=softZero(),alpha=softZero();bool ended=false;
+ uint mode=outState[30];ended=mode==0u||mode==1u;if(mode==2u){ended=time.exponent>T.exponent||(time.exponent==T.exponent&&!wlt(time.sig,T.sig));if(ended){angle=softAdd(theta0,softHalf(softMul(Om,T)));}else{Soft phase=softDiv(softMul(softMul(softInt(2u),pi),time),T);Soft sine=softSin(softHalf(phase));omega=softMul(Om,softMul(sine,sine));alpha=softMul(softDiv(softMul(Om,pi),T),softSin(phase));Soft difference;if(phase.exponent< -2){Soft z=softMul(phase,phase),p=softNeg(softUnpack(SOFT_SIN[12]));for(int i=11;i>=1;--i)p=softAdd(softMul(p,z),softNeg(softUnpack(SOFT_SIN[i])));difference=softMul(softMul(phase,z),p);}else difference=softAdd(phase,softNeg(softSin(phase)));angle=softAdd(theta0,softMul(softDiv(softMul(Om,T),softMul(softInt(4u),pi)),difference));}}
+ if(mode==3u){omega=Om;angle=softAdd(theta0,softMul(Om,time));}Soft cs=softCos(angle),sn=softSin(angle);Soft gx=softF32(uintBitsToFloat(outState[202])),gy=softF32(uintBitsToFloat(outState[203]));Soft bx=softAdd(softMul(cs,gx),softMul(sn,gy)),by=softAdd(softMul(softNeg(sn),gx),softMul(cs,gy));uint quadrant;Soft wrapped=softReduce(angle,quadrant);wrapped=softAdd(wrapped,softMul(softInt(quadrant),softHalf(pi)));c[624]=floatBitsToUint(softFloat(wrapped));c[625]=floatBitsToUint(softFloat(omega));c[626]=floatBitsToUint(softFloat(alpha));c[627]=floatBitsToUint(softFloat(bx));c[628]=floatBitsToUint(softFloat(by));c[629]=uint(ended);for(uint i=0u;i<4u;++i){c[630u+i]=softPack(angle)[i];c[634u+i]=softPack(omega)[i];c[638u+i]=softPack(alpha)[i];}for(uint i=0u;i<4u;++i){c[820u+i]=softPack(bx)[i];c[824u+i]=softPack(by)[i];}uvec4 fq=uvec4(baseState[18],baseState[19],0u,0u);bool forceEnabled=!wlt(fq,uvec4(outState[198],outState[199],0u,0u))&&wlt(fq,uvec4(outState[200],outState[201],0u,0u));if(outState[204]==3u&&forceEnabled){Soft t=acceptedTime();c[642]=floatBitsToUint(.25*softFloat(softExp(softNeg(t))));c[643]=floatBitsToUint(.125*softFloat(softExp(softNeg(softMul(softInt(2u),t)))));}if(softDomain)failMath(localMathStatus);}
+float viscApply(uint array,uint f,bool homogeneous){bool v=f>=nuFaces();uint z=v?f-nuFaces():f;int x=int(v?z%nx():z%(nx()+1u)),y=int(v?z/nx():z/(nx()+1u));float q=uintBitsToFloat(w[array+f]);float sum=fieldRead(array,v,x-1,y)+fieldRead(array,v,x+1,y)+fieldRead(array,v,x,y-1)+fieldRead(array,v,x,y+1)-4.*q;if(homogeneous&&!v&&!periodicY()){if(y==0)sum-=2.*uintBitsToFloat(c[32]);if(y==int(ny())-1)sum-=2.*uintBitsToFloat(c[33]);}return q-uintBitsToFloat(c[18])*dt()*sum/(h()*h());}
+uint viscResult(){return work(5u+((c[729]+1u)%3u));}
+float viscSpectralUpper(){uvec4 denominator=wshl(uvec4(120u*uJ,0u,0u,0u),48u);uint inv=uint(round(1./h()));uvec4 numerator=wadd(denominator,smulsmall(floatFixed(uintBitsToFloat(c[18]),48),8u*inv*inv));int exponent=wtop(numerator)-wtop(denominator);uvec4 testN=numerator,testD=denominator;if(exponent>=0)testD=wshl(testD,uint(exponent));else testN=wshl(testN,uint(-exponent));if(wlt(testN,testD))--exponent;uvec4 rem;uvec4 q=wdiv(wshl(numerator,uint(23-exponent)),denominator,rem);if(!wzero(rem))q=wadd(q,uvec4(1u,0u,0u,0u));if(q.x>=0x1000000u){q.x>>=1u;++exponent;}return uintBitsToFloat((uint(exponent+127)<<23u)|(q.x&0x7fffffu));}
+void viscBlock(){bool noop=c[525u]!=0u;float nu=uintBitsToFloat(c[18]);float upper=viscSpectralUpper(),cc=.5*(upper+1.),dd=.5*(upper-1.);float rho=dd==0.?0.:dd/cc;
+ if(dd!=0.)for(uint k=1u;k<uBlock*16u;++k)rho=1./(2.*cc/dd-rho);
+ float lastAlpha=0.,lastBeta=0.;
+ for(uint k=0u;k<16u;++k){uint iteration=uBlock*16u+k;float prev=rho;if(iteration>0u&&dd!=0.)rho=1./(2.*cc/dd-rho);float alpha=iteration==0u||dd==0.?1./cc:2.*rho/dd,beta=iteration==0u||dd==0.?0.:rho*prev;lastAlpha=alpha;lastBeta=beta;
+  uint currentArray=work(5u+((iteration+1u)%3u)),previousArray=work(5u+(iteration%3u)),nextArray=work(5u+((iteration+2u)%3u));
+  for(uint f=lane;f<nf();f+=64u)if(!noop){float x=uintBitsToFloat(w[currentArray+f]),old=uintBitsToFloat(w[previousArray+f]);float residual=uintBitsToFloat(w[work(4u)+f])-viscApply(currentArray,f,true);float next=nu==0.?uintBitsToFloat(w[work(4u)+f]):(activeFace(f)?x+alpha*residual+beta*(x-old):x);checkVelocity(next);w[nextArray+f]=floatBitsToUint(next);}syncAll();}
+ if(lane==0u&&!noop)c[729]=16u*(uBlock+1u);syncAll();uint result=viscResult();float sq=0.,mx=0.,energy=0.;for(uint f=lane;f<nf();f+=64u)if(activeFace(f)){float x=uintBitsToFloat(w[result+f]),r=uintBitsToFloat(w[work(4u)+f])-viscApply(result,f,true);sq+=r*r;mx=max(mx,abs(r));energy-=h()*h()*x*r;}reducePair(sq,mx);if(lane==0u){float rms=sqrt(sharedSum[0]/float(nc()));c[720]=floatBitsToUint(rms);c[721]=floatBitsToUint(sharedMax[0]);if(rms<=exp2(-16.)/float(uJ)&&sharedMax[0]<=exp2(-14.)/float(uJ))c[525u]=1u;else if(uBlock==7u)fail(13u);traceVisc(rms,sharedMax[0],noop);uint record=microBase()+384u+16u*uBlock;c[record+6u]=c[729];c[record+7u]=floatBitsToUint(upper);c[record+8u]=floatBitsToUint(rho);c[record+9u]=floatBitsToUint(lastAlpha);c[record+10u]=floatBitsToUint(lastBeta);c[record+11u]=c[18];c[record+14u]=noop?0u:16u;}reducePair(energy,0.);if(lane==0u)c[microBase()+384u+16u*uBlock+12u]=floatBitsToUint(sharedSum[0]);syncAll();}
+uvec4 poisson(uint array,uint level,int x,int y){uint X=uL[40u+level*3u],Y=uL[41u+level*3u];uvec4 p=pressureAt(array,level,x,y),sum=uvec4(0u);for(int axis=0;axis<4;++axis){int dx=axis==0?-1:(axis==1?1:0),dy=axis==2?-1:(axis==3?1:0);sum=wadd(sum,wsub(p,pressureAt(array,level,x+dx,y+dy)));}uint inv=uint(round(1./h()))>>level;return smulsmall(sum,inv*inv);}
+void integerReduce(uvec4 q){sharedWide[lane]=q;syncAll();for(uint stride=32u;stride>0u;stride>>=1u){if(lane<stride)sharedWide[lane]=wadd(sharedWide[lane],sharedWide[lane+stride]);syncAll();}}
+void meanRemove(uint array,uint level,bool compatibility){uint X=uL[40u+3u*level],Y=uL[41u+3u*level],start=uL[42u+3u*level],count=X*Y;uvec4 sum=uvec4(0u);for(uint i=lane;i<count;i+=64u)sum=wadd(sum,loadQ(array,start+i));integerReduce(sum);sum=sharedWide[0];if(compatibility&&wlt(uvec4(count/2u,0u,0u,0u),sabs(sum)))fail(19u);uvec4 mean=compatibility?sdivtz(sum,count):sdivrne(sum,count);uvec4 rem=wsub(sum,smulsmall(mean,count));uint corrections=sabs(rem).x;for(uint i=lane;i<count;i+=64u){uvec4 correction=mean;if(compatibility&&i<corrections)correction=wadd(correction,si(sneg(rem)?-1:1));storeQ(array,start+i,wsub(loadQ(array,start+i),correction));}syncAll();if(level==0u&&lane==0u){uvec4 after=wsub(sum,smulsmall(mean,count));if(compatibility){c[616]=sum.x;c[617]=sum.y;c[618]=0u;c[619]=0u;}else{c[620]=after.x;c[621]=after.y;if(wlt(uvec4(count/2u,0u,0u,0u),sabs(after)))fail(20u);}}}
+void jacobi(uint level,uint count){uint X=uL[40u+3u*level],Y=uL[41u+3u*level],start=uL[42u+3u*level],n=X*Y,inv=uint(round(1./h()))>>level;
+ for(uint k=0u;k<count;++k){uint readArray=work(10u+(k&1u)),writeArray=work(11u-(k&1u));for(uint i=lane;i<n;i+=64u){int x=int(i%X),y=int(i/X);uint neighbors=4u;if(!periodicX()){neighbors-=uint(x==0)+uint(x==int(X)-1);}if(!periodicY()){neighbors-=uint(y==0)+uint(y==int(Y)-1);}uvec4 r=wsub(loadQ(work(12u),start+i),poisson(readArray,level,x,y));uvec4 delta=sdivrne(smulsmall(r,2u),3u*neighbors*inv*inv);storeQ(writeArray,start+i,wadd(loadQ(readArray,start+i),delta));}syncAll();}}
+void restrictResidual(uint level){uint X=uL[40u+3u*level],Y=uL[41u+3u*level],start=uL[42u+3u*level];for(uint i=lane;i<X*Y;i+=64u)storeQ(work(13u),start+i,wsub(loadQ(work(12u),start+i),poisson(work(10u),level,int(i%X),int(i/X))));syncAll();uint next=level+1u,CX=uL[40u+3u*next],CY=uL[41u+3u*next],cs=uL[42u+3u*next];for(uint i=lane;i<CX*CY;i+=64u){uint x=2u*(i%CX),y=2u*(i/CX);uvec4 q=uvec4(0u);for(uint dy=0u;dy<2u;++dy)for(uint dx=0u;dx<2u;++dx)q=wadd(q,loadQ(work(13u),start+(y+dy)*X+x+dx));storeQ(work(12u),cs+i,sdivrne(q,4u));storeQ(work(10u),cs+i,uvec4(0u));storeQ(work(11u),cs+i,uvec4(0u));}syncAll();meanRemove(work(12u),next,true);}
+void prolong(uint level){uint X=uL[40u+3u*level],Y=uL[41u+3u*level],start=uL[42u+3u*level];for(uint i=lane;i<X*Y;i+=64u){int x=int(i%X),y=int(i/X),cx=x/2,cy=y/2,dx=(x&1)==0?-1:1,dy=(y&1)==0?-1:1;uvec4 p=smulsmall(pressureAt(work(10u),level+1u,cx,cy),9u);p=wadd(p,smulsmall(pressureAt(work(10u),level+1u,cx+dx,cy),3u));p=wadd(p,smulsmall(pressureAt(work(10u),level+1u,cx,cy+dy),3u));p=wadd(p,pressureAt(work(10u),level+1u,cx+dx,cy+dy));storeQ(work(10u),start+i,wadd(loadQ(work(10u),start+i),sdivrne(p,16u)));}syncAll();}
+void pressureCycle(){bool noop=c[524u]!=0u;if(!noop){for(uint level=0u;level+1u<uL[7];++level){jacobi(level,2u);restrictResidual(level);}jacobi(uL[7]-1u,32u);meanRemove(work(10u),uL[7]-1u,false);for(int level=int(uL[7])-2;level>=0;--level){prolong(uint(level));jacobi(uint(level),2u);}meanRemove(work(10u),0u,false);}
+ uvec4 squares=uvec4(0u),maximum=uvec4(0u);for(uint i=lane;i<nc();i+=64u){uvec4 r=wsub(loadQ(work(12u),i),poisson(work(10u),0u,int(i%nx()),int(i/nx())));if(wlt(wshl(uvec4(1u,0u,0u,0u),56u),sabs(r)))fail(17u);storeQ(work(13u),i,r);U256 sq=wmul(sabs(r),sabs(r));if(!wzero(sq.hi))fail(17u);squares=wadd(squares,sq.lo);if(wlt(maximum,sabs(r)))maximum=sabs(r);}integerReduce(squares);uvec4 sum=sharedWide[0];sharedWide[lane]=maximum;syncAll();for(uint stride=32u;stride>0u;stride>>=1u){if(lane<stride&&wlt(sharedWide[lane],sharedWide[lane+stride]))sharedWide[lane]=sharedWide[lane+stride];syncAll();}
+ if(lane==0u){uvec4 rem,q=wdiv(sum,uvec4(nc(),0u,0u,0u),rem);if(!wzero(rem))q=wadd(q,uvec4(1u,0u,0u,0u));uvec4 U=wisqrt(q);if(wlt(wmul(U,U).lo,q))U=wadd(U,uvec4(1u,0u,0u,0u));uint a=15u*uJ*uint(round(1./h()))/16u,lambda=c[6]==2u?32u:8u;uvec4 left=wadd(wshl(U,1u),uvec4(2u*a+3u,0u,0u,0u));uvec4 pLimit=wshl(uvec4(2u*lambda,0u,0u,0u),16u);float tolerance=exp2(-16.);
+ if(c[762]==1u){Soft pi=softUnpack(SOFT_piBinary128),x=softHalf(softMul(pi,softF32(h())));Soft ratio=softDiv(x,softSin(x));Soft tighter=softDiv(softAdd(ratio,softNeg(softInt(1u))),softInt(128u));Soft baseline=softF32(exp2(-16.));if(tighter.exponent<baseline.exponent||(tighter.exponent==baseline.exponent&&wlt(tighter.sig,baseline.sig))){tolerance=softFloat(tighter);Soft limit=softMul(tighter,softInt(2u*lambda));limit.exponent+=32;uvec4 rawLimit=limit.exponent>=112?wshl(limit.sig,uint(limit.exponent-112)):wshr(limit.sig,uint(112-limit.exponent));if(wlt(rawLimit,pLimit))pLimit=rawLimit;}}
+ U256 l2=wmul(left,left);uvec4 vLimit=wshl(uvec4(4u*lambda*120u*120u,0u,0u,0u),32u);bool pass=!wlt(pLimit,left)&&wzero(l2.hi)&&!wlt(vLimit,l2.lo);if(pass)c[524u]=1u;else if(uBlock==15u)fail(14u);c[722]=floatBitsToUint(sfloat(U,-32));c[723]=floatBitsToUint(sfloat(sharedWide[0],-32));for(uint i=0u;i<4u;++i)c[656u+i]=sum[i];c[660]=U.x;c[661]=U.y;c[662]=floatBitsToUint(tolerance);float upper=sfloat(left,-33);c[663]=floatBitsToUint(upper/float(lambda));c[664]=floatBitsToUint(upper/(120.*float(uJ)*sqrt(float(lambda))));c[665]=sharedWide[0].x;c[666]=sharedWide[0].y;c[669]=floatBitsToUint(float(a)*exp2(-32.)+3.*exp2(-33.));tracePressure(sum,U,pass,noop);}
+ syncAll();}
+void wallLedger(bool integrate){
+ vec2 box=vec2(uintBitsToFloat(c[8]),uintBitsToFloat(c[9]));float omega=uintBitsToFloat(c[625]),nu=uintBitsToFloat(c[18]);vec2 gravity=vec2(uintBitsToFloat(c[627]),uintBitsToFloat(c[628]));float meanPhi=omega*omega*(dot(box,box)-2.*h()*h())/24.;
+ for(uint wallIndex=0u;wallIndex<4u;++wallIndex){bool horizontal=wallIndex>=2u,high=(wallIndex&1u)!=0u;bool absent=horizontal?periodicY():periodicX();uint count=horizontal?nx():ny();float pressure=0.,normalVisc=0.,tangentVisc=0.;
+  for(uint i=lane;i<count;i+=64u)if(!absent){uint x=horizontal?i:(high?nx()-1u:0u),y=horizontal?(high?ny()-1u:0u):i;uvec4 pi=s64(uvec2(outState[uL[10]+2u*(y*nx()+x)],outState[uL[10]+2u*(y*nx()+x)+1u]));vec2 pos=horizontal?vec2((float(i)+.5)*h(),high?box.y:0.):vec2(high?box.x:0.,(float(i)+.5)*h());vec2 r=pos-.5*box;pressure+=sfloat(pi,-32)+dot(gravity,r)+.5*omega*omega*dot(r,r)-meanPhi+uintBitsToFloat(c[34]);if(integrate){uint face=horizontal?faceIndex(true,int(i),high?int(ny())-1:1):faceIndex(false,high?int(nx())-1:1,int(i));normalVisc-=nu*dt()*uintBitsToFloat(w[work(6u)+face]);}}
+  if(integrate&&!absent){uint tangentCount=horizontal?(periodicX()?nx():nx()-1u):(periodicY()?ny():ny()-1u);for(uint i=lane;i<tangentCount;i+=64u){int along=int(i)+(horizontal?(periodicX()?0:1):(periodicY()?0:1));uint face=horizontal?faceIndex(false,along,high?int(ny())-1:0):faceIndex(true,high?int(nx())-1:0,along);float wallSpeed=horizontal?uintBitsToFloat(c[high?33u:32u]):0.;tangentVisc+=2.*nu*dt()*(wallSpeed-uintBitsToFloat(w[work(6u)+face]));}}
+  reducePair(pressure,0.);if(lane==0u){uint p=160u+8u*wallIndex;float mean=absent?0.:sharedSum[0]/float(count);outState[p+5u]=floatBitsToUint(integrate?uintBitsToFloat(outState[p+5u])+mean/float(uJ):mean);outState[p+6u]=absent?16u:1u;if(integrate){float impulse=(high?-1.:1.)*dt()*h()*sharedSum[0];uint axis=horizontal?1u:0u;outState[p+axis]=floatBitsToUint(uintBitsToFloat(outState[p+axis])+impulse);}}
+  reducePair(normalVisc,0.);if(lane==0u&&integrate){uint p=162u+8u*wallIndex+(horizontal?1u:0u);outState[p]=floatBitsToUint(uintBitsToFloat(outState[p])+sharedSum[0]);}
+  reducePair(tangentVisc,0.);if(lane==0u&&integrate){uint p=162u+8u*wallIndex+(horizontal?0u:1u);outState[p]=floatBitsToUint(uintBitsToFloat(outState[p])+sharedSum[0]);float speed=horizontal?uintBitsToFloat(c[high?33u:32u]):0.;uint wp=164u+8u*wallIndex;outState[wp]=floatBitsToUint(uintBitsToFloat(outState[wp])+sharedSum[0]*speed);}
+ }
+ if(lane==0u&&integrate){float area=box.x*box.y;c[708]=floatBitsToUint(dt()*area*gravity.x);c[709]=floatBitsToUint(dt()*area*gravity.y);}
+}
+void fieldAudit();
+void copyBase(){for(uint i=lane;i<uL[4];i+=64u)outState[i]=baseState[i];syncAll();if(lane==0u){for(uint i=0u;i<4u;++i)outState[12u+i]=c[146u+i];if(c[520]>=50u)for(uint i=160u;i<192u;++i)outState[i]=0u;}}
+void fieldAudit(){if(lane==0u){for(uint i=26u;i<=29u;++i)if(isnan(uintBitsToFloat(outState[i]))||isinf(uintBitsToFloat(outState[i])))fail(16u);for(uint i=202u;i<=205u;++i)if(i!=204u&&(isnan(uintBitsToFloat(outState[i]))||isinf(uintBitsToFloat(outState[i]))))fail(16u);if(outState[30]>3u||outState[206]!=outState[30]||outState[204]>3u||abs(uintBitsToFloat(outState[27]))>2.||abs(uintBitsToFloat(outState[205]))>8.||length(vec2(uintBitsToFloat(outState[202]),uintBitsToFloat(outState[203])))>64.||(outState[30]==2u&&uintBitsToFloat(outState[28])<2.))fail(35u);}uvec4 sumGauge=uvec4(0u);for(uint i=lane;i<nc();i+=64u)sumGauge=wadd(sumGauge,s64(uvec2(outState[uL[10]+2u*i],outState[uL[10]+2u*i+1u])));integerReduce(sumGauge);if(lane==0u&&wlt(uvec4(nc()/2u,0u,0u,0u),sabs(sharedWide[0])))fail(20u);for(uint z=lane;z<4096u;z+=64u){uint at=uL[11]+8u*z;if(z>=c[28]){for(uint j=0u;j<8u;++j)if(outState[at+j]!=0u)fail(26u);}else if(outState[at+4u]!=z||outState[at+5u]!=1u)fail(26u);}for(uint i=223u+lane;i<256u;i+=64u)if(outState[i]!=0u)fail(2u);for(uint k=lane;k<4u;k+=64u)if(outState[167u+8u*k]!=0u)fail(2u);for(uint f=lane;f<nf();f+=64u){float value=uintBitsToFloat(outState[256u+f]);checkVelocity(value);if(!activeFace(f)){bool vertical=f>=nuFaces();uint z=vertical?f-nuFaces():f;int x=int(vertical?z%nx():z%(nx()+1u)),y=int(vertical?z/nx():z/(nx()+1u));float expected=fieldRead(0xffffffffu,vertical,x,y);if(outState[256u+f]!=floatBitsToUint(expected))fail(35u);}}for(uint i=lane;i<nc();i+=64u){uvec4 p=s64(uvec2(outState[uL[10]+2u*i],outState[uL[10]+2u*i+1u]));if(wlt(wshl(uvec4(64u,0u,0u,0u),32u),sabs(p)))fail(35u);}for(uint i=lane;i<c[28];i+=64u){uint at=uL[11]+8u*i;vec2 pos=uintBitsToFloat(uvec2(outState[at],outState[at+1u]));if(any(isnan(pos))||any(isinf(pos))||any(lessThan(pos,vec2(0.)))||any(greaterThan(pos,vec2(uintBitsToFloat(c[8]),uintBitsToFloat(c[9]))))||outState[at+7u]!=0u)fail(26u);}}
+void audit(uint bit){syncAll();if(lane==0u&&c[514]==0u)c[755]|=1u<<bit;}
+void baseIdentityAudit(){if(lane==0u){if(baseState[0]!=1395863879u||baseState[1]!=1u||baseState[2]!=1177760071u||baseState[3]!=uL[4]||baseState[4]!=nx()||baseState[5]!=ny()||baseState[6]!=c[6])fail(2u);for(uint i=0u;i<8u;++i)if(baseState[32u+i]!=c[76u+i])fail(3u);for(uint i=0u;i<2u;++i)if(c[222]==0u&&(baseState[12u+i]!=c[146u+i]||baseState[14u+i]!=c[148u+i]))fail(2u);for(uint i=0u;i<2u;++i)if(baseState[8u+i]!=c[140u+i]||baseState[10u+i]!=c[144u+i]||baseState[16u+i]!=c[160u+i])fail(2u);}audit(0u);audit(19u);}
+void sourceInstall(){if(lane!=0u)return;uint inputOffset=1216u,op=c[inputOffset+88u];if(op==1u){outState[202]=c[inputOffset+93u];outState[203]=c[inputOffset+94u];}else if(op==2u){if(c[629]==0u||c[625]!=0u||c[inputOffset+90u]!=c[624])fail(31u);outState[26]=c[inputOffset+90u];outState[27]=c[inputOffset+91u];outState[28]=c[inputOffset+92u];outState[30]=c[inputOffset+89u];outState[206]=c[inputOffset+89u];outState[24]=baseState[18];outState[25]=baseState[19];uvec4 ticks=wshl(uvec4(baseState[18],baseState[19],0u,0u),2u);if(ticks.z!=0u||ticks.w!=0u)fail(17u);outState[220]=ticks.x;outState[221]=ticks.y;}else if(op==3u){outState[204]=c[inputOffset+95u];outState[205]=c[inputOffset+96u];outState[29]=c[inputOffset+96u];for(uint i=0u;i<4u;++i)outState[198u+i]=c[inputOffset+97u+i];}else fail(4u);outState[22]=c[inputOffset+20u];outState[23]=c[inputOffset+21u];outState[196]=c[inputOffset+104u];outState[197]=c[inputOffset+105u];outState[208]=c[inputOffset+22u];outState[209]=c[inputOffset+23u];outState[192]=c[inputOffset+20u];outState[193]=c[inputOffset+21u];outState[194]=c[inputOffset+18u];outState[195]=c[inputOffset+19u];outState[210]=c[inputOffset+106u];outState[211]=c[inputOffset+107u];for(uint i=0u;i<8u;++i)outState[212u+i]=c[inputOffset+80u+i];}
+void coldFP32Probe(){
+ if(gl_LocalInvocationID.x!=0u||uScope>1u)return;
+ uint dst=18632u+8u*uScope;
+ highp float one=uintBitsToFloat(c[746]), zero=uintBitsToFloat(c[747]);
+ precise highp float ulp=one+uintBitsToFloat(c[18648u]), tie=one+uintBitsToFloat(c[745]);
+ precise highp float retained=uintBitsToFloat(c[744])+zero;
+ precise highp float produced=uintBitsToFloat(c[18649u])*uintBitsToFloat(c[18650u]);
+ c[dst]=floatBitsToUint(ulp);c[dst+1u]=floatBitsToUint(tie);
+ c[dst+2u]=floatBitsToUint(retained);c[dst+3u]=floatBitsToUint(produced);
+ c[dst+4u]=uint(!isinf(ulp)&&!isnan(ulp)) |
+           (uint(isinf(uintBitsToFloat(c[18651u])))<<1u) |
+           (uint(isnan(uintBitsToFloat(c[18652u])))<<2u);
+ c[dst+5u]=0u;c[dst+6u]=0u;
+ memoryBarrierBuffer();c[dst+7u]=0x46503332u;
+}
+void main(){
+if(uOp==66u){
+{{coldFP32Probe();
+return;}}
+return;
+}
+if(uOp==48u){
+lane=gl_LocalInvocationID.x;
+if(lane==0u){c[752]=uIndex;
+errorAtEntry=c[514];
+selectedAtEntry=c[518u+min(uScope,1u)];
+convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));
+c[676]=0u;}
+syncAll();
+if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));
+if(nooped)c[523]++; else c[522]++;
+if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+(nooped?9u:8u)]++;}}
+bool selected=selectedAtEntry!=0u;
+bool projectOnly=c[762]==1u;
+bool diagnosticNoop=projectOnly&&((uOp>=18u&&uOp<=35u&&uOp!=33u)||(uOp>=43u&&uOp<=46u)||uOp==48u);
+bool forcedSkip=c[768u+uScope]!=0u;
+bool noop=selected||errorAtEntry!=0u||diagnosticNoop||forcedSkip;
+if(lane==0u){if(noop||convergedAtEntry!=0u)c[523]++; else c[522]++;
+uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+((noop||convergedAtEntry!=0u)?9u:8u)]++;}
+if(noop){{{if(lane==0u){uint p=microBase()+(uOp==OP_VISC_BLOCK?384u:128u)+16u*uBlock;
+c[p]=uBlock;
+c[p+1u]=32u|(c[514]!=0u?8u:(diagnosticNoop||forcedSkip?16u:2u));
+c[p+3u]=c[514];
+c[p+15u]=0xc0de1301u;}}}
+traceStage(true);
+return;}
+if(convergedAtEntry!=0u){if(lane==0u){uint p=microBase()+(uOp==OP_VISC_BLOCK?384u:128u)+16u*uBlock;
+if(uBlock>0u){for(uint i=0u;i<16u;++i)c[p+i]=c[p-16u+i];} else {for(uint i=0u;i<16u;++i)c[p+i]=0u;
+c[p+2u]=1u;
+{c[p+7u]=floatBitsToUint(1.);}}
+c[p]=uBlock;
+c[p+1u]=36u;
+c[p+14u]=0u;
+c[p+15u]=0xc0de1301u;}
+return;}
+{{{{{{{{{{{viscBlock();
+if(lane==0u)c[784u+uScope]++;}}}}}}}}}}}
+traceStage(false);
+return;
+}
+if(uOp==49u){
+lane=gl_LocalInvocationID.x;
+if(lane==0u){c[752]=uIndex;
+errorAtEntry=c[514];
+selectedAtEntry=c[518u+min(uScope,1u)];
+convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));
+c[676]=0u;}
+syncAll();
+if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));
+if(nooped)c[523]++; else c[522]++;
+if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+(nooped?9u:8u)]++;}}
+bool selected=selectedAtEntry!=0u;
+bool projectOnly=c[762]==1u;
+bool diagnosticNoop=projectOnly&&((uOp>=18u&&uOp<=35u&&uOp!=33u)||(uOp>=43u&&uOp<=46u)||uOp==48u);
+bool forcedSkip=c[768u+uScope]!=0u;
+bool noop=selected||errorAtEntry!=0u||diagnosticNoop||forcedSkip;
+if(lane==0u){if(noop||convergedAtEntry!=0u)c[523]++; else c[522]++;
+uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+((noop||convergedAtEntry!=0u)?9u:8u)]++;}
+if(noop){{{if(lane==0u){uint p=microBase()+(uOp==OP_VISC_BLOCK?384u:128u)+16u*uBlock;
+c[p]=uBlock;
+c[p+1u]=32u|(c[514]!=0u?8u:(diagnosticNoop||forcedSkip?16u:2u));
+c[p+3u]=c[514];
+c[p+15u]=0xc0de1301u;}}}
+traceStage(true);
+return;}
+if(convergedAtEntry!=0u){if(lane==0u){uint p=microBase()+(uOp==OP_VISC_BLOCK?384u:128u)+16u*uBlock;
+if(uBlock>0u){for(uint i=0u;i<16u;++i)c[p+i]=c[p-16u+i];} else {for(uint i=0u;i<16u;++i)c[p+i]=0u;
+c[p+2u]=1u;}
+c[p]=uBlock;
+c[p+1u]=36u;
+c[p+14u]=0u;
+c[p+15u]=0xc0de1301u;}
+return;}
+{{{{{{{{{{{{{{{{{pressureCycle();
+if(lane==0u){c[730]=uBlock+1u;
+c[788u+uScope]++;}}}}}}}}}}}}}}}}}}
+traceStage(false);
+return;
+}
+if(uOp==52u){
+lane=gl_LocalInvocationID.x;
+if(lane==0u){c[752]=uIndex;
+errorAtEntry=c[514];
+selectedAtEntry=c[518u+min(uScope,1u)];
+convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));
+c[676]=0u;}
+syncAll();
+if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));
+if(nooped)c[523]++; else c[522]++;
+if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+(nooped?9u:8u)]++;}}
+bool selected=selectedAtEntry!=0u;
+{{{{baseIdentityAudit();}}
+return;}}
+return;
+}
+if(uOp==54u){
+lane=gl_LocalInvocationID.x;
+if(lane==0u){c[752]=uIndex;
+errorAtEntry=c[514];
+selectedAtEntry=c[518u+min(uScope,1u)];
+convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));
+c[676]=0u;}
+syncAll();
+if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));
+if(nooped)c[523]++; else c[522]++;
+if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+(nooped?9u:8u)]++;}}
+bool selected=selectedAtEntry!=0u;
+{{copyBase();
+return;}}
+return;
+}
+if(uOp==55u){
+lane=gl_LocalInvocationID.x;
+if(lane==0u){c[752]=uIndex;
+errorAtEntry=c[514];
+selectedAtEntry=c[518u+min(uScope,1u)];
+convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));
+c[676]=0u;}
+syncAll();
+if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));
+if(nooped)c[523]++; else c[522]++;
+if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+(nooped?9u:8u)]++;}}
+bool selected=selectedAtEntry!=0u;
+{{drive();
+syncAll();
+sourceInstall();
+return;}}
+return;
+}
+if(uOp==56u){
+lane=gl_LocalInvocationID.x;
+if(lane==0u){c[752]=uIndex;
+errorAtEntry=c[514];
+selectedAtEntry=c[518u+min(uScope,1u)];
+convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));
+c[676]=0u;}
+syncAll();
+if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));
+if(nooped)c[523]++; else c[522]++;
+if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+(nooped?9u:8u)]++;}}
+bool selected=selectedAtEntry!=0u;
+{{{{fieldAudit();
+drive();
+audit(1u);
+audit(2u);
+syncAll();
+wallLedger(false);
+audit(15u);
+if(lane==0u&&c[514]==0u){uint which=uOp==OP_SOURCE_ACTUAL_AUDIT?0u:1u;
+c[518u+which]=1u;
+c[772u+which]=c[755];
+uint root=which==0u?2048u:10240u;
+c[root+5u]=33u;
+c[root+1023u]=0xc0de1301u;}}}
+return;}}
+return;
+}
+if(uOp==57u){
+lane=gl_LocalInvocationID.x;
+if(lane==0u){c[752]=uIndex;
+errorAtEntry=c[514];
+selectedAtEntry=c[518u+min(uScope,1u)];
+convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));
+c[676]=0u;}
+syncAll();
+if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));
+if(nooped)c[523]++; else c[522]++;
+if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+(nooped?9u:8u)]++;}}
+bool selected=selectedAtEntry!=0u;
+{{copyBase();
+return;}}
+return;
+}
+if(uOp==58u){
+lane=gl_LocalInvocationID.x;
+if(lane==0u){c[752]=uIndex;
+errorAtEntry=c[514];
+selectedAtEntry=c[518u+min(uScope,1u)];
+convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));
+c[676]=0u;}
+syncAll();
+if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));
+if(nooped)c[523]++; else c[522]++;
+if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+(nooped?9u:8u)]++;}}
+bool selected=selectedAtEntry!=0u;
+{{drive();
+syncAll();
+sourceInstall();
+return;}}
+return;
+}
+if(uOp==59u){
+lane=gl_LocalInvocationID.x;
+if(lane==0u){c[752]=uIndex;
+errorAtEntry=c[514];
+selectedAtEntry=c[518u+min(uScope,1u)];
+convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));
+c[676]=0u;}
+syncAll();
+if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));
+if(nooped)c[523]++; else c[522]++;
+if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+(nooped?9u:8u)]++;}}
+bool selected=selectedAtEntry!=0u;
+{{{{fieldAudit();
+drive();
+audit(1u);
+audit(2u);
+syncAll();
+wallLedger(false);
+audit(15u);
+if(lane==0u&&c[514]==0u){uint which=uOp==OP_SOURCE_ACTUAL_AUDIT?0u:1u;
+c[518u+which]=1u;
+c[772u+which]=c[755];
+uint root=which==0u?2048u:10240u;
+c[root+5u]=33u;
+c[root+1023u]=0xc0de1301u;}}}
+return;}}
+return;
+}
+if(uOp==60u){
+lane=gl_LocalInvocationID.x;
+if(lane==0u){c[752]=uIndex;
+errorAtEntry=c[514];
+selectedAtEntry=c[518u+min(uScope,1u)];
+convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));
+c[676]=0u;}
+syncAll();
+if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));
+if(nooped)c[523]++; else c[522]++;
+if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+(nooped?9u:8u)]++;}}
+bool selected=selectedAtEntry!=0u;
+{{if(lane==0u){c[10240u+5u]=32u|(c[519]!=0u?1u:8u);
+c[10240u+1023u]=0xc0de1301u;
+c[773]=c[755];
+c[802]=uint(c[518]!=c[519]||c[520]!=c[129]||c[3071]!=0xc0de1301u||c[2056]!=c[136]||c[2057]!=c[137]);}
+syncAll();
+for(uint i=lane;i<uL[4];i+=64u)if(baseState[i]!=outState[i])atomicOr(c[802],1u);
+for(uint i=lane;i<8192u;i+=64u){bool scopeWord=(i==4u)||(i>=1024u&&i%1024u==4u);
+if(scopeWord?(c[2048u+i]!=0u||(uOp==OP_ROOT_SCOPE_COMPARE||i==4u?c[10240u+i]!=1u:c[10240u+i]!=0u)):c[2048u+i]!=c[10240u+i])atomicOr(c[802],1u);}
+syncAll();
+if(lane==0u){if(c[802]!=0u){fail(18u);} else if(c[514]==0u){c[755]=(c[772]&c[773])|(1u<<13u);
+c[756]=3u;}}
+return;}}
+return;
+}
+if(uOp==62u){
+lane=gl_LocalInvocationID.x;
+if(lane==0u){c[752]=uIndex;
+errorAtEntry=c[514];
+selectedAtEntry=c[518u+min(uScope,1u)];
+convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));
+c[676]=0u;}
+syncAll();
+if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));
+if(nooped)c[523]++; else c[522]++;
+if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));
+c[r+(nooped?9u:8u)]++;}}
+bool selected=selectedAtEntry!=0u;
+{{{{for(uint f=lane;f<nf()+2u*nc();f+=64u)if(outState[256u+f]!=baseState[256u+f])fail(18u);
+for(uint i=lane;i<c[28];i+=64u)if(outState[uL[11]+8u*i+6u]!=baseState[uL[11]+8u*i+6u])fail(18u);
+if(lane==0u&&(outState[18]!=baseState[18]||outState[19]!=baseState[19]))fail(18u);
+audit(18u);}}
+return;}}
+return;
+}
+}

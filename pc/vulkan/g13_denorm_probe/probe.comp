@@ -1,0 +1,33 @@
+#version 450
+#extension GL_EXT_spirv_intrinsics : require
+spirv_execution_mode(extensions = ["SPV_KHR_float_controls"], capabilities = [4466, 4467], 4461, 32);
+spirv_execution_mode(4462, 32);
+layout(local_size_x = 1) in;
+layout(std430, binding = 0) buffer ProbeWords { uint words[]; };
+
+uint canonical(uint bits) {
+    return (bits & 0x7fffffffu) < 0x01000000u ? 0u : bits;
+}
+
+uint product(uint a, uint b) {
+    precise float computed = uintBitsToFloat(a) * uintBitsToFloat(b);
+    return canonical(floatBitsToUint(computed));
+}
+
+void main() {
+    for (uint i = 0; i < 12; ++i)
+        words[16 + i] = canonical(words[i]);
+    words[28] = product(words[4], words[12]);
+    words[29] = product(words[11], words[12]);
+    words[30] = product(words[4], words[13]);
+    words[31] = product(words[11], words[13]);
+    words[32] = product(words[7], words[12]);
+    precise float tie = uintBitsToFloat(words[7]) + uintBitsToFloat(words[14]);
+    words[33] = floatBitsToUint(tie);
+    // The two inputs model a device choosing differently at two underflow sites.
+    precise float mixed = (uintBitsToFloat(canonical(words[2])) +
+                           uintBitsToFloat(canonical(words[0]))) * uintBitsToFloat(words[15]);
+    words[34] = floatBitsToUint(mixed);
+    words[35] = uint(isinf(uintBitsToFloat(words[9]))) + 2u * uint(isnan(uintBitsToFloat(words[10])));
+    words[36] = 0x916f0032u;
+}
