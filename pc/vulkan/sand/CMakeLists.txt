@@ -29,7 +29,7 @@ add_custom_command(OUTPUT "${ROLE_HEADER}" "${ASSETS}/roles.json"
         "${CMAKE_CURRENT_SOURCE_DIR}/../build_sand_roles.py" "${CMAKE_CURRENT_SOURCE_DIR}/t913_roles.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/t913_split_roles.py" "${GPU}/integer_primitives.glsl"
         "${CMAKE_CURRENT_SOURCE_DIR}/../build_t909_angle_probes.py" "${CMAKE_CURRENT_SOURCE_DIR}/t909_g15.py"
-        "${CMAKE_CURRENT_SOURCE_DIR}/g15_dm2.glsl"
+        "${CMAKE_CURRENT_SOURCE_DIR}/g15_dm2.glsl" "${CMAKE_CURRENT_SOURCE_DIR}/../t933_g15_qualify.py"
         "${GPU}/g11vis/scene.cpp" "${REPO}/docs/architecture-T552-g9-seed-manifest-v2.json"
         "${REPO}/docs/architecture-T660-g11-manifest-v2.json" "${REPO}/tools/g11/generate_contract.cjs"
         "${REPO}/test/t566_generate_composite.cjs" ${ROLE_INPUTS}
@@ -76,7 +76,7 @@ if(SAND_FAMILY STREQUAL "dm2")
               "${CMAKE_CURRENT_SOURCE_DIR}/../g16_scene.vert" "${CMAKE_CURRENT_SOURCE_DIR}/../g16_scene.frag" VERBATIM)
   set_source_files_properties(../wsi.cpp PROPERTIES OBJECT_DEPENDS "${VIEW}/pc_view_spirv.h")
 endif()
-if(SAND_ROLE_VARIANT STREQUAL "g15-dm2")
+if(SAND_ROLE_VARIANT MATCHES "^g15-dm2(-op23)?$")
   target_compile_definitions(pc_sand_${SAND_FAMILY}_host PRIVATE PC_SAND_G15_SCENE)
   target_include_directories(pc_sand_${SAND_FAMILY}_host PRIVATE "${VIEW}" "${CMAKE_CURRENT_SOURCE_DIR}/.."
       "${GPU}/g13vulkan_boot")

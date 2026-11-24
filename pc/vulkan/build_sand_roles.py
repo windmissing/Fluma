@@ -58,7 +58,7 @@ def port(raw, common, push):
             text.removeprefix("#version 310 es\n")).encode()
 
 
-def compile_role(compiler, out, opcode, source, common, push, name):
+def compile_role(compiler, out, opcode, source, common, push, name, drop_op23_record=False):
     row = dict(op=opcode, name=name, sourceBytes=len(source), sourceSHA=sha(source))
     if len(source) > LIMIT:
         return dict(row, state="SOURCE_LIMIT_EXCEEDED")
@@ -84,6 +84,13 @@ def compile_role(compiler, out, opcode, source, common, push, name):
             sorted(re.findall(r"OpDecorate %\S+ Binding (\d+)", asm)) != list("01234") or
             re.findall(r"OpDecorate %\S+ DescriptorSet (\d+)", asm) != ["0"] * 5):
         raise ValueError(f"{opcode}: Vulkan descriptor/local-size reflection differs")
+    if drop_op23_record and opcode == 23:
+        from t933_g15_qualify import ORIGINAL, strip_source_extension
+        original = binary.read_bytes()
+        if sha(original) != ORIGINAL:
+            raise ValueError("G15 opcode 23 no longer matches T937's verified original")
+        binary.write_bytes(strip_source_extension(original))
+        row.update(originalSpvSHA=ORIGINAL, removedSourceExtensionBytes=52)
     return dict(row, state="STATIC_SPIRV", spv=binary.name, spvBytes=binary.stat().st_size,
                 spvSHA=sha(binary.read_bytes()))
 
@@ -177,7 +184,7 @@ def build(family, compiler, out, role_variant="baseline"):
     raw = parent.read_bytes().replace(b"\r\n", b"\n")
     source = raw.decode()
     composite = family == "r1"
-    g15 = role_variant=="g15-dm2"
+    g15 = role_variant in ("g15-dm2", "g15-dm2-op23")
     if g15:
         if composite:
             raise ValueError("G15 requires DM2")
@@ -196,7 +203,8 @@ def build(family, compiler, out, role_variant="baseline"):
     if role_variant == "t913-split-v2":
         jobs, aliases = split_source(family,jobs,passes)
     with ThreadPoolExecutor(max_workers=4) as pool:
-        roles = list(pool.map(lambda job: compile_role(compiler, out, job[0], job[1], common, push, job[2]), jobs))
+        roles = list(pool.map(lambda job: compile_role(compiler,out,job[0],job[1],common,push,job[2],
+                                                      role_variant=="g15-dm2-op23"), jobs))
     usable = {r["op"] for r in roles if r["state"] == "STATIC_SPIRV"}
     data = dict(schema="PC_SAND_VULKAN_ROLES_V1", family=family, parentSHA=sha(raw),
                 constants=common, commonBytes=(common[-1][2] + (8 if common[-1][1] == "uvec2" else 4) + 15) // 16 * 16,
@@ -257,7 +265,8 @@ if __name__ == "__main__":
     parser.add_argument("family", choices=("dm2", "r1"))
     parser.add_argument("--compiler", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
-    parser.add_argument("--role-variant", default="baseline", choices=("baseline","t913-v1","t913-split-v2","g15-dm2"))
+    parser.add_argument("--role-variant", default="baseline",
+                        choices=("baseline","t913-v1","t913-split-v2","g15-dm2","g15-dm2-op23"))
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     build(args.family, args.compiler.resolve(), args.out.resolve(), args.role_variant)

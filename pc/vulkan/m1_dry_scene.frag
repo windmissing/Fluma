@@ -2,7 +2,7 @@
 layout(set=0,binding=0,std430) readonly buffer Publication { uint P[]; };
 layout(push_constant) uniform WindowFrame {
     vec2 extent; uint encode; uint empty; int gx; int gy; int gravityState;
-    uint compact; float boxCos; float boxSin; float boxLow; float boxHigh; float boxHeight;
+    uint compact; float boxCos; float boxSin; float boxLow; float boxHigh; float boxHeight; float boxScale;
 };
 layout(location=0) in vec2 uv;
 layout(location=0) out vec4 color;
@@ -27,8 +27,8 @@ void main() {
     const uint header = columnBase + 16u*128u;
     const vec3 background = vec3(.006,.008,.014);
     vec3 rgb = background;
-    float scale=min(extent.x,extent.y)*.008;
-    vec2 boxPixel=(uv-.5)*extent;
+    float scale=compact!=0u ? boxScale : min(extent.x,extent.y)*.008;
+    vec2 boxPixel=gl_FragCoord.xy-.5*extent;
     vec2 localPoint=vec2(dot(boxPixel,vec2(boxCos,boxSin)),dot(boxPixel,vec2(boxSin,-boxCos)))/scale;
     vec2 point=compact!=0u ? localPoint+vec2((boxLow+boxHigh)*.5,boxHeight*.5) : vec2(uv.x,1.-uv.y)*vec2(128,256);
     vec2 boxEdge=(abs(localPoint)-vec2((boxHigh-boxLow)*.5,boxHeight*.5))*scale;

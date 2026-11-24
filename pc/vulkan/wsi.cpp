@@ -207,7 +207,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     VkPipelineLayoutCreateInfo layout{VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO};
     layout.setLayoutCount = g16 ? 0u : 1u;
     layout.pSetLayouts = &wsi.descriptors;
-    const VkPushConstantRange extentPush{VK_SHADER_STAGE_FRAGMENT_BIT,0,52};
+    const VkPushConstantRange extentPush{VK_SHADER_STAGE_FRAGMENT_BIT,0,56};
     constexpr auto g16PushStages=VK_SHADER_STAGE_VERTEX_BIT|VK_SHADER_STAGE_FRAGMENT_BIT;
     const VkPushConstantRange g16Push{g16PushStages,0,24};
     if (g16) {
@@ -391,14 +391,36 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
           std::array<int32_t,3> gravity;
           uint32_t compact;
           std::array<float,2> rotation;
-          float lo,hi,boxHeight;
+          float lo,hi,boxHeight,boxScale;
         };
-        frame.requestedBoxAngle=observation.requestedBoxAngle ? observation.requestedBoxAngle() : 0;
+        const float scale=float(std::min(extent.width,extent.height))*.008f;
+        const bool tied=bool(observation.compactView);
+        frame.compact=tied ? observation.compactView() : CompactView{};
+        if (tied) {
+          auto &view=frame.compact;
+          RECT client{};
+          const bool haveClient=GetClientRect(window,&client)!=0;
+          view.clientWidth=haveClient ? uint32_t(client.right-client.left) : 0;
+          view.clientHeight=haveClient ? uint32_t(client.bottom-client.top) : 0;
+          view.dpi=GetDpiForWindow(window);
+          view.window=reinterpret_cast<uintptr_t>(window);
+          view.swapchain=reinterpret_cast<uintptr_t>(wsi.swapchain);
+          view.width=extent.width;view.height=extent.height;
+          view.centerX=float(extent.width)*.5f;view.centerY=float(extent.height)*.5f;
+          view.scale=scale;view.rotation=CompactRotation(view.angle);
+          view.surfaceTransform=chain.preTransform;
+          view.serial=frame.serial+1;
+          view.mapped=haveClient && view.dpi && view.clientWidth==view.width && view.clientHeight==view.height &&
+              chain.preTransform==VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+        }
+        frame.requestedBoxAngle=tied ? frame.compact.requestedAngle :
+            observation.requestedBoxAngle ? observation.requestedBoxAngle() : 0;
         const FramePush values{float(extent.width),float(extent.height),uint32_t(unorm),uint32_t(frame.empty),
                                observation.gravityIndicator ? observation.gravityIndicator() : std::array<int32_t,3>{},
-                               uint32_t(bool(observation.requestedBoxAngle)),CompactRotation(frame.requestedBoxAngle),
-                               kCompactFirstColumn,kCompactEndColumn,kCompactHeight};
-        static_assert(sizeof(values)==52);
+                               uint32_t(tied || bool(observation.requestedBoxAngle)),
+                               tied ? frame.compact.rotation : CompactRotation(frame.requestedBoxAngle),
+                               kCompactFirstColumn,kCompactEndColumn,kCompactHeight,scale};
+        static_assert(sizeof(values)==56);
         vk.CmdPushConstants(command,wsi.layout,VK_SHADER_STAGE_FRAGMENT_BIT,0,sizeof(values),&values);
       }
       if (!g16) wsi.CmdDraw(command, 3, 1, 0, 0);
@@ -424,7 +446,8 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       ++frame.serial;
       frame.graphicsFence=reinterpret_cast<uintptr_t>(wsi.submitted);
       frame.roi={};
-      const auto *regions=!frame.empty && observation.requestedRoi ? observation.requestedRoi(extent.width,extent.height) : nullptr;
+      const auto *regions=!frame.empty && observation.requestedRoi ?
+          observation.requestedRoi(extent.width,extent.height,frame.compact) : nullptr;
       if (regions) {
         frame.roi.regions=*regions;
         bool fits=observation.roiStride>=1024 && observation.roiStride%4==0;
@@ -536,7 +559,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       if (!current()) break;
       const auto next=nextPublication();
       if (!next || !current()) break;
-      frame.empty=frame.empty && observation.requestedBoxAngle && next==control;
+      frame.empty=frame.empty && (observation.requestedBoxAngle || observation.compactView) && next==control;
       Check(resetPool(device,wsi.commandPool,0),"vkResetCommandPool.GRAPHICS");
       const VkFence fences[]={wsi.acquired,wsi.submitted};
       Check(resetFences(device,2,fences),"vkResetFences.GRAPHICS");

@@ -13,6 +13,7 @@
 #include "g13_candidate_timing.h"
 #include "m1_d1_drain.h"
 #include "m1_observation.h"
+#include "m1_compact.h"
 #include "m1_recovery.h"
 #else
 struct NativeWindow;
@@ -78,6 +79,8 @@ struct Attempt {
   bool m1Integrated=false,m1AuditBreakdown=false;
   std::wstring m1PrivateReference,m1PrivateOutput;
   bool m1PrivateObserve=false;
+  std::function<uint64_t(pc::CompactView &)> presentedCompact;
+  std::function<void(const SourceOffer &,uint32_t,bool)> compactSourceResult;
 #else
   NativeWindow *window;
 #endif

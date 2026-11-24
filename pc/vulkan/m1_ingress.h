@@ -11,6 +11,7 @@ struct PointerSample {
   double x=0, y=0;
   int32_t clientX=0, clientY=0;
   uint32_t material=0;
+  uint64_t transformRevision=0,frameSerial=0;
 };
 
 struct SourceScope {
@@ -42,7 +43,7 @@ struct SourceOffer {
            current.callbackTicks==b.current.callbackTicks && current.receiptTicks==b.current.receiptTicks &&
            a.hold==s.hold && a.sequence==s.sequence && a.timeNs==s.timeNs &&
            a.x==s.x && a.y==s.y && a.clientX==s.clientX && a.clientY==s.clientY &&
-           a.material==s.material;
+           a.material==s.material && a.transformRevision==s.transformRevision && a.frameSerial==s.frameSerial;
   }
 };
 

@@ -13,6 +13,8 @@
 #include "../m1/source_owner.h"
 #include <filesystem>
 #include <future>
+#include <iomanip>
+#include <limits>
 #else
 #include "../program_cache/mapped_build_id.h"
 #include <dlfcn.h>

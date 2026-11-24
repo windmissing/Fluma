@@ -64,6 +64,12 @@ struct Window {
   std::wstring m1PrivateReference,m1PrivateOutput;
   bool m1PrivateObserve=false;
   bool compactRequestAtLimit=false;
+  grs::pc::CompactView compactShown;
+  uint64_t compactRevision=0;
+  uint64_t compactAnchorAfter=0;
+  bool compactResample=false;
+  enum class CompactIntake { Normal, Updating, Outside, Bed, Capacity };
+  CompactIntake compactIntake=CompactIntake::Normal;
   size_t g13PulseWrite=0;
   bool t833Allowed=true;
   std::atomic<uint64_t> sourcePulse{0};
@@ -386,6 +392,8 @@ struct Window {
   void CancelHeld() {
     heldRecovery={};
     held={};
+    compactResample=false;
+    compactAnchorAfter=0;
     scope.permission=0;
     ClearSourceAnchor();
     ingress.Authorize(scope,0);
@@ -440,6 +448,8 @@ struct Window {
     if (IsIconic(hwnd)) width = height = 0;
     dpi = GetDpiForWindow(hwnd);
     ++generation;
+    compactShown={};
+    compactIntake=m1Integrated ? CompactIntake::Updating : CompactIntake::Normal;
     m1IntakeState=M1IntakeState::Normal;
     gravity={generation};
     compactRequestAtLimit=false;
@@ -457,8 +467,10 @@ struct Window {
     const auto sequence = ++eventSeq;
     const auto ticks = grs::pc::QpcTicks();
     double mappedX=0,mappedY=0;
+    const bool mapped=!m1Integrated || (compactShown.mapped && compactShown.geometry==generation);
     const bool inside = x >= 0 && y >= 0 && x < width && y < height &&
-        (!m1Compact || grs::pc::CompactPointer(x,y,width,height,gravity.angle,mappedX,mappedY));
+        (m1Integrated ? grs::pc::MapCompactPointer(compactShown,x,y,mappedX,mappedY) :
+         !m1Compact || grs::pc::CompactPointer(x,y,width,height,gravity.angle,mappedX,mappedY));
     const std::string action(kind);
     if (!d1Mode.empty() && (action=="DOWN" || action=="MOVE" || action=="UP")) return;
     if (action=="FOCUS_LOST" && m1GravityEnabled) {
@@ -472,19 +484,29 @@ struct Window {
         held.hold = sequence;
         held.material = material;
         scope.permission=sequence;
+        compactAnchorAfter=ticks;
       }
-    } else if (action != "MOVE" || !inside) {
+    } else if (action!="MOVE" || (mapped && !inside)) {
       CancelHeld();
     }
-    if (held.hold) {
+    if (held.hold && mapped) {
       held.sequence = sequence;
       held.timeNs = grs::pc::TimeNs();
       held.x = m1Compact ? mappedX : (double(x)+0.5)*128/width;
       held.y = m1Compact ? mappedY : (1-(double(y)+0.5)/height)*256;
       held.clientX = x;
       held.clientY = y;
+      if (m1Integrated) {
+        held.transformRevision=compactShown.revision;
+        held.frameSerial=compactShown.serial;
+      }
       sampleTicks = ticks;
     }
+    if (m1Integrated && (action=="DOWN" || (action=="MOVE" && !inside && GetCapture()==hwnd))) {
+      compactIntake=!mapped ? CompactIntake::Updating : !inside ? CompactIntake::Outside : CompactIntake::Normal;
+      PostMessageW(hwnd,kM1GravityCaption,0,0);
+    }
+    const auto frameRevision=compactShown.revision,frameSerial=compactShown.serial;
     ingress.Authorize(scope,scope.permission ? held.hold : 0);
     const auto geometry=generation, hold=held.hold;
     const auto inputReady=pointerReady;
@@ -502,7 +524,10 @@ struct Window {
          "\",\"inputReady\":" + (inputReady ? "true" : "false") +
          ",\"readyQpc\":\"" + std::to_string(readyQpc) + "\",\"selectedMaterial\":" + std::to_string(selected) +
          ",\"boundMaterial\":" + (hold ? std::to_string(bound) : "null") +
+         ",\"transformRevision\":\"" + std::to_string(frameRevision) + "\",\"presentedSerial\":\"" +
+         std::to_string(frameSerial) + "\"" +
          ",\"reject\":" + (action!="DOWN" || hold ? "null" :
+                      !mapped ? "\"PRESENTED_MAPPING_UNAVAILABLE\"" :
                       !inputReady ? "\"NOT_READY\"" : "\"OUTSIDE_CLIENT\"") + "}");
   }
 
@@ -542,10 +567,74 @@ struct Window {
     uint64_t geometry=0;
     {
       std::lock_guard lock(mutex);
-      if (!m1GravityEnabled || closing || !grs::pc::M1ResetHit(x,y,width,height)) return false;
+      if (!m1GravityEnabled || closing || (m1Integrated && (!compactShown.mapped || compactShown.geometry!=generation)) ||
+          !grs::pc::M1ResetHit(x,y,width,height)) return false;
       geometry=generation;
     }
     SetGravity(0,geometry);
+    return true;
+  }
+
+  uint64_t SetCompactPresented(grs::pc::CompactView &view) {
+    std::lock_guard lock(mutex);
+    if (closing || view.geometry!=generation || view.run!=scope.run ||
+        view.window!=reinterpret_cast<uintptr_t>(hwnd)) return 0;
+    view.mapped=view.mapped && view.clientWidth==uint32_t(width) && view.clientHeight==uint32_t(height) && view.dpi==dpi;
+    const bool changed=!grs::pc::SameCompactMapping(compactShown,view);
+    view.revision=changed ? ++compactRevision : compactShown.revision;
+    compactShown=view;
+    if (changed) {
+      compactIntake=view.mapped ? CompactIntake::Normal : CompactIntake::Updating;
+      if (held.hold) {
+        scope.permission=0;
+        ClearSourceAnchor();
+        ingress.Authorize(scope,0);
+        compactResample=true;
+      }
+      PostMessageW(hwnd,kM1GravityCaption,0,0);
+    }
+    return view.revision;
+  }
+
+  void CompactSourceResult(const grs::g13vk::SourceOffer &offer,uint32_t reason,bool admitted) {
+    std::lock_guard lock(mutex);
+    if (closing || !scope.permission || !(scope==offer.scope) || held.hold!=offer.sample.hold ||
+        held.sequence!=offer.sample.sequence || compactShown.revision!=offer.sample.transformRevision) return;
+    const auto status=admitted ? CompactIntake::Normal : reason==4 ? CompactIntake::Bed :
+        reason==5 || reason==6 || reason==7 || reason==11 ? CompactIntake::Capacity : compactIntake;
+    if(status==compactIntake)return;
+    compactIntake=status;
+    PostMessageW(hwnd,kM1GravityCaption,0,0);
+  }
+
+  bool ResampleCompactHold() {
+    if (!compactResample) return true;
+    if (!compactShown.mapped) return false;
+    POINT point{};
+    double x=0,y=0;
+    if (!held.hold || GetCapture()!=hwnd || !GetCursorPos(&point) || !ScreenToClient(hwnd,&point) ||
+        !grs::pc::MapCompactPointer(compactShown,point.x,point.y,x,y)) {
+      CancelHeld();
+      compactIntake=CompactIntake::Outside;
+      PostMessageW(hwnd,kM1GravityCaption,0,0);
+      return false;
+    }
+    if (heldRecovery.oldSession && !heldRecovery.newSession) return false;
+    sampleTicks=grs::pc::QpcTicks();
+    compactAnchorAfter=sampleTicks;
+    held.sequence=++eventSeq;
+    held.timeNs=grs::pc::QpcNs(sampleTicks,grs::pc::QpcFrequency());
+    held.x=x;held.y=y;held.clientX=point.x;held.clientY=point.y;
+    held.transformRevision=compactShown.revision;held.frameSerial=compactShown.serial;
+    scope.permission=held.sequence;
+    ingress.Authorize(scope,held.hold);
+    ClearSourceAnchor();
+    compactResample=false;
+    Emit("{\"stage\":\"M1_COMPACT_RESAMPLE\",\"hold\":\""+std::to_string(held.hold)+
+         "\",\"seq\":\""+std::to_string(held.sequence)+"\",\"qpc\":\""+std::to_string(sampleTicks)+
+         "\",\"transformRevision\":\""+std::to_string(held.transformRevision)+
+         "\",\"presentedSerial\":\""+std::to_string(held.frameSerial)+
+         "\",\"x\":"+std::to_string(point.x)+",\"y\":"+std::to_string(point.y)+"}");
     return true;
   }
 
@@ -568,16 +657,25 @@ struct Window {
       std::lock_guard lock(mutex);
       if (m1GravityEnabled) {
         const bool accepted=gravityDisplay.accepted && gravityDisplay.geometry==generation;
-        title << (m1Compact ? L"盒体预览 " : L"重力  请求 ") << (gravity.geometry==generation ? gravity.angle/256. : 0.) << L"°";
+        title << (m1Integrated ? L"盒体  请求 " : m1Compact ? L"盒体预览 " : L"重力  请求 ")
+              << (gravity.geometry==generation ? gravity.angle/256. : 0.) << L"°";
         if (compactRequestAtLimit) title << L"  请求到边界";
-        if (accepted) title << L"  实际 " << gravityDisplay.actual/256. << L"°";
+        if (accepted || (m1Integrated && compactShown.geometry==generation))
+          title << L"  实际 " << (accepted ? gravityDisplay.actual : compactShown.angle)/256. << L"°";
         if (accepted && gravityDisplay.stale) title << L"  上一有效帧";
         if (accepted && gravityDisplay.limited) title << L"  床形限制";
-        if (!accepted || gravityDisplay.sequence!=gravity.sequence) title << L"  待应用";
+        if ((!m1Integrated || gravity.sequence) && (!accepted || gravityDisplay.sequence!=gravity.sequence))
+          title << L"  待应用";
         title << L"  |  R 重力回正";
       } else title << L"HelloWorld Vulkan M1";
       if (m1IntakeState==M1IntakeState::Retiring) title << L"  |  GPU 退役中，暂停入料";
       if (m1IntakeState==M1IntakeState::Fault) title << L"  |  GPU 退役故障，请重启";
+      if (m1Integrated) {
+        if (compactIntake==CompactIntake::Updating) title << L"  |  画面更新中";
+        if (compactIntake==CompactIntake::Outside) title << L"  |  盒外，请重新按下";
+        if (compactIntake==CompactIntake::Bed) title << L"  |  床面遮挡";
+        if (compactIntake==CompactIntake::Capacity) title << L"  |  入料容量已满";
+      }
     }
     const auto caption=title.str();
     if (caption!=gravityCaption) {
@@ -604,12 +702,14 @@ struct Window {
       const auto pulse=!closing && !m1SourceModule.empty() ? ReceiveM1Pulse(ticks,ns,hz).pulse : grs::g13vk::M1Pulse{};
       if (closing || !pointerReady) return;
       RevalidateHeld(pulse);
+      if (m1Integrated && !ResampleCompactHold()) return;
       offer.scope=scope;
       if (sourceAnchorHold!=held.hold) { sourceAnchorHold=held.hold; sourceAnchor={}; }
-      if (held.hold && scope.permission && pulse.seq &&
+      if (held.hold && scope.permission && pulse.seq && (!m1Integrated || pulse.callbackTicks>compactAnchorAfter) &&
           (!heldRecovery.newSession ||
            grs::g13vk::SourcePulseAfter(pulse,heldRecovery.newSession,heldRecovery.boundary))) {
-        if (grs::g13vk::AdjacentSourcePulses(sourceAnchor,pulse) && pulse.uiNs>held.timeNs)
+        if (grs::g13vk::AdjacentSourcePulses(sourceAnchor,pulse) && pulse.uiNs>held.timeNs &&
+            (!m1Integrated || (compactShown.mapped && held.transformRevision==compactShown.revision)))
           offer={scope,++offerSeq,ns,ticks,sampleTicks,hz,held,1,0,pulse.uiNs-sourceAnchor.uiNs,sourceAnchor,pulse};
         sourceAnchor=pulse;
       }
@@ -789,12 +889,18 @@ struct Window {
                                                  if (closing || generation!=previous || !t833Allowed || !pointerReady ||
                                                      !scope.permission || !(offer.scope==scope) || offer.sample.hold!=held.hold ||
                                                      offer.sample.material!=held.material ||
+                                                     (m1Integrated && (!compactShown.mapped ||
+                                                       offer.sample.transformRevision!=compactShown.revision)) ||
                                                      (heldRecovery.newSession && offer.current.session!=heldRecovery.newSession))
                                                    return false;
                                                  act();
                                                  return true;
                                                },g13CompileTrace,m1Compact,m1Integrated,m1AuditBreakdown,
-                                               m1PrivateReference,m1PrivateOutput,m1PrivateObserve},
+                                               m1PrivateReference,m1PrivateOutput,m1PrivateObserve,
+                                               [&](grs::pc::CompactView &view) {return SetCompactPresented(view);},
+                                               [&](const grs::g13vk::SourceOffer &offer,uint32_t reason,bool admitted) {
+                                                 CompactSourceResult(offer,reason,admitted);
+                                               }},
           [&](const std::string &report) {
             Emit(report);
             const bool retiring=report.find("\"stage\":\"M1_RETIRE_PENDING\"")!=std::string::npos;
@@ -1103,7 +1209,7 @@ int wmain(int argc, wchar_t **argv) {
   if ((window.g13TailTiming || window.g13SealV1) && window.t877Mode.empty()) return 2;
   if ((window.m1StageTiming || window.m1InventoryV1) && window.m1QuantumCandidate.empty()) return 2;
   if (window.m1AngleWitness && (window.m1QuantumCandidate.empty() || window.m1InventoryV1)) return 2;
-  if (window.m1Compact && (window.m1AngleWitness || window.observation.packetId)) return 2;
+  if (window.m1Compact && (window.m1AngleWitness || (window.observation.packetId && !window.m1Integrated))) return 2;
   if (window.m1Integrated && (!window.m1Compact || window.m1InventoryV1 || !window.d1Mode.empty())) return 2;
   if (!window.m1PrivateReference.empty() &&
       (window.m1QuantumCandidate.empty() || window.m1Preview || window.dualSource ||

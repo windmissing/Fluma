@@ -20,7 +20,7 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def package(exe, shaders, out):
+def package(exe, shaders, out, revision="T942"):
     expected = {name: shaders / name for name in MODULES}
     for name, path in expected.items():
         if sha(path) != MODULES[name]:
@@ -28,6 +28,11 @@ def package(exe, shaders, out):
     with exe.open("rb") as source:
         if source.read(2) != b"MZ":
             raise ValueError("Expected a Windows PE executable")
+    view_receipt = exe.parent / "g13_assets" / "pc_view_assets.json"
+    embedded = None
+    if revision == "T942":
+        view = json.loads(view_receipt.read_bytes())
+        embedded = {name: view[name] for name in ("vert", "m1_dry_scene.frag", "m1_full_scene.frag")}
     out.mkdir()
     files = {EXE: exe, **expected}
     for name, source in files.items():
@@ -37,8 +42,10 @@ def package(exe, shaders, out):
         "cd /d \"%~dp0\" || exit /b 1\r\n"
         "set \"DEMO_LOG=%TEMP%\\HelloWorld-Demo-%RANDOM%-%RANDOM%\"\r\n"
         "mkdir \"%DEMO_LOG%\" || exit /b 1\r\n"
-        "powershell.exe -NoProfile -Command \"$m=Get-Content -Raw -LiteralPath 'manifest.json' | ConvertFrom-Json; "
-        "foreach($f in $m.files){if((Get-FileHash -Algorithm SHA256 -LiteralPath $f.name).Hash -ne $f.sha256){exit 2}}\""
+        "powershell.exe -NoProfile -Command \"$ErrorActionPreference='Stop'; "
+        "$m=Get-Content -Raw -LiteralPath 'manifest.json' | ConvertFrom-Json; "
+        "if($m.files.Count -ne 5){exit 2}; foreach($f in $m.files){"
+        "if((Get-FileHash -Algorithm SHA256 -LiteralPath $f.name).Hash -ne $f.sha256){exit 2}}\""
         " || (echo Demo files do not match manifest.json. & pause & exit /b 2)\r\n"
         "copy /y manifest.json \"%DEMO_LOG%\\manifest.json\" >nul\r\n"
         "echo Log: %DEMO_LOG%\r\n"
@@ -48,13 +55,15 @@ def package(exe, shaders, out):
     )
     (out / "Start Demo.cmd").write_bytes(cmd.encode("ascii"))
     document = {
-        "schema": "T933_DEMO_INTEGRATED_V1",
+        "schema": f"{revision}_DEMO_INTEGRATED_V1",
         "qualification": "T935_PENDING",
         "dispatchesPerQuantum": 35,
         "argv": [EXE, "--m1-window", *MODULES, *FLAGS],
         "files": [{"name": name, "bytes": (out / name).stat().st_size, "sha256": sha(out / name)}
                   for name in (*files, "Start Demo.cmd")],
     }
+    if embedded is not None:
+        document["embeddedViewSPIRV"] = embedded
     (out / "manifest.json").write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
 
 
@@ -63,5 +72,6 @@ if __name__ == "__main__":
     parser.add_argument("exe", type=Path)
     parser.add_argument("shaders", type=Path)
     parser.add_argument("out", type=Path)
+    parser.add_argument("--revision", choices=("T933", "T942"), default="T942")
     args = parser.parse_args()
-    package(args.exe, args.shaders, args.out)
+    package(args.exe, args.shaders, args.out, args.revision)

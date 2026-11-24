@@ -4,6 +4,7 @@
 #include "vulkan_api.h"
 #include "m1_hot_capture.h"
 #include "m1_observation.h"
+#include "m1_compact.h"
 
 namespace grs::pc {
 struct Frame {
@@ -25,6 +26,7 @@ struct Frame {
   int32_t requestedBoxAngle=0;
   uint64_t serial=0;
   uintptr_t graphicsFence=0;
+  CompactView compact{};
   struct Roi {
     std::array<M1Rect,3> regions{};
     std::array<uint8_t,kM1RoiBytes> bytes{};
@@ -45,9 +47,10 @@ struct PresentObservations {
   bool timing=false;
   uint32_t timestampBits=0;
   VkDeviceSize roiStride=0;
-  std::function<const std::array<M1Rect,3>*(uint32_t width,uint32_t height)> requestedRoi;
+  std::function<const std::array<M1Rect,3>*(uint32_t width,uint32_t height,const CompactView &)> requestedRoi;
   std::function<std::array<int32_t,3>()> gravityIndicator; // sin/cos Q20 and state
   std::function<int32_t()> requestedBoxAngle;
+  std::function<CompactView()> compactView;
   VkBuffer g15Work=VK_NULL_HANDLE,g15Witness=VK_NULL_HANDLE;
   VkDeviceSize g15WitnessOffset=0;
   const G16SceneView *g16=nullptr;
