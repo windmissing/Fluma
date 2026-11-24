@@ -43,7 +43,7 @@ struct Options {
   std::filesystem::path modules, source, archive, witness;
   uint32_t steps=0;
   int32_t angle=0;
-  bool full=false,present=false,sourceTimestamps=false;
+  bool full=false,present=false,sourceTimestamps=false,sourceDetail=false,sourcePrewarm=false;
 };
 
 Options Args(int argc,wchar_t **argv) {
@@ -65,6 +65,8 @@ Options Args(int argc,wchar_t **argv) {
       RequireHost(!out.sourceTimestamps,"DUPLICATE_SOURCE_TIMESTAMPS");
       out.sourceTimestamps=true;
     }
+    else if (key==L"--source-timestamps-detail") out.sourceDetail=true;
+    else if (key==L"--source-prewarm") out.sourcePrewarm=true;
     else {
       RequireHost(i+1<argc,"MISSING_ARGUMENT");
       const auto *value=argv[++i];
@@ -91,7 +93,7 @@ Options Args(int argc,wchar_t **argv) {
               (!out.full || (out.steps && !out.archive.empty())) &&
               (out.archive.empty() || out.steps || !out.source.empty()),"DM2_CAPABILITIES");
 #endif
-  RequireHost(!out.sourceTimestamps || !out.source.empty(),"SOURCE_TIMESTAMPS_NEED_SOURCE");
+  RequireHost(!(out.sourceTimestamps || out.sourceDetail || out.sourcePrewarm) || !out.source.empty(),"SOURCE_DIAGNOSTIC_NEEDS_SOURCE");
   return out;
 }
 
@@ -263,7 +265,11 @@ void SourceTimeline(const HostDevice &gpu,const VulkanOwner &owner,const VulkanO
       << "\",\"grantNs\":\"" << grant << "\",\"deadlineNs\":\"" << deadline
       << "\",\"inputFrozenNs\":\"" << frozen << "\",\"expectedReadyNs\":\"" << expected
       << "\",\"recordEnterNs\":\"" << t.recordEnter << "\",\"recordExitNs\":\"" << t.recordExit
-      << "\",\"submitEnterNs\":\"" << t.submitEnter << "\",\"submitExitNs\":\"" << t.submitExit
+      << "\",\"descriptorPrewarmed\":" << (t.descriptorPrewarmed ? "true" : "false")
+      << ",\"descriptorRecordNs\":" << t.descriptorNs << ",\"commandResetNs\":" << t.commandResetNs
+      << ",\"uploadRecordNs\":" << t.uploadRecordNs << ",\"dispatchRecordNs\":" << t.dispatchRecordNs
+      << ",\"copyRecordNs\":" << t.copyRecordNs << ",\"endCommandNs\":" << t.endCommandNs
+      << ",\"submitEnterNs\":\"" << t.submitEnter << "\",\"submitExitNs\":\"" << t.submitExit
       << "\",\"submitVkResult\":" << int(t.submit) << ",\"stopNs\":\"" << t.stopNs
       << "\",\"firstStop\":\"" << t.stop << "\",\"clock\":{\"observedNs\":\"" << pulse.observed
       << "\",\"seq\":\"" << pulse.sequence << "\",\"callbackNs\":\"" << pulse.callback
@@ -335,7 +341,7 @@ int Run(const Options &opt) {
   gpu.Open(opt.present);
   VulkanOwner owner;
   RequireVk(owner.Open({gpu.device,gpu.queue,gpu.family,gpu.deviceProc,gpu.properties.limits,
-                        gpu.timestampBits,opt.sourceTimestamps},opt.modules),
+                        gpu.timestampBits,opt.sourceTimestamps || opt.sourceDetail,opt.sourceDetail},opt.modules),
             "VULKAN_ROLE_PIPELINES");
   Scope scope{HostDevice::Now(),GetCurrentThreadId(),reinterpret_cast<uintptr_t>(gpu.device),
               1,1,1,gpu.window ? reinterpret_cast<uintptr_t>(gpu.window) : 1,1,
@@ -459,6 +465,14 @@ int Run(const Options &opt) {
   uploads.clear();
   Gate gate;
   gate.Configure(std::get<PhysicalConfig>(parent->Configuration()),permit.identity);
+  if (opt.sourcePrewarm) {
+    const auto enter=HostDevice::Now();
+    const auto warmed=owner.PrewarmSource(storage,common);
+    std::cout << "{\"stage\":\"SOURCE_DESCRIPTOR_PREWARM\",\"family\":\"" << family << "\",\"run\":\""
+              << scope.run << "\",\"enterNs\":\"" << enter << "\",\"exitNs\":\"" << HostDevice::Now()
+              << "\",\"vkResult\":" << int(warmed) << "}\n";
+    RequireVk(warmed,"SOURCE_DESCRIPTOR_PREWARM");
+  }
   PulseClock pacing(scope,opt.angle);
   uint64_t commit=0,quanta=0;
   for (uint32_t n=0;n<total;++n) {
@@ -641,7 +655,7 @@ int Run(const Options &opt) {
 int wmain(int argc,wchar_t **argv) {
   using namespace grs::pc::sand;
   if (argc==2 && std::wstring_view(argv[1])==L"--help") {
-    std::cout << "pc_sand_" << family << " --modules DIR [--source INPUT128.u32le [--source-timestamps]] [--steps N] [--angle-index N] "
+    std::cout << "pc_sand_" << family << " --modules DIR [--source INPUT128.u32le [--source-timestamps|--source-timestamps-detail] [--source-prewarm]] [--steps N] [--angle-index N] "
               << (kind==grs::g11vis::ParentKind::DM ? "[--archive FILE [--full]]" : "[--witness FILE] [--present]") << '\n';
     return 0;
   }

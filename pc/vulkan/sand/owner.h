@@ -22,6 +22,7 @@ class VulkanOwner {
     VkPhysicalDeviceLimits limits;
     uint32_t timestampBits=0;
     bool sourceTimestamps=false;
+    bool sourceDetail=false;
   };
   struct Readback {
     Slice buffer;
@@ -63,6 +64,8 @@ class VulkanOwner {
       size_t calls=0;
       uint64_t recordEnter=0,recordExit=0,submitEnter=0,submitExit=0,stopNs=0;
       uint64_t readEnter=0,readExit=0;
+      uint64_t descriptorNs=0,commandResetNs=0,uploadRecordNs=0,dispatchRecordNs=0,copyRecordNs=0,endCommandNs=0;
+      bool descriptorPrewarmed=false;
       VkResult submit=VK_NOT_READY,readFence=VK_NOT_READY,invalidate=VK_NOT_READY;
       const char *stop="PRECONDITION";
     } timing;
@@ -96,6 +99,7 @@ class VulkanOwner {
                   const std::function<bool()> &current,uint64_t absoluteDeadlineNs,
                   const std::function<uint64_t()> &nowNs,const Capture *capture=nullptr,
                   const RootIdentity *diagnostic=nullptr);
+  VkResult PrewarmSource(const StorageSlots &,const Slice &common);
   void FinishSourceDiagnostic(const RootReceipt &,bool accepted,uint64_t retireTimeoutNs);
   VkResult Retire(uint64_t timeoutNs);
   bool HasPendingWork() const { return inFlight_; }
@@ -134,6 +138,10 @@ class VulkanOwner {
   VkQueryPool sourceQueries_=VK_NULL_HANDLE;
   VkResult queryCreate_=VK_NOT_READY;
   std::optional<RootIdentity> submittedSource_;
+  StorageSlots sourceWarmStorage_{};
+  Slice sourceWarmCommon_{};
+  std::array<VkDescriptorSet,std::size(kSource)> sourceWarmSets_{};
+  bool sourceWarm_=false;
   std::vector<Pipeline> pipelines_;
   std::unique_ptr<Prepared> prepared_;
   std::thread::id thread_;
@@ -150,7 +158,7 @@ class VulkanOwner {
   VkBuffer qualifiedBuffer_=VK_NULL_HANDLE;
   bool inFlight_=false,eligible_=false,opened_=false;
   bool OnOwner() const { return thread_==std::this_thread::get_id(); }
-  VkResult Begin(const Upload *,size_t,bool timestamp=false);
+  VkResult Begin(const Upload *,size_t,bool timestamp=false,bool prewarmed=false,RootReceipt::Timeline *timing=nullptr);
   VkResult Submit(RootReceipt::Timeline *timing=nullptr);
   VkResult MapReady(const Readback &, VkDeviceSize, RootReceipt::Timeline *timing=nullptr);
   void ReportSourceGpu(const char *,VkResult,bool accepted);

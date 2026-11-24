@@ -11,6 +11,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools/glsl"))
 from g9_boot import LIMIT, WARM, split_inputs
+from sand.t913_roles import variant
 
 UNIFORM = re.compile(r"\buniform\s+(uint|int|uvec2)\s+([\w,]+)\s*;")
 BINDING = re.compile(r"layout\(std430,\s*binding\s*=\s*([0-3])\)")
@@ -167,7 +168,7 @@ def graphics(compiler, out):
     return result
 
 
-def build(family, compiler, out):
+def build(family, compiler, out, role_variant="baseline"):
     parent, schema = load_parent(family, out / "parent")
     raw = parent.read_bytes().replace(b"\r\n", b"\n")
     source = raw.decode()
@@ -178,6 +179,8 @@ def build(family, compiler, out):
     names = {op: name for name, op in ops.items()}
     names[WARM] = "WARM_AUDIT"
     jobs = [(op, port(emit((op,))[0], common, push), name) for op, name in sorted(names.items())]
+    if role_variant == "t913-v1":
+        jobs = [(op, variant(name, src, family), name) for op, src, name in jobs]
     with ThreadPoolExecutor(max_workers=4) as pool:
         roles = list(pool.map(lambda job: compile_role(compiler, out, job[0], job[1], common, push, job[2]), jobs))
     usable = {r["op"] for r in roles if r["state"] == "STATIC_SPIRV"}
@@ -188,8 +191,13 @@ def build(family, compiler, out):
                 complete={kind: all(op in usable for op, *_ in rows) for kind, rows in passes.items()},
                 graphics=graphics(compiler,out) if composite else {},
                 runtimeQualification="NOT_EXECUTED")
+    if role_variant != "baseline":
+        data.update(schema="PC_SAND_VULKAN_ROLES_T913_V1", roleVariant=role_variant)
     data["roleSetSHA"] = sha(json.dumps(data, sort_keys=True, separators=(",", ":")).encode())
     (out / "roles.json").write_text(json.dumps(data, indent=2) + "\n", encoding="utf8")
+    if role_variant != "baseline" and not all(data["complete"].values()):
+        failed = [r["name"] for r in roles if r["state"] != "STATIC_SPIRV"]
+        raise ValueError(f"T913 variant required role compilation failed: {failed}")
     with (out / "sand_passes.h").open("w", encoding="ascii") as header:
         header.write("#pragma once\nnamespace grs::pc::sand {\n")
         for kind, rows in passes.items():
@@ -220,6 +228,7 @@ if __name__ == "__main__":
     parser.add_argument("family", choices=("dm2", "r1"))
     parser.add_argument("--compiler", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--role-variant", default="baseline", choices=("baseline","t913-v1"))
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
-    build(args.family, args.compiler.resolve(), args.out.resolve())
+    build(args.family, args.compiler.resolve(), args.out.resolve(), args.role_variant)

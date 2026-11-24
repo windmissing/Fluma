@@ -11,8 +11,11 @@ if(NOT EXISTS "${VULKAN_HEADERS}/vulkan/vulkan.h" OR NOT EXISTS "${G13_GLSLANG}"
 endif()
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 set(ASSETS "${CMAKE_CURRENT_BINARY_DIR}/sand_assets")
+set(SAND_ROLE_VARIANT "baseline" CACHE STRING "PC sand SOURCE role set (baseline or t913-v1)")
 execute_process(COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/../build_sand_roles.py"
-    "${SAND_FAMILY}" --compiler "${G13_GLSLANG}" --out "${ASSETS}" COMMAND_ERROR_IS_FATAL ANY)
+    "${SAND_FAMILY}" --compiler "${G13_GLSLANG}" --out "${ASSETS}" --role-variant "${SAND_ROLE_VARIANT}" COMMAND_ERROR_IS_FATAL ANY)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/../build_sand_roles.py" "${CMAKE_CURRENT_SOURCE_DIR}/t913_roles.py")
 set(VK_INCLUDE "${CMAKE_CURRENT_BINARY_DIR}/vk_include")
 file(COPY "${VULKAN_HEADERS}/vulkan" DESTINATION "${VK_INCLUDE}")
 if(IS_DIRECTORY "${VULKAN_HEADERS}/vk_video")
