@@ -1,0 +1,68 @@
+{
+ "schema": "T914_PC_SOURCE_CANDIDATE_EQUIVALENCE_TIMING_V1",
+ "gpu": {
+  "name": "Intel UHD 630",
+  "pci": "8086:3e98",
+  "driverVersion": 1656924,
+  "driver": "31.0.101.2140",
+  "vendor": 32902,
+  "device": 16024
+ },
+ "inputSHA256": "3580ccb1a4199f41708bd9a790f8997f77c4af87dac1743b08c636264e22f55a",
+ "pe": {
+  "dm2-baseline": "c709d183777b3ac8781d1c118e1ae18e2059e529d0cd4f1aa08ef545c337af19",
+  "dm2-v1": "ef8ecd4ec3715d29b6ac036ee5783da687e081e4da5fa8eb4f7e38475a20230c",
+  "dm2-split-v2": "2b13c952b40ad0c447ca032d2b46bbc0f4c5ed18740cec6ff1235d9b7910d2bf",
+  "r1-baseline": "5839b002649620c64d656a89330988cd804f84c4d28cc178ea9f7f93ff2c6a64",
+  "r1-v1": "72030900da4015004e3b8eb4cb38a71abf28f50fc810fcc354078bd1e7ac4c7f",
+  "r1-split-v2": "e15d25813ae552b8c956293cfde843f82200f97653130485c4d5f9e19013f21a"
+ },
+ "matrix": "3 variants x 4 flag sets x 2 families = 24 arms (manifest.json)",
+ "gate": "test/t914/check_t914.py version-aware T905 extension; 22/22 PASS on runnable arms",
+ "results": {
+  "structural": "22/22 PASS (fence identity, retire chain, timeline order, poll<=2ms, query binding)",
+  "dm2Accepted": {
+   "baseline": {
+    "stopMs": 244.5,
+    "marginMs": 5,
+    "tail": "12/12/12",
+    "gate": "TAIL_ACCEPTED"
+   },
+   "v1": {
+    "stopMs": 221.6,
+    "marginMs": 28,
+    "gate": "TAIL_ACCEPTED"
+   },
+   "note": "first typed accepted SOURCE roots on iGPU for both role sets"
+  },
+  "r1": "all arms 250-263ms; v1 GPU dispatch sum 426.3->233.1ms (-45.3%) but host record 50-85ms keeps total over 250ms",
+  "slotDeltas": {
+   "dm2": {
+    "SLOT_9": "30.26->1.05ms (-96.5%)",
+    "SLOT_8": "73.4->64.5ms (-12%)",
+    "total": "246.1->209.3ms (-15%)"
+   },
+   "r1": {
+    "SLOT_8": "146.7->67.5ms (-54%)",
+    "SLOT_13": "144.2->64.2ms (-55.5%)",
+    "SLOT_14": "30.5->0.99ms (-96.8%)",
+    "total": "426.3->233.1ms (-45.3%)"
+   }
+  },
+  "flags": {
+   "prewarm": "up to -12ms near-deadline arms",
+   "detail": "+<2ms query overhead"
+  },
+  "chain": "6x --steps 1 attempts: SOURCE window re-rejected at 250-262ms; QUANTUM/WORK/Present continuation not captured on iGPU",
+  "splitV2": "BLOCKED 8/8: owner.Open VkResult=-3 before any stdout; module files/SHAs/magics verified; hand developer for per-module pipeline bisection",
+  "wordEquivalence": "structural PASS; literal word diff impossible cross-run (ModelEnvelope stamps wall-clock now -> inputSHA differs every run); needs frozen-time replay (developer)"
+ },
+ "canvasFallback": "none",
+ "artifacts": {
+  "runs": "test/reports/t914/runs/",
+  "gate": "gate-results.json",
+  "slots": "slot-tick-tables.json",
+  "checker": "test/t914/check_t914.py",
+  "runner": "test/t914/run_t914.py"
+ }
+}

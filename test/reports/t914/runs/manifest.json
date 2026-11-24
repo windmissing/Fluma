@@ -1,0 +1,245 @@
+{
+ "inputSHA": "3580ccb1a4199f41708bd9a790f8997f77c4af87dac1743b08c636264e22f55a",
+ "runs": [
+  {
+   "tag": "dm2-baseline-plain",
+   "family": "dm2",
+   "variant": "baseline",
+   "flags": "plain",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\dm2-baseline-plain.jsonl",
+   "hostSHA": "c709d183777b3ac8781d1c118e1ae18e2059e529d0cd4f1aa08ef545c337af19",
+   "stderr": "DM2 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "dm2-baseline-detail",
+   "family": "dm2",
+   "variant": "baseline",
+   "flags": "detail",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\dm2-baseline-detail.jsonl",
+   "hostSHA": "c709d183777b3ac8781d1c118e1ae18e2059e529d0cd4f1aa08ef545c337af19",
+   "stderr": "DM2 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "dm2-baseline-prewarm",
+   "family": "dm2",
+   "variant": "baseline",
+   "flags": "prewarm",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\dm2-baseline-prewarm.jsonl",
+   "hostSHA": "c709d183777b3ac8781d1c118e1ae18e2059e529d0cd4f1aa08ef545c337af19",
+   "stderr": "DM2 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "dm2-baseline-detail-prewarm",
+   "family": "dm2",
+   "variant": "baseline",
+   "flags": "detail-prewarm",
+   "exit": 0,
+   "out": "test\\reports\\t914\\runs\\dm2-baseline-detail-prewarm.jsonl",
+   "hostSHA": "c709d183777b3ac8781d1c118e1ae18e2059e529d0cd4f1aa08ef545c337af19",
+   "stderr": ""
+  },
+  {
+   "tag": "dm2-v1-plain",
+   "family": "dm2",
+   "variant": "v1",
+   "flags": "plain",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\dm2-v1-plain.jsonl",
+   "hostSHA": "ef8ecd4ec3715d29b6ac036ee5783da687e081e4da5fa8eb4f7e38475a20230c",
+   "stderr": "DM2 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "dm2-v1-detail",
+   "family": "dm2",
+   "variant": "v1",
+   "flags": "detail",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\dm2-v1-detail.jsonl",
+   "hostSHA": "ef8ecd4ec3715d29b6ac036ee5783da687e081e4da5fa8eb4f7e38475a20230c",
+   "stderr": "DM2 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "dm2-v1-prewarm",
+   "family": "dm2",
+   "variant": "v1",
+   "flags": "prewarm",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\dm2-v1-prewarm.jsonl",
+   "hostSHA": "ef8ecd4ec3715d29b6ac036ee5783da687e081e4da5fa8eb4f7e38475a20230c",
+   "stderr": "DM2 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "dm2-v1-detail-prewarm",
+   "family": "dm2",
+   "variant": "v1",
+   "flags": "detail-prewarm",
+   "exit": 0,
+   "out": "test\\reports\\t914\\runs\\dm2-v1-detail-prewarm.jsonl",
+   "hostSHA": "ef8ecd4ec3715d29b6ac036ee5783da687e081e4da5fa8eb4f7e38475a20230c",
+   "stderr": ""
+  },
+  {
+   "tag": "dm2-split-v2-plain",
+   "family": "dm2",
+   "variant": "split-v2",
+   "flags": "plain",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\dm2-split-v2-plain.jsonl",
+   "hostSHA": "2b13c952b40ad0c447ca032d2b46bbc0f4c5ed18740cec6ff1235d9b7910d2bf",
+   "stderr": "DM2 VULKAN_ROLE_PIPELINES VkResult=-3\r\n"
+  },
+  {
+   "tag": "dm2-split-v2-detail",
+   "family": "dm2",
+   "variant": "split-v2",
+   "flags": "detail",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\dm2-split-v2-detail.jsonl",
+   "hostSHA": "2b13c952b40ad0c447ca032d2b46bbc0f4c5ed18740cec6ff1235d9b7910d2bf",
+   "stderr": "DM2 VULKAN_ROLE_PIPELINES VkResult=-3\r\n"
+  },
+  {
+   "tag": "dm2-split-v2-prewarm",
+   "family": "dm2",
+   "variant": "split-v2",
+   "flags": "prewarm",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\dm2-split-v2-prewarm.jsonl",
+   "hostSHA": "2b13c952b40ad0c447ca032d2b46bbc0f4c5ed18740cec6ff1235d9b7910d2bf",
+   "stderr": "DM2 VULKAN_ROLE_PIPELINES VkResult=-3\r\n"
+  },
+  {
+   "tag": "dm2-split-v2-detail-prewarm",
+   "family": "dm2",
+   "variant": "split-v2",
+   "flags": "detail-prewarm",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\dm2-split-v2-detail-prewarm.jsonl",
+   "hostSHA": "2b13c952b40ad0c447ca032d2b46bbc0f4c5ed18740cec6ff1235d9b7910d2bf",
+   "stderr": "DM2 VULKAN_ROLE_PIPELINES VkResult=-3\r\n"
+  },
+  {
+   "tag": "r1-baseline-plain",
+   "family": "r1",
+   "variant": "baseline",
+   "flags": "plain",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\r1-baseline-plain.jsonl",
+   "hostSHA": "5839b002649620c64d656a89330988cd804f84c4d28cc178ea9f7f93ff2c6a64",
+   "stderr": "R1 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "r1-baseline-detail",
+   "family": "r1",
+   "variant": "baseline",
+   "flags": "detail",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\r1-baseline-detail.jsonl",
+   "hostSHA": "5839b002649620c64d656a89330988cd804f84c4d28cc178ea9f7f93ff2c6a64",
+   "stderr": "R1 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "r1-baseline-prewarm",
+   "family": "r1",
+   "variant": "baseline",
+   "flags": "prewarm",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\r1-baseline-prewarm.jsonl",
+   "hostSHA": "5839b002649620c64d656a89330988cd804f84c4d28cc178ea9f7f93ff2c6a64",
+   "stderr": "R1 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "r1-baseline-detail-prewarm",
+   "family": "r1",
+   "variant": "baseline",
+   "flags": "detail-prewarm",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\r1-baseline-detail-prewarm.jsonl",
+   "hostSHA": "5839b002649620c64d656a89330988cd804f84c4d28cc178ea9f7f93ff2c6a64",
+   "stderr": "R1 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "r1-v1-plain",
+   "family": "r1",
+   "variant": "v1",
+   "flags": "plain",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\r1-v1-plain.jsonl",
+   "hostSHA": "72030900da4015004e3b8eb4cb38a71abf28f50fc810fcc354078bd1e7ac4c7f",
+   "stderr": "R1 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "r1-v1-detail",
+   "family": "r1",
+   "variant": "v1",
+   "flags": "detail",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\r1-v1-detail.jsonl",
+   "hostSHA": "72030900da4015004e3b8eb4cb38a71abf28f50fc810fcc354078bd1e7ac4c7f",
+   "stderr": "R1 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "r1-v1-prewarm",
+   "family": "r1",
+   "variant": "v1",
+   "flags": "prewarm",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\r1-v1-prewarm.jsonl",
+   "hostSHA": "72030900da4015004e3b8eb4cb38a71abf28f50fc810fcc354078bd1e7ac4c7f",
+   "stderr": "R1 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "r1-v1-detail-prewarm",
+   "family": "r1",
+   "variant": "v1",
+   "flags": "detail-prewarm",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\r1-v1-detail-prewarm.jsonl",
+   "hostSHA": "72030900da4015004e3b8eb4cb38a71abf28f50fc810fcc354078bd1e7ac4c7f",
+   "stderr": "R1 ROOT_NOT_ACCEPTED\r\n"
+  },
+  {
+   "tag": "r1-split-v2-plain",
+   "family": "r1",
+   "variant": "split-v2",
+   "flags": "plain",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\r1-split-v2-plain.jsonl",
+   "hostSHA": "e15d25813ae552b8c956293cfde843f82200f97653130485c4d5f9e19013f21a",
+   "stderr": "R1 VULKAN_ROLE_PIPELINES VkResult=-3\r\n"
+  },
+  {
+   "tag": "r1-split-v2-detail",
+   "family": "r1",
+   "variant": "split-v2",
+   "flags": "detail",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\r1-split-v2-detail.jsonl",
+   "hostSHA": "e15d25813ae552b8c956293cfde843f82200f97653130485c4d5f9e19013f21a",
+   "stderr": "R1 VULKAN_ROLE_PIPELINES VkResult=-3\r\n"
+  },
+  {
+   "tag": "r1-split-v2-prewarm",
+   "family": "r1",
+   "variant": "split-v2",
+   "flags": "prewarm",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\r1-split-v2-prewarm.jsonl",
+   "hostSHA": "e15d25813ae552b8c956293cfde843f82200f97653130485c4d5f9e19013f21a",
+   "stderr": "R1 VULKAN_ROLE_PIPELINES VkResult=-3\r\n"
+  },
+  {
+   "tag": "r1-split-v2-detail-prewarm",
+   "family": "r1",
+   "variant": "split-v2",
+   "flags": "detail-prewarm",
+   "exit": 1,
+   "out": "test\\reports\\t914\\runs\\r1-split-v2-detail-prewarm.jsonl",
+   "hostSHA": "e15d25813ae552b8c956293cfde843f82200f97653130485c4d5f9e19013f21a",
+   "stderr": "R1 VULKAN_ROLE_PIPELINES VkResult=-3\r\n"
+  }
+ ]
+}
