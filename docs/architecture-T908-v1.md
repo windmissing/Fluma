@@ -4,6 +4,8 @@
 
 ## 1. 原件与计量
 
+另一份同版普通 Demo 在高负载下进入退役等待超时并关闭入料。按真实根、容量和恢复链的交接见 [T925](architecture-T925-v1.md)。
+
 用户原件 `.codex/local-test/demo-0317c9d04e5548728b4614c97277dd71/demo.jsonl` 是仍增长的日志。本次固定取前 58,000 行完整字节（76,657,893 B，SHA256 `4f22f28cea031083b81c682c3d0abc89fa5a3cef1d50118911bfa43d76f5ba00`）。0 s 为首次真实 Down 的 QPC `16396683084782`，时基 10 MHz。PID 20412，run `16395936734607`，geometry/config `2/2`，784×461，60 Hz。实际 Intel UHD 630（`8086:3e98`，Vulkan driver 原值 `1656924`，版本 `31.0.101.2140`）。现场进程 argv 使用 T899 A、`--m1-window`、`--m1-empty-preview --m1-manual-gravity --m1-one-quantum-grant --m1-dual-source`。本机 PE SHA256 `c09e87faae0e432a9cf67e717a24d229fce2bc72a075e5d9beb77c7dd777da79`，三模块 SHA 与日志分别吻合（`1912af9e…`、`b8f0e327…`、`caf0614c…`）。 [T899 工件](developer-T899-v1.md)
 
 只按同 run+nonce 计真正 accepted SOURCE/QUANTUM。用各自的 completion rootKind/nonce、实际 fence、owner、authority 及 sourceCommit 去重。图像另核实际图形与 WSI 结果、publication slot/generation、physicsCommit 和 image index。采用 accepted Q 的 fence QPC 做半开窗口。联合收据有 471 行重复 `m1GravityGrant` 键，接受 Q 的角对象以嵌套 nonce 对上自身 rootKind 和 Completion256 word 107。共 8152 个接受 Q，原字 quantumSerial 从 1 到 8152 无间断，同根 Present 入队证据同数。实际可见与像素按各自原件裁定。根收支逐次通过原生成配额等式和 Q20 库存对照。

@@ -1,0 +1,1909 @@
+{
+  "log": ".codex/local-test/demo-7b46b51ba59b497a8ac4447f1328229b/demo.jsonl",
+  "frozenLines": 6539,
+  "bytes": 14696965,
+  "sha256": "cbc3659f1f4251f19857ddf4d066a35cc9bf42fde0b7232d3ca33d9051e594c3",
+  "artifact": {
+    "pcProcessMatched": true,
+    "pid": 87816,
+    "createFiletime": "134399741558655524",
+    "codeCommit": "1bc13152",
+    "pe": ".codex/local-test/t899-a-release.exe",
+    "peSHA": "c09e87faae0e432a9cf67e717a24d229fce2bc72a075e5d9beb77c7dd777da79",
+    "modulePaths": [
+      ".codex/local-test/t830-m1-20261123/full_source.spv",
+      ".codex/local-test/t830-m1-20261123/quantum_candidate.spv",
+      ".codex/local-test/t830-m1-20261123/quantum_commit.spv"
+    ],
+    "moduleSHAs": [
+      "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162",
+      "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c",
+      "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce"
+    ],
+    "argv": [
+      "--m1-window",
+      ".codex/local-test/t830-m1-20261123/full_source.spv",
+      ".codex/local-test/t830-m1-20261123/quantum_candidate.spv",
+      ".codex/local-test/t830-m1-20261123/quantum_commit.spv",
+      "--m1-empty-preview",
+      "--m1-manual-gravity",
+      "--m1-one-quantum-grant",
+      "--m1-dual-source"
+    ],
+    "width": 784,
+    "height": 461,
+    "vendor": "8086",
+    "device": "3e98",
+    "driver": 1656924,
+    "driverVersion": "31.0.101.2140"
+  },
+  "firstDownQpc": 16603947930267,
+  "frequency": 10000000,
+  "terminal": [
+    {
+      "summary": {
+        "line": 6412,
+        "t": 219.490453,
+        "run": "16603889196966",
+        "session": "243",
+        "geometry": "2",
+        "plan": "1541",
+        "nonce": "16606142484360",
+        "why": "CLOCK_GAP",
+        "readySession": "243",
+        "pending": true,
+        "retireVk": 2,
+        "budget": 249695900,
+        "hasRearm": false,
+        "fence": "1787706299240",
+        "acceptedRoot": "16606128063635"
+      },
+      "authority": {
+        "reason": "CLOCK_GAP",
+        "nonce": "16606142484360",
+        "windowCurrent": true,
+        "run": "16603889196966",
+        "geometry": "2",
+        "session": "243",
+        "clockSession": "243",
+        "plan": "1541",
+        "activePlan": "1541",
+        "grantNs": "1660614248435800",
+        "deadlineNs": "1660614498435800",
+        "clockOpen": false,
+        "clockReady": false,
+        "clockFault": "CLOCK_GAP",
+        "producerSeq": "3",
+        "producerTick": "16606142834422",
+        "producerReceiptTick": "16606142834434",
+        "consumedSeq": "2",
+        "callbackTick": "16606142447618",
+        "receiptTick": "16606142447634",
+        "uiNs": "1660614244761800",
+        "receiptNs": "1660614244763400",
+        "maxUiGapNs": "38680400",
+        "maxNativeGapNs": "38680000",
+        "pending": 0,
+        "active": 0,
+        "carry": 0,
+        "grantQuanta": 1,
+        "grantCap": 1,
+        "generated": 24602,
+        "quantaAccepted": 1317,
+        "revoked": 1112,
+        "overload": 22173,
+        "balanced": true,
+        "recordBeginQpc": "16606142484380",
+        "recordEndQpc": "16606142487045",
+        "submitEnterQpc": "16606142487065",
+        "submitExitQpc": "16606142487388",
+        "businessStopQpc": "16606142834799",
+        "firstWaitBudgetNs": 249695900,
+        "acceptedRoot": "16606128063635",
+        "submitVkResult": 0,
+        "retireVkResult": 2,
+        "retireEnterQpc": "16606142834808",
+        "retireExitQpc": "16606145416111",
+        "fencePending": true,
+        "waitCount": 2,
+        "fenceObject": "1787706299240",
+        "waitsTruncated": false,
+        "lastWait": [
+          "16606142660221",
+          "16606142834610",
+          2000000,
+          2
+        ],
+        "waits": [
+          [
+            "16606142487399",
+            "16606142656469",
+            2000000,
+            2
+          ],
+          [
+            "16606142660221",
+            "16606142834610",
+            2000000,
+            2
+          ]
+        ]
+      },
+      "lastWait": [
+        "16606142660221",
+        "16606142834610",
+        2000000,
+        2
+      ],
+      "publishedReleased": null,
+      "wsiRetireVkResult": null
+    },
+    {
+      "summary": {
+        "line": 6413,
+        "t": 219.490453,
+        "run": "16603889196966",
+        "session": "243",
+        "geometry": "2",
+        "plan": "1541",
+        "nonce": "16606142484360",
+        "why": "CLOCK_GAP",
+        "readySession": "243",
+        "pending": true,
+        "retireVk": 2,
+        "budget": 249695900,
+        "hasRearm": false,
+        "fence": "1787706299240",
+        "acceptedRoot": "16606128063635"
+      },
+      "authority": {
+        "reason": "CLOCK_GAP",
+        "nonce": "16606142484360",
+        "windowCurrent": true,
+        "run": "16603889196966",
+        "geometry": "2",
+        "session": "243",
+        "clockSession": "243",
+        "plan": "1541",
+        "activePlan": "1541",
+        "grantNs": "1660614248435800",
+        "deadlineNs": "1660614498435800",
+        "clockOpen": false,
+        "clockReady": false,
+        "clockFault": "CLOCK_GAP",
+        "producerSeq": "3",
+        "producerTick": "16606142834422",
+        "producerReceiptTick": "16606142834434",
+        "consumedSeq": "2",
+        "callbackTick": "16606142447618",
+        "receiptTick": "16606142447634",
+        "uiNs": "1660614244761800",
+        "receiptNs": "1660614244763400",
+        "maxUiGapNs": "38680400",
+        "maxNativeGapNs": "38680000",
+        "pending": 0,
+        "active": 0,
+        "carry": 0,
+        "grantQuanta": 1,
+        "grantCap": 1,
+        "generated": 24602,
+        "quantaAccepted": 1317,
+        "revoked": 1112,
+        "overload": 22173,
+        "balanced": true,
+        "recordBeginQpc": "16606142484380",
+        "recordEndQpc": "16606142487045",
+        "submitEnterQpc": "16606142487065",
+        "submitExitQpc": "16606142487388",
+        "businessStopQpc": "16606142834799",
+        "firstWaitBudgetNs": 249695900,
+        "acceptedRoot": "16606128063635",
+        "submitVkResult": 0,
+        "retireVkResult": 2,
+        "retireEnterQpc": "16606142834808",
+        "retireExitQpc": "16606145416111",
+        "fencePending": true,
+        "waitCount": 2,
+        "fenceObject": "1787706299240",
+        "waitsTruncated": false,
+        "lastWait": [
+          "16606142660221",
+          "16606142834610",
+          2000000,
+          2
+        ],
+        "waits": [
+          [
+            "16606142487399",
+            "16606142656469",
+            2000000,
+            2
+          ],
+          [
+            "16606142660221",
+            "16606142834610",
+            2000000,
+            2
+          ]
+        ]
+      },
+      "lastWait": [
+        "16606142660221",
+        "16606142834610",
+        2000000,
+        2
+      ],
+      "publishedReleased": true,
+      "wsiRetireVkResult": 0
+    }
+  ],
+  "lastPointers": [
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "DOWN",
+      "geometry": "2",
+      "seq": "4577",
+      "qpc": "16606131635686",
+      "x": 354,
+      "y": 365,
+      "dpi": 96,
+      "hold": "4577",
+      "inputReady": true,
+      "readyQpc": "16606127904485",
+      "selectedMaterial": 0,
+      "boundMaterial": 0,
+      "reject": null,
+      "line": 6389,
+      "t": 218.370542
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "UP",
+      "geometry": "2",
+      "seq": "4583",
+      "qpc": "16606133127761",
+      "x": 354,
+      "y": 374,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": true,
+      "readyQpc": "16606127904485",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": null,
+      "line": 6395,
+      "t": 218.519749
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "DOWN",
+      "geometry": "2",
+      "seq": "4585",
+      "qpc": "16606133889635",
+      "x": 354,
+      "y": 375,
+      "dpi": 96,
+      "hold": "4585",
+      "inputReady": true,
+      "readyQpc": "16606133292430",
+      "selectedMaterial": 0,
+      "boundMaterial": 0,
+      "reject": null,
+      "line": 6399,
+      "t": 218.595937
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "UP",
+      "geometry": "2",
+      "seq": "4589",
+      "qpc": "16606135309634",
+      "x": 355,
+      "y": 379,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": true,
+      "readyQpc": "16606133292430",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": null,
+      "line": 6403,
+      "t": 218.737937
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "FOCUS_LOST",
+      "geometry": "2",
+      "seq": "4591",
+      "qpc": "16606140350778",
+      "x": 0,
+      "y": 0,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": true,
+      "readyQpc": "16606139189782",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": null,
+      "line": 6409,
+      "t": 219.242051
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "DOWN",
+      "geometry": "2",
+      "seq": "4593",
+      "qpc": "16606902066984",
+      "x": 386,
+      "y": 353,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": false,
+      "readyQpc": "16606142346553",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": "NOT_READY",
+      "line": 6415,
+      "t": 295.413672
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "UP",
+      "geometry": "2",
+      "seq": "4641",
+      "qpc": "16606907386656",
+      "x": 336,
+      "y": 334,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": false,
+      "readyQpc": "16606142346553",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": null,
+      "line": 6463,
+      "t": 295.945639
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "DOWN",
+      "geometry": "2",
+      "seq": "4643",
+      "qpc": "16606910007875",
+      "x": 354,
+      "y": 289,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": false,
+      "readyQpc": "16606142346553",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": "NOT_READY",
+      "line": 6465,
+      "t": 296.207761
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "UP",
+      "geometry": "2",
+      "seq": "4669",
+      "qpc": "16606913161367",
+      "x": 357,
+      "y": 379,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": false,
+      "readyQpc": "16606142346553",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": null,
+      "line": 6491,
+      "t": 296.52311
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "DOWN",
+      "geometry": "2",
+      "seq": "4671",
+      "qpc": "16606914508740",
+      "x": 357,
+      "y": 368,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": false,
+      "readyQpc": "16606142346553",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": "NOT_READY",
+      "line": 6493,
+      "t": 296.657847
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "UP",
+      "geometry": "2",
+      "seq": "4687",
+      "qpc": "16606916684013",
+      "x": 357,
+      "y": 413,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": false,
+      "readyQpc": "16606142346553",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": null,
+      "line": 6509,
+      "t": 296.875375
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "DOWN",
+      "geometry": "2",
+      "seq": "4689",
+      "qpc": "16606920289672",
+      "x": 360,
+      "y": 402,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": false,
+      "readyQpc": "16606142346553",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": "NOT_READY",
+      "line": 6511,
+      "t": 297.235941
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "UP",
+      "geometry": "2",
+      "seq": "4695",
+      "qpc": "16606922160549",
+      "x": 360,
+      "y": 407,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": false,
+      "readyQpc": "16606142346553",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": null,
+      "line": 6517,
+      "t": 297.423028
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "DOWN",
+      "geometry": "2",
+      "seq": "4697",
+      "qpc": "16606923295175",
+      "x": 360,
+      "y": 435,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": false,
+      "readyQpc": "16606142346553",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": "NOT_READY",
+      "line": 6519,
+      "t": 297.536491
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "UP",
+      "geometry": "2",
+      "seq": "4715",
+      "qpc": "16606924710607",
+      "x": 344,
+      "y": 485,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": false,
+      "readyQpc": "16606142346553",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": null,
+      "line": 6537,
+      "t": 297.678034
+    },
+    {
+      "stage": "WIN32_POINTER",
+      "kind": "FOCUS_LOST",
+      "geometry": "2",
+      "seq": "4717",
+      "qpc": "16606933870768",
+      "x": 0,
+      "y": 0,
+      "dpi": 96,
+      "hold": "0",
+      "inputReady": false,
+      "readyQpc": "16606142346553",
+      "selectedMaterial": 0,
+      "boundMaterial": null,
+      "reject": null,
+      "line": 6539,
+      "t": 298.59405
+    }
+  ],
+  "timeline": [
+    {
+      "line": 6388,
+      "stage": "M1_QUANTUM_SUBMIT",
+      "state": "M1_QUANTUM_PRESENT_QUEUED",
+      "reason": "",
+      "nonce": "16606128063635",
+      "ready": "239",
+      "readyQpc": "16606127752601",
+      "recovery": null,
+      "authority": {
+        "session": "239",
+        "plan": "1536",
+        "businessStopQpc": "16606130559136",
+        "fenceObject": "1787706302824",
+        "firstWaitBudgetNs": 249744400,
+        "retireEnterQpc": "0",
+        "retireExitQpc": "0",
+        "retireVkResult": 1,
+        "fencePending": false,
+        "acceptedRoot": "16606128063635"
+      }
+    },
+    {
+      "line": 6396,
+      "stage": "M1_QUANTUM_SUBMIT",
+      "state": "M1_STALE_WAIT_REAL_PULSE",
+      "reason": "LATE_FENCE_SIGNAL",
+      "nonce": "16606130627359",
+      "ready": null,
+      "readyQpc": null,
+      "recovery": {
+        "oldSession": "239",
+        "reason": "LATE_FENCE_SIGNAL",
+        "failedNonce": "16606130627359",
+        "oldRetiredQpc": "16606133132977",
+        "submitted": true,
+        "returnedCredits": 5,
+        "clearedCarry": 140060000,
+        "balanced": true,
+        "lastAcceptedRoot": "16606128063635",
+        "lastPresentedRoot": "16606128063635"
+      },
+      "authority": {
+        "session": "239",
+        "plan": "1537",
+        "businessStopQpc": "16606133133150",
+        "fenceObject": "1787706304168",
+        "firstWaitBudgetNs": 249714500,
+        "retireEnterQpc": "0",
+        "retireExitQpc": "0",
+        "retireVkResult": 0,
+        "fencePending": false,
+        "acceptedRoot": "16606128063635"
+      }
+    },
+    {
+      "line": 6398,
+      "stage": "M1_POINTER_READY",
+      "state": "M1_READY_PHYSICS",
+      "reason": "",
+      "nonce": null,
+      "ready": "240",
+      "readyQpc": "16606133144558",
+      "recovery": null,
+      "authority": null
+    },
+    {
+      "line": 6405,
+      "stage": "M1_QUANTUM_SUBMIT",
+      "state": "M1_STALE_WAIT_REAL_PULSE",
+      "reason": "LATE_FENCE_SIGNAL",
+      "nonce": "16606133448303",
+      "ready": "240",
+      "readyQpc": "16606133144558",
+      "recovery": {
+        "oldSession": "240",
+        "reason": "LATE_FENCE_SIGNAL",
+        "failedNonce": "16606133448303",
+        "oldRetiredQpc": "16606135953627",
+        "submitted": true,
+        "returnedCredits": 5,
+        "clearedCarry": 911428000,
+        "balanced": true,
+        "lastAcceptedRoot": "16606128063635",
+        "lastPresentedRoot": "16606128063635"
+      },
+      "authority": {
+        "session": "240",
+        "plan": "1538",
+        "businessStopQpc": "16606135953796",
+        "fenceObject": "1787706302824",
+        "firstWaitBudgetNs": 249746400,
+        "retireEnterQpc": "0",
+        "retireExitQpc": "0",
+        "retireVkResult": 0,
+        "fencePending": false,
+        "acceptedRoot": "16606128063635"
+      }
+    },
+    {
+      "line": 6406,
+      "stage": "M1_POINTER_READY",
+      "state": "M1_READY_PHYSICS",
+      "reason": "",
+      "nonce": null,
+      "ready": "241",
+      "readyQpc": "16606136082778",
+      "recovery": null,
+      "authority": null
+    },
+    {
+      "line": 6407,
+      "stage": "M1_QUANTUM_SUBMIT",
+      "state": "M1_STALE_WAIT_REAL_PULSE",
+      "reason": "ROOT_DEADLINE",
+      "nonce": "16606136383007",
+      "ready": "241",
+      "readyQpc": "16606136082778",
+      "recovery": {
+        "oldSession": "241",
+        "reason": "ROOT_DEADLINE",
+        "failedNonce": "16606136383007",
+        "oldRetiredQpc": "16606138933328",
+        "submitted": true,
+        "returnedCredits": 5,
+        "clearedCarry": 764648000,
+        "balanced": true,
+        "lastAcceptedRoot": "16606128063635",
+        "lastPresentedRoot": "16606128063635"
+      },
+      "authority": {
+        "session": "241",
+        "plan": "1539",
+        "businessStopQpc": "16606138883145",
+        "fenceObject": "1787706305064",
+        "firstWaitBudgetNs": 249736000,
+        "retireEnterQpc": "16606138883155",
+        "retireExitQpc": "16606138933328",
+        "retireVkResult": 0,
+        "fencePending": false,
+        "acceptedRoot": "16606128063635"
+      }
+    },
+    {
+      "line": 6408,
+      "stage": "M1_POINTER_READY",
+      "state": "M1_READY_PHYSICS",
+      "reason": "",
+      "nonce": null,
+      "ready": "242",
+      "readyQpc": "16606139154585",
+      "recovery": null,
+      "authority": null
+    },
+    {
+      "line": 6410,
+      "stage": "M1_QUANTUM_SUBMIT",
+      "state": "M1_STALE_WAIT_REAL_PULSE",
+      "reason": "CLOCK_GAP",
+      "nonce": "16606139495775",
+      "ready": "242",
+      "readyQpc": "16606139154585",
+      "recovery": {
+        "oldSession": "242",
+        "reason": "CLOCK_GAP",
+        "failedNonce": "16606139495775",
+        "oldRetiredQpc": "16606142181639",
+        "submitted": true,
+        "returnedCredits": 0,
+        "clearedCarry": 0,
+        "balanced": true,
+        "lastAcceptedRoot": "16606128063635",
+        "lastPresentedRoot": "16606128063635"
+      },
+      "authority": {
+        "session": "242",
+        "plan": "1540",
+        "businessStopQpc": "16606140589426",
+        "fenceObject": "1787706299240",
+        "firstWaitBudgetNs": 249736800,
+        "retireEnterQpc": "16606140589435",
+        "retireExitQpc": "16606142181639",
+        "retireVkResult": 0,
+        "fencePending": false,
+        "acceptedRoot": "16606128063635"
+      }
+    },
+    {
+      "line": 6411,
+      "stage": "M1_POINTER_READY",
+      "state": "M1_READY_PHYSICS",
+      "reason": "",
+      "nonce": null,
+      "ready": "243",
+      "readyQpc": "16606142248869",
+      "recovery": null,
+      "authority": null
+    },
+    {
+      "line": 6412,
+      "stage": "M1_QUANTUM_SUBMIT",
+      "state": "FAILED",
+      "reason": "M1_QUANTUM_CONTINUATION_FAILED",
+      "nonce": "16606142484360",
+      "ready": "243",
+      "readyQpc": "16606142248869",
+      "recovery": null,
+      "authority": {
+        "session": "243",
+        "plan": "1541",
+        "businessStopQpc": "16606142834799",
+        "fenceObject": "1787706299240",
+        "firstWaitBudgetNs": 249695900,
+        "retireEnterQpc": "16606142834808",
+        "retireExitQpc": "16606145416111",
+        "retireVkResult": 2,
+        "fencePending": true,
+        "acceptedRoot": "16606128063635"
+      }
+    },
+    {
+      "line": 6413,
+      "stage": "M1_QUANTUM_SUBMIT",
+      "state": "FAILED",
+      "reason": "M1_QUANTUM_CONTINUATION_FAILED",
+      "nonce": "16606142484360",
+      "ready": "243",
+      "readyQpc": "16606142248869",
+      "recovery": null,
+      "authority": {
+        "session": "243",
+        "plan": "1541",
+        "businessStopQpc": "16606142834799",
+        "fenceObject": "1787706299240",
+        "firstWaitBudgetNs": 249695900,
+        "retireEnterQpc": "16606142834808",
+        "retireExitQpc": "16606145416111",
+        "retireVkResult": 2,
+        "fencePending": true,
+        "acceptedRoot": "16606128063635"
+      }
+    }
+  ],
+  "windowStats": [
+    {
+      "range": [
+        0,
+        20
+      ],
+      "line": [
+        50,
+        566
+      ],
+      "q": 351,
+      "rate": 17.55,
+      "sim": 0.14625,
+      "src": 25,
+      "srcQ": 3391085,
+      "stockQ": [
+        138717,
+        3391085
+      ],
+      "live": [
+        0,
+        6,
+        24
+      ],
+      "minFree": 168,
+      "zeroLive": 68,
+      "compute": [
+        49.8848,
+        80.3597
+      ],
+      "record": [
+        0.189,
+        0.2552
+      ],
+      "graphics": [
+        1.0079,
+        1.8506
+      ],
+      "reject": {
+        "CLOCK_GAP": 2
+      }
+    },
+    {
+      "range": [
+        20,
+        40
+      ],
+      "line": [
+        567,
+        1201
+      ],
+      "q": 408,
+      "rate": 20.4,
+      "sim": 0.17,
+      "src": 25,
+      "srcQ": 3289968,
+      "stockQ": [
+        3391085,
+        6548047
+      ],
+      "live": [
+        0,
+        1.0,
+        32
+      ],
+      "minFree": 160,
+      "zeroLive": 93,
+      "compute": [
+        39.2731,
+        75.6815
+      ],
+      "record": [
+        0.1933,
+        0.2847
+      ],
+      "graphics": [
+        0.7156,
+        1.8522
+      ],
+      "reject": {}
+    },
+    {
+      "range": [
+        40,
+        60
+      ],
+      "line": [
+        1212,
+        2200
+      ],
+      "q": 157,
+      "rate": 7.85,
+      "sim": 0.06542,
+      "src": 70,
+      "srcQ": 9084484,
+      "stockQ": [
+        6681053,
+        15518985
+      ],
+      "live": [
+        12,
+        42,
+        61
+      ],
+      "minFree": 131,
+      "zeroLive": 0,
+      "compute": [
+        114.7482,
+        146.4907
+      ],
+      "record": [
+        0.1962,
+        0.2833
+      ],
+      "graphics": [
+        2.5532,
+        3.5284
+      ],
+      "reject": {
+        "CLOCK_GAP": 1
+      }
+    },
+    {
+      "range": [
+        60,
+        80
+      ],
+      "line": [
+        2214,
+        3197
+      ],
+      "q": 104,
+      "rate": 5.2,
+      "sim": 0.04333,
+      "src": 63,
+      "srcQ": 8170102,
+      "stockQ": [
+        15765537,
+        23801535
+      ],
+      "live": [
+        34,
+        66.5,
+        78
+      ],
+      "minFree": 114,
+      "zeroLive": 0,
+      "compute": [
+        161.5643,
+        220.0396
+      ],
+      "record": [
+        0.2072,
+        0.309
+      ],
+      "graphics": [
+        3.9022,
+        5.7862
+      ],
+      "reject": {
+        "ROOT_DEADLINE": 1
+      }
+    },
+    {
+      "range": [
+        80,
+        100
+      ],
+      "line": [
+        3198,
+        3614
+      ],
+      "q": 85,
+      "rate": 4.25,
+      "sim": 0.03542,
+      "src": 16,
+      "srcQ": 2147360,
+      "stockQ": [
+        23935639,
+        26082999
+      ],
+      "live": [
+        78,
+        94,
+        98
+      ],
+      "minFree": 94,
+      "zeroLive": 0,
+      "compute": [
+        208.122,
+        213.2953
+      ],
+      "record": [
+        0.213,
+        0.3388
+      ],
+      "graphics": [
+        5.2616,
+        6.0053
+      ],
+      "reject": {
+        "LATE_FENCE_SIGNAL": 4,
+        "ROOT_DEADLINE": 1
+      }
+    },
+    {
+      "range": [
+        100,
+        120
+      ],
+      "line": [
+        3635,
+        4716
+      ],
+      "q": 77,
+      "rate": 3.85,
+      "sim": 0.03208,
+      "src": 8,
+      "srcQ": 915097,
+      "stockQ": [
+        26082999,
+        26998096
+      ],
+      "live": [
+        98,
+        103,
+        107
+      ],
+      "minFree": 85,
+      "zeroLive": 0,
+      "compute": [
+        221.2023,
+        229.1175
+      ],
+      "record": [
+        0.2118,
+        0.2876
+      ],
+      "graphics": [
+        5.7553,
+        6.5136
+      ],
+      "reject": {
+        "LATE_FENCE_SIGNAL": 3,
+        "ROOT_DEADLINE": 5
+      }
+    },
+    {
+      "range": [
+        120,
+        140
+      ],
+      "line": [
+        4742,
+        5340
+      ],
+      "q": 63,
+      "rate": 3.15,
+      "sim": 0.02625,
+      "src": 8,
+      "srcQ": 883661,
+      "stockQ": [
+        26998096,
+        27881757
+      ],
+      "live": [
+        107,
+        115,
+        118
+      ],
+      "minFree": 74,
+      "zeroLive": 0,
+      "compute": [
+        242.1111,
+        248.2699
+      ],
+      "record": [
+        0.2248,
+        0.302
+      ],
+      "graphics": [
+        6.3936,
+        7.1249
+      ],
+      "reject": {
+        "ROOT_DEADLINE": 13,
+        "ACCEPT_DEADLINE": 1
+      }
+    },
+    {
+      "range": [
+        140,
+        160
+      ],
+      "line": [
+        5347,
+        5754
+      ],
+      "q": 42,
+      "rate": 2.1,
+      "sim": 0.0175,
+      "src": 2,
+      "srcQ": 255159,
+      "stockQ": [
+        27881757,
+        28136916
+      ],
+      "live": [
+        118,
+        119.0,
+        120
+      ],
+      "minFree": 72,
+      "zeroLive": 0,
+      "compute": [
+        247.6785,
+        249.3092
+      ],
+      "record": [
+        0.2111,
+        0.3496
+      ],
+      "graphics": [
+        6.5181,
+        6.6812
+      ],
+      "reject": {
+        "ROOT_DEADLINE": 16,
+        "LATE_FENCE_SIGNAL": 14
+      }
+    },
+    {
+      "range": [
+        160,
+        180
+      ],
+      "line": [
+        5763,
+        5840
+      ],
+      "q": 26,
+      "rate": 1.3,
+      "sim": 0.01083,
+      "src": 0,
+      "srcQ": 0,
+      "stockQ": [
+        28136916,
+        28136916
+      ],
+      "live": [
+        120,
+        120.0,
+        120
+      ],
+      "minFree": 72,
+      "zeroLive": 0,
+      "compute": [
+        248.9663,
+        249.6685
+      ],
+      "record": [
+        0.2114,
+        0.2512
+      ],
+      "graphics": [
+        6.5699,
+        6.7836
+      ],
+      "reject": {
+        "LATE_FENCE_SIGNAL": 20,
+        "ROOT_DEADLINE": 22
+      }
+    },
+    {
+      "range": [
+        180,
+        200
+      ],
+      "q": 0,
+      "src": 0,
+      "reject": {
+        "ROOT_DEADLINE": 55,
+        "LATE_FENCE_SIGNAL": 4,
+        "CLOCK_GAP": 2
+      }
+    },
+    {
+      "range": [
+        200,
+        220
+      ],
+      "line": [
+        6174,
+        6388
+      ],
+      "q": 4,
+      "rate": 0.2,
+      "sim": 0.00167,
+      "src": 1,
+      "srcQ": 125561,
+      "stockQ": [
+        28136916,
+        28262477
+      ],
+      "live": [
+        120,
+        121.0,
+        121
+      ],
+      "minFree": 71,
+      "zeroLive": 0,
+      "compute": [
+        249.472,
+        249.65
+      ],
+      "record": [
+        0.216,
+        0.2213
+      ],
+      "graphics": [
+        6.6454,
+        6.7794
+      ],
+      "reject": {
+        "ROOT_DEADLINE": 36,
+        "LATE_FENCE_SIGNAL": 20,
+        "CLOCK_GAP": 3
+      }
+    }
+  ],
+  "postLastPresent": {
+    "range": [
+      218.262,
+      220
+    ],
+    "line": [
+      6388,
+      6388
+    ],
+    "q": 1,
+    "rate": 0.5754,
+    "sim": 0.00479,
+    "src": 0,
+    "srcQ": 0,
+    "stockQ": [
+      28262477,
+      28262477
+    ],
+    "live": [
+      121,
+      121,
+      121
+    ],
+    "minFree": 71,
+    "zeroLive": 0,
+    "compute": [
+      249.1969,
+      249.1969
+    ],
+    "record": [
+      0.2156,
+      0.2156
+    ],
+    "graphics": [
+      6.5552,
+      6.5552
+    ],
+    "reject": {
+      "LATE_FENCE_SIGNAL": 2,
+      "ROOT_DEADLINE": 1,
+      "CLOCK_GAP": 2
+    }
+  },
+  "acceptedQuanta": 1317,
+  "acceptedWSI": 1317,
+  "lastQ": {
+    "line": 6388,
+    "t": 218.262788,
+    "stockQ": 28262477,
+    "live": 121,
+    "free": 71,
+    "root": "16606128063635",
+    "serial": 1317,
+    "accepted": 1317,
+    "sourceCommit": 218,
+    "compute": 249.1969,
+    "record": 0.2156,
+    "graphics": 6.5552,
+    "presentQpc": 16606130625850,
+    "flags": [
+      0,
+      0
+    ]
+  },
+  "firstQ": {
+    "line": 50,
+    "t": 0.221196,
+    "stockQ": 138717,
+    "live": 2,
+    "free": 190,
+    "root": "16603949011901",
+    "serial": 1,
+    "accepted": 1,
+    "sourceCommit": 1,
+    "compute": 112.5512,
+    "record": 0.4626,
+    "graphics": 1.1149,
+    "presentQpc": 16603950155411,
+    "flags": [
+      0,
+      0
+    ]
+  },
+  "rejectedBudget": {
+    "ACCEPT_DEADLINE": {
+      "n": 1,
+      "ge245ms": 1,
+      "rearm": 1,
+      "fencePending": 0
+    },
+    "CLOCK_GAP": {
+      "n": 7,
+      "ge245ms": 5,
+      "rearm": 7,
+      "fencePending": 0
+    },
+    "LATE_FENCE_SIGNAL": {
+      "n": 65,
+      "ge245ms": 60,
+      "rearm": 65,
+      "fencePending": 0
+    },
+    "ROOT_DEADLINE": {
+      "n": 149,
+      "ge245ms": 127,
+      "rearm": 149,
+      "fencePending": 0
+    }
+  },
+  "noRootRecovery": [
+    [
+      6353,
+      "CLOCK_GAP"
+    ]
+  ],
+  "rejectedSources": [
+    {
+      "line": 102,
+      "t": 0.843532,
+      "reason": "SOURCE_HOLD_REVOKED",
+      "nonce": "16603956099159",
+      "fenceVk": 0,
+      "submitted": 0,
+      "retired": 0,
+      "pending": false,
+      "hold": "1"
+    },
+    {
+      "line": 715,
+      "t": 27.355173,
+      "reason": "SOURCE_HOLD_REVOKED",
+      "nonce": "16604221317561",
+      "fenceVk": 2,
+      "submitted": 0,
+      "retired": 0,
+      "pending": false,
+      "hold": "186"
+    },
+    {
+      "line": 1916,
+      "t": 51.19243,
+      "reason": "SOURCE_HOLD_REVOKED",
+      "nonce": "16604459541846",
+      "fenceVk": 2,
+      "submitted": 0,
+      "retired": 0,
+      "pending": false,
+      "hold": "719"
+    },
+    {
+      "line": 2447,
+      "t": 62.986288,
+      "reason": "SOURCE_HOLD_REVOKED",
+      "nonce": "16604577461368",
+      "fenceVk": 0,
+      "submitted": 0,
+      "retired": 0,
+      "pending": false,
+      "hold": "1348"
+    },
+    {
+      "line": 3460,
+      "t": 97.13778,
+      "reason": "SOURCE_HOLD_REVOKED",
+      "nonce": "16604919146924",
+      "fenceVk": 2,
+      "submitted": 0,
+      "retired": 0,
+      "pending": false,
+      "hold": "2305"
+    },
+    {
+      "line": 5123,
+      "t": 126.896568,
+      "reason": "SOURCE_HOLD_REVOKED",
+      "nonce": "16605216613920",
+      "fenceVk": 2,
+      "submitted": 0,
+      "retired": 0,
+      "pending": false,
+      "hold": "3834"
+    },
+    {
+      "line": 5133,
+      "t": 127.463492,
+      "reason": "SOURCE_HOLD_REVOKED",
+      "nonce": "16605222289973",
+      "fenceVk": 2,
+      "submitted": 0,
+      "retired": 0,
+      "pending": false,
+      "hold": "3840"
+    },
+    {
+      "line": 5256,
+      "t": 131.796589,
+      "reason": "SOURCE_HOLD_REVOKED",
+      "nonce": "16605265485720",
+      "fenceVk": 0,
+      "submitted": 0,
+      "retired": 0,
+      "pending": false,
+      "hold": "3941"
+    },
+    {
+      "line": 5313,
+      "t": 134.467879,
+      "reason": "SOURCE_HOLD_REVOKED",
+      "nonce": "16605292446873",
+      "fenceVk": 2,
+      "submitted": 0,
+      "retired": 0,
+      "pending": false,
+      "hold": "3984"
+    }
+  ],
+  "acceptedSources": 218,
+  "cumulativeSandQ": 28262477,
+  "lastSources": [
+    {
+      "line": 4332,
+      "t": 115.374917,
+      "nonce": "16605101275118",
+      "hold": "3074",
+      "mat": 0,
+      "q": 126273,
+      "rejectedQ": 0,
+      "rc": 0,
+      "admissionClass": 0,
+      "commit": 207,
+      "live": 107,
+      "free": 85,
+      "stockQ": 26998096
+    },
+    {
+      "line": 4994,
+      "t": 123.200689,
+      "nonce": "16605179526982",
+      "hold": "3695",
+      "mat": 0,
+      "q": 127891,
+      "rejectedQ": 0,
+      "rc": 0,
+      "admissionClass": 0,
+      "commit": 208,
+      "live": 108,
+      "free": 84,
+      "stockQ": 27125987
+    },
+    {
+      "line": 5058,
+      "t": 124.452293,
+      "nonce": "16605192047345",
+      "hold": "3752",
+      "mat": 0,
+      "q": 66040,
+      "rejectedQ": 0,
+      "rc": 0,
+      "admissionClass": 0,
+      "commit": 209,
+      "live": 109,
+      "free": 83,
+      "stockQ": 27192027
+    },
+    {
+      "line": 5087,
+      "t": 125.24082,
+      "nonce": "16605199926004",
+      "hold": "3799",
+      "mat": 0,
+      "q": 135559,
+      "rejectedQ": 0,
+      "rc": 0,
+      "admissionClass": 0,
+      "commit": 210,
+      "live": 111,
+      "free": 81,
+      "stockQ": 27327586
+    },
+    {
+      "line": 5099,
+      "t": 125.790941,
+      "nonce": "16605205435929",
+      "hold": "3815",
+      "mat": 0,
+      "q": 127445,
+      "rejectedQ": 0,
+      "rc": 0,
+      "admissionClass": 0,
+      "commit": 211,
+      "live": 112,
+      "free": 80,
+      "stockQ": 27455031
+    },
+    {
+      "line": 5115,
+      "t": 126.345389,
+      "nonce": "16605210981047",
+      "hold": "3826",
+      "mat": 0,
+      "q": 131416,
+      "rejectedQ": 0,
+      "rc": 0,
+      "admissionClass": 0,
+      "commit": 212,
+      "live": 114,
+      "free": 78,
+      "stockQ": 27586447
+    },
+    {
+      "line": 5209,
+      "t": 128.831538,
+      "nonce": "16605235839823",
+      "hold": "3904",
+      "mat": 0,
+      "q": 23512,
+      "rejectedQ": 0,
+      "rc": 0,
+      "admissionClass": 0,
+      "commit": 213,
+      "live": 115,
+      "free": 77,
+      "stockQ": 27609959
+    },
+    {
+      "line": 5243,
+      "t": 130.898405,
+      "nonce": "16605256503942",
+      "hold": "3932",
+      "mat": 0,
+      "q": 144056,
+      "rejectedQ": 0,
+      "rc": 0,
+      "admissionClass": 0,
+      "commit": 214,
+      "live": 117,
+      "free": 75,
+      "stockQ": 27754015
+    },
+    {
+      "line": 5300,
+      "t": 133.632407,
+      "nonce": "16605283840462",
+      "hold": "3972",
+      "mat": 0,
+      "q": 127742,
+      "rejectedQ": 0,
+      "rc": 0,
+      "admissionClass": 0,
+      "commit": 215,
+      "live": 118,
+      "free": 74,
+      "stockQ": 27881757
+    },
+    {
+      "line": 5379,
+      "t": 144.435594,
+      "nonce": "16605391876007",
+      "hold": "3993",
+      "mat": 0,
+      "q": 127149,
+      "rejectedQ": 0,
+      "rc": 0,
+      "admissionClass": 0,
+      "commit": 216,
+      "live": 119,
+      "free": 73,
+      "stockQ": 28008906
+    },
+    {
+      "line": 5540,
+      "t": 152.422493,
+      "nonce": "16605471736622",
+      "hold": "4092",
+      "mat": 0,
+      "q": 128010,
+      "rejectedQ": 0,
+      "rc": 0,
+      "admissionClass": 0,
+      "commit": 217,
+      "live": 120,
+      "free": 72,
+      "stockQ": 28136916
+    },
+    {
+      "line": 6198,
+      "t": 211.434352,
+      "nonce": "16606061837489",
+      "hold": "4408",
+      "mat": 0,
+      "q": 125561,
+      "rejectedQ": 0,
+      "rc": 0,
+      "admissionClass": 0,
+      "commit": 218,
+      "live": 121,
+      "free": 71,
+      "stockQ": 28262477
+    }
+  ],
+  "sourceClasses": {
+    "0/0": 218
+  },
+  "partialSourceCount": 0,
+  "acceptedCapacity": {
+    "quantumPeakLive": 121,
+    "quantumMinFree": 71,
+    "sourcePeakLive": 121,
+    "sourceMinFree": 71
+  },
+  "subsequentQCount": 3,
+  "loadBands": {
+    "0-60": {
+      "0-0": [
+        161,
+        [
+          36.9489,
+          38.5762
+        ],
+        [
+          1031800,
+          3703401
+        ]
+      ],
+      "1-31": [
+        641,
+        [
+          48.754,
+          82.5386
+        ],
+        [
+          138717,
+          15390215
+        ]
+      ],
+      "32-63": [
+        114,
+        [
+          116.3011,
+          147.6276
+        ],
+        [
+          6548047,
+          15518985
+        ]
+      ]
+    },
+    "60-120": {
+      "32-63": [
+        46,
+        [
+          132.9042,
+          151.5186
+        ],
+        [
+          15765537,
+          22031083
+        ]
+      ],
+      "64-95": [
+        133,
+        [
+          206.643,
+          220.0396
+        ],
+        [
+          18445148,
+          25698646
+        ]
+      ],
+      "96-127": [
+        87,
+        [
+          219.7692,
+          228.6219
+        ],
+        [
+          25830056,
+          26998096
+        ]
+      ]
+    },
+    "120-180": {
+      "96-127": [
+        131,
+        [
+          247.0807,
+          249.5337
+        ],
+        [
+          26998096,
+          28136916
+        ]
+      ]
+    },
+    "180-220": {
+      "96-127": [
+        4,
+        [
+          249.472,
+          249.65
+        ],
+        [
+          28136916,
+          28262477
+        ]
+      ]
+    },
+    "0-220": {
+      "0-0": [
+        161,
+        [
+          36.9489,
+          38.5762
+        ],
+        [
+          1031800,
+          3703401
+        ]
+      ],
+      "1-31": [
+        641,
+        [
+          48.754,
+          82.5386
+        ],
+        [
+          138717,
+          15390215
+        ]
+      ],
+      "32-63": [
+        160,
+        [
+          123.5788,
+          150.3243
+        ],
+        [
+          6548047,
+          22031083
+        ]
+      ],
+      "64-95": [
+        133,
+        [
+          206.643,
+          220.0396
+        ],
+        [
+          18445148,
+          25698646
+        ]
+      ],
+      "96-127": [
+        222,
+        [
+          239.9226,
+          249.4457
+        ],
+        [
+          25830056,
+          28262477
+        ]
+      ]
+    }
+  },
+  "lateOfferSamples": {
+    "total": 44,
+    "nonzero": [
+      [
+        6198,
+        "2600"
+      ]
+    ]
+  },
+  "longestAcceptedFenceGap": {
+    "a": {
+      "line": 5840,
+      "t": 174.036177,
+      "stockQ": 28136916,
+      "live": 120,
+      "free": 72,
+      "root": "16605685800132",
+      "serial": 1313,
+      "accepted": 1313,
+      "sourceCommit": 217,
+      "compute": 248.9694,
+      "record": 0.1961,
+      "graphics": 6.5765,
+      "presentQpc": 16605688360028,
+      "flags": [
+        0,
+        0
+      ]
+    },
+    "b": {
+      "line": 6174,
+      "t": 211.383505,
+      "stockQ": 28136916,
+      "live": 120,
+      "free": 72,
+      "root": "16606059266271",
+      "serial": 1314,
+      "accepted": 1314,
+      "sourceCommit": 217,
+      "compute": 249.65,
+      "record": 0.2213,
+      "graphics": 6.7794,
+      "presentQpc": 16606061835983,
+      "flags": [
+        0,
+        0
+      ]
+    },
+    "seconds": 37.347328
+  },
+  "t920FullLongrun": {
+    "log": "test/reports/t920/runs-long/longrun-t909r2/demo.jsonl",
+    "sha256": "51c3a2a61d963868ac5914bb8baed72782990f855c9464b77eb522ea33a9a1cd",
+    "bytes": 11769361,
+    "lines": 7323,
+    "argvSHA": "9401d956bf093e88ca3363b1972309161c8d880296d703af61e558a4eb36803e",
+    "launch": {
+      "command": [
+        ".codex/local-test/t909-r2-ninja/hello_world_pc.exe",
+        "--m1-window",
+        ".codex/local-test/t830-m1-bounded\\full_source.spv",
+        ".codex/local-test/t830-m1-bounded\\quantum_candidate.spv",
+        ".codex/local-test/t830-m1-bounded\\quantum_commit.spv",
+        "--m1-empty-preview",
+        "--m1-manual-gravity",
+        "--m1-one-quantum-grant",
+        "--m1-dual-source",
+        "--m1-source-trace"
+      ],
+      "cycles": 12,
+      "hold": 6.0,
+      "idle": 4.0,
+      "finalProbes": 6
+    },
+    "pe": ".codex/local-test/t909-r2-ninja/hello_world_pc.exe",
+    "peSHA": "d37e45b9f2a2832ab41b6141335b92bf5de24d51e66baa87558863997cb30124",
+    "moduleSHA": [
+      "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162",
+      "b8f0e3275fc8de0569a6c946097e8f47263d52d24a1a6e6f3573ebe960f8c85c",
+      "caf0614c3b2b56e3ad03d3bb4394347bbea9f2ec5692fce5ee1ddf1fdfd906ce"
+    ],
+    "acceptedQuanta": 987,
+    "acceptedSource": 210,
+    "admittedQ": 26816375,
+    "maxLive": 95,
+    "lastLive": 51,
+    "acceptedSpanS": 195.214868,
+    "retireObserved": {
+      "LATE_FENCE_SIGNAL": 10,
+      "ROOT_DEADLINE": 11,
+      "CLOCK_GAP": 1,
+      "WINDOW_REVOKED": 1
+    },
+    "finalState": "M1_QUANTUM_PRESENT_RETIRED",
+    "finalProbes": [
+      {
+        "line": 4839,
+        "downS": 130.286647,
+        "hold": "397",
+        "source": 36,
+        "sourceQ": 4215279
+      },
+      {
+        "line": 5694,
+        "downS": 140.298662,
+        "hold": "430",
+        "source": 23,
+        "sourceQ": 3063029
+      },
+      {
+        "line": 6454,
+        "downS": 150.314855,
+        "hold": "463",
+        "source": 5,
+        "sourceQ": 697795
+      },
+      {
+        "line": 6712,
+        "downS": 160.325464,
+        "hold": "496",
+        "source": 6,
+        "sourceQ": 797920
+      },
+      {
+        "line": 6999,
+        "downS": 170.343408,
+        "hold": "529",
+        "source": 2,
+        "sourceQ": 263820
+      },
+      {
+        "line": 7161,
+        "downS": 180.361429,
+        "hold": "562",
+        "source": 1,
+        "sourceQ": 132328
+      }
+    ]
+  }
+}
