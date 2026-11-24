@@ -1,0 +1,39 @@
+{
+ "arms": {
+  "control-r3": {
+   "SOURCE": "accepted vk=0 14 disp",
+   "QUANTUM": "vk=2 GRANT_DEADLINE 2404 disp, tailRead=false",
+   "selectedJ": 1,
+   "scheduledTailMicroSlots": 744,
+   "WORK control[16]": 2404,
+   "BASE16": 1,
+   "ACTUAL16": 2
+  },
+  "replay-indirect-r1": {
+   "SOURCE": "accepted vk=0 14 disp",
+   "QUANTUM": "vk=2 GRANT_DEADLINE 2404 encoded, tailRead=false",
+   "selectedJ": 1,
+   "scheduledTailMicroSlots": 744,
+   "WORK control[16]": 2404,
+   "BASE16": 1,
+   "ACTUAL16": 2,
+   "replayIndirectArgsValid": true,
+   "replayZeroWorkgroups": 372,
+   "extraIndirectBarriers": 1,
+   "argsTable": "args[96]==1==J, m=0 active only, 31 zero-groups, structure words all 1"
+  }
+ },
+ "sameFence": "QUANTUM root nonce/fence/fenceGeneration == ROOT_GPU_TIMESTAMPS (15 points, all available vk=0, queryResetSerial=4) both arms",
+ "byteComparison": {
+  "identical": [
+   "EVENT.bin",
+   "PATH.bin",
+   "FIXTURE128.bin"
+  ],
+  "differingWords": "identity/clock/seal regions only: COMPLETION 10-15+88-95(seal), INPUT 4-9+16-21(clock), REPLAY/SELECTED 4-9+260-277+299-300(late-completion header)+82458-82461(seal), EXPECTED 28-84 identity, CONFIG 40-53 scope words, WORK 40 words @1164944+ (indirect table header)",
+  "businessFields": "REPLAY/SELECTED body (256..82457), EVENT, PATH, rejection prefix identical"
+ },
+ "JVariants": "J2/J4/J0 not reachable on this machine/seed: J is selected by real late-completion timing; 2 measured runs both selected J=1 (late completion arrives within window). steps2 arm hit SOURCE vk=2 edge (250ms swing) \u2014 recorded as timing edge, not J evidence.",
+ "negativeJ0": "per T953 schedule(b) semantics J0 = all-rejected/full-scheduling preserved; real J0 requires absent late completion \u2014 not reproducible today; documented as limitation",
+ "verdict": "PASS (diagnostic): same-fence latch, control[16]=2404 order-seal both arms, zero-workgroups 372 exactly as J=1 contract, args table valid, business bytes identical; indirect arm adds 388B param table at WORK end (1311748 vs 1311360) with 40 differing header words (dispatch params for slot 2007 producer)"
+}

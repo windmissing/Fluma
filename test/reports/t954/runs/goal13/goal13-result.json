@@ -1,0 +1,34 @@
+{
+ "qualification": {
+  "OP48_VISCOSITY": "CHILD_EXIT vk=0 qualified (module 812db31f)",
+  "OP49_PRESSURE": "CHILD_EXIT vk=0 qualified (ca603a59)",
+  "OP_48": "CALL_UNRETURNED (old module f01959cc igc hang persists)",
+  "OP48_REMAINDER": "CALL_UNRETURNED (module 64101778 hangs \u2014 T953 handoff consistent: no successful remainder EXIT seen)",
+  "note": "role-name validation fixed (all four accepted by supervisor); T949 usage-reject gone"
+ },
+ "f02SealABBA": {
+  "pe": "t955-ninja eb0e841e (T955, required for cycle-scope/seal-stages; t946 v2 PE rejects cycle-scope at usage \u2014 newer staged-seal implementation)",
+  "armA": {
+   "sealV1": "OP_00_9_11_SEAL_V1 pipeline x4 EXIT vk=0"
+  },
+  "armB": {
+   "stagedSeal": "OP11_T955_PREPARE/SHA/PUBLISH each x4 EXIT vk=0 (3-dispatch 819 split live-built)"
+  },
+  "replayArm": "staged seal + cycle-scope replay: same closures + T955_ORIGINAL_RETIRE vk=0",
+  "common": "all arms: VISCOSITY/PRESSURE x4 EXIT, root GRANT_DEADLINE (late-root iGPU pattern T901/T949), T955_ORIGINAL_RETIRE 5s confirm vk=0 (late completion confirmed), acceptedRoot=null",
+  "fence": "T877_ROOT_WAIT == T877_GPU_TIMESTAMPS same fence/nonce/generation (gen 1)",
+  "cycles815_819": "61 GPU points: ACTUAL/REPLAY spans, J1 MICRO0 PRESSURE CYCLE0 begin/end (both scopes), TRIAL J2/J4 edges, FINAL_AUDIT(815/816) TIME_PREPARE PACK_VIEW(817) PACK_AUDIT(818) SEAL(819)",
+  "timing": {
+   "ACTUAL pressure span": "701.97ms",
+   "REPLAY pressure span": "587.79ms",
+   "FINAL_AUDIT": "0.572ms",
+   "cycle0 actual/replay": "recorded"
+  },
+  "coldCopy": ".quantum 1,795,120B x4 arms sealed; t955PrivateLateRaw=true"
+ },
+ "f03": {
+  "result": "actual-viscosity arm run: VISCOSITY/PRESSURE x4 EXIT, root GRANT_DEADLINE late-root, T955_ORIGINAL_RETIRE vk=0; acceptedRoot=null",
+  "fieldJudge": "F03 acceptance NOT reached (late-root rejection) \u2014 field verdict/GridView handoff blocked per card rule"
+ },
+ "verdict": "PARTIAL: qualification 2/4 (2 igc hangs), F02 seal-v1 ABBA + staged seal + cycle 815-819 + same-fence captured (all as private late-root diagnostics), F03 no acceptance \u2014 no field judgment"
+}

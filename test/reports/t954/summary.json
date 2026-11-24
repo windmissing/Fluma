@@ -1,0 +1,102 @@
+{
+ "schema": "T954_GOAL9_13_DEMO_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "packages": {
+  "t946-resume-package": "manifest 482d5f4f verified (PE d9e6f89c/dm2 67c6d7b1/dd55cb8c)",
+  "t955-ninja": "eb0e841e (cycle-scope/seal-stages implementation; t946 v2 PE rejects those flags at usage)"
+ },
+ "goal9": {
+  "control": {
+   "SOURCE": "accepted 14 disp",
+   "Q": "vk=2 GRANT_DEADLINE 2404 disp",
+   "selectedJ": 1,
+   "WORK_control16": 2404
+  },
+  "replayIndirect": {
+   "SOURCE": "accepted 14 disp",
+   "Q": "vk=2 GRANT_DEADLINE",
+   "selectedJ": 1,
+   "WORK_control16": 2404,
+   "zeroWorkgroups": 372,
+   "argsValid": true,
+   "extraBarriers": 1,
+   "argsTable": "args[96]==1, m0 active, 31 zero, structure all 1"
+  },
+  "sameFence": "Q root nonce/fence/gen == 15-point GPU timestamps (all available vk=0)",
+  "bytes": {
+   "identical": [
+    "EVENT",
+    "PATH",
+    "FIXTURE128"
+   ],
+   "diff": "identity/clock/seal words only (structured offsets)",
+   "business": "REPLAY/SELECTED body + rejection prefix identical"
+  },
+  "jVariants": "J2/J4/J0 unreachable on this seed (J fixed at 1 by real late-completion timing); steps2 hit SOURCE vk=2 edge",
+  "verdict": "PASS (diagnostic)"
+ },
+ "goal13": {
+  "qualification": {
+   "OP48_VISCOSITY": "CHILD_EXIT vk=0 (812db31f)",
+   "OP49_PRESSURE": "CHILD_EXIT vk=0 (ca603a59)",
+   "OP_48": "CALL_UNRETURNED (f01959cc hang)",
+   "OP48_REMAINDER": "CALL_UNRETURNED (64101778 hang)"
+  },
+  "f02SealABBA": {
+   "armA": "SEAL_V1 pipeline x4 EXIT",
+   "armB": "PREPARE/SHA/PUBLISH x4 EXIT each",
+   "cycles": "61 GPU points: J1 MICRO0 PRESSURE CYCLE0 (94.97/60.28ms), 815-819 stages, same fence/nonce/gen",
+   "lateRoot": "GRANT_DEADLINE + T955_ORIGINAL_RETIRE vk=0 + acceptedRoot=null",
+   "spans": {
+    "ACTUAL pressure": "701.97ms",
+    "REPLAY pressure": "587.79ms",
+    "FINAL_AUDIT": "0.572ms"
+   }
+  },
+  "f03": "no acceptance (late-root) \u2014 no field verdict, no GridView handoff",
+  "verdict": "PARTIAL"
+ },
+ "demo": {
+  "observeBirth": {
+   "center": {
+    "frames": 4,
+    "birthAtPointer": true,
+    "freeY": "215.0->216.0"
+   },
+   "high": {
+    "frames": 8,
+    "birthAtPointer": true,
+    "freeY": "120.0->122.5 accelerating"
+   },
+   "tiltPos20": {
+    "frames": 6,
+    "angle256": 5120,
+    "freeY": "207->214 accelerating"
+   },
+   "tiltNeg20": {
+    "frames": 2,
+    "angle256": -5120,
+    "freeY": "207->208 early stop"
+   }
+  },
+  "regression": {
+   "t933UserEntry": {
+    "4s": "97 q",
+    "60s": "1602 q (26.7 Q/s)",
+    "conservation": "CLOSED 59,122,246",
+    "verdict": "PASS no regression"
+   },
+   "resumeM1_35": "low throughput by design (audit profile)"
+  },
+  "userEntry": "unchanged (t933 launcher already qualified)"
+ },
+ "negativeEvidence": [
+  "center first run NO_MATCHING_ROOT (Q TAIL_REJECTED) \u2014 retry passed",
+  "J0/J2/J4 not reachable today",
+  "F02/F03 iGPU late-root 700ms-class"
+ ]
+}

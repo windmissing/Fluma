@@ -1,0 +1,16 @@
+{
+  "command": [
+    ".codex/local-test/t946-resume-package/hello_world_pc.exe",
+    "--m1-window",
+    ".codex/local-test/t946-resume-package/m1/35/full_source.spv",
+    ".codex/local-test/t946-resume-package/m1/35/quantum_candidate.spv",
+    ".codex/local-test/t946-resume-package/m1/35/quantum_commit.spv",
+    "--m1-compact-demo",
+    "--m1-integrated",
+    "--m1-dual-source",
+    "--m1-parallel-inventory",
+    "--m1-observe-birth",
+    "8",
+    "test/reports/t954/runs/demo-birth-high/root"
+  ]
+}

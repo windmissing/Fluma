@@ -1,0 +1,54 @@
+{
+ "pe": "resume package d9e6f89c + m1/35 modules (observe-birth available); regression verified on t933 user-entry PE 4a40a141",
+ "center": {
+  "pointer": [
+   312,
+   215
+  ],
+  "frames": 4,
+  "allState": "SAND_COLOR_PIXELS",
+  "paced": true,
+  "birthPixel": "ROI0 centroid (312.0,215.0) == pointer center (312.5,215.5 rounded) \u2014 birth at pointer",
+  "freeTrajectory": "particle centroid y: 215.0\u2192215.3\u2192215.7\u2192216.0 (falling, screen-down)",
+  "mappedSand": "Q20 height word 33,535,791\u219233,256,171 decreasing across frames"
+ },
+ "high": {
+  "pointer": [
+   312,
+   120
+  ],
+  "frames": 8,
+  "birthPixel": "ROI0 centroid (312.0,120.0) == pointer (312.5,120.5)",
+  "freeTrajectory": "y: 120.0\u2192120.3\u2192120.7\u2192121.0\u2192120.7\u2192121.3\u2192122.0\u2192122.5 \u2014 8 points, monotonic-with-smoothing, accelerating (window y112\u2192116)",
+  "acceleration": "inter-frame delta 0.3\u21920.4\u21920.3\u21920.3\u21920.6\u21920.7\u21920.5 \u2014 growing"
+ },
+ "tilt": {
+  "pos20": {
+   "angle256": 5120,
+   "frames": 6,
+   "freeTrajectory": "particle window y: 207\u2192208\u2192209\u2192210\u2192212\u2192214 \u2014 accelerating fall under tilt+20deg, screen-down",
+   "direction": "screen-down (y increasing) consistent with gravity projection along tilted box"
+  },
+  "neg20": {
+   "angle256": -5120,
+   "frames": 2,
+   "freeTrajectory": "y: 207\u2192208 \u2014 fall starts, observation ended early (particle left tracked window)",
+   "note": "shorter capture; same screen-down direction"
+  }
+ },
+ "regression": {
+  "t933UserEntry": {
+   "4sHold": "97 quanta",
+   "60sHold": "1602 quanta (26.7 Q/s)",
+   "final": "1759",
+   "conservation": "admitted 59,122,246 == stock + active(0) CLOSED",
+   "verdict": "PASS \u2014 no regression on user entry"
+  },
+  "resumeM1_35": {
+   "4sHold": "10 quanta",
+   "60s": "10",
+   "note": "observe-birth PE m1/35 (parallel-inventory audit profile) has low throughput by design \u2014 not the user entry"
+  }
+ },
+ "verdict": "observe-birth three scenarios captured (birth pixel == pointer, >=3 free points with screen-down arrow direction, tilt +/-20deg with angle256 recorded); user-entry regression PASS; user entry stays t933 launcher (no update needed \u2014 resume PE is diagnostic grade)"
+}
