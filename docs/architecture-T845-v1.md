@@ -6,6 +6,8 @@
 
 ## 已有证据与接入条件
 
+2026-11-24 · T945 续接。T923/T924 已有真实 DM2 SOURCE 和同次进程 QUANTUM 超期证据。先用同一 CURRENT 取 Q 分段、真实 250 ms 内的连续接受，再开 ROOT/FULL。 [T945 集显工程合同](architecture-T945-v1.md)
+
 | 来源 | 复用范围 |
 | --- | --- |
 | T830/T840/T842 固定输入 | T830 的 Intel UHD 630 GPU 准入 131,072 Q20，permit 后约 74.596 ms 取得 fence。原 Completion256 被 M1 owner 接受，publication generation 1 同根进入 784×461 窗口，GPU/Present 原结果全 0。T840 v2 用同 SHA 工件独立复现固定 SOURCE 及同根呈现，11 项通过。T842 已核错 geometry、nonce、接受结果、frame token、退役五项负控。 [T830 实测](../test/reports/t830/m1-source-window.md) · [T840 v2](test-report-T840-v1.md) · [T842](test-report-T842-v1.md) |
