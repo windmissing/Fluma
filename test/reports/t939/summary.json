@@ -1,0 +1,57 @@
+{
+ "schema": "T939_G16_MULTI_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "bundle": {
+  "manifest": "T936_G16_V1 verified: PE b03fd782, fixture cfa50b74, module 786bb1db, seeds d74e/eca4 unchanged",
+  "note": "word13 flags fix confirmed live (reason-2 no longer fires)"
+ },
+ "g16a": "reused from T932 (da1ed011): T930 errors=[], TOI gate 350x margin",
+ "positiveArms": {
+  "B13_static_2roots": {
+   "result": "reason 10 stage 4",
+   "B": 200,
+   "C": 27,
+   "Ic": 0
+  },
+  "B13_slow/fast/hold": {
+   "result": "reason 10 stage 4 all modes"
+  },
+  "B52_static/fast/slow/hold": {
+   "result": "reason 14 stage 8 all modes",
+   "B": 800,
+   "C": 134,
+   "Ic": 16
+  },
+  "interpretation": "13-disk: wallHit/bracket returns unresolved (flags=4, no sign-certain root) \u2014 geometry gate; 52-disk: Jacobi contact solver residual exceeds tolerance (z<-residualSpeed or complement bound) \u2014 solver convergence gate",
+  "verdict": "BLOCKED at physics layer: no accepted root in any of 8 positive arms; atomic-rejection evidence captured per arm; typed acceptance/conservation residual/same-window shader not reachable"
+ },
+ "injectionArms": {
+  "bad-first-flags0": {
+   "passed": true,
+   "outcome/reason/stage": "2/2/1",
+   "stageMask": "0x801",
+   "firstDisk": 1
+  },
+  "bad-second-bank-flags3": {
+   "exit": 3,
+   "note": "contract behavior: first root has physics rejection (reason 10) so fault preserved as original first-error before injection"
+  },
+  "bad-late-slot-reserved1": {
+   "passed": true,
+   "outcome/reason/stage": "2/2/1",
+   "stageMask": "0x801",
+   "firstDisk": 52
+  },
+  "common": "BASE unchanged (trustedBaseSHA vs faultyBaseSHA differ only at injected word), no publication, same fence retirement, acceptedRoot=null"
+ },
+ "negativeControls": {
+  "mutatedSeed": "G16_SEED_SHA exit 2",
+  "oldModuleNewPE": "G16_MODULE_SHA exit 2",
+  "newModuleOldPE": "G16_MODULE_SHA exit 2"
+ },
+ "handoff": "developer: bracket unresolved (13-disk) and solver residual (52-disk) gates reject all roots; physics tuning or tolerance work needed before positive capture; G16-C stays gated on B positive"
+}
