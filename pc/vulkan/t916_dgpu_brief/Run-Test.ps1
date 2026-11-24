@@ -19,6 +19,9 @@ function Get-Sha256([string]$Path) {
 }
 
 $manifest = Get-Content -Raw -LiteralPath (Join-Path $root 'manifest.json') | ConvertFrom-Json
+if ($manifest.op48SHA256 -cnotmatch '^[0-9a-f]{64}$') {
+    throw 'Invalid OP_48 SHA-256 in manifest.'
+}
 foreach ($file in $manifest.files.PSObject.Properties) {
     $actual = Get-Sha256 (Join-Path $root $file.Name)
     if ($actual -ine $file.Value) {
