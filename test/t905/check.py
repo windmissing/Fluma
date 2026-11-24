@@ -76,13 +76,13 @@ def cold(rows, files):
                  and a['lastWait'][3]==0 and a['acceptedRoot']==nonce
                  for r in root['rows'] if (a:=r.get(auth_key))), 'COPY_BUSINESS_ROOT_FENCE')
         ranges = submit['ranges']
-        need([r['bytes'] for r in ranges]==[1024,29696,256*t[53],31744]
-             and len({r['slot'] for r in ranges})==4
+        need([r['bytes'] for r in ranges]==[1024,29696,256*t[53],31744,0,0]
+             and len({r['slot'] for r in ranges[:4]})==4
              and all(int(r['buffer'])>0 and int(r['allocation'])>0 and r['generation']>0 and r['offset']==0
                      for r in ranges), 'COPY_RANGES')
         field = 'm1SourceColdBacking' if root['kind']=='SOURCE' else 'm1ColdBacking'
         need(any([int(x[k]) for k in ('bankBuffer','eventBuffer','publicationBuffer')]
-                 ==[int(r['buffer']) for r in ranges[1:]] for record in root['rows'] if (x:=record.get(field))),
+                 ==[int(r['buffer']) for r in ranges[1:4]] for record in root['rows'] if (x:=record.get(field))),
              'COPY_BACKING_IDENTITY')
         archives[nonce] = result
         waits.append(wait)
@@ -248,7 +248,7 @@ def cold_fixture(directory):
                  **dict(zip(('baseBank','finalBank','publicationSlot','eventArena','eventStart','eventEnd','eventCapacity'),
                             (t[i] for i in (32,33,35,51,52,53,54)))),
                  ranges=[dict(slot=i,buffer=str(i+1),allocation=str(i+5),generation=1,offset=0,bytes=size)
-                         for i,size in enumerate(sizes[:4])])
+                         for i,size in enumerate(sizes[:6])])
         rows.extend([dict(b,stage=COPY[0],copyFence='8',submitEnterQpc=exit,submitExitQpc=exit,submitVkResult=0),
                      dict(b,stage=COPY[1],copyFence='8',waitEnterQpc=exit,waitExitQpc=exit,waitVkResult=0),
                      dict(b,stage=COPY[2],mapVkResult=0,invalidateVkResult=0)])

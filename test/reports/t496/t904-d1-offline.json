@@ -1,0 +1,403 @@
+{
+  "arms": {
+    "replay-off": {
+      "archives": {
+        "16393937527392": {
+          "kind": "SOURCE",
+          "nonce": "16393937527392",
+          "scope": [
+            19848,
+            "134399531209437088",
+            "2",
+            85124,
+            "1",
+            "2"
+          ],
+          "payloadSHA": "bd8d4d7f84e115dcc565f648aeb378d2d7ffe09c5454835ff2ab801310f1a5ab",
+          "bytes": 62976,
+          "sectionSHA": [
+            "cc6d036881049d405ff731e63acd7c5dc60b72d2e12db765b6de909fd8d5b49b",
+            "bd3676cdbabc35d678462612dbb916620cc14cefe2ea3a380f3ea22fb5f38c6f",
+            "1aa9c1f2a3262534adb57bea492ec82dd4566d9d918fa2c46d7f5b43442f38b5",
+            "0fd39515c2c5056e38893879c21f392025b9829818f63eed191b2de7946f43d7"
+          ],
+          "fileSHA": "fdc66a6081a65df45d5a761947aeea303b6be311b180661763e4d358f50defe1"
+        },
+        "16393938347552": {
+          "kind": "QUANTUM",
+          "nonce": "16393938347552",
+          "scope": [
+            19848,
+            "134399531209437088",
+            "2",
+            85124,
+            "1",
+            "2"
+          ],
+          "payloadSHA": "574248ec8dacad05dc0d929f6fb2a92b4e44b384693717b2e95106e62c4d4d8e",
+          "bytes": 62976,
+          "sectionSHA": [
+            "fa8363efb2ba8c5bd659df6e890fd908611e213d5f74e68ee65d5ee8a4daa7c6",
+            "afcd39a82a4c6a9f974fa7467285d04c5999fdab18e8f6a8d2e82d99df9fd336",
+            "7630cb984bce397884eda1dda634429eb3a7b4ae935f71894e9237971e543430",
+            "a3b715496b0762be5ea969138db94702c0bf9ebbf864eed534c1f9814f8e7f4b"
+          ],
+          "fileSHA": "654351a667998dedcee3f886cfa10bf965f898c209b49c7786703f34e7b52512"
+        },
+        "16393939544491": {
+          "kind": "QUANTUM",
+          "nonce": "16393939544491",
+          "scope": [
+            19848,
+            "134399531209437088",
+            "2",
+            85124,
+            "1",
+            "2"
+          ],
+          "payloadSHA": "8fb80bb00ef622486c461bd60e1703982866d2d6b515d296522466a5c8bd175e",
+          "bytes": 63488,
+          "sectionSHA": [
+            "92851e6c6366b07bd78cb7c74d7e3adbe402131a93726f7fc7bbe37bb6620bb3",
+            "1ef3c4f73596633514a012b3ef8d60328807be4a0cfa16646bc4d0837dac5da7",
+            "a45e8b55b9b936fdf23f809927fbcd59bc6ff9e3c178e990b3d27c41280cdef9",
+            "aba3c386fa2468600a31d913578ff447a3f287448d9dae634e84e68a39630ce9"
+          ],
+          "fileSHA": "d1f1def638a068f38eec6ec1fadc05771f6d4dbbde1fa5ed3deac4e5b4311578"
+        }
+      },
+      "drain": "FENCE_RETIRED_BEFORE_DRAIN_PROBE",
+      "ownerSessions": {
+        "1": {
+          "session": "1",
+          "queued": 28,
+          "accepted": 28,
+          "rejected": 0,
+          "revoked": 0,
+          "queuedMask": "268435455",
+          "terminalMask": "268435455"
+        }
+      },
+      "traceSHA": "8c972b62b00f4a11d7b5f61c0440b4257b5bb4a9ccedee3bc905fe9dca399abb",
+      "run": "16393935099876",
+      "actionRows": 52,
+      "firstActualAction": [
+        1,
+        "DELIVERED",
+        24269300,
+        [
+          1,
+          1,
+          0,
+          0,
+          6,
+          150001,
+          "accepted",
+          "PAGE_PULSE_ACCEPTED",
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "source": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "16393937527392",
+          "admittedQ20": 135556,
+          "requested": 0.1292768,
+          "deltaNs": 16159600,
+          "commandSHA": "6fbf6cd6b0697108d42907ce818581be67e864b69574e4b4fd3898c5b8468a38"
+        },
+        "29": {
+          "outcome": "REVOKED",
+          "offer": "2"
+        }
+      }
+    },
+    "replay-on": {
+      "archives": {
+        "16394101332583": {
+          "kind": "SOURCE",
+          "nonce": "16394101332583",
+          "scope": [
+            97056,
+            "134399531775507185",
+            "2",
+            29284,
+            "1",
+            "2"
+          ],
+          "payloadSHA": "d2432f8dc86f042c31c7da907b3fa8095957325cbc30dc9e59b83ee059f5cd64",
+          "bytes": 62976,
+          "sectionSHA": [
+            "835397fee83bb15f6d794bb252781d6a762a26b2e90a840bd9c0135c68520a6d",
+            "fb60ba64d6a45739983550b05f1b52495c963d7c4a1111e5db789a9ae27aa5f6",
+            "ccd61ee5de6b40da481f9a7a318bfad658a80a9495464409281010e1f11983c3",
+            "d552f7508f8365f6f6acf6f6723471cfbb9508b3b7dce8f3248c244cb11fa458"
+          ],
+          "fileSHA": "2fac012e98c81f814c5a9987a7bc824de05a72897cf2e04ec867517eb7a2df6c"
+        },
+        "16394102220642": {
+          "kind": "QUANTUM",
+          "nonce": "16394102220642",
+          "scope": [
+            97056,
+            "134399531775507185",
+            "2",
+            29284,
+            "1",
+            "2"
+          ],
+          "payloadSHA": "3ddac332a03701cc40eb6c1509b5af45f12f488afbf2db0a0ed030aa36eb1c47",
+          "bytes": 62976,
+          "sectionSHA": [
+            "c35cc362c10a9c504146960f8a59ca4d75a2d8f10cbae48213d4b3c74f6f68ee",
+            "b57c27ca8b2832a06e1104673029be0f010004d38a76c619c6e16d22f72a460e",
+            "0eb758fbba094a308bd7eeacca40bc1c428078a928a8e85f39790cbffbba0651",
+            "193ecd0ff002cab048964d0d10448245db27ebae019b4acc73844ae257f916fe"
+          ],
+          "fileSHA": "85c01f791444c9215ddef0e2c91d9530276be2fb41f6a4a528682fbc476ef3fb"
+        },
+        "16394103469725": {
+          "kind": "QUANTUM",
+          "nonce": "16394103469725",
+          "scope": [
+            97056,
+            "134399531775507185",
+            "2",
+            29284,
+            "1",
+            "2"
+          ],
+          "payloadSHA": "04d09df00d7144832dac0643a320b00742536e32baf0bc64bf8eedfb28394521",
+          "bytes": 63488,
+          "sectionSHA": [
+            "9e4fe568820659df6112f30944248e9f48575fcf9c5c626a8fb50ea4d9165721",
+            "2bae61dc849b8fe48536293699f591474d0d6e07a865fcdf905d30eb6c9bd5f0",
+            "bd9306343e7749707af610d18702b1af6f26e45fdaea341be6d05e0d25c0dcc8",
+            "b2bea58bc9d57631533b8e1bf9c7dc4dc589ddaf5ddc8c171c6bc8f3f31a1c29"
+          ],
+          "fileSHA": "333bdaab280e79feb2f66178dabd704ae823a0a1e9879370ae6cff6d7c27be86"
+        }
+      },
+      "drain": "COLD_COPY_SIGNALED",
+      "ownerSessions": {
+        "1": {
+          "session": "1",
+          "queued": 29,
+          "accepted": 28,
+          "rejected": 0,
+          "revoked": 1,
+          "queuedMask": "536870911",
+          "terminalMask": "536870911"
+        }
+      },
+      "traceSHA": "8032fe98b17469e5f4f9a47c95594ec5921292a6a878d364ad86f613ebaa471c",
+      "run": "16394099653034",
+      "actionRows": 52,
+      "firstActualAction": [
+        1,
+        "DELIVERED",
+        30459400,
+        [
+          1,
+          1,
+          0,
+          0,
+          9,
+          149360,
+          "accepted",
+          "PAGE_PULSE_ACCEPTED",
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "source": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "16394101332583",
+          "admittedQ20": 144576,
+          "requested": 0.1378792,
+          "deltaNs": 17234900,
+          "commandSHA": "b3176fcdd52c8fc7195d48c1afa883d0d8ba808a4215382390571d9a72103140"
+        },
+        "29": {
+          "outcome": "REVOKED",
+          "offer": "2"
+        }
+      }
+    },
+    "cold-reanchor": {
+      "archives": {
+        "16394112034111": {
+          "kind": "SOURCE",
+          "nonce": "16394112034111",
+          "scope": [
+            26648,
+            "134399531787979676",
+            "2",
+            66960,
+            "1",
+            "2"
+          ],
+          "payloadSHA": "4eab9ab1b07a9cc4cd03c3cd05e4dc4ef64edef8e7a735f7442e57b081ed2361",
+          "bytes": 62976,
+          "sectionSHA": [
+            "5ddb56b8c3329c68fb4b4187dff18a08d599950b22ef0bc120c1944ca3551a68",
+            "b13173603ed082a66fe9c4719b4b742fa37130a8123c49028435c425af54ec27",
+            "8e7dc0544d51b42903deba930f758c92097ca28ba441f31c3ed3db36c16b6cca",
+            "3b17e2be30cd2d7e211d319644e87a3bf3f00728e327bfd0736fa769ea078c77"
+          ],
+          "fileSHA": "dafe59f072e71c5645883eec70baca3dedaf12c58a0496383e56a2beb56ef21c"
+        },
+        "16394112999566": {
+          "kind": "QUANTUM",
+          "nonce": "16394112999566",
+          "scope": [
+            26648,
+            "134399531787979676",
+            "2",
+            66960,
+            "1",
+            "2"
+          ],
+          "payloadSHA": "a1a454affe48002d9f2cd65f4c9f122ec48df122521619781a7a07201d9f7c56",
+          "bytes": 62976,
+          "sectionSHA": [
+            "7ca3b95ae5c7b6938d6221acbfc04b3e44d27f4b806d36ae276de87e1bc6c335",
+            "49ec0fddca207067ab047deab77c177756c270455f7d179351ebc8ec0fa68bf5",
+            "9e1687a3aaaacb72fc8054a80f025c152d672e86f492f1a3d451441d888c2c5d",
+            "0a8b9ac9613a0799d7b50693bc789c1878f82cf5474a3a4fe5f7fbfe106032b6"
+          ],
+          "fileSHA": "e6647a2294160b9bc39ed25d878949f21a2f640ef49be70b1c25a81791aecc3b"
+        },
+        "16394114862667": {
+          "kind": "QUANTUM",
+          "nonce": "16394114862667",
+          "scope": [
+            26648,
+            "134399531787979676",
+            "2",
+            66960,
+            "1",
+            "2"
+          ],
+          "payloadSHA": "3197deefb7663853973648d55dea182a9c4c1dfd1c762a45213e2c3627d454e9",
+          "bytes": 62976,
+          "sectionSHA": [
+            "bbcb9066a19fd307f665c0ccdc587507a534618272f41242f5a0015f4637b66f",
+            "408f84aae6fe46b319b5388e617e9ab1d277380639ccf7fcfc2bb17c12bd289f",
+            "be03982b80115c5f6df72466c1a1d79ecc5a9745595e68586ca018e7b1cbc053",
+            "3449f8e71c16e4a9bbc32a8503854f3abcbee7c3754233c177a8a69aab47dad5"
+          ],
+          "fileSHA": "a5f2a1216d7ede0b150c28601b6f59128034096b10f7b1de250e3e78dd3cfd26"
+        },
+        "16394116227247": {
+          "kind": "QUANTUM",
+          "nonce": "16394116227247",
+          "scope": [
+            26648,
+            "134399531787979676",
+            "2",
+            66960,
+            "1",
+            "2"
+          ],
+          "payloadSHA": "5c9a96a29d399af916ce2e13d5706cba944b2f3733cf97bb08a504a35851376d",
+          "bytes": 62976,
+          "sectionSHA": [
+            "cef6a068af28ddaba365de34f26ac8699a0416f74db6d75389dec415d33dcd62",
+            "f716c6be9468b60c8ca0cd26f00a8699d6526c6871c5868433ad84fe3819f318",
+            "de76851da07661022c99d53d09252503c5beff80869c6b791746d96eea288430",
+            "a89dc4bb906d9c39c7bd73944fa51e688a1b9d03a5b7c51df4fe786200e9781d"
+          ],
+          "fileSHA": "e54b43b2268a2dd1ef20d1dd3a2c3390951f7eb1e9bd5035d84fea9ac1f8678f"
+        }
+      },
+      "drain": "FENCE_RETIRED_BEFORE_DRAIN_PROBE",
+      "ownerSessions": {
+        "1": {
+          "session": "1",
+          "queued": 23,
+          "accepted": 21,
+          "rejected": 0,
+          "revoked": 2,
+          "queuedMask": "8388607",
+          "terminalMask": "8388607"
+        },
+        "2": {
+          "session": "2",
+          "queued": 25,
+          "accepted": 25,
+          "rejected": 0,
+          "revoked": 0,
+          "queuedMask": "33554431",
+          "terminalMask": "33554431"
+        }
+      },
+      "traceSHA": "80ee9fe74d9d6f7962737bedb68ca7167b959d246b74f833387a6f76ac94f45d",
+      "run": "16394110598722",
+      "actionRows": 52,
+      "firstActualAction": [
+        1,
+        "DELIVERED",
+        32063300,
+        [
+          1,
+          1,
+          0,
+          0,
+          10,
+          159249,
+          "accepted",
+          "PAGE_PULSE_ACCEPTED",
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "source": {
+        "7": {
+          "outcome": "ACCEPTED",
+          "offer": "1",
+          "root": "16394112034111",
+          "admittedQ20": 133027,
+          "requested": 0.1268648,
+          "deltaNs": 15858100,
+          "commandSHA": "8b1a3a5bf9a06b8dbdb8f6da0c46c6dc0b01d2fcbf6567465ce344594fe8a7f2"
+        },
+        "29": {
+          "outcome": "EXPIRED",
+          "offer": "2",
+          "reason": "STALE_ENDPOINT",
+          "ageNs": 121368100
+        }
+      }
+    }
+  },
+  "archiveCount": 10,
+  "strictState": "CLOCK_OR_INPUT_DIFFERENCE",
+  "firstAction": 1,
+  "firstActionNs": [
+    24269300,
+    30459400,
+    32063300
+  ],
+  "source7Q20": [
+    135556,
+    144576,
+    133027
+  ],
+  "source7DeltaNs": [
+    16159600,
+    17234900,
+    15858100
+  ],
+  "t865FourArm": "ARM_SET"
+}
