@@ -1,0 +1,80 @@
+{
+  "t932": {
+    "g16-fast-13": {
+      "n": 13,
+      "nonce": 1668162890147500,
+      "firstDisk": 1,
+      "seedSHA": "d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168"
+    },
+    "g16-hold-13": {
+      "n": 13,
+      "nonce": 1668162669024200,
+      "firstDisk": 1,
+      "seedSHA": "d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168"
+    },
+    "g16-static-13": {
+      "n": 13,
+      "nonce": 1667921041349700,
+      "firstDisk": 1,
+      "seedSHA": "d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168"
+    },
+    "g16-static-52": {
+      "n": 52,
+      "nonce": 1668084856045500,
+      "firstDisk": 1,
+      "seedSHA": "eca4c474bc8143d358e0ed5f3a67f93c7f9d0a91f9c86fbe1a405b909ffb0884"
+    }
+  },
+  "t936": {
+    "state": "STATIC_PAIR_VERIFIED",
+    "files": 6,
+    "moduleSHA": "786bb1db9b8d3a679042bdc36d014226d68647913770d503192c297e0c10e361",
+    "hostControlsReceipt": 19,
+    "independentHostReject": "G16_SEED_SHA"
+  },
+  "diskRejectFixtures": 96,
+  "negativeControls": [
+    "REJECT_VISIBLE_SIDE_EFFECT",
+    "PRIVATE_PREFIX",
+    "ACTIVE_TAIL_NONZERO",
+    "REJECT_VISIBLE_SIDE_EFFECT",
+    "PRIVATE_PREFIX",
+    "ACTIVE_TAIL_NONZERO",
+    "REFERENCE_IDENTITY",
+    "PRIVATE_FAKE_PUBLICATION",
+    "PRIVATE_FAKE_PUBLICATION",
+    "PRIVATE_CURRENT_FENCE",
+    "PRIVATE_FIRST_PHYSICAL_WORD_DIFF"
+  ],
+  "reference": {
+    "sha": "922ddef7e9e26010f394068841df8f1d7551a1e501f685366eea17661ebd6951",
+    "delta": 15026700,
+    "q": 126053,
+    "pulses": [
+      16657906421389,
+      16657906571656,
+      16657906421412,
+      16657906571658
+    ],
+    "frequency": 10000000
+  },
+  "comparisons": [
+    {
+      "state": "PRIVATE_PHYSICS_WORD_MATCH",
+      "formalD1": false
+    },
+    {
+      "state": "PRIVATE_PHYSICS_WORD_MATCH",
+      "formalD1": false
+    }
+  ],
+  "firstWordNegative": {
+    "state": "WORD_DIFF",
+    "section": "quantum-candidate",
+    "word": 0,
+    "left": 9,
+    "right": 8
+  },
+  "actualPrivate": "PENDING_T937",
+  "formalD1": "T496_ONLY"
+}
