@@ -1,0 +1,15 @@
+{
+ "module": "792f5986 (T946 contact revision)",
+ "b13": {
+  "result": "reason 11 stage 9, B=200 C=27 Ic=32, dur 20.8ms, fresh=true",
+  "oldFailure": "T939: reason 10/4 bracket unresolved \u2014 GONE",
+  "newGate": "remaining>0 after physical advance loop (fail 11u,9u,1u) \u2014 time-budget accounting gate"
+ },
+ "b52Static": {
+  "result": "vkResult=2 retire=2, dur 256.9ms, fresh=false, B=0 C=0 (no edges built)",
+  "oldFailure": "T939: reason 14/8 solver residual \u2014 GONE",
+  "newGate": "iGPU 250ms budget exceeded by ~7ms for 52-disk x 256 microsteps (timeout, not physics)"
+ },
+ "b52Fast480": "same timeout family (256+2 dispatches per root, 480 roots not reached)",
+ "verdict": "both T939 old failures eliminated by revision; new blockers: B13 remaining-time accounting (reason 11/9) and B52 iGPU 7ms-over-budget; positive acceptance still not reached"
+}

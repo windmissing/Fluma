@@ -1,0 +1,14 @@
+{
+ "qualification": {
+  "OP_48": "CALL_UNRETURNED (exit 1) \u2014 old module still hangs on this machine (igc64, T912/T921/T937 pattern)",
+  "OP48_VISCOSITY/OP49_PRESSURE/OP48_REMAINDER": "name accepted only under --g13-split-op48 (t833_candidate.inc renames); standalone qualify_role role-name rejected at usage"
+ },
+ "f02Original": "TIMEOUT 240s (old OP_48 compile hang \u2014 consistent with qualification)",
+ "f02Split": {
+  "pipelines": "34 STEADY_PIPELINE rows; OP48_VISCOSITY x10 and OP49_PRESSURE x10 progress rows (modules 812db31f/ca603a59 live-built)",
+  "root": "T833_ROOT_RETIRE_WAIT FAILED (vkWaitForFences.T833_RETIRE) \u2014 late-root rejection, T901 F02 pattern (~1770ms late)",
+  "segment818": "not reached (root rejected before audit segment)",
+  "pressureVelocityDivergenceViscosity": "blocked: 818 audit and ACTUAL/REPLAY edge evidence require an accepted root; late root is private diagnostic only"
+ },
+ "verdict": "three-closure pipelines live-qualified under split; F02 physics evidence blocked by late-root (iGPU) + old OP_48 hang; diagnostic results do not replace formal acceptance"
+}

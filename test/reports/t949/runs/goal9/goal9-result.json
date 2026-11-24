@@ -1,0 +1,29 @@
+{
+ "arms": {
+  "source-only": "SOURCE vk=2 (edge), 14 dispatches",
+  "q-control": "SOURCE vk=2 (edge)",
+  "q-timing": "SOURCE accepted (14 disp, vk=0) + QUANTUM rejected vk=2 GRANT_DEADLINE 2404 disp, tailRead=false (late tail \u2014 T923 pattern)"
+ },
+ "quantumTimeline": {
+  "submitToStop": "250.0ms",
+  "stop": "GRANT_DEADLINE",
+  "tailRead": false
+ },
+ "gpuTimestamps": {
+  "SOURCE": 6,
+  "QUANTUM": 15,
+  "binding": "real business fence generation, query pool+reset serial per T946"
+ },
+ "rawDualSeal": {
+  "sourceAccepted": 20,
+  "quantumDiagnostic": 19
+ },
+ "control16": {
+  "actual": 2,
+  "base": 1,
+  "finding": "control[16] increments to 2 even on rejected empty-microstep quantum \u2014 direct evidence for T946 slot-trim prerequisite (shader validates+increments per-slot before empty-body check)"
+ },
+ "latch": "QUANTUM_TIMELINE fenceGeneration=4 same-fence as SOURCE envelope; stop=GRANT_DEADLINE at exactly 250ms",
+ "rejectionPrefix": "Q completion tail[6]=1, tailRead=false \u2014 late-tail prefix preserved (2404 logical slots, EVENT/PATH are late-read, matching T948/T923 finding)",
+ "lateEvidence": "diagnostic raw sealed with rootVkResult=2"
+}
