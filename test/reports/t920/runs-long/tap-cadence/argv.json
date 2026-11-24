@@ -1,0 +1,23 @@
+{
+  "command": [
+    ".codex/local-test/t909-r2-ninja/hello_world_pc.exe",
+    "--m1-window",
+    ".codex/local-test/t830-m1-bounded\\full_source.spv",
+    ".codex/local-test/t830-m1-bounded\\quantum_candidate.spv",
+    ".codex/local-test/t830-m1-bounded\\quantum_commit.spv",
+    "--m1-empty-preview",
+    "--m1-manual-gravity",
+    "--m1-one-quantum-grant",
+    "--m1-dual-source",
+    "--m1-source-trace"
+  ],
+  "exe": ".codex/local-test/t909-r2-ninja/hello_world_pc.exe",
+  "modules": ".codex/local-test/t830-m1-bounded",
+  "out": "test/reports/t920/runs-long/tap-cadence",
+  "load_holds": 4,
+  "load_hold_seconds": 40.0,
+  "load_idle": 8.0,
+  "taps": 120,
+  "tap_press": 0.6,
+  "tap_gap": 0.4
+}

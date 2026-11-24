@@ -1,0 +1,191 @@
+{
+ "userLog": {
+  "path": ".codex/local-test/demo-7b46b51ba59b497a8ac4447f1328229b/demo.jsonl",
+  "identity": {
+   "window": "784x461",
+   "profile": "FULL_M1_V2",
+   "candidateSHA": "b8f0e327 (t830-m1-bounded)",
+   "sourceSHA": "1912af9e",
+   "commitSHA": "caf0614c",
+   "peFamily": "t909-r2-era full demo (non-compact 128x256)"
+  },
+  "rejects": {
+   "ROOT_DEADLINE": 149,
+   "LATE_FENCE_SIGNAL": 65,
+   "CLOCK_GAP": 27,
+   "ACCEPT_DEADLINE": 1
+  },
+  "continuationFailed": 2,
+  "era": [
+   [
+    0,
+    549,
+    24,
+    3.36
+   ],
+   [
+    30,
+    369,
+    61,
+    15.16
+   ],
+   [
+    60,
+    143,
+    94,
+    24.51
+   ],
+   [
+    90,
+    122,
+    107,
+    25.75
+   ],
+   [
+    120,
+    85,
+    119,
+    26.71
+   ],
+   [
+    150,
+    45,
+    120,
+    26.83
+   ],
+   [
+    210,
+    4,
+    121,
+    26.95
+   ]
+  ],
+  "rootDeadlineCluster": {
+   "60s": 2,
+   "90s": 5,
+   "120s": 24,
+   "150s": 113,
+   "210s": 5
+  },
+  "overloadCumulative": {
+   "0s": 3037,
+   "60s": 9667,
+   "120s": 16226,
+   "180s": 21377,
+   "210s": 22173
+  }
+ },
+ "reproTapCadence": {
+  "path": "test/reports/t920/runs-long/tap-cadence/demo.jsonl",
+  "argv": [
+   "t909-r2-ninja PE (d37e45b9)",
+   "t830-m1-bounded modules",
+   "--m1-empty-preview --m1-manual-gravity --m1-one-quantum-grant --m1-dual-source --m1-source-trace"
+  ],
+  "script": "test/t920/drive_taps.py: 4x(40s hold+8s idle) then 120x(0.6s tap+0.4s gap)",
+  "rejects": {
+   "ROOT_DEADLINE": 144,
+   "LATE_FENCE_SIGNAL": 46,
+   "CLOCK_GAP": 13,
+   "ACCEPT_DEADLINE": 1
+  },
+  "continuationFailed": 0,
+  "era": [
+   [
+    0,
+    204,
+    74,
+    5.61
+   ],
+   [
+    30,
+    440,
+    73,
+    11.83
+   ],
+   [
+    60,
+    198,
+    73,
+    11.83
+   ],
+   [
+    90,
+    234,
+    90,
+    18.94
+   ],
+   [
+    120,
+    183,
+    80,
+    22.14
+   ],
+   [
+    150,
+    175,
+    88,
+    23.04
+   ],
+   [
+    180,
+    336,
+    67,
+    29.58
+   ],
+   [
+    210,
+    111,
+    107,
+    34.92
+   ],
+   [
+    240,
+    20,
+    112,
+    35.68
+   ],
+   [
+    270,
+    4,
+    114,
+    35.93
+   ]
+  ],
+  "finalPhase": {
+   "presses": 86,
+   "admittedPerPressU": 0.0517,
+   "rootDeadlinePer20s": {
+    "220": 16,
+    "240": 84,
+    "280": 43
+   }
+  },
+  "failedRootSignature": {
+   "budgetBurn": "249.8ms full window, waitCount 17",
+   "cause": "quantum at high stock exceeds 250ms"
+  }
+ },
+ "stressHold100": {
+  "path": "test/reports/t920/runs-long/stress-hold100/demo.jsonl",
+  "script": "test/t920/drive_stress.py: 100s continuous hold x8 cycles",
+  "finding": "within ONE continuous hold, admission bursts ~4-7u in first ~40s then STOPS to zero for the rest of the hold; probes still admit at 30u stock if active settles to 0 first",
+  "rejects": {
+   "CLOCK_GAP": 11,
+   "LATE_FENCE_SIGNAL": 3,
+   "ROOT_DEADLINE": 2
+  }
+ },
+ "cycleRun": {
+  "path": "test/reports/t920/runs-long/longrun-t909r2/demo.jsonl",
+  "script": "test/t920/drive_long.py: 12x(6s hold+4s idle)+10s+6x(6s+4s)",
+  "finding": "no collapse at 25.6u stock with settling gaps: frames steady 62-118/15s, admission 0.13-3.61u/cycle; symptom requires sustained high active (no-settle cadence)"
+ },
+ "diagnosis": {
+  "primary": "quantum compute time grows with bed stock/active (T908 A: heavy-bed 5.8x); at ~27-36u stock + active>110 the quantum exceeds the 250ms root deadline -> every grant fails (ROOT_DEADLINE), recoveries loop, admission ->0",
+  "secondary": "overload counter grows monotonically (22173 quanta lost by 210s in user log) - pulse earnings accumulate but can never be spent",
+  "terminal": "user hit M1_QUANTUM_CONTINUATION_FAILED x2 (recover() exhausted); repro reached same frame/admission collapse at t=240-280s",
+  "cadenceDependency": "symptom requires high active WITHOUT settling gaps (rapid taps / re-press); with idle gaps active->0 and admission resumes",
+  "handoff": "developer: T908 A motion/replay + fragment cost fixes (dispatch-count vs active-row scan); the 250ms deadline vs stock growth remains structural until per-quantum cost is reduced"
+ }
+}
