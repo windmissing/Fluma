@@ -4,6 +4,7 @@
 #include "vulkan_api.h"
 #ifdef _WIN32
 #include "wsi.h"
+#include "m1_compact.h"
 #include "m1_cold_format.h"
 #include "root_plan.h"
 #include "../angles_generated.h"

@@ -221,9 +221,12 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   constexpr auto storage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
   constexpr auto upload = VK_BUFFER_USAGE_TRANSFER_DST_BIT;
   constexpr auto block = 20*sizeof(uint32_t);
-  constexpr char sourceSHA[] = "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162";
+  const char *sourceSHA=attempt.m1Compact ? "e9c7c123747c77350545b9d11abcfbd9b0b2e85948cde854f2592b97957f292c" :
+      "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162";
+  const char *commitSHA=attempt.m1Compact ? "1383f353018da0f67bbd4faadc3906eb193fd3f5234cc2d060891ebede30ef0e" : kM1CommitSHA;
   const bool interactive = !attempt.m1QuantumCandidate.empty();
-  const char *candidateSHA=attempt.m1InventoryV1 ? kM1InventoryV1SHA :
+  const char *candidateSHA=attempt.m1Compact ? "78139c8f3d53e2a175d9409cb88d646ce3d5ef2ebce04319ddc5d5ed259233a9" :
+      attempt.m1InventoryV1 ? kM1InventoryV1SHA :
       attempt.m1AngleWitness ? kM1AngleWitnessSHA : kM1CandidateSHA;
   const bool fullM1=interactive && attempt.m1DualSource;
   const uint32_t emitQ=fullM1 ? 16u*1048576u : 1048576u;
@@ -249,6 +252,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   fields << ",\"m1SourceModuleSHA\":" << Quote(sourceSHA)
          << ",\"inputKind\":" << Quote(interactive ? "WIN32_POINTER_HOLD" : "PC_DIAGNOSTIC_DRY_SOURCE")
          << ",\"m1InputProfile\":" << Quote(fullM1 ? "FULL_M1_V2" : "DRY_M1_V2")
+         << ",\"m1CompactDemo\":" << (attempt.m1Compact ? "true" : "false")
          << ",\"m1EmitQ\":" << emitQ;
   vk.DestroyPipeline(device, pipeline, nullptr);
   vk.DestroyShaderModule(device, shader, nullptr);
@@ -271,11 +275,11 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   if (interactive) {
     fields << ",\"m1QuantumCandidateSHA\":" << Quote(candidateSHA)
            << ",\"m1InventoryV1\":" << (attempt.m1InventoryV1 ? "true" : "false")
-           << ",\"m1QuantumCommitSHA\":" << Quote(kM1CommitSHA);
+           << ",\"m1QuantumCommitSHA\":" << Quote(commitSHA);
     Checkpoint("M1_QUANTUM_CANDIDATE_PIPELINE");
     m1QuantumPipelines[0] = M1Pipeline(attempt.m1QuantumCandidate, candidateSHA);
     Checkpoint("M1_QUANTUM_COMMIT_PIPELINE");
-    m1QuantumPipelines[1] = M1Pipeline(attempt.m1QuantumCommit, kM1CommitSHA);
+    m1QuantumPipelines[1] = M1Pipeline(attempt.m1QuantumCommit, commitSHA);
   }
 
   Checkpoint("M1_SOURCE_BUFFERS");
@@ -349,7 +353,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   identity.surface = narrow(attempt.surface);
   identity.geometry = narrow(attempt.geometry);
   if (interactive) {
-    const std::string set = std::string(sourceSHA) + candidateSHA + kM1CommitSHA;
+    const std::string set = std::string(sourceSHA) + candidateSHA + commitSHA;
     digestWords(Hex(Hash(set.data(), set.size()).data()).c_str(), identity.shaderSha);
   } else {
     digestWords(sourceSHA, identity.shaderSha);
@@ -653,8 +657,9 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       cmd[26] = 1;
     }
     cmd[28] = identity.config.lo; cmd[29] = identity.config.hi;
+    const double sourceRate=attempt.m1Compact ? pc::kCompactSourceRate : 8.0;
     const double source[] = {interactive ? inputSample.x : 64.5, interactive ? inputSample.y : 0.0,
-                             interactive ? 8.0*double(delta)/1000000000.0 : 0.125};
+                             interactive ? sourceRate*double(delta)/1000000000.0 : 0.125};
     std::memcpy(cmd.data()+16, source, sizeof(source));
     if (offer.seq) {
       fields << ",\"m1Hold\":\"" << inputSample.hold << "\",\"m1PointerSeq\":\"" << inputSample.sequence
@@ -957,7 +962,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   const auto publicationBuffer=[&] {
     return buffers[preview || !interactive ? kM1Pub : accepted.publication ? kM1QPubAlt : kM1QPub].handle;
   };
-  bool roiPending=false,roiTerminal=false;
+  bool roiPending=false,roiTerminal=false,compactViewOnly=false;
+  int32_t lastDrawnBoxAngle=0;
   bool havePacketRegions=false;
   std::array<pc::M1Rect,3> packetRegions{};
   const auto roiWanted=[&] { return attempt.m1Observation.Includes(businessPresents+1); };
@@ -972,12 +978,16 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     return std::array<int32_t,3>{int32_t(kAngleWords[table+1]),int32_t(kAngleWords[table+2]),
                                  angle==permit.angle ? 2 : 3};
   };
+  if (attempt.m1Compact) wsiObservation.requestedBoxAngle=[&] {
+    const auto requested=attempt.m1Gravity();
+    return requested.geometry==attempt.geometry ? requested.angle : 0;
+  };
   if (attempt.m1Observation.frame) {
     const auto align=std::max<VkDeviceSize>(4,candidate.properties.limits.optimalBufferCopyOffsetAlignment);
     wsiObservation.roiStride=(1024+align-1)/align*align;
     Allocate(kM1PixelStaging,4*wsiObservation.roiStride,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
     wsiObservation.requestedRoi=[&](uint32_t width,uint32_t height) -> const std::array<pc::M1Rect,3>* {
-      if (!roiWanted() || !leased) return nullptr;
+      if (!roiWanted() || !leased || compactViewOnly) return nullptr;
       if (!attempt.m1Observation.packetId) return &attempt.m1Observation.regions;
       if (m1PacketSample.nonce!=wide(lease.nonce) || width<24 || height<8) return nullptr;
       if (!m1PacketSample.mass) return havePacketRegions ? &packetRegions : nullptr;
@@ -1000,13 +1010,52 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     publish(Receipt("M1_OBSERVATION_ARMED",""));
   }
   const auto &pixels=attempt.m1Observation.frame ? buffers[kM1PixelStaging] : staging;
+  bool compactInputOpen=false;
+  int32_t lastEmptyBoxAngle=INT32_MIN;
   std::function<VkBuffer()> nextPublication;
   if (interactive && !attempt.m1SinglePresent && (attempt.m1ColdFile.empty() || attempt.m1RootCapture)) {
     nextPublication=[&]() -> VkBuffer {
       if (preview) {
         fields.str(setupFields);
         fields.seekp(0,std::ios::end);
-        if (const auto failure=startBusiness()) {
+        if (attempt.m1Compact) {
+          if (!compactInputOpen) {
+            beginClock(false);
+            if (!openInput(false,false)) return VK_NULL_HANDLE;
+            compactInputOpen=true;
+          }
+          if (!refresh()) {
+            if (!clock.open) beginClock(false);
+            return publicationBuffer();
+          }
+          const auto offer=takeFresh();
+          if (!offer.seq) return publicationBuffer();
+          clock.ready=clock.baseline=true;
+          if (!ClaimM1Source(clock,offer.sample.hold,offer,permit)) {
+            finishOffer(offer,IngressCode::Rejected,0,"SOURCE_PERMIT_UNAVAILABLE");
+            return publicationBuffer();
+          }
+          if (!consumeSource(offer.sample,offer.pulseNs,offer.deltaNs,offer)) {
+            if (root.State()==FlightState::Idle && !inFlight && m1Retirement.proven && m1Reject) {
+              if (std::strcmp(m1Reject,"SOURCE_HOLD_REVOKED")==0) {
+                beginClock(false);
+                return publicationBuffer();
+              }
+              if (pc::RecoverableM1ClockFault(m1Reject) || pc::RecoverableM1Deadline(m1Reject)) {
+                compactInputOpen=false;
+                publish(Receipt("M1_COMPACT_PREVIEW_REARM",m1Reject));
+                return publicationBuffer();
+              }
+            }
+            nextRootFailed=attempt.current();
+            if (nextRootFailed) publish(Receipt("FAILED","M1_COMPACT_FIRST_SOURCE"));
+            return VK_NULL_HANDLE;
+          }
+          if (!advanceQuantum()) {
+            nextRootFailed=attempt.current();
+            return VK_NULL_HANDLE;
+          }
+        } else if (const auto failure=startBusiness()) {
           nextRootFailed=attempt.current();
           if (nextRootFailed) publish(Receipt("FAILED",failure));
           return VK_NULL_HANDLE;
@@ -1025,6 +1074,13 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         leased=true;
         return publicationBuffer();
       }
+      if (attempt.m1Compact && !compactViewOnly && wsiObservation.requestedBoxAngle()!=lastDrawnBoxAngle) {
+        // Present the requested box with the same pinned publication before
+        // attempting another physics root. Alternate with business frames.
+        compactViewOnly=true;
+        return publicationBuffer();
+      }
+      compactViewOnly=false;
       Require(root.Release(accepted.publication,accepted.publicationGeneration,true)==ControlCode::OK,
               "M1_QUANTUM_FRAME_RELEASE");
       leased=false;
@@ -1124,7 +1180,12 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   const auto frame = pc::PresentBoot(vk, instance, candidate.physical, device, queue, candidate.family,
       surface, publicationBuffer(), pixels.handle, pixels.memory, pixels.flags, attempt.window,
       attempt.current, [&](const pc::Frame &visible) {
+        if (attempt.m1Compact) lastDrawnBoxAngle=visible.requestedBoxAngle;
         if (visible.empty) {
+          if (attempt.m1Compact && lastEmptyBoxAngle==visible.requestedBoxAngle) return;
+          lastEmptyBoxAngle=visible.requestedBoxAngle;
+          if (attempt.m1Compact)
+            fields << ",\"m1RequestedBoxAngle256\":" << visible.requestedBoxAngle;
           if (attempt.gravityDisplay) attempt.gravityDisplay(displayedGravity);
           fields << ",\"windowFrame\":{\"kind\":\"EMPTY_READY\",\"acceptedRoot\":null,\"sourceCommit\":\"0\","
                  << "\"physicsCommit\":\"0\",\"sandStockQ\":\"0\",\"waterStockQ\":\"0\",\"particles\":0,"
@@ -1140,6 +1201,16 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
                  << ",\"graphicsFence\":\"" << visible.graphicsFence << "\",\"presentExitQpc\":\""
                  << visible.presentExit << "\",\"pixel\":" << visible.pixel << '}';
           publish(Receipt("M1_EMPTY_PRESENT_QUEUED",""));
+          return;
+        }
+        if (compactViewOnly) {
+          std::ostringstream row;
+          row << "{\"stage\":\"M1_BOX_VIEW_PRESENT_QUEUED\",\"run\":\"" << m1Run
+              << "\",\"geometry\":\"" << attempt.geometry << "\",\"baseRoot\":\"" << wide(lease.nonce)
+              << "\",\"requestedAngle256\":" << visible.requestedBoxAngle
+              << ",\"actualAngle256\":" << int32_t(accepted.completion[107])
+              << ",\"presentExitQpc\":\"" << visible.presentExit << "\"}";
+          publish(row.str());
           return;
         }
         reportCold();
@@ -1175,6 +1246,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         ++businessPresents;
         lastPresentedRoot=wide(lease.nonce);
         const auto &completion=accepted.completion;
+        if (attempt.m1Compact)
+          fields << ",\"m1RequestedBoxAngle256\":" << visible.requestedBoxAngle;
         const auto q64=[&](size_t lo) { return wide({completion[lo],completion[lo+1]}); };
         if (attempt.gravityDisplay && completion[27]==2) {
           const auto actual=int32_t(completion[107]);

@@ -1,6 +1,7 @@
 #include <functional>
 #include "wsi.h"
 #include "pc_view_spirv.h"
+#include "m1_compact.h"
 #include <algorithm>
 #include <array>
 #include <cstring>
@@ -192,7 +193,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     VkPipelineLayoutCreateInfo layout{VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO};
     layout.setLayoutCount = 1;
     layout.pSetLayouts = &wsi.descriptors;
-    const VkPushConstantRange extentPush{VK_SHADER_STAGE_FRAGMENT_BIT,0,28};
+    const VkPushConstantRange extentPush{VK_SHADER_STAGE_FRAGMENT_BIT,0,52};
     if (dryScene) {
       layout.pushConstantRangeCount = 1;
       layout.pPushConstantRanges = &extentPush;
@@ -325,10 +326,20 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       vk.CmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, wsi.layout, 0, 1, &set, 0, nullptr);
       if (dryScene) {
         const bool unorm=found->format==VK_FORMAT_B8G8R8A8_UNORM || found->format==VK_FORMAT_R8G8B8A8_UNORM;
-        struct FramePush { float width,height; uint32_t encode,empty; std::array<int32_t,3> gravity; };
+        struct FramePush {
+          float width,height;
+          uint32_t encode,empty;
+          std::array<int32_t,3> gravity;
+          uint32_t compact;
+          std::array<float,2> rotation;
+          float lo,hi,boxHeight;
+        };
+        frame.requestedBoxAngle=observation.requestedBoxAngle ? observation.requestedBoxAngle() : 0;
         const FramePush values{float(extent.width),float(extent.height),uint32_t(unorm),uint32_t(frame.empty),
-                               observation.gravityIndicator ? observation.gravityIndicator() : std::array<int32_t,3>{}};
-        static_assert(sizeof(values)==28);
+                               observation.gravityIndicator ? observation.gravityIndicator() : std::array<int32_t,3>{},
+                               uint32_t(bool(observation.requestedBoxAngle)),CompactRotation(frame.requestedBoxAngle),
+                               kCompactFirstColumn,kCompactEndColumn,kCompactHeight};
+        static_assert(sizeof(values)==52);
         vk.CmdPushConstants(command,wsi.layout,VK_SHADER_STAGE_FRAGMENT_BIT,0,sizeof(values),&values);
       }
       wsi.CmdDraw(command, 3, 1, 0, 0);
@@ -466,7 +477,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       if (!current()) break;
       const auto next=nextPublication();
       if (!next || !current()) break;
-      frame.empty=false;
+      frame.empty=frame.empty && observation.requestedBoxAngle && next==control;
       Check(resetPool(device,wsi.commandPool,0),"vkResetCommandPool.GRAPHICS");
       const VkFence fences[]={wsi.acquired,wsi.submitted};
       Check(resetFences(device,2,fences),"vkResetFences.GRAPHICS");

@@ -1,6 +1,9 @@
 #version 450
 layout(set=0,binding=0,std430) readonly buffer Publication { uint P[]; };
-layout(push_constant) uniform WindowFrame { vec2 extent; uint encode; uint empty; int gx; int gy; int gravityState; };
+layout(push_constant) uniform WindowFrame {
+    vec2 extent; uint encode; uint empty; int gx; int gy; int gravityState;
+    uint compact; float boxCos; float boxSin; float boxLow; float boxHigh; float boxHeight;
+};
 layout(location=0) in vec2 uv;
 layout(location=0) out vec4 color;
 
@@ -24,19 +27,25 @@ void main() {
     const uint header = columnBase + 16u*128u;
     const vec3 background = vec3(.006,.008,.014);
     vec3 rgb = background;
-    if (empty!=0u) {
+    float scale=min(extent.x,extent.y)*.008;
+    vec2 boxPixel=(uv-.5)*extent;
+    vec2 localPoint=vec2(dot(boxPixel,vec2(boxCos,boxSin)),dot(boxPixel,vec2(boxSin,-boxCos)))/scale;
+    vec2 point=compact!=0u ? localPoint+vec2((boxLow+boxHigh)*.5,boxHeight*.5) : vec2(uv.x,1.-uv.y)*vec2(128,256);
+    vec2 boxEdge=(abs(localPoint)-vec2((boxHigh-boxLow)*.5,boxHeight*.5))*scale;
+    bool inBox=compact==0u || (point.x>=boxLow && point.x<boxHigh && point.y>=0. && point.y<boxHeight);
+    if (empty!=0u && compact==0u) {
         vec2 edge = abs(uv*extent-extent*.5)-extent*.5;
         if (abs(max(edge.x,edge.y))<=1.) rgb = vec3(.08)+rgb*.8;
-    } else if (P[header] == 1347637831u && P[header+1u] == 2u && P[header+3u] == 3235823838u) {
+    } else if (empty==0u && inBox && P[header] == 1347637831u && P[header+1u] == 2u && P[header+3u] == 3235823838u) {
         const vec3 sandColor = vec3(.72,.57,.35);
-        vec2 point = vec2(uv.x,1.0-uv.y)*vec2(128,256);
         uint column = min(uint(point.x),127u);
         if (point.y < uintBitsToFloat(P[columnBase+8u*128u+column])) rgb = linearize(sandColor);
         uint live = min(P[header+34u],sandCapacity);
         for (uint i=0u; i<live; ++i) {
             vec2 position = vec2(uintBitsToFloat(P[8u*sandCapacity+i]),uintBitsToFloat(P[9u*sandCapacity+i]));
             float radius = uintBitsToFloat(P[10u*sandCapacity+i]);
-            vec2 local = (vec2(position.x/128.,1.-position.y/256.)-uv)*extent/radius;
+            vec2 local = compact!=0u ? (position-point)*scale/radius :
+                (vec2(position.x/128.,1.-position.y/256.)-uv)*extent/radius;
             if (P[3u*sandCapacity+i]!=0u && radius>0. && dot(local,local)<=1.) {
                 rgb = linearize(sandColor);
                 break;
@@ -58,15 +67,18 @@ void main() {
             vec2 position = vec2(uintBitsToFloat(P[waterBase+16u*waterCapacity+i]),
                                  uintBitsToFloat(P[waterBase+17u*waterCapacity+i]));
             float radius = 2.*sqrt(float(mass)/131072.);
-            vec2 local = (uv-vec2(position.x/128.,1.-position.y/256.))*extent/radius;
+            vec2 local = compact!=0u ? (point-position)*scale/radius :
+                (uv-vec2(position.x/128.,1.-position.y/256.))*extent/radius;
             float alpha = .8*(1.-smoothstep(.8,1.,length(local)));
             float highlight = pow(max(0.,1.-length(local-vec2(-.25,-.25))),8.);
             rgb = mix(rgb,mix(waterColor,vec3(.8,.9,1.),highlight),alpha);
         }
 #endif
         vec2 edge = abs(uv*extent-extent*.5)-extent*.5;
-        if (abs(max(edge.x,edge.y))<=1.) rgb = vec3(.08)+rgb*.8;
+        if (compact==0u && abs(max(edge.x,edge.y))<=1.) rgb = vec3(.08)+rgb*.8;
     }
+    if (compact!=0u && abs(max(boxEdge.x,boxEdge.y))<=1.5)
+        rgb=mix(rgb,vec3(.19,.57,.8),.92);
     if (gravityState!=0 && extent.x>=112. && extent.y>=42.) {
         vec2 pixel=uv*extent;
         vec2 button=pixel-vec2(extent.x-42.,8.);

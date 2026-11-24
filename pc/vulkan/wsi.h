@@ -22,6 +22,7 @@ struct Frame {
   uint32_t pixel = 0;
   bool pixelRead = false, stale = false;
   bool empty=false;
+  int32_t requestedBoxAngle=0;
   uint64_t serial=0;
   uintptr_t graphicsFence=0;
   struct Roi {
@@ -41,6 +42,7 @@ struct PresentObservations {
   VkDeviceSize roiStride=0;
   std::function<const std::array<M1Rect,3>*(uint32_t width,uint32_t height)> requestedRoi;
   std::function<std::array<int32_t,3>()> gravityIndicator; // sin/cos Q20 and state
+  std::function<int32_t()> requestedBoxAngle;
 };
 Frame PresentBoot(g13vk::VulkanApi &, VkInstance, VkPhysicalDevice, VkDevice, VkQueue,
                   uint32_t family, VkSurfaceKHR, VkBuffer control, VkBuffer staging,

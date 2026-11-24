@@ -74,6 +74,7 @@ struct Attempt {
   std::function<void(uint64_t,uint64_t,const M1Pulse &)> resumeM1Hold;
   std::function<bool(const SourceOffer &,const std::function<void()> &)> authorizeM1Offer;
   bool g13CompileTrace=false;
+  bool m1Compact=false;
 #else
   NativeWindow *window;
 #endif

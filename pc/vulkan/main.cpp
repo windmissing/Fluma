@@ -1,5 +1,6 @@
 #include "boot.h"
 #include "m1_d1_plan.h"
+#include "m1_compact.h"
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
@@ -56,6 +57,8 @@ struct Window {
   std::string t877Mode;
   bool t899SlotSnapshot=false;
   bool g13CompileTrace=false;
+  bool m1Compact=false;
+  bool compactRequestAtLimit=false;
   size_t g13PulseWrite=0;
   bool t833Allowed=true;
   std::atomic<uint64_t> sourcePulse{0};
@@ -430,6 +433,7 @@ struct Window {
     dpi = GetDpiForWindow(hwnd);
     ++generation;
     gravity={generation};
+    compactRequestAtLimit=false;
     pointerReady = false;
     CancelHeld();
     ingress.Authorize({},0);
@@ -443,11 +447,16 @@ struct Window {
     if (closing) return;
     const auto sequence = ++eventSeq;
     const auto ticks = grs::pc::QpcTicks();
-    const bool inside = x >= 0 && y >= 0 && x < width && y < height;
+    double mappedX=0,mappedY=0;
+    const bool inside = x >= 0 && y >= 0 && x < width && y < height &&
+        (!m1Compact || grs::pc::CompactPointer(x,y,width,height,gravity.angle,mappedX,mappedY));
     const std::string action(kind);
     if (!d1Mode.empty() && (action=="DOWN" || action=="MOVE" || action=="UP")) return;
-    if (action=="FOCUS_LOST" && m1GravityEnabled)
+    if (action=="FOCUS_LOST" && m1GravityEnabled) {
       gravity={generation,sequence,ticks,0};
+      compactRequestAtLimit=false;
+      if (m1Compact) PostMessageW(hwnd,kM1GravityCaption,0,0);
+    }
     if (action == "DOWN") {
       CancelHeld();
       if (pointerReady && inside && GetCapture()==hwnd) {
@@ -461,8 +470,8 @@ struct Window {
     if (held.hold) {
       held.sequence = sequence;
       held.timeNs = grs::pc::TimeNs();
-      held.x = (double(x)+0.5)*128/width;
-      held.y = (1-(double(y)+0.5)/height)*256;
+      held.x = m1Compact ? mappedX : (double(x)+0.5)*128/width;
+      held.y = m1Compact ? mappedY : (1-(double(y)+0.5)/height)*256;
       held.clientX = x;
       held.clientY = y;
       sampleTicks = ticks;
@@ -505,12 +514,14 @@ struct Window {
     std::lock_guard lock(mutex);
     const auto seq=++eventSeq;
     const auto ticks=grs::pc::QpcTicks();
-    if (relative) angle=std::clamp(gravity.angle+angle,-grs::pc::kM1AngleLimit,grs::pc::kM1AngleLimit);
+    const auto target=relative ? gravity.angle+angle : angle;
+    if (relative) angle=std::clamp(target,-grs::pc::kM1AngleLimit,grs::pc::kM1AngleLimit);
     const char *result=!m1GravityEnabled ? "GRAVITY_DISABLED" :
         closing || (expectedGeometry && expectedGeometry!=generation) ? "STALE_GEOMETRY" :
         !grs::pc::ValidM1Angle(angle) ? "ANGLE_OUT_OF_RANGE" : "ACCEPTED_INPUT";
     if (std::string_view(result)=="ACCEPTED_INPUT") {
       gravity={generation,seq,ticks,angle};
+      compactRequestAtLimit=m1Compact && target!=angle;
       PostMessageW(hwnd,kM1GravityCaption,0,0);
     }
     Emit("{\"stage\":\"M1_GRAVITY_INPUT\",\"geometry\":\""+std::to_string(generation)+
@@ -547,7 +558,8 @@ struct Window {
     {
       std::lock_guard lock(mutex);
       const bool accepted=gravityDisplay.accepted && gravityDisplay.geometry==generation;
-      title << L"重力  请求 " << (gravity.geometry==generation ? gravity.angle/256. : 0.) << L"°";
+      title << (m1Compact ? L"盒体预览 " : L"重力  请求 ") << (gravity.geometry==generation ? gravity.angle/256. : 0.) << L"°";
+      if (compactRequestAtLimit) title << L"  请求到边界";
       if (accepted) title << L"  实际 " << gravityDisplay.actual/256. << L"°";
       if (accepted && gravityDisplay.stale) title << L"  上一有效帧";
       if (accepted && gravityDisplay.limited) title << L"  床形限制";
@@ -765,7 +777,7 @@ struct Window {
                                                    return false;
                                                  act();
                                                  return true;
-                                               },g13CompileTrace},
+                                               },g13CompileTrace,m1Compact},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
@@ -849,7 +861,8 @@ LRESULT CALLBACK Dispatch(HWND hwnd, UINT message, WPARAM w, LPARAM l) {
     return 0;
   case WM_KEYDOWN:
     if (window->m1GravityEnabled && (w==VK_LEFT || w==VK_RIGHT || w==VK_HOME || w=='R')) {
-      window->SetGravity(w==VK_LEFT ? -grs::pc::kM1AngleStep : w==VK_RIGHT ? grs::pc::kM1AngleStep : 0,
+      const auto step=window->m1Compact ? grs::pc::kCompactAngleStep : grs::pc::kM1AngleStep;
+      window->SetGravity(w==VK_LEFT ? -step : w==VK_RIGHT ? step : 0,
                          0,w==VK_LEFT || w==VK_RIGHT);
       return 0;
     }
@@ -960,6 +973,11 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--m1-capture-hot")) window.captureHot=true;
     else if (!std::wcscmp(argv[i], L"--m1-dual-source")) window.dualSource=true;
     else if (!std::wcscmp(argv[i], L"--m1-empty-preview")) window.m1Preview=true;
+    else if (!std::wcscmp(argv[i], L"--m1-compact-demo")) {
+      window.m1Compact=true;
+      window.m1Preview=true;
+      window.m1GravityEnabled=true;
+    }
     else if (!std::wcscmp(argv[i], L"--m1-manual-gravity")) window.m1GravityEnabled=true;
     else if (!std::wcscmp(argv[i], L"--m1-one-quantum-grant")) window.m1OneQuantumGrant=true;
     else if (!std::wcscmp(argv[i], L"--g13-slot-snapshot")) window.t899SlotSnapshot=true;
@@ -1013,7 +1031,7 @@ int wmain(int argc, wchar_t **argv) {
                    "[--m1-capture-hot] [--m1-source-trace] [--m1-d1 OFF|ON|REPLAY_OFF|REPLAY_ON] "
                    "[--m1-d1-replay-prefix PATH] "
                    "[--m1-dual-source] | --qualify-t849-writes FILE | --g13-candidate FILE "
-                   "[--m1-empty-preview] [--m1-manual-gravity] [--m1-observe REQUEST PREFIX] [--m1-observe-series REQUEST PREFIX] "
+                   "[--m1-empty-preview] [--m1-manual-gravity] [--m1-compact-demo] [--m1-observe REQUEST PREFIX] [--m1-observe-series REQUEST PREFIX] "
                    "[--m1-one-quantum-grant] [--m1-stage-timing] [--m1-observe-kappa-zero] [--m1-inventory-v1] [--m1-angle-witness-v1] "
                    "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] [--g13-f05-rest] "
                    "[--g13-revoke-before | --g13-revoke-after] [--g13-diagnostics full|hot] [--g13-slot-snapshot] [--g13-tail-timing] [--g13-seal-v1]] [--g13-compile-trace]\n";
@@ -1042,6 +1060,7 @@ int wmain(int argc, wchar_t **argv) {
   if ((window.g13TailTiming || window.g13SealV1) && window.t877Mode.empty()) return 2;
   if ((window.m1StageTiming || window.m1InventoryV1) && window.m1QuantumCandidate.empty()) return 2;
   if (window.m1AngleWitness && (window.m1QuantumCandidate.empty() || window.m1InventoryV1)) return 2;
+  if (window.m1Compact && (window.m1InventoryV1 || window.m1AngleWitness || window.observation.packetId)) return 2;
   if (window.observation.series && !window.d1Mode.empty()) return 2;
   if (window.observation.packetId && !window.dualSource) return 2;
   if (window.m1Kappa==0 && (!window.dualSource || !window.observation.frame)) return 2;
@@ -1079,7 +1098,8 @@ int wmain(int argc, wchar_t **argv) {
   if (!RegisterClassW(&type)) return 3;
   HWND hwnd = CreateWindowExW(0, type.lpszClassName,
       window.m1QuantumCandidate.empty() ? L"HelloWorld Vulkan BOOT diagnostic" : L"HelloWorld Vulkan M1",
-      WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 800, 500, nullptr, nullptr, instance, &window);
+      WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, window.m1Compact ? 640 : 800,
+      window.m1Compact ? 470 : 500, nullptr, nullptr, instance, &window);
   if (!hwnd) return 4;
   if ((!window.m1SourceModule.empty() || !window.t833CandidateFile.empty()) &&
       !SetTimer(hwnd,kSourceProbeTimer,10,nullptr)) return 5;
