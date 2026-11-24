@@ -1,0 +1,56 @@
+{
+ "schema": "T920_COMPACT_DEMO_PILE_ROTATE_V1",
+ "pe": {
+  "path": ".codex/local-test/t918-ninja/hello_world_pc.exe",
+  "sha256": "f5aff05df12f837edd81852b742e7a6d41f50d1b408e96c6eda74d569ff8262d"
+ },
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "profiles": {
+  "compact": "t918-shaders (source e9c7c123)",
+  "baseline": "t830-m1-20261123 original three shaders"
+ },
+ "windows": {
+  "compact": "624x431 (box 80col x 64u = 276x221px, scale 3.448)",
+  "baseline": "784x461 (128x256 full container)"
+ },
+ "pile": {
+  "compact": {
+   "sources": 21,
+   "units": 9.73,
+   "ratePerSec": 2.43,
+   "land": 31,
+   "bedEdge": 40,
+   "sandMove": 3219,
+   "archiveRoots": 75
+  },
+  "baseline": {
+   "sources": 29,
+   "units": 3.65,
+   "ratePerSec": 0.91
+  },
+  "visiblePile": {
+   "when": "~25s wall after UP",
+   "col64Px": 4.7,
+   "pixelRows": 4,
+   "pixelArchiveDeltaPx": "<=1"
+  },
+  "gate2to4s": "NOT MET: admission 2.43/2.5 u/s OK; sim clock 0.13-0.16 s/s + particle flight delay -> bottleneck moved from admission to sim clock"
+ },
+ "rotate": {
+  "inputs": 16,
+  "boundary": "-30deg clamped to -15.07deg (BED_SHAPE, 31 limited frames)",
+  "reverse": "accepted angle recovers stepwise on RIGHT keys",
+  "reset": "R key + button both reach 0deg",
+  "redrawFrames": 0,
+  "physicsFrames": "all via m1GravityFrame",
+  "archiveFrame": "t=11.6s angle -15.58 (from -25 request), 3 SAND_MOVE + 68 CONTACT_WAIT",
+  "stockConserved": "8.19u constant through rotation"
+ },
+ "clockGap": "post-UP gaps correctly skip revalidation (hold=0); in-hold resume proven in T912 followup",
+ "canvasFallback": "none",
+ "artifacts": "test/reports/t920/runs/"
+}
