@@ -1,0 +1,91 @@
+{
+ "schema": "T941_GOAL4_GOAL6_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "goal4": {
+  "verdict": "CLOSABLE",
+  "method": "build bed 6s hold + 8s settle, then re-press 3s to create in-flight particles, observe-series 30 frames on falling column (x=312) at y220/260/300",
+  "frame40Pairing": {
+   "root": "paired: m1Observation.root == windowFrame.acceptedRoot == archive root",
+   "bed": {
+    "S": {
+     "63": 74402,
+     "64": 616049,
+     "65": 58512
+    }
+   },
+   "inFlight": {
+    "P": {
+     "64": 3474908
+    },
+    "activeSand": 32
+   },
+   "ledgerIdentity": "S(748,963)+P(3,474,908)=4,223,871 == sandStockQ",
+   "pixels": {
+    "inTransit_y260": 11,
+    "nearBed_y300": 5,
+    "upper_y220": 0
+   },
+   "viewport": {
+    "imageIndex": 0,
+    "physicsCommit": 38,
+    "format": 44
+   },
+   "frames20to30": "bed S=0 with growing P column (2.13M\u21923.67M) \u2014 pure pour phase; frame40 shows settled bed + in-flight column simultaneously"
+  },
+  "archiveCount": 38
+ },
+ "goal6": {
+  "bundle": "T933 integrated same-version 35-dispatch (manifest 4a40a141), default argv",
+  "longWindow": {
+   "wallSeconds": 117.2,
+   "submits": 6574,
+   "accepted": 6571,
+   "acceptRate": 0.9995,
+   "rejects": {
+    "CLOCK_GAP": 2,
+    "WINDOW_REVOKED": 1
+   },
+   "recovery": {
+    "SUSPEND": 2,
+    "RETIRED": 1,
+    "NEW_BASELINE": 1,
+    "HOLD_REVALIDATED": 1
+   },
+   "simSeconds": 54.8,
+   "simOverWall": 0.47,
+   "presents": 2821,
+   "distinctPhysicsCommits": 2821,
+   "quantaPerPresent": 2.33
+  },
+  "stageTiming": {
+   "gpuQuantumSpanMs": {
+    "median": 15.076,
+    "mean": 15.253,
+    "max": 91.092,
+    "n": 1101,
+    "periodNs": 83.333,
+    "bits": 36
+   },
+   "hostRecordStopMs": {
+    "median": 15.6,
+    "mean": 15.5,
+    "n": 1074
+   },
+   "quantumCompletionIntervalMs": {
+    "median": 16.04,
+    "qps": 62.3
+   },
+   "presentIntervalMs": {
+    "median": 39.5,
+    "fps": 25.3,
+    "note": "fenced present cadence, NOT WSI-queue-as-FPS"
+   },
+   "accountingPace": "1/120s per Q (8.33ms) vs GPU compute 15.1ms \u2014 iGPU compute-bound"
+  },
+  "scope": "dev-machine correctness + diagnostics only; dGPU sustained performance is user-environment scope; diagnostic flag --m1-stage-timing on same 35-dispatch shaders per T933 doc, not the user experience variant"
+ }
+}

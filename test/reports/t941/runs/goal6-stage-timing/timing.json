@@ -1,0 +1,23 @@
+{
+ "gpuSpanMs": {
+  "median": 15.076,
+  "mean": 15.253,
+  "max": 91.092,
+  "n": 1101,
+  "note": "36-bit tick x 83.333ns period; quantum compute on GPU"
+ },
+ "hostRecordStopMs": {
+  "median": 15.6,
+  "mean": 15.5,
+  "n": 1074
+ },
+ "quantumCompletionIntervalMs": {
+  "median": 16.04
+ },
+ "presentIntervalMs": {
+  "median": 39.5,
+  "fps": 25.3
+ },
+ "accounting": "1/120s per accepted Q (8.33ms); sim/wall 0.47 in long window",
+ "interpretation": "GPU quantum compute median 15.1ms exceeds 8.33ms accounting pace \u2014 throughput bound by GPU compute + presentation cadence on iGPU; not WSI-queue-as-FPS; dGPU sustained performance remains user-environment scope"
+}

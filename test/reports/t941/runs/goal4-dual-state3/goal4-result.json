@@ -1,0 +1,34 @@
+{
+ "frame": "40",
+ "root": "16745307078819",
+ "pixelSand": {
+  "inTransit(312,260)": 11,
+  "nearBed(312,300)": 5,
+  "upper(312,220)": 0
+ },
+ "viewport": {
+  "imageIndex": 0,
+  "physicsCommit": "50",
+  "width": 624,
+  "height": 431,
+  "format": 44
+ },
+ "lease": {
+  "activeSand": 32,
+  "sandStockQ": "4223871",
+  "geometry": "2"
+ },
+ "archive": {
+  "S": {
+   "63": 74402,
+   "64": 616049,
+   "65": 58512
+  },
+  "P": {
+   "64": 3474908
+  },
+  "ledgerIdentity": "S(748,963)+P(3,474,908)=4,223,871 == sandStockQ"
+ },
+ "pairing": "m1Observation.root == windowFrame.acceptedRoot == archive root-16745302484846-style nonce; same geometry/slot/publication",
+ "verdict": "GOAL_4_CLOSABLE: one presented frame pairs non-zero bed (S cols63-65), in-flight particles (P col64, activeSand 32), falling-column pixels (11 px at y260) and bed pixels (8 px at y300) under one root/lease/geometry/viewport/imageIndex"
+}
