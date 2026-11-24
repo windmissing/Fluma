@@ -143,7 +143,7 @@ accept647::Digest Digest(const char *hex) {
   F(CreateDescriptorPool) F(DestroyDescriptorPool) F(ResetDescriptorPool) F(AllocateDescriptorSets) \
   F(UpdateDescriptorSets) F(CreateCommandPool) F(DestroyCommandPool) F(ResetCommandPool) F(AllocateCommandBuffers) \
   F(BeginCommandBuffer) F(EndCommandBuffer) F(CmdUpdateBuffer) F(CmdCopyBuffer) F(CmdPipelineBarrier) \
-  F(CmdBindPipeline) F(CmdBindDescriptorSets) F(CmdPushConstants) F(CmdDispatch) F(CreateFence) \
+  F(CmdBindPipeline) F(CmdBindDescriptorSets) F(CmdPushConstants) F(CmdDispatch) F(CmdDispatchIndirect) F(CreateFence) \
   F(DestroyFence) F(ResetFences) F(WaitForFences) F(InvalidateMappedMemoryRanges) F(QueueSubmit) F(DeviceWaitIdle)
 struct VulkanOwner::Api {
 #define MEMBER(name) PFN_vk##name name=nullptr;
@@ -838,7 +838,7 @@ VkResult VulkanOwner::MapReady(const Readback &memory,VkDeviceSize bytes,RootRec
 }
 
 bool VulkanOwner::Dispatch(const Pass &p,const Command &c,const StorageSlots &storage,
-                           const Slice &common,VkDescriptorSet set) {
+                           const Slice &common,VkDescriptorSet set,std::optional<uint32_t> indirectMicro) {
   const auto pipeline=std::find_if(pipelines_.begin(),pipelines_.end(),[&](const auto &r) {
     return r.opcode==p.opcode;
   });
@@ -853,8 +853,14 @@ bool VulkanOwner::Dispatch(const Pass &p,const Command &c,const StorageSlots &st
         !WriteDescriptors(api_->UpdateDescriptorSets,context_.device,set,c,storage,common,context_.limits,true))
       return false;
   }
+  if (indirectMicro && (*indirectMicro>=32 || !SliceFits(storage[5],kReplayIndirectOffset+kReplayIndirectBytes)))
+    return false;
+  const auto indirectOffset=indirectMicro ?
+      storage[5].offset+kReplayIndirectOffset+*indirectMicro*sizeof(VkDispatchIndirectCommand) : 0;
   return Record({api_->CmdBindPipeline,api_->CmdBindDescriptorSets,api_->CmdPushConstants,api_->CmdDispatch,
-                 api_->CmdPipelineBarrier},command_,p,c,{pipeline->object,layout_,set,p.opcode,c.storageSlots});
+                 api_->CmdPipelineBarrier,api_->CmdDispatchIndirect},command_,p,c,
+                {pipeline->object,layout_,set,p.opcode,c.storageSlots},
+                indirectMicro ? storage[5].buffer : VK_NULL_HANDLE,indirectOffset);
 }
 
 VulkanOwner::BootReceipt VulkanOwner::Qualify(const StorageSlots &storage,const Slice &common,
@@ -1040,12 +1046,22 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
     if (measure) timing.descriptorNs+=now()-descriptorEnter;
     }
     const auto dispatchEnter=measure ? now() : 0;
-    if (!Dispatch(rows[i],*planned,storage,common,descriptor)) {
+    const bool indirect=kReplayIndirect && !source && i>=kReplayIndirectFirst && i<kReplayIndirectEnd;
+    const auto indirectMicro=indirect ? std::optional<uint32_t>(rows[i].micro) : std::nullopt;
+    if (!Dispatch(rows[i],*planned,storage,common,descriptor,indirectMicro)) {
       result.result=VK_ERROR_INITIALIZATION_FAILED;
       return result;
     }
     if (measure) timing.dispatchRecordNs+=now()-dispatchEnter;
     ++result.dispatches;
+    if (kReplayIndirect && !source && i==kReplayIndirectProducer) {
+      VkMemoryBarrier visible{};
+      visible.sType=VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+      visible.srcAccessMask=VK_ACCESS_SHADER_WRITE_BIT;
+      visible.dstAccessMask=VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+      api_->CmdPipelineBarrier(command_,VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT,
+                               0,1,&visible,0,nullptr,0,nullptr);
+    }
     if (capture) {
 #ifdef PC_SAND_G11_R1
       const bool begin=i==witness->beginOrdinal,apply=i==witness->applyOrdinal;

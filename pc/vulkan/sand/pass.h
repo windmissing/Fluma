@@ -20,6 +20,11 @@ struct GraphicsFile { const char *group, *stage; uint32_t bytes; const char *nam
 #include "sand_passes.h"
 
 namespace grs::pc::sand {
+inline constexpr VkDeviceSize kReplayIndirectOffset=1311360;
+inline constexpr VkDeviceSize kReplayIndirectBytes=388;
+inline constexpr size_t kReplayIndirectProducer=2007, kReplayIndirectFirst=2013, kReplayIndirectEnd=2397;
+static_assert(sizeof(VkDispatchIndirectCommand)==12);
+
 struct Command {
   std::array<uint8_t,4> storageSlots;
   std::array<uint32_t,9> push;
@@ -43,8 +48,10 @@ struct DispatchApi {
   PFN_vkCmdPushConstants push;
   PFN_vkCmdDispatch dispatch;
   PFN_vkCmdPipelineBarrier barrier;
+  PFN_vkCmdDispatchIndirect dispatchIndirect=nullptr;
 };
-bool Record(const DispatchApi &, VkCommandBuffer, const Pass &, const Command &, const BoundPass &);
+bool Record(const DispatchApi &, VkCommandBuffer, const Pass &, const Command &, const BoundPass &,
+            VkBuffer indirect=VK_NULL_HANDLE,VkDeviceSize indirectOffset=0);
 
 struct Slice {
   VkBuffer buffer = VK_NULL_HANDLE;

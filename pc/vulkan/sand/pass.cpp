@@ -53,11 +53,12 @@ std::optional<Command> Plan(Root root,size_t ordinal) {
   return result;
 }
 
-bool Record(const DispatchApi &api,VkCommandBuffer cb,const Pass &pass,const Command &command,const BoundPass &bound) {
+bool Record(const DispatchApi &api,VkCommandBuffer cb,const Pass &pass,const Command &command,const BoundPass &bound,
+            VkBuffer indirect,VkDeviceSize indirectOffset) {
   if (!api.bind || !api.descriptors || !api.push || !api.dispatch || !api.barrier || !cb ||
       !bound.pipeline || !bound.layout || !bound.descriptors || !pass.hasModule ||
       pass.opcode!=bound.opcode || pass.opcode!=command.push[0] ||
-      bound.storageSlots!=command.storageSlots) return false;
+      bound.storageSlots!=command.storageSlots || (indirect && (!api.dispatchIndirect || indirectOffset%4))) return false;
 #ifdef PC_SAND_G11_R1
   constexpr uint32_t pushBytes=36;
 #else
@@ -66,7 +67,8 @@ bool Record(const DispatchApi &api,VkCommandBuffer cb,const Pass &pass,const Com
   api.bind(cb,VK_PIPELINE_BIND_POINT_COMPUTE,bound.pipeline);
   api.descriptors(cb,VK_PIPELINE_BIND_POINT_COMPUTE,bound.layout,0,1,&bound.descriptors,0,nullptr);
   api.push(cb,bound.layout,VK_SHADER_STAGE_COMPUTE_BIT,0,pushBytes,command.push.data());
-  api.dispatch(cb,1,1,1);
+  if (indirect) api.dispatchIndirect(cb,indirect,indirectOffset);
+  else api.dispatch(cb,1,1,1);
   VkMemoryBarrier visible{};
   visible.sType=VK_STRUCTURE_TYPE_MEMORY_BARRIER;
   visible.srcAccessMask=VK_ACCESS_SHADER_WRITE_BIT;

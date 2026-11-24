@@ -188,6 +188,6 @@ class VulkanOwner {
   void ReportSourceGpu(const char *,VkResult,bool accepted);
   void DrainPending();
   bool Dispatch(const Pass &,const Command &,const StorageSlots &,const Slice &common,
-                VkDescriptorSet);
+                VkDescriptorSet,std::optional<uint32_t> indirectMicro={});
 };
 }

@@ -22,6 +22,60 @@ BINDING = re.compile(r"layout\(std430,\s*binding\s*=\s*([0-3])\)")
 PUSH = ("uOp", "uRole", "uJslot", "uMicro", "uPass")
 VIS_PUSH = ("uVisPhase", "uVisOldBank", "uVisNewBank", "uVisOrdinal")
 VIS_ROOT = ROOT / "entry/src/main/cpp/gpu_resident/g11vis"
+REPLAY_INDIRECT = "t946-replay-indirect"
+REPLAY_WORD = 1311360 // 4
+REPLAY_BEGIN, REPLAY_FIRST, REPLAY_JOIN = 2007, 2013, 2397
+
+
+def replay_indirect(jobs, rows):
+    if (len(rows) != 2404 or rows[REPLAY_BEGIN][:4] != [39, 0, 0, -1] or
+            rows[REPLAY_JOIN][:4] != [33, 4, 32, -1]):
+        raise ValueError("Replay extent moved")
+    for i, row in enumerate(rows[REPLAY_FIRST:REPLAY_JOIN]):
+        if row[:4] != [21 + i % 12, 4, 32, i // 12]:
+            raise ValueError("Replay microstep plan changed")
+    # Exact binding and ordinal: other scopes still execute their original
+    # op 33, and an all-rejected root keeps the full replay schedule.
+    ordinal = "if(lane==0u){if(g9Ctl(16u)!=uPass)"
+    for op, source, name in jobs:
+        if op == 39:
+            counter = "g9Set(16u,g9Ctl(16u)+1u);}"
+            code = f"""
+ if(uRootKind==2u&&uRole==0u&&uPass=={REPLAY_BEGIN}u){{
+  uint j=g9Ctl(11u);
+  bool valid=j<=32u&&(j==0u||(j&(j-1u))==0u);
+  if(!valid)g9Fault(25u,0u,uPass);
+  uint groups=valid&&j!=0u?j:32u;
+  for(uint m=0u;m<32u;++m){{
+   uint a={REPLAY_WORD}u+3u*m;
+   W[a]=uint(m<groups);W[a+1u]=1u;W[a+2u]=1u;
+  }}
+  W[{REPLAY_WORD+96}u]=j;
+ }}
+"""
+            if source.count(counter.encode()) != 1:
+                raise ValueError("Replay-begin counter anchor")
+            source = source.replace(counter.encode(), ("g9Set(16u,g9Ctl(16u)+1u);" + code + "}").encode())
+        elif op == 33:
+            code = f"""
+ if(uRootKind==2u&&uRole==4u&&uPass=={REPLAY_JOIN}u){{
+  uint j=g9Ctl(11u);
+  bool valid=j<=32u&&(j==0u||(j&(j-1u))==0u);
+  uint groups=valid&&j!=0u?j:32u;
+  uint expected={REPLAY_FIRST}u+12u*groups;
+  bool table=valid&&W[{REPLAY_WORD+96}u]==j;
+  for(uint m=0u;m<32u;++m){{
+   uint a={REPLAY_WORD}u+3u*m;
+   table=table&&W[a]==uint(m<groups)&&W[a+1u]==1u&&W[a+2u]==1u;
+  }}
+  if(table&&g9Ctl(16u)==expected)g9Set(16u,uPass);
+  else g9Fault(25u,0u,uPass);
+ }}
+ if(g9Ctl(16u)!=uPass)"""
+            if source.count(ordinal.encode()) != 1:
+                raise ValueError("Replay-join counter anchor")
+            source = source.replace(ordinal.encode(), ("if(lane==0u){" + code).encode())
+        yield op, source, name
 
 
 def sha(raw):
@@ -184,6 +238,9 @@ def build(family, compiler, out, role_variant="baseline"):
     raw = parent.read_bytes().replace(b"\r\n", b"\n")
     source = raw.decode()
     composite = family == "r1"
+    indirect = role_variant == REPLAY_INDIRECT
+    if indirect and composite:
+        raise ValueError("T946 replay indirect requires DM2")
     g15 = role_variant in ("g15-dm2", "g15-dm2-op23")
     if g15:
         if composite:
@@ -200,8 +257,10 @@ def build(family, compiler, out, role_variant="baseline"):
     elif role_variant != "baseline":
         jobs = [(op, variant(name, src, family), name) for op, src, name in jobs]
     aliases = {}
-    if role_variant == "t913-split-v2":
+    if role_variant == "t913-split-v2" or indirect:
         jobs, aliases = split_source(family,jobs,passes)
+    if indirect:
+        jobs = list(replay_indirect(jobs, passes["Quantum"]))
     with ThreadPoolExecutor(max_workers=4) as pool:
         roles = list(pool.map(lambda job: compile_role(compiler,out,job[0],job[1],common,push,job[2],
                                                       role_variant=="g15-dm2-op23"), jobs))
@@ -221,6 +280,9 @@ def build(family, compiler, out, role_variant="baseline"):
         data.update(schema="PC_SAND_VULKAN_ROLES_G15_DM2",angleTableSHA=sha(angles),extraWorkBytes=len(angles)+8192)
     if aliases:
         data.update(schema="PC_SAND_VULKAN_ROLES_T913_SPLIT_V2", sourceBindingAliases=aliases)
+    if indirect:
+        data.update(replayIndirect=dict(workOffset=REPLAY_WORD*4, workBytes=388,
+                                       producer=REPLAY_BEGIN, first=REPLAY_FIRST, end=REPLAY_JOIN))
     data["roleSetSHA"] = sha(json.dumps(data, sort_keys=True, separators=(",", ":")).encode())
     manifest = (json.dumps(data, indent=2) + "\n").encode()
     if role_variant != "baseline" and not all(data["complete"].values()):
@@ -250,6 +312,7 @@ def build(family, compiler, out, role_variant="baseline"):
         header.write(f'inline constexpr unsigned kCommonBytes={data["commonBytes"]};\n')
         header.write(f'inline constexpr bool kSplitSourceSchedule={str(bool(aliases)).lower()};\n')
         header.write(f'inline constexpr bool kG15Dm2={str(g15).lower()};\n')
+        header.write(f'inline constexpr bool kReplayIndirect={str(indirect).lower()};\n')
         header.write(f'inline constexpr unsigned kG15AngleBytes={len(angles) if g15 else 0};\n')
         header.write(f'inline constexpr unsigned kG15WorkBytes={len(angles)+8192 if g15 else 0};\n')
         header.write(f'inline constexpr char kG15AngleSHA[]="{sha(angles) if g15 else ""}";\n')
@@ -266,7 +329,7 @@ if __name__ == "__main__":
     parser.add_argument("--compiler", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--role-variant", default="baseline",
-                        choices=("baseline","t913-v1","t913-split-v2","g15-dm2","g15-dm2-op23"))
+                        choices=("baseline","t913-v1","t913-split-v2","g15-dm2","g15-dm2-op23",REPLAY_INDIRECT))
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     build(args.family, args.compiler.resolve(), args.out.resolve(), args.role_variant)

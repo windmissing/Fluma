@@ -362,6 +362,16 @@ private:
   } m1AcceptedFence;
   std::array<uint64_t,5> m1LastReplay{};
   struct M1PacketSample { uint64_t nonce=0; uint32_t mass=0,xBits=0,yBits=0; } m1PacketSample;
+  struct M1BirthTarget {
+    uint64_t nonce=0,commit=0,origin=0;
+    uint32_t id=0,generation=0,source=0;
+    bool active=false;
+    PointerSample pointer{};
+  } m1BirthTarget;
+  struct M1SandSample {
+    uint64_t nonce=0;
+    std::array<uint32_t,16> publication{};
+  } m1SandSample;
   VkQueryPool m1TimingPool=VK_NULL_HANDLE;
   VkFence m1TimedFence=VK_NULL_HANDLE;
   uint64_t m1TimedNonce=0,m1TimingMask=0;

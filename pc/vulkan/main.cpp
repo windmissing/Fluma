@@ -1141,9 +1141,19 @@ int wmain(int argc, wchar_t **argv) {
     }
     else if (!std::wcscmp(argv[i],L"--m1-angle-witness-v1")) window.m1AngleWitness=true;
     else if (!std::wcscmp(argv[i], L"--m1-observe-kappa-zero")) window.m1Kappa=0;
+    else if (!std::wcscmp(argv[i],L"--m1-observe-birth") && i+2<argc) {
+      if (window.observation.Enabled()) return 2;
+      const std::wstring frames=argv[++i];
+      if (frames.empty() || frames.size()>2 || frames.find_first_not_of(L"0123456789")!=std::wstring::npos)
+        return 2;
+      window.observation.birthFrames=uint32_t(std::stoul(frames));
+      window.observation.archivePrefix=argv[++i];
+      if (!window.observation.birthFrames || window.observation.birthFrames>12 ||
+          window.observation.archivePrefix.empty()) return 2;
+    }
     else if ((!std::wcscmp(argv[i], L"--m1-observe") || !std::wcscmp(argv[i], L"--m1-observe-series") ||
               !std::wcscmp(argv[i], L"--m1-observe-packet")) && i+2<argc) {
-      if (window.observation.frame) return 2;
+      if (window.observation.Enabled()) return 2;
       const bool packet=!std::wcscmp(argv[i], L"--m1-observe-packet");
       const bool series=packet || !std::wcscmp(argv[i],L"--m1-observe-series");
       std::ifstream request{std::filesystem::path(argv[++i])};
@@ -1184,7 +1194,7 @@ int wmain(int argc, wchar_t **argv) {
                    "[--m1-capture-hot] [--m1-source-trace] [--m1-d1 OFF|ON|REPLAY_OFF|REPLAY_ON] "
                    "[--m1-d1-replay-prefix PATH] "
                    "[--m1-dual-source] | --qualify-t849-writes FILE | --g13-candidate FILE "
-                   "[--m1-empty-preview] [--m1-manual-gravity] [--m1-compact-demo] [--m1-observe REQUEST PREFIX] [--m1-observe-series REQUEST PREFIX] "
+                   "[--m1-empty-preview] [--m1-manual-gravity] [--m1-compact-demo] [--m1-observe REQUEST PREFIX] [--m1-observe-series REQUEST PREFIX] [--m1-observe-birth FRAMES PREFIX] "
                    "[--m1-one-quantum-grant] [--m1-stage-timing] [--m1-observe-kappa-zero] [--m1-inventory-v1] [--m1-angle-witness-v1] "
                    "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] [--g13-f05-rest] "
                    "[--g13-revoke-before | --g13-revoke-after] [--g13-diagnostics full|hot] [--g13-slot-snapshot] [--g13-tail-timing] [--g13-seal-v1]] [--g13-compile-trace]\n";
@@ -1218,10 +1228,13 @@ int wmain(int argc, wchar_t **argv) {
   if (window.m1Compact && (window.m1AngleWitness || (window.observation.packetId && !window.m1Integrated))) return 2;
   if (window.m1Integrated && (!window.m1Compact || window.m1InventoryV1 || !window.d1Mode.empty())) return 2;
   if (window.m1ParallelInventory && (!window.m1Integrated || window.m1QuantumCandidate.empty())) return 2;
+  if (window.observation.birthFrames && (!window.m1Integrated || !window.m1Preview ||
+      window.m1QuantumCandidate.empty() || !window.d1Mode.empty() || window.captureHot ||
+      !window.m1ColdFile.empty() || !window.d1ReplayPrefix.empty())) return 2;
   if (!window.m1PrivateReference.empty() &&
       (window.m1QuantumCandidate.empty() || window.m1Preview || window.dualSource ||
        !window.m1ColdFile.empty() || !window.d1Mode.empty() || window.captureHot ||
-       window.observation.frame || window.m1InventoryV1 || window.m1AngleWitness ||
+       window.observation.Enabled() || window.m1InventoryV1 || window.m1AngleWitness ||
        window.m1GravityEnabled || window.once || window.m1PrivateOutput.empty())) return 2;
   if (window.observation.series && !window.d1Mode.empty()) return 2;
   if (window.observation.packetId && !window.dualSource) return 2;

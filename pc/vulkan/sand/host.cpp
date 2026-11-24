@@ -454,6 +454,16 @@ void SealRawEnvelope(const std::filesystem::path &dest,VulkanOwner &owner,const 
     // This is the prearranged AUTH/REPLAY tail, not proof of zero side effects.
     if (j && j<=32 && !(j&(j-1))) manifest << 2*12*(32-j);
     else manifest << "null";
+    if (kReplayIndirect) {
+      const auto *args=payload[5]+kReplayIndirectOffset/4;
+      const auto active=j ? j : 32;
+      bool valid=j<=32 && (!j || !(j&(j-1))) && args[96]==j;
+      for (unsigned m=0;m<32;++m)
+        valid=valid && args[m*3]==unsigned(m<active) && args[m*3+1]==1 && args[m*3+2]==1;
+      manifest << ",\"replayIndirectArgsValid\":" << (valid ? "true" : "false")
+               << ",\"replayZeroWorkgroups\":" << (valid ? std::to_string(12*(32-active)) : "null")
+               << ",\"encodedDispatches\":" << raw.dispatches << ",\"extraIndirectBarriers\":1";
+    }
   }
 #endif
   manifest << ",\"permit\":{";
@@ -599,7 +609,8 @@ int Run(const Options &opt) {
   const auto witness=!opt.witness.empty() ?
       gpu.Allocate(kR1WitnessBytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true).Readback() : VulkanOwner::Readback{};
 #else
-  const auto totalWork=l.workBytes+kG15WorkBytes;
+  RequireHost(!kReplayIndirect || l.workBytes==kReplayIndirectOffset,"REPLAY_INDIRECT_LAYOUT");
+  const auto totalWork=l.workBytes+kG15WorkBytes+(kReplayIndirect ? kReplayIndirectBytes : 0);
   const auto boot=gpu.Allocate(8,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true).Readback();
   const auto archive=!opt.archive.empty() ?
       gpu.Allocate(opt.full ? kDmColdFullBytes : kDmColdRootBytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true).Readback() :
@@ -608,7 +619,8 @@ int Run(const Options &opt) {
   if (opt.full) for (auto &r:discovery) r=gpu.Allocate(l.arenaBytes,storageUsage).slice;
 #endif
   for (size_t i=0;i<storage.size();++i)
-    storage[i]=gpu.Allocate(i<5 ? l.stateBytes : i==5 ? totalWork : l.arenaBytes,storageUsage).slice;
+    storage[i]=gpu.Allocate(i<5 ? l.stateBytes : i==5 ? totalWork : l.arenaBytes,
+                           storageUsage|(kReplayIndirect && i==5 ? VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT : 0)).slice;
   const auto envelopeReadback=opt.rawEnvelope.empty() ? VulkanOwner::Readback{} :
       gpu.Allocate(5*l.stateBytes+totalWork+2*l.arenaBytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true).Readback();
 #ifdef PC_SAND_G15_SCENE

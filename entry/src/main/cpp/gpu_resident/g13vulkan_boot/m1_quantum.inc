@@ -112,7 +112,7 @@ void Boot::PrepareM1Quantum(const Candidate &candidate) {
   const auto stride = (block+align-1)/align*align;
   const auto pubBytes = buffers[kM1Pub].bytes;
   const auto copyOut = attempt.m1ColdFile.empty() && attempt.m1ReplayPrefix.empty() &&
-      attempt.m1PrivateReference.empty() && !attempt.m1Observation.frame
+      attempt.m1PrivateReference.empty() && !attempt.m1Observation.Enabled()
       ? 0 : VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
   Allocate(kM1QScratch, stateWords*4, storage);
   Allocate(kM1QWork, (angleWitnessWord+(attempt.m1AngleWitness ? angleWitnessWords : 0))*4,
@@ -124,6 +124,8 @@ void Boot::PrepareM1Quantum(const Candidate &candidate) {
   Allocate(kM1QPubAlt, pubBytes, storage | copyOut);
   if (attempt.m1Observation.packetId)
     Allocate(kM1PacketStaging,packetPublicationWords*4,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
+  else if (attempt.m1Observation.birthFrames)
+    Allocate(kM1PacketStaging,16*k*4,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
 
   const uint32_t count = uint32_t(passes.size());
   const VkDescriptorPoolSize sizes[] = {{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,count*8},
@@ -332,6 +334,9 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   if (attempt.m1Observation.packetId) {
     const VkBufferCopy waterPublication{16*k*4,0,packetPublicationWords*4};
     vk.CmdCopyBuffer(cmd,buffers[pubs[r.publicationSlot]].handle,buffers[kM1PacketStaging].handle,1,&waterPublication);
+  } else if (m1BirthTarget.active) {
+    const VkBufferCopy sandPublication{0,0,16*k*4};
+    vk.CmdCopyBuffer(cmd,buffers[pubs[r.publicationSlot]].handle,buffers[kM1PacketStaging].handle,1,&sandPublication);
   }
   Barrier(kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT,VK_PIPELINE_STAGE_HOST_BIT,VK_ACCESS_HOST_READ_BIT);
   mark(uint32_t(std::size(timingPoints)-1));
@@ -444,6 +449,27 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
           }
       }
       vk.UnmapMemory(device,packet.memory);
+    }
+  } else if (m1BirthTarget.active) {
+    m1SandSample={};
+    const auto &staging=buffers[kM1PacketStaging];
+    void *mapped=nullptr;
+    if (vk.MapMemory(device,staging.memory,0,VK_WHOLE_SIZE,0,&mapped)==VK_SUCCESS) {
+      const VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,nullptr,staging.memory,0,VK_WHOLE_SIZE};
+      if ((staging.flags&VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) ||
+          vk.InvalidateMappedMemoryRanges(device,1,&range)==VK_SUCCESS) {
+        const auto *words=static_cast<const uint32_t *>(mapped);
+        for (uint32_t i=0;i<std::min(k,tail[88]);++i) {
+          if (words[i]!=m1BirthTarget.id || words[k+i]!=m1BirthTarget.generation ||
+              words[2*k+i]!=m1BirthTarget.source || !words[3*k+i] ||
+              (uint64_t(words[15*k+i])<<32|words[14*k+i])!=m1BirthTarget.origin) continue;
+          m1SandSample.nonce=nonce;
+          for (size_t field=0;field<m1SandSample.publication.size();++field)
+            m1SandSample.publication[field]=words[field*k+i];
+          break;
+        }
+      }
+      vk.UnmapMemory(device,staging.memory);
     }
   }
   if (attempt.m1AngleWitness) {
@@ -644,6 +670,23 @@ std::future<M1ColdResult> Boot::CaptureM1Quantum(m1::SourceRootOwner &root, cons
           "M1_COLD_RELEASE");
   pin.held=false;
   Require(std::memcmp(raw.data(),stored.data(),1024)==0,"M1_COLD_COMPLETION_CHANGED");
+  if (attempt.m1Observation.birthFrames && !observationPrefix.empty() && !sourceRoot) {
+    namespace e=m1::event64;
+    uint32_t motion=0,contact=0;
+    for (size_t i=stored[52];i<eventCount;++i) {
+      std::array<uint32_t,64> row{};
+      std::memcpy(row.data(),raw.data()+sizes[0]+sizes[1]+i*sizeof(row),sizeof(row));
+      if (row[e::rootKind]!=2 || g13::U64(row.data()+e::rootNonceLo)!=nonce ||
+          row[e::id]!=m1BirthTarget.id || row[e::slotGeneration]!=m1BirthTarget.generation ||
+          row[e::sourceId]!=m1BirthTarget.source || g13::U64(row.data()+e::originLo)!=m1BirthTarget.origin) continue;
+      const auto kind=row[e::kind];
+      if (kind==3 && !row[e::mediumBefore] && !row[e::mediumAfter]) ++motion;
+      if (kind==6 || kind==7 || kind==8 || kind==13) ++contact;
+    }
+    fields << ",\"m1BirthMotion\":{\"root\":\"" << nonce << "\",\"sourceNonce\":\"" << m1BirthTarget.nonce
+           << "\",\"state\":" << Quote(contact ? "MOTION_CONTACT" : motion ? "DRY_MOVE_ROWS" : "NO_MATCHING_ROOT")
+           << ",\"dryMoveRows\":" << motion << ",\"contactRows\":" << contact << '}';
+  }
   if (!rootOnly) {
     std::memcpy(raw.data()+gpuBytes,sourceCompletion.data(),sizes[6]);
     std::memcpy(raw.data()+gpuBytes+sizes[6],sourceCommand.data(),sizes[7]);

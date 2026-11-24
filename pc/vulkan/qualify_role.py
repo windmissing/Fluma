@@ -185,7 +185,7 @@ if __name__ == "__main__":
         if not private_writes and not re.fullmatch(
                 r"OP(?:_[0-9]+(?:_[0-9]+)*|7_(?:FIELD|DRIVE|MOTION|MMS_FORCE|REDUCE)_ONLY|"
                 r"17_(?:LEDGER_ONLY|DRIVE_CONTEXT|MOTION_CONTEXT|MMS_CONTEXT|PRIVATE_MOTION|PRIVATE_MMS|PRIVATE_LEDGER)|"
-                r"6|8|12_14|15|16|17)", role):
+                r"6|8|12_14|15|16|17|48_VISCOSITY|49_PRESSURE|48_REMAINDER)", role):
             parser.error("invalid role")
         receipt = supervise(args.exe, role, args.out, args.disable_optimization, args.stack_dumps, private_writes)
         print(role, receipt["reason"], receipt["exitCode"], receipt["ownerRetired"], flush=True)

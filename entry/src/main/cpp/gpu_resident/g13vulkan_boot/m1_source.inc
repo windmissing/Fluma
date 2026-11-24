@@ -847,6 +847,14 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     Barrier(kCompute, VK_ACCESS_SHADER_WRITE_BIT, kTransfer, VK_ACCESS_TRANSFER_READ_BIT);
     const VkBufferCopy copy{0,0,1024};
     vk.CmdCopyBuffer(command, buffers[kM1Tail].handle, buffers[kStaging].handle, 1, &copy);
+    constexpr size_t birthProbeRows=4;
+    std::array<std::array<uint32_t,64>,birthProbeRows> birthEvents{};
+    const bool probeBirth=attempt.m1Observation.birthFrames && !m1BirthTarget.nonce &&
+                         offer.seq && inputSample.hold && !inputSample.material;
+    if (probeBirth) {
+      const VkBufferCopy sample{0,0,sizeof(birthEvents)};
+      vk.CmdCopyBuffer(command,buffers[kM1Events].handle,buffers[kM1PacketStaging].handle,1,&sample);
+    }
     Barrier(kTransfer, VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_HOST_BIT, VK_ACCESS_HOST_READ_BIT);
     markSource(3);
     Check(vk.EndCommandBuffer(command), "vkEndCommandBuffer.M1_SOURCE");
@@ -944,6 +952,35 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     if (!m1Reject && result!=ControlCode::OK) m1Reject="TAIL_REJECTED";
     if (m1Reject) return reject();
     log.stopQpc=pc::QpcTicks();
+    if (probeBirth && accepted.sourceSuccess && tail[66]) {
+      const auto &staging=buffers[kM1PacketStaging];
+      void *mapped=nullptr;
+      if (vk.MapMemory(device,staging.memory,0,VK_WHOLE_SIZE,0,&mapped)==VK_SUCCESS) {
+        const VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,nullptr,staging.memory,0,VK_WHOLE_SIZE};
+        if ((staging.flags&VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) ||
+            vk.InvalidateMappedMemoryRanges(device,1,&range)==VK_SUCCESS)
+          std::memcpy(birthEvents.data(),mapped,sizeof(birthEvents));
+        vk.UnmapMemory(device,staging.memory);
+      }
+      namespace e=m1::event64;
+      const auto nonce=wide(accepted.nonce);
+      for (size_t i=0;i<std::min<size_t>(birthProbeRows,tail[53]);++i) {
+        const auto &row=birthEvents[i];
+        if (row[e::magic]!=1163088455u || row[e::revision]!=m1::revision ||
+            g13::U64(row.data()+e::rootNonceLo)!=nonce || row[e::rootKind]!=1 ||
+            row[e::stage]!=1 || row[e::kind]!=1 || !row[e::id] || !row[e::slotGeneration] ||
+            !row[e::sourceId] || !row[e::massAfter] || !g13::U64(row.data()+e::originLo)) continue;
+        m1BirthTarget={nonce,g13::U64(row.data()+e::sourceCommitLo),g13::U64(row.data()+e::originLo),
+                       row[e::id],row[e::slotGeneration],row[e::sourceId],true,inputSample};
+        fields << ",\"m1BirthSource\":{\"nonce\":\"" << nonce << "\",\"sourceCommit\":\"" << m1BirthTarget.commit
+               << "\",\"pointerSequence\":\"" << inputSample.sequence << "\",\"hold\":\"" << inputSample.hold
+               << "\",\"sampleView\":\"" << inputSample.frameSerial << "\",\"sampleTransformRevision\":\""
+               << inputSample.transformRevision << "\",\"pointer\":[" << inputSample.clientX << ',' << inputSample.clientY
+               << "],\"birthEvent\":" << Words(row) << ",\"sourceCommand\":" << Words(cmd) << '}';
+        publish(Receipt("M1_BIRTH_OBSERVATION_SOURCE",""));
+        break;
+      }
+    }
     M1RootTrace("Source",wide(request.nonce),clock,permit,accepted,log);
     ReportM1Timing(VK_SUCCESS,true);
     fields << ",\"m1Completion\":" << Words(tail) << ",\"m1OwnerCode\":" << int(result);
@@ -1261,7 +1298,10 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   int32_t lastDrawnBoxAngle=0;
   bool havePacketRegions=false;
   std::array<pc::M1Rect,3> packetRegions{};
-  const auto roiWanted=[&] { return attempt.m1Observation.Includes(businessPresents+1); };
+  uint32_t birthFramesCaptured=0;
+  const auto roiWanted=[&] {
+    return attempt.m1Observation.birthFrames ? m1BirthTarget.active : attempt.m1Observation.Includes(businessPresents+1);
+  };
   pc::PresentObservations wsiObservation{preview};
   wsiObservation.timing=attempt.m1Trace || attempt.m1OneQuantumGrant || attempt.m1StageTiming;
   if (attempt.m1StageTiming) wsiObservation.timestampBits=candidate.timestampBits;
@@ -1292,13 +1332,30 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     const auto requested=attempt.m1Gravity();
     return requested.geometry==attempt.geometry ? requested.angle : 0;
   };
-  if (attempt.m1Observation.frame) {
+  if (attempt.m1Observation.Enabled()) {
     const auto align=std::max<VkDeviceSize>(4,candidate.properties.limits.optimalBufferCopyOffsetAlignment);
     wsiObservation.roiStride=(1024+align-1)/align*align;
     Allocate(kM1PixelStaging,4*wsiObservation.roiStride,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
     wsiObservation.requestedRoi=[&](uint32_t width,uint32_t height,const pc::CompactView &view)
         -> const std::array<pc::M1Rect,3>* {
       if (!roiWanted() || !leased || compactViewOnly) return nullptr;
+      if (attempt.m1Observation.birthFrames) {
+        if (m1SandSample.nonce!=wide(lease.nonce) || !view.mapped || width<16 || height<16) return nullptr;
+        float x=0,y=0;
+        std::memcpy(&x,&m1SandSample.publication[8],sizeof(x));
+        std::memcpy(&y,&m1SandSample.publication[9],sizeof(y));
+        const auto point=pc::ProjectCompactPoint(view,x,y);
+        if (!std::isfinite(point[0]) || !std::isfinite(point[1]) ||
+            point[0]<0. || point[0]>=width || point[1]<0. || point[1]>=height) return nullptr;
+        const auto &p=m1BirthTarget.pointer;
+        const auto rect=[width,height](double x,double y) {
+          return pc::M1Rect{uint32_t(std::clamp(x-8.,0.,double(width-16))),
+                            uint32_t(std::clamp(y-8.,0.,double(height-16))),16,16};
+        };
+        packetRegions={rect(p.clientX+.5,p.clientY+.5),rect(p.clientX+.5,p.clientY+12.5),
+                       rect(point[0],point[1])};
+        return &packetRegions;
+      }
       if (!attempt.m1Observation.packetId) return &attempt.m1Observation.regions;
       if (m1PacketSample.nonce!=wide(lease.nonce) || width<24 || height<8) return nullptr;
       if (!m1PacketSample.mass) return havePacketRegions ? &packetRegions : nullptr;
@@ -1326,9 +1383,11 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     };
     fields << ",\"m1ObservationRequestedFrame\":\"" << attempt.m1Observation.frame << "\"";
     fields << ",\"m1ObservationSeries\":" << attempt.m1Observation.series << ",\"m1Kappa\":" << attempt.m1Kappa;
+    if (attempt.m1Observation.birthFrames)
+      fields << ",\"m1BirthObservationFrames\":" << attempt.m1Observation.birthFrames;
     publish(Receipt("M1_OBSERVATION_ARMED",""));
   }
-  const auto &pixels=attempt.m1Observation.frame ? buffers[kM1PixelStaging] : staging;
+  const auto &pixels=attempt.m1Observation.Enabled() ? buffers[kM1PixelStaging] : staging;
   bool compactInputOpen=false;
   int32_t lastEmptyBoxAngle=INT32_MIN;
   // Observation/capture modes retain one accepted quantum per present so their
@@ -1462,7 +1521,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
         }
         fields << ",\"m1ObservedColdSHA\":" << Quote(written.sha)
                << ",\"m1ObservedColdBytes\":" << written.bytes;
-        roiTerminal=!attempt.m1Observation.series || !attempt.m1Observation.Includes(businessPresents+1);
+        roiTerminal=attempt.m1Observation.birthFrames ? !m1BirthTarget.active :
+            !attempt.m1Observation.series || !attempt.m1Observation.Includes(businessPresents+1);
         publish(Receipt(written.bytes ? "M1_OBSERVATION_COMPLETE" : "M1_OBSERVATION_NOT_CAPTURED",""));
       }
       fields.str(setupFields);
@@ -1626,9 +1686,27 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
           return;
         }
         reportCold();
-        if (roiWanted() && (visible.roi.state || attempt.m1Observation.packetId)) {
+        if (roiWanted() && (visible.roi.state || attempt.m1Observation.packetId || attempt.m1Observation.birthFrames)) {
           const auto &r=visible.roi;
-          fields << ",\"m1Observation\":{\"state\":" << Quote(r.state ? r.state : "PACKET_ROI_UNAVAILABLE")
+          const bool birth=attempt.m1Observation.birthFrames!=0;
+          const bool matched=birth && m1SandSample.nonce==wide(lease.nonce);
+          const char *observationState=r.state ? r.state : "PACKET_ROI_UNAVAILABLE";
+          uint32_t sandPixels=0;
+          if (birth) {
+            observationState=matched ? "NO_BIRTH_PIXELS" : "NO_MATCHING_ROOT";
+            if (matched && r.size) {
+              const bool bgr=visible.format==VK_FORMAT_B8G8R8A8_UNORM || visible.format==VK_FORMAT_B8G8R8A8_SRGB;
+              const auto &first=r.regions[0], &below=r.regions[1], &particle=r.regions[2];
+              const auto begin=4u*(first.width*first.height+below.width*below.height);
+              const auto end=begin+4u*particle.width*particle.height;
+              if (end<=r.size)
+                for (size_t i=begin;i<end;i+=4)
+                  if (r.bytes[i]==(bgr?89:184) && r.bytes[i+1]==145 && r.bytes[i+2]==(bgr?184:89))
+                    ++sandPixels;
+              if (sandPixels) observationState="SAND_COLOR_PIXELS";
+            }
+          }
+          fields << ",\"m1Observation\":{\"state\":" << Quote(observationState)
                  << ",\"frame\":\"" << businessPresents+1 << '"'
                  << ",\"root\":\"" << wide(lease.nonce) << "\",\"slot\":" << accepted.publication
                  << ",\"generation\":\"" << wide(lease.generation) << "\",\"geometry\":\"" << attempt.geometry
@@ -1651,8 +1729,17 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
                    << ",\"packetSampleRoot\":\"" << m1PacketSample.nonce
                    << "\",\"packetMass\":" << m1PacketSample.mass
                    << ",\"packetXBits\":" << m1PacketSample.xBits << ",\"packetYBits\":" << m1PacketSample.yBits;
+          if (birth) {
+            ++birthFramesCaptured;
+            fields << ",\"birthOrdinal\":" << birthFramesCaptured << ",\"sourceNonce\":\"" << m1BirthTarget.nonce
+                   << "\",\"sourceCommit\":\"" << m1BirthTarget.commit << "\",\"sandPixels\":" << sandPixels
+                   << ",\"mappedSand\":" << (matched ? Words(m1SandSample.publication) : "null")
+                   << ",\"angle256\":" << visible.compact.angle
+                   << ",\"pacedPresent\":" << (pacedPresent ? "true" : "false");
+            if (birthFramesCaptured==attempt.m1Observation.birthFrames) m1BirthTarget.active=false;
+          }
           fields << '}';
-          roiPending=r.size!=0 || attempt.m1Observation.series;
+          roiPending=r.size!=0 || attempt.m1Observation.series || birth;
           roiTerminal=!roiPending;
         }
         ++businessPresents;
@@ -1725,8 +1812,9 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   fields << ",\"m1PublicationReleased\":" << (usable ? "true" : "false") << ",\"m1WsiResult\":" << int(frame.error)
          << ",\"m1WsiRetireVkResult\":" << int(frame.retire) << ",\"m1WsiStage\":" << Quote(frame.stage);
   if (attempt.m1D1) reportDrain(attempt.d1Intake->Await(),&frame);
-  if (attempt.m1Observation.frame && !roiTerminal)
-    publish(Receipt("M1_OBSERVATION_NOT_CAPTURED",roiPending ? "COLD_COPY_NOT_RETIRED" : "FRAME_NOT_REACHED"));
+  if (attempt.m1Observation.Enabled() && !roiTerminal)
+    publish(Receipt("M1_OBSERVATION_NOT_CAPTURED",roiPending ? "COLD_COPY_NOT_RETIRED" :
+        attempt.m1Observation.birthFrames ? "NO_MATCHING_ROOT" : "FRAME_NOT_REACHED"));
   if (preview && frame.error==VK_SUCCESS && !nextRootFailed)
     return Receipt("M1_EMPTY_PRESENT_RETIRED","");
   if (nextRootFailed) return Receipt("FAILED","M1_QUANTUM_CONTINUATION_FAILED");
