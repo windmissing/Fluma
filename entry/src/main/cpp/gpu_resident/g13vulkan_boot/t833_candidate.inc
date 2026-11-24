@@ -27,7 +27,8 @@ enum T877Point {
   FinalAuditBegin, FinalAuditEnd, TimePrepareEnd, PackViewEnd, SealBegin, SealEnd, TransferReady, PackAuditEnd,
   ActualJ1ViscosityBegin, ActualJ1ViscosityEnd, ActualJ1PressureBegin, ActualJ1PressureEnd,
   ReplayJ1ViscosityBegin, ReplayJ1ViscosityEnd, ReplayJ1PressureBegin, ReplayJ1PressureEnd,
-  PointCount
+  SealPrepareEnd, SealShaEnd, CycleBegin, CycleEnd=CycleBegin+16,
+  TrialEdges=CycleEnd+1, PointCount=TrialEdges+8
 };
 constexpr const char *kT877PointNames[]{
     "UPLOAD_DONE","ACTUAL_BEGIN","ACTUAL_END","REPLAY_BEGIN","REPLAY_END",
@@ -39,8 +40,16 @@ constexpr const char *kT877PointNames[]{
     "ACTUAL_J1_MICRO0_VISC_BLOCK0_BEGIN","ACTUAL_J1_MICRO0_VISC_BLOCK0_END",
     "ACTUAL_J1_MICRO0_PRESSURE_CYCLE0_BEGIN","ACTUAL_J1_MICRO0_PRESSURE_CYCLE0_END",
     "REPLAY_J1_MICRO0_VISC_BLOCK0_BEGIN","REPLAY_J1_MICRO0_VISC_BLOCK0_END",
-    "REPLAY_J1_MICRO0_PRESSURE_CYCLE0_BEGIN","REPLAY_J1_MICRO0_PRESSURE_CYCLE0_END"};
-static_assert(std::size(kT877PointNames)==PointCount);
+    "REPLAY_J1_MICRO0_PRESSURE_CYCLE0_BEGIN","REPLAY_J1_MICRO0_PRESSURE_CYCLE0_END",
+    "SEAL_PREPARE_END","SEAL_SHA_END"};
+static_assert(std::size(kT877PointNames)==CycleBegin && PointCount<=64);
+std::string T877PointName(size_t point) {
+  if (point<CycleBegin) return kT877PointNames[point];
+  if (point==CycleBegin) return "J1_OPERATOR_BEGIN";
+  if (point<=CycleEnd) return "J1_OPERATOR_BLOCK_"+std::to_string(point-CycleBegin-1)+"_END";
+  const auto edge=point-TrialEdges;
+  return std::string(edge<4?"ACTUAL":"REPLAY")+"_J"+(edge%4<2?"2":"4")+(edge%2?"_END":"_BEGIN");
+}
 
 bool T833TailMatches(const Completion &tail,const Permit &permit,uint64_t quantum,uint64_t sourceSeq) {
   const bool source=permit[1]==50;
@@ -131,7 +140,7 @@ void Boot::ReportLateCandidate(VkResult confirmed,VkResult drained,uint64_t ente
     any=any || p.available;
     if (comma) row << ',';
     comma=true;
-    row << "{\"point\":" << Quote(kT877PointNames[i]) << ",\"vkResult\":" << int(status)
+    row << "{\"point\":" << Quote(T877PointName(i)) << ",\"vkResult\":" << int(status)
         << ",\"available\":" << (p.available ? "true" : "false") << ",\"tick\":"
         << (p.available ? Quote(std::to_string(p.tick&mask)) : "null") << "}";
   }
@@ -186,6 +195,14 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
   const uint32_t diagnostic=privateProject ? 1u : attempt.t833Case.empty() ? 0u : 2u;
   const bool t877=!attempt.t877Mode.empty(),hot=attempt.t877Mode=="hot";
   const bool snapshot=attempt.t899SlotSnapshot;
+  const bool stagedSeal=attempt.g13SealStages;
+  const bool diagnosticRaw=stagedSeal || !attempt.g13CycleScope.empty();
+  const auto selectSeal=[&](pc::CandidatePass &pass,uint32_t op) {
+    if (stagedSeal && op==11) {
+      pass.roles={"OP11_T955_PREPARE","OP11_T955_SHA","OP11_T955_PUBLISH"};
+      pass.count=3;
+    }
+  };
   const auto evidenceRole=[&](std::string_view role,uint32_t op) {
     if (attempt.g13SplitOp48 && role=="OP_48") {
       if (op==48) return std::string_view("OP48_VISCOSITY");
@@ -202,10 +219,15 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
          << ",\"t899SlotSnapshot\":" << (snapshot ? "true" : "false")
          << ",\"t946SplitOp48\":" << (attempt.g13SplitOp48 ? "true" : "false")
          << ",\"t909SealV1\":" << (attempt.g13SealV1 ? "true" : "false");
+  if (diagnosticRaw)
+    fields << ",\"t955StagedSeal\":" << (stagedSeal ? "true" : "false")
+           << ",\"t955CycleScope\":" << Quote(attempt.g13CycleScope)
+           << ",\"t955CycleOperator\":" << Quote(privateProject?"PRESSURE":"VISCOSITY");
   const auto prepare=[&](bool source,const auto &plan) {
     for (size_t i=0;i<std::size(plan);++i) {
       pc::CandidatePass pass{};
       Require(pc::PlanSplitCandidate(source,i,plan[i],pass),"T833_SPLIT_PLAN");
+      selectSeal(pass,plan[i].op);
       for (size_t k=0;k<pass.count;++k) {
         const auto name=evidenceRole(pass.roles[k],plan[i].op);
         const auto found=std::find_if(t833Pipelines.begin(),t833Pipelines.end(),
@@ -427,7 +449,7 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
                                : VK_NOT_READY;
         if (comma) row << ',';
         comma=true;
-        row << "{\"point\":" << Quote(kT877PointNames[i]) << ",\"vkResult\":"
+        row << "{\"point\":" << Quote(T877PointName(i)) << ",\"vkResult\":"
             << (readable ? std::to_string(int(status)) : "null")
             << ",\"available\":" << (values[1] ? "true" : "false") << ",\"tick\":"
             << (values[1] ? Quote(std::to_string(values[0])) : "null") << '}';
@@ -461,6 +483,7 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
         positions[last]=ordinal;
       };
       for (size_t i=0;i<std::size(plan);++i) {
+        const auto &p=plan[i];
         RootBinding binding{};
         Require(ResolveRootBinding(source,i,plan[i],binding),"T877_PHASE_PLAN");
         if (binding.phase==RootPhase::Actual) {
@@ -475,6 +498,11 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
         }
         if (binding.phase==RootPhase::Compare) positions[CompareEnd]=i;
         if (binding.phase==RootPhase::Pack) positions[PackEnd]=i;
+        if (!source && !attempt.g13CycleScope.empty() && (p.scope==1 || p.scope==2) &&
+            (p.J==2 || p.J==4)) {
+          const auto entry=TrialEdges+4*(p.scope-1)+(p.J==4?2:0);
+          span(i,T877Point(entry),T877Point(entry+1));
+        }
         if (privateProject && attempt.g13TailTiming && plan[i].J==1 && plan[i].micro==0 && plan[i].block==0) {
           if (binding.phase==RootPhase::Actual && plan[i].op==OP_VISC_BLOCK)
             span(i,ActualJ1ViscosityBegin,ActualJ1ViscosityEnd);
@@ -505,6 +533,14 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
       for (auto point:beforePoints) if (positions[point]==ordinal) mark(point,kCompute);
       pc::CandidatePass pass{};
       Require(pc::PlanSplitCandidate(source,ordinal,plan[ordinal],pass),"T833_RECORD_PLAN");
+      selectSeal(pass,plan[ordinal].op);
+      const auto &op=plan[ordinal];
+      const bool cycle=!source && !attempt.g13CycleScope.empty() && op.J==1 && op.micro==0 &&
+          op.scope==(attempt.g13CycleScope=="actual"?1u:2u) &&
+          op.op==(privateProject?OP_PRESSURE_V:OP_VISC_BLOCK);
+      if (cycle && op.block==0) mark(CycleBegin,kCompute);
+      for (size_t i=0;i<8;i+=2)
+        if(positions[TrialEdges+i]==ordinal) mark(T877Point(TrialEdges+i),kCompute);
       const auto &binding=pass.binding;
       const auto set=pc::CandidateSet(binding);
       if (!t877 || boundSet!=sets[set]) {
@@ -528,7 +564,12 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
         ++issued;
         Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kCompute,kShaderRW);
         ++computeBarriers;
+        if (stagedSeal && op.op==11 && i<2)
+          mark(i==0?SealPrepareEnd:SealShaEnd,kCompute);
       }
+      if (cycle) mark(T877Point(CycleBegin+1+op.block),kCompute);
+      for (size_t i=1;i<8;i+=2)
+        if(positions[TrialEdges+i]==ordinal) mark(T877Point(TrialEdges+i),kCompute);
       for (auto point:afterPoints) if (positions[point]==ordinal) mark(point,kCompute);
       if (plan[ordinal].op==17) {
         Require(slotIndex<kCandidateSlotCount,"T833_SLOT_RANGE");
@@ -668,6 +709,16 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
       timing.retire.exitQpc=pc::QpcTicks();
       timing.retire.result=int(waited);
     }
+    if (diagnosticRaw && waited==VK_TIMEOUT && attempt.current()) {
+      const auto original=fence;
+      const auto entered=pc::QpcTicks();
+      waited=vk.WaitForFences(device,1,&original,VK_TRUE,5000000000ull);
+      publish("{\"stage\":\"T955_ORIGINAL_RETIRE\",\"nonce\":\""+std::to_string(nonce)+
+              "\",\"fence\":\""+std::to_string(reinterpret_cast<uintptr_t>(original))+
+              "\",\"generation\":\""+std::to_string(t877FenceGeneration)+"\",\"waitEnterQpc\":\""+
+              std::to_string(entered)+"\",\"waitExitQpc\":\""+std::to_string(pc::QpcTicks())+
+              "\",\"vkResult\":"+std::to_string(int(waited))+",\"acceptedRoot\":null}");
+    }
     if (waited==VK_SUCCESS || waited==VK_ERROR_DEVICE_LOST) inFlight=false;
     fields << ",\"" << prefix << "Fence\":" << int(waited);
     fields << ",\"" << prefix << "Submit\":" << int(submitted)
@@ -774,7 +825,8 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
       fields << ",\"" << prefix << "HotEvidence\":{\"nonce\":\"" << nonce << "\",\"fileBytes\":" << hotPrefix.size()
              << ",\"sha256\":" << Quote(Hex(Hash(hotPrefix.data(),hotPrefix.size()).data()))
              << ",\"acceptedRoot\":" << (accepted ? Quote(std::to_string(nonce)) : "null") << "}";
-      if (!matched || !attempt.current()) {
+      const bool privateLate=diagnosticRaw && !timely && waited==VK_SUCCESS;
+      if ((!matched && !privateLate) || !attempt.current()) {
         fields << ",\"" << prefix << "ColdCapture\":\"NO_SAFE_READ_WINDOW\"";
         reportGpu(true);
         coldFailure=matched;
@@ -783,6 +835,7 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
       // No next root is recorded while these original buffer ranges are pinned
       // on the owner. The copy has its own submission and fence after acceptance.
       stage="T877_COLD_COPY";
+      if(privateLate) fields << ",\"t955PrivateLateRaw\":true";
       Check(reset(device,commandPool,0),"vkResetCommandPool.T877_COLD");
       vk.DestroyFence(device,fence,nullptr);
       fence=VK_NULL_HANDLE;
@@ -877,7 +930,19 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
            << ",\"layoutWords\":" << Words(BootLayout(profile)) << ",\"completion\":" << Words(tail)
            << ",\"latchOK\":" << (latchOK ? "true" : "false")
            << ",\"privateProjectComplete\":" << (matched && privateProject ? "true" : "false") << ",\"acceptedRoot\":"
-           << (accepted ? Quote(std::to_string(nonce)) : "null") << "}";
+           << (accepted ? Quote(std::to_string(nonce)) : "null");
+    if(diagnosticRaw) {
+      fields << ",\"completionSHA\":" << Quote(Hex(Hash(raw.data(),sizeof(Completion)).data()))
+             << ",\"segmentSHA\":[";
+      size_t at=fieldsAt;
+      for(size_t j=0;j<bytes.size();++j) {
+        if(j) fields << ',';
+        fields << Quote(Hex(Hash(raw.data()+at,bytes[j]).data()));
+        at+=bytes[j];
+      }
+      fields << ']';
+    }
+    fields << '}';
     evidence[source ? 0 : 1]=std::move(raw);
     evidenceIsHot[source ? 0 : 1]=false;
     return matched;

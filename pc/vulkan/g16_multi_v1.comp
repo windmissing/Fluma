@@ -404,6 +404,8 @@ float decide(uint count,float time,float duration,uint segment) {
 // Fixed-order sums of physical impulse, angular impulse and energy across the
 // entire candidate root. They survive the scratch overwrite of earlier edges.
 const uint ledger=witness+32u;
+// T955 is appended after the original Work allocation.
+const uint timeEvidence=152064u;
 const uint diskAudit=98816u;
 const uint journal=pairs+4096u,journalCapacity=300u;
 void drift(float t) {
@@ -677,6 +679,7 @@ bool auditGaps(float time,uint count,uint segment,bool full) {
 void microstep() {
     float dt=1./(120.*float(cfg(5u)));
     float time=float(cfg(24u))/120.+float(micro)*dt;
+    float start=time;
     float remaining=dt;
     for(uint i=0u;i<cfg(4u);++i)sw(diskAudit+i*8u,0.);
     for(uint seg=0u;seg<2u;++seg) {
@@ -690,13 +693,51 @@ void microstep() {
         float hit=decide(count,time,remaining,seg);
         if(result(41u)!=0u)return;
         if(hit==noTime){drift(remaining);auditGaps(time+remaining,count,seg,false);return;}
+        uint record=timeEvidence+16u*seg;
+        work[record]=micro;work[record+1u]=seg;
+        sw(record+2u,start);sw(record+3u,dt);sw(record+4u,time);sw(record+5u,remaining);
+        sw(record+6u,hit);sw(record+7u,remaining-hit);
+        work[record+8u]=work[witness+25u];
         drift(hit);
         if(!auditGaps(time+hit,count,seg,false))return;
         if(!solve(count,time,remaining,hit,seg))return;
+        work[record+9u]=work[witness+25u];work[record+10u]=count;
         time+=hit;remaining-=hit;
         if(remaining<=0.)break;
     }
     if(remaining>0.)fail(11u,9u,1u,invalid,invalid,invalid);
+}
+
+void diagnoseRemaining() {
+    if(result(40u)!=2u || result(41u)!=11u || result(42u)!=9u)return;
+    uint record=timeEvidence+16u,diag=timeEvidence+32u;
+    float time=wf(record+4u)+wf(record+6u), remaining=wf(record+7u);
+    if(!(remaining>0.))return;
+    uint saved[256];
+    for(uint i=0u;i<256u;++i)saved[i]=result(i);
+    put(41u,0u);
+    uint count=0u;
+    float maxMove=0.,hit=noTime;
+    if(makeBuckets(time,remaining,2u,maxMove)&&collectPairs(time,remaining,2u,maxMove,count))
+        hit=decide(count,time,remaining,0u);
+    uint error=result(41u);
+    work[diag]=0x35353954u;work[diag+1u]=1u;
+    work[diag+2u]=error!=0u?3u:hit==noTime?1u:2u;
+    work[diag+3u]=error;sw(diag+4u,time);sw(diag+5u,remaining);sw(diag+6u,hit);
+    work[diag+7u]=count;work[diag+8u]=saved[43u];work[diag+9u]=saved[44u];
+    work[diag+10u]=result(45u);work[diag+11u]=result(46u);work[diag+12u]=result(47u);
+    if(error==10u && result(47u)!=invalid)
+        for(uint f=0u;f<8u;++f)work[diag+16u+f]=work[witness+8u+f];
+    if(error==0u && hit!=noTime)for(uint e=0u;e<count;++e){
+        uint k=12u*e,flags=contacts[k+5u];
+        if(flags!=1u&&flags!=2u)continue;
+        uint earliest=uint(floor(hit/remaining*q24));
+        if(earliest<contacts[k+6u]||earliest>contacts[k+7u])continue;
+        for(uint f=0u;f<12u;++f)work[diag+16u+f]=contacts[k+f];
+        work[diag+28u]=work[witness+64u+2u*e];work[diag+29u]=work[witness+65u+2u*e];
+        break;
+    }
+    for(uint i=0u;i<256u;++i)put(i,saved[i]);
 }
 
 void copyWords(uint dest,uint src,uint count) {
@@ -711,6 +752,7 @@ void freeze() {
     put(53u,cfg(44u)*cfg(45u));put(57u,cfg(5u));put(61u,physicalDispatches);
     for(uint i=43u;i<=47u;++i)put(i,invalid);
     for(uint i=0u;i<64u;++i)work[witness+i]=0u;
+    for(uint i=0u;i<64u;++i)work[timeEvidence+i]=0u;
     work[witness+26u]=journalCapacity;
     enter(1u);
     bool large=cfg(4u)==52u;
@@ -796,6 +838,10 @@ void seal() {
 
 void main() {
     if(pass==0u)freeze();
-    else if(pass==1u&&result(41u)==0u)microstep();
+    else if(pass==1u&&result(41u)==0u){
+        microstep();
+        if(result(41u)==0u)work[timeEvidence+31u]=micro+1u;
+    }
     else if(pass==2u)seal();
+    else if(pass==3u)diagnoseRemaining();
 }

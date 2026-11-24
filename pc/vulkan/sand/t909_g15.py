@@ -9,7 +9,7 @@ def once(text, old, updated):
     return text.replace(old, updated)
 
 
-def install(source):
+def install(source, dry_front=False):
     helper = Path(__file__).with_name("g15_dm2.glsl").read_text(encoding="utf8")
     geometry = source.index("bool dmGeometry(")
     tail = source.index("bool dmOriginPrefix(",geometry)
@@ -51,7 +51,49 @@ def install(source):
                   "if(!g9AuditMicroEnergy())return;\n"
                   "  if(!g15GravityWork(g15Tick(uMicro+1u,false))||!g15SupportAll())return;\n"
                   "  if(uMicro+1u==uJ)g15Scene();")
-    return source
+    return install_dry_front(source) if dry_front else source
+
+
+def install_dry_front(source):
+    source = once(source, "g9WriteWide(at+20u,fp);",
+        """g9WriteWide(at+20u,fp);
+  bool dry=edge!=0u&&edge!=128u&&(g9Column(left,1u)==0u||g9Column(right,1u)==0u);
+  W[at+24u]=uint(dry);W[at+25u]=uint(narrow);g9WriteWide(at+26u,jp);
+  if(dry)g9WriteWide(at+4u,uvec4(0u));""")
+    source = once(source, "g9WriteWide(stage,p);g9WriteWide(stage+4u,bed);",
+                  "g9WriteWide(stage,p);g9WriteWide(stage+24u,p);g9WriteWide(stage+4u,bed);")
+    anchor = "bool g9FlowApply(){"
+    return once(source, anchor, """bool g15DeliverDryFront(){
+ for(uint c=0u;c<128u;++c){
+  uint mass=g9Column(c,1u),sent=0u;
+  uvec4 entry=g9Momentum(c),prior=uvec4(0u);
+  for(uint side=0u;side<2u;++side){
+   uint at=uFaces+(c+side)*32u;
+   int q=int(W[at]);
+   bool outgoing=side==0u?q<0:q>0;
+   if(W[at+24u]==0u||!outgoing)continue;
+   uint debit=uint(abs(q));
+   if(sent>mass||debit>mass-sent){g9Reject(8u,c,side);return false;}
+   sent+=debit;
+   uvec4 prefix,delta;
+   if(!g9RneProduct(entry,g9U32(sent),mass,prefix)||!g9SSub(prefix,prior,delta)||
+      (side==0u&&!g9SNeg(delta,delta))){g9Fault(29u,c,side);return false;}
+   g9WriteWide(at+4u,delta);
+   prior=prefix;
+  }
+ }
+ for(uint c=0u;c<128u;++c){
+  uint left=uFaces+c*32u,stage=uColumnStage+c*64u;
+  uvec4 change,result;
+  if(!g9SSub(g9ReadWide(left+4u),g9ReadWide(left+36u),change)||
+     !g9SAdd(g9Momentum(c),change,result)||!g9SAdd(result,g9ReadWide(stage+4u),result)||
+     !g9SAdd(result,g9ReadWide(stage+8u),result)){g9Fault(29u,c,7u);return false;}
+  g9WriteWide(stage,result);
+ }
+ return true;
+}
+bool g9FlowApply(){
+ if(!g15DeliverDryFront())return false;""")
 
 
 def enable_int64(source):

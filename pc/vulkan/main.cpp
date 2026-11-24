@@ -63,6 +63,8 @@ struct Window {
   bool m1Integrated=false,m1AuditBreakdown=false;
   bool g13SplitOp48=false;
   bool m1ParallelInventory=false;
+  bool g13SealStages=false;
+  std::string g13CycleScope;
   std::wstring m1PrivateReference,m1PrivateOutput;
   bool m1PrivateObserve=false;
   bool compactRequestAtLimit=false;
@@ -902,7 +904,7 @@ struct Window {
                                                [&](grs::pc::CompactView &view) {return SetCompactPresented(view);},
                                                [&](const grs::g13vk::SourceOffer &offer,uint32_t reason,bool admitted) {
                                                  CompactSourceResult(offer,reason,admitted);
-                                               },g13SplitOp48,m1ParallelInventory},
+                                               },g13SplitOp48,m1ParallelInventory,g13SealStages,g13CycleScope},
           [&](const std::string &report) {
             Emit(report);
             const bool retiring=report.find("\"stage\":\"M1_RETIRE_PENDING\"")!=std::string::npos;
@@ -1122,6 +1124,12 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--g13-compile-trace")) window.g13CompileTrace=true;
     else if (!std::wcscmp(argv[i], L"--g13-tail-timing")) window.g13TailTiming=true;
     else if (!std::wcscmp(argv[i], L"--g13-seal-v1")) window.g13SealV1=true;
+    else if (!std::wcscmp(argv[i],L"--g13-seal-stages")) window.g13SealStages=true;
+    else if (!std::wcscmp(argv[i],L"--g13-cycle-scope") && i+1<argc) {
+      const std::wstring scope=argv[++i];
+      if(scope!=L"actual" && scope!=L"replay") return 2;
+      window.g13CycleScope.assign(scope.begin(),scope.end());
+    }
     else if (!std::wcscmp(argv[i], L"--g13-split-op48")) window.g13SplitOp48=true;
     else if (!std::wcscmp(argv[i], L"--m1-stage-timing")) window.m1StageTiming=true;
     else if (!std::wcscmp(argv[i],L"--m1-inventory-v1")) window.m1InventoryV1=true;
@@ -1222,6 +1230,10 @@ int wmain(int argc, wchar_t **argv) {
   if (window.t833F05Rest && window.t833Case!="F05") return 2;
   if (!window.t877Mode.empty() && window.t833CandidateFile.empty()) return 2;
   if ((window.g13TailTiming || window.g13SealV1) && window.t877Mode.empty()) return 2;
+  if ((window.g13SealStages || !window.g13CycleScope.empty()) &&
+      (window.t877Mode!="hot" || !window.g13TailTiming ||
+       (window.t833Case!="F02" && window.t833Case!="F03"))) return 2;
+  if (window.g13SealStages && window.g13SealV1) return 2;
   if ((window.m1StageTiming || window.m1InventoryV1) && window.m1QuantumCandidate.empty()) return 2;
   if (window.m1AngleWitness && (window.m1QuantumCandidate.empty() || window.m1InventoryV1)) return 2;
   if (window.m1Integrated && !window.m1PrivateReference.empty()) window.m1Compact=true;

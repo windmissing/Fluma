@@ -83,6 +83,8 @@ struct Attempt {
   std::function<void(const SourceOffer &,uint32_t,bool)> compactSourceResult;
   bool g13SplitOp48=false;
   bool m1ParallelInventory=false;
+  bool g13SealStages=false;
+  std::string g13CycleScope;
 #else
   NativeWindow *window;
 #endif

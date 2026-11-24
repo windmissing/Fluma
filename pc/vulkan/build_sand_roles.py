@@ -23,6 +23,7 @@ PUSH = ("uOp", "uRole", "uJslot", "uMicro", "uPass")
 VIS_PUSH = ("uVisPhase", "uVisOldBank", "uVisNewBank", "uVisOrdinal")
 VIS_ROOT = ROOT / "entry/src/main/cpp/gpu_resident/g11vis"
 REPLAY_INDIRECT = "t946-replay-indirect"
+G15_DRY_FRONT = "g15-dm2-dry-front"
 REPLAY_WORD = 1311360 // 4
 REPLAY_BEGIN, REPLAY_FIRST, REPLAY_JOIN = 2007, 2013, 2397
 
@@ -241,11 +242,11 @@ def build(family, compiler, out, role_variant="baseline"):
     indirect = role_variant == REPLAY_INDIRECT
     if indirect and composite:
         raise ValueError("T946 replay indirect requires DM2")
-    g15 = role_variant in ("g15-dm2", "g15-dm2-op23")
+    g15 = role_variant in ("g15-dm2", "g15-dm2-op23", G15_DRY_FRONT)
     if g15:
         if composite:
             raise ValueError("G15 requires DM2")
-        source = install_g15(source)
+        source = install_g15(source, dry_front=role_variant==G15_DRY_FRONT)
     ops, emit = split_inputs(source, composite_r1=composite)
     common, push = declarations(source, composite)
     passes = dispatches(family, schema.read_text(encoding="utf8"), ops)
@@ -263,7 +264,7 @@ def build(family, compiler, out, role_variant="baseline"):
         jobs = list(replay_indirect(jobs, passes["Quantum"]))
     with ThreadPoolExecutor(max_workers=4) as pool:
         roles = list(pool.map(lambda job: compile_role(compiler,out,job[0],job[1],common,push,job[2],
-                                                      role_variant=="g15-dm2-op23"), jobs))
+                                                      role_variant in ("g15-dm2-op23",G15_DRY_FRONT)), jobs))
     usable = {r["op"] for r in roles if r["state"] == "STATIC_SPIRV"}
     data = dict(schema="PC_SAND_VULKAN_ROLES_V1", family=family, parentSHA=sha(raw),
                 constants=common, commonBytes=(common[-1][2] + (8 if common[-1][1] == "uvec2" else 4) + 15) // 16 * 16,
@@ -329,7 +330,8 @@ if __name__ == "__main__":
     parser.add_argument("--compiler", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--role-variant", default="baseline",
-                        choices=("baseline","t913-v1","t913-split-v2","g15-dm2","g15-dm2-op23",REPLAY_INDIRECT))
+                        choices=("baseline","t913-v1","t913-split-v2","g15-dm2","g15-dm2-op23",
+                                 G15_DRY_FRONT,REPLAY_INDIRECT))
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     build(args.family, args.compiler.resolve(), args.out.resolve(), args.role_variant)

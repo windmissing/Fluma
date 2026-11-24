@@ -76,7 +76,7 @@ if(SAND_FAMILY STREQUAL "dm2")
               "${CMAKE_CURRENT_SOURCE_DIR}/../g16_scene.vert" "${CMAKE_CURRENT_SOURCE_DIR}/../g16_scene.frag" VERBATIM)
   set_source_files_properties(../wsi.cpp PROPERTIES OBJECT_DEPENDS "${VIEW}/pc_view_spirv.h")
 endif()
-if(SAND_ROLE_VARIANT MATCHES "^g15-dm2(-op23)?$")
+if(SAND_ROLE_VARIANT MATCHES "^g15-dm2(-op23|-dry-front)?$")
   target_compile_definitions(pc_sand_${SAND_FAMILY}_host PRIVATE PC_SAND_G15_SCENE)
   target_include_directories(pc_sand_${SAND_FAMILY}_host PRIVATE "${VIEW}" "${CMAKE_CURRENT_SOURCE_DIR}/.."
       "${GPU}/g13vulkan_boot")

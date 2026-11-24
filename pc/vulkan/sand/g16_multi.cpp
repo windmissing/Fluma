@@ -14,10 +14,12 @@
 
 namespace grs::pc::sand {
 namespace {
-constexpr std::array<VkDeviceSize,4> storageBytes{196608,1179648,608256,65536};
+constexpr std::array<VkDeviceSize,4> storageBytes{196608,1179648,608512,65536};
 constexpr VkDeviceSize configOffset=346112,receiptOffset=350208,witnessOffset=559104;
 constexpr VkDeviceSize stateStride=65536,sceneStride=32768,receiptBytes=1024,witnessBytes=256;
 constexpr VkDeviceSize journalOffset=509952,journalRowBytes=160,journalCapacity=300;
+constexpr VkDeviceSize timeEvidenceOffset=608256,timeEvidenceBytes=256;
+constexpr uint32_t timeQueries=12;
 constexpr uint64_t budget=250000000;
 using DigestBytes=std::array<uint8_t,32>;
 using Completion=std::array<uint32_t,256>;
@@ -83,7 +85,7 @@ struct Program {
   std::filesystem::path out;
   Config initial{};
   uint32_t j=128,roots=0,disks=0;
-  bool mirror=false,present=false;
+  bool mirror=false,present=false,diagnostics=false;
   Motion motion=Motion::Static;
 #ifdef PC_G16_FREEZE_FIXTURE
   std::optional<FreezeFault> fault;
@@ -176,7 +178,8 @@ class Owner {
                <<"\",\"fenceVkResult\":"<<int(retired)<<",\"acceptedRoot\":null}\n";
     }
 #define DESTROY(name,handle) if(handle)Proc<PFN_vkDestroy##name>("vkDestroy" #name)(gpu_.device,handle,nullptr)
-    DESTROY(Fence,fence_);DESTROY(CommandPool,commands_);DESTROY(Pipeline,pipeline_);DESTROY(ShaderModule,shader_);
+    DESTROY(QueryPool,queries_);DESTROY(Fence,fence_);DESTROY(CommandPool,commands_);
+    DESTROY(Pipeline,pipeline_);DESTROY(ShaderModule,shader_);
     DESTROY(PipelineLayout,layout_);DESTROY(DescriptorPool,sets_);DESTROY(DescriptorSetLayout,bindings_);
 #undef DESTROY
   }
@@ -207,6 +210,8 @@ class Owner {
   VkCommandPool commands_=VK_NULL_HANDLE;
   VkCommandBuffer command_=VK_NULL_HANDLE;
   VkFence fence_=VK_NULL_HANDLE;
+  VkQueryPool queries_=VK_NULL_HANDLE;
+  struct SubmissionTimes { uint64_t submitEnter=0,submitExit=0,waitEnter=0,waitExit=0; } submittedTimes_;
   bool pending_=false;
   uint64_t fenceGeneration_=0,previousNonce_=0;
   Head head_{};
@@ -274,6 +279,13 @@ void Owner::Prepare(const Program &p) {
   RequireVk(VKFN(AllocateCommandBuffers)(device,&cmdInfo,&command_),"G16_COMMAND");
   const VkFenceCreateInfo fenceInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
   RequireVk(VKFN(CreateFence)(device,&fenceInfo,nullptr,&fence_),"G16_FENCE");
+  if(p.diagnostics && gpu_.timestampBits && gpu_.timestampBits<=64) {
+    const VkQueryPoolCreateInfo query{VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO,nullptr,0,
+      VK_QUERY_TYPE_TIMESTAMP,timeQueries,0};
+    const auto status=VKFN(CreateQueryPool)(device,&query,nullptr,&queries_);
+    if(status!=VK_SUCCESS)queries_=VK_NULL_HANDLE;
+    std::cout<<"{\"stage\":\"G16_QUERY_CREATE\",\"vkResult\":"<<int(status)<<"}\n";
+  }
 #ifdef PC_G16_FREEZE_FIXTURE
   if(p.fault)
     fixtureState_=gpu_.Allocate(storageBytes[0],VK_BUFFER_USAGE_STORAGE_BUFFER_BIT|
@@ -312,16 +324,21 @@ void Owner::RecordFreezeFault(const FreezeFault &fault,uint32_t bank) {
 
 VkResult Owner::Submit(uint64_t until,const HostDevice::Memory &destination,VkDeviceSize bytes,
                        VkResult &submit,VkResult &retire) {
+  submittedTimes_={};
   const auto now=HostDevice::Now();
   if(now>=until) return VK_TIMEOUT;
   const auto device=gpu_.device;
   VkSubmitInfo info{VK_STRUCTURE_TYPE_SUBMIT_INFO};
   info.commandBufferCount=1;info.pCommandBuffers=&command_;
+  submittedTimes_.submitEnter=pc::QpcTicks();
   submit=VKFN(QueueSubmit)(gpu_.queue,1,&info,fence_);
+  submittedTimes_.submitExit=pc::QpcTicks();
   if(submit!=VK_SUCCESS)return submit;
   pending_=true;
   const auto entered=HostDevice::Now();
+  submittedTimes_.waitEnter=pc::QpcTicks();
   retire=VKFN(WaitForFences)(device,1,&fence_,VK_TRUE,entered<until?until-entered:0);
+  submittedTimes_.waitExit=pc::QpcTicks();
   pending_=retire!=VK_SUCCESS && retire!=VK_ERROR_DEVICE_LOST;
   if(retire!=VK_SUCCESS)return retire;
   if(HostDevice::Now()>until)return VK_TIMEOUT;
@@ -340,9 +357,12 @@ void Owner::Export(const Program &p,const Config &config,const Completion &r,boo
   const VkDeviceSize journalAt=arrays+3*edgeBytes+headBytes+adjBytes;
   const VkDeviceSize ordinaryBytes=journalAt+journalRowBytes*journalCapacity;
   VkDeviceSize bytes=ordinaryBytes;
+  const bool rescan=p.diagnostics && !accepted && r[41]==11 && r[42]==9;
 #ifdef PC_G16_FREEZE_FIXTURE
   if(fixtureBound_)bytes+=3*stateStride;
 #endif
+  const auto timeAt=bytes;
+  if(p.diagnostics)bytes+=timeEvidenceBytes;
   const auto capture=gpu_.Allocate(bytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
   const auto device=gpu_.device;
   RequireHost(!pending_,"G16_COLD_IN_FLIGHT");
@@ -374,6 +394,8 @@ void Owner::Export(const Program &p,const Config &config,const Completion &r,boo
   for(uint32_t i=0;i<3 && edgeBytes;++i)
     ranges.push_back(span(1,i*maxEdgePlane,edgeBytes,arrays+i*edgeBytes));
   if(adjBytes)ranges.push_back(span(2,0,adjBytes,arrays+3*edgeBytes+headBytes));
+  if(rescan)ranges.push_back(span(2,timeEvidenceOffset,timeEvidenceBytes/2,timeAt));
+  else if(p.diagnostics)ranges.push_back(span(2,timeEvidenceOffset,timeEvidenceBytes,timeAt));
 #ifdef PC_G16_FREEZE_FIXTURE
   if(fixtureBound_) {
     ranges.push_back(span(0,config[40]*stateStride,stateStride,ordinaryBytes));
@@ -386,16 +408,39 @@ void Owner::Export(const Program &p,const Config &config,const Completion &r,boo
 #endif
   RequireHost(RecordReadback(VKFN(CmdPipelineBarrier),VKFN(CmdCopyBuffer),command_,capture.slice,ranges.data(),ranges.size()),
     "G16_COLD_RECORD");
+  if(rescan) {
+    const VkMemoryBarrier ready{VK_STRUCTURE_TYPE_MEMORY_BARRIER,nullptr,VK_ACCESS_TRANSFER_READ_BIT,
+      VK_ACCESS_SHADER_READ_BIT|VK_ACCESS_SHADER_WRITE_BIT};
+    VKFN(CmdPipelineBarrier)(command_,VK_PIPELINE_STAGE_TRANSFER_BIT,VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                             0,1,&ready,0,nullptr,0,nullptr);
+    VKFN(CmdBindPipeline)(command_,VK_PIPELINE_BIND_POINT_COMPUTE,pipeline_);
+    VKFN(CmdBindDescriptorSets)(command_,VK_PIPELINE_BIND_POINT_COMPUTE,layout_,0,1,&set_,0,nullptr);
+    const uint32_t push[]{3,0,p.j+2};
+    VKFN(CmdPushConstants)(command_,layout_,VK_SHADER_STAGE_COMPUTE_BIT,0,sizeof(push),push);
+    VKFN(CmdDispatch)(command_,1,1,1);
+    const auto tail=span(2,timeEvidenceOffset+timeEvidenceBytes/2,timeEvidenceBytes/2,timeAt+timeEvidenceBytes/2);
+    RequireHost(RecordReadback(VKFN(CmdPipelineBarrier),VKFN(CmdCopyBuffer),command_,capture.slice,&tail,1),
+      "G16_RESCAN_RECORD");
+  }
   RequireHost(MakeHostVisible(VKFN(CmdPipelineBarrier),command_,capture.slice),"G16_COLD_HOST_BARRIER");
   RequireVk(VKFN(EndCommandBuffer)(command_),"G16_COLD_END");
   VkResult submit=VK_NOT_READY,retire=VK_NOT_READY;
   const auto result=Submit(HostDevice::Now()+budget,capture,bytes,submit,retire);
   std::cout<<"{\"stage\":\"G16_COLD\",\"nonce\":\""<<Wide(config,16)<<"\",\"fence\":\""
     <<reinterpret_cast<uintptr_t>(fence_)<<"\",\"fenceGeneration\":\""<<fenceGeneration_
+    <<"\",\"originalFenceGeneration\":\""<<Wide(config,34)
     <<"\",\"submit\":"<<int(submit)<<",\"retire\":"<<int(retire)<<",\"vkResult\":"<<int(result)
     <<",\"acceptedRoot\":null}\n";
   RequireVk(result,"G16_COLD_RESULT");
   const auto *words=capture.words;
+  if(p.diagnostics) {
+    const auto *time=words+timeAt/4;
+    Write(p.out/(rescan?"remaining-v1.u32le":"time-v1.u32le"),time,timeEvidenceBytes);
+    std::cout<<"{\"stage\":\"G16_PRIVATE_TIME_EVIDENCE\",\"nonce\":\""<<Wide(config,16)
+      <<"\",\"originalGeneration\":\""<<Wide(config,34)<<"\",\"coldGeneration\":\""<<fenceGeneration_
+      <<"\",\"completedMicrosteps\":"<<time[31]<<",\"rescanState\":"<<(rescan?time[34]:0)
+      <<",\"evidenceSHA\":\""<<Hex(Hash(time,timeEvidenceBytes))<<"\",\"acceptedRoot\":null}\n";
+  }
   Write(p.out/"base.disk64",words,stateBytes);
   Write(p.out/"candidate.disk64",words+stateBytes/4,stateBytes);
 #ifdef PC_G16_FREEZE_FIXTURE
@@ -505,8 +550,15 @@ bool Owner::Run(const Program &p) {
     PutWide(config,34,++fenceGeneration_);
     PutWide(config,36,begin);PutWide(config,38,begin+budget);
     config[40]=head_.bank;config[41]=1-head_.bank;config[42]=head_.scene;config[43]=1-head_.scene;
+    const auto recordBegin=pc::QpcTicks();
     const VkCommandBufferBeginInfo start{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,nullptr,VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT};
     RequireVk(VKFN(BeginCommandBuffer)(command_,&start),"G16_ROOT_BEGIN");
+    uint32_t point=0;
+    const auto stamp=[&](VkPipelineStageFlagBits stage=VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT) {
+      if(queries_)VKFN(CmdWriteTimestamp)(command_,stage,queries_,point++);
+    };
+    if(queries_)VKFN(CmdResetQueryPool)(command_,queries_,0,timeQueries);
+    stamp(VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
     if(i==0) {
       const auto &state=resources_[0].slice;
       VKFN(CmdFillBuffer)(command_,state.buffer,0,state.bytes,0);
@@ -532,18 +584,23 @@ bool Owner::Run(const Program &p) {
       VKFN(CmdDispatch)(command_,1,1,1);
     };
     dispatch(0,0);
+    stamp();
     for(uint32_t micro=0;micro<p.j;++micro) {
       writeBarrier(VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,VK_ACCESS_SHADER_WRITE_BIT);
       dispatch(1,micro);
+      if((micro+1)%32==0)stamp();
     }
     writeBarrier(VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,VK_ACCESS_SHADER_WRITE_BIT);
     dispatch(2,0);
+    stamp();
     auto hot=resources_[2].slice;
     hot.offset=receiptOffset;hot.bytes=receiptBytes;
     const CopySpan copy{hot,0};
     RequireHost(RecordReadback(VKFN(CmdPipelineBarrier),VKFN(CmdCopyBuffer),command_,readback_.slice,&copy,1) &&
         MakeHostVisible(VKFN(CmdPipelineBarrier),command_,readback_.slice),"G16_HOT_RECORD");
+    stamp();
     RequireVk(VKFN(EndCommandBuffer)(command_),"G16_ROOT_END");
+    const auto recordEnd=pc::QpcTicks();
     VkResult submit=VK_NOT_READY,retire=VK_NOT_READY;
     const auto result=Submit(begin+budget,readback_,receiptBytes,submit,retire);
     Completion receipt{};
@@ -561,10 +618,64 @@ bool Owner::Run(const Program &p) {
       <<"\",\"exitNs\":\""<<HostDevice::Now()<<"\",\"submit\":"<<int(submit)<<",\"retire\":"<<int(retire)
       <<",\"vkResult\":"<<int(result)<<",\"current\":"<<(current?"true":"false")<<",\"fresh\":"<<(fresh?"true":"false")
       <<",\"baseCommit\":\""<<Wide(config,22)<<"\",\"privateCommit\":\""<<head_.commit
-      <<"\",\"identityOK\":"<<(valid?"true":"false")<<",\"firstReason\":"<<receipt[41]
-      <<",\"firstStage\":"<<receipt[42]<<",\"B\":"<<receipt[53]<<",\"N\":"<<p.disks
-      <<",\"C\":"<<receipt[54]<<",\"Ic\":"<<receipt[59]<<",\"dispatches\":"<<p.j+2
+      <<"\",\"identityOK\":"<<(valid?"true":"false");
+    const auto observedWord=[&](size_t word) {
+      return p.diagnostics && !valid ? std::string("null") : std::to_string(receipt[word]);
+    };
+    std::cout<<",\"firstReason\":"<<observedWord(41)<<",\"firstStage\":"<<observedWord(42)
+      <<",\"B\":"<<observedWord(53)<<",\"N\":"<<p.disks
+      <<",\"C\":"<<observedWord(54)<<",\"Ic\":"<<observedWord(59)<<",\"dispatches\":"<<p.j+2
       <<",\"computeBarriers\":"<<p.j+1<<",\"acceptedRoot\":null}\n";
+    if(p.diagnostics) {
+      const auto lateEnter=pc::QpcTicks();
+      VkResult observed=retire;
+      if(submit==VK_SUCCESS && retire==VK_TIMEOUT) {
+        observed=VKFN(WaitForFences)(device,1,&fence_,VK_TRUE,5000000000ull);
+        if(observed==VK_SUCCESS || observed==VK_ERROR_DEVICE_LOST)pending_=false;
+      }
+      const auto lateExit=pc::QpcTicks();
+      std::cout<<"{\"stage\":\"G16_PRIVATE_TIMING\",\"nonce\":\""<<Wide(config,16)
+        <<"\",\"run\":\""<<Wide(config,8)<<"\",\"device\":\""<<reinterpret_cast<uintptr_t>(device)
+        <<"\",\"queue\":\""<<reinterpret_cast<uintptr_t>(gpu_.queue)
+        <<"\",\"originalFence\":\""<<reinterpret_cast<uintptr_t>(fence_)<<"\",\"originalGeneration\":\""
+        <<fenceGeneration_<<"\",\"queryResetSerial\":\""<<fenceGeneration_<<"\",\"queryPool\":\""
+        <<reinterpret_cast<uintptr_t>(queries_)<<"\",\"recordBeginQpc\":\""<<recordBegin
+        <<"\",\"recordEndQpc\":\""<<recordEnd<<"\",\"submitEnterQpc\":\""<<submittedTimes_.submitEnter
+        <<"\",\"submitExitQpc\":\""<<submittedTimes_.submitExit<<"\",\"waitEnterQpc\":\""
+        <<submittedTimes_.waitEnter<<"\",\"waitExitQpc\":\""<<submittedTimes_.waitExit
+        <<"\",\"lateEnterQpc\":\""<<lateEnter<<"\",\"lateExitQpc\":\""<<lateExit
+        <<"\",\"lateVkResult\":"<<int(observed)<<",\"periodNs\":"<<gpu_.properties.limits.timestampPeriod
+        <<",\"validBits\":"<<gpu_.timestampBits<<",\"qpcFrequency\":\""<<pc::QpcFrequency()
+        <<"\",\"acceptedRoot\":null,\"points\":[";
+      for(uint32_t q=0;q<point;++q) {
+        const auto name=q==0 ? "ROOT_BEGIN" : q==1 ? "FREEZE_END" : q==point-2 ? "SEAL_END" :
+            q==point-1 ? "TAIL_COPY_END" : "MICRO_"+std::to_string((q-1)*32)+"_END";
+        uint64_t data[2]{};
+        const auto queried=observed==VK_SUCCESS ?
+          VKFN(GetQueryPoolResults)(device,queries_,q,1,sizeof(data),data,sizeof(data),
+             VK_QUERY_RESULT_64_BIT|VK_QUERY_RESULT_WITH_AVAILABILITY_BIT) : VK_NOT_READY;
+        std::cout<<(q?",":"")<<"{\"name\":\""<<name<<"\",\"vkResult\":"<<int(queried)
+          <<",\"tick\":"<<(queried==VK_SUCCESS && data[1] ? "\""+std::to_string(data[0])+"\"" : "null")<<'}';
+      }
+      std::cout<<"]}\n";
+      if(!valid && submit==VK_SUCCESS && observed==VK_SUCCESS) {
+        const auto ready=AwaitReadback(VKFN(WaitForFences),VKFN(InvalidateMappedMemoryRanges),device,fence_,0,
+          readback_.coherent,readback_.memory,readback_.allocation,
+          gpu_.properties.limits.nonCoherentAtomSize,0,receiptBytes);
+        if(ready==VK_SUCCESS) {
+          Completion late{};
+          std::copy_n(readback_.words,late.size(),late.begin());
+          const bool identity=CheckIdentity(config,late,late[40]) && (late[40]==1 || late[40]==2);
+          std::cout<<"{\"stage\":\"G16_PRIVATE_LATE_TAIL\",\"nonce\":\""<<Wide(config,16)
+            <<"\",\"originalFence\":\""<<reinterpret_cast<uintptr_t>(fence_)<<"\",\"originalGeneration\":\""
+            <<fenceGeneration_<<"\",\"identityOK\":"<<(identity?"true":"false")<<",\"firstReason\":"<<late[41]
+            <<",\"firstStage\":"<<late[42]<<",\"segments\":"<<late[58]<<",\"iterations\":"<<late[59]
+            <<",\"candidates\":"<<late[54]<<",\"acceptedRoot\":null}\n";
+          Write(p.out/"late-completion.u32le",late.data(),sizeof(late));
+          if(identity)Export(p,config,late,false);
+        }
+      }
+    }
     if(valid)
       RequireHost(bool(stream.write(reinterpret_cast<const char *>(receipt.data()),sizeof(receipt))),"G16_COMPLETION_WRITE");
     if(!accepted || i+1==p.roots) {
@@ -598,18 +709,21 @@ int RunG16Multi(int argc,wchar_t **argv) {
 #ifdef PC_G16_FREEZE_FIXTURE
   faultMode=argc==12 && std::wstring_view(argv[8])==L"--freeze-fault";
 #endif
-  RequireHost(faultMode || (argc>=8 && argc<=10),
-      "USE: g16-multi MODULE SEED (static|fast|slow|hold) (128|256) ROOTS OUT [mirror] [present]");
+  RequireHost(faultMode || (argc>=8 && argc<=11),
+      "USE: g16-multi MODULE SEED (static|fast|slow|hold) (128|256) ROOTS OUT [mirror] [present] [diagnostics]");
   for(int i=8;!faultMode && i<argc;++i) {
     const std::wstring_view flag(argv[i]);
     if(flag==L"mirror" && !p.mirror)p.mirror=true;
     else if(flag==L"present" && !p.present)p.present=true;
+    else if(flag==L"diagnostics" && !p.diagnostics)p.diagnostics=true;
     else RequireHost(false,"G16_FLAG");
   }
   p.module=ReadWords(argv[2],256*1024);
   const auto moduleSHA=Hex(Hash(p.module.data(),p.module.size()*4));
-  RequireHost(moduleSHA=="792f5986328b796aa4bea47b601899cce55aef83e5f0e76ed3d29afe7b718cda" ||
+  const bool timeEvidence=moduleSHA=="6d4beb5e51e665fb0c853c7f411f85a61e6d1ff9ecd09bef632913d50c396a52";
+  RequireHost(timeEvidence || moduleSHA=="792f5986328b796aa4bea47b601899cce55aef83e5f0e76ed3d29afe7b718cda" ||
               moduleSHA=="786bb1db9b8d3a679042bdc36d014226d68647913770d503192c297e0c10e361","G16_MODULE_SHA");
+  RequireHost(!p.diagnostics || timeEvidence,"G16_DIAGNOSTIC_MODULE");
   p.seed=ReadWords(argv[3],52*64);
   const auto seedSHA=Hex(Hash(p.seed.data(),p.seed.size()*4));
   if(seedSHA=="d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168")p.disks=13;

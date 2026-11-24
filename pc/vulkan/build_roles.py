@@ -219,6 +219,22 @@ def build(out, compiler):
                       "memoryBarrierBuffer();c[t+255u]=0xc0de1301u;}",
                       "T909 completion copies")
     sources.append(("OP_00_9_11_SEAL_V1", [9, 10, 11, 66], seal.encode()))
+    begin = seal.index("void completion(){")
+    finish = seal.index("\n}", begin) + 2
+    body = seal[begin:finish]
+    hash_begin = body.index(" uint hash[8];gpuSha(2u,uL[4],hash);")
+    hash_end = body.index("\n", hash_begin+1)
+    publish_begin = body.index("}\n syncAll();\n for(uint i=lane;i<255u")
+    prepare = body[:hash_begin] + body[hash_end:publish_begin] + "}\n}"
+    digest = "void completion(){if(lane==0u){uint t=18432u;" + body[hash_begin:hash_end] + "}}"
+    publish = "void completion(){uint t=18432u;\n" + body[publish_begin+1:]
+    for label, part in (("PREPARE", prepare), ("SHA", digest), ("PUBLISH", publish)):
+        staged = seal[:begin] + part + seal[finish:]
+        if label != "PREPARE":
+            staged = substitute(staged, "if(uOp==11u){",
+                                "if(uOp==11u){lane=gl_LocalInvocationID.x;completion();return;",
+                                "T955 continuation bypasses logical slot counting")
+        sources.append(("OP11_T955_"+label, [9, 10, 11, 66], staged.encode()))
     sources.extend(t841_arms(emit))
     sources.extend(t849_arms(emit))
     dispatch = Path(__file__).resolve().parents[2] / "docs" / "architecture-T607-g13-dispatch-v1.json"
