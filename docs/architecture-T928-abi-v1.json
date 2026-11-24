@@ -1,0 +1,1298 @@
+{
+  "schema": "G16_DISK_PC_V1",
+  "phase": "ENGINEERING_CONTRACT_ONLY",
+  "byteOrder": "LE",
+  "float": "IEEE754 binary32",
+  "units": {
+    "position": "m",
+    "velocity": "m/s",
+    "mass": "kg",
+    "angular": "rad,rad/s,rad/s^2",
+    "inertia": "kg*m^2",
+    "impulse": "N*s",
+    "work": "J"
+  },
+  "boxHalfExtentUm": [
+    50000,
+    100000
+  ],
+  "worldGravity": [
+    0,
+    -9.81
+  ],
+  "walls": {
+    "0": "original bottom",
+    "1": "original top",
+    "2": "original left",
+    "3": "original right"
+  },
+  "material": {
+    "id": 1,
+    "name": "G16_DRY_FRICTIONLESS_REFERENCE_V1",
+    "muStatic": 0,
+    "muKinetic": 0,
+    "restitutionMulti": 0,
+    "maximumIsolatedRestitution": 0.15,
+    "scope": "Technical reference; no sand constitutive calibration"
+  },
+  "pose": {
+    "fixture": {
+      "file": "test/reports/t843/G16-invert.json",
+      "sha256": "417142f7c2f523f99641a6d7a5c8e42b26b28f0c436d8142d2af16e6263c2b29",
+      "mode": "T843_INPUT_DEGREES",
+      "sourceSamples": 401,
+      "timeUse": "evaluate quintic at rational accepted root/micro/TOI"
+    },
+    "fast": {
+      "knotsDeg": [
+        0,
+        80,
+        100,
+        180,
+        180
+      ],
+      "durationsNs": [
+        1000000000,
+        1000000000,
+        1000000000,
+        1000000000
+      ]
+    },
+    "slow": {
+      "knotsDeg": [
+        0,
+        80,
+        100,
+        180,
+        180
+      ],
+      "durationsNs": [
+        2000000000,
+        2000000000,
+        2000000000,
+        1000000000
+      ]
+    },
+    "near90Hold": {
+      "knotsDeg": [
+        0,
+        80,
+        90,
+        90,
+        100,
+        180,
+        180
+      ],
+      "durationsNs": [
+        1000000000,
+        500000000,
+        500000000,
+        500000000,
+        1000000000,
+        1000000000
+      ]
+    },
+    "reflection": {
+      "negate": [
+        "inputAngle",
+        "worldX",
+        "vx",
+        "spinAngle",
+        "spinOmega"
+      ],
+      "swapWalls": [
+        2,
+        3
+      ]
+    },
+    "phaseConvention": "world-to-box R(+thetaInput); thetaWorld=-thetaInput; thetaInput is unwrapped",
+    "centerWorld": [
+      0,
+      0
+    ],
+    "quantum": {
+      "secondsNumerator": 1,
+      "secondsDenominator": 120,
+      "BTrialJ": [
+        128,
+        256
+      ],
+      "maxJ": 256,
+      "maxSegmentsPerMicro": 2,
+      "toiDenominator": 16777216
+    }
+  },
+  "seeds": [
+    {
+      "id": "G16-B13",
+      "n": 13,
+      "radiusUm": 5000,
+      "massUg": 10000000,
+      "materialId": 1,
+      "bucketUm": 10000,
+      "bucketWidthHeight": [
+        10,
+        20
+      ],
+      "rowFormat": [
+        "yUm",
+        "firstXUm",
+        "pitchUm",
+        "columns"
+      ],
+      "rows": [
+        [
+          -94995,
+          -40040,
+          10010,
+          [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        ],
+        [
+          -86325,
+          -35035,
+          10010,
+          [
+            1,
+            2,
+            3,
+            5
+          ]
+        ]
+      ],
+      "proof": {
+        "bytes": 832,
+        "uploadSHA256": "d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168",
+        "massUg": 130000000,
+        "areaMm2": 1021.017612417,
+        "comUm": [
+          -2310.0,
+          -92327.307692308
+        ],
+        "minWallClearanceUm": 5,
+        "minPairClearanceUm": 10.0,
+        "heightFromBottomUm": 18675,
+        "coldDiskCandidates": 18,
+        "coldWallCandidates": 9,
+        "coldMaximumDegree": 5
+      }
+    },
+    {
+      "id": "G16-B52",
+      "n": 52,
+      "radiusUm": 2500,
+      "massUg": 2500000,
+      "materialId": 1,
+      "bucketUm": 5000,
+      "bucketWidthHeight": [
+        20,
+        40
+      ],
+      "rowFormat": [
+        "yUm",
+        "firstXUm",
+        "pitchUm",
+        "columns"
+      ],
+      "rows": [
+        [
+          -97495,
+          -45090,
+          5010,
+          [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ]
+        ],
+        [
+          -93155,
+          -42585,
+          5010,
+          [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17
+          ]
+        ],
+        [
+          -88815,
+          -35070,
+          5010,
+          [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ]
+        ]
+      ],
+      "proof": {
+        "bytes": 3328,
+        "uploadSHA256": "eca4c474bc8143d358e0ed5f3a67f93c7f9d0a91f9c86fbe1a405b909ffb0884",
+        "massUg": 130000000,
+        "areaMm2": 1021.017612417,
+        "comUm": [
+          0.0,
+          -93488.846153846
+        ],
+        "minWallClearanceUm": 5,
+        "minPairClearanceUm": 10.0,
+        "heightFromBottomUm": 13685,
+        "coldDiskCandidates": 115,
+        "coldWallCandidates": 19,
+        "coldMaximumDegree": 6
+      }
+    }
+  ],
+  "limits": {
+    "disks": 1024,
+    "buckets": 3200,
+    "candidateEdgesWithWalls": 8192,
+    "incidentPerDisk": 16,
+    "directedAdjacencyEntries": 16384,
+    "iterations": 16,
+    "logicalPassesPerSegment": 44,
+    "extraLogicalPassesPerRoot": 32,
+    "logicalPassesPerRoot": 22560,
+    "shaderFullInputBytes": 49152,
+    "privateDiagnosticDeadlineNs": 250000000
+  },
+  "bindings": [
+    {
+      "binding": 0,
+      "bytes": 196608,
+      "usage": "STORAGE|TRANSFER_SRC|TRANSFER_DST",
+      "ranges": [
+        [
+          "state0",
+          0,
+          65536
+        ],
+        [
+          "state1",
+          65536,
+          65536
+        ],
+        [
+          "state2",
+          131072,
+          65536
+        ]
+      ]
+    },
+    {
+      "binding": 1,
+      "bytes": 1179648,
+      "usage": "STORAGE|TRANSFER_SRC",
+      "ranges": [
+        [
+          "keyBracket",
+          0,
+          393216
+        ],
+        [
+          "solverResidual",
+          393216,
+          393216
+        ],
+        [
+          "geometryWork",
+          786432,
+          393216
+        ]
+      ]
+    },
+    {
+      "binding": 2,
+      "bytes": 608256,
+      "usage": "STORAGE|TRANSFER_SRC|TRANSFER_DST",
+      "ranges": [
+        [
+          "adjacency",
+          0,
+          262144
+        ],
+        [
+          "buckets",
+          262144,
+          51200
+        ],
+        [
+          "sort0",
+          313344,
+          16384
+        ],
+        [
+          "sort1",
+          329728,
+          16384
+        ],
+        [
+          "frozenConfigAndPose",
+          346112,
+          4096
+        ],
+        [
+          "controlAndCompletion",
+          350208,
+          4096
+        ],
+        [
+          "csrHeads",
+          354304,
+          8192
+        ],
+        [
+          "velocity0",
+          362496,
+          16384
+        ],
+        [
+          "velocity1",
+          378880,
+          16384
+        ],
+        [
+          "diskAudit",
+          395264,
+          32768
+        ],
+        [
+          "sweptBounds",
+          428032,
+          65536
+        ],
+        [
+          "reductions",
+          493568,
+          65536
+        ],
+        [
+          "witnessScratch",
+          559104,
+          49152
+        ]
+      ]
+    },
+    {
+      "binding": 3,
+      "bytes": 65536,
+      "usage": "STORAGE|VERTEX|TRANSFER_SRC",
+      "ranges": [
+        [
+          "scene0",
+          0,
+          32768
+        ],
+        [
+          "scene1",
+          32768,
+          32768
+        ]
+      ]
+    }
+  ],
+  "logicalResidentBytes": 2050048,
+  "records": {
+    "disk64": {
+      "stride": 64,
+      "wordTypes": "4u32 9f32 3u32",
+      "fields": [
+        "id",
+        "generation",
+        "origin",
+        "material",
+        "x",
+        "y",
+        "vx",
+        "vy",
+        "spinAngle",
+        "spinOmega",
+        "radius",
+        "mass",
+        "inertia",
+        "flags",
+        "reserved0",
+        "reserved1"
+      ]
+    },
+    "edgeKeyBracket48": {
+      "stride": 48,
+      "wordTypes": "8u32 4f32",
+      "fields": [
+        "idA",
+        "genA",
+        "idB",
+        "genB",
+        "wallIdOrFFFFFFFF",
+        "flags",
+        "toiLoQ24",
+        "toiHiQ24",
+        "gap",
+        "nx",
+        "ny",
+        "approachSpeedBound"
+      ]
+    },
+    "edgeSolver48": {
+      "stride": 48,
+      "wordTypes": "12f32",
+      "fields": [
+        "lambdaN",
+        "lambdaT",
+        "vNBefore",
+        "vTBefore",
+        "vNAfter",
+        "vTAfter",
+        "vTarget",
+        "zN",
+        "complementarityJ",
+        "absTangentialResidual",
+        "effNInvMass",
+        "effTInvMass"
+      ]
+    },
+    "edgeGeometryWork48": {
+      "stride": 48,
+      "wordTypes": "10f32 2u32",
+      "fields": [
+        "cx",
+        "cy",
+        "wallVx",
+        "wallVy",
+        "impulseX",
+        "impulseY",
+        "wallWork",
+        "contactDissipation",
+        "torqueA",
+        "torqueB",
+        "flags",
+        "reserved"
+      ]
+    },
+    "adjacency16": {
+      "stride": 16,
+      "wordTypes": "4u32",
+      "fields": [
+        "edgeIndex",
+        "endpointSide",
+        "oppositeIdOrWall",
+        "oppositeGeneration"
+      ]
+    },
+    "bucket16": {
+      "stride": 16,
+      "wordTypes": "4u32",
+      "fields": [
+        "head",
+        "count",
+        "scatterReserve",
+        "epoch"
+      ]
+    },
+    "scene32": {
+      "stride": 32,
+      "wordTypes": "4f32 4u32",
+      "fields": [
+        "worldX",
+        "worldY",
+        "radius",
+        "spinAngle",
+        "id",
+        "generation",
+        "origin",
+        "materialAndFlags"
+      ]
+    }
+  },
+  "reusedReferences": {
+    "t906": "docs/algorithm-T906-planar-avalanche-v1.md",
+    "t907": "docs/architecture-T907-g15-g16-v1.md",
+    "g21Exp11SHA": "953e2c26812b185796e9e41ad4800986f9b35d3c5d8dc23ad4c0e56727a1f469",
+    "t910OracleSHA": "c1cbf9021a0c02a313279af0fb0a0ae52c9f1b644b12cfeb45c37cba687d9264"
+  },
+  "isolatedReceipts": {
+    "g16-translate": {
+      "inputPackedHex": "0ad7a33c6f12833bcdcccc3c00000000cdcccc3dc3f51cc1cdcccc3d0000803e0000000000000000000000000000000000000000",
+      "inputSHA": "4a45e260b65305d49d9ca045d705534831d13bb342db9e615848bb9f41ba70c7",
+      "output": "test/reports/t912/outputs/g16-translate-output.bin",
+      "outputSHA": "0f7bd878e930f8d4651bf8e7bbd3d34fe7aea8d4444d56ca8a73a5ba849fd054",
+      "status": 1,
+      "gpuTOI": 0.061922550201416016,
+      "gpuBracket": [
+        0.061922550201416016,
+        0.061922550201416016
+      ],
+      "oracleFP32InputTOI": 0.061922552391813344,
+      "errorMs": -2.1903973287940026e-06,
+      "impulseError": -1.4349143036967993e-09,
+      "velocityError": -7.647589506110108e-10,
+      "t906ToiPass": true
+    },
+    "g16-rotate": {
+      "inputPackedHex": "0ad7a33c6f12833b00000000000000000000000000000000cdcccc3d0000803e295c8f3d0ad7233d0ad7a33d0000803f01000000",
+      "inputSHA": "ff9802104a5d8c1c6a59b523ea877140de304e47b9c593e42d65ef9ea689550d",
+      "output": "test/reports/t912/outputs/g16-rotate-output.bin",
+      "outputSHA": "f4b2d44a1fe362e89ebf84cfc928012e7368b7ae514420f6d049ea008c060390",
+      "status": 1,
+      "gpuTOI": 0.17895472049713135,
+      "gpuBracket": [
+        0.17895470559597015,
+        0.17895472049713135
+      ],
+      "oracleFP32InputTOI": 0.17887421765476041,
+      "errorMs": 0.08050284237093308,
+      "endpointGapsM": [
+        -2.1654632297854123e-06,
+        -2.1658640879411092e-06
+      ],
+      "t906LimitMs": 0.05,
+      "t906ToiPass": false
+    }
+  },
+  "frozenConfig": {
+    "binding": 2,
+    "byteOffset": 346112,
+    "bytes": 4096,
+    "magicLE": "G16I",
+    "version": 1,
+    "config128": [
+      [
+        0,
+        "magic",
+        "u32"
+      ],
+      [
+        1,
+        "version",
+        "u32"
+      ],
+      [
+        2,
+        "recordWords",
+        "u32"
+      ],
+      [
+        3,
+        "mode",
+        "u32"
+      ],
+      [
+        4,
+        "diskCount",
+        "u32"
+      ],
+      [
+        5,
+        "maxJ",
+        "u32"
+      ],
+      [
+        6,
+        "poseSegmentCount",
+        "u32"
+      ],
+      [
+        7,
+        "bookFlags",
+        "u32"
+      ],
+      [
+        8,
+        "run",
+        "u64le"
+      ],
+      [
+        10,
+        "owner",
+        "u64le"
+      ],
+      [
+        12,
+        "context",
+        "u64le"
+      ],
+      [
+        14,
+        "geometry",
+        "u64le"
+      ],
+      [
+        16,
+        "nonce",
+        "u64le"
+      ],
+      [
+        18,
+        "plan",
+        "u64le"
+      ],
+      [
+        20,
+        "inputId",
+        "u64le"
+      ],
+      [
+        22,
+        "baseCommit",
+        "u64le"
+      ],
+      [
+        24,
+        "baseAcceptedQuanta",
+        "u64le"
+      ],
+      [
+        26,
+        "baseStateGeneration",
+        "u64le"
+      ],
+      [
+        28,
+        "candidateStateGeneration",
+        "u64le"
+      ],
+      [
+        30,
+        "priorSceneGeneration",
+        "u64le"
+      ],
+      [
+        32,
+        "nextSceneGeneration",
+        "u64le"
+      ],
+      [
+        34,
+        "expectedFenceGeneration",
+        "u64le"
+      ],
+      [
+        36,
+        "grantBeginNs",
+        "u64le"
+      ],
+      [
+        38,
+        "deadlineNs",
+        "u64le"
+      ],
+      [
+        40,
+        "baseBank",
+        "u32"
+      ],
+      [
+        41,
+        "candidateBank",
+        "u32"
+      ],
+      [
+        42,
+        "priorSceneSlot",
+        "u32"
+      ],
+      [
+        43,
+        "candidateSceneSlot",
+        "u32"
+      ],
+      [
+        44,
+        "bucketWidth",
+        "u32"
+      ],
+      [
+        45,
+        "bucketHeight",
+        "u32"
+      ],
+      [
+        46,
+        "originCount",
+        "u32"
+      ],
+      [
+        47,
+        "materialId",
+        "u32"
+      ],
+      [
+        48,
+        "halfWidth",
+        "f32"
+      ],
+      [
+        49,
+        "halfHeight",
+        "f32"
+      ],
+      [
+        50,
+        "gravityX",
+        "f32"
+      ],
+      [
+        51,
+        "gravityY",
+        "f32"
+      ],
+      [
+        52,
+        "epsilonGap",
+        "f32"
+      ],
+      [
+        53,
+        "allowedPenetration",
+        "f32"
+      ],
+      [
+        54,
+        "centerX",
+        "f32"
+      ],
+      [
+        55,
+        "centerY",
+        "f32"
+      ],
+      [
+        56,
+        "centerVx",
+        "f32"
+      ],
+      [
+        57,
+        "centerVy",
+        "f32"
+      ],
+      [
+        58,
+        "muS",
+        "f32"
+      ],
+      [
+        59,
+        "muK",
+        "f32"
+      ],
+      [
+        60,
+        "restitution",
+        "f32"
+      ],
+      [
+        61,
+        "bucketSize",
+        "f32"
+      ],
+      [
+        64,
+        "seedSHA",
+        "sha256Bytes"
+      ],
+      [
+        72,
+        "poseSHA",
+        "sha256Bytes"
+      ],
+      [
+        80,
+        "materialSHA",
+        "sha256Bytes"
+      ],
+      [
+        88,
+        "layoutSHA",
+        "sha256Bytes"
+      ],
+      [
+        96,
+        "roleSetSHA",
+        "sha256Bytes"
+      ]
+    ],
+    "poseSegments": {
+      "offsetWithinConfig": 512,
+      "countMax": 8,
+      "stride": 64,
+      "wordType": "2u64le 2s32 2u32 8u32",
+      "fields": [
+        "beginNs",
+        "durationNs",
+        "thetaBeginMilliDeg",
+        "thetaEndMilliDeg",
+        "curveKind(1=quintic)",
+        "flags",
+        "reserved[8]"
+      ]
+    },
+    "unused": "All zeros. Pose intervals are contiguous, non-empty, checked for overflow."
+  },
+  "completion": {
+    "binding": 2,
+    "byteOffset": 350208,
+    "hotBytes": 1024,
+    "magicLE": "CG16",
+    "version": 1,
+    "seal": "0xC016CAFE",
+    "noIndex": "0xffffffff",
+    "outcome": {
+      "0": "invalid",
+      "1": "candidate_audited",
+      "2": "rejected_or_incomplete"
+    },
+    "fields": [
+      [
+        0,
+        "magic",
+        "u32"
+      ],
+      [
+        1,
+        "version",
+        "u32"
+      ],
+      [
+        2,
+        "recordWords",
+        "u32"
+      ],
+      [
+        3,
+        "seal",
+        "u32"
+      ],
+      [
+        4,
+        "run",
+        "u64le"
+      ],
+      [
+        6,
+        "nonce",
+        "u64le"
+      ],
+      [
+        8,
+        "plan",
+        "u64le"
+      ],
+      [
+        10,
+        "owner",
+        "u64le"
+      ],
+      [
+        12,
+        "context",
+        "u64le"
+      ],
+      [
+        14,
+        "geometry",
+        "u64le"
+      ],
+      [
+        16,
+        "inputId",
+        "u64le"
+      ],
+      [
+        18,
+        "baseCommit",
+        "u64le"
+      ],
+      [
+        20,
+        "candidateCommit",
+        "u64le"
+      ],
+      [
+        22,
+        "baseQuanta",
+        "u64le"
+      ],
+      [
+        24,
+        "candidateQuanta",
+        "u64le"
+      ],
+      [
+        26,
+        "baseStateGeneration",
+        "u64le"
+      ],
+      [
+        28,
+        "candidateStateGeneration",
+        "u64le"
+      ],
+      [
+        30,
+        "priorSceneGeneration",
+        "u64le"
+      ],
+      [
+        32,
+        "candidateSceneGeneration",
+        "u64le"
+      ],
+      [
+        34,
+        "fenceGeneration",
+        "u64le"
+      ],
+      [
+        36,
+        "grantBeginNs",
+        "u64le"
+      ],
+      [
+        38,
+        "deadlineNs",
+        "u64le"
+      ],
+      [
+        40,
+        "outcome",
+        "u32"
+      ],
+      [
+        41,
+        "firstReason",
+        "u32"
+      ],
+      [
+        42,
+        "firstStage",
+        "u32"
+      ],
+      [
+        43,
+        "firstMicro",
+        "u32"
+      ],
+      [
+        44,
+        "firstSegment",
+        "u32"
+      ],
+      [
+        45,
+        "firstDiskId",
+        "u32"
+      ],
+      [
+        46,
+        "firstEdgeIndex",
+        "u32"
+      ],
+      [
+        47,
+        "wallId",
+        "u32"
+      ],
+      [
+        48,
+        "baseBank",
+        "u32"
+      ],
+      [
+        49,
+        "candidateBank",
+        "u32"
+      ],
+      [
+        50,
+        "priorSceneSlot",
+        "u32"
+      ],
+      [
+        51,
+        "candidateSceneSlot",
+        "u32"
+      ],
+      [
+        52,
+        "diskCount",
+        "u32"
+      ],
+      [
+        53,
+        "bucketCount",
+        "u32"
+      ],
+      [
+        54,
+        "candidateCount",
+        "u32"
+      ],
+      [
+        55,
+        "degreeMax",
+        "u32"
+      ],
+      [
+        56,
+        "directedCount",
+        "u32"
+      ],
+      [
+        57,
+        "actualJ",
+        "u32"
+      ],
+      [
+        58,
+        "segments",
+        "u32"
+      ],
+      [
+        59,
+        "iterations",
+        "u32"
+      ],
+      [
+        60,
+        "logicPasses",
+        "u32"
+      ],
+      [
+        61,
+        "physicalDispatches",
+        "u32"
+      ],
+      [
+        62,
+        "visibleInstances",
+        "u32"
+      ],
+      [
+        63,
+        "stageMask",
+        "u32"
+      ],
+      [
+        64,
+        "prefixRecords",
+        "u32"
+      ],
+      [
+        65,
+        "flags",
+        "u32"
+      ],
+      [
+        66,
+        "massBeforeUg",
+        "u64le"
+      ],
+      [
+        68,
+        "massAfterUg",
+        "u64le"
+      ],
+      [
+        70,
+        "minGap",
+        "f32"
+      ],
+      [
+        71,
+        "maxPenetration",
+        "f32"
+      ],
+      [
+        72,
+        "maxNegZn",
+        "f32"
+      ],
+      [
+        73,
+        "maxComplementarityAbs",
+        "f32"
+      ],
+      [
+        74,
+        "maxTangentialResidual",
+        "f32"
+      ],
+      [
+        75,
+        "linearResidualX",
+        "f32"
+      ],
+      [
+        76,
+        "linearResidualY",
+        "f32"
+      ],
+      [
+        77,
+        "angularResidual",
+        "f32"
+      ],
+      [
+        78,
+        "energyResidual",
+        "f32"
+      ],
+      [
+        79,
+        "wallWork",
+        "f32"
+      ],
+      [
+        80,
+        "contactDissipation",
+        "f32"
+      ],
+      [
+        82,
+        "originalBottomNormalImpulse",
+        "f32"
+      ],
+      [
+        83,
+        "originalTopNormalImpulse",
+        "f32"
+      ],
+      [
+        84,
+        "originalLeftNormalImpulse",
+        "f32"
+      ],
+      [
+        85,
+        "originalRightNormalImpulse",
+        "f32"
+      ],
+      [
+        88,
+        "seedSHA",
+        "sha256Bytes"
+      ],
+      [
+        96,
+        "poseSHA",
+        "sha256Bytes"
+      ],
+      [
+        104,
+        "materialSHA",
+        "sha256Bytes"
+      ],
+      [
+        112,
+        "layoutSHA",
+        "sha256Bytes"
+      ],
+      [
+        120,
+        "roleSetSHA",
+        "sha256Bytes"
+      ]
+    ],
+    "stageCodes": {
+      "0": "none",
+      "1": "freeze",
+      "2": "predict",
+      "3": "bucket",
+      "4": "candidate_toi",
+      "5": "adjacency",
+      "6": "contact_prepare",
+      "7": "jacobi_edge",
+      "8": "jacobi_gather",
+      "9": "integrate",
+      "10": "audit",
+      "11": "pack",
+      "12": "seal"
+    },
+    "gpuReasons": {
+      "0": "none",
+      "1": "identity_or_layout",
+      "2": "seed_or_material",
+      "3": "position_or_pose_domain",
+      "4": "non_finite",
+      "5": "displacement",
+      "6": "bucket_or_scatter_capacity",
+      "7": "candidate_capacity",
+      "8": "incident_capacity",
+      "9": "duplicate_key",
+      "10": "toi_unisolated",
+      "11": "segment_limit",
+      "12": "penetration",
+      "13": "negative_normal",
+      "14": "not_converged",
+      "15": "ledger_or_energy",
+      "16": "scene_range",
+      "17": "witness_capacity"
+    },
+    "flags": {
+      "0": "cold_witness_truncated",
+      "1": "used_predictive_constraint",
+      "2": "used_isolated_restitution"
+    },
+    "rules": [
+      "Reserved words and bits zero; nonapplicable first IDs use noIndex.",
+      "Seal written last; outcome 1 is conditional on live scope/fence/deadline checked by owner.",
+      "On audit rejection candidate fields describe private attempt only, no active bank, commit, time or scene change.",
+      "A failed Vulkan submission, timeout, device loss, host stale or copy failure uses an independent host receipt.",
+      "SHA fields are raw 32-byte hashes copied in digest order."
+    ]
+  }
+}
