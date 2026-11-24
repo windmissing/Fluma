@@ -4,6 +4,8 @@
 
 ## 1. 四臂复算
 
+T914 后续的 split-v2 启动故障、时钟封装及续根证据见 [T919 工程修订](architecture-T919-v1.md)。T919 补充发布包校验和首根到续根的复测入口。
+
 证据钉住 T904 `e04697a8` 和 T903 B `cafcfe9d`。实际为 `8086:3e98` Intel UHD 630、驱动 `1656924 / 31.0.101.2140`、queue family 0，各族独立 PE 和 role set。复核本机 PE SHA 和相应产物、512 B 的同一 `t894-model-source.u32le`（`3580ccb1…`），里面的 synthetic 业务体为质量 0.2、x=64、y=200、初速零。各进程的实际 frozen `inputSHA` 仍不同，身份和 permit 随 run 封装。T904 有无查询各一例，能说明边界与量级，无法单独量出查询开销或稳定分布。非查询两臂无 query pool、无点位，`queryCreateVkResult=1` 是未创建分支的初值。各原件最后一行是实际进程错误文本 `<family> ROOT_NOT_ACCEPTED`。 [T903 构建与复现命令](developer-T903-v1.md)
 
 ROOT、ROOT_TIMELINE、RETIRE 和 ROOT_GPU_TIMESTAMPS 按 `family/run/nonce=1/fence/generation=2` 联接，再核 device/queue/plan。四份 BOOT 的原 VkResult 为 0，DM2 seal 6559303、R1 seal 3223126018。随后 SOURCE 分别录制 12/19 个派发、submit=0。真实 business polls 均为 `VK_TIMEOUT=2`，stop 记录的 pulse 当下仍 fresh，firstStop 为 `GRANT_DEADLINE`。业务 readback/gate/promote 没有开始，`TAIL_NOT_READY` 是未到门，ROOT 的零 outcome/reason 为默认字。独立 RETIRE 在同 fence 返回 0，所有迟到查询均 `acceptedRoot=null`。
