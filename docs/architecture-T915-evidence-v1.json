@@ -1,0 +1,755 @@
+{
+  "sourceCommits": [
+    "daf168ec",
+    "5cf5e40b",
+    "865bd2df"
+  ],
+  "g13": {
+    "device": {
+      "vendorId": 32902,
+      "deviceId": 16024,
+      "driverVersion": 1656924,
+      "cacheUUIDBytes": [
+        109,
+        60,
+        105,
+        49,
+        105,
+        49,
+        90,
+        50,
+        101,
+        63,
+        102,
+        49,
+        97,
+        53,
+        99,
+        1
+      ],
+      "driverUUIDBytes": [
+        51,
+        49,
+        46,
+        48,
+        46,
+        49,
+        48,
+        49,
+        46,
+        50,
+        49,
+        52,
+        48,
+        0,
+        0,
+        0
+      ],
+      "deviceUUIDBytes": [
+        134,
+        128,
+        152,
+        62,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "loaderApi": 4206893,
+      "instanceApi": 4202496,
+      "queueFamily": 0,
+      "queueFlags": 15,
+      "queueSurfaceSupport": true,
+      "floatControlsRoute": "Vulkan 1.2 core",
+      "deviceExtensions": []
+    },
+    "builds": {
+      "t890": {
+        "peSHA256": "1e49f2a6f7aadef3bd9b047c647ba21cccf57de23a5fd8809dd01f771c69671c",
+        "peBytes": 3783168,
+        "op48Bytes": 261304,
+        "op48SHA256": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+        "flagsPresent": {
+          "--g13-slot-snapshot": false,
+          "--g13-tail-timing": false,
+          "--g13-seal-v1": false
+        }
+      },
+      "t909": {
+        "peSHA256": "f742cf6a9ba0b422824c06d4ad76de54bd07cc078d90e17902d4abf7fbebc484",
+        "peBytes": 3973120,
+        "op48Bytes": 261304,
+        "op48SHA256": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+        "flagsPresent": {
+          "--g13-slot-snapshot": true,
+          "--g13-tail-timing": true,
+          "--g13-seal-v1": true
+        }
+      }
+    },
+    "originalObservations": {
+      "t909Tail": {
+        "file": "test/reports/t912/runs/g13-baseline-tail.jsonl",
+        "sha256": "ad9eb1e366889f488fa3c0c27c753dec345975bfbef658b0cbb15d2ff94f9bd9",
+        "lines": 99,
+        "op48": [
+          {
+            "line": 97,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateShaderModule",
+            "edge": "ENTER",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 24032,
+            "ownerTid": 53336,
+            "processStartTick": "134399628836817991",
+            "qpcFrequency": "10000000",
+            "qpc": "16491160387809",
+            "vkResult": null
+          },
+          {
+            "line": 98,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateShaderModule",
+            "edge": "EXIT",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 24032,
+            "ownerTid": 53336,
+            "processStartTick": "134399628836817991",
+            "qpcFrequency": "10000000",
+            "qpc": "16491160388417",
+            "vkResult": 0
+          },
+          {
+            "line": 99,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateComputePipelines",
+            "edge": "ENTER",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 24032,
+            "ownerTid": 53336,
+            "processStartTick": "134399628836817991",
+            "qpcFrequency": "10000000",
+            "qpc": "16491160388497",
+            "vkResult": null
+          }
+        ],
+        "elapsedNs": null,
+        "prefixRoles": [
+          {
+            "line": 19,
+            "role": "OP_00_0_5",
+            "sha256": "a42bb063c6ccb0402291d6bdb6bfe863cf6324771ba0f558c1a3666862cd6ea4"
+          },
+          {
+            "line": 29,
+            "role": "OP12_14",
+            "sha256": "eceb9fcb4f4ed1cba79ceb49a9974e945c907934864a125ae4ca445d489c39b5"
+          },
+          {
+            "line": 39,
+            "role": "OP15",
+            "sha256": "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f"
+          },
+          {
+            "line": 49,
+            "role": "OP16",
+            "sha256": "cfaaa4d61649236f6e6e2bfdbd759f0e62e67cc9288c927d1f0822c27fa926d2"
+          },
+          {
+            "line": 59,
+            "role": "OP17_PRIVATE_MOTION",
+            "sha256": "99725ccb0e6c67702eb913a656beac6145eef0bff06eac79fe1d6da3f0f24e8f"
+          },
+          {
+            "line": 69,
+            "role": "OP17_PRIVATE_MMS",
+            "sha256": "4c68c98e631fff9ee70ab0ebce93cbbfa57b557a5939dcd4bde9d33cb582b3eb"
+          },
+          {
+            "line": 79,
+            "role": "OP17_PRIVATE_LEDGER_SNAPSHOT",
+            "sha256": "bdd47fcba518981e1db056f8628d2ef0e28e2aa331997c336eec7eda528fadd7"
+          },
+          {
+            "line": 89,
+            "role": "OP_18",
+            "sha256": "762b9f504a4bf73ce004d2b763198a84acf0a38814a7bea724952ec06630286f"
+          }
+        ],
+        "privateRootOutcome": "NOT_REACHED"
+      },
+      "t909NoTail": {
+        "file": "test/reports/t912/runs/g13-t909-no-tail.jsonl",
+        "sha256": "ff8bb04177a0d7e3c8ed784ef9866dd4fd0ca5e9a520544d4e930bf83fd1af64",
+        "lines": 99,
+        "op48": [
+          {
+            "line": 97,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateShaderModule",
+            "edge": "ENTER",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 22196,
+            "ownerTid": 52696,
+            "processStartTick": "134399615294351716",
+            "qpcFrequency": "10000000",
+            "qpc": "16477623438485",
+            "vkResult": null
+          },
+          {
+            "line": 98,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateShaderModule",
+            "edge": "EXIT",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 22196,
+            "ownerTid": 52696,
+            "processStartTick": "134399615294351716",
+            "qpcFrequency": "10000000",
+            "qpc": "16477623439992",
+            "vkResult": 0
+          },
+          {
+            "line": 99,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateComputePipelines",
+            "edge": "ENTER",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 22196,
+            "ownerTid": 52696,
+            "processStartTick": "134399615294351716",
+            "qpcFrequency": "10000000",
+            "qpc": "16477623440105",
+            "vkResult": null
+          }
+        ],
+        "elapsedNs": null,
+        "prefixRoles": [
+          {
+            "line": 19,
+            "role": "OP_00_0_5",
+            "sha256": "a42bb063c6ccb0402291d6bdb6bfe863cf6324771ba0f558c1a3666862cd6ea4"
+          },
+          {
+            "line": 29,
+            "role": "OP12_14",
+            "sha256": "eceb9fcb4f4ed1cba79ceb49a9974e945c907934864a125ae4ca445d489c39b5"
+          },
+          {
+            "line": 39,
+            "role": "OP15",
+            "sha256": "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f"
+          },
+          {
+            "line": 49,
+            "role": "OP16",
+            "sha256": "cfaaa4d61649236f6e6e2bfdbd759f0e62e67cc9288c927d1f0822c27fa926d2"
+          },
+          {
+            "line": 59,
+            "role": "OP17_PRIVATE_MOTION",
+            "sha256": "99725ccb0e6c67702eb913a656beac6145eef0bff06eac79fe1d6da3f0f24e8f"
+          },
+          {
+            "line": 69,
+            "role": "OP17_PRIVATE_MMS",
+            "sha256": "4c68c98e631fff9ee70ab0ebce93cbbfa57b557a5939dcd4bde9d33cb582b3eb"
+          },
+          {
+            "line": 79,
+            "role": "OP17_PRIVATE_LEDGER_SNAPSHOT",
+            "sha256": "bdd47fcba518981e1db056f8628d2ef0e28e2aa331997c336eec7eda528fadd7"
+          },
+          {
+            "line": 89,
+            "role": "OP_18",
+            "sha256": "762b9f504a4bf73ce004d2b763198a84acf0a38814a7bea724952ec06630286f"
+          }
+        ],
+        "privateRootOutcome": "NOT_REACHED"
+      },
+      "t890Control": {
+        "file": "test/reports/t912/runs/g13-control-t890.jsonl",
+        "sha256": "512435a19e3f7857db63a82a3212398b81337a042cc8cb061eaf698fb1451839",
+        "lines": 181,
+        "op48": [
+          {
+            "line": 97,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateShaderModule",
+            "edge": "ENTER",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 31336,
+            "ownerTid": 25364,
+            "processStartTick": "134399614894554433",
+            "qpcFrequency": "10000000",
+            "qpc": "16477223730719",
+            "vkResult": null
+          },
+          {
+            "line": 98,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateShaderModule",
+            "edge": "EXIT",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 31336,
+            "ownerTid": 25364,
+            "processStartTick": "134399614894554433",
+            "qpcFrequency": "10000000",
+            "qpc": "16477223731391",
+            "vkResult": 0
+          },
+          {
+            "line": 99,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateComputePipelines",
+            "edge": "ENTER",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 31336,
+            "ownerTid": 25364,
+            "processStartTick": "134399614894554433",
+            "qpcFrequency": "10000000",
+            "qpc": "16477223731456",
+            "vkResult": null
+          },
+          {
+            "line": 100,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateComputePipelines",
+            "edge": "EXIT",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 31336,
+            "ownerTid": 25364,
+            "processStartTick": "134399614894554433",
+            "qpcFrequency": "10000000",
+            "qpc": "16477223842559",
+            "vkResult": 0
+          }
+        ],
+        "elapsedNs": 11110300,
+        "prefixRoles": [
+          {
+            "line": 19,
+            "role": "OP_00_0_5",
+            "sha256": "a42bb063c6ccb0402291d6bdb6bfe863cf6324771ba0f558c1a3666862cd6ea4"
+          },
+          {
+            "line": 29,
+            "role": "OP12_14",
+            "sha256": "eceb9fcb4f4ed1cba79ceb49a9974e945c907934864a125ae4ca445d489c39b5"
+          },
+          {
+            "line": 39,
+            "role": "OP15",
+            "sha256": "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f"
+          },
+          {
+            "line": 49,
+            "role": "OP16",
+            "sha256": "cfaaa4d61649236f6e6e2bfdbd759f0e62e67cc9288c927d1f0822c27fa926d2"
+          },
+          {
+            "line": 59,
+            "role": "OP17_PRIVATE_MOTION",
+            "sha256": "99725ccb0e6c67702eb913a656beac6145eef0bff06eac79fe1d6da3f0f24e8f"
+          },
+          {
+            "line": 69,
+            "role": "OP17_PRIVATE_MMS",
+            "sha256": "4c68c98e631fff9ee70ab0ebce93cbbfa57b557a5939dcd4bde9d33cb582b3eb"
+          },
+          {
+            "line": 79,
+            "role": "OP17_PRIVATE_LEDGER",
+            "sha256": "cf3d9addcd9a145abc6cc4ff6d9f3fb6833ecd6f7a14015f09b99b4d904bc830"
+          },
+          {
+            "line": 89,
+            "role": "OP_18",
+            "sha256": "762b9f504a4bf73ce004d2b763198a84acf0a38814a7bea724952ec06630286f"
+          }
+        ],
+        "privateRootOutcome": "BUSINESS_REJECTED"
+      },
+      "t899Snapshot": {
+        "file": "test/reports/t901/b-hot-slots.jsonl",
+        "sha256": "a302f6815719e60c591db869b07766586bc0ba19058a180b6b41a13a8e02faa4",
+        "lines": 182,
+        "op48": [
+          {
+            "line": 97,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateShaderModule",
+            "edge": "ENTER",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 2148,
+            "ownerTid": 25248,
+            "processStartTick": "134399499293855983",
+            "qpcFrequency": "10000000",
+            "qpc": "16362510382103",
+            "vkResult": null
+          },
+          {
+            "line": 98,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateShaderModule",
+            "edge": "EXIT",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 2148,
+            "ownerTid": 25248,
+            "processStartTick": "134399499293855983",
+            "qpcFrequency": "10000000",
+            "qpc": "16362510382911",
+            "vkResult": 0
+          },
+          {
+            "line": 99,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateComputePipelines",
+            "edge": "ENTER",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 2148,
+            "ownerTid": 25248,
+            "processStartTick": "134399499293855983",
+            "qpcFrequency": "10000000",
+            "qpc": "16362510383013",
+            "vkResult": null
+          },
+          {
+            "line": 100,
+            "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+            "call": "vkCreateComputePipelines",
+            "edge": "EXIT",
+            "role": "OP_48",
+            "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+            "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+            "flags": 0,
+            "pipelineCache": null,
+            "pid": 2148,
+            "ownerTid": 25248,
+            "processStartTick": "134399499293855983",
+            "qpcFrequency": "10000000",
+            "qpc": "16374777344578",
+            "vkResult": 0
+          }
+        ],
+        "elapsedNs": 1226696156500,
+        "prefixRoles": [
+          {
+            "line": 19,
+            "role": "OP_00_0_5",
+            "sha256": "a42bb063c6ccb0402291d6bdb6bfe863cf6324771ba0f558c1a3666862cd6ea4"
+          },
+          {
+            "line": 29,
+            "role": "OP12_14",
+            "sha256": "eceb9fcb4f4ed1cba79ceb49a9974e945c907934864a125ae4ca445d489c39b5"
+          },
+          {
+            "line": 39,
+            "role": "OP15",
+            "sha256": "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f"
+          },
+          {
+            "line": 49,
+            "role": "OP16",
+            "sha256": "cfaaa4d61649236f6e6e2bfdbd759f0e62e67cc9288c927d1f0822c27fa926d2"
+          },
+          {
+            "line": 59,
+            "role": "OP17_PRIVATE_MOTION",
+            "sha256": "99725ccb0e6c67702eb913a656beac6145eef0bff06eac79fe1d6da3f0f24e8f"
+          },
+          {
+            "line": 69,
+            "role": "OP17_PRIVATE_MMS",
+            "sha256": "4c68c98e631fff9ee70ab0ebce93cbbfa57b557a5939dcd4bde9d33cb582b3eb"
+          },
+          {
+            "line": 79,
+            "role": "OP17_PRIVATE_LEDGER_SNAPSHOT",
+            "sha256": "bdd47fcba518981e1db056f8628d2ef0e28e2aa331997c336eec7eda528fadd7"
+          },
+          {
+            "line": 89,
+            "role": "OP_18",
+            "sha256": "762b9f504a4bf73ce004d2b763198a84acf0a38814a7bea724952ec06630286f"
+          }
+        ],
+        "privateRootOutcome": "BUSINESS_REJECTED"
+      }
+    },
+    "reportedWatchdogSeconds": [
+      240,
+      420,
+      400,
+      870
+    ],
+    "independentStallProcessesInRepo": 2
+  },
+  "m1": {
+    "file": "test/reports/t912/runs/2a-sand-observe/demo.jsonl",
+    "sha256": "41ec426e2d3258b295f3e44f146e4ece24c45e0cb02842fa14cfe48e4b5c30e8",
+    "lines": 1238,
+    "pointerEvents": [
+      {
+        "line": 31,
+        "stage": "WIN32_POINTER",
+        "kind": "DOWN",
+        "geometry": "2",
+        "seq": "1",
+        "qpc": "16449943372318",
+        "x": 392,
+        "y": 380,
+        "dpi": 96,
+        "hold": "1",
+        "inputReady": true,
+        "readyQpc": "16449942932073",
+        "selectedMaterial": 0,
+        "boundMaterial": 0,
+        "reject": null
+      },
+      {
+        "line": 510,
+        "stage": "WIN32_POINTER",
+        "kind": "UP",
+        "geometry": "2",
+        "seq": "2",
+        "qpc": "16450023377154",
+        "x": 392,
+        "y": 380,
+        "dpi": 96,
+        "hold": "0",
+        "inputReady": true,
+        "readyQpc": "16449971250871",
+        "selectedMaterial": 0,
+        "boundMaterial": null,
+        "reject": null
+      },
+      {
+        "line": 511,
+        "stage": "WIN32_POINTER",
+        "kind": "CAPTURE_LOST",
+        "geometry": "2",
+        "seq": "3",
+        "qpc": "16450023384707",
+        "x": 0,
+        "y": 0,
+        "dpi": 96,
+        "hold": "0",
+        "inputReady": true,
+        "readyQpc": "16449971250871",
+        "selectedMaterial": 0,
+        "boundMaterial": null,
+        "reject": null
+      }
+    ],
+    "holdElapsedNs": 8000483600,
+    "faultLine": 202,
+    "reason": "CLOCK_GAP",
+    "failedNonce": "16449970250208",
+    "lastAcceptedRoot": "16449969799237",
+    "oldFence": "1422238522408",
+    "retireVkResult": 0,
+    "stopAfterDownNs": 2741229900,
+    "retireAfterDownNs": 2777333200,
+    "callbackGapNs": "39181600",
+    "receiptGapNs": "39181700",
+    "baselineLine": 203,
+    "baselineQpc": "16449971158055",
+    "baselineAfterDownNs": 2778573700,
+    "oldSession": "1",
+    "newSession": "2",
+    "archiveCount": 136,
+    "acceptedSourceCount": 16,
+    "acceptedSourceQ20": 2064374,
+    "acceptedSources": {
+      "16449943608470": {
+        "firstEvidenceLine": 32,
+        "sourceCommit": 1,
+        "admittedQ20": 116944,
+        "fenceNs": "1644994434692200",
+        "session": "1"
+      },
+      "16449945804208": {
+        "firstEvidenceLine": 43,
+        "sourceCommit": 2,
+        "admittedQ20": 126778,
+        "fenceNs": "1644994635337700",
+        "session": "1"
+      },
+      "16449947607500": {
+        "firstEvidenceLine": 54,
+        "sourceCommit": 3,
+        "admittedQ20": 133549,
+        "fenceNs": "1644994817567700",
+        "session": "1"
+      },
+      "16449949498009": {
+        "firstEvidenceLine": 65,
+        "sourceCommit": 4,
+        "admittedQ20": 129729,
+        "fenceNs": "1644995005641600",
+        "session": "1"
+      },
+      "16449951362259": {
+        "firstEvidenceLine": 76,
+        "sourceCommit": 5,
+        "admittedQ20": 130591,
+        "fenceNs": "1644995178276400",
+        "session": "1"
+      },
+      "16449952929859": {
+        "firstEvidenceLine": 87,
+        "sourceCommit": 6,
+        "admittedQ20": 124019,
+        "fenceNs": "1644995338827600",
+        "session": "1"
+      },
+      "16449954544523": {
+        "firstEvidenceLine": 98,
+        "sourceCommit": 7,
+        "admittedQ20": 131257,
+        "fenceNs": "1644995500186300",
+        "session": "1"
+      },
+      "16449956195631": {
+        "firstEvidenceLine": 109,
+        "sourceCommit": 8,
+        "admittedQ20": 128453,
+        "fenceNs": "1644995663093600",
+        "session": "1"
+      },
+      "16449957917159": {
+        "firstEvidenceLine": 120,
+        "sourceCommit": 9,
+        "admittedQ20": 143113,
+        "fenceNs": "1644995832727200",
+        "session": "1"
+      },
+      "16449959531959": {
+        "firstEvidenceLine": 131,
+        "sourceCommit": 10,
+        "admittedQ20": 125423,
+        "fenceNs": "1644995990873800",
+        "session": "1"
+      },
+      "16449961112293": {
+        "firstEvidenceLine": 142,
+        "sourceCommit": 11,
+        "admittedQ20": 130226,
+        "fenceNs": "1644996151985300",
+        "session": "1"
+      },
+      "16449962761209": {
+        "firstEvidenceLine": 153,
+        "sourceCommit": 12,
+        "admittedQ20": 134273,
+        "fenceNs": "1644996315858400",
+        "session": "1"
+      },
+      "16449964507394": {
+        "firstEvidenceLine": 164,
+        "sourceCommit": 13,
+        "admittedQ20": 133427,
+        "fenceNs": "1644996491820500",
+        "session": "1"
+      },
+      "16449966334016": {
+        "firstEvidenceLine": 175,
+        "sourceCommit": 14,
+        "admittedQ20": 16286,
+        "fenceNs": "1644996673560800",
+        "session": "1"
+      },
+      "16449968092768": {
+        "firstEvidenceLine": 186,
+        "sourceCommit": 15,
+        "admittedQ20": 230919,
+        "fenceNs": "1644996848191700",
+        "session": "1"
+      },
+      "16449969799237": {
+        "firstEvidenceLine": 197,
+        "sourceCommit": 16,
+        "admittedQ20": 129387,
+        "fenceNs": "1644997011754600",
+        "session": "1"
+      }
+    },
+    "newQUANTUMBeforeUpCount": 51,
+    "newQUANTUMBeforeUpFirstLast": [
+      {
+        "line": 204,
+        "nonce": "16449971558594",
+        "offer": null
+      },
+      {
+        "line": 504,
+        "nonce": "16450022073953",
+        "offer": "0"
+      }
+    ],
+    "newQUANTUMBeforeUpExplicitOfferZeroCount": 50
+  }
+}

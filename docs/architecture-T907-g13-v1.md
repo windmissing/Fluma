@@ -1,5 +1,7 @@
 # T907 · G13 PC 业务超期归因与裁剪方案 v1
 
+> 2026-11-24 更新：T912 在候选业务根前的 OP_48 建管线长尾按 [T915](architecture-T915-v1.md) 隔离复测，再做本稿要求的配对。
+
 2026-11-24 · architect · 离线复核。T901 B 首拒为 `GRANT_DEADLINE`。同一已提交根的 GPU 时间戳在晚退役后可用。实际求解段 712.151 ms，重放 551.579 ms，`PACK_DONE` 后另有 499.658 ms 待拆解。2 次业务复制的区间约 **13.08 µs**，原报告的 13.08 ms 量纲有误。优先分解完成封印与两个求解 scope，再并行化经量测确认的热点。 [T901 报告](../test/reports/t901/report.md) · [原日志](../test/reports/t901/b-hot-slots.jsonl) · [T899 实现](developer-T899-v1.md)
 
 ## 1. 原件与时间分层
