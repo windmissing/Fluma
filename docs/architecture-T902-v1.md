@@ -1,5 +1,7 @@
 # T902 · PC REPLAY 冷档与 DM2/R1 首根归因
 
+> 2026-11-24 更新：T904 四臂的同 fence 追加退役均已证实。DM2/R1 SOURCE 截止、阶段预算与等价裁剪按 [T911 修订](architecture-T911-v1.md) 实施。
+
 2026-11-24 · architect · P4 · Windows Vulkan · 源码与原件离线复核
 
 **REPLAY 是预览初始化顺序缺陷。** 三次都在空箱初始化后、D1 READY 前把空 `AcceptedRoot` 送到冷档检查，实际未取得根、lease 或冷拷贝 fence。**DM2 和 R1 各自通过 BOOT，均在已提交的首个 SOURCE 离开业务截止窗口。** DM2 的追加同 fence 等待成功。R1 的追加等待仍超时，退出阶段缺最终退役原件。 [逐臂原件复算](architecture-T902-evidence-v1.json)

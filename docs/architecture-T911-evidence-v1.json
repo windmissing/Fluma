@@ -1,0 +1,307 @@
+{
+  "originalCommit": "e04697a8",
+  "buildCommit": "cafcfe9d",
+  "commonInputBodySHA256": "3580ccb1a4199f41708bd9a790f8997f77c4af87dac1743b08c636264e22f55a",
+  "bodyBinary64FieldsMassXYVxVy": [
+    0.2,
+    64.0,
+    200.0,
+    0.0,
+    0.0
+  ],
+  "arms": {
+    "dm2-plain": {
+      "file": "test/reports/t904/b-dm2-plain.jsonl",
+      "rawSHA256": "876762ef75c7146c70bacd8245eefd71a841f35d79940eba0da3ee76b210c6bf",
+      "peSHA256": "3ef1e99ebdca39a956bbe5e0f75a61f71c13218059a384244f9ff86e9e3d3602",
+      "roleSetSHA256": "3639e57f834308bab001ca783f321b6a503c232caa924e04b1d8f1d7e3333ca6",
+      "inputFrozenSHA256": "10a5ad85a62098a16b9965a0bc3d5990e637fc6492e525b99f950e0e6f6a50fc",
+      "adapter": {
+        "vendor": 32902,
+        "device": 16024,
+        "driver": 1656924,
+        "queueFamily": 0,
+        "deviceUUID": "8680983e020000000000000000000000",
+        "driverUUID": "33312e302e3130312e32313430000000",
+        "luid": "3cda000000000000"
+      },
+      "identity": {
+        "run": "1639434092869000",
+        "nonce": "1",
+        "plan": "1",
+        "device": "2620498217784",
+        "queue": "2620500002376",
+        "fence": "2620462524232",
+        "fenceGeneration": "2"
+      },
+      "dispatches": 12,
+      "timingNs": {
+        "bootNs": 140053400,
+        "freezeAfterGrantNs": 17400,
+        "expectedAfterFreezeNs": 29200,
+        "recordNs": 37675400,
+        "submitCallNs": 29900,
+        "grantToSubmitExitNs": 37753100,
+        "submitExitToDeadlineNs": 212246900,
+        "submitExitToStopNs": 213755000,
+        "stopOverDeadlineNs": 1508100,
+        "retireWaitNs": 195049000
+      },
+      "businessPollDurationsNs": [
+        8414600,
+        16073200,
+        15099000,
+        16039300,
+        15727600,
+        16038900,
+        15607700,
+        17768500,
+        15440700,
+        14554000,
+        15849400,
+        15479600,
+        15723000,
+        15871500
+      ],
+      "firstStop": "GRANT_DEADLINE",
+      "accepted": false,
+      "retireVkResult": 0,
+      "query": {
+        "requested": false,
+        "pool": "0",
+        "validBits": 36,
+        "periodNs": 83.333,
+        "availableCount": 0
+      }
+    },
+    "dm2-ts": {
+      "file": "test/reports/t904/b-dm2-ts.jsonl",
+      "rawSHA256": "5e343e4bedf69ca6467265c8229772c454e9b2e5d498f3cd5c6eada8fee11bc3",
+      "peSHA256": "3ef1e99ebdca39a956bbe5e0f75a61f71c13218059a384244f9ff86e9e3d3602",
+      "roleSetSHA256": "3639e57f834308bab001ca783f321b6a503c232caa924e04b1d8f1d7e3333ca6",
+      "inputFrozenSHA256": "07ae9becca1a0a6f6a41f8f5daab29a439793f668b8a0ce4c14c70f135fc4f92",
+      "adapter": {
+        "vendor": 32902,
+        "device": 16024,
+        "driver": 1656924,
+        "queueFamily": 0,
+        "deviceUUID": "8680983e020000000000000000000000",
+        "driverUUID": "33312e302e3130312e32313430000000",
+        "luid": "3cda000000000000"
+      },
+      "identity": {
+        "run": "1639434950085900",
+        "nonce": "1",
+        "plan": "1",
+        "device": "2501666529496",
+        "queue": "2501668589496",
+        "fence": "2501665685800",
+        "fenceGeneration": "2"
+      },
+      "dispatches": 12,
+      "timingNs": {
+        "bootNs": 92091400,
+        "freezeAfterGrantNs": 24600,
+        "expectedAfterFreezeNs": 25800,
+        "recordNs": 41436000,
+        "submitCallNs": 25400,
+        "grantToSubmitExitNs": 41513800,
+        "submitExitToDeadlineNs": 208486200,
+        "submitExitToStopNs": 212257900,
+        "stopOverDeadlineNs": 3771700,
+        "retireWaitNs": 28526600
+      },
+      "businessPollDurationsNs": [
+        6567600,
+        15904700,
+        15216900,
+        16003700,
+        15954700,
+        16026100,
+        15450900,
+        16268200,
+        15761500,
+        14986200,
+        16031200,
+        16057100,
+        15993100,
+        16007000
+      ],
+      "firstStop": "GRANT_DEADLINE",
+      "accepted": false,
+      "retireVkResult": 0,
+      "query": {
+        "requested": true,
+        "pool": "2501670491576",
+        "validBits": 36,
+        "periodNs": 83.333,
+        "availableCount": 6,
+        "ticks": [
+          "19639418256",
+          "19639418413",
+          "19639889413",
+          "19640741336",
+          "19642310112",
+          "19642310199"
+        ],
+        "spansNs": {
+          "UPLOAD": "13083.281",
+          "PREPARE": "39249843.000",
+          "SOURCE_WRITER": "70993299.359",
+          "AUDIT_COMPARE_PACK_SEAL": "130730810.408",
+          "TAIL_COPY": "7249.971"
+        },
+        "durationNs": "240994286.019",
+        "durationMinusRemainingGrantNs": "32508086.019"
+      }
+    },
+    "r1-plain": {
+      "file": "test/reports/t904/b-r1-plain.jsonl",
+      "rawSHA256": "0d090e02ae0f0fc2a6ab7183c7f503b42df25be720f76377808de7ee3954e06d",
+      "peSHA256": "694ad0c245a6ad86b890fc3f8bb79a86de90497f2ae06c93271487c512defc4e",
+      "roleSetSHA256": "f7d812d64eba3c932fcfc41d70fbed48835349819f235b6d9d61fb58216641f3",
+      "inputFrozenSHA256": "2080e2fe8ff678d20c45ba9b18f7cc7af65577052453fc9d7ace9c49be5efb32",
+      "adapter": {
+        "vendor": 32902,
+        "device": 16024,
+        "driver": 1656924,
+        "queueFamily": 0,
+        "deviceUUID": "8680983e020000000000000000000000",
+        "driverUUID": "33312e302e3130312e32313430000000",
+        "luid": "3cda000000000000"
+      },
+      "identity": {
+        "run": "1639435716240700",
+        "nonce": "1",
+        "plan": "1",
+        "device": "3020877332216",
+        "queue": "3020877689800",
+        "fence": "3020844686744",
+        "fenceGeneration": "2"
+      },
+      "dispatches": 19,
+      "timingNs": {
+        "bootNs": 194077600,
+        "freezeAfterGrantNs": 3300,
+        "expectedAfterFreezeNs": 38500,
+        "recordNs": 29990400,
+        "submitCallNs": 26800,
+        "grantToSubmitExitNs": 30060500,
+        "submitExitToDeadlineNs": 219939500,
+        "submitExitToStopNs": 232014000,
+        "stopOverDeadlineNs": 12074500,
+        "retireWaitNs": 168238300
+      },
+      "businessPollDurationsNs": [
+        1941300,
+        15792300,
+        15908500,
+        15614700,
+        15778200,
+        15537700,
+        15863400,
+        21341700,
+        19159000,
+        7653100,
+        13442800,
+        19664000,
+        21782300,
+        16365000,
+        16126100
+      ],
+      "firstStop": "GRANT_DEADLINE",
+      "accepted": false,
+      "retireVkResult": 0,
+      "query": {
+        "requested": false,
+        "pool": "0",
+        "validBits": 36,
+        "periodNs": 83.333,
+        "availableCount": 0
+      }
+    },
+    "r1-ts": {
+      "file": "test/reports/t904/b-r1-ts.jsonl",
+      "rawSHA256": "03fd9633b887a7fc7f6231b948d384a2e880088be3ec0ea94ec0a5d8b12289d4",
+      "peSHA256": "694ad0c245a6ad86b890fc3f8bb79a86de90497f2ae06c93271487c512defc4e",
+      "roleSetSHA256": "f7d812d64eba3c932fcfc41d70fbed48835349819f235b6d9d61fb58216641f3",
+      "inputFrozenSHA256": "f983f9c39a125684633f01b7f217ab73b27827761df8de10a481b6787b14e1ea",
+      "adapter": {
+        "vendor": 32902,
+        "device": 16024,
+        "driver": 1656924,
+        "queueFamily": 0,
+        "deviceUUID": "8680983e020000000000000000000000",
+        "driverUUID": "33312e302e3130312e32313430000000",
+        "luid": "3cda000000000000"
+      },
+      "identity": {
+        "run": "1639436599160200",
+        "nonce": "1",
+        "plan": "1",
+        "device": "2636605686952",
+        "queue": "2636605943912",
+        "fence": "2636605713432",
+        "fenceGeneration": "2"
+      },
+      "dispatches": 19,
+      "timingNs": {
+        "bootNs": 194895500,
+        "freezeAfterGrantNs": 3300,
+        "expectedAfterFreezeNs": 72800,
+        "recordNs": 34667900,
+        "submitCallNs": 23300,
+        "grantToSubmitExitNs": 34769400,
+        "submitExitToDeadlineNs": 215230600,
+        "submitExitToStopNs": 217961300,
+        "stopOverDeadlineNs": 2730700,
+        "retireWaitNs": 195230600
+      },
+      "businessPollDurationsNs": [
+        13171900,
+        15008100,
+        15592500,
+        15975400,
+        15617900,
+        15655600,
+        15603200,
+        15652600,
+        15597900,
+        16109200,
+        15984400,
+        15987800,
+        15861500,
+        16017000
+      ],
+      "firstStop": "GRANT_DEADLINE",
+      "accepted": false,
+      "retireVkResult": 0,
+      "query": {
+        "requested": true,
+        "pool": "2636606611976",
+        "validBits": 36,
+        "periodNs": 83.333,
+        "availableCount": 7,
+        "ticks": [
+          "19660402409",
+          "19660402513",
+          "19660794297",
+          "19662985574",
+          "19664984665",
+          "19665363285",
+          "19665363375"
+        ],
+        "spansNs": {
+          "UPLOAD": "8666.632",
+          "PREPARE": "32648536.072",
+          "ACTUAL_WRITER": "182605686.241",
+          "REPLAY_AUDIT_APPLY": "166590250.303",
+          "COMPARE_PACK_AUDIT_SEAL": "31551540.460",
+          "TAIL_COPY": "7499.970"
+        },
+        "durationNs": "413412179.678",
+        "durationMinusRemainingGrantNs": "198181579.678"
+      }
+    }
+  }
+}
