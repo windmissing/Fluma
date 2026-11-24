@@ -35,6 +35,11 @@ struct Frame {
 };
 
 using PresentBusy = std::function<void(g13vk::M1HotCapture::Phase,bool,bool)>;
+struct G16SceneView {
+  VkDeviceSize offset=0;
+  uint32_t count=0;
+  std::array<float,2> rotation{};
+};
 struct PresentObservations {
   bool emptyFirst=false;
   bool timing=false;
@@ -45,6 +50,7 @@ struct PresentObservations {
   std::function<int32_t()> requestedBoxAngle;
   VkBuffer g15Work=VK_NULL_HANDLE,g15Witness=VK_NULL_HANDLE;
   VkDeviceSize g15WitnessOffset=0;
+  const G16SceneView *g16=nullptr;
 };
 Frame PresentBoot(g13vk::VulkanApi &, VkInstance, VkPhysicalDevice, VkDevice, VkQueue,
                   uint32_t family, VkSurfaceKHR, VkBuffer control, VkBuffer staging,

@@ -100,3 +100,39 @@ $p = '.codex/local-test/t909-g15-dune-release'
 ## T496 OFF×2
 
 `pc/vulkan/run_t909_d1_off_pair.py EXE SOURCE CANDIDATE COMMIT OUT` 按原 52 动作运行恰好两次 D1 OFF。可加 `--plan` 核真实 PE/SPIR-V 指纹和完整 argv。两臂分别保存自然 wall-clock 原行，结束后用 T897 首差判据。两份新 PC 原件仍由 effector 获取。工具保留原 T865 四臂资格门。若新版仍有真实输入首差，再用这批原件接只读采样重放诊断，当前入口不注入受控时钟。
+
+## G16-A/B · T928 续接
+
+G16-A 的新版 `g16-v2` 读取原 52 B FP32 输入。转壁 gap 使用固定阶三角多项式和禁止收缩的求值，分别搜索两端符号确定的界。104 B 回执保留原 36 B 前缀，并追加初/末及两界的 gap、TOI 处法向/壁速/接触点、gap 误差界、两界各自的法向和法向壁速。原版 `g16`、历史回执和独立 T930 判据可直接复用。
+
+用 T912 相同的 52 B 上传数据离线模拟 FP32 新求值。TOI 为 0.1788740754 s，与 T930 60 位十进制参考相差 −0.000142 ms。夹区间为 [0.1788668633, 0.1788812876] s，独立 gap 为 +0.19789 / −0.19023 µm。旧工件偏差为 +0.080503 ms；以上新数值来自主机算术对照，GPU 原字待采。
+
+G16-B 的 `g16-multi` 运行 T928 两份实名 Disk64 种子和固定、快、慢、近 90° 保持及镜像姿态。GPU 在已接受根的 1/120 s 时间、实际微步及事件时刻重新求五次姿态，按原底/顶/左/右四壁计算 gap 与点速。主流程在四个 SSBO 中分桶、容量预演、稳定归集、检测 TOI、建立 CSR、用双份速度做有界 Jacobi、推进余时和审计。小域材料使用原冻结的零切向摩擦和零多点恢复系数。未隔离、余时未完、冲量残差或守恒超限会拒绝根。
+
+每个私有根以真实 250 ms、原计算 fence 及 1,024 B completion 作为提升门。通过才交换私有 BASE、commit 和 Scene32。可选 `present` 在最后一个通过根用真实 Vulkan WSI 绘制与姿态同根的 Scene32 实例，原 buffer 保持到图形退役。私有工具的回执保留 `acceptedRoot:null`。
+
+根结尾和拒绝时输出只读冷证据。`completions.u32le` 是逐根原回执。另有冻结输入、前态、候选态、最后一段 edge 三平面、CSR 和同根姿态。`witness.u32le` 前 64 字含最后一段的计数、微步/段号、实际扫描时间和位移上界。随后每条有效边有两个 FP32 端点 gap。第 16–23 字是同根姿态和 input ID；第 24–26 字是已保存接触、实际接触总数和容量；第 40–45 字是重力线/角冲量和墙线/角冲量。`contact-journal.bin` 每条 160 B，前四字为微步、段号、物理秒 FP32、edge index，后接 T928 的三份 48 B 原字。日志最多 300 条，超限置 completion flags bit 0，仍保真实总数。独立全量事件重算需选择未截断原件或补采相应区间。
+
+### 编译与 PC 复采
+
+在 MSVC x64 命令环境下从仓库根运行。孤立输入由 T928 ABI 的 `isolatedReceipts.*.inputPackedHex` 逐字还原。
+
+```powershell
+$local = '.codex/local-test'
+$compiler = "$PWD/$local/g13-glslang/bin/glslang.exe"
+$sdk = 'C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot/usr/include'
+python pc/vulkan/build_t909_angle_probes.py --compiler $compiler --out "$local/t909-g16-probes"
+python test/t928/fixtures.py --out "$local/t909-g16-fixtures"
+cmake -S pc/vulkan/sand -B "$local/t909-g16-dm2-release" -G Ninja -DCMAKE_BUILD_TYPE=Release -DSAND_FAMILY=dm2 "-DG13_GLSLANG=$compiler" "-DVULKAN_HEADERS=$sdk"
+cmake --build "$local/t909-g16-dm2-release" --config Release --target t909_angle_probe
+$exe = "$local/t909-g16-dm2-release/t909_angle_probe.exe"
+$spv = "$local/t909-g16-probes"
+$seed = "$local/t909-g16-fixtures"
+& $exe g16-v2 "$spv/g16_isolated_contact_v2.spv" rotate.bin rotate-v2.bin
+python pc/vulkan/unpack_g16_isolated.py rotate-v2.bin rotate-t930
+python test/t930/check.py contact rotate.bin rotate-t930/contact.bin --near rotate-t930/near.json
+& $exe g16-multi "$spv/g16_multi_v1.spv" "$seed/G16-B13.disk64" static 128 1 g16-static-13
+& $exe g16-multi "$spv/g16_multi_v1.spv" "$seed/G16-B52.disk64" fast 256 480 g16-fast-52 present
+```
+
+转壁 v2 与多盘模块 SHA-256 分别为 `7e1dae62f752c263223eae9af2c3b4ce56cd36d6611b5ca9dad15ceefd7ce4b1`、`0f9b9e756216caa22c21e8fc66896ec561bcdc992681ab60b33126a6d858ef98`。PC 采样用两种种子分别配 J128/256 与 fast/slow，完整姿态需要 480/840 个根。保每次实际工件、GPU、驱动、VK 结果和第一个拒绝。当前负责开发与编译，G16-A 实际迟近根原字、G16-B 两档两速/守恒残差和窗口证据由 tester/effector 独立验证。G16-C 等 B 正例及代表负载种子，OFF 重放接缝仍等 T927 的真实输入首差。

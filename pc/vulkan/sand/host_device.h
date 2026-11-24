@@ -13,6 +13,8 @@ class HostDevice {
     VkDeviceSize allocation=0;
     const uint32_t *words=nullptr;
     bool coherent=false;
+    VkDeviceSize alignment=0;
+    uint32_t memoryType=UINT32_MAX;
     VulkanOwner::Readback Readback() const { return {slice,memory,allocation,0,words,coherent}; }
   };
   HMODULE loader=nullptr;
@@ -33,7 +35,7 @@ class HostDevice {
   HostDevice(const HostDevice &)=delete;
   HostDevice &operator=(const HostDevice &)=delete;
   ~HostDevice();
-  void Open(bool present);
+  void Open(bool present,const wchar_t *title=L"G11 R1 Vulkan prototype");
   Memory Allocate(VkDeviceSize bytes,VkBufferUsageFlags usage,bool host=false);
   bool Current();
   static uint64_t Now();

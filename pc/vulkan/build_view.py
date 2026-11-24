@@ -21,6 +21,8 @@ for file, name, define in (
     ("m1_dry_scene.frag", "kM1DrySceneFragment", None),
     ("m1_dry_scene.frag", "kM1FullSceneFragment", "M1_FULL_SCENE"),
     ("g15_dm_scene.frag", "kG15DmSceneFragment", None),
+    ("g16_scene.vert", "kG16SceneVertex", None),
+    ("g16_scene.frag", "kG16SceneFragment", None),
 ):
     source = root / file
     key = "m1_full_scene.frag" if define else source.suffix[1:] if source.stem == "boot_view" else file

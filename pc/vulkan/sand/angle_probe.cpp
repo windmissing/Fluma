@@ -1,4 +1,5 @@
 #include "host_device.h"
+#include "g16_multi.h"
 #include "../../../entry/src/main/cpp/gpu_resident/program_cache/sha256.h"
 #include <fstream>
 #include <iostream>
@@ -182,19 +183,21 @@ int wmain(int argc,wchar_t **argv) {
   using namespace grs::pc::sand;
   try {
     const auto mode=argc>=2 ? std::wstring_view(argv[1]) : std::wstring_view{};
+    if(mode==L"g16-multi")return RunG16Multi(argc,argv);
     const bool corrector=mode==L"g15-corrector" || mode==L"g15-step";
     const bool origin=mode==L"g15-origin" || mode==L"g15-step";
     const bool pose=mode==L"g15-pose",flux=origin || corrector || mode==L"g15-flux";
     const bool g15=pose || flux || mode==L"g15";
-    const bool g16=argc>=2 && std::wstring_view(argv[1])==L"g16";
+    const bool g16v2=mode==L"g16-v2",g16=mode==L"g16" || g16v2;
     RequireHost((origin && argc==8)||(g15 && !origin && argc==6)||(g16 && argc==5),
-                "USE: (g15|g15-pose|g15-flux|g15-corrector MODULE INPUT ANGLES OUTPUT) | (g16 MODULE INPUT OUTPUT) | "
+                "USE: (g15|g15-pose|g15-flux|g15-corrector MODULE INPUT ANGLES OUTPUT) | (g16|g16-v2 MODULE INPUT OUTPUT) | "
                 "(g15-origin|g15-step FLUX_OR_CORRECTOR INPUT ANGLES ORIGIN_MODULE ORIGIN_INPUT OUTPUT)");
     const auto module=Read(argv[2],corrector ? 80*1024 : 64*1024);
     RequireHost(Digest(module)==(corrector ? "7f0af4e5aeea143dc1fa1d066a575f8f811512c9241e642272835d3cb25248b9" :
                                 flux ? "41d52e58b47e70afca62491a8c76fadb398419275852dd585939ab86615d1826" :
                                 pose ? "21452cbf2441d19b0feb386488548bc7d3833d6587e871b631c3df6954ee5086" :
                                 g15 ? "0744d45f428c56064089cff52dafa08e189f80bed0eaca817e13fbb4ad069fd0" :
+                                g16v2 ? "7e1dae62f752c263223eae9af2c3b4ce56cd36d6611b5ca9dad15ceefd7ce4b1" :
                                     "cc1c655f6ac151fb499c9b3e2894233a4d713482633f4986e08601b03117dc8b"),"PROBE_MODULE_SHA");
     std::vector<std::vector<uint32_t>> input{Read(argv[3],flux ? (8+129*8)*4 : (6+127)*4)};
     const auto &body=input.front();
@@ -209,7 +212,7 @@ int wmain(int argc,wchar_t **argv) {
                   "PROBE_MIDPOINT_COLUMN_MISMATCH");
     }
     constexpr size_t columnBytes=(4+64*4)*4;
-    const size_t bytes=origin ? 16+(faces-1)*columnBytes : g15 ? size_t(faces)*(flux ? 64 : pose ? 32 : 24) : 36;
+    const size_t bytes=origin ? 16+(faces-1)*columnBytes : g15 ? size_t(faces)*(flux ? 64 : pose ? 32 : 24) : g16v2 ? 104 : 36;
     if (g15) {
       input.push_back(Read(argv[4],184328));
       RequireHost(Digest(input.back())=="6278b4a06d704df8439b3291b1c3abff608a42049c4837720e6745a4b272ad61","ANGLE_TABLE_SHA");

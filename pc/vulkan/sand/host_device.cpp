@@ -31,7 +31,7 @@ bool HostDevice::Current() {
          bounds.right==client_.right && bounds.bottom==client_.bottom;
 }
 
-void HostDevice::Open(bool present) {
+void HostDevice::Open(bool present,const wchar_t *title) {
   if (present) {
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
     WNDCLASSW type{};
@@ -39,7 +39,7 @@ void HostDevice::Open(bool present) {
     type.hInstance=GetModuleHandleW(nullptr);
     type.lpszClassName=L"PcSandR1Host";
     RequireHost(RegisterClassW(&type)!=0,"WIN32_REGISTER");
-    window=CreateWindowExW(0,type.lpszClassName,L"G11 R1 Vulkan prototype",WS_OVERLAPPEDWINDOW,
+    window=CreateWindowExW(0,type.lpszClassName,title,WS_OVERLAPPEDWINDOW,
                            CW_USEDEFAULT,CW_USEDEFAULT,800,500,nullptr,nullptr,type.hInstance,nullptr);
     RequireHost(window!=nullptr,"WIN32_WINDOW");
     ShowWindow(window,SW_SHOWNORMAL);
@@ -163,6 +163,8 @@ HostDevice::Memory HostDevice::Allocate(VkDeviceSize bytes,VkBufferUsageFlags us
   }
   RequireHost(type!=UINT32_MAX,"VK_MEMORY_TYPE");
   resource.allocation=r.size;
+  resource.alignment=r.alignment;
+  resource.memoryType=type;
   resource.coherent=(memory_.memoryTypes[type].propertyFlags&VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)!=0;
   const VkMemoryAllocateInfo allocation{VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,nullptr,r.size,type};
   RequireVk(alloc(device,&allocation,nullptr,&resource.memory),"vkAllocateMemory");

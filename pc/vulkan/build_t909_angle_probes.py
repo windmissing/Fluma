@@ -44,8 +44,9 @@ def build(compiler, directory):
     assert len(raw) == 184328
     (directory / "g15_angle_q20.i32le").write_bytes(raw)
     result = {"angleTable": {"sha256": sha256(raw).hexdigest(), "rows": len(angles), "bytes": len(raw)}}
-    for name, count in (("g15_support_v1", 3), ("g16_isolated_contact_v1", 2), ("g15_pose_v1", 3),
-                        ("g15_flux_v1", 3), ("g15_corrector_v1", 3), ("g15_origin_v1", 4)):
+    for name, count in (("g15_support_v1", 3), ("g16_isolated_contact_v1", 2), ("g16_isolated_contact_v2", 2), ("g15_pose_v1", 3),
+                        ("g15_flux_v1", 3), ("g15_corrector_v1", 3), ("g15_origin_v1", 4),
+                        ("g16_multi_v1", 4)):
         if name == "g15_pose_v1":
             source = directory / (name + ".comp")
             original = Path(__file__).with_name("g15_support_v1.comp").read_text()
@@ -68,6 +69,11 @@ def build(compiler, directory):
             pose = support[support.index("u64vec2 mulWord"):support.index("shared bool groupValid;")+len("shared bool groupValid;")]
             source = directory / (name + ".comp")
             source.write_bytes(template.replace("/* T647_WIDE */", "bool g9Zero(" + wide).replace("/* G15_POSE */", pose).encode())
+        elif name in ("g16_isolated_contact_v2", "g16_multi_v1"):
+            source = directory / (name + ".comp")
+            template = Path(__file__).with_name(name + ".comp").read_text()
+            trig = Path(__file__).with_name("g16_trig.glsl").read_text()
+            source.write_bytes(template.replace("/* G16_TRIG */", trig).encode())
         else:
             source = Path(__file__).with_name(name + ".comp")
         module = directory / (name + ".spv")
@@ -78,7 +84,7 @@ def build(compiler, directory):
         asm = compilation.stdout
         assert source.stat().st_size <= 49152
         assert sorted(re.findall(r"OpDecorate %\S+ Binding (\d+)", asm)) == list(map(str, range(count)))
-        assert name != "g16_isolated_contact_v1" or "NoContraction" in asm
+        assert not name.startswith("g16_isolated_contact_") or "NoContraction" in asm
         result[name] = {"spvSHA": sha256(module.read_bytes()).hexdigest(), "spvBytes": module.stat().st_size,
                         "sourceSHA": sha256(source.read_bytes()).hexdigest(), "sourceBytes": source.stat().st_size}
     (directory / "receipt.json").write_text(json.dumps(result, indent=2) + "\n")

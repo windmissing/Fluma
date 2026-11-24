@@ -63,7 +63,7 @@ if(SAND_FAMILY STREQUAL "r1")
 endif()
 target_link_libraries(pc_sand_${SAND_FAMILY}_host PRIVATE pc_sand_${SAND_FAMILY} user32)
 target_compile_options(pc_sand_${SAND_FAMILY}_host PRIVATE /EHsc /utf-8 /W4)
-if(SAND_ROLE_VARIANT STREQUAL "g15-dm2")
+if(SAND_FAMILY STREQUAL "dm2")
   set(VIEW "${CMAKE_CURRENT_BINARY_DIR}/view_assets")
   add_custom_command(OUTPUT "${VIEW}/pc_view_spirv.h"
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${VIEW}"
@@ -72,15 +72,19 @@ if(SAND_ROLE_VARIANT STREQUAL "g15-dm2")
       DEPENDS "${G13_GLSLANG}" "${CMAKE_CURRENT_SOURCE_DIR}/../build_view.py"
               "${CMAKE_CURRENT_SOURCE_DIR}/../g15_dm_scene.frag" "${CMAKE_CURRENT_SOURCE_DIR}/../boot_view.vert"
               "${CMAKE_CURRENT_SOURCE_DIR}/../boot_view.frag" "${CMAKE_CURRENT_SOURCE_DIR}/../m1_source_view.frag"
-              "${CMAKE_CURRENT_SOURCE_DIR}/../m1_dry_scene.frag" VERBATIM)
+              "${CMAKE_CURRENT_SOURCE_DIR}/../m1_dry_scene.frag"
+              "${CMAKE_CURRENT_SOURCE_DIR}/../g16_scene.vert" "${CMAKE_CURRENT_SOURCE_DIR}/../g16_scene.frag" VERBATIM)
   set_source_files_properties(../wsi.cpp PROPERTIES OBJECT_DEPENDS "${VIEW}/pc_view_spirv.h")
+endif()
+if(SAND_ROLE_VARIANT STREQUAL "g15-dm2")
   target_compile_definitions(pc_sand_${SAND_FAMILY}_host PRIVATE PC_SAND_G15_SCENE)
   target_include_directories(pc_sand_${SAND_FAMILY}_host PRIVATE "${VIEW}" "${CMAKE_CURRENT_SOURCE_DIR}/.."
       "${GPU}/g13vulkan_boot")
   target_sources(pc_sand_${SAND_FAMILY}_host PRIVATE host_g15_present.cpp ../wsi.cpp "${VIEW}/pc_view_spirv.h")
 endif()
 if(SAND_FAMILY STREQUAL "dm2")
-  add_executable(t909_angle_probe angle_probe.cpp host_device.cpp)
+  add_executable(t909_angle_probe angle_probe.cpp g16_multi.cpp host_device.cpp ../wsi.cpp "${VIEW}/pc_view_spirv.h")
+  target_include_directories(t909_angle_probe PRIVATE "${VIEW}" "${GPU}/g13vulkan_boot")
   target_link_libraries(t909_angle_probe PRIVATE pc_sand_dm2 user32)
   target_compile_options(t909_angle_probe PRIVATE /EHsc /utf-8 /W4)
 endif()

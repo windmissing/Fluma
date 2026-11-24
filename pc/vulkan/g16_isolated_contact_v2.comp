@@ -1,0 +1,104 @@
+#version 450
+layout(local_size_x=1) in;
+layout(std430,binding=0) readonly buffer Inputs {
+    float mass,radius,gap,normalVelocity,wallVelocity,acceleration,restitution,horizon;
+    float centerX,centerY,wallDistance,omega;
+    uint mode;
+};
+layout(std430,binding=1) writeonly buffer Result {
+    uint status;
+    float toi,impulse,velocity,wallWork,relativeBefore,relativeAfter;
+    float bracketLo,bracketHi;
+    float gapStart,gapEnd,gapLo,gapHi,normalX,normalY,wallVx,wallVy,contactX,contactY,gapErrorBound;
+    float loNx,loNy,loWallSpeed,hiNx,hiNy,hiWallSpeed;
+};
+/* G16_TRIG */
+
+float rotatingGap(float t) {
+    precise float a=omega*t;
+    vec2 cs=g16CosSin(a);
+    precise float clearance=(wallDistance-radius)-centerX*cs.x-centerY*cs.y;
+    return clearance;
+}
+
+void impact(float t,float inward,float speed,float lo,float hi) {
+    precise float after=restitution*inward;
+    precise float kick=mass*(after+inward);
+    precise float finalVelocity=speed+after;
+    precise float work=kick*speed;
+    if (isinf(kick)||isinf(finalVelocity)||isinf(work)||isnan(work)) return;
+    relativeBefore=-inward; relativeAfter=after;
+    impulse=kick; velocity=finalVelocity; wallWork=work;
+    bracketLo=lo; bracketHi=hi; toi=t; status=1u;
+}
+
+void rotate() {
+    vec4 pose=vec4(centerX,centerY,wallDistance,omega);
+    precise float terminal=omega*horizon;
+    if (any(isnan(pose))||any(isinf(pose))||centerX<=0.||centerY<=0.||
+        wallDistance<=radius||omega<=0.||terminal>=1.57079632679) return;
+    vec2 last=g16CosSin(terminal);
+    precise float bound=0.000001*(wallDistance+radius+centerX+centerY);
+    precise float startGap=rotatingGap(0.),endGap=rotatingGap(horizon);
+    gapStart=startGap; gapEnd=endGap; gapErrorBound=bound;
+    if (centerY*last.x-centerX*last.y<=bound||startGap<=bound||endGap>=-bound) return;
+    // Two monotone searches certify separate endpoints. The uncertain near-zero
+    // band is inside the interval even when a rounded gap has the wrong sign.
+    float lo=0.,hi=horizon,positiveLimit=horizon,negativeLimit=0.;
+    for (int i=0;i<24;++i) {
+        precise float left=lo+(positiveLimit-lo)*.5;
+        precise float right=negativeLimit+(hi-negativeLimit)*.5;
+        if (rotatingGap(left)>bound) lo=left; else positiveLimit=left;
+        if (rotatingGap(right)<-bound) hi=right; else negativeLimit=right;
+    }
+    gapLo=rotatingGap(lo); gapHi=rotatingGap(hi);
+    vec2 loCS=g16CosSin(omega*lo),hiCS=g16CosSin(omega*hi);
+    loNx=-loCS.x;loNy=-loCS.y;loWallSpeed=omega*(centerY*loCS.x-centerX*loCS.y);
+    hiNx=-hiCS.x;hiNy=-hiCS.y;hiWallSpeed=omega*(centerY*hiCS.x-centerX*hiCS.y);
+    if (hi-lo>0.00005) return;
+    precise float t=lo+(hi-lo)*.5;
+    precise float angle=omega*t;
+    vec2 cs=g16CosSin(angle);
+    vec2 point=vec2(centerX,centerY)+cs*(wallDistance-dot(cs,vec2(centerX,centerY)));
+    vec2 wallV=omega*vec2(-point.y,point.x);
+    precise float normalSpeed=omega*(centerY*cs.x-centerX*cs.y);
+    normalX=-cs.x; normalY=-cs.y; contactX=point.x; contactY=point.y; wallVx=wallV.x; wallVy=wallV.y;
+    impact(t,normalSpeed,normalSpeed,lo,hi);
+}
+
+void translate() {
+    precise float vn=normalVelocity-wallVelocity;
+    velocity=normalVelocity; relativeBefore=vn; relativeAfter=vn;
+    normalX=1.; wallVx=wallVelocity; gapStart=gap;
+    gapEnd=gap+horizon*(vn+0.5*acceleration*horizon);
+    if (gap==0. && vn==0. && acceleration<0.) {
+        precise float kick=-mass*acceleration*horizon;
+        precise float work=kick*wallVelocity;
+        if (isinf(kick)||isnan(work)||isinf(work)) return;
+        impulse=kick; velocity=wallVelocity; wallWork=work; status=2u;
+        return;
+    }
+    precise float disc=vn*vn-2.*acceleration*gap;
+    if (isnan(disc)||isinf(disc)) return;
+    status=0u;
+    if (disc<=0.) return;
+    precise float inward=sqrt(disc);
+    precise float t=-1.;
+    if (vn<0.) t=2.*gap/(inward-vn);
+    else if (acceleration<0.) t=(-vn-inward)/acceleration;
+    if (t<0.||t>horizon) return;
+    status=3u;
+    impact(t,inward,wallVelocity,t,t);
+}
+
+void main() {
+    status=3u; toi=0.; impulse=0.; velocity=0.; wallWork=0.; relativeBefore=0.; relativeAfter=0.;
+    bracketLo=0.; bracketHi=0.; gapStart=0.; gapEnd=0.; gapLo=0.; gapHi=0.;
+    normalX=0.; normalY=0.; wallVx=0.; wallVy=0.; contactX=0.; contactY=0.; gapErrorBound=0.;
+    loNx=0.;loNy=0.;loWallSpeed=0.;hiNx=0.;hiNy=0.;hiWallSpeed=0.;
+    vec4 a=vec4(mass,radius,gap,normalVelocity),b=vec4(wallVelocity,acceleration,restitution,horizon);
+    if (any(isnan(a))||any(isinf(a))||any(isnan(b))||any(isinf(b))||
+        mass<=0.||radius<=0.||gap<0.||restitution<0.||restitution>.15||horizon<=0.) return;
+    if (mode==1u) rotate();
+    if (mode==0u) translate();
+}

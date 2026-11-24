@@ -1,0 +1,691 @@
+#version 450
+layout(local_size_x=1) in;
+layout(std430,binding=0) buffer State { uint state[]; };
+layout(std430,binding=1) buffer Contacts { uint contacts[]; };
+layout(std430,binding=2) buffer Work { uint work[]; };
+layout(std430,binding=3) writeonly buffer Scene { uint scene[]; };
+layout(push_constant) uniform Command { uint pass,micro,physicalDispatches; };
+/* G16_TRIG */
+
+const uint config=86528u,receipt=87552u,heads=88576u,velocity0=90624u,velocity1=94720u;
+const uint bucket=65536u,order=78336u,sweep=107008u,pairs=123392u,witness=139776u;
+const uint solver=98304u,geometry=196608u,invalid=0xffffffffu;
+const uint capEdges=8192u,capDegree=16u;
+const float radiansPerMilliDeg=.000017453292519943296;
+const float gapRound=.00000025;
+const float residualSpeed=.001;
+const float q24=16777216.;
+const float noTime=2.;
+
+uint cfg(uint i) { return work[config+i]; }
+float cf(uint i) { return uintBitsToFloat(cfg(i)); }
+uint result(uint i) { return work[receipt+i]; }
+void put(uint i,uint v) { work[receipt+i]=v; }
+float rf(uint i) { return uintBitsToFloat(result(i)); }
+void pf(uint i,float v) { put(i,floatBitsToUint(v)); }
+float wf(uint i) { return uintBitsToFloat(work[i]); }
+void sw(uint i,float v) { work[i]=floatBitsToUint(v); }
+bool finite(float v) { return !isnan(v)&&!isinf(v); }
+bool finite(vec2 v) { return !any(isnan(v))&&!any(isinf(v)); }
+float cross2(vec2 a,vec2 b) { return a.x*b.y-a.y*b.x; }
+vec2 perp(vec2 v) { return vec2(-v.y,v.x); }
+vec2 vecAt(uint addr) { return uintBitsToFloat(uvec2(work[addr],work[addr+1u])); }
+void vecPut(uint addr,vec2 v) { sw(addr,v.x);sw(addr+1u,v.y); }
+void enter(uint stage) { put(63u,result(63u)|(1u<<(stage-1u))); }
+void fail(uint reason,uint stage,uint segment,uint disk,uint edge,uint wall) {
+    if(result(41u)!=0u)return;
+    put(41u,reason);put(42u,stage);put(43u,pass==1u?micro:invalid);put(44u,segment);
+    put(45u,disk);put(46u,edge);put(47u,wall);
+}
+
+struct Disk { vec2 p,v; float angle,spin,r,m,inertia; };
+uint diskWord(uint bank,uint i) { return bank*16384u+i*16u; }
+Disk loadDisk(uint bank,uint i) {
+    uint a=diskWord(bank,i)+4u;
+    return Disk(uintBitsToFloat(uvec2(state[a],state[a+1u])),uintBitsToFloat(uvec2(state[a+2u],state[a+3u])),
+        uintBitsToFloat(state[a+4u]),uintBitsToFloat(state[a+5u]),uintBitsToFloat(state[a+6u]),
+        uintBitsToFloat(state[a+7u]),uintBitsToFloat(state[a+8u]));
+}
+uint id(uint i) { return state[diskWord(cfg(41u),i)]; }
+void storeMotion(uint i,Disk d) {
+    uint a=diskWord(cfg(41u),i)+4u;
+    state[a]=floatBitsToUint(d.p.x);state[a+1u]=floatBitsToUint(d.p.y);
+    state[a+2u]=floatBitsToUint(d.v.x);state[a+3u]=floatBitsToUint(d.v.y);
+    state[a+4u]=floatBitsToUint(d.angle);state[a+5u]=floatBitsToUint(d.spin);
+}
+vec2 gravity() { return vec2(cf(50u),cf(51u)); }
+vec2 atTime(Disk d,float t) {
+    precise vec2 p=d.p+t*(d.v+(0.5*t)*gravity());
+    return p;
+}
+
+struct Pose { vec2 cs; float angle,omega,alpha; };
+Pose poseAt(float time) {
+    float angle=0.,omega=0.,alpha=0.;
+    for(uint i=0u;i<cfg(6u);++i) {
+        uint a=config+128u+i*16u;
+        float begin=(float(work[a])+4294967296.*float(work[a+1u]))*1e-9;
+        float duration=(float(work[a+2u])+4294967296.*float(work[a+3u]))*1e-9;
+        precise float u=clamp((time-begin)/duration,0.,1.);
+        precise float s=u*u*u*(10.+u*(-15.+6.*u));
+        int start=int(work[a+4u]),delta=int(work[a+5u])-start;
+        angle=(float(start)+float(delta)*s)*radiansPerMilliDeg;
+        omega=-float(delta)*radiansPerMilliDeg*(30.*u*u*(1.-u)*(1.-u))/duration;
+        alpha=-float(delta)*radiansPerMilliDeg*(60.*u*(1.-u)*(1.-2.*u))/(duration*duration);
+        if(time<begin+duration)break;
+    }
+    return Pose(g16CosSin(angle),angle,omega,alpha);
+}
+vec2 toBox(vec2 p,vec2 cs) {
+    precise vec2 rotated=vec2(cs.x*p.x-cs.y*p.y,cs.y*p.x+cs.x*p.y);
+    return rotated;
+}
+vec2 toWorld(vec2 p,vec2 cs) { return toBox(p,vec2(cs.x,-cs.y)); }
+
+struct Geom { float gap; vec2 n,point,wallV; };
+Geom wallGeometry(vec2 p,float radius,uint wall,Pose pose) {
+    vec2 halfExtent=vec2(cf(48u),cf(49u));
+    vec2 box=toBox(p,pose.cs);
+    vec2 n=wall==0u?vec2(0,1):wall==1u?vec2(0,-1):wall==2u?vec2(1,0):vec2(-1,0);
+    float halfAlong=dot(abs(n),halfExtent);
+    vec2 point=clamp(box,-halfExtent,halfExtent);
+    point=point-abs(n)*point-halfAlong*n;
+    point=toWorld(point,pose.cs);
+    precise float gap=halfAlong+dot(n,box)-radius;
+    return Geom(gap,toWorld(n,pose.cs),point,pose.omega*perp(point));
+}
+Geom diskGeometry(Disk a,Disk b) {
+    vec2 delta=a.p-b.p;
+    float distance=length(delta);
+    vec2 n=distance>0.?delta/distance:vec2(0);
+    return Geom(distance-a.r-b.r,n,0.5*((a.p-a.r*n)+(b.p+b.r*n)),vec2(0));
+}
+Geom geometryAt(Disk a,Disk b,uint wall,float time,float t) {
+    a.p=atTime(a,t);
+    if(wall!=invalid)return wallGeometry(a.p,a.r,wall,poseAt(time+t));
+    b.p=atTime(b,t);
+    return diskGeometry(a,b);
+}
+
+struct Hit { float lo,hi,t,bound; uint flags; };
+Hit noHit(float bound) { return Hit(noTime,noTime,noTime,bound,0u); }
+Hit unresolved(float bound) { return Hit(noTime,noTime,noTime,bound,4u); }
+Hit predictive(float t,float bound) { return Hit(t,t,t,bound,2u); }
+Hit diskHit(Disk a,Disk b,float duration,float eps,bool remainder) {
+    vec2 p=a.p-b.p,v=a.v-b.v;
+    float distance=length(p),r=a.r+b.r,rate=dot(p,v),speed=length(v);
+    if(distance==0.)return unresolved(speed);
+    float gap=distance-r;
+    if(gap<=gapRound) {
+        if(rate>=0.)return noHit(speed);
+        if(remainder && gap+rate/distance*duration>=-gapRound)return noHit(speed);
+        return predictive(0.,speed);
+    }
+    if(rate>=0.)return noHit(speed);
+    precise float square=dot(v,v),c=gap*(distance+r);
+    precise float discriminant=rate*rate-square*c;
+    float closest=length(p+v*min(-rate/square,duration))-r;
+    if(closest>gapRound)return noHit(speed);
+    if(discriminant<=0.)return unresolved(speed);
+    precise float t=c/(-rate+sqrt(discriminant));
+    if(t>duration)return gap<eps && abs(closest)<=gapRound?predictive(duration,speed):unresolved(speed);
+    // Use the speed at the estimated crossing to bound the distance-to-time
+    // conversion. A grazing pair without a sign certificate is not accepted.
+    float approach=-dot(p+v*t,v)/r;
+    if(approach<=0.)return unresolved(speed);
+    float dt=2.*gapRound/approach;
+    float lo=max(0.,t-dt),hi=min(duration,t+dt);
+    float before=length(p+v*lo)-r,after=length(p+v*hi)-r;
+    if(before>gapRound && after< -gapRound)return Hit(lo,hi,t,speed,1u);
+    if(abs(after)<=gapRound && gap<eps)return predictive(t,speed);
+    return unresolved(speed);
+}
+Hit wallHit(Disk a,uint wall,float time,float duration,float eps,bool remainder) {
+    Pose start=poseAt(time),end=poseAt(time+duration);
+    Geom left=wallGeometry(a.p,a.r,wall,start);
+    Geom right=wallGeometry(atTime(a,duration),a.r,wall,end);
+    // Global suprema for the frozen fast, slow, hold, static and mirrored
+    // quintic profiles. Radius bound includes the full admitted disk drift.
+    float speed=length(a.v)+9.81*duration;
+    float reach=length(a.p)+speed*duration;
+    float bound=speed+3.*reach;
+    float curvature=9.81+6.*speed+19.*reach;
+    float curveError=curvature*duration*duration*.125;
+    if(min(left.gap,right.gap)>gapRound+curveError)return noHit(bound);
+    float rate=dot(a.v-left.wallV,left.n);
+    float spread=curvature*duration;
+    if(rate-spread>=0.)return noHit(bound);
+    if(left.gap<=gapRound) {
+        if(right.gap>=-gapRound && (remainder || right.gap>=left.gap))return noHit(bound);
+        if(rate+spread<0.)return predictive(0.,bound);
+        if(right.gap>=-eps && !remainder)return predictive(.5*duration,bound);
+        return unresolved(bound);
+    }
+    if(rate+spread>=0.)return unresolved(bound);
+    if(right.gap>gapRound)return noHit(bound);
+    if(right.gap>=-gapRound && left.gap<eps)return predictive(duration,bound);
+    if(right.gap>=-gapRound)return unresolved(bound);
+    float lo=0.,hi=duration,loLimit=duration,hiLimit=0.;
+    for(uint j=0u;j<16u;++j) {
+        float aTime=.5*(lo+loLimit),bTime=.5*(hi+hiLimit);
+        float aGap=wallGeometry(atTime(a,aTime),a.r,wall,poseAt(time+aTime)).gap;
+        float bGap=wallGeometry(atTime(a,bTime),a.r,wall,poseAt(time+bTime)).gap;
+        if(aGap>gapRound)lo=aTime;else loLimit=aTime;
+        if(bGap< -gapRound)hi=bTime;else hiLimit=bTime;
+    }
+    if(hi-lo>.00005)return unresolved(bound);
+    return Hit(lo,hi,.5*(lo+hi),bound,1u);
+}
+
+bool makeBuckets(float time,float duration,uint segment,out float maxMove) {
+    enter(2u);enter(3u);
+    uint width=cfg(44u),height=cfg(45u),total=width*height;
+    float cell=cf(61u);
+    vec2 halfExtent=vec2(cf(48u),cf(49u));
+    Pose pose=poseAt(time);
+    for(uint k=0u;k<total;++k)work[bucket+4u*k+1u]=0u;
+    maxMove=0.;
+    for(uint i=0u;i<cfg(4u);++i) {
+        Disk d=loadDisk(cfg(41u),i);
+        float move=duration*(length(d.v)+0.5*duration*length(gravity()));
+        if(!finite(move)||!finite(d.p)||!finite(d.spin)||!finite(d.angle)) {
+            fail(4u,2u,segment,id(i),invalid,invalid);return false;
+        }
+        if(move>.1*d.r) { fail(5u,2u,segment,id(i),invalid,invalid);return false; }
+        maxMove=max(maxMove,move);
+        vec2 start=toBox(d.p,pose.cs),end=toBox(atTime(d,duration),pose.cs);
+        ivec2 cellAt=ivec2(floor((start+halfExtent)/cell));
+        if(any(lessThan(cellAt,ivec2(0)))||any(greaterThanEqual(cellAt,ivec2(width,height)))) {
+            fail(3u,3u,segment,id(i),invalid,invalid);return false;
+        }
+        uint index=uint(cellAt.x)+width*uint(cellAt.y);
+        work[sweep+i*16u]=index;
+        vec2 bow=vec2(length(gravity())*duration*duration*.125+gapRound);
+        vecPut(sweep+i*16u+1u,min(start,end)-bow);
+        vecPut(sweep+i*16u+3u,max(start,end)+bow);
+        ++work[bucket+4u*index+1u];
+    }
+    uint prefix=0u;
+    for(uint k=0u;k<total;++k) {
+        uint row=bucket+4u*k;
+        work[row]=prefix;work[row+2u]=0u;work[row+3u]=1u+2u*micro+segment;
+        prefix+=work[row+1u];
+    }
+    if(prefix!=cfg(4u)) { fail(6u,3u,segment,invalid,invalid,invalid);return false; }
+    for(uint i=0u;i<cfg(4u);++i) {
+        uint row=bucket+4u*work[sweep+i*16u];
+        work[order+work[row]+work[row+2u]++]=i;
+    }
+    return true;
+}
+
+bool appendPair(uint a,uint b,uint wall,uint segment,inout uint count,inout uint degrees) {
+    if(count==capEdges) { fail(7u,4u,segment,id(a),count,wall);return false; }
+    uint da=++work[heads+2u*a+1u];
+    uint db=b==invalid?0u:++work[heads+2u*b+1u];
+    if(max(da,db)>capDegree) { fail(8u,5u,segment,id(da>capDegree?a:b),count,wall);return false; }
+    degrees=max(degrees,max(da,db));
+    work[pairs+2u*count]=a;
+    work[pairs+2u*count+1u]=b==invalid?0x80000000u|wall:b;
+    ++count;
+    return true;
+}
+
+bool collectPairs(float time,float duration,uint segment,float maxMove,out uint count) {
+    enter(4u);enter(5u);count=0u;
+    uint n=cfg(4u),width=cfg(44u),height=cfg(45u),degrees=0u;
+    for(uint i=0u;i<n;++i)work[heads+2u*i+1u]=0u;
+    float eps=cf(52u),cell=cf(61u);
+    vec2 halfExtent=vec2(cf(48u),cf(49u));
+    Pose p=poseAt(time);
+    for(uint i=0u;i<n;++i) {
+        Disk a=loadDisk(cfg(41u),i);
+        float expansion=2.*a.r+maxMove+eps+gapRound;
+        vec2 lower=vecAt(sweep+i*16u+1u)-expansion,upper=vecAt(sweep+i*16u+3u)+expansion;
+        ivec2 limit=ivec2(width,height)-1;
+        ivec2 lo=clamp(ivec2(floor((lower+halfExtent)/cell)),ivec2(0),limit);
+        ivec2 hi=clamp(ivec2(floor((upper+halfExtent)/cell)),ivec2(0),limit);
+        for(uint wall=0u;wall<4u;++wall) {
+            float bound=length(a.v)+9.81*duration+3.*(length(a.p)+maxMove);
+            if(wallGeometry(a.p,a.r,wall,p).gap<=eps+gapRound+bound*duration &&
+               !appendPair(i,invalid,wall,segment,count,degrees))return false;
+        }
+        uvec2 mask=uvec2(0);
+        for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x) {
+            uint row=bucket+4u*(uint(x)+width*uint(y));
+            for(uint k=0u;k<work[row+1u];++k) {
+                uint j=work[order+work[row]+k];
+                if(j<=i)continue;
+                Disk b=loadDisk(cfg(41u),j);
+                if(length(a.p-b.p)<=a.r+b.r+eps+gapRound+2.*maxMove)mask[j/32u]|=1u<<(j%32u);
+            }
+        }
+        for(uint word=0u;word<2u;++word)while(mask[word]!=0u) {
+            uint j=32u*word+uint(findLSB(mask[word]));
+            mask[word]&=mask[word]-1u;
+            if(!appendPair(i,j,invalid,segment,count,degrees))return false;
+        }
+    }
+    uint directed=0u;
+    for(uint i=0u;i<n;++i) {
+        work[heads+2u*i]=directed;
+        directed+=work[heads+2u*i+1u];
+        work[heads+2u*i+1u]=0u;
+    }
+    for(uint e=0u;e<count;++e) {
+        uint i=work[pairs+2u*e],j=work[pairs+2u*e+1u];
+        bool wall=(j&0x80000000u)!=0u;
+        uint a=4u*(work[heads+2u*i]+work[heads+2u*i+1u]++);
+        work[a]=e;work[a+1u]=0u;work[a+2u]=wall?j&3u:id(j);work[a+3u]=wall?0u:1u;
+        if(!wall) {
+            uint b=4u*(work[heads+2u*j]+work[heads+2u*j+1u]++);
+            work[b]=e;work[b+1u]=1u;work[b+2u]=id(i);work[b+3u]=1u;
+        }
+    }
+    put(54u,max(count,result(54u)));put(55u,max(degrees,result(55u)));put(56u,max(directed,result(56u)));
+    work[witness+0u]=0u;work[witness+1u]=directed;work[witness+2u]=micro;work[witness+3u]=segment;
+    work[witness+4u]=count;
+    sw(witness+5u,maxMove);
+    sw(witness+6u,time);sw(witness+7u,duration);
+    return true;
+}
+
+struct Pair { uint a,b,wall; };
+Pair pairAt(uint edge) {
+    uint a=work[pairs+2u*edge],other=work[pairs+2u*edge+1u];
+    return (other&0x80000000u)!=0u?Pair(a,invalid,other&3u):Pair(a,other,invalid);
+}
+Disk secondDisk(Pair p,Disk fallback) {return p.b==invalid?fallback:loadDisk(cfg(41u),p.b);}
+float decide(uint count,float time,float duration,uint segment) {
+    float first=noTime,eps=cf(52u);
+    for(uint e=0u;e<count;++e) {
+        Pair p=pairAt(e);
+        Disk a=loadDisk(cfg(41u),p.a),b=secondDisk(p,a);
+        Hit h=p.b==invalid?wallHit(a,p.wall,time,duration,eps,segment!=0u):diskHit(a,b,duration,eps,segment!=0u);
+        uint k=12u*e;
+        contacts[k]=id(p.a);contacts[k+1u]=1u;contacts[k+2u]=p.b==invalid?0u:id(p.b);
+        contacts[k+3u]=p.b==invalid?0u:1u;contacts[k+4u]=p.wall;contacts[k+5u]=h.flags;
+        contacts[k+6u]=h.flags==1u||h.flags==2u?uint(max(0.,floor(h.lo/duration*q24)-1.)):invalid;
+        contacts[k+7u]=h.flags==1u||h.flags==2u?uint(min(q24,ceil(h.hi/duration*q24)+1.)):invalid;
+        Geom g=geometryAt(a,b,p.wall,time,h.t!=noTime?h.t:0.);
+        contacts[k+8u]=floatBitsToUint(g.gap);contacts[k+9u]=floatBitsToUint(g.n.x);
+        contacts[k+10u]=floatBitsToUint(g.n.y);contacts[k+11u]=floatBitsToUint(h.bound);
+        if(h.flags==1u||h.flags==2u) {
+            sw(witness+64u+2u*e,geometryAt(a,b,p.wall,time,h.lo).gap);
+            sw(witness+65u+2u*e,geometryAt(a,b,p.wall,time,h.hi).gap);
+        } else {
+            work[witness+64u+2u*e]=0u;
+            work[witness+65u+2u*e]=0u;
+        }
+        for(uint i=0u;i<12u;++i){contacts[solver+k+i]=0u;contacts[geometry+k+i]=0u;}
+        work[witness]=e+1u;
+        if(h.flags==4u) {
+            fail(10u,4u,segment,id(p.a),e,p.wall);return noTime;
+        }
+        first=min(first,h.t);
+    }
+    return first;
+}
+
+// Fixed-order sums of physical impulse, angular impulse and energy across the
+// entire candidate root. They survive the scratch overwrite of earlier edges.
+const uint ledger=witness+32u;
+const uint diskAudit=98816u;
+const uint journal=pairs+4096u,journalCapacity=300u;
+void drift(float t) {
+    if(t<=0.)return;
+    enter(9u);
+    vec2 g=gravity();
+    precise vec2 gravityDelta=(.13*t)*g-vecAt(ledger+14u);
+    precise vec2 previousGravity=vecAt(ledger+8u);
+    precise vec2 nextGravity=previousGravity+gravityDelta;
+    vecPut(ledger+14u,(nextGravity-previousGravity)-gravityDelta);
+    vecPut(ledger+8u,nextGravity);
+    for(uint i=0u;i<cfg(4u);++i) {
+        Disk d=loadDisk(cfg(41u),i);
+        vec2 j=d.m*t*g;
+        vec2 mean=d.p+(.5*t)*d.v+(t*t/6.)*g;
+        sw(diskAudit+8u*i,wf(diskAudit+8u*i)+t*(length(d.v)+.5*t*length(g)));
+        vecPut(ledger,vecAt(ledger)+j);
+        float angular=cross2(mean,j);
+        sw(ledger+2u,wf(ledger+2u)+angular);
+        sw(ledger+10u,wf(ledger+10u)+angular);
+        d.p=atTime(d,t);d.v+=g*t;d.angle+=d.spin*t;
+        storeMotion(i,d);
+    }
+}
+
+void storeSpeed(uint base,uint i,vec2 v,float spin) {
+    uint a=base+4u*i;
+    vecPut(a,v);sw(a+2u,spin);
+}
+vec2 pointSpeed(vec2 v,float spin,vec2 arm) { return v+spin*perp(arm); }
+struct Velocities { vec2 relative,armA,armB; };
+Velocities relativeAt(Pair p,Geom g,Disk a,Disk b,uint snapshot) {
+    vec2 armA=g.point-a.p,armB=g.point-b.p;
+    vec2 va=pointSpeed(vecAt(snapshot+p.a*4u),wf(snapshot+p.a*4u+2u),armA);
+    vec2 vb=p.b==invalid?g.wallV:pointSpeed(vecAt(snapshot+p.b*4u),wf(snapshot+p.b*4u+2u),armB);
+    return Velocities(va-vb,armA,armB);
+}
+Geom loadGeom(uint k) {
+    return Geom(uintBitsToFloat(contacts[k+8u]),
+        uintBitsToFloat(uvec2(contacts[k+9u],contacts[k+10u])),
+        uintBitsToFloat(uvec2(contacts[geometry+k],contacts[geometry+k+1u])),
+        uintBitsToFloat(uvec2(contacts[geometry+k+2u],contacts[geometry+k+3u])));
+}
+void setGeometry(uint k,Geom g) {
+    contacts[k+8u]=floatBitsToUint(g.gap);
+    contacts[k+9u]=floatBitsToUint(g.n.x);contacts[k+10u]=floatBitsToUint(g.n.y);
+    contacts[geometry+k]=floatBitsToUint(g.point.x);contacts[geometry+k+1u]=floatBitsToUint(g.point.y);
+    contacts[geometry+k+2u]=floatBitsToUint(g.wallV.x);contacts[geometry+k+3u]=floatBitsToUint(g.wallV.y);
+}
+float edgeFloat(uint k) {return uintBitsToFloat(contacts[k]);}
+void setEdge(uint k,float v) {contacts[k]=floatBitsToUint(v);}
+void recordContact(uint edge,uint segment,float time) {
+    uint sequence=work[witness+25u]++;
+    if(sequence>=journalCapacity) {
+        put(65u,result(65u)|1u);
+        return;
+    }
+    uint a=journal+sequence*40u,k=12u*edge;
+    work[a]=micro;work[a+1u]=segment;sw(a+2u,time);work[a+3u]=edge;
+    for(uint w=0u;w<12u;++w) {
+        work[a+4u+w]=contacts[k+w];
+        work[a+16u+w]=contacts[solver+k+w];
+        work[a+28u+w]=contacts[geometry+k+w];
+    }
+    work[witness+24u]=sequence+1u;
+}
+
+bool solve(uint count,float time,float duration,float first,uint segment) {
+    enter(6u);
+    uint n=cfg(4u),activeCount=0u;
+    for(uint i=0u;i<n;++i) {
+        Disk d=loadDisk(cfg(41u),i);
+        storeSpeed(velocity0,i,d.v,d.spin);
+        storeSpeed(velocity1,i,d.v,d.spin);
+    }
+    Pose pose=poseAt(time+first);
+    for(uint e=0u;e<count;++e) {
+        Pair p=pairAt(e);
+        Disk a=loadDisk(cfg(41u),p.a),b=secondDisk(p,a);
+        Geom g=p.b==invalid?wallGeometry(a.p,a.r,p.wall,pose):diskGeometry(a,b);
+        uint k=12u*e;
+        if(g.gap>cf(52u))continue;
+        if(!finite(g.gap)||!finite(g.n)||dot(g.n,g.n)<.999) {
+            fail(4u,6u,segment,id(p.a),e,p.wall);return false;
+        }
+        setGeometry(k,g);
+        contacts[k+5u]|=8u;
+        ++activeCount;
+        Velocities v=relativeAt(p,g,a,b,velocity0);
+        float inverseMass=1./a.m+(p.b==invalid?0.:1./b.m);
+        float armA=cross2(v.armA,g.n),armB=cross2(v.armB,g.n);
+        float effective=inverseMass+armA*armA/a.inertia+(p.b==invalid?0.:armB*armB/b.inertia);
+        vec2 tangent=perp(g.n);
+        float tanA=cross2(v.armA,tangent),tanB=cross2(v.armB,tangent);
+        float effectiveT=inverseMass+tanA*tanA/a.inertia+(p.b==invalid?0.:tanB*tanB/b.inertia);
+        float remaining=duration-first;
+        float target=(contacts[k+5u]&2u)!=0u && remaining>0.?-max(0.,g.gap)/remaining:0.;
+        setEdge(solver+k+2u,dot(v.relative,g.n));
+        setEdge(solver+k+3u,dot(v.relative,tangent));
+        setEdge(solver+k+6u,target);
+        setEdge(solver+k+10u,effective);setEdge(solver+k+11u,effectiveT);
+    }
+    if(activeCount==0u) {fail(10u,6u,segment,invalid,invalid,invalid);return false;}
+
+    uint before=velocity0,after=velocity1;
+    for(uint iteration=0u;iteration<16u;++iteration) {
+        enter(7u);enter(8u);
+        for(uint e=0u;e<count;++e) {
+            uint k=e*12u;
+            if((contacts[k+5u]&8u)==0u)continue;
+            Pair p=pairAt(e);
+            Disk a=loadDisk(cfg(41u),p.a),b=secondDisk(p,a);
+            Geom g=loadGeom(k);
+            Velocities v=relativeAt(p,g,a,b,before);
+            float lambda=edgeFloat(solver+k);
+            uint degree=work[heads+2u*p.a+1u]+(p.b==invalid?0u:work[heads+2u*p.b+1u]);
+            float update=(edgeFloat(solver+k+6u)-dot(v.relative,g.n))/edgeFloat(solver+k+10u);
+            float next=max(0.,lambda+update/float(max(degree,1u)));
+            setEdge(solver+k,next);
+            setEdge(geometry+k+4u,(next-lambda)*g.n.x);
+            setEdge(geometry+k+5u,(next-lambda)*g.n.y);
+        }
+        for(uint i=0u;i<n;++i) {
+            Disk d=loadDisk(cfg(41u),i);
+            vec2 v=vecAt(before+4u*i);
+            float spin=wf(before+4u*i+2u);
+            uint begin=work[heads+2u*i],degree=work[heads+2u*i+1u];
+            for(uint j=0u;j<degree;++j) {
+                uint adj=4u*(begin+j),k=12u*work[adj];
+                if((contacts[k+5u]&8u)==0u)continue;
+                Geom g=loadGeom(k);
+                vec2 impulse=vec2(edgeFloat(geometry+k+4u),edgeFloat(geometry+k+5u));
+                if(work[adj+1u]!=0u)impulse=-impulse;
+                v+=impulse/d.m;
+                spin+=cross2(g.point-d.p,impulse)/d.inertia;
+            }
+            if(!finite(v)||!finite(spin)) {fail(4u,8u,segment,id(i),invalid,invalid);return false;}
+            storeSpeed(after,i,v,spin);
+        }
+        uint old=before;before=after;after=old;
+    }
+    put(59u,result(59u)+16u);
+    put(60u,result(60u)+32u);
+    // Check all actual edge residuals before writing any candidate motion.
+    float totalLoss=0.;
+    for(uint e=0u;e<count;++e) {
+        uint k=12u*e;
+        if((contacts[k+5u]&8u)==0u)continue;
+        Pair p=pairAt(e);
+        Disk a=loadDisk(cfg(41u),p.a),b=secondDisk(p,a);
+        Geom g=loadGeom(k);
+        Velocities v=relativeAt(p,g,a,b,before);
+        float lambda=edgeFloat(solver+k),vN=dot(v.relative,g.n),vT=dot(v.relative,perp(g.n));
+        float z=vN-edgeFloat(solver+k+6u),complement=abs(lambda*z);
+        setEdge(solver+k+4u,vN);setEdge(solver+k+5u,vT);
+        setEdge(solver+k+7u,z);setEdge(solver+k+8u,complement);
+        // Material 1 has no tangential friction. No sticking or sliding row
+        // is asserted, so the tangential residual field stays at zero.
+        pf(72u,max(rf(72u),-z));pf(73u,max(rf(73u),complement));
+        if(!finite(lambda)||!finite(vN)||!finite(complement)) {
+            fail(4u,8u,segment,id(p.a),e,p.wall);return false;
+        }
+        if(lambda<0.) {fail(13u,8u,segment,id(p.a),e,p.wall);return false;}
+        if(z< -residualSpeed||complement>residualSpeed*lambda+1e-10) {
+            fail(14u,8u,segment,id(p.a),e,p.wall);return false;
+        }
+        vec2 impulse=lambda*g.n;
+        float signedLoss=-.5*lambda*(edgeFloat(solver+k+2u)+vN);
+        float loss=max(0.,signedLoss);
+        float wallWork=dot(impulse,g.wallV);
+        totalLoss+=loss;
+        setEdge(geometry+k+4u,impulse.x);setEdge(geometry+k+5u,impulse.y);
+        setEdge(geometry+k+6u,wallWork);setEdge(geometry+k+7u,loss);
+        setEdge(geometry+k+8u,cross2(v.armA,impulse));
+        setEdge(geometry+k+9u,p.b==invalid?0.:cross2(v.armB,-impulse));
+        contacts[geometry+k+10u]=contacts[k+5u];
+        recordContact(e,segment,time+first);
+        if(!finite(signedLoss)||signedLoss< -1e-10) {
+            fail(15u,8u,segment,id(p.a),e,p.wall);return false;
+        }
+        if((contacts[k+5u]&2u)!=0u && lambda>0.)put(65u,result(65u)|2u);
+        if(p.b==invalid) {
+            vecPut(ledger,vecAt(ledger)+impulse);
+            float angular=cross2(g.point,impulse);
+            sw(ledger+2u,wf(ledger+2u)+angular);
+            vecPut(ledger+11u,vecAt(ledger+11u)+impulse);
+            sw(ledger+13u,wf(ledger+13u)+angular);
+            pf(79u,rf(79u)+wallWork);
+            pf(82u+p.wall,rf(82u+p.wall)+lambda);
+        }
+    }
+    if(!finite(totalLoss)||totalLoss< -1e-10) {
+        fail(15u,8u,segment,invalid,invalid,invalid);return false;
+    }
+    pf(80u,rf(80u)+max(0.,totalLoss));
+    for(uint i=0u;i<n;++i) {
+        Disk d=loadDisk(cfg(41u),i);
+        d.v=vecAt(before+4u*i);d.spin=wf(before+4u*i+2u);
+        storeMotion(i,d);
+    }
+    return true;
+}
+
+bool auditGaps(float time,uint count,uint segment,bool full) {
+    enter(10u);
+    Pose p=poseAt(time);
+    for(uint i=0u;i<cfg(4u);++i) {
+        Disk d=loadDisk(cfg(41u),i);
+        float travelled=wf(diskAudit+8u*i);
+        if(!finite(travelled)||!finite(d.p)||!finite(d.v)||!finite(d.angle)||!finite(d.spin)) {
+            fail(4u,10u,segment,id(i),invalid,invalid);return false;
+        }
+        if(travelled>.1*d.r) {fail(5u,10u,segment,id(i),invalid,invalid);return false;}
+        for(uint wall=0u;wall<4u;++wall) {
+            float gap=wallGeometry(d.p,d.r,wall,p).gap;
+            pf(70u,min(rf(70u),gap));pf(71u,max(rf(71u),-gap));
+            if(gap< -cf(53u)){fail(12u,10u,segment,id(i),invalid,wall);return false;}
+        }
+        if(full)for(uint j=i+1u;j<cfg(4u);++j) {
+            float gap=diskGeometry(d,loadDisk(cfg(41u),j)).gap;
+            pf(70u,min(rf(70u),gap));pf(71u,max(rf(71u),-gap));
+            if(gap< -cf(53u)){fail(12u,10u,segment,id(i),invalid,invalid);return false;}
+        }
+    }
+    if(!full)for(uint e=0u;e<count;++e) {
+        Pair p=pairAt(e);
+        if(p.b==invalid)continue;
+        float gap=diskGeometry(loadDisk(cfg(41u),p.a),loadDisk(cfg(41u),p.b)).gap;
+        pf(70u,min(rf(70u),gap));pf(71u,max(rf(71u),-gap));
+        if(gap< -cf(53u)){fail(12u,10u,segment,id(p.a),e,invalid);return false;}
+    }
+    return true;
+}
+
+void microstep() {
+    float dt=1./(120.*float(cfg(5u)));
+    float time=float(cfg(24u))/120.+float(micro)*dt;
+    float remaining=dt;
+    for(uint i=0u;i<cfg(4u);++i)sw(diskAudit+i*8u,0.);
+    for(uint seg=0u;seg<2u;++seg) {
+        uint count;
+        float maxMove;
+        for(uint i=0u;i<8u;++i)work[witness+i]=0u;
+        work[witness+2u]=micro;work[witness+3u]=seg;
+        put(58u,result(58u)+1u);
+        put(60u,result(60u)+12u);
+        if(!makeBuckets(time,remaining,seg,maxMove)||!collectPairs(time,remaining,seg,maxMove,count))return;
+        float hit=decide(count,time,remaining,seg);
+        if(result(41u)!=0u)return;
+        if(hit==noTime){drift(remaining);auditGaps(time+remaining,count,seg,false);return;}
+        drift(hit);
+        if(!auditGaps(time+hit,count,seg,false))return;
+        if(!solve(count,time,remaining,hit,seg))return;
+        time+=hit;remaining-=hit;
+        if(remaining<=0.)break;
+    }
+    if(remaining>0.)fail(11u,9u,1u,invalid,invalid,invalid);
+}
+
+void copyWords(uint dest,uint src,uint count) {
+    for(uint i=0u;i<count;++i)put(dest+i,cfg(src+i));
+}
+void freeze() {
+    for(uint i=0u;i<256u;++i)put(i,0u);
+    put(0u,0x36314743u);put(1u,1u);put(2u,256u);
+    copyWords(4u,8u,2u);copyWords(6u,16u,4u);copyWords(10u,10u,6u);
+    copyWords(16u,20u,4u);copyWords(22u,24u,2u);copyWords(26u,26u,14u);
+    copyWords(48u,40u,4u);copyWords(52u,4u,1u);copyWords(88u,64u,40u);
+    put(53u,cfg(44u)*cfg(45u));put(57u,cfg(5u));put(61u,physicalDispatches);
+    for(uint i=43u;i<=47u;++i)put(i,invalid);
+    for(uint i=0u;i<64u;++i)work[witness+i]=0u;
+    work[witness+26u]=journalCapacity;
+    enter(1u);
+    bool large=cfg(4u)==52u;
+    uint n=cfg(4u),j=cfg(5u);
+    if(cfg(0u)!=0x49363147u||cfg(1u)!=1u||cfg(2u)!=128u||cfg(3u)!=1u||
+        cfg(40u)>1u||cfg(41u)>1u||cfg(41u)==cfg(40u)||cfg(42u)>1u||cfg(43u)>1u||cfg(42u)==cfg(43u)||
+        (j!=128u&&j!=256u)||physicalDispatches!=j+2u||cfg(6u)==0u||cfg(6u)>8u||
+        cfg(25u)!=0u||cfg(24u)>=1200u||(!large&&n!=13u)||cfg(44u)!=(large?20u:10u)||
+        cfg(45u)!=(large?40u:20u)||cfg(46u)!=n||cfg(47u)!=1u||
+        cf(48u)!=.05||cf(49u)!=.1||cf(50u)!=0.||cf(51u)!=-9.81||cf(52u)!=.00005||
+        cf(53u)!=.00025||cf(54u)!=0.||cf(55u)!=0.||cf(56u)!=0.||cf(57u)!=0.||
+        cf(58u)!=0.||cf(59u)!=0.||cf(60u)!=0.||cf(61u)!=(large?.005:.01)) {
+        fail(1u,1u,invalid,invalid,invalid,invalid);return;
+    }
+    pf(70u,1.);
+    float expectedRadius=large?.0025:.005,expectedMass=large?.0025:.01;
+    for(uint i=0u;i<n;++i) {
+        uint a=diskWord(cfg(40u),i),b=diskWord(cfg(41u),i);
+        Disk d=loadDisk(cfg(40u),i);
+        if(state[a]!=i+1u||state[a+1u]!=1u||state[a+2u]!=i+1u||state[a+3u]!=1u||
+            d.r!=expectedRadius||d.m!=expectedMass||
+            abs(d.inertia-0.5*d.m*d.r*d.r)>2e-14||!finite(d.inertia)||
+            state[a+13u]!=0u||state[a+14u]!=0u||state[a+15u]!=0u) {
+            fail(2u,1u,invalid,i+1u,invalid,invalid);return;
+        }
+        for(uint k=0u;k<16u;++k)state[b+k]=state[a+k];
+    }
+    put(66u,n*(large?2500000u:10000000u));
+    put(60u,4u);
+}
+
+vec4 totals(uint bank) {
+    vec4 sum=vec4(0.);
+    for(uint i=0u;i<cfg(4u);++i) {
+        Disk d=loadDisk(bank,i);
+        vec2 momentum=d.m*d.v;
+        sum.xy+=momentum;
+        sum.z+=cross2(d.p,momentum)+d.inertia*d.spin;
+        sum.w+=.5*(dot(momentum,d.v)+d.inertia*d.spin*d.spin)-d.m*dot(d.p,gravity());
+    }
+    return sum;
+}
+void increment(uint dest,uint src) {
+    uint low=cfg(src)+1u;
+    put(dest,low);put(dest+1u,cfg(src+1u)+uint(low==0u));
+}
+void seal() {
+    if(result(41u)==0u) {
+        float time=float(cfg(24u)+1u)/120.;
+        if(auditGaps(time,0u,invalid,true)) {
+            vec4 delta=totals(cfg(41u))-totals(cfg(40u));
+            vec4 residual=delta-vec4(vecAt(ledger),wf(ledger+2u),rf(79u)-rf(80u));
+            pf(75u,residual.x);pf(76u,residual.y);pf(77u,residual.z);pf(78u,residual.w);
+            const float momentumLimit=.001*.13*sqrt(9.81*.2);
+            const float angularLimit=momentumLimit*.2;
+            const float energyLimit=.001*.13*9.81*.2;
+            if(any(isnan(residual))||any(isinf(residual))||length(residual.xy)>momentumLimit||
+                abs(residual.z)>angularLimit||abs(residual.w)>energyLimit)
+                fail(15u,10u,invalid,invalid,invalid,invalid);
+            else {
+                enter(11u);
+                for(uint i=0u;i<cfg(4u);++i) {
+                    uint src=diskWord(cfg(41u),i),dst=cfg(43u)*8192u+i*8u;
+                    scene[dst]=state[src+4u];scene[dst+1u]=state[src+5u];
+                    scene[dst+2u]=state[src+10u];scene[dst+3u]=state[src+8u];
+                    for(uint w=0u;w<4u;++w)scene[dst+4u+w]=state[src+w];
+                }
+                Pose p=poseAt(time);
+                vecPut(witness+16u,p.cs);sw(witness+18u,p.angle);sw(witness+19u,p.omega);
+                sw(witness+20u,p.alpha);sw(witness+21u,time);
+                work[witness+22u]=cfg(20u);work[witness+23u]=cfg(21u);
+                put(62u,cfg(4u));put(68u,result(66u));increment(20u,22u);increment(24u,24u);
+            }
+        }
+    }
+    put(64u,work[witness]); // Number of meaningful edge records in the last segment.
+    put(40u,result(41u)==0u?1u:2u);
+    put(60u,result(60u)+4u);
+    enter(12u);
+    memoryBarrierBuffer();
+    put(3u,0xC016CAFEu);
+}
+
+void main() {
+    if(pass==0u)freeze();
+    else if(pass==1u&&result(41u)==0u)microstep();
+    else if(pass==2u)seal();
+}

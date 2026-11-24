@@ -30,7 +30,8 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/build_roles.py"
     "${CMAKE_CURRENT_SOURCE_DIR}/boot_view.vert" "${CMAKE_CURRENT_SOURCE_DIR}/boot_view.frag"
     "${CMAKE_CURRENT_SOURCE_DIR}/m1_source_view.frag" "${CMAKE_CURRENT_SOURCE_DIR}/m1_dry_scene.frag")
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/g15_dm_scene.frag")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/g15_dm_scene.frag"
+    "${CMAKE_CURRENT_SOURCE_DIR}/g16_scene.vert" "${CMAKE_CURRENT_SOURCE_DIR}/g16_scene.frag")
 add_executable(hello_world_pc main.cpp wsi.cpp "${GPU}/g13vulkan_boot/boot.cpp")
 set_property(SOURCE "${GPU}/g13vulkan_boot/boot.cpp" APPEND PROPERTY OBJECT_DEPENDS
     "${GPU}/g13vulkan_boot/m1_source.inc" "${GPU}/g13vulkan_boot/m1_quantum.inc"
