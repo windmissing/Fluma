@@ -1,0 +1,495 @@
+{
+  "schema": "T904_REPLAY_REALROOT_DM2R1_V1",
+  "pe": {
+    "M1": {
+      "path": ".codex/local-test/t903-m1-ninja/hello_world_pc.exe",
+      "sha256": "e72b53c684a6757a366ac9a5a6316dc1d542ede6d6616fe9daef0d2635b5fa2e"
+    },
+    "DM2": {
+      "path": ".codex/local-test/t903-dm2-release/pc_sand_dm2_host.exe",
+      "sha256": "3ef1e99ebdca39a956bbe5e0f75a61f71c13218059a384244f9ff86e9e3d3602"
+    },
+    "R1": {
+      "path": ".codex/local-test/t903-r1-release/pc_sand_r1_host.exe",
+      "sha256": "694ad0c245a6ad86b890fc3f8bb79a86de90497f2ae06c93271487c512defc4e"
+    },
+    "input": {
+      "sha256": "3580ccb1a4199f41708bd9a790f8997f77c4af87dac1743b08c636264e22f55a"
+    }
+  },
+  "subA": {
+    "a-replay-off": {
+      "actions": 52,
+      "states": {
+        "DELIVERED": 28,
+        "AWAIT_PULSE": 2,
+        "OFF_NOOP": 1,
+        "REVOKED": 21
+      },
+      "coldCopies": [
+        {
+          "kind": "SOURCE",
+          "nonce": "16393937527392",
+          "gen": "1",
+          "banks": [
+            0,
+            1
+          ],
+          "slot": 1,
+          "eventRange": [
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "QUANTUM",
+          "nonce": "16393938347552",
+          "gen": "2",
+          "banks": [
+            1,
+            0
+          ],
+          "slot": 0,
+          "eventRange": [
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "QUANTUM",
+          "nonce": "16393939544491",
+          "gen": "3",
+          "banks": [
+            0,
+            1
+          ],
+          "slot": 1,
+          "eventRange": [
+            2,
+            4
+          ]
+        }
+      ],
+      "drain": "RETIRED",
+      "ownerCoverage": {
+        "complete": true,
+        "loss": 0
+      },
+      "replayFiles": [
+        {
+          "file": "a-ro-prefix-16393937527392.m1root",
+          "bytes": 63048
+        },
+        {
+          "file": "a-ro-prefix-16393938347552.m1root",
+          "bytes": 63048
+        },
+        {
+          "file": "a-ro-prefix-16393939544491.m1root",
+          "bytes": 63560
+        }
+      ]
+    },
+    "a-replay-on": {
+      "actions": 52,
+      "states": {
+        "DELIVERED": 29,
+        "AWAIT_PULSE": 2,
+        "RESERVED": 1,
+        "REVOKED": 20
+      },
+      "coldCopies": [
+        {
+          "kind": "SOURCE",
+          "nonce": "16394101332583",
+          "gen": "1",
+          "banks": [
+            0,
+            1
+          ],
+          "slot": 1,
+          "eventRange": [
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "QUANTUM",
+          "nonce": "16394102220642",
+          "gen": "2",
+          "banks": [
+            1,
+            0
+          ],
+          "slot": 0,
+          "eventRange": [
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "QUANTUM",
+          "nonce": "16394103469725",
+          "gen": "3",
+          "banks": [
+            0,
+            1
+          ],
+          "slot": 1,
+          "eventRange": [
+            2,
+            4
+          ]
+        }
+      ],
+      "drain": "RETIRED",
+      "ownerCoverage": {
+        "complete": true,
+        "loss": 0
+      },
+      "replayFiles": [
+        {
+          "file": "a-ron-prefix-16394101332583.m1root",
+          "bytes": 63048
+        },
+        {
+          "file": "a-ron-prefix-16394102220642.m1root",
+          "bytes": 63048
+        },
+        {
+          "file": "a-ron-prefix-16394103469725.m1root",
+          "bytes": 63560
+        }
+      ]
+    },
+    "a-cold-reanchor": {
+      "actions": 52,
+      "states": {
+        "DELIVERED": 48,
+        "AWAIT_PULSE": 2,
+        "OFF_NOOP": 2
+      },
+      "coldCopies": [
+        {
+          "kind": "SOURCE",
+          "nonce": "16394112034111",
+          "gen": "1",
+          "banks": [
+            0,
+            1
+          ],
+          "slot": 1,
+          "eventRange": [
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "QUANTUM",
+          "nonce": "16394112999566",
+          "gen": "2",
+          "banks": [
+            1,
+            0
+          ],
+          "slot": 0,
+          "eventRange": [
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "QUANTUM",
+          "nonce": "16394114862667",
+          "gen": "3",
+          "banks": [
+            0,
+            1
+          ],
+          "slot": 1,
+          "eventRange": [
+            0,
+            2
+          ]
+        },
+        {
+          "kind": "QUANTUM",
+          "nonce": "16394116227247",
+          "gen": "4",
+          "banks": [
+            1,
+            0
+          ],
+          "slot": 0,
+          "eventRange": [
+            0,
+            2
+          ]
+        }
+      ],
+      "drain": "RETIRED",
+      "ownerCoverage": {
+        "complete": true,
+        "loss": 0
+      },
+      "replayFiles": [
+        {
+          "file": "a-cr-prefix-16394112034111.m1root",
+          "bytes": 63048
+        },
+        {
+          "file": "a-cr-prefix-16394112999566.m1root",
+          "bytes": 63048
+        },
+        {
+          "file": "a-cr-prefix-16394114862667.m1root",
+          "bytes": 63048
+        },
+        {
+          "file": "a-cr-prefix-16394116227247.m1root",
+          "bytes": 63048
+        }
+      ]
+    },
+    "verdict": "T903 修复实证: REPLAY 冷档以真实接受根触发——三个 REPLAY 臂（REPLAY_OFF/REPLAY_ON/cold-reanchor）均完成 52 动作、COLD_COPY 完整生命周期（SUBMITTED/WAIT/READBACK 带背板字段）、首笔真实 SOURCE 根+QUANTUM 根 M1PROOT1 档（10 件全部摘要验证通过）、drain RETIRED+ownerCoverage complete/loss=0。T896 的 M1_COLD_ROOT_BACKING 空箱根缺陷不再复现。"
+  },
+  "subB": {
+    "b-dm2-plain": {
+      "boot": {
+        "vk": 0,
+        "seal": 6559303,
+        "eligible": true,
+        "driver": 1656924,
+        "vendor": 32902,
+        "device": 16024
+      },
+      "root": {
+        "vk": 2,
+        "dispatches": 12,
+        "accepted": false,
+        "firstStop": "GRANT_DEADLINE"
+      },
+      "retireVk": 0,
+      "timeline": {
+        "grantNs": "1639434248182100",
+        "deadlineNs": "1639434498182100",
+        "recordMs": 37.7,
+        "submitVk": 0,
+        "pollCount": 14,
+        "gateResult": "TAIL_NOT_READY",
+        "acceptedRoot": null
+      },
+      "gpuTimestamps": {
+        "state": "LATE_RETIRED_DIAGNOSTIC",
+        "fenceVk": 0,
+        "queryCreateVk": 1,
+        "validBits": 36,
+        "periodNs": 83.333,
+        "spans": [
+          {
+            "name": "UPLOAD",
+            "ms": 0.0
+          },
+          {
+            "name": "PREPARE",
+            "ms": 0.0
+          },
+          {
+            "name": "SOURCE_WRITER",
+            "ms": 0.0
+          },
+          {
+            "name": "AUDIT_COMPARE_PACK_SEAL",
+            "ms": 0.0
+          },
+          {
+            "name": "TAIL_COPY",
+            "ms": 0.0
+          }
+        ],
+        "pointsAvailable": 0,
+        "pointsTotal": 6
+      }
+    },
+    "b-dm2-ts": {
+      "boot": {
+        "vk": 0,
+        "seal": 6559303,
+        "eligible": true,
+        "driver": 1656924,
+        "vendor": 32902,
+        "device": 16024
+      },
+      "root": {
+        "vk": 2,
+        "dispatches": 12,
+        "accepted": false,
+        "firstStop": "GRANT_DEADLINE"
+      },
+      "retireVk": 0,
+      "timeline": {
+        "grantNs": "1639435062122000",
+        "deadlineNs": "1639435312122000",
+        "recordMs": 41.4,
+        "submitVk": 0,
+        "pollCount": 14,
+        "gateResult": "TAIL_NOT_READY",
+        "acceptedRoot": null
+      },
+      "gpuTimestamps": {
+        "state": "LATE_RETIRED_DIAGNOSTIC",
+        "fenceVk": 0,
+        "queryCreateVk": 0,
+        "validBits": 36,
+        "periodNs": 83.333,
+        "spans": [
+          {
+            "name": "UPLOAD",
+            "ms": 0.013
+          },
+          {
+            "name": "PREPARE",
+            "ms": 39.25
+          },
+          {
+            "name": "SOURCE_WRITER",
+            "ms": 70.993
+          },
+          {
+            "name": "AUDIT_COMPARE_PACK_SEAL",
+            "ms": 130.731
+          },
+          {
+            "name": "TAIL_COPY",
+            "ms": 0.007
+          }
+        ],
+        "pointsAvailable": 6,
+        "pointsTotal": 6
+      }
+    },
+    "b-r1-plain": {
+      "boot": {
+        "vk": 0,
+        "seal": 3223126018,
+        "eligible": true,
+        "driver": 1656924,
+        "vendor": 32902,
+        "device": 16024
+      },
+      "root": {
+        "vk": 2,
+        "dispatches": 19,
+        "accepted": false,
+        "firstStop": "GRANT_DEADLINE"
+      },
+      "retireVk": 0,
+      "timeline": {
+        "grantNs": "1639435925862600",
+        "deadlineNs": "1639436175862600",
+        "recordMs": 30.0,
+        "submitVk": 0,
+        "pollCount": 15,
+        "gateResult": "TAIL_NOT_READY",
+        "acceptedRoot": null
+      },
+      "gpuTimestamps": {
+        "state": "LATE_RETIRED_DIAGNOSTIC",
+        "fenceVk": 0,
+        "queryCreateVk": 1,
+        "validBits": 36,
+        "periodNs": 83.333,
+        "spans": [
+          {
+            "name": "UPLOAD",
+            "ms": 0.0
+          },
+          {
+            "name": "PREPARE",
+            "ms": 0.0
+          },
+          {
+            "name": "ACTUAL_WRITER",
+            "ms": 0.0
+          },
+          {
+            "name": "REPLAY_AUDIT_APPLY",
+            "ms": 0.0
+          },
+          {
+            "name": "COMPARE_PACK_AUDIT_SEAL",
+            "ms": 0.0
+          },
+          {
+            "name": "TAIL_COPY",
+            "ms": 0.0
+          }
+        ],
+        "pointsAvailable": 0,
+        "pointsTotal": 7
+      }
+    },
+    "b-r1-ts": {
+      "boot": {
+        "vk": 0,
+        "seal": 3223126018,
+        "eligible": true,
+        "driver": 1656924,
+        "vendor": 32902,
+        "device": 16024
+      },
+      "root": {
+        "vk": 2,
+        "dispatches": 19,
+        "accepted": false,
+        "firstStop": "GRANT_DEADLINE"
+      },
+      "retireVk": 0,
+      "timeline": {
+        "grantNs": "1639436817575300",
+        "deadlineNs": "1639437067575300",
+        "recordMs": 34.7,
+        "submitVk": 0,
+        "pollCount": 14,
+        "gateResult": "TAIL_NOT_READY",
+        "acceptedRoot": null
+      },
+      "gpuTimestamps": {
+        "state": "LATE_RETIRED_DIAGNOSTIC",
+        "fenceVk": 0,
+        "queryCreateVk": 0,
+        "validBits": 36,
+        "periodNs": 83.333,
+        "spans": [
+          {
+            "name": "UPLOAD",
+            "ms": 0.009
+          },
+          {
+            "name": "PREPARE",
+            "ms": 32.648
+          },
+          {
+            "name": "ACTUAL_WRITER",
+            "ms": 182.606
+          },
+          {
+            "name": "REPLAY_AUDIT_APPLY",
+            "ms": 166.59
+          },
+          {
+            "name": "COMPARE_PACK_AUDIT_SEAL",
+            "ms": 31.552
+          },
+          {
+            "name": "TAIL_COPY",
+            "ms": 0.007
+          }
+        ],
+        "pointsAvailable": 7,
+        "pointsTotal": 7
+      }
+    },
+    "verdict": "DM2/R1 各两臂（无/有 --source-timestamps）：BOOT 全过；ROOT 250ms 原业务边界下拒绝（DM2 12/R1 19 派发 vk=2、firstStop=GRANT_DEADLINE、gate TAIL_NOT_READY、acceptedRoot=null）；RETIRE 同 fence 追加等待成功（DM2/R1 均 vk=0——T902 时 R1=2 缺口已修）；时间戳臂 LATE_RETIRED_DIAGNOSTIC 6/6、7/7 点位可用，GPU 分段 DM2 PREPARE 39.2/SOURCE_WRITER 71.0/AUDIT 130.7ms、R1 PREPARE 32.6/ACTUAL_WRITER 182.6/REPLAY_AUDIT 166.6/COMPARE_PACK 31.6ms。实际接受未达成（iGPU 250ms 界）→ROOT/FULL 与 WORK/Present 不计入接受。"
+  }
+}
