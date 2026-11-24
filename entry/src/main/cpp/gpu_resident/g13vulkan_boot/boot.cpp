@@ -363,6 +363,7 @@ private:
   VkQueryPool m1TimingPool=VK_NULL_HANDLE;
   VkFence m1TimedFence=VK_NULL_HANDLE;
   uint64_t m1TimedNonce=0,m1TimingMask=0;
+  uint64_t m1TimingResetSerial=0;
   bool m1TimedSource=false;
   uint32_t m1TimingBits=0;
   float m1TimingPeriod=0;
@@ -916,8 +917,8 @@ std::string Boot::Read(const std::array<uint32_t, 18688> &control) {
 }
 
 #ifdef _WIN32
-#include "m1_source.inc"
 #include "m1_quantum.inc"
+#include "m1_source.inc"
 
 void Boot::QualifySteady(const std::string &roleName) {
   const auto reset = reinterpret_cast<PFN_vkResetCommandPool>(

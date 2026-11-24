@@ -5,7 +5,7 @@ U64 qr(const uint32_t* p,size_t i){return {p[i],p[i+1]};}bool qm(const uint32_t*
 }
 ControlCode SourceRootOwner::BeginQuantum(const RootRequest& r,int angle){
  if(state==FlightState::StateLost)return ControlCode::OWNER_STATE_LOST;if(state==FlightState::Quarantined)return ControlCode::QUARANTINED;if(state!=FlightState::Idle)return ControlCode::BUSY;
- const uint32_t passes=QuantumDispatchCount(K==192?256:512,Kw,groupSort),capacity=4*(48*K+16*Kw+254)+K;
+ const uint32_t passes=QuantumDispatchCount(K==192?256:512,Kw,groupSort,auditBreakdown),capacity=4*(48*K+16*Kw+254)+K;
  if(r.kind!=2||r.quantumOrdinal<1||r.quantumOrdinal>4||r.publicationSlot>1||r.eventArena>1||r.eventStart>r.eventCapacity||r.eventCapacity!=capacity||r.dispatchCount!=passes||r.barrierCount!=passes||r.carry>=1000000000||!(r.frame.lo|r.frame.hi)||!(r.control.lo|r.control.hi)||Compare64(r.nonce,lastNonce)<=0||angle< -7680||angle>7680)return ControlCode::INVALID_INPUT;
  if(pubs[r.publicationSlot].leased||pubs[r.publicationSlot].releasePending)return ControlCode::BACKPRESSURE;
  pending=r;quantumAngle=angle;lastNonce=r.nonce;tombstone=false;state=FlightState::Submitted;pubs[r.publicationSlot].available=false;return ControlCode::OK;

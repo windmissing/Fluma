@@ -935,6 +935,24 @@ int wmain(int argc,wchar_t **argv) {
     std::cout << std::unitbuf;
     if (argc==3 && std::wstring_view(argv[1])==L"--check-package")
       return VulkanOwner::CheckRolePackage(argv[2]) ? 0 : 1;
+    if (argc>=2 && std::wstring_view(argv[1])==L"--qualify-g15-op23") {
+      RequireHost(kG15Dm2 && (argc==3 || argc==4),"G15_QUALIFY_ARGUMENTS");
+      HostDevice gpu;
+      gpu.Open(false);
+      std::cout << "{\"stage\":\"G15_QUALIFY_DEVICE\",\"device\":\"" << HexBytes(gpu.deviceId.deviceUUID,VK_UUID_SIZE)
+                << "\",\"driverUUID\":\"" << HexBytes(gpu.deviceId.driverUUID,VK_UUID_SIZE)
+                << "\",\"vendor\":" << gpu.properties.vendorID << ",\"deviceId\":" << gpu.properties.deviceID
+                << ",\"driver\":" << gpu.properties.driverVersion << ",\"queueFamily\":" << gpu.family
+                << ",\"ownerTid\":" << GetCurrentThreadId() << "}\n";
+      {
+        VulkanOwner owner;
+        RequireVk(owner.QualifyG15FlightPath({gpu.device,gpu.queue,gpu.family,gpu.deviceProc,
+            gpu.properties.limits},argv[2],argc==4?std::filesystem::path(argv[3]):std::filesystem::path{}),
+            "G15_OP23_QUALIFY");
+      }
+      std::cout << "{\"state\":\"G15_OP23_QUALIFIED\",\"acceptedRoot\":null}\n";
+      return 0;
+    }
     const auto options=Args(argc,argv);
     std::cout << "{\"stage\":\"ROLE_LAUNCH\",\"hostReceipt\":\"T924_V1\",\"cwd\":" << std::quoted(std::filesystem::current_path().generic_u8string())
               << ",\"argv\":[";

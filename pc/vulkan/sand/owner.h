@@ -100,6 +100,8 @@ class VulkanOwner {
   VulkanOwner &operator=(const VulkanOwner &)=delete;
   ~VulkanOwner();
   VkResult Open(const Context &,const std::filesystem::path &modules);
+  VkResult QualifyG15FlightPath(const Context &,const std::filesystem::path &module,
+                                const std::filesystem::path &prefix);
   static bool CheckRolePackage(const std::filesystem::path &modules);
   // Caller holds the same resource generation through qualification and roots.
   // Uploads contain the original frozen seed, WORK/config and Common, retained through recording.
@@ -136,6 +138,8 @@ class VulkanOwner {
                         uint64_t timeoutNs);
 #endif
  private:
+  VkResult OpenPipelines(const Context &,const std::vector<uint32_t> &opcodes,
+                         const std::vector<std::vector<uint32_t>> &modules,bool qualify);
   struct Api;
   struct Prepared;
   struct Pipeline { uint32_t opcode; VkPipeline object; };

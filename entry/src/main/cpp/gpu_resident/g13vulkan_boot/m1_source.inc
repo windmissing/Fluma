@@ -240,8 +240,9 @@ void Boot::M1RootTrace(const char *kind,uint64_t nonce,const m1::ProgressClockV2
          << "\",\"submitEnterQpc\":\"" << log.submitEnter << "\",\"submitExitQpc\":\"" << log.submitExit
          << "\",\"businessStopQpc\":\"" << log.stopQpc << "\""
          << ",\"firstWaitBudgetNs\":" << (firstWaitNs ? std::to_string(deadline>firstWaitNs ? deadline-firstWaitNs : 0) : "null")
-         << ",\"acceptedRoot\":\"" << ((uint64_t(accepted.nonce.hi)<<32)|accepted.nonce.lo)
-         << "\",\"submitVkResult\":" << int(log.submit) << ",\"retireVkResult\":" << int(log.retire)
+         << (attempt.m1PrivateReference.empty() ? ",\"acceptedRoot\":\"" : ",\"acceptedRoot\":null,\"privateRoot\":\"")
+         << ((uint64_t(accepted.nonce.hi)<<32)|accepted.nonce.lo) << "\",\"submitVkResult\":" << int(log.submit)
+         << ",\"retireVkResult\":" << int(log.retire)
          << ",\"retireEnterQpc\":\"" << log.retireEnter << "\",\"retireExitQpc\":\"" << log.retireExit << "\""
          << ",\"fencePending\":" << (inFlight ? "true" : "false") << ",\"waitCount\":" << log.calls
          << ",\"fenceObject\":\"" << (grant.id ? reinterpret_cast<uintptr_t>(fence) : 0) << "\""
@@ -285,6 +286,25 @@ static_assert(!SourceDescriptorsReady(VK_SUCCESS,16,16,16,false));
 std::string Boot::ProbeM1Source(const Candidate &candidate) {
   constexpr uint32_t K = 192, Kw = 128, kColumn = 16*(K+Kw);
   constexpr uint32_t headerAt = kColumn+16*128, stateWords = headerAt+256;
+  constexpr char privateReferenceSHA[]="922ddef7e9e26010f394068841df8f1d7551a1e501f685366eea17661ebd6951";
+  const bool privateOff=!attempt.m1PrivateReference.empty();
+  std::array<uint32_t,32> referenceCommand{};
+  uint64_t referenceDelta=0,referenceAdmitted=0;
+  std::filesystem::path privateDir(attempt.m1PrivateOutput);
+  if (privateOff) {
+    std::ifstream reference(std::filesystem::path(attempt.m1PrivateReference),std::ios::binary);
+    std::array<uint8_t,2480> bytes{};
+    Require(bool(reference.read(reinterpret_cast<char *>(bytes.data()),bytes.size())) &&
+        reference.peek()==std::char_traits<char>::eof() &&
+        Hex(Hash(bytes.data(),bytes.size()).data())==privateReferenceSHA,"M1_PRIVATE_REFERENCE_SHA");
+    std::memcpy(referenceCommand.data(),bytes.data()+304,sizeof(referenceCommand));
+    std::memcpy(&referenceDelta,bytes.data()+80,8);
+    std::memcpy(&referenceAdmitted,bytes.data()+96,8);
+    Require(referenceDelta==15026700 && referenceAdmitted==126053 && referenceCommand[2]==0 &&
+        std::filesystem::create_directory(privateDir),"M1_PRIVATE_REFERENCE_LAYOUT");
+    std::ofstream copy(privateDir/"reference.bin",std::ios::binary);
+    Require(bool(copy.write(reinterpret_cast<const char *>(bytes.data()),bytes.size())), "M1_PRIVATE_REFERENCE_WRITE");
+  }
   constexpr uint32_t workWords = 96+4096*64+stateWords+4096*16;
   constexpr uint32_t pubWords = 16*K+20*Kw+16*128+256;
   constexpr uint32_t passes = 8;
@@ -297,10 +317,13 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   constexpr auto block = 20*sizeof(uint32_t);
   const char *sourceSHA=attempt.m1Compact ? "e9c7c123747c77350545b9d11abcfbd9b0b2e85948cde854f2592b97957f292c" :
       "1912af9ed97e30d9eb158f0af2d6eaf5dcbabe6fc32bc04bd57b8226fc4c7162";
-  const char *commitSHA=attempt.m1Compact ? "1383f353018da0f67bbd4faadc3906eb193fd3f5234cc2d060891ebede30ef0e" : kM1CommitSHA;
+  const char *commitSHA=attempt.m1AuditBreakdown ? "d46888f259eb18beeb4a8f3d4f5b2891a82d171e7e0b1098c1a4b50088f1445c" :
+      attempt.m1Integrated ? "64ba25f41818b8c55fc117ce44fce52b5a55bdd0ebc5e3d458a9bb1380f43a01" :
+      attempt.m1Compact ? "1383f353018da0f67bbd4faadc3906eb193fd3f5234cc2d060891ebede30ef0e" : kM1CommitSHA;
   const bool interactive = !attempt.m1QuantumCandidate.empty();
-  const bool groupSort=attempt.m1Compact && attempt.m1InventoryV1;
-  const char *candidateSHA=groupSort ? "1792a1a3d5dc26eb2cc575f733c5f005db9fa16397aae4b8314091fdabb9d579" :
+  const bool groupSort=attempt.m1Compact && (attempt.m1InventoryV1 || attempt.m1Integrated);
+  const char *candidateSHA=attempt.m1Integrated ? "bf024ac5c580be0549aee02369a58bdb7b500ea3165b2588922936331edb285f" :
+      groupSort ? "1792a1a3d5dc26eb2cc575f733c5f005db9fa16397aae4b8314091fdabb9d579" :
       attempt.m1Compact ? "78139c8f3d53e2a175d9409cb88d646ce3d5ef2ebce04319ddc5d5ed259233a9" :
       attempt.m1InventoryV1 ? kM1InventoryV1SHA :
       attempt.m1AngleWitness ? kM1AngleWitnessSHA : kM1CandidateSHA;
@@ -326,7 +349,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   Require(bool(input.read(reinterpret_cast<char *>(module.data()), size)) &&
           Hex(Hash(module.data(), size_t(size)).data()) == sourceSHA, "M1_MODULE_SHA");
   fields << ",\"m1SourceModuleSHA\":" << Quote(sourceSHA)
-         << ",\"inputKind\":" << Quote(interactive ? "WIN32_POINTER_HOLD" : "PC_DIAGNOSTIC_DRY_SOURCE")
+         << ",\"inputKind\":" << Quote(privateOff ? "T927_PRIVATE_POST_FREEZE" :
+             interactive ? "WIN32_POINTER_HOLD" : "PC_DIAGNOSTIC_DRY_SOURCE")
          << ",\"m1InputProfile\":" << Quote(fullM1 ? "FULL_M1_V2" : "DRY_M1_V2")
          << ",\"m1CompactDemo\":" << (attempt.m1Compact ? "true" : "false")
          << ",\"m1EmitQ\":" << emitQ;
@@ -351,6 +375,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   if (interactive) {
     fields << ",\"m1QuantumCandidateSHA\":" << Quote(candidateSHA)
            << ",\"m1InventoryV1\":" << (attempt.m1InventoryV1 ? "true" : "false")
+           << ",\"m1Integrated\":" << (attempt.m1Integrated ? "true" : "false")
+           << ",\"m1AuditBreakdown\":" << (attempt.m1AuditBreakdown ? "true" : "false")
            << ",\"m1QuantumCommitSHA\":" << Quote(commitSHA);
     Checkpoint("M1_QUANTUM_CANDIDATE_PIPELINE");
     m1QuantumPipelines[0] = M1Pipeline(attempt.m1QuantumCandidate, candidateSHA);
@@ -364,7 +390,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   Allocate(kM1Candidate, stateWords*4, storage | copyOut);
   Allocate(kM1Work, workWords*4, storage | upload | copyOut);
   Allocate(kM1Events, (K+1)*64*4, storage | copyOut);
-  Allocate(kM1Pub, pubWords*4, storage | (attempt.m1ReplayPrefix.empty() && !attempt.m1Observation.series ? 0 : copyOut) |
+  Allocate(kM1Pub, pubWords*4, storage | (attempt.m1ReplayPrefix.empty() && !attempt.m1Observation.series && !privateOff ? 0 : copyOut) |
            (attempt.m1Preview ? upload : 0));
   Allocate(kM1Tail, 1024, storage | VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
   Allocate(kM1Uniform, stride*passes, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | upload);
@@ -438,7 +464,8 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
   digestWords(m1::manifestSha, identity.layoutSha);
   m1::SourceRootOwner root;
   using SourceProfile=m1::SourceRootOwner::Profile;
-  Require(root.Initialize(identity,K,Kw,groupSort ? SourceProfile::FullM1GroupSort :
+  Require(root.Initialize(identity,K,Kw,attempt.m1AuditBreakdown ? SourceProfile::FullM1AuditBreakdown :
+          groupSort ? SourceProfile::FullM1GroupSort :
           fullM1 ? SourceProfile::FullM1 : SourceProfile::SourceCore)
           ==ControlCode::OK,"M1_SOURCE_OWNER_INIT");
 
@@ -738,6 +765,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     const double source[] = {interactive ? inputSample.x : 64.5, interactive ? inputSample.y : 0.0,
                              interactive ? sourceRate*double(delta)/1000000000.0 : 0.125};
     std::memcpy(cmd.data()+16, source, sizeof(source));
+    if (privateOff) std::copy_n(referenceCommand.data()+16,6,cmd.data()+16);
     if (offer.seq) {
       fields << ",\"m1Hold\":\"" << inputSample.hold << "\",\"m1PointerSeq\":\"" << inputSample.sequence
              << "\",\"m1PointerNs\":\"" << inputSample.timeNs << "\",\"m1SourceDeltaNs\":\"" << delta << "\"";
@@ -769,6 +797,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     };
     if (m1TimingPool) {
       m1ResetTiming(command,m1TimingPool,0,4);
+      ++m1TimingResetSerial;
       m1WriteTiming(command,VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,m1TimingPool,0);
     }
     if (!baseInitialized && !root.AcceptedCount()) recordColdBase();
@@ -801,7 +830,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
       if (!attempt.current()) return "WINDOW_REVOKED";
       if (!refresh()) return clock.fault;
       if (!clock.Identity(permit.id,permit.session)) return "PLAN_SESSION_MISMATCH";
-      if (!interactive) return nullptr;
+      if (!interactive || privateOff) return nullptr;
       if (offer.current.seq && attempt.authorizeM1Offer)
         return attempt.authorizeM1Offer(offer,[]{}) ? nullptr : "SOURCE_HOLD_REVOKED";
       const auto held=attempt.pointer();
@@ -885,7 +914,7 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     };
     m1Reject=sourceGuard();
     if (!m1Reject && !(offer.current.seq && attempt.authorizeM1Offer ?
-        attempt.authorizeM1Offer(offer,accept) : attempt.acceptPointer(inputSample.hold,accept)))
+        attempt.authorizeM1Offer(offer,accept) : attempt.acceptPointer(privateOff?0:inputSample.hold,accept)))
       m1Reject=attempt.current() ? "SOURCE_HOLD_REVOKED" : "WINDOW_REVOKED";
     if (!m1Reject && result!=ControlCode::OK) m1Reject="TAIL_REJECTED";
     if (m1Reject) return reject();
@@ -1023,6 +1052,119 @@ std::string Boot::ProbeM1Source(const Candidate &candidate) {
     if (interactive && !advanceQuantum()) return "M1_QUANTUM_NOT_ACCEPTED";
     return nullptr;
   };
+  if (privateOff) {
+    fields << ",\"acceptedRoot\":null,\"m1PrivateReferenceSHA\":" << Quote(privateReferenceSHA)
+           << ",\"m1PrivateReferenceDeltaNs\":\"" << referenceDelta << "\",\"m1PrivateObservation\":"
+           << (attempt.m1PrivateObserve ? "true" : "false");
+    struct Span { size_t slot; VkDeviceSize offset,bytes; const char *file; };
+    const auto write=[&](const char *name,const void *bytes,size_t size) {
+      std::ofstream output(privateDir/name,std::ios::binary);
+      Require(size<=size_t(INT64_MAX) && bool(output.write(static_cast<const char *>(bytes),std::streamsize(size))),
+              "M1_PRIVATE_WRITE");
+    };
+    const auto capture=[&](bool init,std::initializer_list<Span> spans) {
+      Require(!inFlight && attempt.current(),"M1_PRIVATE_COPY_SCOPE");
+      if (!buffers[kM1ColdStaging].handle)
+        Allocate(kM1ColdStaging,M1HotCapture::kColdLimit,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
+      const auto &cold=buffers[kM1ColdStaging];
+      Check(reset(device,commandPool,0),"vkResetCommandPool.M1_PRIVATE");
+      vk.DestroyFence(device,fence,nullptr);
+      fence=VK_NULL_HANDLE;
+      Check(vk.CreateFence(device,&fenceInfo,nullptr,&fence),"vkCreateFence.M1_PRIVATE");
+      VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+      begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+      Check(vk.BeginCommandBuffer(command,&begin),"vkBeginCommandBuffer.M1_PRIVATE");
+      if (init) recordColdBase();
+      Barrier(kCompute|kTransfer,VK_ACCESS_SHADER_WRITE_BIT|VK_ACCESS_TRANSFER_WRITE_BIT,
+              kTransfer,VK_ACCESS_TRANSFER_READ_BIT);
+      VkDeviceSize at=0;
+      for (const auto &part:spans) {
+        const auto &buffer=buffers[part.slot];
+        Require(part.offset<=buffer.bytes && part.bytes<=buffer.bytes-part.offset && part.bytes<=cold.bytes-at,
+                "M1_PRIVATE_COPY_RANGE");
+        if (part.bytes) {
+          const VkBufferCopy range{part.offset,at,part.bytes};
+          vk.CmdCopyBuffer(command,buffer.handle,cold.handle,1,&range);
+        }
+        at+=part.bytes;
+      }
+      Barrier(kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT,VK_PIPELINE_STAGE_HOST_BIT,VK_ACCESS_HOST_READ_BIT);
+      Check(vk.EndCommandBuffer(command),"vkEndCommandBuffer.M1_PRIVATE");
+      VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+      submit.commandBufferCount=1;submit.pCommandBuffers=&command;
+      const auto entered=pc::QpcTicks();
+      const auto submitted=vk.QueueSubmit(queue,1,&submit,fence);
+      Check(submitted,"vkQueueSubmit.M1_PRIVATE");
+      inFlight=true;
+      const auto waited=vk.WaitForFences(device,1,&fence,VK_TRUE,m1::ProgressClockV2::JobNs);
+      const auto exited=pc::QpcTicks();
+      if (waited==VK_SUCCESS || waited==VK_ERROR_DEVICE_LOST) inFlight=false;
+      fields << ",\"" << (init ? "m1PrivateBaseCopy" : "m1PrivateEvidenceCopy")
+             << "\":{\"fence\":\"" << reinterpret_cast<uintptr_t>(fence) << "\",\"enterQpc\":\""
+             << entered << "\",\"exitQpc\":\"" << exited << "\",\"vkResult\":" << int(waited) << '}';
+      Check(waited,"vkWaitForFences.M1_PRIVATE");
+      Require(attempt.current(),"M1_PRIVATE_COPY_STALE");
+      void *mapped=nullptr;
+      Check(vk.MapMemory(device,cold.memory,0,VK_WHOLE_SIZE,0,&mapped),"vkMapMemory.M1_PRIVATE");
+      struct Mapping {
+        const g13vk::VulkanApi &api;
+        VkDevice device;
+        VkDeviceMemory memory;
+        ~Mapping(){api.UnmapMemory(device,memory);}
+      } mapping{vk,device,cold.memory};
+      if (!(cold.flags&VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+        const VkMappedMemoryRange range{VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,nullptr,cold.memory,0,VK_WHOLE_SIZE};
+        Check(vk.InvalidateMappedMemoryRanges(device,1,&range),"vkInvalidateMappedMemoryRanges.M1_PRIVATE");
+      }
+      auto *bytes=static_cast<const uint8_t *>(mapped);
+      if (init) {
+        Require(std::all_of(bytes,bytes+headerAt*4,[](uint8_t v) { return v==0; }) &&
+                std::memcmp(bytes+headerAt*4,root.Header().data(),1024)==0,"M1_PRIVATE_BASE_RESIDENT_BYTES");
+      }
+      for (const auto &part:spans) {
+        write(part.file,bytes,size_t(part.bytes));
+        bytes+=part.bytes;
+      }
+    };
+    capture(true,{{kM1Base,0,stateWords*4,"source-base.u32le"}});
+    baseInitialized=true;
+    beginClock(false);
+    if (!primeClock()) return Receipt("FAILED","M1_PRIVATE_REAL_PULSE");
+    clock.ready=clock.baseline=true;
+    PointerSample sample{};
+    std::memcpy(&sample.x,referenceCommand.data()+16,8);
+    std::memcpy(&sample.y,referenceCommand.data()+18,8);
+    sample.hold=1;
+    if (!ClaimM1(clock,1,true,permit) || permit.quanta!=0 ||
+        !consumeSource(sample,m1Consumed.uiNs,referenceDelta,{}) || !accepted.sourceSuccess ||
+        tail[61]!=referenceAdmitted) return Receipt("FAILED","M1_PRIVATE_SOURCE");
+    const auto source=accepted;
+    write("source-command.u32le",cmd.data(),sizeof(cmd));
+    write("source-completion.u32le",tail.data(),sizeof(tail));
+    if (!RunM1Quantum(candidate,root,clock,permit,refresh,accepted,frameSerial,ordinal))
+      return Receipt("FAILED","M1_PRIVATE_QUANTUM");
+    Require(accepted.completion[52]==0 && accepted.completion[26]==1 && clock.accepted==1 &&
+            clock.Balanced(),"M1_PRIVATE_QUANTUM_SCOPE");
+    capture(false,{
+      {source.bank ? kM1Candidate : kM1Base,0,stateWords*4,"quantum-base.u32le"},
+      {accepted.bank ? kM1Candidate : kM1Base,0,stateWords*4,"quantum-candidate.u32le"},
+      {kM1QWork,m1pc::spare*4ull,stateWords*4,"quantum-independent.u32le"},
+      {kM1QWork,m1pc::sourceEvents*4ull,source.completion[56]*64ull,"source-ledger.u32le"},
+      {kM1Events,0,source.completion[53]*256ull,"source-events.u32le"},
+      {kM1QEvents,0,accepted.completion[53]*256ull,"quantum-events.u32le"},
+      {accepted.publication ? kM1QPubAlt : kM1QPub,0,buffers[kM1QPub].bytes,"quantum-publication.u32le"}});
+    write("quantum-completion.u32le",accepted.completion.data(),sizeof(accepted.completion));
+    if (attempt.m1PrivateObserve) {
+      const auto observed=CaptureM1Quantum(root,accepted,tail,stateWords,cmd,{},(privateDir/L"observe").wstring()).get();
+      Require(observed.bytes!=0,"M1_PRIVATE_OBSERVATION");
+      fields << ",\"m1PrivateObservationSHA\":" << Quote(observed.sha);
+    }
+    fields << ",\"m1PrivateClockBalanced\":" << (clock.Balanced() ? "true" : "false")
+           << ",\"m1PrivateGenerated\":" << clock.generated << ",\"m1PrivateConsumed\":" << clock.accepted
+           << ",\"m1PrivatePending\":" << clock.pending << ",\"m1PrivateActive\":" << clock.activeRemaining
+           << ",\"m1PrivateOverload\":" << clock.overload;
+    return Receipt("M1_PRIVATE_OFF_COMPLETE","");
+  }
   if (!attempt.m1Preview) {
     if (const auto failure=startBusiness()) {
       if (!attempt.m1D1 && std::strcmp(failure,"M1_QUANTUM_NOT_ACCEPTED")!=0) Require(false,failure);

@@ -38,9 +38,11 @@ constexpr auto storage=VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 constexpr auto transferDst=VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 constexpr const char *timingPoints[]{
     "ROOT_BEGIN","UPLOAD_DONE","PREPARE_DONE","WATER_DONE","FROZEN_DONE","SORT_DONE",
-    "MOTION_DONE","BED_DONE","ARRIVAL_SORT_DONE","ARRIVE_DONE","FINAL_AUDIT_DONE",
-    "REPLAY_BEGIN","REPLAY_DONE","PACK_DONE","SEAL_DONE","TAIL_COPY_DONE"};
-constexpr uint32_t timingStages[]{1,4,5,9,11,14,17,18,19,21,24,25,27};
+    "WATER_MOTION_DONE","MOTION_DONE","BED_DONE","ARRIVAL_SORT_DONE","ARRIVE_DONE","FINAL_AUDIT_DONE",
+    "INDEPENDENT_INVENTORY_DONE","INDEPENDENT_ANGLE_DONE","INDEPENDENT_SOURCE_LEDGER_DONE",
+    "REPLAY_BEGIN","REPLAY_COPY_DONE","REPLAY_EVENTS_DONE","REPLAY_DONE","PACK_DONE","SEAL_DONE","TAIL_COPY_DONE"};
+constexpr uint32_t timingStages[]{1,4,5,9,10,11,14,17,18,19,29,30,31,21,22,23,24,25,27};
+static_assert(std::size(timingPoints)==std::size(timingStages)+3);
 constexpr const char *sourceTimingPoints[]{"ROOT_BEGIN","UPLOAD_DONE","SOURCE_PASSES_DONE","TAIL_COPY_DONE"};
 }
 
@@ -54,7 +56,9 @@ void Boot::ReportM1Timing(VkResult retired,bool accepted) {
       << "\",\"kind\":" << Quote(m1TimedSource ? "SOURCE" : "QUANTUM")
       << ",\"queue\":\"" << reinterpret_cast<uintptr_t>(queue)
       << "\",\"pool\":\"" << reinterpret_cast<uintptr_t>(m1TimingPool)
-      << "\",\"acceptedRoot\":" << (accepted ? Quote(std::to_string(m1TimedNonce)) : "null")
+      << "\",\"poolGeneration\":\"1\",\"resetSerial\":\"" << m1TimingResetSerial
+      << "\",\"acceptedRoot\":" << (accepted && attempt.m1PrivateReference.empty() ?
+          Quote(std::to_string(m1TimedNonce)) : "null")
       << ",\"fenceVkResult\":" << int(retired) << ",\"validBits\":" << m1TimingBits
       << ",\"periodNs\":" << m1TimingPeriod << ",\"points\":[";
   bool comma=false;
@@ -79,9 +83,10 @@ void Boot::ReportM1Timing(VkResult retired,bool accepted) {
 void Boot::PrepareM1Quantum(const Candidate &candidate) {
   using namespace m1pc;
   auto &passes=m1QuantumPasses;
-  const bool groupSort=attempt.m1Compact && attempt.m1InventoryV1;
+  const bool groupSort=attempt.m1Compact && (attempt.m1InventoryV1 || attempt.m1Integrated);
   Require(!groupSort || candidate.properties.limits.maxComputeSharedMemorySize>=4096,"M1_GROUP_SORT_SHARED_LIMIT");
-  m1::EachQuantumPass(stateWords, pad, kw, [&](m1::QuantumPassOp p) { passes.push_back(p); },groupSort);
+  m1::EachQuantumPass(stateWords,pad,kw,[&](m1::QuantumPassOp p) { passes.push_back(p); },
+                      groupSort,attempt.m1AuditBreakdown);
   const auto &limits = candidate.properties.limits;
   if (attempt.m1StageTiming) {
     VkResult created=VK_NOT_READY;
@@ -106,11 +111,13 @@ void Boot::PrepareM1Quantum(const Candidate &candidate) {
   const auto align = limits.minUniformBufferOffsetAlignment;
   const auto stride = (block+align-1)/align*align;
   const auto pubBytes = buffers[kM1Pub].bytes;
-  const auto copyOut = attempt.m1ColdFile.empty() && attempt.m1ReplayPrefix.empty() && !attempt.m1Observation.frame
+  const auto copyOut = attempt.m1ColdFile.empty() && attempt.m1ReplayPrefix.empty() &&
+      attempt.m1PrivateReference.empty() && !attempt.m1Observation.frame
       ? 0 : VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
   Allocate(kM1QScratch, stateWords*4, storage);
   Allocate(kM1QWork, (angleWitnessWord+(attempt.m1AngleWitness ? angleWitnessWords : 0))*4,
-           storage | transferDst | (attempt.m1AngleWitness ? VK_BUFFER_USAGE_TRANSFER_SRC_BIT : 0));
+           storage | transferDst | (attempt.m1AngleWitness || !attempt.m1PrivateReference.empty() ?
+           VK_BUFFER_USAGE_TRANSFER_SRC_BIT : 0));
   Allocate(kM1QEvents, capacity*256ull, storage | transferDst | copyOut);
   Allocate(kM1QUniform, stride*passes.size(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | transferDst);
   Allocate(kM1QPub, pubBytes, storage | copyOut);
@@ -153,6 +160,11 @@ void Boot::PrepareM1Quantum(const Candidate &candidate) {
   }
   }
   Checkpoint("M1_QUANTUM_COLD_ANGLES");
+  if (attempt.m1Integrated) {
+    static_assert(std::size(kAngleWords)==15361*4);
+    for (size_t i=4;i<std::size(kAngleWords);i+=4)
+      Require(int32_t(kAngleWords[i-4])<=int32_t(kAngleWords[i]),"M1_TANGENT_TABLE_ORDER");
+  }
   auto reset=reinterpret_cast<PFN_vkResetCommandPool>(vk.GetDeviceProcAddr(device,"vkResetCommandPool"));
   Require(reset!=nullptr,"M1_QUANTUM_RESET_FUNCTION");
   Check(reset(device,commandPool,0),"vkResetCommandPool.M1_ANGLES");
@@ -260,6 +272,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   if (m1TimingPool) {
     m1TimingMask=0;
     m1ResetTiming(command,m1TimingPool,0,uint32_t(std::size(timingPoints)));
+    ++m1TimingResetSerial;
     mark(0,VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
   }
   const auto work=buffers[kM1QWork].handle;
@@ -407,7 +420,8 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   if (attempt.m1StageTiming)
     fields << ",\"m1QuantumWork\":{\"baseSand\":" << previous[88] << ",\"baseWater\":" << previous[90]
            << ",\"liveSand\":" << tail[88] << ",\"liveWater\":" << tail[90]
-           << ",\"events\":" << tail[53]-tail[52] << ",\"motionRows\":" << tail[155]
+           << ",\"events\":" << tail[53]-tail[52] << ",\"sourceLedgerRows\":" << tail[55]
+           << ",\"eventStart\":" << tail[52] << ",\"motionRows\":" << tail[155]
            << ",\"arrivalRows\":" << tail[156] << ",\"dispatches\":" << count << '}';
   if (attempt.m1Observation.packetId) {
     m1PacketSample={};

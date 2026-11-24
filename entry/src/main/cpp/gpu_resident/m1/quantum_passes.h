@@ -11,7 +11,8 @@ struct QuantumPassOp {uint32_t stage,n,color,sortK,sortJ,bind3,out;};
 
 // Original FullM1 dispatch order, shared by GLES and Vulkan.
 template<class Emit>
-constexpr void EachQuantumPass(uint32_t words,uint32_t pad,uint32_t kw,Emit emit,bool groupSort=false){
+constexpr void EachQuantumPass(uint32_t words,uint32_t pad,uint32_t kw,Emit emit,bool groupSort=false,
+                               bool auditBreakdown=false){
  auto pass=[&](uint32_t stage,uint32_t count,uint32_t color=UINT32_MAX){
   emit({stage,count,color,0,0,0,0});
  };
@@ -30,17 +31,19 @@ constexpr void EachQuantumPass(uint32_t words,uint32_t pad,uint32_t kw,Emit emit
  if(groupSort)pass(17,64);
  else{pass(16,kw);sort(17,kw);}
  pass(18,1);pass(19,1);pass(20,words);
+ if(auditBreakdown){pass(29,1);pass(30,1);pass(31,1);}
  pass(21,1);pass(22,words);pass(23,1);pass(24,1);
  emit({28,words,UINT32_MAX,0,0,1,1});
  emit({25,1,UINT32_MAX,0,0,2,2});pass(26,1);
  emit({27,1,UINT32_MAX,0,0,3,3});
 }
 
-constexpr uint32_t QuantumDispatchCount(uint32_t pad,uint32_t kw,bool groupSort) {
+constexpr uint32_t QuantumDispatchCount(uint32_t pad,uint32_t kw,bool groupSort,bool auditBreakdown=false) {
  uint32_t count=0;
- EachQuantumPass(1,pad,kw,[&](QuantumPassOp){++count;},groupSort);
+ EachQuantumPass(1,pad,kw,[&](QuantumPassOp){++count;},groupSort,auditBreakdown);
  return count;
 }
 static_assert(QuantumDispatchCount(256,128,false)==127);
 static_assert(QuantumDispatchCount(256,128,true)==35);
+static_assert(QuantumDispatchCount(256,128,true,true)==38);
 }

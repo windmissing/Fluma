@@ -329,6 +329,53 @@ VkResult VulkanOwner::Open(const Context &context,const std::filesystem::path &d
     return VK_ERROR_INITIALIZATION_FAILED;
   std::vector<std::vector<uint32_t>> roles;
   if (!ReadRolePackage(directory,roles)) return VK_ERROR_INITIALIZATION_FAILED;
+  std::vector<uint32_t> opcodes;
+  for (const auto &entry:kModules) opcodes.push_back(entry.opcode);
+  return OpenPipelines(context,opcodes,roles,false);
+}
+
+VkResult VulkanOwner::QualifyG15FlightPath(const Context &context,const std::filesystem::path &module,
+                                         const std::filesystem::path &prefix) {
+  if (!kG15Dm2 || api_ || !context.device || !context.queue || !context.load) return VK_ERROR_INITIALIZATION_FAILED;
+  constexpr char original[]="29e0d466a922536acce6727cb4a768a974f333ecaa7faa1875a77202a0ee3e24";
+  constexpr char stripped[]="5f8fcc775e1c1bd0fae0078ec979a011655531e7b708891c94f9085a77d34c01";
+  const auto read=[](const std::filesystem::path &path,std::vector<uint32_t> &words) {
+    std::ifstream in(path,std::ios::binary|std::ios::ate);
+    const auto bytes=in.tellg();
+    if (bytes<20 || bytes>1024*1024 || bytes%4) return false;
+    words.resize(size_t(bytes)/4);
+    in.seekg(0);
+    return bool(in.read(reinterpret_cast<char *>(words.data()),bytes)) && words[0]==0x07230203;
+  };
+  std::vector<uint32_t> opcodes;
+  std::vector<std::vector<uint32_t>> roles;
+  if (!prefix.empty()) {
+    std::vector<uint32_t> combined;
+    for (uint32_t i=0;i<23;++i) {
+      std::ostringstream name;
+      name << "role_" << std::hex << std::setfill('0') << std::setw(8) << i << ".spv";
+      std::vector<uint32_t> words;
+      if (!read(prefix/name.str(),words)) return VK_ERROR_INITIALIZATION_FAILED;
+      combined.insert(combined.end(),words.begin(),words.end());
+      opcodes.push_back(i);
+      roles.push_back(std::move(words));
+    }
+    const auto digest=RoleDigest(combined.data(),combined.size()*4);
+    if (digest!="d5367cd29c885e797fe350c0ea76fa358772983f9c8c3ec3a33a80d27fc03ff8" &&
+        digest!="bf03a518742740996c7b8741e9dc54865a7ba212147b809a66b67c78b4d7c880")
+      return VK_ERROR_INITIALIZATION_FAILED;
+    std::cout << "{\"stage\":\"G15_OP23_PREFIX\",\"roles\":23,\"sha256\":\"" << digest << "\"}\n";
+  }
+  std::vector<uint32_t> target;
+  if (!read(module,target)) return VK_ERROR_INITIALIZATION_FAILED;
+  const auto sha=RoleDigest(target.data(),target.size()*4);
+  if (sha!=original && sha!=stripped) return VK_ERROR_INITIALIZATION_FAILED;
+  opcodes.push_back(23);roles.push_back(std::move(target));
+  return OpenPipelines(context,opcodes,roles,true);
+}
+
+VkResult VulkanOwner::OpenPipelines(const Context &context,const std::vector<uint32_t> &opcodes,
+    const std::vector<std::vector<uint32_t>> &roles,bool qualify) {
   context_=context;
   thread_=std::this_thread::get_id();
   api_=new (std::nothrow) Api;
@@ -373,18 +420,18 @@ VkResult VulkanOwner::Open(const Context &context,const std::filesystem::path &d
   pipelineLayout.pPushConstantRanges=&pushRange;
   r=api_->CreatePipelineLayout(context.device,&pipelineLayout,nullptr,&layout_);
   if (r!=VK_SUCCESS) return r;
-  pipelines_.reserve(std::size(kModules));
-  for (size_t i=0;i<std::size(kModules);++i) {
-    const auto &entry=kModules[i];
+  pipelines_.reserve(roles.size());
+  for (size_t i=0;i<roles.size();++i) {
+    const auto opcode=opcodes[i];
     const auto &words=roles[i];
     VkShaderModuleCreateInfo moduleInfo{};
     moduleInfo.sType=VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    moduleInfo.codeSize=entry.bytes;
+    moduleInfo.codeSize=words.size()*4;
     moduleInfo.pCode=words.data();
     VkShaderModule module=VK_NULL_HANDLE;
     const auto moduleEnter=pc::TimeNs();
     r=api_->CreateShaderModule(context.device,&moduleInfo,nullptr,&module);
-    std::cout << "{\"stage\":\"ROLE_SHADER_MODULE\",\"opcode\":" << entry.opcode
+    std::cout << "{\"stage\":\"ROLE_SHADER_MODULE\",\"opcode\":" << opcode
               << ",\"enterNs\":\"" << moduleEnter << "\",\"exitNs\":\"" << pc::TimeNs()
               << "\",\"moduleVkResult\":" << int(r) << "}\n";
     if (r!=VK_SUCCESS) return r;
@@ -397,17 +444,29 @@ VkResult VulkanOwner::Open(const Context &context,const std::filesystem::path &d
     info.layout=layout_;
     VkPipeline pipeline=VK_NULL_HANDLE;
     const auto buildEnter=pc::TimeNs();
-    std::cout << "{\"stage\":\"ROLE_PIPELINE_ENTER\",\"opcode\":" << entry.opcode
+    const auto evidence=[&](const char *edge) {
+      if (qualify) std::cout << ",\"call\":\"vkCreateComputePipelines\",\"edge\":\"" << edge
+        << "\",\"role\":\"OP_" << opcode << "\",\"ownerTid\":" << GetCurrentThreadId()
+        << ",\"qpc\":\"" << pc::QpcTicks() << "\",\"qpcFrequency\":\"" << pc::QpcFrequency() << "\"";
+    };
+    std::cout << "{\"stage\":\"ROLE_PIPELINE_ENTER\",\"opcode\":" << opcode
               << ",\"flags\":" << info.flags << ",\"cache\":null,\"pushBytes\":" << push
               << ",\"commonBytes\":" << kCommonBytes << ",\"layoutSHA\":\"" << layoutSHA
-              << "\",\"enterNs\":\"" << buildEnter << "\"}\n";
+              << "\",\"enterNs\":\"" << buildEnter << "\"";
+    if (qualify) std::cout << ",\"moduleSHA\":\"" << RoleDigest(words.data(),moduleInfo.codeSize)
+      << "\",\"moduleBytes\":" << moduleInfo.codeSize << ",\"entryPoint\":\"main\"";
+    evidence("ENTER");
+    std::cout << "}\n";
     r=api_->CreateComputePipelines(context.device,VK_NULL_HANDLE,1,&info,nullptr,&pipeline);
-    std::cout << "{\"stage\":\"ROLE_PIPELINE_EXIT\",\"opcode\":" << entry.opcode
-              << ",\"exitNs\":\"" << pc::TimeNs() << "\",\"pipelineVkResult\":" << int(r) << "}\n";
+    std::cout << "{\"stage\":\"ROLE_PIPELINE_EXIT\",\"opcode\":" << opcode
+              << ",\"exitNs\":\"" << pc::TimeNs() << "\",\"pipelineVkResult\":" << int(r);
+    evidence("EXIT");
+    std::cout << "}\n";
     api_->DestroyShaderModule(context.device,module,nullptr);
     if (r!=VK_SUCCESS) return r;
-    pipelines_.push_back({entry.opcode,pipeline});
+    pipelines_.push_back({opcode,pipeline});
   }
+  if (qualify) return VK_SUCCESS;
   constexpr uint32_t maxBindings=16;
   const VkDescriptorPoolSize sizes[]={{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,4*maxBindings},
                                      {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,maxBindings}};

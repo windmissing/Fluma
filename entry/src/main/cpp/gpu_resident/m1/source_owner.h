@@ -5,7 +5,7 @@ namespace grs {namespace m1 {
 // Revision 2 owner for SOURCE and the FullM1 QUANTUM transport.
 class SourceRootOwner {
 public:
- enum class Profile { SourceCore, FullM1, FullM1GroupSort };
+ enum class Profile { SourceCore, FullM1, FullM1GroupSort, FullM1AuditBreakdown };
  ControlCode Initialize(const Identity&,uint32_t K,uint32_t Kw);
  ControlCode Initialize(const Identity&,uint32_t K,uint32_t Kw,Profile);
  ControlCode Begin(const RootRequest&,const std::array<uint32_t,32>&);
@@ -24,6 +24,7 @@ private:
  bool ValidQuantum(const uint32_t*,size_t,uint32_t)const;int quantumAngle=0;
  bool fullWaterContract=false;
  bool groupSort=false;
+ bool auditBreakdown=false;
  bool Valid(const uint32_t*,size_t,uint32_t)const;
  bool InspectCompletion(const uint32_t*,size_t,uint32_t,AcceptedRoot&)const;
  void AcceptCompletion(const AcceptedRoot&);

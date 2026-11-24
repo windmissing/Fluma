@@ -60,6 +60,9 @@ struct Window {
   bool t899SlotSnapshot=false;
   bool g13CompileTrace=false;
   bool m1Compact=false;
+  bool m1Integrated=false,m1AuditBreakdown=false;
+  std::wstring m1PrivateReference,m1PrivateOutput;
+  bool m1PrivateObserve=false;
   bool compactRequestAtLimit=false;
   size_t g13PulseWrite=0;
   bool t833Allowed=true;
@@ -700,7 +703,8 @@ struct Window {
            "\",\"width\":" + std::to_string(snapshotWidth) + ",\"height\":" +
            std::to_string(snapshotHeight) + ",\"dpi\":" + std::to_string(snapshotDpi) +
            ",\"modeHz\":" + (haveMode ? std::to_string(mode.dmDisplayFrequency) : "null") + "}");
-      const auto terminal = grs::g13vk::RunBoot({previous, 1, previous, hwnd, !bootOnly || m1Present, current, steady,
+      const auto terminal = grs::g13vk::RunBoot({previous,1,previous,hwnd,
+                                               m1PrivateReference.empty() && (!bootOnly || m1Present),current,steady,
                                                steadyRole, disableOptimization, m1SourceModule,
                                                [&] { return sourcePulse.load(std::memory_order_relaxed); },
                                                m1QuantumCandidate, m1QuantumCommit, m1ColdFile,
@@ -789,7 +793,8 @@ struct Window {
                                                    return false;
                                                  act();
                                                  return true;
-                                               },g13CompileTrace,m1Compact},
+                                               },g13CompileTrace,m1Compact,m1Integrated,m1AuditBreakdown,
+                                               m1PrivateReference,m1PrivateOutput,m1PrivateObserve},
           [&](const std::string &report) {
             Emit(report);
             const bool retiring=report.find("\"stage\":\"M1_RETIRE_PENDING\"")!=std::string::npos;
@@ -822,6 +827,10 @@ struct Window {
         }
       }
       Emit(terminal);
+      if (!m1PrivateReference.empty()) {
+        result=terminal.find("\"state\":\"M1_PRIVATE_OFF_COMPLETE\"")!=std::string::npos ? 0 : 1;
+        break;
+      }
       if (!d1Mode.empty()) {
         d1Intake.Await();
         ReportD1("\"state\":\"OWNER_TERMINATED_BEFORE_DRAIN_PROOF\"",false);
@@ -1007,6 +1016,19 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--g13-seal-v1")) window.g13SealV1=true;
     else if (!std::wcscmp(argv[i], L"--m1-stage-timing")) window.m1StageTiming=true;
     else if (!std::wcscmp(argv[i],L"--m1-inventory-v1")) window.m1InventoryV1=true;
+    else if (!std::wcscmp(argv[i],L"--m1-integrated")) window.m1Integrated=true;
+    else if (!std::wcscmp(argv[i],L"--m1-audit-breakdown")) {
+      window.m1Integrated=true;
+      window.m1StageTiming=true;
+      window.m1AuditBreakdown=true;
+    }
+    else if (!std::wcscmp(argv[i],L"--m1-private-off") && i+3<argc && window.m1PrivateReference.empty()) {
+      window.m1PrivateReference=argv[++i];
+      window.m1PrivateOutput=argv[++i];
+      const std::wstring mode=argv[++i];
+      if (mode!=L"OFF" && mode!=L"ON") return 2;
+      window.m1PrivateObserve=mode==L"ON";
+    }
     else if (!std::wcscmp(argv[i],L"--m1-angle-witness-v1")) window.m1AngleWitness=true;
     else if (!std::wcscmp(argv[i], L"--m1-observe-kappa-zero")) window.m1Kappa=0;
     else if ((!std::wcscmp(argv[i], L"--m1-observe") || !std::wcscmp(argv[i], L"--m1-observe-series") ||
@@ -1082,6 +1104,12 @@ int wmain(int argc, wchar_t **argv) {
   if ((window.m1StageTiming || window.m1InventoryV1) && window.m1QuantumCandidate.empty()) return 2;
   if (window.m1AngleWitness && (window.m1QuantumCandidate.empty() || window.m1InventoryV1)) return 2;
   if (window.m1Compact && (window.m1AngleWitness || window.observation.packetId)) return 2;
+  if (window.m1Integrated && (!window.m1Compact || window.m1InventoryV1 || !window.d1Mode.empty())) return 2;
+  if (!window.m1PrivateReference.empty() &&
+      (window.m1QuantumCandidate.empty() || window.m1Preview || window.dualSource ||
+       !window.m1ColdFile.empty() || !window.d1Mode.empty() || window.captureHot ||
+       window.observation.frame || window.m1InventoryV1 || window.m1AngleWitness ||
+       window.m1GravityEnabled || window.once || window.m1PrivateOutput.empty())) return 2;
   if (window.observation.series && !window.d1Mode.empty()) return 2;
   if (window.observation.packetId && !window.dualSource) return 2;
   if (window.m1Kappa==0 && (!window.dualSource || !window.observation.frame)) return 2;
@@ -1124,7 +1152,7 @@ int wmain(int argc, wchar_t **argv) {
   if (!hwnd) return 4;
   if ((!window.m1SourceModule.empty() || !window.t833CandidateFile.empty()) &&
       !SetTimer(hwnd,kSourceProbeTimer,10,nullptr)) return 5;
-  if (!window.bootOnly || window.m1Present) ShowWindow(hwnd, SW_SHOW);
+  if (window.m1PrivateReference.empty() && (!window.bootOnly || window.m1Present)) ShowWindow(hwnd, SW_SHOW);
   window.Size();
   std::thread logger([&] { window.WriteLogs(); });
   std::thread owner([&] { window.Owner(); });

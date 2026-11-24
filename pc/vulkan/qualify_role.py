@@ -143,7 +143,7 @@ def supervise(exe, role, out, disable, stack_dumps=False, private_writes=False, 
     probes = [r for r in rows if r.get("schema") == "PC_G13_STEADY_OP66_V1"]
     probe = probes[0] if probes else None
     retired = not forced and final.get("state") in ("STEADY_ROLE_QUALIFIED","T849_PRIVATE_WRITES_CAPTURED",
-                                                     "T854_PRIVATE_WRITES_CAPTURED")
+                                                     "T854_PRIVATE_WRITES_CAPTURED","G15_OP23_QUALIFIED")
     receipt = dict(attemptId=str(uuid.uuid4()), role=role, pid=child.pid, reason=reason, lastPipeline=build,
                    exeSHA=hashlib.sha256(exe.read_bytes()).hexdigest(), stdoutSHA=hashlib.sha256(stdout.read_bytes()).hexdigest(),
                    supervisorStopQpc=str(stop_tick), qpcFrequency=str(frequency), samples=samples, stackDumps=dumps,
