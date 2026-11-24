@@ -1,0 +1,308 @@
+{
+  "synthetic": {
+    "resumed": {
+      "state": "SAME_DOWN_RESUMED",
+      "admittedQ20": 125829
+    },
+    "pair": {
+      "state": "MATCHED_CALL_PARAMETERS",
+      "results": [
+        {
+          "pipeline": "ENTER_WITHOUT_EXIT",
+          "elapsedMs": null,
+          "business": "NOT_REACHED"
+        },
+        {
+          "pipeline": "LATE_EXIT",
+          "elapsedMs": 90.0,
+          "business": "NOT_REACHED"
+        }
+      ]
+    },
+    "capacity": {
+      "state": "CAPACITY_ZERO_CONFIRMED",
+      "admittedQ20": 0
+    },
+    "snapshot": {
+      "state": "MATCHED_CALL_PARAMETERS",
+      "results": [
+        {
+          "pipeline": "ENTER_WITHOUT_EXIT",
+          "elapsedMs": null,
+          "business": "NOT_REACHED"
+        },
+        {
+          "pipeline": "LATE_EXIT",
+          "elapsedMs": 90.0,
+          "business": "NOT_REACHED"
+        }
+      ]
+    }
+  },
+  "negativeControls": [
+    "OLD_FENCE_OR_CREDIT",
+    "OLD_FENCE_OR_CREDIT",
+    "NEW_BASELINE",
+    "NEW_PULSE_IDENTITY",
+    "FIRST_PULSE_MINTED_SOURCE",
+    "NEW_OFFER_REUSE_OR_IDENTITY",
+    "NEW_OFFER_REUSE_OR_IDENTITY",
+    "MISSING_OFFER_TERMINAL",
+    "PAIR_CLOCK_OR_FRESHNESS",
+    "PAIR_CLOCK_OR_FRESHNESS",
+    "PAIR_ARGV",
+    "PAIR_FROZEN_PARAMETERS",
+    "OP48_EXIT_IDENTITY",
+    "PAIR_CREATE_INFO"
+  ],
+  "cancelControls": [
+    "UP",
+    "CAPTURE_LOST",
+    "MODE_CHANGED",
+    "OUTSIDE",
+    "RESIZE"
+  ],
+  "original": {
+    "g13": {
+      "t912-no-tail": {
+        "pipeline": "ENTER_WITHOUT_EXIT",
+        "elapsedMs": null,
+        "business": "NOT_REACHED",
+        "enter": {
+          "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+          "call": "vkCreateComputePipelines",
+          "edge": "ENTER",
+          "role": "OP_48",
+          "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+          "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+          "flags": 0,
+          "pipelineCache": null,
+          "pid": 22196,
+          "ownerTid": 52696,
+          "processStartTick": "134399615294351716",
+          "qpcFrequency": "10000000",
+          "qpc": "16477623440105",
+          "vkResult": null
+        },
+        "prior": [
+          [
+            "OP_00_0_5",
+            "a42bb063c6ccb0402291d6bdb6bfe863cf6324771ba0f558c1a3666862cd6ea4"
+          ],
+          [
+            "OP12_14",
+            "eceb9fcb4f4ed1cba79ceb49a9974e945c907934864a125ae4ca445d489c39b5"
+          ],
+          [
+            "OP15",
+            "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f"
+          ],
+          [
+            "OP16",
+            "cfaaa4d61649236f6e6e2bfdbd759f0e62e67cc9288c927d1f0822c27fa926d2"
+          ],
+          [
+            "OP17_PRIVATE_MOTION",
+            "99725ccb0e6c67702eb913a656beac6145eef0bff06eac79fe1d6da3f0f24e8f"
+          ],
+          [
+            "OP17_PRIVATE_MMS",
+            "4c68c98e631fff9ee70ab0ebce93cbbfa57b557a5939dcd4bde9d33cb582b3eb"
+          ],
+          [
+            "OP17_PRIVATE_LEDGER_SNAPSHOT",
+            "bdd47fcba518981e1db056f8628d2ef0e28e2aa331997c336eec7eda528fadd7"
+          ],
+          [
+            "OP_18",
+            "762b9f504a4bf73ce004d2b763198a84acf0a38814a7bea724952ec06630286f"
+          ]
+        ],
+        "sha256": "ff8bb04177a0d7e3c8ed784ef9866dd4fd0ca5e9a520544d4e930bf83fd1af64"
+      },
+      "t912-baseline": {
+        "pipeline": "ENTER_WITHOUT_EXIT",
+        "elapsedMs": null,
+        "business": "NOT_REACHED",
+        "enter": {
+          "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+          "call": "vkCreateComputePipelines",
+          "edge": "ENTER",
+          "role": "OP_48",
+          "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+          "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+          "flags": 0,
+          "pipelineCache": null,
+          "pid": 24032,
+          "ownerTid": 53336,
+          "processStartTick": "134399628836817991",
+          "qpcFrequency": "10000000",
+          "qpc": "16491160388497",
+          "vkResult": null
+        },
+        "prior": [
+          [
+            "OP_00_0_5",
+            "a42bb063c6ccb0402291d6bdb6bfe863cf6324771ba0f558c1a3666862cd6ea4"
+          ],
+          [
+            "OP12_14",
+            "eceb9fcb4f4ed1cba79ceb49a9974e945c907934864a125ae4ca445d489c39b5"
+          ],
+          [
+            "OP15",
+            "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f"
+          ],
+          [
+            "OP16",
+            "cfaaa4d61649236f6e6e2bfdbd759f0e62e67cc9288c927d1f0822c27fa926d2"
+          ],
+          [
+            "OP17_PRIVATE_MOTION",
+            "99725ccb0e6c67702eb913a656beac6145eef0bff06eac79fe1d6da3f0f24e8f"
+          ],
+          [
+            "OP17_PRIVATE_MMS",
+            "4c68c98e631fff9ee70ab0ebce93cbbfa57b557a5939dcd4bde9d33cb582b3eb"
+          ],
+          [
+            "OP17_PRIVATE_LEDGER_SNAPSHOT",
+            "bdd47fcba518981e1db056f8628d2ef0e28e2aa331997c336eec7eda528fadd7"
+          ],
+          [
+            "OP_18",
+            "762b9f504a4bf73ce004d2b763198a84acf0a38814a7bea724952ec06630286f"
+          ]
+        ],
+        "sha256": "ad9eb1e366889f488fa3c0c27c753dec345975bfbef658b0cbb15d2ff94f9bd9"
+      },
+      "t890-control": {
+        "pipeline": "EXIT",
+        "elapsedMs": 11.1103,
+        "business": "F02_REJECTED_LATE_RETIRE",
+        "enter": {
+          "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+          "call": "vkCreateComputePipelines",
+          "edge": "ENTER",
+          "role": "OP_48",
+          "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+          "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+          "flags": 0,
+          "pipelineCache": null,
+          "pid": 31336,
+          "ownerTid": 25364,
+          "processStartTick": "134399614894554433",
+          "qpcFrequency": "10000000",
+          "qpc": "16477223731456",
+          "vkResult": null
+        },
+        "prior": [
+          [
+            "OP_00_0_5",
+            "a42bb063c6ccb0402291d6bdb6bfe863cf6324771ba0f558c1a3666862cd6ea4"
+          ],
+          [
+            "OP12_14",
+            "eceb9fcb4f4ed1cba79ceb49a9974e945c907934864a125ae4ca445d489c39b5"
+          ],
+          [
+            "OP15",
+            "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f"
+          ],
+          [
+            "OP16",
+            "cfaaa4d61649236f6e6e2bfdbd759f0e62e67cc9288c927d1f0822c27fa926d2"
+          ],
+          [
+            "OP17_PRIVATE_MOTION",
+            "99725ccb0e6c67702eb913a656beac6145eef0bff06eac79fe1d6da3f0f24e8f"
+          ],
+          [
+            "OP17_PRIVATE_MMS",
+            "4c68c98e631fff9ee70ab0ebce93cbbfa57b557a5939dcd4bde9d33cb582b3eb"
+          ],
+          [
+            "OP17_PRIVATE_LEDGER",
+            "cf3d9addcd9a145abc6cc4ff6d9f3fb6833ecd6f7a14015f09b99b4d904bc830"
+          ],
+          [
+            "OP_18",
+            "762b9f504a4bf73ce004d2b763198a84acf0a38814a7bea724952ec06630286f"
+          ]
+        ],
+        "sha256": "512435a19e3f7857db63a82a3212398b81337a042cc8cb061eaf698fb1451839"
+      },
+      "t901-hot": {
+        "pipeline": "LATE_EXIT",
+        "elapsedMs": 1226696.1565,
+        "business": "F02_REJECTED_LATE_RETIRE",
+        "enter": {
+          "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+          "call": "vkCreateComputePipelines",
+          "edge": "ENTER",
+          "role": "OP_48",
+          "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+          "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+          "flags": 0,
+          "pipelineCache": null,
+          "pid": 2148,
+          "ownerTid": 25248,
+          "processStartTick": "134399499293855983",
+          "qpcFrequency": "10000000",
+          "qpc": "16362510383013",
+          "vkResult": null
+        },
+        "prior": [
+          [
+            "OP_00_0_5",
+            "a42bb063c6ccb0402291d6bdb6bfe863cf6324771ba0f558c1a3666862cd6ea4"
+          ],
+          [
+            "OP12_14",
+            "eceb9fcb4f4ed1cba79ceb49a9974e945c907934864a125ae4ca445d489c39b5"
+          ],
+          [
+            "OP15",
+            "3b3e0cd68481c66aa29b17d54233f9cb0e48c79e5016531ff5a9cef50d90307f"
+          ],
+          [
+            "OP16",
+            "cfaaa4d61649236f6e6e2bfdbd759f0e62e67cc9288c927d1f0822c27fa926d2"
+          ],
+          [
+            "OP17_PRIVATE_MOTION",
+            "99725ccb0e6c67702eb913a656beac6145eef0bff06eac79fe1d6da3f0f24e8f"
+          ],
+          [
+            "OP17_PRIVATE_MMS",
+            "4c68c98e631fff9ee70ab0ebce93cbbfa57b557a5939dcd4bde9d33cb582b3eb"
+          ],
+          [
+            "OP17_PRIVATE_LEDGER_SNAPSHOT",
+            "bdd47fcba518981e1db056f8628d2ef0e28e2aa331997c336eec7eda528fadd7"
+          ],
+          [
+            "OP_18",
+            "762b9f504a4bf73ce004d2b763198a84acf0a38814a7bea724952ec06630286f"
+          ]
+        ],
+        "sha256": "a302f6815719e60c591db869b07766586bc0ba19058a180b6b41a13a8e02faa4"
+      }
+    },
+    "duplicateBaseline": true,
+    "historicalPair": "ACTUAL_ARGV_ICD_AND_EQUAL_PREFIX_MISSING",
+    "m1": {
+      "sha256": "41ec426e2d3258b295f3e44f146e4ece24c45e0cb02842fa14cfe48e4b5c30e8",
+      "down": "16449943372318",
+      "up": "16450023377154",
+      "sourceCount": 16,
+      "stockQ20": 2064374,
+      "callbackGapNs": 39181600,
+      "receiptGapNs": 39181700,
+      "fence": "1422238522408",
+      "baselineSession": "2",
+      "continuingQuanta": 51,
+      "state": "PHYSICS_CONTINUED_SOURCE_DID_NOT_RESUME"
+    }
+  }
+}
