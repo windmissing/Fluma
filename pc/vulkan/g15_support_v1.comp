@@ -1,0 +1,32 @@
+#version 450
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
+layout(local_size_x=64) in;
+// SI-derived slope and width must use the same integer length unit.
+layout(std430,binding=0) readonly buffer Input { int width; int angleQ8; uint muQ16; uint faceCount; int slope[]; };
+layout(std430,binding=1) readonly buffer Angles { ivec2 projection[]; };
+struct Face { int64_t drive; int64_t normal; int direction; uint state; };
+layout(std430,binding=2) writeonly buffer Output { Face face[]; };
+const int64_t Q20=1048576l;
+
+void main() {
+    uint i=gl_GlobalInvocationID.x;
+    if (i>=faceCount||i>=face.length()) return;
+    Face result=Face(0l,0l,0,1u);
+    if (faceCount<=127u && i<slope.length() && projection.length()==23041 &&
+        angleQ8>= -11520 && angleQ8<=11520 && width>0 && width<=16777216 && muQ16<=65536u) {
+        int64_t dx=int64_t(width), db=int64_t(slope[i]);
+        ivec2 gc=projection[angleQ8+11520];
+        if (gc.x>= -741455 && gc.x<=741455 && gc.y>=741455 && gc.y<=1048576 &&
+            5l*(db<0l ? -db : db)<=3l*dx) {
+            result.drive=int64_t(gc.x)*dx-int64_t(gc.y)*db;
+            result.normal=int64_t(gc.y)*dx+int64_t(gc.x)*db;
+            if (4l*result.normal>=Q20*dx) {
+                int64_t limit=int64_t(muQ16)*result.normal;
+                int64_t drive=result.drive*65536l;
+                result.direction=drive>limit ? 1 : drive< -limit ? -1 : 0;
+                result.state=0u;
+            } else result.state=2u;
+        }
+    }
+    face[i]=result;
+}

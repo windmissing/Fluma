@@ -17,6 +17,7 @@ namespace {
 constexpr UINT kOwnerFinished = WM_APP + 1;
 constexpr UINT kFirstPresent = WM_APP + 2;
 constexpr UINT kSetM1Gravity = WM_APP + 3;
+constexpr UINT kM1GravityCaption = WM_APP + 4;
 constexpr UINT_PTR kSourceProbeTimer = 2;
 struct Window {
   HWND hwnd = nullptr;
@@ -34,8 +35,12 @@ struct Window {
   bool m1Present = false;
   bool dualSource = false;
   bool m1Preview=false, m1GravityEnabled=false;
+  bool gravityClick=false,m1StageTiming=false,g13TailTiming=false,m1InventoryV1=false,g13SealV1=false;
+  uint32_t m1Kappa=24;
   bool m1OneQuantumGrant=false;
   grs::pc::M1Gravity gravity;
+  grs::pc::M1GravityDisplay gravityDisplay;
+  std::wstring gravityCaption;
   grs::pc::M1Observation observation;
   uint32_t material=0;
   std::wstring t849WriteFile;
@@ -435,10 +440,56 @@ struct Window {
     const char *result=!m1GravityEnabled ? "GRAVITY_DISABLED" :
         closing || (expectedGeometry && expectedGeometry!=generation) ? "STALE_GEOMETRY" :
         !grs::pc::ValidM1Angle(angle) ? "ANGLE_OUT_OF_RANGE" : "ACCEPTED_INPUT";
-    if (std::string_view(result)=="ACCEPTED_INPUT") gravity={generation,seq,ticks,angle};
+    if (std::string_view(result)=="ACCEPTED_INPUT") {
+      gravity={generation,seq,ticks,angle};
+      PostMessageW(hwnd,kM1GravityCaption,0,0);
+    }
     Emit("{\"stage\":\"M1_GRAVITY_INPUT\",\"geometry\":\""+std::to_string(generation)+
          "\",\"seq\":\""+std::to_string(seq)+"\",\"qpc\":\""+std::to_string(ticks)+
          "\",\"requestedAngle256\":"+std::to_string(angle)+",\"result\":\""+result+"\"}");
+  }
+
+  bool ResetGravityButton(int x,int y) {
+    uint64_t geometry=0;
+    {
+      std::lock_guard lock(mutex);
+      if (!m1GravityEnabled || closing || !grs::pc::M1ResetHit(x,y,width,height)) return false;
+      geometry=generation;
+    }
+    SetGravity(0,geometry);
+    return true;
+  }
+
+  void SetGravityDisplay(grs::pc::M1GravityDisplay value) {
+    std::lock_guard lock(mutex);
+    if (!m1GravityEnabled || closing || value.geometry!=generation) return;
+    if (gravityDisplay.geometry==value.geometry && gravityDisplay.sequence==value.sequence &&
+        gravityDisplay.actual==value.actual && gravityDisplay.accepted==value.accepted &&
+        gravityDisplay.limited==value.limited && gravityDisplay.stale==value.stale) return;
+    gravityDisplay=value;
+    PostMessageW(hwnd,kM1GravityCaption,0,0);
+  }
+
+  void UpdateGravityCaption() {
+    if (!m1GravityEnabled) return;
+    std::wostringstream title;
+    title.setf(std::ios::fixed,std::ios::floatfield);
+    title.precision(1);
+    {
+      std::lock_guard lock(mutex);
+      const bool accepted=gravityDisplay.accepted && gravityDisplay.geometry==generation;
+      title << L"重力  请求 " << (gravity.geometry==generation ? gravity.angle/256. : 0.) << L"°";
+      if (accepted) title << L"  实际 " << gravityDisplay.actual/256. << L"°";
+      if (accepted && gravityDisplay.stale) title << L"  上一有效帧";
+      if (accepted && gravityDisplay.limited) title << L"  床形限制";
+      if (!accepted || gravityDisplay.sequence!=gravity.sequence) title << L"  待应用";
+    }
+    title << L"  |  R 重力回正";
+    const auto caption=title.str();
+    if (caption!=gravityCaption) {
+      gravityCaption=caption;
+      SetWindowTextW(hwnd,caption.c_str());
+    }
   }
 
   void Pulse() {
@@ -622,7 +673,10 @@ struct Window {
                                                  std::lock_guard guard(mutex);
                                                  return m1GravityEnabled && !closing && previous==generation ?
                                                      gravity : grs::pc::M1Gravity{};
-                                               },observation,m1OneQuantumGrant,t899SlotSnapshot},
+                                               },observation,m1OneQuantumGrant,t899SlotSnapshot,
+                                               m1GravityEnabled ? std::function<void(grs::pc::M1GravityDisplay)>(
+                                                   [&](grs::pc::M1GravityDisplay value) { SetGravityDisplay(value); }) : nullptr,
+                                               m1Kappa,m1StageTiming,g13TailTiming,m1InventoryV1,g13SealV1},
           [&](const std::string &report) {
             Emit(report);
             if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
@@ -691,15 +745,23 @@ LRESULT CALLBACK Dispatch(HWND hwnd, UINT message, WPARAM w, LPARAM l) {
     window->Size();
     return 0;
   }
-  case WM_LBUTTONDOWN: SetCapture(hwnd); window->Input("DOWN", GET_X_LPARAM(l), GET_Y_LPARAM(l)); return 0;
-  case WM_MOUSEMOVE:
-    if (w & MK_LBUTTON) window->Input("MOVE", GET_X_LPARAM(l), GET_Y_LPARAM(l));
+  case WM_LBUTTONDOWN:
+    window->gravityClick=window->ResetGravityButton(GET_X_LPARAM(l),GET_Y_LPARAM(l));
+    SetCapture(hwnd);
+    if (!window->gravityClick) window->Input("DOWN", GET_X_LPARAM(l), GET_Y_LPARAM(l));
     return 0;
-  case WM_LBUTTONUP: window->Input("UP", GET_X_LPARAM(l), GET_Y_LPARAM(l)); ReleaseCapture(); return 0;
+  case WM_MOUSEMOVE:
+    if ((w & MK_LBUTTON) && !window->gravityClick) window->Input("MOVE", GET_X_LPARAM(l), GET_Y_LPARAM(l));
+    return 0;
+  case WM_LBUTTONUP:
+    if (!window->gravityClick) window->Input("UP", GET_X_LPARAM(l), GET_Y_LPARAM(l));
+    ReleaseCapture();
+    window->gravityClick=false;
+    return 0;
   case WM_KEYDOWN:
-    if (window->m1GravityEnabled && (w==VK_LEFT || w==VK_RIGHT || w==VK_HOME)) {
+    if (window->m1GravityEnabled && (w==VK_LEFT || w==VK_RIGHT || w==VK_HOME || w=='R')) {
       window->SetGravity(w==VK_LEFT ? -grs::pc::kM1AngleStep : w==VK_RIGHT ? grs::pc::kM1AngleStep : 0,
-                         0,w!=VK_HOME);
+                         0,w==VK_LEFT || w==VK_RIGHT);
       return 0;
     }
     if (window->dualSource && (w=='1' || w=='2')) {
@@ -710,8 +772,12 @@ LRESULT CALLBACK Dispatch(HWND hwnd, UINT message, WPARAM w, LPARAM l) {
   case kSetM1Gravity:
     window->SetGravity(static_cast<int32_t>(w),static_cast<uint64_t>(l));
     return 0;
+  case kM1GravityCaption: window->UpdateGravityCaption(); return 0;
   case WM_CANCELMODE: window->Input("CANCEL", 0, 0); if (GetCapture() == hwnd) ReleaseCapture(); return 0;
-  case WM_CAPTURECHANGED: window->Input("CAPTURE_LOST", 0, 0); return 0;
+  case WM_CAPTURECHANGED:
+    if (!window->gravityClick) window->Input("CAPTURE_LOST", 0, 0);
+    window->gravityClick=false;
+    return 0;
   case WM_KILLFOCUS: window->Input("FOCUS_LOST", 0, 0); if (GetCapture() == hwnd) ReleaseCapture(); return 0;
   case WM_CLOSE: window->Close(); return 0;
   case kFirstPresent:
@@ -808,11 +874,19 @@ int wmain(int argc, wchar_t **argv) {
     else if (!std::wcscmp(argv[i], L"--m1-manual-gravity")) window.m1GravityEnabled=true;
     else if (!std::wcscmp(argv[i], L"--m1-one-quantum-grant")) window.m1OneQuantumGrant=true;
     else if (!std::wcscmp(argv[i], L"--g13-slot-snapshot")) window.t899SlotSnapshot=true;
-    else if (!std::wcscmp(argv[i], L"--m1-observe") && i+2<argc) {
+    else if (!std::wcscmp(argv[i], L"--g13-tail-timing")) window.g13TailTiming=true;
+    else if (!std::wcscmp(argv[i], L"--g13-seal-v1")) window.g13SealV1=true;
+    else if (!std::wcscmp(argv[i], L"--m1-stage-timing")) window.m1StageTiming=true;
+    else if (!std::wcscmp(argv[i],L"--m1-inventory-v1")) window.m1InventoryV1=true;
+    else if (!std::wcscmp(argv[i], L"--m1-observe-kappa-zero")) window.m1Kappa=0;
+    else if ((!std::wcscmp(argv[i], L"--m1-observe") || !std::wcscmp(argv[i], L"--m1-observe-series")) && i+2<argc) {
       if (window.observation.frame) return 2;
+      const bool series=!std::wcscmp(argv[i],L"--m1-observe-series");
       std::ifstream request{std::filesystem::path(argv[++i])};
       if (!(request >> window.observation.frame) || !window.observation.frame ||
           window.observation.frame>1000000) return 2;
+      if (series && (!(request >> window.observation.series) || !window.observation.series ||
+                     window.observation.series>120)) return 2;
       for (auto &r:window.observation.regions)
         if (!(request >> r.x >> r.y >> r.width >> r.height) || !grs::pc::Fits(r,INT_MAX,INT_MAX)) return 2;
       std::string extra;
@@ -841,10 +915,10 @@ int wmain(int argc, wchar_t **argv) {
                    "[--m1-capture-hot] [--m1-source-trace] [--m1-d1 OFF|ON|REPLAY_OFF|REPLAY_ON] "
                    "[--m1-d1-replay-prefix PATH] "
                    "[--m1-dual-source] | --qualify-t849-writes FILE | --g13-candidate FILE "
-                   "[--m1-empty-preview] [--m1-manual-gravity] [--m1-observe REQUEST PREFIX] "
-                   "[--m1-one-quantum-grant] "
+                   "[--m1-empty-preview] [--m1-manual-gravity] [--m1-observe REQUEST PREFIX] [--m1-observe-series REQUEST PREFIX] "
+                   "[--m1-one-quantum-grant] [--m1-stage-timing] [--m1-observe-kappa-zero] [--m1-inventory-v1] "
                    "[--g13-fixture F02|F03|F05 CONFIG STATE] [--g13-trial 1|2|4] [--g13-f05-rest] "
-                   "[--g13-revoke-before | --g13-revoke-after] [--g13-diagnostics full|hot] [--g13-slot-snapshot]]\n";
+                   "[--g13-revoke-before | --g13-revoke-after] [--g13-diagnostics full|hot] [--g13-slot-snapshot] [--g13-tail-timing] [--g13-seal-v1]]\n";
       return 2;
     }
   }
@@ -867,6 +941,10 @@ int wmain(int argc, wchar_t **argv) {
   if (window.t833ForcedJ && window.t833Case!="F03") return 2;
   if (window.t833F05Rest && window.t833Case!="F05") return 2;
   if (!window.t877Mode.empty() && window.t833CandidateFile.empty()) return 2;
+  if ((window.g13TailTiming || window.g13SealV1) && window.t877Mode.empty()) return 2;
+  if ((window.m1StageTiming || window.m1InventoryV1) && window.m1QuantumCandidate.empty()) return 2;
+  if (window.observation.series && !window.d1Mode.empty()) return 2;
+  if (window.m1Kappa==0 && (!window.dualSource || !window.observation.frame)) return 2;
   if (window.t899SlotSnapshot && window.t877Mode.empty()) return 2;
   if (!window.t833CandidateFile.empty() && (window.steady || !window.m1SourceModule.empty())) return 2;
   if (window.sourceTrace) window.ingress.EnableTrace();

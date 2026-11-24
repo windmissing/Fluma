@@ -34,6 +34,40 @@ constexpr uint32_t capacity=4*(48*k+16*kw+254)+k;
 constexpr uint32_t block=192;
 constexpr auto storage=VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 constexpr auto transferDst=VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+constexpr const char *timingPoints[]{
+    "ROOT_BEGIN","UPLOAD_DONE","PREPARE_DONE","WATER_DONE","FROZEN_DONE","SORT_DONE",
+    "MOTION_DONE","BED_DONE","ARRIVAL_SORT_DONE","ARRIVE_DONE","FINAL_AUDIT_DONE",
+    "REPLAY_BEGIN","REPLAY_DONE","PACK_DONE","SEAL_DONE","TAIL_COPY_DONE"};
+constexpr uint32_t timingStages[]{1,4,5,9,11,14,17,18,19,21,24,25,27};
+}
+
+void Boot::ReportM1Timing(VkResult retired,bool accepted) {
+  if (!m1TimedNonce) return;
+  const bool readable=retired==VK_SUCCESS && m1TimedFence==fence;
+  struct Point { uint64_t tick=0,available=0; };
+  std::ostringstream row;
+  row << "{\"stage\":\"M1_GPU_TIMESTAMPS\",\"run\":\"" << m1Run << "\",\"geometry\":\"" << attempt.geometry
+      << "\",\"nonce\":\"" << m1TimedNonce << "\",\"fence\":\"" << reinterpret_cast<uintptr_t>(m1TimedFence)
+      << "\",\"queue\":\"" << reinterpret_cast<uintptr_t>(queue)
+      << "\",\"pool\":\"" << reinterpret_cast<uintptr_t>(m1TimingPool)
+      << "\",\"acceptedRoot\":" << (accepted ? Quote(std::to_string(m1TimedNonce)) : "null")
+      << ",\"fenceVkResult\":" << int(retired) << ",\"validBits\":" << m1TimingBits
+      << ",\"periodNs\":" << m1TimingPeriod << ",\"points\":[";
+  bool comma=false;
+  for (uint32_t i=0;i<std::size(m1pc::timingPoints);++i) {
+    if (!(m1TimingMask&(uint64_t{1}<<i))) continue;
+    Point value;
+    const auto result=readable ? m1ReadTiming(device,m1TimingPool,i,1,sizeof(value),&value,sizeof(value),
+        VK_QUERY_RESULT_64_BIT|VK_QUERY_RESULT_WITH_AVAILABILITY_BIT) : VK_NOT_READY;
+    const bool available=result==VK_SUCCESS && value.available;
+    if (comma) row << ',';
+    comma=true;
+    row << "{\"point\":" << Quote(m1pc::timingPoints[i]) << ",\"vkResult\":" << int(result)
+        << ",\"available\":" << (available ? "true" : "false")
+        << ",\"tick\":" << (available ? Quote(std::to_string(value.tick)) : "null") << '}';
+  }
+  publish(row.str()+"]}");
+  m1TimedNonce=0;
 }
 
 void Boot::PrepareM1Quantum(const Candidate &candidate) {
@@ -41,12 +75,31 @@ void Boot::PrepareM1Quantum(const Candidate &candidate) {
   auto &passes=m1QuantumPasses;
   m1::EachQuantumPass(stateWords, pad, kw, [&](m1::QuantumPassOp p) { passes.push_back(p); });
   const auto &limits = candidate.properties.limits;
+  if (attempt.m1StageTiming) {
+    VkResult created=VK_NOT_READY;
+    m1TimingBits=candidate.timestampBits;
+    m1TimingPeriod=limits.timestampPeriod;
+    auto create=reinterpret_cast<PFN_vkCreateQueryPool>(vk.GetDeviceProcAddr(device,"vkCreateQueryPool"));
+    m1DestroyTiming=reinterpret_cast<PFN_vkDestroyQueryPool>(vk.GetDeviceProcAddr(device,"vkDestroyQueryPool"));
+    m1ResetTiming=reinterpret_cast<PFN_vkCmdResetQueryPool>(vk.GetDeviceProcAddr(device,"vkCmdResetQueryPool"));
+    m1WriteTiming=reinterpret_cast<PFN_vkCmdWriteTimestamp>(vk.GetDeviceProcAddr(device,"vkCmdWriteTimestamp"));
+    m1ReadTiming=reinterpret_cast<PFN_vkGetQueryPoolResults>(vk.GetDeviceProcAddr(device,"vkGetQueryPoolResults"));
+    if (m1TimingBits && m1TimingBits<=64 && create && m1DestroyTiming && m1ResetTiming && m1WriteTiming && m1ReadTiming) {
+      VkQueryPoolCreateInfo query{VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO};
+      query.queryType=VK_QUERY_TYPE_TIMESTAMP;
+      query.queryCount=uint32_t(std::size(timingPoints));
+      created=create(device,&query,nullptr,&m1TimingPool);
+      if (created!=VK_SUCCESS) m1TimingPool=VK_NULL_HANDLE;
+    }
+    fields << ",\"m1TimingValidBits\":" << m1TimingBits << ",\"m1TimingCreateVkResult\":" << int(created);
+  }
   Require(capacity*256ull <= limits.maxStorageBufferRange && block <= limits.maxUniformBufferRange &&
           limits.minUniformBufferOffsetAlignment, "M1_QUANTUM_RESOURCE_LIMIT");
   const auto align = limits.minUniformBufferOffsetAlignment;
   const auto stride = (block+align-1)/align*align;
   const auto pubBytes = buffers[kM1Pub].bytes;
-  const auto copyOut = attempt.m1ColdFile.empty() ? 0 : VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+  const auto copyOut = attempt.m1ColdFile.empty() && attempt.m1ReplayPrefix.empty() && !attempt.m1Observation.frame
+      ? 0 : VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
   Allocate(kM1QScratch, stateWords*4, storage);
   Allocate(kM1QWork, (replay+256)*4, storage | transferDst);
   Allocate(kM1QEvents, capacity*256ull, storage | transferDst | copyOut);
@@ -126,6 +179,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   using namespace m1pc;
   m1Retirement={};
   m1::QuantumParameters p;
+  p.kappa=attempt.m1Kappa;
   const auto &passes=m1QuantumPasses;
   const auto &sets=m1QuantumSets;
   const uint32_t count=uint32_t(passes.size());
@@ -185,6 +239,16 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
   begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
   Check(vk.BeginCommandBuffer(command,&begin),"vkBeginCommandBuffer.M1_QUANTUM");
+  const auto mark=[&](uint32_t index,VkPipelineStageFlagBits stage=VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT) {
+    if (!m1TimingPool) return;
+    m1WriteTiming(command,stage,m1TimingPool,index);
+    m1TimingMask|=uint64_t{1}<<index;
+  };
+  if (m1TimingPool) {
+    m1TimingMask=0;
+    m1ResetTiming(command,m1TimingPool,0,uint32_t(std::size(timingPoints)));
+    mark(0,VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
+  }
   const auto work=buffers[kM1QWork].handle;
   Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_READ_BIT);
   const VkBufferCopy ledger{(96+4096*64+stateWords)*4,sourceEvents*4,4096*64};
@@ -204,8 +268,16 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
     vk.CmdUpdateBuffer(command,buffers[kM1QUniform].handle,stride*i,block,u.data());
   }
   Barrier(kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT,kCompute,kShaderRW|VK_ACCESS_UNIFORM_READ_BIT);
+  mark(1);
   Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kCompute,kShaderRW);
   const VkCommandBuffer cmd=command;
+  std::array<uint32_t,std::size(timingStages)> lastStage{};
+  if (m1TimingPool) {
+    lastStage.fill(UINT32_MAX);
+    for (uint32_t i=0;i<count;++i)
+      for (uint32_t point=0;point<std::size(timingStages);++point)
+        if (passes[i].stage==timingStages[point]) lastStage[point]=i;
+  }
   VkPipeline bound=VK_NULL_HANDLE;
   for (uint32_t i=0;i<count;++i) {
     const auto next=m1QuantumPipelines[passes[i].stage<=20 ? 0 : 1];
@@ -216,12 +288,16 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
     vk.CmdBindDescriptorSets(cmd,VK_PIPELINE_BIND_POINT_COMPUTE,pipelineLayout,0,1,&sets[baseBank*count+i],0,nullptr);
     vk.CmdDispatch(cmd,(passes[i].n+63)/64,1,1);
     if (i+1<count) Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kCompute,kShaderRW);
+    if (m1TimingPool)
+      for (uint32_t point=0;point<std::size(timingStages);++point)
+        if (lastStage[point]==i) mark(point+2);
   }
   Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_READ_BIT);
   const VkBufferCopy tailCopy{0,0,1024};
   const auto &staging=buffers[kStaging];
   vk.CmdCopyBuffer(cmd,buffers[kM1Tail].handle,staging.handle,1,&tailCopy);
   Barrier(kTransfer,VK_ACCESS_TRANSFER_WRITE_BIT,VK_PIPELINE_STAGE_HOST_BIT,VK_ACCESS_HOST_READ_BIT);
+  mark(uint32_t(std::size(timingPoints)-1));
   Check(vk.EndCommandBuffer(cmd),"vkEndCommandBuffer.M1_QUANTUM");
   stage="M1_QUANTUM_SUBMIT";
   fields << ",\"m1QuantumNonce\":\"" << nonce << "\",\"m1QuantumDispatches\":" << count
@@ -238,6 +314,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
     log.stopQpc=pc::QpcTicks();
     attempt.disarmM1Input();
     RetireM1Root(root,nonce,log);
+    if (!inFlight) ReportM1Timing(log.retireEnter ? log.retire : log.last,false);
     fields << ",\"m1QuantumReject\":" << Quote(m1Reject);
     M1RootTrace("Quantum",nonce,clock,permit,accepted,log);
     return false;
@@ -254,6 +331,10 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
     return reject();
   }
   inFlight=true;
+  if (m1TimingPool) {
+    m1TimedNonce=nonce;
+    m1TimedFence=fence;
+  }
   M1BusyFence busy{attempt.hotCapture,M1HotCapture::Phase::QuantumFence,nonce};
   m1Reject=AwaitM1Fence(deadline,guard,log);
   if (attempt.hotCapture) attempt.hotCapture->StopBusy();
@@ -294,6 +375,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   if (m1Reject) return reject();
   log.stopQpc=pc::QpcTicks();
   M1RootTrace("Quantum",nonce,clock,permit,accepted,log);
+  ReportM1Timing(VK_SUCCESS,true);
   return true;
 }
 

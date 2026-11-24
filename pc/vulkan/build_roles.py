@@ -198,6 +198,20 @@ def build(out, compiler):
         selection = tuple(range(first, last + 1))
         raw, _ = emit(selection)
         sources.append((f"OP_00_{first}_{last}", [*selection, 66], raw))
+    seal, _ = emit((9, 10, 11))
+    seal = substitute(seal.decode(), "if(lane!=0u)return;uint t=18432u;\n for(uint i=0u;i<256u;++i)c[t+i]=0u;",
+                      "uint t=18432u;\n for(uint i=lane;i<256u;i+=64u)c[t+i]=0u;\n syncAll();\n if(lane==0u){",
+                      "T909 completion initialization")
+    seal = substitute(seal,
+                      "for(uint scope=0u;scope<2u;++scope){uint root=scope==0u?2048u:10240u;"
+                      "for(uint i=0u;i<255u;++i)c[root+256u+i]=c[t+i];c[root+511u]=0xc0de1301u;}"
+                      "\n memoryBarrierBuffer();c[t+255u]=0xc0de1301u;",
+                      "}\n syncAll();\n"
+                      " for(uint i=lane;i<255u;i+=64u){c[2304u+i]=c[t+i];c[10496u+i]=c[t+i];}\n"
+                      " syncAll();\n if(lane==0u){c[2559u]=0xc0de1301u;c[10751u]=0xc0de1301u;"
+                      "memoryBarrierBuffer();c[t+255u]=0xc0de1301u;}",
+                      "T909 completion copies")
+    sources.append(("OP_00_9_11_SEAL_V1", [9, 10, 11, 66], seal.encode()))
     sources.extend(t841_arms(emit))
     sources.extend(t849_arms(emit))
     dispatch = Path(__file__).resolve().parents[2] / "docs" / "architecture-T607-g13-dispatch-v1.json"

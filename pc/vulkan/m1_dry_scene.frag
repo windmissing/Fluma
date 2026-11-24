@@ -1,6 +1,6 @@
 #version 450
 layout(set=0,binding=0,std430) readonly buffer Publication { uint P[]; };
-layout(push_constant) uniform WindowFrame { vec2 extent; uint encode; uint empty; };
+layout(push_constant) uniform WindowFrame { vec2 extent; uint encode; uint empty; int gx; int gy; int gravityState; };
 layout(location=0) in vec2 uv;
 layout(location=0) out vec4 color;
 
@@ -66,6 +66,27 @@ void main() {
 #endif
         vec2 edge = abs(uv*extent-extent*.5)-extent*.5;
         if (abs(max(edge.x,edge.y))<=1.) rgb = vec3(.08)+rgb*.8;
+    }
+    if (gravityState!=0 && extent.x>=112. && extent.y>=42.) {
+        vec2 pixel=uv*extent;
+        vec2 button=pixel-vec2(extent.x-42.,8.);
+        if (all(greaterThanEqual(button,vec2(0.))) && all(lessThan(button,vec2(34.,30.)))) {
+            rgb=mix(rgb,vec3(.08,.14,.21),.92);
+            vec2 p=button-vec2(11.,7.);
+            bool letter=(p.x>=0. && p.x<2. && p.y>=0. && p.y<16.) ||
+                (p.x>=0. && p.x<10. && (abs(p.y-1.)<1. || abs(p.y-7.)<1.)) ||
+                (p.x>=8. && p.x<10. && p.y>=0. && p.y<8.) ||
+                (p.y>=7. && p.y<16. && abs(p.x-(p.y-5.))<1.3);
+            if (letter) rgb=vec3(.8,.86,.92);
+        }
+        if (gravityState>=2) {
+            vec2 p=pixel-vec2(extent.x-75.,22.);
+            vec2 direction=vec2(gx,gy)/1048576.;
+            float along=dot(p,direction),side=abs(dot(p,vec2(direction.y,-direction.x)));
+            if ((along>=-11. && along<=8. && side<1.1) ||
+                (along>3. && along<=11. && abs(side-(11.-along)*.65)<1.1))
+                rgb=gravityState==3 ? vec3(.95,.47,.09) : vec3(.38,.82,.96);
+        }
     }
     color = vec4(encode!=0u ? srgb(rgb) : rgb,1);
 }

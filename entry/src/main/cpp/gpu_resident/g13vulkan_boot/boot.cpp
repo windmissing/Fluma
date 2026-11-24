@@ -193,6 +193,14 @@ public:
           vk.WaitForFences(device,1,&fence,VK_TRUE,0) : VK_NOT_READY;
       ReportLateCandidate(confirmed,finalDrain,before,pc::QpcTicks());
     }
+    if (m1TimedNonce) {
+      const bool same=m1TimedFence==fence;
+      const auto result=finalDrain==VK_SUCCESS && same ?
+          vk.WaitForFences(device,1,&fence,VK_TRUE,0) :
+          finalDrain==VK_ERROR_DEVICE_LOST ? finalDrain : VK_NOT_READY;
+      ReportM1Timing(result,false);
+    }
+    if (m1TimingPool) m1DestroyTiming(device,m1TimingPool,nullptr);
 #endif
     if (fence)
       vk.DestroyFence(device, fence, nullptr);
@@ -348,6 +356,16 @@ private:
     uintptr_t object=0;
   } m1AcceptedFence;
   std::array<uint64_t,5> m1LastReplay{};
+  VkQueryPool m1TimingPool=VK_NULL_HANDLE;
+  VkFence m1TimedFence=VK_NULL_HANDLE;
+  uint64_t m1TimedNonce=0,m1TimingMask=0;
+  uint32_t m1TimingBits=0;
+  float m1TimingPeriod=0;
+  PFN_vkDestroyQueryPool m1DestroyTiming=nullptr;
+  PFN_vkCmdResetQueryPool m1ResetTiming=nullptr;
+  PFN_vkCmdWriteTimestamp m1WriteTiming=nullptr;
+  PFN_vkGetQueryPoolResults m1ReadTiming=nullptr;
+  void ReportM1Timing(VkResult,bool accepted);
   const char *m1Reject=nullptr;
   pc::M1Gravity m1GrantGravity{};
   bool ClaimM1(m1::ProgressClockV2 &,uint64_t,bool,m1::PlanGrantV2 &);

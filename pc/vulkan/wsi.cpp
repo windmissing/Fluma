@@ -189,7 +189,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     VkPipelineLayoutCreateInfo layout{VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO};
     layout.setLayoutCount = 1;
     layout.pSetLayouts = &wsi.descriptors;
-    const VkPushConstantRange extentPush{VK_SHADER_STAGE_FRAGMENT_BIT,0,16};
+    const VkPushConstantRange extentPush{VK_SHADER_STAGE_FRAGMENT_BIT,0,28};
     if (dryScene) {
       layout.pushConstantRangeCount = 1;
       layout.pPushConstantRanges = &extentPush;
@@ -306,9 +306,10 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       vk.CmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, wsi.layout, 0, 1, &set, 0, nullptr);
       if (dryScene) {
         const bool unorm=found->format==VK_FORMAT_B8G8R8A8_UNORM || found->format==VK_FORMAT_R8G8B8A8_UNORM;
-        struct FramePush { float width,height; uint32_t encode,empty; };
-        const FramePush values{float(extent.width),float(extent.height),uint32_t(unorm),uint32_t(frame.empty)};
-        static_assert(sizeof(values)==16);
+        struct FramePush { float width,height; uint32_t encode,empty; std::array<int32_t,3> gravity; };
+        const FramePush values{float(extent.width),float(extent.height),uint32_t(unorm),uint32_t(frame.empty),
+                               observation.gravityIndicator ? observation.gravityIndicator() : std::array<int32_t,3>{}};
+        static_assert(sizeof(values)==28);
         vk.CmdPushConstants(command,wsi.layout,VK_SHADER_STAGE_FRAGMENT_BIT,0,sizeof(values),&values);
       }
       wsi.CmdDraw(command, 3, 1, 0, 0);

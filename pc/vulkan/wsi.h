@@ -37,6 +37,7 @@ struct PresentObservations {
   bool timing=false;
   VkDeviceSize roiStride=0;
   std::function<const std::array<M1Rect,3>*()> requestedRoi;
+  std::function<std::array<int32_t,3>()> gravityIndicator; // sin/cos Q20 and state
 };
 Frame PresentBoot(g13vk::VulkanApi &, VkInstance, VkPhysicalDevice, VkDevice, VkQueue,
                   uint32_t family, VkSurfaceKHR, VkBuffer control, VkBuffer staging,

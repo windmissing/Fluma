@@ -17,17 +17,21 @@ constexpr bool CandidateSnapshotOrdinalsMatch() {
   return slot==kCandidateSlotCount && slot==std::size(pc::kT899SlotOrdinals);
 }
 static_assert(CandidateSnapshotOrdinalsMatch());
+static_assert(k_quantum[815].op==7 && k_quantum[816].op==8 && k_quantum[817].op==9 &&
+              k_quantum[818].op==10 && k_quantum[819].op==11);
 enum T877Point {
   Upload, ActualBegin, ActualEnd, ReplayBegin, ReplayEnd,
   ActualPressureBegin, ActualPressureEnd, ActualViscosityBegin, ActualViscosityEnd,
   ReplayPressureBegin, ReplayPressureEnd, ReplayViscosityBegin, ReplayViscosityEnd,
-  CompareEnd, PackEnd, BeforeTail, BusinessCopiesEnd, ColdCopiesEnd, RootBegin, ColdCopiesBegin, PointCount
+  CompareEnd, PackEnd, BeforeTail, BusinessCopiesEnd, ColdCopiesEnd, RootBegin, ColdCopiesBegin,
+  FinalAuditBegin, FinalAuditEnd, TimePrepareEnd, PackViewEnd, SealBegin, SealEnd, TransferReady, PointCount
 };
 constexpr const char *kT877PointNames[]{
     "UPLOAD_DONE","ACTUAL_BEGIN","ACTUAL_END","REPLAY_BEGIN","REPLAY_END",
     "ACTUAL_PRESSURE_SPAN_BEGIN","ACTUAL_PRESSURE_SPAN_END","ACTUAL_VISCOSITY_SPAN_BEGIN","ACTUAL_VISCOSITY_SPAN_END",
     "REPLAY_PRESSURE_SPAN_BEGIN","REPLAY_PRESSURE_SPAN_END","REPLAY_VISCOSITY_SPAN_BEGIN","REPLAY_VISCOSITY_SPAN_END",
-    "COMPARE_DONE","PACK_DONE","BEFORE_TAIL","BUSINESS_COPIES_DONE","COLD_COPIES_DONE","ROOT_BEGIN","COLD_COPIES_BEGIN"};
+    "COMPARE_DONE","PACK_DONE","BEFORE_TAIL","BUSINESS_COPIES_DONE","COLD_COPIES_DONE","ROOT_BEGIN","COLD_COPIES_BEGIN",
+    "FINAL_AUDIT_BEGIN","FINAL_AUDIT_END","TIME_PREPARE_END","PACK_VIEW_END","SEAL_BEGIN","SEAL_END","TAIL_TRANSFER_READY"};
 static_assert(std::size(kT877PointNames)==PointCount);
 
 bool T833TailMatches(const Completion &tail,const Permit &permit,uint64_t quantum,uint64_t sourceSeq) {
@@ -174,19 +178,22 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
   const uint32_t diagnostic=privateProject ? 1u : attempt.t833Case.empty() ? 0u : 2u;
   const bool t877=!attempt.t877Mode.empty(),hot=attempt.t877Mode=="hot";
   const bool snapshot=attempt.t899SlotSnapshot;
-  const auto evidenceRole=[snapshot](std::string_view role) {
+  const auto evidenceRole=[&](std::string_view role,uint32_t op) {
+    if (attempt.g13SealV1 && op==11 && role=="OP_00_9_11")
+      return std::string_view("OP_00_9_11_SEAL_V1");
     return snapshot && role=="OP17_PRIVATE_LEDGER" ? std::string_view("OP17_PRIVATE_LEDGER_SNAPSHOT") : role;
   };
   fields << ",\"oldMonolithicPCReference\":\"MISSING_PC_REFERENCE\""
          << ",\"candidateInput\":" << Quote(attempt.t833Case.empty() ? "REST_BOOT_RAMP_SOURCE" : attempt.t833Case)
          << ",\"candidateRoute\":" << Quote(privateProject ? "PRIVATE_PROJECT" : "PC_SPLIT_CANDIDATE")
-         << ",\"t899SlotSnapshot\":" << (snapshot ? "true" : "false");
+         << ",\"t899SlotSnapshot\":" << (snapshot ? "true" : "false")
+         << ",\"t909SealV1\":" << (attempt.g13SealV1 ? "true" : "false");
   const auto prepare=[&](bool source,const auto &plan) {
     for (size_t i=0;i<std::size(plan);++i) {
       pc::CandidatePass pass{};
       Require(pc::PlanSplitCandidate(source,i,plan[i],pass),"T833_SPLIT_PLAN");
       for (size_t k=0;k<pass.count;++k) {
-        const auto name=evidenceRole(pass.roles[k]);
+        const auto name=evidenceRole(pass.roles[k],plan[i].op);
         const auto found=std::find_if(t833Pipelines.begin(),t833Pipelines.end(),
                                      [&](const auto &role) { return role.first==name; });
         if (found!=t833Pipelines.end()) continue;
@@ -457,9 +464,16 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
       }
     }
     constexpr T877Point beforePoints[]{ActualBegin,ReplayBegin,ActualPressureBegin,ActualViscosityBegin,
-                                       ReplayPressureBegin,ReplayViscosityBegin};
+                                       ReplayPressureBegin,ReplayViscosityBegin,FinalAuditBegin,SealBegin};
     constexpr T877Point afterPoints[]{ActualEnd,ReplayEnd,ActualPressureEnd,ActualViscosityEnd,
-                                      ReplayPressureEnd,ReplayViscosityEnd,CompareEnd,PackEnd};
+                                      ReplayPressureEnd,ReplayViscosityEnd,CompareEnd,PackEnd,
+                                      FinalAuditEnd,TimePrepareEnd,PackViewEnd,SealEnd};
+    if (t877Queries && attempt.g13TailTiming && !source) {
+      positions[FinalAuditBegin]=positions[FinalAuditEnd]=815;
+      positions[TimePrepareEnd]=816;
+      positions[PackViewEnd]=817;
+      positions[SealBegin]=positions[SealEnd]=819;
+    }
     for (size_t ordinal=0;ordinal<std::size(plan);++ordinal) {
       for (auto point:beforePoints) if (positions[point]==ordinal) mark(point,kCompute);
       pc::CandidatePass pass{};
@@ -474,7 +488,7 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
       vk.CmdPushConstants(command,pipelineLayout,VK_SHADER_STAGE_COMPUTE_BIT,0,
                           sizeof(binding.push),binding.push.data());
       for (size_t i=0;i<pass.count;++i) {
-        const auto name=evidenceRole(pass.roles[i]);
+        const auto name=evidenceRole(pass.roles[i],plan[ordinal].op);
         const auto role=std::find_if(t833Pipelines.begin(),t833Pipelines.end(),
                                      [&](const auto &item) { return item.first==name; });
         Require(role!=t833Pipelines.end(),"T833_ROLE_NOT_QUALIFIED");
@@ -501,6 +515,7 @@ std::string Boot::RunT833Candidate(const Profile &profile,const Config &config,c
       }
     }
     Barrier(kCompute,VK_ACCESS_SHADER_WRITE_BIT,kTransfer,VK_ACCESS_TRANSFER_READ_BIT);
+    if (attempt.g13TailTiming && !source) mark(TransferReady,kTransfer);
     mark(BeforeTail,kCompute);
     copy(kControl,kColdTailWordOffset*4,0,sizeof(Completion));
     if (snapshot && slotIndex)

@@ -1,0 +1,81 @@
+#version 450
+layout(local_size_x=1) in;
+// Private isolated-disk diagnostic in SI.
+layout(std430,binding=0) readonly buffer Inputs {
+    float mass,radius,gap,normalVelocity,wallVelocity,acceleration,restitution,horizon;
+    float centerX,centerY,wallDistance,omega;
+    uint mode;
+};
+layout(std430,binding=1) writeonly buffer Result {
+    uint status;
+    float toi,impulse,velocity,wallWork,relativeBefore,relativeAfter;
+    float bracketLo,bracketHi;
+};
+
+float rotatingGap(float t) {
+    precise float a=omega*t;
+    precise float clearance=wallDistance-radius-centerX*cos(a)-centerY*sin(a);
+    return clearance;
+}
+
+void impact(float t,float inward,float speed,float lo,float hi) {
+    precise float after=restitution*inward;
+    precise float kick=mass*(after+inward);
+    precise float finalVelocity=speed+after;
+    precise float work=kick*speed;
+    if (isinf(kick)||isinf(finalVelocity)||isinf(work)||isnan(work)) { status=3u; return; }
+    relativeBefore=-inward;
+    relativeAfter=after;
+    impulse=kick;
+    velocity=finalVelocity;
+    wallWork=work;
+    bracketLo=lo; bracketHi=hi; toi=t; status=1u;
+}
+
+void main() {
+    status=3u; toi=0.; impulse=0.; velocity=0.; wallWork=0.; relativeBefore=0.; relativeAfter=0.;
+    bracketLo=0.; bracketHi=0.;
+    vec4 a=vec4(mass,radius,gap,normalVelocity), b=vec4(wallVelocity,acceleration,restitution,horizon);
+    if (any(isnan(a))||any(isinf(a))||any(isnan(b))||any(isinf(b))||
+        mass<=0.||radius<=0.||gap<0.||restitution<0.||restitution>.15||horizon<=0.) return;
+    if (mode==1u) {
+        vec4 pose=vec4(centerX,centerY,wallDistance,omega);
+        if (any(isnan(pose))||any(isinf(pose))||centerX<=0.||centerY<=0.||
+            wallDistance<=radius||omega<=0.||omega*horizon>=1.57079632679) return;
+        precise float terminal=omega*horizon;
+        // Restrict to the bracket where clearance is strictly decreasing.
+        if (centerX*sin(terminal)-centerY*cos(terminal)>=0.||
+            rotatingGap(0.)<=0.||rotatingGap(horizon)>=0.) return;
+        float lo=0.,hi=horizon;
+        for (int i=0;i<24;++i) {
+            precise float mid=lo+(hi-lo)*.5;
+            if (rotatingGap(mid)>0.) lo=mid; else hi=mid;
+        }
+        precise float angle=omega*hi;
+        precise float speed=omega*(centerY*cos(angle)-centerX*sin(angle));
+        impact(hi,speed,speed,lo,hi);
+        return;
+    }
+    if (mode!=0u) return;
+    precise float vn=normalVelocity-wallVelocity;
+    velocity=normalVelocity;
+    relativeBefore=vn; relativeAfter=vn;
+    if (gap==0. && vn==0. && acceleration<0.) {
+        precise float contactImpulse=-mass*acceleration*horizon;
+        precise float work=contactImpulse*wallVelocity;
+        if (isinf(contactImpulse)||isnan(work)||isinf(work)) return;
+        impulse=contactImpulse;
+        velocity=wallVelocity; wallWork=work; status=2u;
+        return;
+    }
+    precise float disc=vn*vn-2.*acceleration*gap;
+    if (isnan(disc)||isinf(disc)) return;
+    status=0u;
+    if (disc<=0.) return;
+    precise float inward=sqrt(disc);
+    precise float t=-1.;
+    if (vn<0.) t=2.*gap/(inward-vn);
+    else if (acceleration<0.) t=(-vn-inward)/acceleration;
+    if (t<0.||t>horizon) return;
+    impact(t,inward,wallVelocity,t,t);
+}
