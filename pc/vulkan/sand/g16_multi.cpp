@@ -14,7 +14,8 @@
 
 namespace grs::pc::sand {
 namespace {
-constexpr std::array<VkDeviceSize,4> storageBytes{196608,1179648,608512,65536};
+constexpr VkDeviceSize tailTapeOffset=608512,tailTapeBytes=(8+16*32)*4;
+constexpr std::array<VkDeviceSize,4> storageBytes{196608,1179648,tailTapeOffset+tailTapeBytes,65536};
 constexpr VkDeviceSize configOffset=346112,receiptOffset=350208,witnessOffset=559104;
 constexpr VkDeviceSize stateStride=65536,sceneStride=32768,receiptBytes=1024,witnessBytes=256;
 constexpr VkDeviceSize journalOffset=509952,journalRowBytes=160,journalCapacity=300;
@@ -85,7 +86,7 @@ struct Program {
   std::filesystem::path out;
   Config initial{};
   uint32_t j=128,roots=0,disks=0;
-  bool mirror=false,present=false,diagnostics=false;
+  bool mirror=false,present=false,diagnostics=false,tailEvidence=false,support=false,supportProbe=false,third=false;
   Motion motion=Motion::Static;
 #ifdef PC_G16_FREEZE_FIXTURE
   std::optional<FreezeFault> fault;
@@ -216,6 +217,8 @@ class Owner {
   uint64_t fenceGeneration_=0,previousNonce_=0;
   Head head_{};
   bool scenePinned_=false;
+  bool thirdVerified_=false;
+  bool RunSupportProbe(const Program &);
 #ifdef PC_G16_FREEZE_FIXTURE
   HostDevice::Memory fixtureState_{};
   bool fixtureBound_=false;
@@ -363,6 +366,8 @@ void Owner::Export(const Program &p,const Config &config,const Completion &r,boo
 #endif
   const auto timeAt=bytes;
   if(p.diagnostics)bytes+=timeEvidenceBytes;
+  const auto tapeAt=bytes;
+  if(p.tailEvidence)bytes+=tailTapeBytes;
   const auto capture=gpu_.Allocate(bytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
   const auto device=gpu_.device;
   RequireHost(!pending_,"G16_COLD_IN_FLIGHT");
@@ -396,6 +401,7 @@ void Owner::Export(const Program &p,const Config &config,const Completion &r,boo
   if(adjBytes)ranges.push_back(span(2,0,adjBytes,arrays+3*edgeBytes+headBytes));
   if(rescan)ranges.push_back(span(2,timeEvidenceOffset,timeEvidenceBytes/2,timeAt));
   else if(p.diagnostics)ranges.push_back(span(2,timeEvidenceOffset,timeEvidenceBytes,timeAt));
+  if(p.tailEvidence)ranges.push_back(span(2,tailTapeOffset,tailTapeBytes,tapeAt));
 #ifdef PC_G16_FREEZE_FIXTURE
   if(fixtureBound_) {
     ranges.push_back(span(0,config[40]*stateStride,stateStride,ordinaryBytes));
@@ -433,6 +439,25 @@ void Owner::Export(const Program &p,const Config &config,const Completion &r,boo
     <<",\"acceptedRoot\":null}\n";
   RequireVk(result,"G16_COLD_RESULT");
   const auto *words=capture.words;
+  if(p.tailEvidence) {
+    const auto *tape=words+tapeAt/4;
+    RequireHost(tape[0]==0x47393654 && tape[1]==r[126],"G16_TAIL_TAPE_IDENTITY");
+    const auto saved=std::min(tape[1],16u);
+    const auto validBytes=(8+saved*32)*sizeof(uint32_t);
+    Write(p.out/"certified-tail-v1.u32le",tape,validBytes);
+    std::cout<<"{\"stage\":\"G16_CERTIFIED_TAIL\",\"nonce\":\""<<Wide(config,16)
+      <<"\",\"originalGeneration\":\""<<Wide(config,34)<<"\",\"coldGeneration\":\""<<fenceGeneration_
+      <<"\",\"attempts\":"<<tape[1]<<",\"retained\":"<<saved<<",\"lastState\":"<<r[127]
+      <<",\"sha256\":\""<<Hex(Hash(tape,validBytes))<<"\",\"acceptedRoot\":null}\n";
+    if(p.third && saved) {
+      const auto *row=tape+8+32*(saved-1);
+      const auto time=AsFloat(row[17]);
+      thirdVerified_=!accepted && r[41]==11 && r[42]==9 && r[43]==15 && row[1]==3 &&
+          row[14]==13 && row[15]==UINT32_MAX && row[16]==(p.mirror?2u:3u) &&
+          std::abs(time-4e-6f)<5e-8f && AsFloat(row[24])>0 && AsFloat(row[25])<0 &&
+          row[27]==0 && std::equal(p.seed.begin(),p.seed.end(),words);
+    }
+  }
   if(p.diagnostics) {
     const auto *time=words+timeAt/4;
     Write(p.out/(rescan?"remaining-v1.u32le":"time-v1.u32le"),time,timeEvidenceBytes);
@@ -528,7 +553,44 @@ bool Owner::Present(const Program &p,const Config &config,const uint32_t *pose) 
   return frame.error==VK_SUCCESS && frame.retire==VK_SUCCESS;
 }
 
+bool Owner::RunSupportProbe(const Program &p) {
+  const auto size=3*8*sizeof(uint32_t);
+  const auto capture=gpu_.Allocate(size,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true);
+  ++fenceGeneration_;
+  const VkCommandBufferBeginInfo begin{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,nullptr,
+                                        VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT};
+  RequireVk(VKFN(BeginCommandBuffer)(command_,&begin),"G16_SUPPORT_BEGIN");
+  VKFN(CmdBindPipeline)(command_,VK_PIPELINE_BIND_POINT_COMPUTE,pipeline_);
+  VKFN(CmdBindDescriptorSets)(command_,VK_PIPELINE_BIND_POINT_COMPUTE,layout_,0,1,&set_,0,nullptr);
+  const uint32_t push[]{4,0,p.j+2};
+  VKFN(CmdPushConstants)(command_,layout_,VK_SHADER_STAGE_COMPUTE_BIT,0,sizeof(push),push);
+  VKFN(CmdDispatch)(command_,1,1,1);
+  auto slice=resources_[2].slice;
+  slice.offset=tailTapeOffset;slice.bytes=size;
+  const CopySpan copy{slice,0};
+  RequireHost(RecordReadback(VKFN(CmdPipelineBarrier),VKFN(CmdCopyBuffer),command_,capture.slice,&copy,1) &&
+      MakeHostVisible(VKFN(CmdPipelineBarrier),command_,capture.slice),"G16_SUPPORT_COPY");
+  RequireVk(VKFN(EndCommandBuffer)(command_),"G16_SUPPORT_END");
+  VkResult submit=VK_NOT_READY,wait=VK_NOT_READY;
+  const auto result=Submit(HostDevice::Now()+budget,capture,size,submit,wait);
+  bool valid=result==VK_SUCCESS;
+  if(valid) {
+    const auto *w=capture.words;
+    Write(p.out/"support-v1.u32le",w,size);
+    const auto closeWord=[](uint32_t value,float target,float eps){return std::abs(AsFloat(value)-target)<=eps;};
+    valid=w[7]==0x47393654 && w[15]==w[7] && w[23]==w[7] &&
+        closeWord(w[2],.0981f,1e-7f) && closeWord(w[3],7.913759e-7f,1e-12f) && w[4]==0 && w[5]==0 &&
+        w[10]==0 && w[11]==0 && closeWord(w[12],7.126e-11f,1e-14f) &&
+        closeWord(w[18],.1181f,1e-7f) && closeWord(w[21],7.68594e-12f,1e-15f);
+  }
+  std::cout<<"{\"stage\":\"G16_SUPPORT_FIXTURE\",\"passed\":"<<(valid?"true":"false")
+    <<",\"fence\":\""<<reinterpret_cast<uintptr_t>(fence_)<<"\",\"fenceGeneration\":\""<<fenceGeneration_
+    <<"\",\"vkResult\":"<<int(result)<<",\"acceptedRoot\":null}\n";
+  return valid;
+}
+
 bool Owner::Run(const Program &p) {
+  if(p.supportProbe)return RunSupportProbe(p);
   std::ofstream stream(p.out/"completions.u32le",std::ios::binary);
   RequireHost(bool(stream),"G16_COMPLETION_OUTPUT");
   const auto device=gpu_.device;
@@ -606,10 +668,11 @@ bool Owner::Run(const Program &p) {
     Completion receipt{};
     if(result==VK_SUCCESS)std::copy_n(readback_.words,receipt.size(),receipt.begin());
     const bool valid=result==VK_SUCCESS && CheckIdentity(config,receipt,receipt[40]) &&
+        (!p.tailEvidence || (receipt[86]==config[62] && receipt[87]==config[63])) &&
         (receipt[40]==1 || (receipt[40]==2 && receipt[41]>=1 && receipt[41]<=17));
     const bool current=gpu_.Current();
     const bool fresh=HostDevice::Now()<=begin+budget;
-    const bool accepted=!faultArmed && valid && current && fresh && CanCommit(config,receipt);
+    const bool accepted=!faultArmed && !p.third && valid && current && fresh && CanCommit(config,receipt);
     if(accepted)
       head_={config[41],config[43],Wide(receipt,20),Wide(receipt,28),Wide(receipt,32)};
     std::cout<<"{\"stage\":\"G16_PRIVATE_ROOT\",\"run\":\""<<Wide(config,8)<<"\",\"nonce\":\""<<Wide(config,16)
@@ -665,7 +728,8 @@ bool Owner::Run(const Program &p) {
         if(ready==VK_SUCCESS) {
           Completion late{};
           std::copy_n(readback_.words,late.size(),late.begin());
-          const bool identity=CheckIdentity(config,late,late[40]) && (late[40]==1 || late[40]==2);
+          const bool identity=CheckIdentity(config,late,late[40]) && (late[40]==1 || late[40]==2) &&
+              (!p.tailEvidence || (late[86]==config[62] && late[87]==config[63]));
           std::cout<<"{\"stage\":\"G16_PRIVATE_LATE_TAIL\",\"nonce\":\""<<Wide(config,16)
             <<"\",\"originalFence\":\""<<reinterpret_cast<uintptr_t>(fence_)<<"\",\"originalGeneration\":\""
             <<fenceGeneration_<<"\",\"identityOK\":"<<(identity?"true":"false")<<",\"firstReason\":"<<late[41]
@@ -680,6 +744,13 @@ bool Owner::Run(const Program &p) {
       RequireHost(bool(stream.write(reinterpret_cast<const char *>(receipt.data()),sizeof(receipt))),"G16_COMPLETION_WRITE");
     if(!accepted || i+1==p.roots) {
       if(valid)Export(p,config,receipt,accepted);
+      if(p.third) {
+        const bool pass=valid && current && fresh && thirdVerified_ &&
+            head_.bank==config[40] && head_.commit==Wide(config,22);
+        std::cout<<"{\"stage\":\"G16_THIRD_IMPACT_FIXTURE\",\"passed\":"<<(pass?"true":"false")
+          <<",\"privateCommit\":"<<head_.commit<<",\"acceptedRoot\":null}\n";
+        return pass;
+      }
 #ifdef PC_G16_FREEZE_FIXTURE
       if(faultArmed) {
         const bool passed=valid && current && fresh && receipt[40]==2 && receipt[41]==2 && receipt[42]==1 &&
@@ -709,21 +780,29 @@ int RunG16Multi(int argc,wchar_t **argv) {
 #ifdef PC_G16_FREEZE_FIXTURE
   faultMode=argc==12 && std::wstring_view(argv[8])==L"--freeze-fault";
 #endif
-  RequireHost(faultMode || (argc>=8 && argc<=11),
-      "USE: g16-multi MODULE SEED (static|fast|slow|hold) (128|256) ROOTS OUT [mirror] [present] [diagnostics]");
+  RequireHost(faultMode || (argc>=8 && argc<=12),
+      "USE: g16-multi MODULE SEED (static|fast|slow|hold) (128|256) ROOTS OUT [mirror] [present] [diagnostics] [support]");
   for(int i=8;!faultMode && i<argc;++i) {
     const std::wstring_view flag(argv[i]);
     if(flag==L"mirror" && !p.mirror)p.mirror=true;
     else if(flag==L"present" && !p.present)p.present=true;
     else if(flag==L"diagnostics" && !p.diagnostics)p.diagnostics=true;
+    else if(flag==L"support" && !p.support)p.support=true;
+#ifdef PC_G16_FREEZE_FIXTURE
+    else if(flag==L"third" && !p.third)p.third=true;
+    else if(flag==L"support-check" && !p.supportProbe)p.supportProbe=true;
+#endif
     else RequireHost(false,"G16_FLAG");
   }
   p.module=ReadWords(argv[2],256*1024);
   const auto moduleSHA=Hex(Hash(p.module.data(),p.module.size()*4));
-  const bool timeEvidence=moduleSHA=="6d4beb5e51e665fb0c853c7f411f85a61e6d1ff9ecd09bef632913d50c396a52";
+  p.tailEvidence=moduleSHA=="b9cab892f95da3b5402696d26ec41d1fe8acd2e89f636ada358208cf2c557923";
+  const bool timeEvidence=p.tailEvidence ||
+      moduleSHA=="6d4beb5e51e665fb0c853c7f411f85a61e6d1ff9ecd09bef632913d50c396a52";
   RequireHost(timeEvidence || moduleSHA=="792f5986328b796aa4bea47b601899cce55aef83e5f0e76ed3d29afe7b718cda" ||
               moduleSHA=="786bb1db9b8d3a679042bdc36d014226d68647913770d503192c297e0c10e361","G16_MODULE_SHA");
   RequireHost(!p.diagnostics || timeEvidence,"G16_DIAGNOSTIC_MODULE");
+  RequireHost(!(p.support || p.third || p.supportProbe) || p.tailEvidence,"G16_TAIL_MODULE");
   p.seed=ReadWords(argv[3],52*64);
   const auto seedSHA=Hex(Hash(p.seed.data(),p.seed.size()*4));
   if(seedSHA=="d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168")p.disks=13;
@@ -739,6 +818,9 @@ int RunG16Multi(int argc,wchar_t **argv) {
       std::all_of(rootCount.begin(),rootCount.end(),[](wchar_t c){return c>=L'0' && c<=L'9';}),"G16_ROOT_COUNT");
   p.roots=uint32_t(std::stoul(argv[6]));
   RequireHost(p.roots && p.roots<=1200,"G16_ROOT_COUNT");
+  RequireHost(!(p.third || p.supportProbe) ||
+      (!p.present && !p.support && p.roots==1 && p.disks==13 && p.j==128 && p.motion==Motion::Static &&
+       !(p.third&&p.supportProbe)),"G16_TAIL_FIXTURE_ARGUMENTS");
 #ifdef PC_G16_FREEZE_FIXTURE
   if(faultMode) {
     const auto decimal=[](const wchar_t *raw) {
@@ -760,6 +842,8 @@ int RunG16Multi(int argc,wchar_t **argv) {
   if(p.mirror)for(uint32_t i=0;i<p.disks;++i)
     for(uint32_t w: {4u,6u,8u,9u}) p.seed[i*16u+w]^=0x80000000u;
   p.Freeze(HostDevice::Now());
+  p.initial[62]=p.support?1u:0u;
+  p.initial[63]=p.third?(p.mirror?2u:1u):0u;
   RequireHost(std::filesystem::create_directory(p.out),"G16_OUTPUT_EXISTS");
   Write(p.out/"initial-config.u32le",p.initial.data(),sizeof(p.initial));
   Write(p.out/"seed.disk64",p.seed.data(),p.seed.size()*4);

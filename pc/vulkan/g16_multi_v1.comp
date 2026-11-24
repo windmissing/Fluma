@@ -115,7 +115,7 @@ Hit predictive(float t,float bound) { return Hit(t,t,t,bound,2u,invalid,invalid)
 const float roundUnit=5.960464477539063e-8;
 struct GapBound { float value,error; };
 
-GapBound wallGapBound(Disk a,uint wall,float time,float t) {
+GapBound wallGapWithAcceleration(Disk a,uint wall,float time,float t,vec2 acceleration) {
     Pose pose=poseAt(time+t);
     vec2 n=wall==0u?vec2(pose.cs.y,pose.cs.x):wall==1u? -vec2(pose.cs.y,pose.cs.x):
            wall==2u?vec2(pose.cs.x,-pose.cs.y):vec2(-pose.cs.x,pose.cs.y);
@@ -124,7 +124,7 @@ GapBound wallGapBound(Disk a,uint wall,float time,float t) {
     // Sum the larger opposite-signed terms first, then add the local drift.
     if(abs(p1)>abs(p0)){float swap=p0;p0=p1;p1=swap;}
     precise float base=(extent+p0)-a.r;
-    precise vec2 displacement=t*(a.v+(.5*t)*gravity());
+    precise vec2 displacement=t*(a.v+(.5*t)*acceleration);
     precise float shift=dot(displacement,n);
     precise float gap=(base+p1)+shift;
     // The first subtraction is exact by Sterbenz near a wall. The moving
@@ -138,6 +138,9 @@ GapBound wallGapBound(Disk a,uint wall,float time,float t) {
     if(!cancellation)arithmetic+=roundUnit*(extent+abs(p0));
     arithmetic+=roundUnit*abs((extent+p0)-a.r);
     return GapBound(gap,projection+arithmetic+1e-13);
+}
+GapBound wallGapBound(Disk a,uint wall,float time,float t) {
+    return wallGapWithAcceleration(a,wall,time,t,gravity());
 }
 Hit diskHit(Disk a,Disk b,float duration,float eps,bool remainder) {
     vec2 p=a.p-b.p,v=a.v-b.v;
@@ -408,7 +411,9 @@ const uint ledger=witness+32u;
 const uint timeEvidence=152064u;
 const uint diskAudit=98816u;
 const uint journal=pairs+4096u,journalCapacity=300u;
-void drift(float t) {
+const uint tailTape=152128u,tailRows=16u,tailWords=32u;
+vec2 tailAcceleration(uint i) {return vecAt(diskAudit+8u*i+1u);}
+void advance(float t,bool constrained) {
     if(t<=0.)return;
     enter(9u);
     vec2 g=gravity();
@@ -419,17 +424,32 @@ void drift(float t) {
     vecPut(ledger+8u,nextGravity);
     for(uint i=0u;i<cfg(4u);++i) {
         Disk d=loadDisk(cfg(41u),i);
+        vec2 resultant=constrained?tailAcceleration(i):g;
         vec2 j=d.m*t*g;
-        vec2 mean=d.p+(.5*t)*d.v+(t*t/6.)*g;
-        sw(diskAudit+8u*i,wf(diskAudit+8u*i)+t*(length(d.v)+.5*t*length(g)));
+        vec2 mean=d.p+(.5*t)*d.v+(t*t/6.)*resultant;
+        sw(diskAudit+8u*i,wf(diskAudit+8u*i)+t*(length(d.v)+.5*t*length(resultant)));
         vecPut(ledger,vecAt(ledger)+j);
         float angular=cross2(mean,j);
         sw(ledger+2u,wf(ledger+2u)+angular);
         sw(ledger+10u,wf(ledger+10u)+angular);
-        d.p=atTime(d,t);d.v+=g*t;d.angle+=d.spin*t;
+        if(constrained){
+            uint wall=work[diskAudit+8u*i+3u];
+            if(wall!=invalid){
+                vec2 impulse=(d.m*t)*(resultant-g);
+                float wallAngular=cross2(mean,impulse); // Normal impulse has zero arm about the disk center.
+                vecPut(ledger,vecAt(ledger)+impulse);
+                sw(ledger+2u,wf(ledger+2u)+wallAngular);
+                vecPut(ledger+11u,vecAt(ledger+11u)+impulse);
+                sw(ledger+13u,wf(ledger+13u)+wallAngular);
+                pf(82u+wall,rf(82u+wall)+length(impulse));
+            }
+            d.p+=t*(d.v+(.5*t)*resultant);
+        } else d.p=atTime(d,t);
+        d.v+=resultant*t;d.angle+=d.spin*t;
         storeMotion(i,d);
     }
 }
+void drift(float t) {advance(t,false);}
 
 void storeSpeed(uint base,uint i,vec2 v,float spin) {
     uint a=base+4u*i;
@@ -676,6 +696,167 @@ bool auditGaps(float time,uint count,uint segment,bool full) {
     return true;
 }
 
+bool fixedBox(){return cfg(6u)==1u&&cfg(132u)==0u&&cfg(133u)==0u;}
+vec2 axisNormal(uint wall){
+    return wall==0u?vec2(0,1):wall==1u?vec2(0,-1):wall==2u?vec2(1,0):vec2(-1,0);
+}
+bool exactContact(Disk d,uint wall){
+    float extent=cf(wall<2u?49u:48u),p=-dot(d.p,axisNormal(wall));
+    // Within the Sterbenz range the represented extent minus coordinate is exact.
+    return p>=.5*extent&&p<=2.*extent&&extent-p==d.r;
+}
+float normalReaction(float mass,float relativeAcceleration){
+    return max(0.,-mass*relativeAcceleration);
+}
+float wallLower(Disk d,uint wall,float time,float t,vec2 acceleration,bool stationary){
+    if(stationary){
+        vec2 n=axisNormal(wall);
+        float rate=dot(n,d.v),a=dot(n,acceleration);
+        if(exactContact(d,wall)&&((rate==0.&&a>0.)||
+           (rate>0.&&rate+min(0.,a*t)>16.*roundUnit*(rate+abs(a*t)))))return 0.;
+        float middle=a>0.?clamp(-rate/a,0.,t):0.;
+        GapBound z=wallGapWithAcceleration(d,wall,time,0.,acceleration);
+        GapBound m=wallGapWithAcceleration(d,wall,time,middle,acceleration);
+        GapBound e=wallGapWithAcceleration(d,wall,time,t,acceleration);
+        float bound=min(min(z.value-z.error,m.value-m.error),e.value-e.error)-
+                    8.*roundUnit*t*(abs(rate)+abs(a*t));
+        return bound==0.?-1e-13:bound;
+    }
+    float speed=length(d.v)+length(acceleration)*t;
+    float curve=length(acceleration)+6.*speed+19.*(length(d.p)+speed*t);
+    float lower=1.;
+    // A single positive whole-window bound is common. Subdivide only an ambiguous interval.
+    for(uint pass=0u;pass<2u;++pass){
+        uint count=pass==0u?1u:16u;
+        lower=1.;
+        GapBound lo=wallGapWithAcceleration(d,wall,time,0.,acceleration);
+        for(uint i=1u;i<=count;++i){
+            float width=t/float(count);
+            GapBound hi=wallGapWithAcceleration(d,wall,time,t*float(i)/float(count),acceleration);
+            lower=min(lower,min(lo.value-lo.error,hi.value-hi.error)-curve*width*width*.125);
+            lo=hi;
+        }
+        if(lower>0.)break;
+    }
+    return lower==0.?-1e-13:lower;
+}
+float pairLower(Disk a,Disk b,vec2 acceleration,float t){
+    vec2 p=a.p-b.p,v=a.v-b.v;
+    vec2 chord=t*(v+.5*t*acceleration);
+    float k=dot(chord,chord),u=k>0.?clamp(-dot(p,chord)/k,0.,1.):0.;
+    float margin=length(p+u*chord)-(a.r+b.r);
+    float roundError=16.*roundUnit*(length(a.p)+length(b.p)+length(p)+length(chord)+a.r+b.r);
+    return margin-roundError-length(acceleration)*t*t*.125;
+}
+
+bool certifiedTail(float time,float t,float start,float dt){
+    uint sequence=work[tailTape+1u]++;
+    uint record=tailTape+8u+tailWords*min(sequence,tailRows-1u),n=cfg(4u);
+    for(uint w=0u;w<tailWords;++w)work[record+w]=0u;
+    work[record]=micro;sw(record+2u,start);sw(record+3u,dt);sw(record+4u,time);sw(record+5u,t);
+    sw(record+6u,wf(timeEvidence+6u));sw(record+7u,wf(timeEvidence+22u));
+    bool stationary=fixedBox();
+    uint supports=0u, supportDisk=invalid,supportWall=invalid,firstA=invalid,firstB=invalid,firstWall=invalid;
+    float impulse=0.,wallMin=1.,pairMin=1.;
+    bool uncertain=false;
+    Hit earliest=noHit(0.);
+    if(abs(wf(record+6u)+wf(record+7u)+t-dt)>8.*roundUnit*dt){work[record+1u]=4u;return false;}
+    if(work[timeEvidence+11u]==0u||work[timeEvidence+27u]==0u){work[record+1u]=4u;return false;}
+    // The versioned negative arm replaces only a private post-impact disk.
+    if(cfg(63u)!=0u && micro==15u && n==13u){
+        Disk fixture=loadDisk(cfg(41u),12u);
+        float mirror=cfg(63u)==2u?-1.:1.;
+        fixture.p=vec2(mirror*uintBitsToFloat(0x3d3851e1u),0.);
+        fixture.v=vec2(mirror*uintBitsToFloat(0x3c240830u),0.);
+        storeMotion(12u,fixture);
+    }
+    for(uint i=0u;i<n;++i){
+        Disk d=loadDisk(cfg(41u),i);
+        uint ownership=invalid;
+        vec2 g=gravity();
+        if(cfg(62u)!=0u&&stationary)for(uint wall=0u;wall<4u;++wall){
+            vec2 normal=axisNormal(wall);
+            if(!exactContact(d,wall)||dot(d.v,normal)!=0.)continue;
+            float freeAcceleration=dot(gravity(),normal);
+            if(freeAcceleration>0.)continue;
+            if(ownership!=invalid){uncertain=true;continue;}
+            ownership=wall;supports++;
+            if(supportDisk==invalid){supportDisk=id(i);supportWall=wall;}
+            impulse+=normalReaction(d.m,freeAcceleration)*t;
+            g-=freeAcceleration*normal;
+        }
+        vecPut(diskAudit+8u*i+1u,g);
+        work[diskAudit+8u*i+3u]=ownership;
+    }
+    for(uint i=0u;i<n;++i){
+        Disk d=loadDisk(cfg(41u),i);
+        vec2 acceleration=tailAcceleration(i);
+        for(uint wall=0u;wall<4u;++wall){
+            if(work[diskAudit+8u*i+3u]==wall)continue;
+            float lower=wallLower(d,wall,time,t,acceleration,stationary);
+            wallMin=min(wallMin,lower);
+            if(lower>=0.)continue;
+            Hit h=wallHit(d,wall,time,t,cf(52u),false);
+            if(h.flags!=1u || any(notEqual(acceleration,gravity())))uncertain=true;
+            else if(h.t<earliest.t){earliest=h;firstA=i;firstB=invalid;firstWall=wall;}
+        }
+        for(uint j=i+1u;j<n;++j){
+            Disk b=loadDisk(cfg(41u),j);
+            vec2 relative=acceleration-tailAcceleration(j);
+            float lower=pairLower(d,b,relative,t);
+            pairMin=min(pairMin,lower);
+            if(lower>0.)continue;
+            Hit h=diskHit(d,b,t,cf(52u),false);
+            if(h.flags!=1u||any(notEqual(relative,vec2(0))))uncertain=true;
+            else if(h.t<earliest.t){earliest=h;firstA=i;firstB=j;firstWall=invalid;}
+        }
+    }
+    work[record+8u]=4u*n;work[record+9u]=n*(n-1u)/2u;
+    sw(record+10u,wallMin);sw(record+11u,pairMin);
+    work[record+12u]=supports;sw(record+13u,impulse);
+    work[record+28u]=supportDisk;work[record+29u]=supportWall;
+    if(earliest.flags==1u){
+        Disk d=loadDisk(cfg(41u),firstA);
+        work[record+14u]=id(firstA);work[record+15u]=firstB==invalid?invalid:id(firstB);
+        work[record+16u]=firstWall;
+        sw(record+17u,earliest.t);sw(record+18u,time+earliest.t);sw(record+19u,t-earliest.t);
+        work[record+20u]=earliest.qLo!=invalid?earliest.qLo:uint(max(0.,floor(earliest.lo/t*q24)-1.));
+        work[record+21u]=earliest.qHi!=invalid?earliest.qHi:uint(min(q24,ceil(earliest.hi/t*q24)+1.));
+        sw(record+22u,earliest.lo);sw(record+23u,earliest.hi);
+        if(firstWall!=invalid){
+            GapBound lo=wallGapBound(d,firstWall,time,earliest.lo),hi=wallGapBound(d,firstWall,time,earliest.hi);
+            sw(record+24u,lo.value-lo.error);sw(record+25u,hi.value+hi.error);
+        } else {
+            Disk b=loadDisk(cfg(41u),firstB);
+            sw(record+24u,geometryAt(d,b,invalid,time,earliest.lo).gap-gapRound);
+            sw(record+25u,geometryAt(d,b,invalid,time,earliest.hi).gap+gapRound);
+        }
+        work[record+1u]=uncertain?4u:3u;
+        return false;
+    }
+    if(uncertain||cfg(63u)!=0u){work[record+1u]=4u;return false;}
+    advance(t,supports!=0u);
+    sw(record+26u,time+t);sw(record+27u,t);
+    float travel=0.;
+    for(uint i=0u;i<n;++i)travel=max(travel,wf(diskAudit+8u*i));
+    sw(record+30u,travel);
+    if(!auditGaps(time+t,0u,1u,true)){work[record+1u]=4u;return false;}
+    work[record+1u]=supports!=0u?2u:1u;
+    return true;
+}
+
+void supportProbe(){
+    float r=8.067032468e-6,m=.01;
+    for(uint i=0u;i<3u;++i){
+        float wall=i==0u?0.:i==1u?-12.:2.;
+        float freeNormal=-9.81-wall,force=normalReaction(m,freeNormal);
+        uint at=tailTape+8u*i;
+        sw(at,wall);sw(at+1u,freeNormal);sw(at+2u,force);
+        sw(at+3u,force*r);sw(at+4u,.5*r*r*max(0.,freeNormal));sw(at+5u,.5*r*r*wall*force);
+        sw(at+6u,r);work[at+7u]=0x47393654u;
+    }
+}
+
 void microstep() {
     float dt=1./(120.*float(cfg(5u)));
     float time=float(cfg(24u))/120.+float(micro)*dt;
@@ -700,12 +881,14 @@ void microstep() {
         work[record+8u]=work[witness+25u];
         drift(hit);
         if(!auditGaps(time+hit,count,seg,false))return;
+        uint hits=work[witness+27u];
         if(!solve(count,time,remaining,hit,seg))return;
+        work[record+11u]=work[witness+27u]-hits;
         work[record+9u]=work[witness+25u];work[record+10u]=count;
         time+=hit;remaining-=hit;
         if(remaining<=0.)break;
     }
-    if(remaining>0.)fail(11u,9u,1u,invalid,invalid,invalid);
+    if(remaining>0.&&!certifiedTail(time,remaining,start,dt))fail(11u,9u,1u,invalid,invalid,invalid);
 }
 
 void diagnoseRemaining() {
@@ -753,6 +936,8 @@ void freeze() {
     for(uint i=43u;i<=47u;++i)put(i,invalid);
     for(uint i=0u;i<64u;++i)work[witness+i]=0u;
     for(uint i=0u;i<64u;++i)work[timeEvidence+i]=0u;
+    for(uint i=0u;i<8u;++i)work[tailTape+i]=0u;
+    work[tailTape]=0x47393654u;
     work[witness+26u]=journalCapacity;
     enter(1u);
     bool large=cfg(4u)==52u;
@@ -764,10 +949,11 @@ void freeze() {
         cfg(45u)!=(large?40u:20u)||cfg(46u)!=n||cfg(47u)!=1u||
         cf(48u)!=.05||cf(49u)!=.1||cf(50u)!=0.||cf(51u)!=-9.81||cf(52u)!=.00005||
         cf(53u)!=.00025||cf(54u)!=0.||cf(55u)!=0.||cf(56u)!=0.||cf(57u)!=0.||
-        cf(58u)!=0.||cf(59u)!=0.||cf(60u)!=0.||cf(61u)!=(large?.005:.01)) {
+        cf(58u)!=0.||cf(59u)!=0.||cf(60u)!=0.||cf(61u)!=(large?.005:.01)||cfg(62u)>1u||cfg(63u)>2u) {
         fail(1u,1u,invalid,invalid,invalid,invalid);return;
     }
     pf(70u,1.);
+    put(86u,cfg(62u));put(87u,cfg(63u));
     float expectedRadius=large?.0025:.005,expectedMass=large?.0025:.01;
     for(uint i=0u;i<n;++i) {
         uint a=diskWord(cfg(40u),i),b=diskWord(cfg(41u),i);
@@ -829,6 +1015,8 @@ void seal() {
         }
     }
     put(64u,work[witness]); // Number of meaningful edge records in the last segment.
+    put(126u,work[tailTape+1u]);
+    if(result(126u)!=0u)put(127u,work[tailTape+9u+tailWords*min(result(126u)-1u,tailRows-1u)]);
     put(40u,result(41u)==0u?1u:2u);
     put(60u,result(60u)+4u);
     enter(12u);
@@ -844,4 +1032,5 @@ void main() {
     }
     else if(pass==2u)seal();
     else if(pass==3u)diagnoseRemaining();
+    else if(pass==4u)supportProbe();
 }
