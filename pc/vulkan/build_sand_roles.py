@@ -200,7 +200,7 @@ def build(family, compiler, out, role_variant="baseline"):
     if aliases:
         data.update(schema="PC_SAND_VULKAN_ROLES_T913_SPLIT_V2", sourceBindingAliases=aliases)
     data["roleSetSHA"] = sha(json.dumps(data, sort_keys=True, separators=(",", ":")).encode())
-    (out / "roles.json").write_text(json.dumps(data, indent=2) + "\n", encoding="utf8")
+    manifest = (json.dumps(data, indent=2) + "\n").encode()
     if role_variant != "baseline" and not all(data["complete"].values()):
         failed = [r["name"] for r in roles if r["state"] != "STATIC_SPIRV"]
         raise ValueError(f"T913 variant required role compilation failed: {failed}")
@@ -227,7 +227,10 @@ def build(family, compiler, out, role_variant="baseline"):
             header.write("};\n")
         header.write(f'inline constexpr unsigned kCommonBytes={data["commonBytes"]};\n')
         header.write(f'inline constexpr bool kSplitSourceSchedule={str(bool(aliases)).lower()};\n')
-        header.write(f'inline constexpr char kRoleSetSHA[]="{data["roleSetSHA"]}";\n}}\n')
+        header.write(f'inline constexpr char kRoleSetSHA[]="{data["roleSetSHA"]}";\n')
+        header.write(f'inline constexpr char kRoleManifestSHA[]="{sha(manifest)}";\n')
+        header.write(f'inline constexpr char kRoleVariant[]="{role_variant}";\n}}\n')
+    (out / "roles.json").write_bytes(manifest)
     print(f"{family}: {len(usable)}/{len(roles)} static roles, {data['complete']}")
 
 

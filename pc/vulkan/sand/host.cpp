@@ -9,6 +9,7 @@
 #include <chrono>
 #include <cstring>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <mutex>
 #include <sstream>
@@ -40,7 +41,7 @@ constexpr auto storageUsage=VK_BUFFER_USAGE_STORAGE_BUFFER_BIT|VK_BUFFER_USAGE_T
                             VK_BUFFER_USAGE_TRANSFER_DST_BIT|VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 
 struct Options {
-  std::filesystem::path modules, source, archive, witness;
+  std::filesystem::path modules, source, archive, witness, rawEnvelope;
   uint32_t steps=0;
   int32_t angle=0;
   bool full=false,present=false,sourceTimestamps=false,sourceDetail=false,sourcePrewarm=false;
@@ -73,6 +74,7 @@ Options Args(int argc,wchar_t **argv) {
       if (key==L"--source") out.source=value;
       else if (key==L"--archive") out.archive=value;
       else if (key==L"--witness") out.witness=value;
+      else if (key==L"--raw-envelope") out.rawEnvelope=value;
       else if (key==L"--steps") {
         const auto count=num(value);
         RequireHost(count>=0 && count<=120,"STEP_RANGE");
@@ -94,6 +96,7 @@ Options Args(int argc,wchar_t **argv) {
               (out.archive.empty() || out.steps || !out.source.empty()),"DM2_CAPABILITIES");
 #endif
   RequireHost(!(out.sourceTimestamps || out.sourceDetail || out.sourcePrewarm) || !out.source.empty(),"SOURCE_DIAGNOSTIC_NEEDS_SOURCE");
+  RequireHost(out.rawEnvelope.empty() || out.steps || !out.source.empty(),"RAW_ENVELOPE_NEEDS_ROOT");
   return out;
 }
 
@@ -115,7 +118,6 @@ Input128 ReadSource(const std::filesystem::path &path) {
   RequireHost(bool(in.read(reinterpret_cast<char*>(raw.data()),sizeof(raw))) &&
               in.peek()==std::char_traits<char>::eof() && raw[40]==1 &&
               accept647::Pair(raw.data(),41)!=0,"SOURCE_NEEDS_G9_INPUT128_BODY");
-  std::fill(raw.begin(),raw.begin()+40,0);
   return raw;
 }
 
@@ -311,7 +313,116 @@ void WriteWords(const std::filesystem::path &path,const uint32_t *words,size_t b
   RequireHost(!std::filesystem::exists(path),"DESTINATION_EXISTS");
   std::ofstream out(path,std::ios::binary);
   out.write(reinterpret_cast<const char*>(words),std::streamsize(bytes));
+  out.close();
   RequireHost(bool(out),"WRITE_ORIGINAL");
+}
+
+void SealRawEnvelope(const std::filesystem::path &dest,VulkanOwner &owner,const VulkanOwner::RootReceipt &raw,
+                     const StorageSlots &storage,const VulkanOwner::Readback &staging,const ParentLayout &layout,
+                     const Scope &scope,const PhysicalPermit &permit,const Input128 &input,const Input128 &fixture,
+                     const VulkanOwner::PreparedWords &expected,const std::array<uint32_t,128> &config,
+                     const std::array<uint32_t,kCommonBytes/4> &common,const std::vector<uint32_t> &seed,
+                     const std::array<uint32_t,256> &quota,const PulseClock::FreshSample &sample,
+                     const VulkanOwner::AcceptTiming &gateTiming,bool accepted,
+                     uint64_t rootBegin,uint64_t promoted,uint64_t visualGeneration,uint64_t visualTicks,
+                     const uint32_t *deviceSeed,size_t deviceSeedBytes) {
+  const auto captured=owner.ReadRawEnvelope(raw,storage,staging,2000000000);
+  if (captured!=VK_SUCCESS) {
+    std::cout << "{\"stage\":\"RAW_ENVELOPE_UNAVAILABLE\",\"nonce\":\"" << permit.nonce
+              << "\",\"rootFenceGeneration\":\"" << raw.generation << "\",\"vkResult\":" << int(captured) << "}\n";
+    return;
+  }
+  const auto namedRoot=std::to_wstring(scope.run)+L"-"+std::to_wstring(permit.nonce);
+  const auto final=dest/(accepted ? L"accepted" : L"diagnostic")/namedRoot;
+  std::filesystem::create_directories(final.parent_path());
+  auto temp=final;
+  temp+=L".pending-"+std::to_wstring(GetCurrentProcessId());
+  RequireHost(!std::filesystem::exists(final) && std::filesystem::create_directory(temp),"RAW_ENVELOPE_DESTINATION");
+  std::ostringstream files;
+  bool separator=false;
+  const auto add=[&](const char *name,const uint32_t *words,size_t bytes,int slot=-1,size_t offset=0) {
+    WriteWords(temp/name,words,bytes);
+    if (separator) files << ',';
+    separator=true;
+    files << "{\"name\":\"" << name << "\",\"bytes\":" << bytes << ",\"sha256\":\""
+          << HexDigest(accept647::HashWords(words,bytes/4)) << "\",\"slot\":" << slot << ",\"offset\":" << offset;
+    if (slot>=0) files << ",\"bufferGeneration\":\"" << storage[slot].generation << '"';
+    files << '}';
+  };
+  constexpr const char *names[]={"CURRENT_BASE.bin","BASE.bin","ACTUAL.bin","SELECTED.bin","REPLAY.bin",
+                                  "WORK.bin","AUTHORITY_ARENA.bin","SELECTED_ARENA.bin"};
+  std::array<const uint32_t *,std::size(names)> payload{};
+  auto *at=staging.words;
+  for (size_t i=0;i<payload.size();++i) {
+    payload[i]=at;
+    add(names[i],at,size_t(storage[i].bytes),int(i));
+    at+=storage[i].bytes/4;
+  }
+  const auto *tail=payload[5]+layout.work[8].begin/4;
+  const auto *gpuInput=payload[5]+layout.work[5].begin/4;
+  const bool uploadMatches=std::equal(input.begin(),input.end(),gpuInput);
+  const bool tailMatches=!raw.read || std::equal(raw.tail.begin(),raw.tail.end(),tail);
+  RequireHost(!accepted || (uploadMatches && tailMatches),"ACCEPTED_ENVELOPE_IDENTITY");
+  add("INPUT128.bin",input.data(),sizeof(input));
+  add("GPU_INPUT128.bin",gpuInput,sizeof(input),5,layout.work[5].begin);
+  add("FIXTURE128.bin",fixture.data(),sizeof(fixture));
+  add("EXPECTED224.bin",expected.words.data(),sizeof(expected.words));
+  add("COMPLETION256.bin",tail,1024,5,layout.work[8].begin);
+  add("CONFIG128.bin",config.data(),sizeof(config));
+  add("COMMON.bin",common.data(),sizeof(common));
+  add("SEED.bin",seed.data(),seed.size()*4);
+  if (deviceSeed) add("VISUAL_DEVICE_SEED.bin",deviceSeed,deviceSeedBytes);
+  if (accepted) add("QUOTA256.bin",quota.data(),sizeof(quota));
+  const size_t arena=permit.kind==1 ? 6 : 7;
+  const size_t pathOffset=size_t(layout.eventCapacity)*256;
+  // Used counts are certificate words. On rejected roots retain the raw
+  // arenas, even if their unfinished counters are unusable.
+  const bool bounded=tail[44]<=layout.eventCapacity && tail[46]<=layout.pathCapacity;
+  if (bounded) {
+    add("EVENT.bin",payload[arena],size_t(tail[44])*256,int(arena));
+    add("PATH.bin",payload[arena]+pathOffset/4,size_t(tail[46])*64,int(arena),pathOffset);
+  }
+#ifdef PC_SAND_G11_R1
+  add("VISUAL_MAPS.bin",payload[5]+visual.visual[kSegFourMaps]/4,visual.workBytes-visual.visual[kSegFourMaps],5,
+      visual.visual[kSegFourMaps]);
+  add("VISUAL_MARKERS.bin",payload[5]+visual.visual[kSegMarkerCurrent]/4,3*128*visual.v,5,visual.visual[kSegMarkerCurrent]);
+#endif
+  std::ofstream manifest(temp/"envelope.json",std::ios::binary);
+  manifest << "{\"schema\":\"PC_SAND_RAW_ENVELOPE_V1\",\"family\":\"" << family << "\",\"variant\":\"" << kRoleVariant
+           << "\",\"roleSetSHA\":\"" << kRoleSetSHA << "\",\"acceptedRoot\":"
+           << (accepted ? "\""+std::to_string(permit.nonce)+"\"" : "null")
+           << ",\"rootFence\":\"" << reinterpret_cast<uintptr_t>(raw.fence) << "\",\"rootFenceGeneration\":\"" << raw.generation
+           << "\",\"diagnosticGeneration\":\"" << raw.generation+1
+           << "\",\"uploadMatches\":" << (uploadMatches?"true":"false")
+           << ",\"tailMatches\":" << (raw.read ? (tailMatches?"true":"false") : "null")
+           << ",\"eventSealed\":" << tail[44] << ",\"pathSealed\":" << tail[46]
+           << ",\"eventCapacity\":" << layout.eventCapacity << ",\"pathCapacity\":" << layout.pathCapacity
+           << ",\"rootVkResult\":" << int(raw.result) << ",\"expectedSHA\":\"" << HexDigest(expected.hash)
+           << "\",\"inputSHA\":\"" << HexDigest(permit.inputSha) << "\",\"permit\":{";
+  const auto number=[&](const char *name,uint64_t value) { manifest << std::quoted(name) << ":\"" << value << "\","; };
+  number("run",scope.run); number("owner",scope.owner); number("context",scope.context);
+  number("inputEpoch",scope.inputEpoch); number("pageSession",scope.pageSession); number("permission",scope.permission);
+  number("window",scope.window); number("config",scope.config); number("surface",scope.surface);
+  number("geometry",permit.geometry); number("nonce",permit.nonce); number("plan",permit.plan);
+  number("frame",permit.frame); number("control",permit.control); number("baseCommit",permit.baseCommit);
+  number("quanta",permit.quanta); number("arenaGeneration",permit.arenaGeneration);
+  number("baseBank",permit.baseBank); number("candidateBank",permit.candidateBank); number("arena",permit.arena);
+  number("ordinal",permit.ordinal); number("kind",permit.kind); number("rootBeginNs",rootBegin);
+  number("deadlineNs",permit.deadline); number("promoteExitNs",promoted);
+  number("visualBaseGeneration",visualGeneration); number("visualBaseTicks",visualTicks);
+  number("qpcFrequency",pc::QpcFrequency()); number("submitEnterNs",raw.timing.submitEnter);
+  number("submitExitNs",raw.timing.submitExit); number("readExitNs",raw.timing.readExit);
+  number("rootFenceSignalNs",raw.timing.lastWait.result==VK_SUCCESS ? raw.timing.lastWait.exit : 0);
+  number("gateEnterNs",gateTiming.gateEnter); number("gateExitNs",gateTiming.gateExit);
+  number("pulseObservedNs",sample.observed); number("pulseSequence",sample.sequence);
+  number("pulseCallbackNs",sample.callback); number("pulseReceiptNs",sample.receipt); number("pulseFault",sample.fault);
+  manifest << "\"parameterSHA\":\"" << HexDigest(permit.parameterSha)
+           << "\",\"layoutSHA\":\"" << HexDigest(permit.layoutSha)
+           << "\",\"shaderSHA\":\"" << HexDigest(permit.shaderSha) << "\"},\"files\":[" << files.str() << "]}\n";
+  manifest.close();
+  RequireHost(bool(manifest) && MoveFileExW(temp.c_str(),final.c_str(),MOVEFILE_WRITE_THROUGH),"SEAL_RAW_ENVELOPE");
+  std::cout << "{\"stage\":\"RAW_ENVELOPE\",\"nonce\":\"" << permit.nonce
+            << "\",\"accepted\":" << (accepted?"true":"false") << ",\"path\":" << std::quoted(final.generic_u8string()) << "}\n";
 }
 
 #ifndef PC_SAND_G11_R1
@@ -334,11 +445,18 @@ std::string ArchiveSHA(const std::filesystem::path &path) {
 
 int Run(const Options &opt) {
   const auto body=ReadSource(opt.source);
+  auto commandBody=body;
+  std::fill(commandBody.begin(),commandBody.begin()+40,0);
   const auto parent=ParentAdapter::Research(kind,192,opt.full);
   RequireHost(parent.has_value(),"FROZEN_K192_PROFILE");
   const auto &l=parent->Layout();
   HostDevice gpu;
   gpu.Open(opt.present);
+  std::cout << "{\"stage\":\"ROLE_DEVICE\",\"family\":\"" << family << "\",\"vendor\":" << gpu.properties.vendorID
+            << ",\"device\":" << gpu.properties.deviceID << ",\"driver\":" << gpu.properties.driverVersion
+            << ",\"queueFamily\":" << gpu.family << ",\"deviceUUID\":\""
+            << HexBytes(gpu.deviceId.deviceUUID,VK_UUID_SIZE) << "\",\"driverUUID\":\""
+            << HexBytes(gpu.deviceId.driverUUID,VK_UUID_SIZE) << "\"}\n";
   VulkanOwner owner;
   RequireVk(owner.Open({gpu.device,gpu.queue,gpu.family,gpu.deviceProc,gpu.properties.limits,
                         gpu.timestampBits,opt.sourceTimestamps || opt.sourceDetail,opt.sourceDetail},opt.modules),
@@ -381,6 +499,8 @@ int Run(const Options &opt) {
 #endif
   for (size_t i=0;i<storage.size();++i)
     storage[i]=gpu.Allocate(i<5 ? l.stateBytes : i==5 ? totalWork : l.arenaBytes,storageUsage).slice;
+  const auto envelopeReadback=opt.rawEnvelope.empty() ? VulkanOwner::Readback{} :
+      gpu.Allocate(5*l.stateBytes+totalWork+2*l.arenaBytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true).Readback();
   std::array<uint32_t,3> banks{0,1,2};
   uint64_t visGeneration=0,visTicks=0;
   const auto uniform=Uniforms(l,permit,0,banks,visGeneration,visTicks);
@@ -486,7 +606,7 @@ int Run(const Options &opt) {
       Sleep(1);
     }
     PulseClock::FreshSample pulse;
-    const auto current=[&] { return surface() && pacing.Fresh(source ? &pulse : nullptr); };
+    const auto current=[&] { return surface() && pacing.Fresh(source || envelopeReadback.words ? &pulse : nullptr); };
     permit.nonce=permit.frame=permit.control=uint64_t(n)+1;
     permit.plan=pacing.grant.id;
     const auto rootBegin=pacing.grant.grantedNs;
@@ -504,7 +624,7 @@ int Run(const Options &opt) {
     Input128 input{}, command{};
     const auto angle=pacing.grant.target;
     if (source) {
-      RequireHost(gate.ModelEnvelope(body,angle,now,command) && int(gate.Offer(command,now))==0,
+      RequireHost(gate.ModelEnvelope(commandBody,angle,now,command) && int(gate.Offer(command,now))==0,
                   "SOURCE_MODEL_ENVELOPE");
     } else gate.Pose(angle,now);
     RequireHost(int(gate.Freeze(source ? &command : nullptr,permit.nonce,now,input))==0,"FROZEN_INPUT");
@@ -545,16 +665,19 @@ int Run(const Options &opt) {
     const auto expectedNs=source ? HostDevice::Now() : 0;
     const VulkanOwner::RootIdentity diagnostic{scope.run,permit.nonce,permit.plan};
     const auto raw=owner.Run(root,storage,common,tail,uploads.data(),uploads.size(),current,
-                             permit.deadline,HostDevice::Now,captureOn ? &capture : nullptr,source ? &diagnostic : nullptr);
+                             permit.deadline,HostDevice::Now,captureOn ? &capture : nullptr,
+                             source || envelopeReadback.words ? &diagnostic : nullptr);
     const auto before=storage;
     const auto beforeBanks=banks;
+    const auto beforeVisGeneration=visGeneration,beforeVisTicks=visTicks;
     std::array<uint32_t,256> quota{};
     VulkanOwner::AcceptTiming gateTiming;
     uint64_t promoteEnter=0;
     const auto accepted=pacing.Accept(source,[&](const auto &fresh) {
-      auto proof=owner.AcceptCurrent([&] { return surface() && fresh(); },HostDevice::Now,source ? &gateTiming : nullptr);
+      auto proof=owner.AcceptCurrent([&] { return surface() && fresh(); },HostDevice::Now,
+                                     source || envelopeReadback.words ? &gateTiming : nullptr);
       if (proof) {
-        if (source) promoteEnter=HostDevice::Now();
+        if (source || envelopeReadback.words) promoteEnter=HostDevice::Now();
         commit=accept647::Pair(proof->Words().data(),30);
         quanta=accept647::Pair(proof->Words().data(),54);
 #ifdef PC_SAND_G11_R1
@@ -584,7 +707,21 @@ int Run(const Options &opt) {
       SourceTimeline(gpu,owner,diagnostic,before,common,tail.buffer,rootBegin,permit.deadline,frozenNs,expectedNs,
                      pulse,raw,gateTiming,promoteEnter,promoteExit,accepted.has_value());
     }
+    const auto sealEnvelope=[&] {
+      if (!envelopeReadback.words) return;
+#ifdef PC_SAND_G11_R1
+      const auto *deviceSeed=boot.words+512/4;
+      const size_t deviceSeedBytes=boot.buffer.bytes-512;
+#else
+      const uint32_t *deviceSeed=nullptr;
+      const size_t deviceSeedBytes=0;
+#endif
+      SealRawEnvelope(opt.rawEnvelope,owner,raw,before,envelopeReadback,l,scope,permit,input,body,*expected,config,
+                      uniformWords,seed,quota,pulse,gateTiming,accepted.has_value(),rootBegin,promoteExit,
+                      beforeVisGeneration,beforeVisTicks,deviceSeed,deviceSeedBytes);
+    };
     if (!accepted) {
+      sealEnvelope();
       if (!source && owner.HasPendingWork()) std::cout << "{\"stage\":\"RETIRE\",\"vkResult\":"
                                             << int(owner.Retire(Clock::RootNs)) << "}\n";
       RequireHost(false,"ROOT_NOT_ACCEPTED");
@@ -627,8 +764,10 @@ int Run(const Options &opt) {
                 << shown.leaseSerial << "\",\"presentEnterQpc\":\"" << shown.enterQpc << "\",\"presentExitQpc\":\""
                 << shown.exitQpc << "\",\"imageIndex\":" << shown.imageIndex << "}\n";
     }
+    sealEnvelope();
 #else
     (void)beforeBanks;
+    sealEnvelope();
     if (last && !opt.archive.empty()) {
       RequireHost(!std::filesystem::exists(opt.archive),"ARCHIVE_DESTINATION_EXISTS");
       auto temp=opt.archive;
@@ -661,9 +800,23 @@ int wmain(int argc,wchar_t **argv) {
   using namespace grs::pc::sand;
   if (argc==2 && std::wstring_view(argv[1])==L"--help") {
     std::cout << "pc_sand_" << family << " --modules DIR [--source INPUT128.u32le [--source-timestamps|--source-timestamps-detail] [--source-prewarm]] [--steps N] [--angle-index N] "
-              << (kind==grs::g11vis::ParentKind::DM ? "[--archive FILE [--full]]" : "[--witness FILE] [--present]") << '\n';
+              << (kind==grs::g11vis::ParentKind::DM ? "[--archive FILE [--full]]" : "[--witness FILE] [--present]")
+              << " [--raw-envelope DIRECTORY]\n  --check-package DIRECTORY\n";
     return 0;
   }
-  try { std::cout << std::unitbuf; return Run(Args(argc,argv)); }
+  try {
+    std::cout << std::unitbuf;
+    if (argc==3 && std::wstring_view(argv[1])==L"--check-package")
+      return VulkanOwner::CheckRolePackage(argv[2]) ? 0 : 1;
+    const auto options=Args(argc,argv);
+    std::cout << "{\"stage\":\"ROLE_LAUNCH\",\"cwd\":" << std::quoted(std::filesystem::current_path().generic_u8string())
+              << ",\"argv\":[";
+    for (int i=0;i<argc;++i) {
+      if (i) std::cout << ',';
+      std::cout << std::quoted(std::filesystem::path(argv[i]).u8string());
+    }
+    std::cout << "]}\n";
+    return Run(options);
+  }
   catch (const std::exception &e) { std::cerr << family << " " << e.what() << '\n'; return 1; }
 }

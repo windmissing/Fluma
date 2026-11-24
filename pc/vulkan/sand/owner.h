@@ -91,6 +91,7 @@ class VulkanOwner {
   VulkanOwner &operator=(const VulkanOwner &)=delete;
   ~VulkanOwner();
   VkResult Open(const Context &,const std::filesystem::path &modules);
+  static bool CheckRolePackage(const std::filesystem::path &modules);
   // Caller holds the same resource generation through qualification and roots.
   // Uploads contain the original frozen seed, WORK/config and Common, retained through recording.
   BootReceipt Qualify(const StorageSlots &, const Slice &common,const Readback &,
@@ -101,6 +102,7 @@ class VulkanOwner {
                   const RootIdentity *diagnostic=nullptr);
   VkResult PrewarmSource(const StorageSlots &,const Slice &common);
   void FinishSourceDiagnostic(const RootReceipt &,bool accepted,uint64_t retireTimeoutNs);
+  VkResult ReadRawEnvelope(const RootReceipt &,const StorageSlots &,const Readback &,uint64_t timeoutNs);
   VkResult Retire(uint64_t timeoutNs);
   bool HasPendingWork() const { return inFlight_; }
   bool Eligible() const { return eligible_; }
@@ -142,6 +144,8 @@ class VulkanOwner {
   Slice sourceWarmCommon_{};
   std::array<VkDescriptorSet,std::size(kSource)> sourceWarmSets_{};
   bool sourceWarm_=false;
+  StorageSlots rawSubmittedStorage_{};
+  uint64_t rawSubmittedGeneration_=0;
   std::vector<Pipeline> pipelines_;
   std::unique_ptr<Prepared> prepared_;
   std::thread::id thread_;

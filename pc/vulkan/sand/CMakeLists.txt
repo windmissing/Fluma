@@ -12,18 +12,36 @@ endif()
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 set(ASSETS "${CMAKE_CURRENT_BINARY_DIR}/sand_assets")
 set(SAND_ROLE_VARIANT "baseline" CACHE STRING "PC sand SOURCE role set")
-execute_process(COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/../build_sand_roles.py"
-    "${SAND_FAMILY}" --compiler "${G13_GLSLANG}" --out "${ASSETS}" --role-variant "${SAND_ROLE_VARIANT}" COMMAND_ERROR_IS_FATAL ANY)
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/../build_sand_roles.py" "${CMAKE_CURRENT_SOURCE_DIR}/t913_roles.py"
-    "${CMAKE_CURRENT_SOURCE_DIR}/t913_split_roles.py")
+set(REPO "${CMAKE_CURRENT_SOURCE_DIR}/../../..")
+set(GPU "${REPO}/entry/src/main/cpp/gpu_resident")
+file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/sand_variant.txt" CONTENT "${SAND_FAMILY}/${SAND_ROLE_VARIANT}\n")
+file(GLOB_RECURSE ROLE_INPUTS CONFIGURE_DEPENDS
+    "${GPU}/g9dm/*.glsl" "${GPU}/g9dm/*.comp" "${GPU}/g9dm/*.json" "${GPU}/g9dm/*.h"
+    "${GPU}/g9spf/*.glsl" "${GPU}/g9spf/*.comp" "${GPU}/g9spf/*.h"
+    "${GPU}/g11vis/*.glsl" "${GPU}/g11vis/*.comp" "${GPU}/g11vis/*.h"
+    "${GPU}/acceptance_t647/*.glsl" "${GPU}/acceptance_t647/*.h"
+    "${REPO}/tools/glsl/*.py" "${REPO}/tools/g9dm/*.py")
+set(ROLE_HEADER "${ASSETS}/sand_passes.h")
+add_custom_command(OUTPUT "${ROLE_HEADER}" "${ASSETS}/roles.json"
+    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/../build_sand_roles.py"
+        "${SAND_FAMILY}" --compiler "${G13_GLSLANG}" --out "${ASSETS}" --role-variant "${SAND_ROLE_VARIANT}"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/sand_variant.txt" "${G13_GLSLANG}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../build_sand_roles.py" "${CMAKE_CURRENT_SOURCE_DIR}/t913_roles.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/t913_split_roles.py" "${GPU}/integer_primitives.glsl"
+        "${GPU}/g11vis/scene.cpp" "${REPO}/docs/architecture-T552-g9-seed-manifest-v2.json"
+        "${REPO}/docs/architecture-T660-g11-manifest-v2.json" "${REPO}/tools/g11/generate_contract.cjs"
+        "${REPO}/test/t566_generate_composite.cjs" ${ROLE_INPUTS}
+    VERBATIM)
+add_custom_target(sand_roles DEPENDS "${ROLE_HEADER}" "${ASSETS}/roles.json")
+set_source_files_properties(pass.cpp owner.cpp host.cpp host_device.cpp host_present.cpp angle_probe.cpp
+    ${SAND_FAMILY}.cpp PROPERTIES OBJECT_DEPENDS "${ROLE_HEADER}")
 set(VK_INCLUDE "${CMAKE_CURRENT_BINARY_DIR}/vk_include")
 file(COPY "${VULKAN_HEADERS}/vulkan" DESTINATION "${VK_INCLUDE}")
 if(IS_DIRECTORY "${VULKAN_HEADERS}/vk_video")
   file(COPY "${VULKAN_HEADERS}/vk_video" DESTINATION "${VK_INCLUDE}")
 endif()
-add_library(pc_sand_${SAND_FAMILY} STATIC pass.cpp owner.cpp ${SAND_FAMILY}.cpp)
-set(GPU "${CMAKE_CURRENT_SOURCE_DIR}/../../../entry/src/main/cpp/gpu_resident")
+add_library(pc_sand_${SAND_FAMILY} STATIC pass.cpp owner.cpp ${SAND_FAMILY}.cpp "${ROLE_HEADER}")
+add_dependencies(pc_sand_${SAND_FAMILY} sand_roles)
 target_sources(pc_sand_${SAND_FAMILY} PRIVATE "${GPU}/acceptance_t647/contract.cpp"
     "${GPU}/g9dm/completion_gate.cpp")
 target_compile_features(pc_sand_${SAND_FAMILY} PUBLIC cxx_std_17)

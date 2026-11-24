@@ -3,6 +3,7 @@
 #include "../../../entry/src/main/cpp/gpu_resident/program_cache/sha256.h"
 #include <algorithm>
 #include <fstream>
+#include <iomanip>
 #include <new>
 #include <iostream>
 #include <sstream>
@@ -48,13 +49,64 @@ bool SliceFits(const Slice &slice,VkDeviceSize bytes) {
          slice.offset%4==0 && bytes<=UINT64_MAX-slice.offset;
 }
 
-bool SameHash(const std::vector<uint32_t> &words,const char *sha) {
+std::string RoleDigest(const void *bytes,size_t length) {
   p011gpu::Sha256 digest;
-  digest.update(reinterpret_cast<const uint8_t*>(words.data()),words.size()*4);
+  if (length) digest.update(static_cast<const uint8_t*>(bytes),length);
   const auto raw=digest.finish();
   constexpr char hex[]="0123456789abcdef";
-  for (size_t i=0;i<raw.size();++i)
-    if (sha[i*2]!=hex[raw[i]>>4] || sha[i*2+1]!=hex[raw[i]&15]) return false;
+  std::string text;
+  for (const auto b:raw) { text+=hex[b>>4]; text+=hex[b&15]; }
+  return text;
+}
+
+bool ReadRoleFile(const std::filesystem::path &directory,const char *name,const char *sha,
+                  uint32_t opcode,size_t expected,std::vector<uint32_t> *module) {
+  const auto path=directory/name;
+  std::ifstream stream(path,std::ios::binary|std::ios::ate);
+  const auto size=stream.tellg();
+  const char *phase=nullptr;
+  std::string actual;
+  if (size<0) phase="FILE_OPEN";
+  else if (size>16*1024*1024) phase="FILE_LENGTH";
+  else {
+    std::vector<uint32_t> words((size_t(size)+3)/4);
+    stream.seekg(0);
+    if ((size && !stream.read(reinterpret_cast<char*>(words.data()),size)) ||
+        stream.peek()!=std::char_traits<char>::eof()) phase="FILE_READ";
+    else {
+      actual=RoleDigest(words.data(),size_t(size));
+      if (expected && size_t(size)!=expected) phase="FILE_LENGTH";
+      else if (actual!=sha) phase="FILE_SHA";
+      else if (expected && (expected%4 || words.empty() || words[0]!=0x07230203)) phase="FILE_MAGIC";
+      else if (module) *module=std::move(words);
+    }
+  }
+  std::cout << "{\"stage\":\"" << (phase?"ROLE_REJECT":"ROLE_FILE")
+            << "\",\"phase\":\"" << (phase?phase:"VERIFIED")
+            << "\",\"opcode\":" << opcode << ",\"path\":" << std::quoted(path.generic_u8string())
+            << ",\"expectedBytes\":" << expected << ",\"actualBytes\":" << (size<0?"null":std::to_string(size_t(size)))
+            << ",\"expectedSHA\":\"" << sha << "\",\"actualSHA\":" << (actual.empty()?"null":"\""+actual+"\"")
+            << ",\"moduleVkResult\":null,\"pipelineVkResult\":null}\n";
+  return !phase;
+}
+
+bool ReadRolePackage(const std::filesystem::path &directory,std::vector<std::vector<uint32_t>> &roles) {
+  std::cout << "{\"stage\":\"OWNER_ROLE_SET\",\"family\":\"" << kSandFamily
+            << "\",\"variant\":\"" << kRoleVariant << "\",\"roleSetSHA\":\"" << kRoleSetSHA
+            << "\",\"manifestSHA\":\"" << kRoleManifestSHA << "\",\"sourceDispatches\":" << std::size(kSource)
+            << ",\"quantumDispatches\":" << std::size(kQuantum) << ",\"roles\":" << std::size(kModules) << "}\n";
+  // Read the owner table first, so a mixed module is identified down to its role even
+  // when the accompanying manifest also differs. No Vulkan call consumes a partial package.
+  roles.resize(std::size(kModules));
+  for (size_t i=0;i<std::size(kModules);++i) {
+    const auto &m=kModules[i];
+    if (!ReadRoleFile(directory,m.name,m.sha,m.opcode,m.bytes,&roles[i])) return false;
+  }
+#ifdef PC_SAND_G11_R1
+  for (const auto &m:kGraphicsModules)
+    if (!ReadRoleFile(directory,m.name,m.sha,0,m.bytes,nullptr)) return false;
+#endif
+  if (!ReadRoleFile(directory,"roles.json",kRoleManifestSHA,0,0,nullptr)) return false;
   return true;
 }
 
@@ -101,6 +153,11 @@ struct VulkanOwner::Prepared {
 };
 
 VulkanOwner::VulkanOwner()=default;
+
+bool VulkanOwner::CheckRolePackage(const std::filesystem::path &directory) {
+  std::vector<std::vector<uint32_t>> roles;
+  return ReadRolePackage(directory,roles);
+}
 
 const char *VulkanOwner::RootModuleSHA(Root root) const {
   const auto op=root==Root::Source ? kSource[std::size(kSource)-1].opcode : kQuantum[std::size(kQuantum)-1].opcode;
@@ -269,6 +326,8 @@ VkResult VulkanOwner::Open(const Context &context,const std::filesystem::path &d
   if (api_ || !context.device || !context.queue || !context.load ||
       context.limits.maxStorageBufferRange<arenaBytes || context.limits.maxUniformBufferRange<kCommonBytes)
     return VK_ERROR_INITIALIZATION_FAILED;
+  std::vector<std::vector<uint32_t>> roles;
+  if (!ReadRolePackage(directory,roles)) return VK_ERROR_INITIALIZATION_FAILED;
   context_=context;
   thread_=std::this_thread::get_id();
   api_=new (std::nothrow) Api;
@@ -293,6 +352,18 @@ VkResult VulkanOwner::Open(const Context &context,const std::filesystem::path &d
   constexpr uint32_t push=20;
 #endif
   const VkPushConstantRange pushRange{VK_SHADER_STAGE_COMPUTE_BIT,0,push};
+  std::array<uint32_t,23> layoutWords{};
+  for (size_t i=0;i<set.size();++i) {
+    const auto &b=set[i];
+    layoutWords[i*4]=b.binding;
+    layoutWords[i*4+1]=b.descriptorType;
+    layoutWords[i*4+2]=b.descriptorCount;
+    layoutWords[i*4+3]=b.stageFlags;
+  }
+  layoutWords[20]=pushRange.offset;
+  layoutWords[21]=pushRange.size;
+  layoutWords[22]=kCommonBytes;
+  const auto layoutSHA=RoleDigest(layoutWords.data(),sizeof(layoutWords));
   VkPipelineLayoutCreateInfo pipelineLayout{};
   pipelineLayout.sType=VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
   pipelineLayout.setLayoutCount=1;
@@ -302,19 +373,19 @@ VkResult VulkanOwner::Open(const Context &context,const std::filesystem::path &d
   r=api_->CreatePipelineLayout(context.device,&pipelineLayout,nullptr,&layout_);
   if (r!=VK_SUCCESS) return r;
   pipelines_.reserve(std::size(kModules));
-  for (const auto &entry:kModules) {
-    if (!entry.bytes || entry.bytes%4) return VK_ERROR_INITIALIZATION_FAILED;
-    std::vector<uint32_t> words(entry.bytes/4);
-    std::ifstream stream(directory/std::filesystem::path(entry.name),std::ios::binary);
-    if (!stream.read(reinterpret_cast<char*>(words.data()),entry.bytes) ||
-        stream.peek()!=std::char_traits<char>::eof() || !SameHash(words,entry.sha) || words[0]!=0x07230203)
-      return VK_ERROR_INITIALIZATION_FAILED;
+  for (size_t i=0;i<std::size(kModules);++i) {
+    const auto &entry=kModules[i];
+    const auto &words=roles[i];
     VkShaderModuleCreateInfo moduleInfo{};
     moduleInfo.sType=VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     moduleInfo.codeSize=entry.bytes;
     moduleInfo.pCode=words.data();
     VkShaderModule module=VK_NULL_HANDLE;
+    const auto moduleEnter=pc::TimeNs();
     r=api_->CreateShaderModule(context.device,&moduleInfo,nullptr,&module);
+    std::cout << "{\"stage\":\"ROLE_SHADER_MODULE\",\"opcode\":" << entry.opcode
+              << ",\"enterNs\":\"" << moduleEnter << "\",\"exitNs\":\"" << pc::TimeNs()
+              << "\",\"moduleVkResult\":" << int(r) << "}\n";
     if (r!=VK_SUCCESS) return r;
     VkComputePipelineCreateInfo info{};
     info.sType=VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
@@ -324,7 +395,14 @@ VkResult VulkanOwner::Open(const Context &context,const std::filesystem::path &d
     info.stage.pName="main";
     info.layout=layout_;
     VkPipeline pipeline=VK_NULL_HANDLE;
+    const auto buildEnter=pc::TimeNs();
+    std::cout << "{\"stage\":\"ROLE_PIPELINE_ENTER\",\"opcode\":" << entry.opcode
+              << ",\"flags\":" << info.flags << ",\"cache\":null,\"pushBytes\":" << push
+              << ",\"commonBytes\":" << kCommonBytes << ",\"layoutSHA\":\"" << layoutSHA
+              << "\",\"enterNs\":\"" << buildEnter << "\"}\n";
     r=api_->CreateComputePipelines(context.device,VK_NULL_HANDLE,1,&info,nullptr,&pipeline);
+    std::cout << "{\"stage\":\"ROLE_PIPELINE_EXIT\",\"opcode\":" << entry.opcode
+              << ",\"exitNs\":\"" << pc::TimeNs() << "\",\"pipelineVkResult\":" << int(r) << "}\n";
     api_->DestroyShaderModule(context.device,module,nullptr);
     if (r!=VK_SUCCESS) return r;
     pipelines_.push_back({entry.opcode,pipeline});
@@ -484,6 +562,33 @@ VkResult VulkanOwner::Retire(uint64_t timeoutNs) {
   if (result==VK_SUCCESS || result==VK_ERROR_DEVICE_LOST) inFlight_=false;
   if (result==VK_ERROR_DEVICE_LOST) eligible_=false;
   return result;
+}
+
+VkResult VulkanOwner::ReadRawEnvelope(const RootReceipt &root,const StorageSlots &storage,
+                                    const Readback &staging,uint64_t timeout) {
+  const auto same=[](const Slice &a,const Slice &b) {
+    return a.buffer==b.buffer && a.offset==b.offset && a.bytes==b.bytes && a.generation==b.generation;
+  };
+  if (!opened_ || !OnOwner() || !eligible_ || !root.generation || root.generation!=generation_ ||
+      root.generation!=rawSubmittedGeneration_ || !root.fence || root.fence!=fence_ ||
+      !std::equal(storage.begin(),storage.end(),rawSubmittedStorage_.begin(),same) || !staging.words || !timeout)
+    return VK_ERROR_INITIALIZATION_FAILED;
+  auto result=inFlight_ ? Retire(timeout) : api_->WaitForFences(context_.device,1,&fence_,VK_TRUE,0);
+  if (result!=VK_SUCCESS) return result;
+  std::array<CopySpan,8> copies{};
+  VkDeviceSize total=0;
+  for (size_t i=0;i<copies.size();++i) {
+    if (total>staging.buffer.bytes || storage[i].bytes>staging.buffer.bytes-total)
+      return VK_ERROR_INITIALIZATION_FAILED;
+    copies[i]={storage[i],total};
+    total+=storage[i].bytes;
+  }
+  if ((result=Begin(nullptr,0))!=VK_SUCCESS) return result;
+  if (!RecordReadback(api_->CmdPipelineBarrier,api_->CmdCopyBuffer,command_,staging.buffer,copies.data(),copies.size()) ||
+      !MakeHostVisible(api_->CmdPipelineBarrier,command_,staging.buffer))
+    return VK_ERROR_INITIALIZATION_FAILED;
+  if ((result=Submit())!=VK_SUCCESS || (result=Retire(timeout))!=VK_SUCCESS) return result;
+  return MapReady(staging,total);
 }
 
 void VulkanOwner::ReportSourceGpu(const char *state,VkResult retired,bool accepted) {
@@ -701,7 +806,7 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
     const Readback &readback,const Upload *uploads,size_t count,const std::function<bool()> &current,
     uint64_t deadline,const std::function<uint64_t()> &now,const Capture *capture,const RootIdentity *diagnostic) {
   RootReceipt result;
-  const bool trace=root==Root::Source && diagnostic;
+  const bool trace=diagnostic!=nullptr;
   auto &timing=result.timing;
   auto *timeline=trace ? &timing : nullptr;
   const auto stopped=[&](const char *reason,uint64_t at) { timing.stop=reason; timing.stopNs=at; };
@@ -737,7 +842,7 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
       if (!SliceFits(capture->discovery[i],arenaBytes)) return result;
   }
 #endif
-  const bool timestamps=trace && sourceQueries_;
+  const bool timestamps=root==Root::Source && trace && sourceQueries_;
   const bool detail=timestamps && context_.sourceDetail;
   const auto measure=context_.sourceDetail ? timeline : nullptr;
   const auto same=[](const Slice &a,const Slice &b) {
@@ -890,7 +995,9 @@ VulkanOwner::RootReceipt VulkanOwner::Run(Root root,const StorageSlots &storage,
     if (trace) stopped("SUBMIT_RESULT",now());
     return result;
   }
-  if (trace) submittedSource_=*diagnostic;
+  rawSubmittedStorage_=storage;
+  rawSubmittedGeneration_=result.generation;
+  if (source && trace) submittedSource_=*diagnostic;
   uint64_t fenceNs=0;
   for (;;) {
     const auto at=now();
