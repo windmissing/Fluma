@@ -363,6 +363,7 @@ private:
   VkQueryPool m1TimingPool=VK_NULL_HANDLE;
   VkFence m1TimedFence=VK_NULL_HANDLE;
   uint64_t m1TimedNonce=0,m1TimingMask=0;
+  bool m1TimedSource=false;
   uint32_t m1TimingBits=0;
   float m1TimingPeriod=0;
   PFN_vkDestroyQueryPool m1DestroyTiming=nullptr;
@@ -379,7 +380,9 @@ private:
   void M1RootTrace(const char *,uint64_t,const m1::ProgressClockV2 &,const m1::PlanGrantV2 &,
                    const grs::AcceptedRoot &,const M1WaitLog &);
   struct M1Retirement { uint64_t nonce=0,exitQpc=0; bool submitted=false,proven=false; } m1Retirement;
+  pc::M1FenceIdentity m1PendingRetirement;
   void RetireM1Root(m1::SourceRootOwner &,uint64_t,M1WaitLog &);
+  bool AwaitM1Retirement(m1::SourceRootOwner &,const grs::AcceptedRoot &,const PublicationLease &,uint32_t);
   bool D1Ended() const { return attempt.m1D1 && attempt.d1Intake->Snapshot().ns; }
   void SubmitM1Root(const VkSubmitInfo &,uint64_t,uint64_t,uint64_t,M1WaitLog &);
   VkResult d1FenceResult=VK_NOT_READY;

@@ -10,7 +10,9 @@ ControlCode SourceRootOwner::Initialize(const Identity& id,uint32_t k,uint32_t k
  if((k!=192&&k!=512)||(kw!=64&&kw!=128))return ControlCode::UNSUPPORTED_FEATURE;
  if(state==FlightState::Submitted||state==FlightState::Quarantined)return ControlCode::BUSY;for(const auto& p:pubs)if(p.leased||p.releasePending)return ControlCode::BACKPRESSURE;
  for(U64 v:{id.run,id.owner,id.context,id.surface,id.geometry,id.config})if(!(v.lo|v.hi))return ControlCode::INVALID_INPUT;
- identity=id;K=k;Kw=kw;fullWaterContract=profile==Profile::FullM1;header={};header[0]=1213420103;header[1]=2;header[2]=256;put(header,4,id.run);put(header,6,id.owner);put(header,8,id.context);put(header,10,id.surface);put(header,20,id.geometry);put(header,22,id.config);
+ if(profile==Profile::FullM1GroupSort&&(k!=192||kw!=128))return ControlCode::INVALID_INPUT;
+ identity=id;K=k;Kw=kw;fullWaterContract=profile!=Profile::SourceCore;groupSort=profile==Profile::FullM1GroupSort;
+ header={};header[0]=1213420103;header[1]=2;header[2]=256;put(header,4,id.run);put(header,6,id.owner);put(header,8,id.context);put(header,10,id.surface);put(header,20,id.geometry);put(header,22,id.config);
  for(size_t i=24;i<=26;i++)header[i]=1;for(size_t i=27;i<=30;i++)header[i]=2;header[31]=3;header[39]=header[40]=1;header[43]=K;header[44]=Kw;header[77]=1;header[78]=2;header[84]=1;header[122]=header[124]=header[125]=1;header[123]=65536;
  for(size_t i=0;i<8;i++){header[88+i]=id.shaderSha[i];header[96+i]=id.angleSha[i];header[104+i]=id.layoutSha[i];}
  bank=0;lastNonce={};pubs[0]={};pubs[1]={};tombstone=false;mapped=accepted=0;state=FlightState::Idle;return ControlCode::OK;

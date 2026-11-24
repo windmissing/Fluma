@@ -1,14 +1,19 @@
 param(
     [switch]$Baseline,
     [switch]$SandOnly,
+    [switch]$T926,
+    [switch]$FastCandidate,
+    [switch]$MatchSingleQuantum,
+    [switch]$StageTiming,
     [switch]$CheckOnly
 )
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $local = Join-Path $root '.codex/local-test'
-$exe = Join-Path $local 't918-ninja/hello_world_pc.exe'
-$profile = if ($Baseline) { 't830-m1-20261123' } else { 't918-shaders' }
+if ($FastCandidate -and $Baseline) { throw 'FastCandidate requires the compact profile.' }
+$exe = Join-Path $local $(if ($T926 -or $FastCandidate) { 't926-ninja/hello_world_pc.exe' } else { 't918-ninja/hello_world_pc.exe' })
+$profile = if ($Baseline) { 't830-m1-20261123' } elseif ($FastCandidate) { 't926-shaders' } else { 't918-shaders' }
 $shaders = Join-Path $local $profile
 $modules = @('full_source.spv', 'quantum_candidate.spv', 'quantum_commit.spv') |
     ForEach-Object { Join-Path $shaders $_ }
@@ -17,7 +22,10 @@ foreach ($path in @($exe) + $modules) {
         throw "Missing T918 artifact: $path"
     }
 }
-$launch = @('--m1-window') + $modules + @('--m1-one-quantum-grant', '--m1-source-trace')
+$launch = @('--m1-window') + $modules + @('--m1-source-trace')
+if (-not $FastCandidate -or $MatchSingleQuantum) { $launch += '--m1-one-quantum-grant' }
+if ($FastCandidate) { $launch += '--m1-inventory-v1' }
+if ($StageTiming) { $launch += '--m1-stage-timing' }
 if ($Baseline) {
     $launch += @('--m1-empty-preview', '--m1-manual-gravity')
 } else {
@@ -29,10 +37,17 @@ if ($CheckOnly) {
     return
 }
 
-$log = Join-Path $local ('t918-demo-' + [Guid]::NewGuid().ToString('N'))
+$runName = if ($T926 -or $FastCandidate) { 't926-demo-' } else { 't918-demo-' }
+$log = Join-Path $local ($runName + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $log | Out-Null
 $stdout = Join-Path $log 'demo.jsonl'
-[ordered]@{ exe = $exe; profile = $profile; argv = $launch; cwd = $root } |
+[ordered]@{
+    exe = $exe
+    profile = $profile
+    argv = $launch
+    cwd = $root
+    artifacts = @(Get-FileHash -LiteralPath (@($exe) + $modules))
+} |
     ConvertTo-Json | Set-Content -LiteralPath (Join-Path $log 'launch.json') -Encoding utf8
 $start = @{
     FilePath = $exe

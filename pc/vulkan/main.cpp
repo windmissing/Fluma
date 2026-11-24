@@ -43,6 +43,8 @@ struct Window {
   grs::pc::M1Gravity gravity;
   grs::pc::M1GravityDisplay gravityDisplay;
   std::wstring gravityCaption;
+  enum class M1IntakeState { Normal, Retiring, Fault };
+  M1IntakeState m1IntakeState=M1IntakeState::Normal;
   grs::pc::M1Observation observation;
   uint32_t material=0;
   std::wstring t849WriteFile;
@@ -397,8 +399,10 @@ struct Window {
   }
 
   void ResumeHeld(uint64_t session,uint64_t retired,const grs::g13vk::M1Pulse &baseline) {
-    if (!heldRecovery.oldSession) return;
-    if (session<=heldRecovery.oldSession || !retired || !grs::g13vk::SourcePulseAfter(baseline,session,retired)) {
+    if (!heldRecovery.oldSession || !heldRecovery.hold || session<=heldRecovery.oldSession || !retired ||
+        !grs::g13vk::SourcePulseAfter(baseline,session,retired)) {
+      Emit("{\"stage\":\"M1_INPUT_WAIT_NEW_DOWN\",\"geometry\":\""+std::to_string(generation)+
+           "\",\"session\":\""+std::to_string(session)+"\",\"retiredQpc\":\""+std::to_string(retired)+"\"}");
       CancelHeld();
       return;
     }
@@ -413,6 +417,7 @@ struct Window {
     if (!held.hold || held.hold!=heldRecovery.hold || generation!=heldRecovery.geometry ||
         scope.run!=heldRecovery.run || held.material!=heldRecovery.material || material!=held.material ||
         held.clientX<0 || held.clientX>=width || held.clientY<0 || held.clientY>=height || GetCapture()!=hwnd) {
+      HoldRecoveryTrace("WAIT_NEW_DOWN",pulse.session,grs::pc::QpcTicks());
       CancelHeld();
       return;
     }
@@ -432,6 +437,7 @@ struct Window {
     if (IsIconic(hwnd)) width = height = 0;
     dpi = GetDpiForWindow(hwnd);
     ++generation;
+    m1IntakeState=M1IntakeState::Normal;
     gravity={generation};
     compactRequestAtLimit=false;
     pointerReady = false;
@@ -551,21 +557,25 @@ struct Window {
   }
 
   void UpdateGravityCaption() {
-    if (!m1GravityEnabled) return;
+    if (m1QuantumCandidate.empty()) return;
     std::wostringstream title;
     title.setf(std::ios::fixed,std::ios::floatfield);
     title.precision(1);
     {
       std::lock_guard lock(mutex);
-      const bool accepted=gravityDisplay.accepted && gravityDisplay.geometry==generation;
-      title << (m1Compact ? L"盒体预览 " : L"重力  请求 ") << (gravity.geometry==generation ? gravity.angle/256. : 0.) << L"°";
-      if (compactRequestAtLimit) title << L"  请求到边界";
-      if (accepted) title << L"  实际 " << gravityDisplay.actual/256. << L"°";
-      if (accepted && gravityDisplay.stale) title << L"  上一有效帧";
-      if (accepted && gravityDisplay.limited) title << L"  床形限制";
-      if (!accepted || gravityDisplay.sequence!=gravity.sequence) title << L"  待应用";
+      if (m1GravityEnabled) {
+        const bool accepted=gravityDisplay.accepted && gravityDisplay.geometry==generation;
+        title << (m1Compact ? L"盒体预览 " : L"重力  请求 ") << (gravity.geometry==generation ? gravity.angle/256. : 0.) << L"°";
+        if (compactRequestAtLimit) title << L"  请求到边界";
+        if (accepted) title << L"  实际 " << gravityDisplay.actual/256. << L"°";
+        if (accepted && gravityDisplay.stale) title << L"  上一有效帧";
+        if (accepted && gravityDisplay.limited) title << L"  床形限制";
+        if (!accepted || gravityDisplay.sequence!=gravity.sequence) title << L"  待应用";
+        title << L"  |  R 重力回正";
+      } else title << L"HelloWorld Vulkan M1";
+      if (m1IntakeState==M1IntakeState::Retiring) title << L"  |  GPU 退役中，暂停入料";
+      if (m1IntakeState==M1IntakeState::Fault) title << L"  |  GPU 退役故障，请重启";
     }
-    title << L"  |  R 重力回正";
     const auto caption=title.str();
     if (caption!=gravityCaption) {
       gravityCaption=caption;
@@ -701,6 +711,8 @@ struct Window {
                                                    Emit(readyReceipt);
                                                    pointerReadyQpc=grs::pc::QpcTicks();
                                                    pointerReady = true;
+                                                   m1IntakeState=M1IntakeState::Normal;
+                                                   PostMessageW(hwnd,kM1GravityCaption,0,0);
                                                    if (!d1Mode.empty() && !d1ReadyNs) {
                                                      d1ReadyScope=scope;
                                                      d1ReadyNs=grs::pc::TimeNs();
@@ -780,6 +792,15 @@ struct Window {
                                                },g13CompileTrace,m1Compact},
           [&](const std::string &report) {
             Emit(report);
+            const bool retiring=report.find("\"stage\":\"M1_RETIRE_PENDING\"")!=std::string::npos;
+            const bool retireFailed=report.find("\"stage\":\"M1_RETIRE_FAILED\"")!=std::string::npos;
+            if (retiring || retireFailed) {
+              std::lock_guard guard(mutex);
+              if (generation==previous && !closing) {
+                m1IntakeState=retiring ? M1IntakeState::Retiring : M1IntakeState::Fault;
+                PostMessageW(hwnd,kM1GravityCaption,0,0);
+              }
+            }
             if (report.find("\"state\":\"M1_QUANTUM_PRESENT_QUEUED\"")!=std::string::npos)
               m1Shown.fetch_add(1,std::memory_order_relaxed);
             if (report.find("\"state\":\"BOOT_DIAGNOSTIC_PRESENT_QUEUED\"") != std::string::npos ||
@@ -1060,7 +1081,7 @@ int wmain(int argc, wchar_t **argv) {
   if ((window.g13TailTiming || window.g13SealV1) && window.t877Mode.empty()) return 2;
   if ((window.m1StageTiming || window.m1InventoryV1) && window.m1QuantumCandidate.empty()) return 2;
   if (window.m1AngleWitness && (window.m1QuantumCandidate.empty() || window.m1InventoryV1)) return 2;
-  if (window.m1Compact && (window.m1InventoryV1 || window.m1AngleWitness || window.observation.packetId)) return 2;
+  if (window.m1Compact && (window.m1AngleWitness || window.observation.packetId)) return 2;
   if (window.observation.series && !window.d1Mode.empty()) return 2;
   if (window.observation.packetId && !window.dualSource) return 2;
   if (window.m1Kappa==0 && (!window.dualSource || !window.observation.frame)) return 2;

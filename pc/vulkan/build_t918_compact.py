@@ -14,7 +14,27 @@ def once(text, old, new):
     return text.replace(old, new)
 
 
-def build(assembled, compiler, out):
+def fast_candidate(root):
+    directory = Path(__file__).parent
+    inventory = (directory / "m1_inventory_v1.glsl").read_text()
+    inventory = once(inventory, "if(malformed||s>CQ||w>CQ-s||",
+                     "if(malformed||s>CQ||w>CQ-s||((c<compactFirst||c>=compactEnd)&&s+w+j+p!=0u)||")
+    start, end = root.index("bool inventory(){"), root.index("void prepare(){")
+    root = root[:start] + inventory + root[end:]
+    group_sort = (directory / "m1_group_sort.glsl").read_text()
+    root = once(root, "void candidateMain(){", group_sort + "\nvoid candidateMain(){")
+    for init, stage, offset, count, ns, arrival in (
+        (6, 7, "uSandIndex", "uPad", "0u", "false"),
+        (8, 9, "uWaterIndex", "uKw", "1u", "false"),
+        (16, 17, "uArrivalIndex", "uKw", "1u", "true"),
+    ):
+        original = (f"if(uPass=={init}u){{if(i<{count})W[{offset}+i]=i;return;}}"
+                    f"if(uPass=={stage}u){{sortIndex(i,{offset},{count},{ns},{arrival});return;}}")
+        root = once(root, original, f"if(uPass=={stage}u){{groupSort({offset},{count},{ns},{arrival});return;}}")
+    return root
+
+
+def build(assembled, compiler, out, optimized=False):
     header = Path(__file__).with_name("m1_compact.h").read_text()
     lo, hi, height = (int(re.search(rf"\b{name}=(\d+);", header)[1]) for name in
                       ("kCompactFirstColumn", "kCompactEndColumn", "kCompactHeight"))
@@ -53,7 +73,13 @@ def build(assembled, compiler, out):
     root = once(root, "&&from<128u&&to<128u&&ev(row,0u)", "&&from>=compactFirst&&from<compactEnd&&"
                 "to>=compactFirst&&to<compactEnd&&ev(row,0u)")
     roles = {"full_source": compile_stage(compiler, Path("full_source.comp"), out, raw=source.encode(), bounded=True)}
-    for name, passes, raw in quantum_units(root.encode()):
+    units = list(quantum_units(root.encode()))
+    if optimized:
+        candidate = next(quantum_units(fast_candidate(root).encode()))
+        if candidate[0] != "quantum_candidate" or units[0][0] != candidate[0]:
+            raise ValueError("COMPACT_CANDIDATE_ROLE")
+        units[0] = candidate
+    for name, passes, raw in units:
         roles[name] = dict(compile_stage(compiler, Path(name + ".comp"), out, raw=raw, bounded=True), passes=passes)
     if roles["quantum_candidate"]["offsets"] != roles["quantum_commit"]["offsets"]:
         raise ValueError("COMPACT_UNIFORM_LAYOUT")
@@ -67,5 +93,6 @@ if __name__ == "__main__":
     parser.add_argument("--assembled", required=True, type=Path)
     parser.add_argument("--compiler", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--fast-candidate", action="store_true")
     args = parser.parse_args()
-    build(args.assembled, args.compiler, args.out)
+    build(args.assembled, args.compiler, args.out, args.fast_candidate)

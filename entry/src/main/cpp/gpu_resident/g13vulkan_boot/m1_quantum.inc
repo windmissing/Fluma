@@ -41,6 +41,7 @@ constexpr const char *timingPoints[]{
     "MOTION_DONE","BED_DONE","ARRIVAL_SORT_DONE","ARRIVE_DONE","FINAL_AUDIT_DONE",
     "REPLAY_BEGIN","REPLAY_DONE","PACK_DONE","SEAL_DONE","TAIL_COPY_DONE"};
 constexpr uint32_t timingStages[]{1,4,5,9,11,14,17,18,19,21,24,25,27};
+constexpr const char *sourceTimingPoints[]{"ROOT_BEGIN","UPLOAD_DONE","SOURCE_PASSES_DONE","TAIL_COPY_DONE"};
 }
 
 void Boot::ReportM1Timing(VkResult retired,bool accepted) {
@@ -50,13 +51,16 @@ void Boot::ReportM1Timing(VkResult retired,bool accepted) {
   std::ostringstream row;
   row << "{\"stage\":\"M1_GPU_TIMESTAMPS\",\"run\":\"" << m1Run << "\",\"geometry\":\"" << attempt.geometry
       << "\",\"nonce\":\"" << m1TimedNonce << "\",\"fence\":\"" << reinterpret_cast<uintptr_t>(m1TimedFence)
-      << "\",\"queue\":\"" << reinterpret_cast<uintptr_t>(queue)
+      << "\",\"kind\":" << Quote(m1TimedSource ? "SOURCE" : "QUANTUM")
+      << ",\"queue\":\"" << reinterpret_cast<uintptr_t>(queue)
       << "\",\"pool\":\"" << reinterpret_cast<uintptr_t>(m1TimingPool)
       << "\",\"acceptedRoot\":" << (accepted ? Quote(std::to_string(m1TimedNonce)) : "null")
       << ",\"fenceVkResult\":" << int(retired) << ",\"validBits\":" << m1TimingBits
       << ",\"periodNs\":" << m1TimingPeriod << ",\"points\":[";
   bool comma=false;
-  for (uint32_t i=0;i<std::size(m1pc::timingPoints);++i) {
+  const auto points=m1TimedSource ? m1pc::sourceTimingPoints : m1pc::timingPoints;
+  const auto count=m1TimedSource ? std::size(m1pc::sourceTimingPoints) : std::size(m1pc::timingPoints);
+  for (uint32_t i=0;i<count;++i) {
     if (!(m1TimingMask&(uint64_t{1}<<i))) continue;
     Point value;
     const auto result=readable ? m1ReadTiming(device,m1TimingPool,i,1,sizeof(value),&value,sizeof(value),
@@ -64,7 +68,7 @@ void Boot::ReportM1Timing(VkResult retired,bool accepted) {
     const bool available=result==VK_SUCCESS && value.available;
     if (comma) row << ',';
     comma=true;
-    row << "{\"point\":" << Quote(m1pc::timingPoints[i]) << ",\"vkResult\":" << int(result)
+    row << "{\"point\":" << Quote(points[i]) << ",\"vkResult\":" << int(result)
         << ",\"available\":" << (available ? "true" : "false")
         << ",\"tick\":" << (available ? Quote(std::to_string(value.tick)) : "null") << '}';
   }
@@ -75,7 +79,9 @@ void Boot::ReportM1Timing(VkResult retired,bool accepted) {
 void Boot::PrepareM1Quantum(const Candidate &candidate) {
   using namespace m1pc;
   auto &passes=m1QuantumPasses;
-  m1::EachQuantumPass(stateWords, pad, kw, [&](m1::QuantumPassOp p) { passes.push_back(p); });
+  const bool groupSort=attempt.m1Compact && attempt.m1InventoryV1;
+  Require(!groupSort || candidate.properties.limits.maxComputeSharedMemorySize>=4096,"M1_GROUP_SORT_SHARED_LIMIT");
+  m1::EachQuantumPass(stateWords, pad, kw, [&](m1::QuantumPassOp p) { passes.push_back(p); },groupSort);
   const auto &limits = candidate.properties.limits;
   if (attempt.m1StageTiming) {
     VkResult created=VK_NOT_READY;
@@ -328,7 +334,8 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   log.recordEnd=pc::QpcTicks();
   const auto reject=[&] {
     log.stopQpc=pc::QpcTicks();
-    if (!SuspendM1Hold(clock,root)) attempt.disarmM1Input();
+    if (SuspendM1Hold(clock,root)) clock.Revoke(m1Reject);
+    else attempt.disarmM1Input();
     RetireM1Root(root,nonce,log);
     if (!inFlight) ReportM1Timing(log.retireEnter ? log.retire : log.last,false);
     fields << ",\"m1QuantumReject\":" << Quote(m1Reject);
@@ -350,6 +357,7 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   if (m1TimingPool) {
     m1TimedNonce=nonce;
     m1TimedFence=fence;
+    m1TimedSource=false;
   }
   M1BusyFence busy{attempt.hotCapture,M1HotCapture::Phase::QuantumFence,nonce};
   m1Reject=AwaitM1Fence(deadline,guard,log);
@@ -396,6 +404,11 @@ bool Boot::RunM1Quantum(const Candidate &candidate, m1::SourceRootOwner &root,
   if (m1Reject) return reject();
   log.stopQpc=pc::QpcTicks();
   M1RootTrace("Quantum",nonce,clock,permit,accepted,log);
+  if (attempt.m1StageTiming)
+    fields << ",\"m1QuantumWork\":{\"baseSand\":" << previous[88] << ",\"baseWater\":" << previous[90]
+           << ",\"liveSand\":" << tail[88] << ",\"liveWater\":" << tail[90]
+           << ",\"events\":" << tail[53]-tail[52] << ",\"motionRows\":" << tail[155]
+           << ",\"arrivalRows\":" << tail[156] << ",\"dispatches\":" << count << '}';
   if (attempt.m1Observation.packetId) {
     m1PacketSample={};
     const auto &packet=buffers[kM1PacketStaging];
