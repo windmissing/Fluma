@@ -70,7 +70,7 @@
       ]
     },
     "one_grant_comparison": {
-      "admissions": 38,
+      "admissions": 37,
       "finalStock": "4837378",
       "liveRange": [
         2,
@@ -88,9 +88,9 @@
         "1": 77
       },
       "retired": true,
-      "contrast": "one-grant mode (cap=1): 38 admissions in 5s hold, stock 132706→4,837,378, liveS 2→61 — physics rearm independent of source permits (T899 A) enables far more admission opportunities vs default cap=4 (3 admissions/8s)"
+      "contrast": "one-grant mode (cap=1): 37 admissions in 5s hold, stock 132706→4,837,378, liveS 2→61 — physics rearm independent of source permits (T899 A) enables far more admission opportunities vs default cap=4 (2 admissions/8s)"
     },
-    "verdict": "持续落沙 PROVEN: single 8s hold → 3 SOURCE admissions (134156+134915=269071 Q); UP with NO new Down → liveSand 4→2→0 (observable settle to zero, stock constant 269071) over 26s window; 1 autonomous recovery (ROOT_DEADLINE, balanced, 5 credits returned) + M1_STALE_WAIT_REAL_PULSE (T899 new state); 584 quanta, clean RETIRED, conservation all frames."
+    "verdict": "持续落沙 PROVEN: single 8s hold → 2 SOURCE admissions (134156+134915=269071 Q); UP with NO new Down → liveSand 4→2→0 (observable settle to zero, stock constant 269071) over 26s window; 1 autonomous recovery (ROOT_DEADLINE, balanced, 5 credits returned) + M1_STALE_WAIT_REAL_PULSE (T899 new state); 584 quanta, clean RETIRED, conservation all frames."
   },
   "subB": {
     "slotEvidence": {

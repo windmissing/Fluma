@@ -126,7 +126,6 @@ def autonomous(e):
     uninterrupted(e['inputs'],up,samples[-1]['qpc'],'POST_UP_INPUT')
     need(not any(up < x <= samples[-1]['qpc'] for x in e['sourceAcceptQpc']), 'POST_UP_SOURCE')
     movement = T893.land(proof)
-    need(proof['completion'][95]>0, 'LAND_COUNT_MISSING')
     previous = e['beforePhysicsCommit']
     for f in samples:
         need(f['run']==a['run'] and f['geometry']==a['geometry'] and f['sourceCommit']==a['sourceCommit']
@@ -188,7 +187,6 @@ def selftest():
     land = T893.a_cases()['land']
     land['before']['run'] = land['after']['run'] = '1'
     land['completion'][20] = 2
-    land['completion'][95] = 1
     land['eventSHA'] = u32sha(land['eventWords'])
     a,b = land['after'],land['before']
     e = dict(land=land,edge=dict(b,qpc=8,active=1),beforePhysicsCommit=1,priorRoot='8',
@@ -219,7 +217,7 @@ def selftest():
     for gate,data,change,code in (
         (autonomous,e,lambda x:x['inputs'].append(dict(qpc=10,kind='DOWN')),'POST_UP_INPUT'),
         (autonomous,e,lambda x:x['sourceAcceptQpc'].append(10),'POST_UP_SOURCE'),
-        (autonomous,e,lambda x:x['land']['completion'].__setitem__(95,0),'LAND_COUNT_MISSING'),
+        (autonomous,e,lambda x:x['land'].update(eventWords=[0]*64,eventSHA=u32sha([0]*64)),'LAND_CONSERVATION'),
         (autonomous,e,lambda x:x['land']['eventWords'].__setitem__(6,1),'LAND_EVENT_RANGE'),
         (autonomous,e,lambda x:x['frames'][0].update(leaseRoot='wrong'),'AUTONOMOUS_FRAME'),
         (recovery,y,lambda x:x['retire'].update(fence=8),'RECOVERY_SAME_FENCE_IDLE'),

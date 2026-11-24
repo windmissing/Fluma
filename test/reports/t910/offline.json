@@ -1,0 +1,325 @@
+{
+  "synthetic": {
+    "land": {
+      "count": 1,
+      "massQ20": 40,
+      "bedEdgeCount": 0
+    },
+    "roi": {
+      "firstVisibleRoot": 10,
+      "settledRoot": 11,
+      "retainedUntil": 3000000000
+    },
+    "g15": {
+      "staticDrive": [
+        1
+      ],
+      "total": 90
+    },
+    "load": {
+      "lightNs": {
+        "prepare": 20,
+        "angle": 20,
+        "sort": 20,
+        "motion": 20,
+        "bed-or-water": 20,
+        "replay": 20,
+        "pack": 20,
+        "graphics": 20,
+        "copy": 20
+      },
+      "heavyNs": {
+        "prepare": 20,
+        "angle": 20,
+        "sort": 20,
+        "motion": 20,
+        "bed-or-water": 20,
+        "replay": 20,
+        "pack": 20,
+        "graphics": 20,
+        "copy": 20
+      },
+      "missing": []
+    }
+  },
+  "controls": [
+    "bed-only",
+    "wrong-generation",
+    "wrong-source",
+    "particle-occluded",
+    "wall-leak",
+    "source-drift",
+    "unsupported-slope",
+    "mismatched-load-seed"
+  ],
+  "contacts": {
+    "fixed": {
+      "toi": 0.07139215614635322,
+      "impulse": 0.015407855139505955,
+      "velocity": 0.07003570517957258,
+      "wallWork": 0.0
+    },
+    "toward": {
+      "toi": 0.061922553132819545,
+      "impulse": 0.015564125417125117,
+      "velocity": 0.17074602462329602,
+      "wallWork": 0.0015564125417125117
+    },
+    "receding": {
+      "toi": 0.08230991296972066,
+      "impulse": 0.015564125417125117,
+      "velocity": -0.029253975376703933,
+      "wallWork": -0.0015564125417125117
+    },
+    "rotating": {
+      "toi": 0.17887429615860828,
+      "bracket": [
+        0.1788742961586074,
+        0.17887429615860828
+      ],
+      "normal": [
+        -0.9840446036562919,
+        -0.17792194360148897
+      ],
+      "wallNormalSpeed": 0.026907248094147445,
+      "impulse": 0.0005919594580712439,
+      "velocity": [
+        -0.029125725514915525,
+        -0.005266128865665991
+      ],
+      "wallWork": 1.592800000000003e-05,
+      "omega": 1.0
+    },
+    "free": {
+      "toi": null,
+      "impulse": 0,
+      "velocity": 1
+    },
+    "supportPast90": {
+      "toi": null,
+      "impulse": 0.0016350000000000002,
+      "velocity": 0,
+      "wallWork": 0.0
+    }
+  },
+  "poses": {
+    "G15-positive": {
+      "samples": 301,
+      "peakDegreesPerSec": 84.375,
+      "sha": "05fdbbb9e77511f62ec2189d14684569765a3ed9468a75743b933839446c8486"
+    },
+    "G15-negative": {
+      "samples": 301,
+      "peakDegreesPerSec": 84.375,
+      "sha": "9d3c3f29c6c8c3090c505d8145653d279df36a754d78475d33a14a8c9a117786"
+    },
+    "G16-invert": {
+      "samples": 401,
+      "peakDegreesPerSec": 150.0,
+      "sha": "417142f7c2f523f99641a6d7a5c8e42b26b28f0c436d8142d2af16e6263c2b29"
+    }
+  },
+  "angleBranches": {
+    "flat": [
+      {
+        "requested": 0,
+        "accepted": 0,
+        "range": [
+          -7679,
+          7679
+        ],
+        "activeFaces": 0
+      },
+      {
+        "requested": 3840,
+        "accepted": 3840,
+        "range": [
+          -7679,
+          7679
+        ],
+        "activeFaces": 0
+      },
+      {
+        "requested": 7680,
+        "accepted": 7679,
+        "range": [
+          -7679,
+          7679
+        ],
+        "activeFaces": 127
+      },
+      {
+        "requested": -3840,
+        "accepted": -3840,
+        "range": [
+          -7679,
+          7679
+        ],
+        "activeFaces": 0
+      },
+      {
+        "requested": 0,
+        "accepted": 0,
+        "range": [
+          -7679,
+          7679
+        ],
+        "activeFaces": 0
+      }
+    ],
+    "gentle": [
+      {
+        "requested": 0,
+        "accepted": 0,
+        "range": [
+          -7574,
+          7679
+        ],
+        "activeFaces": 0
+      },
+      {
+        "requested": 3840,
+        "accepted": 3840,
+        "range": [
+          -7574,
+          7679
+        ],
+        "activeFaces": 0
+      },
+      {
+        "requested": 7680,
+        "accepted": 7679,
+        "range": [
+          -7574,
+          7679
+        ],
+        "activeFaces": 127
+      },
+      {
+        "requested": -3840,
+        "accepted": -3840,
+        "range": [
+          -7574,
+          7679
+        ],
+        "activeFaces": 0
+      },
+      {
+        "requested": 0,
+        "accepted": 0,
+        "range": [
+          -7574,
+          7679
+        ],
+        "activeFaces": 0
+      }
+    ],
+    "guard-limited": [
+      {
+        "requested": 0,
+        "accepted": 0,
+        "range": [
+          -668,
+          668
+        ],
+        "activeFaces": 2
+      },
+      {
+        "requested": 3840,
+        "accepted": 668,
+        "range": [
+          -668,
+          668
+        ],
+        "activeFaces": 1
+      },
+      {
+        "requested": 7680,
+        "accepted": 668,
+        "range": [
+          -668,
+          668
+        ],
+        "activeFaces": 1
+      },
+      {
+        "requested": -3840,
+        "accepted": -668,
+        "range": [
+          -668,
+          668
+        ],
+        "activeFaces": 1
+      },
+      {
+        "requested": 0,
+        "accepted": 0,
+        "range": [
+          -668,
+          668
+        ],
+        "activeFaces": 2
+      }
+    ],
+    "mobile": [
+      {
+        "requested": 0,
+        "accepted": 0,
+        "range": [
+          -3767,
+          7679
+        ],
+        "activeFaces": 0
+      },
+      {
+        "requested": 3840,
+        "accepted": 3840,
+        "range": [
+          -3767,
+          7679
+        ],
+        "activeFaces": 0
+      },
+      {
+        "requested": 7680,
+        "accepted": 7679,
+        "range": [
+          -3767,
+          7679
+        ],
+        "activeFaces": 126
+      },
+      {
+        "requested": -3840,
+        "accepted": -3767,
+        "range": [
+          -3767,
+          7679
+        ],
+        "activeFaces": 1
+      },
+      {
+        "requested": 0,
+        "accepted": 0,
+        "range": [
+          -3767,
+          7679
+        ],
+        "activeFaces": 0
+      }
+    ]
+  },
+  "t901": {
+    "a-longhold.jsonl": {
+      "count": 2,
+      "massQ20": 269071,
+      "sha": "495fbad1b4b5c9a5673bc6c7014ecd576be1e733008cdb60530db6191076bd0a"
+    },
+    "a-one-grant.jsonl": {
+      "count": 37,
+      "massQ20": 4837378,
+      "sha": "50af5b9a059b3886506efb1a4befd7ece07545137d6dcdf9078f7fa86656ecbd"
+    }
+  },
+  "newGpuEvidence": "PENDING"
+}
