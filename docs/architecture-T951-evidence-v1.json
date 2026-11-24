@@ -1,0 +1,389 @@
+{
+  "schema": "T951_EVIDENCE_V1",
+  "fixture": {
+    "configFileSHA256": "295c075ebaaab6d857088cf5ff36ebd636cfa3680851fd42068fd52cd24f8bd3",
+    "configEmbeddedSHA256": "6e7b33e68d51277112aef85cac090a69572ecdf4b8cb4dcfae0bef43940f357d",
+    "stateSHA256": "e1c6b49ef4a23700e483649f43766c29c96366259be5110c2e8ff00c422d1fb1",
+    "configNu": 0.015625
+  },
+  "F02": {
+    "T901": {
+      "path": "test/reports/t901/b-hot-slots.jsonl",
+      "sha256": "a302f6815719e60c591db869b07766586bc0ba19058a180b6b41a13a8e02faa4",
+      "rawLines": [
+        176,
+        180,
+        181,
+        182
+      ],
+      "identity": {
+        "run": "1",
+        "nonce": "16375466411550",
+        "device": "2625794735208",
+        "queue": "2625794906344",
+        "fence": "2625794467512",
+        "fenceGeneration": "1",
+        "queryPool": "2625871014936",
+        "validBits": 36,
+        "periodNs": 83.333,
+        "businessRejected": true,
+        "acceptedRoot": null
+      },
+      "pollCount": 16,
+      "timestampPointCount": 18,
+      "hostMs": {
+        "record": 9.8621,
+        "grantToSubmitExit": 9.9041,
+        "submitCall": 0.0181,
+        "submitExitToBusinessStop": 241.0164,
+        "grantToBusinessStop": 250.9205,
+        "lastWait": 14.998,
+        "retireWait": 251.9131,
+        "drain": 1273.1381,
+        "grantToSameFenceConfirmExit": 1780.6457
+      },
+      "gpuMs": {
+        "root": 1770.31208539,
+        "upload": 0.01958326,
+        "uploadToActual": 3.50665264,
+        "actual": 712.15065139,
+        "actualToReplay": 0.00641664,
+        "replay": 551.57854368,
+        "scopeCompare": 0.4340816,
+        "compareToPack": 2.94515489,
+        "tail": 499.65791803,
+        "businessCopies": 0.01308328
+      },
+      "qualifiedClosures": [
+        {
+          "role": "OP_48",
+          "moduleSHA": "f01959cc0f2fdecff46c953cf6c6073498f531d91bec0ae7d900b35c4c18aceb",
+          "pipelineNs": "1226692625800",
+          "queueSubmit": 0,
+          "wait": 0,
+          "mismatchMasks": [
+            0,
+            0
+          ]
+        }
+      ],
+      "activeOp17ScopeJMicroBlockOrdinal": [
+        [
+          0,
+          1,
+          0,
+          0,
+          10
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          415
+        ]
+      ]
+    },
+    "T949": {
+      "path": "test/reports/t949/runs/goal13/f02-split.jsonl",
+      "sha256": "c4148246ea673e6c542e81963c2f69d0330a5bbfb635166aa0c9d43855d6cad0",
+      "rawLines": [
+        186,
+        190,
+        191,
+        192
+      ],
+      "identity": {
+        "run": "1",
+        "nonce": "16834270194456",
+        "device": "1559528016328",
+        "queue": "1559528197112",
+        "fence": "1559527445048",
+        "fenceGeneration": "1",
+        "queryPool": "1559752882296",
+        "validBits": 36,
+        "periodNs": 83.333,
+        "businessRejected": true,
+        "acceptedRoot": null
+      },
+      "pollCount": 16,
+      "timestampPointCount": 34,
+      "hostMs": {
+        "record": 1.3402,
+        "grantToSubmitExit": 1.399,
+        "submitCall": 0.0244,
+        "submitExitToBusinessStop": 249.5068,
+        "grantToBusinessStop": 250.9058,
+        "lastWait": 16.2155,
+        "retireWait": 263.1374,
+        "drain": 1389.3248,
+        "grantToSameFenceConfirmExit": 1905.325
+      },
+      "gpuMs": {
+        "root": 1902.94863818,
+        "upload": 0.01783326,
+        "uploadToActual": 3.7161518,
+        "actual": 742.38053047,
+        "actualToReplay": 0.00716664,
+        "replay": 602.17650795,
+        "scopeCompare": 0.45299819,
+        "finalAudit": 0.43816491,
+        "timePrepare": 0.01991659,
+        "packView": 3.21348715,
+        "packAudit": 1.28574486,
+        "compareToPack": 4.95698017,
+        "tail": 549.21405313,
+        "seal": 549.20955315,
+        "sealToTransfer": 0.00149999,
+        "businessCopies": 0.02641656,
+        "ACTUAL_J1_MICRO0_VISC_BLOCK0": 0.01733326,
+        "ACTUAL_J1_MICRO0_PRESSURE_CYCLE0": 105.92257631,
+        "REPLAY_J1_MICRO0_VISC_BLOCK0": 0.01033329,
+        "REPLAY_J1_MICRO0_PRESSURE_CYCLE0": 54.99619668
+      },
+      "qualifiedClosures": [
+        {
+          "role": "OP48_VISCOSITY",
+          "moduleSHA": "812db31f801cd56c68800e66252c45cb5a2edb50da78a656c778f7353c099d58",
+          "pipelineNs": "550526800",
+          "queueSubmit": 0,
+          "wait": 0,
+          "mismatchMasks": [
+            0,
+            0
+          ]
+        },
+        {
+          "role": "OP49_PRESSURE",
+          "moduleSHA": "ca603a59b5d09ad9ac27ab4720420335d6a13a73bf622b44e43148b67aea2ec2",
+          "pipelineNs": "7515296800",
+          "queueSubmit": 0,
+          "wait": 0,
+          "mismatchMasks": [
+            0,
+            0
+          ]
+        }
+      ],
+      "activeOp17ScopeJMicroBlockOrdinal": [
+        [
+          0,
+          1,
+          0,
+          0,
+          10
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          415
+        ]
+      ]
+    }
+  },
+  "G16": {
+    "arms": {
+      "b13-static-2": {
+        "path": "test/reports/t949/runs/g16/b13-static-2.jsonl",
+        "sha256": "ba71ea860723ea752412b2e31f422fa50e60fd98e18dba95fc4d03bb282f8727",
+        "moduleSHA256": "792f5986328b796aa4bea47b601899cce55aef83e5f0e76ed3d29afe7b718cda",
+        "seedSHA256": "d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168",
+        "elapsedNs": 20814900,
+        "deltaFrom250msNs": -229185100,
+        "completionBytes": 1024,
+        "root": {
+          "stage": "G16_PRIVATE_ROOT",
+          "run": "1683478532684600",
+          "nonce": "1683480249416000",
+          "inputId": "12424726808078205429",
+          "fence": "2707297069688",
+          "fenceGeneration": "1",
+          "beginNs": "1683480249416000",
+          "exitNs": "1683480270230900",
+          "submit": 0,
+          "retire": 0,
+          "vkResult": 0,
+          "current": true,
+          "fresh": true,
+          "baseCommit": "0",
+          "privateCommit": "0",
+          "identityOK": true,
+          "firstReason": 11,
+          "firstStage": 9,
+          "B": 200,
+          "N": 13,
+          "C": 27,
+          "Ic": 32,
+          "dispatches": 130,
+          "computeBarriers": 129,
+          "acceptedRoot": null
+        }
+      },
+      "b52-fast-480": {
+        "path": "test/reports/t949/runs/g16/b52-fast-480.jsonl",
+        "sha256": "b883dc8dba3fc42a8409a89a73ec68ff4a0be10631411fa2420d6e9562d5946f",
+        "moduleSHA256": "792f5986328b796aa4bea47b601899cce55aef83e5f0e76ed3d29afe7b718cda",
+        "seedSHA256": "eca4c474bc8143d358e0ed5f3a67f93c7f9d0a91f9c86fbe1a405b909ffb0884",
+        "elapsedNs": 251918500,
+        "deltaFrom250msNs": 1918500,
+        "completionBytes": 0,
+        "root": {
+          "stage": "G16_PRIVATE_ROOT",
+          "run": "1683481001710800",
+          "nonce": "1683481152070500",
+          "inputId": "6378929725710773987",
+          "fence": "1805278066104",
+          "fenceGeneration": "1",
+          "beginNs": "1683481152070500",
+          "exitNs": "1683481403989000",
+          "submit": 0,
+          "retire": 2,
+          "vkResult": 2,
+          "current": true,
+          "fresh": false,
+          "baseCommit": "0",
+          "privateCommit": "0",
+          "identityOK": false,
+          "firstReason": 0,
+          "firstStage": 0,
+          "B": 0,
+          "N": 52,
+          "C": 0,
+          "Ic": 0,
+          "dispatches": 258,
+          "computeBarriers": 257,
+          "acceptedRoot": null
+        }
+      },
+      "b52-static-1": {
+        "path": "test/reports/t949/runs/g16/b52-static-1.jsonl",
+        "sha256": "730f7819ef295f3f00552001df3b83c39316e31b63111c78a98256d22f58ba23",
+        "moduleSHA256": "792f5986328b796aa4bea47b601899cce55aef83e5f0e76ed3d29afe7b718cda",
+        "seedSHA256": "eca4c474bc8143d358e0ed5f3a67f93c7f9d0a91f9c86fbe1a405b909ffb0884",
+        "elapsedNs": 258688800,
+        "deltaFrom250msNs": 8688800,
+        "completionBytes": 0,
+        "root": {
+          "stage": "G16_PRIVATE_ROOT",
+          "run": "1683480448690300",
+          "nonce": "1683480550543100",
+          "inputId": "12424726808078205429",
+          "fence": "1884775923272",
+          "fenceGeneration": "1",
+          "beginNs": "1683480550543100",
+          "exitNs": "1683480809231900",
+          "submit": 0,
+          "retire": 2,
+          "vkResult": 2,
+          "current": true,
+          "fresh": false,
+          "baseCommit": "0",
+          "privateCommit": "0",
+          "identityOK": false,
+          "firstReason": 0,
+          "firstStage": 0,
+          "B": 0,
+          "N": 52,
+          "C": 0,
+          "Ic": 0,
+          "dispatches": 258,
+          "computeBarriers": 257,
+          "acceptedRoot": null
+        }
+      }
+    },
+    "B13": {
+      "files": {
+        "completions.u32le": "5b6d77e9ba8c31cf9ca39d0b422c0edbd2f1e79c6e4f80c6a1a2f5bbd7510077",
+        "witness.u32le": "236fd834e3d0eb6fbbec630c0a979e13e178d645119437c1930bbd6d13258188",
+        "contact-journal.bin": "530a14a5a663bcd0941a157ab157779f3f4385684033c142aba9eaaf5708a7cb",
+        "base.disk64": "d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168",
+        "candidate.disk64": "0d89a8f59cdff7b680ef6f3c05591cbdd6c738665c27934c1ce0547353a85ffc"
+      },
+      "completionWords40To65": [
+        2,
+        11,
+        9,
+        15,
+        1,
+        4294967295,
+        4294967295,
+        4294967295,
+        0,
+        1,
+        0,
+        1,
+        13,
+        200,
+        27,
+        5,
+        45,
+        128,
+        17,
+        32,
+        276,
+        130,
+        0,
+        3071,
+        27,
+        0
+      ],
+      "segment1StartWord": 981752068,
+      "segment1DurationWord": 939913353,
+      "hitGroups": [
+        {
+          "micro": 15,
+          "segment": 0,
+          "eventTimeWord": 981752068,
+          "eventTimeSec": 0.0010097329504787922,
+          "wall": 0,
+          "diskIds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "q24Bracket": [
+            8547838,
+            8548097
+          ],
+          "gapWord": 826277888,
+          "gapMeters": 2.7939677238464355e-09
+        },
+        {
+          "micro": 15,
+          "segment": 1,
+          "eventTimeWord": 981957081,
+          "eventTimeSec": 0.0010335996048524976,
+          "wall": 0,
+          "diskIds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "q24Bracket": [
+            12538760,
+            12539219
+          ],
+          "gapWord": 826277888,
+          "gapMeters": 2.7939677238464355e-09
+        }
+      ],
+      "reconstructedRemainingUs": 8.06703247,
+      "oneWallBallisticReturnUs": 23.86663422
+    }
+  }
+}

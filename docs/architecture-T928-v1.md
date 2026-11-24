@@ -1,5 +1,7 @@
 # T928 · G16 多盘接触接口与小域放行 v1
 
+> 2026-11-24 T951 复核 T949：B13 第二次底壁碰撞后仍剩约 8.067 µs，触发两事件段上限。B52 的两个超期样本没有 Completion，下一增量先采同 fence 晚尾和分段，再按实际成本做单项等价优化。 [T951 微步账和预算增量](architecture-T951-v1.md)
+
 2026-11-24 · architect · Windows PC Vulkan · 离线。T909 可开工 G16-A 连续旋转壁和 G16-B 的 13/52 盘 GPU 候选、事务与着色。旧旋转壁原件超出 T906 的 TOI 容差。G16-B 实施可并行，结果放行依赖 A 的旋转正证及本阶段独立审计。G16-C 代表负载待小域正例和代表种子。 [工程 ABI 与冷种子](architecture-T928-abi-v1.json) · [T906 算法与阈值](algorithm-T906-planar-avalanche-v1.md) · [T907 布局](architecture-T907-g15-g16-v1.md)
 
 ## 1. 复用与隔离证据
