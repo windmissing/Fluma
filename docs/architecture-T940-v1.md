@@ -4,6 +4,8 @@
 
 ## 1. 原件与首因
 
+2026-11-24 · T950 复核。T942/T947 的中心 SOURCE 出生符合本稿原字门。报告的 108.4 px 取自旧粒子的 QUANTUM 运动后坐标。首粒像素与 ±20° 实际自由段仍需同身份取证，唯一入口继续待完整回归。 [T950 原件与补证合同](architecture-T950-v1.md)
+
 - **出生。** T935 像素轮客户区 624×431、DPI 96、角 0°。原指针 (312,215) 对应像素中心 (312.5,215.5)，逆映射至 (64.14501160,32)，随后 CompactPointer 将 y 钳到 16。原行 284 的 SOURCE nonce 16709184332000，其命令字 16–19 解码为 (64.14501160,16)。第 289 行画面对应 Q 根的冷档，SOURCE 事件前缀有该 nonce 的 5 条真实出生、527,270 Q20。首粒 id54/gen1 的事件字 26/27 为 (67260919,16777216)，投回客户区是 (312.50,270.668)，比指针低 **55.168 个物理像素**。这是输入改写造成的偏移。 [指针映射](../pc/vulkan/m1_compact.h) · [SOURCE 出生字段](../entry/src/main/cpp/gpu_resident/m1/source_core.comp) · [同根冷档](../test/reports/t935/runs/pixel-round/root-16709184896788.m1root)
 - **实画角与实际角。** T935 主轮 240 个非零请求的实际呈现 QUANTUM 全报 BED_SHAPE，173 根接受 −668/256°，67 根接受 +668/256°。实画最大差为 −30° 对 −2.609375°。第 12519、12639 行还各用旧 lease 重绘，实画 −5°、+10°，对应物理 −2.609375°、+2.609375°。Win32 回调读当时最新请求角，WSI 录制又读一次，两者也可互不相同。 [实际日志](../test/reports/t935/runs/integrated-round/demo.jsonl) · [WSI push](../pc/vulkan/wsi.cpp) · [旧 lease 重绘](../entry/src/main/cpp/gpu_resident/g13vulkan_boot/m1_source.inc)
 - **物理和箭头。** 设 a 为接受角、b 为实画盒角。现有干沙加速度方向在盒内为 (sin a,−cos a)，经盒到屏幕的变换为 (sin(a−b),cos(a−b))。a=b 时向屏幕下。gravityIndicator 当前把 (sin a,cos a) 直接传给在屏幕像素绘制的箭头，漏了随盒姿态投影的步骤。粒子方向取决于两角是否一致，需用新包的无碰撞段原字验证。 [运动算子](../entry/src/main/cpp/gpu_resident/m1/quantum_motion.glsl) · [片元箭头和容器](../pc/vulkan/m1_dry_scene.frag)
