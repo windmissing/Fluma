@@ -1,4 +1,7 @@
 #include "host_device.h"
+#ifdef PC_SAND_G15_SCENE
+#include "g15_seed.h"
+#endif
 #include "../../../entry/src/main/cpp/gpu_resident/g11vis/parent_adapter.h"
 #include "../../../entry/src/main/cpp/gpu_resident/g9dm/input_gate.h"
 #include "../../../entry/src/main/cpp/gpu_resident/g9spf/input_gate.h"
@@ -49,6 +52,7 @@ struct Options {
   uint32_t steps=0;
   int32_t angle=0;
   int32_t g15End=0;
+  int32_t g15Dune=0;
   bool full=false,present=false,sourceTimestamps=false,sourceDetail=false,sourcePrewarm=false,sourcePrepareRetired=false;
 };
 
@@ -74,6 +78,10 @@ Options Args(int argc,wchar_t **argv) {
     else if (key==L"--source-timestamps-detail") out.sourceDetail=true;
     else if (key==L"--source-prewarm") out.sourcePrewarm=true;
     else if (key==L"--source-prepare-retired") out.sourcePrepareRetired=true;
+    else if (key==L"--g15-dune" || key==L"--g15-dune-mirror") {
+      RequireHost(kG15Dm2 && !out.g15Dune,"G15_DUNE_PROFILE");
+      out.g15Dune=key==L"--g15-dune" ? 1 : -1;
+    }
     else {
       RequireHost(i+1<argc,"MISSING_ARGUMENT");
       const auto *value=argv[++i];
@@ -455,6 +463,31 @@ void SealRawEnvelope(const std::filesystem::path &dest,VulkanOwner &owner,const 
             << "\",\"accepted\":" << (accepted?"true":"false") << ",\"path\":" << std::quoted(final.generic_u8string()) << "}\n";
 }
 
+#ifdef PC_SAND_G15_SCENE
+void FillG15Dune(std::vector<uint32_t> &seed,const ParentLayout &layout,uint64_t inputEpoch,bool reverse) {
+  const auto heights=G15Dune(reverse);
+  uint64_t total=0;
+  for (size_t c=0;c<heights.size();++c) {
+    const auto column=layout.state[3].begin/4+c*32;
+    const auto bed=layout.state[4].begin/4+c*64*4;
+    seed[column]=seed[column+9]=heights[c];
+    seed[column+6]=1;
+    seed[bed]=1;
+    seed[bed+2]=1;
+    seed[bed+3]=heights[c];
+    total+=heights[c];
+  }
+  seed[19]=1;
+  seed[40]=uint32_t(total); seed[41]=uint32_t(total>>32);
+  const auto origin=layout.state[7].begin/4;
+  seed[origin]=1;
+  seed[origin+2]=1; // Immutable initial inventory provenance.
+  seed[origin+4]=uint32_t(total); seed[origin+5]=uint32_t(total>>32);
+  seed[origin+8]=uint32_t(inputEpoch); seed[origin+9]=uint32_t(inputEpoch>>32);
+  seed[origin+14]=1;
+}
+#endif
+
 #ifndef PC_SAND_G11_R1
 std::string ArchiveSHA(const std::filesystem::path &path) {
   std::ifstream stream(path,std::ios::binary);
@@ -521,6 +554,9 @@ int Run(const Options &opt) {
   if (kG15Dm2) {
     seed[102]=0;
     std::copy(permit.parameterSha.begin(),permit.parameterSha.end(),seed.begin()+42);
+#ifdef PC_SAND_G15_SCENE
+    if (opt.g15Dune) FillG15Dune(seed,l,scope.inputEpoch,opt.g15Dune<0);
+#endif
     seedSHA=accept647::HashWords(seed.data(),seed.size());
   }
   std::array<uint32_t,128> config{};
@@ -603,7 +639,10 @@ int Run(const Options &opt) {
             << ",\"luid\":\"" << HexBytes(gpu.deviceId.deviceLUID,VK_LUID_SIZE)
             << "\",\"beginNs\":\"" << bootStarted << "\",\"retiredNs\":\"" << bootRetired
             << "\",\"vkResult\":" << int(bootAudit.result) << ",\"error\":" << bootAudit.error
-            << ",\"seal\":" << bootAudit.seal << ",\"eligible\":" << (bootAudit.eligible?"true":"false") << "}\n";
+            << ",\"seal\":" << bootAudit.seal << ",\"eligible\":" << (bootAudit.eligible?"true":"false");
+  if (kG15Dm2) std::cout << ",\"g15Dune\":" << opt.g15Dune << ",\"g15PoseEndQ8\":" << opt.g15End
+                         << ",\"g15SeedSHA\":\"" << HexDigest(seedSHA) << "\"";
+  std::cout << "}\n";
   RequireHost(bootAudit.eligible,"BOOT_GPU_AUDIT_REJECTED");
 #ifdef PC_SAND_G11_R1
   std::array<uint32_t,128> seedReceipt{};
@@ -888,7 +927,7 @@ int wmain(int argc,wchar_t **argv) {
   if (argc==2 && std::wstring_view(argv[1])==L"--help") {
     std::cout << "pc_sand_" << family << " --modules DIR [--source INPUT128.u32le [--source-timestamps|--source-timestamps-detail] [--source-prewarm] [--source-prepare-retired]] [--steps N] [--angle-index N] "
               << (kind==grs::g11vis::ParentKind::DM ? "[--archive FILE [--full]]" : "[--witness FILE] [--present]")
-              << " [--raw-envelope DIRECTORY]" << (kG15Dm2?" [--g15-tilt-q8 ANGLE] [--present]":"")
+              << " [--raw-envelope DIRECTORY]" << (kG15Dm2?" [--g15-tilt-q8 ANGLE] [--g15-dune|--g15-dune-mirror] [--present]":"")
               << "\n  --check-package DIRECTORY\n";
     return 0;
   }

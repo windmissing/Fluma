@@ -88,7 +88,14 @@ Windows Release、SPIR-V、主机 ABI 负控和 T910 离线自检通过。预测
 - 用中点投影算壁反力和有效法向，沿父正负动量账、静置 tick 与精确能量区间。角变功单列，继续使用父非增能门。坡过陡和承托不足以原 support 类拒绝并写不同 operand。失败不提升 state bank 或 accepted 时间。
 - `--present` 在 typed 根后从真实 S/F/P 及同根 q 交 shader。面记录由 WORK 复制到按 commit 轮换的 GPU 槽，graphics fence/WSI 退役后才继续。shader 检查 q 的 nonce 与状态同根。首帧证据和独显开销待独立实测。
 
-用 `-DSAND_FAMILY=dm2 -DSAND_ROLE_VARIANT=g15-dm2` 生成 Windows Release，再用 `pack_sand_roles.py` 发布。用 `--g15-tilt-q8 11520` 或 `-11520`、`--steps`、`--raw-envelope` 和可选的 `--present` 采干域原字。安装夹具、基线窗口和坡面运动由 effector 实测。当前场景使用父 profile 的初态与原 SOURCE 输入，T906 15-B 指定砂丘的冷种子需要另接。未取得产品砂丘运动或 GPU 成本数据。
+用 `-DSAND_FAMILY=dm2 -DSAND_ROLE_VARIANT=g15-dm2` 生成 Windows Release，再用 `pack_sand_roles.py` 发布。新版配套包位于 `.codex/local-test/t909-g15-dune-release`。用 `--g15-dune` 或 `--g15-dune-mirror` 选 T906 15-B 砂丘冷初态。砂丘按列中心取样，0.60 斜率向内量化以满足真实承托门，GPU BOOT 核实床库存和初始来源。用 `--g15-tilt-q8 11520` 或 `-11520`、`--steps`、`--raw-envelope` 和可选的 `--present` 采干域原字。
+
+```powershell
+$p = '.codex/local-test/t909-g15-dune-release'
+& "$p/pc_sand_dm2_host.exe" --modules "$p/sand_assets" --g15-dune --g15-tilt-q8 11520 --steps 240 --raw-envelope RAW_G15 --present
+```
+
+配套 `package.json` 的 SHA-256 为 `80e63c2cb7a5a6835927f63e79ac2baba26c7eaa4ec23616db001ac56e6091c0`。Windows Release、角色与图形 SPIR-V、45 个角色独立核包、砂丘正反镜像及固定点坡度、T910/T897 离线自检通过。实际 typed QUANTUM、砂丘运动、图像和 GPU 成本由 effector 取证。G16 多盘仍等接口。
 
 ## T496 OFF×2
 
