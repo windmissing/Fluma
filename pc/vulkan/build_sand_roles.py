@@ -13,6 +13,9 @@ sys.path.insert(0, str(ROOT / "tools/glsl"))
 from g9_boot import LIMIT, WARM, split_inputs
 from sand.t913_roles import variant
 from sand.t913_split_roles import split_source
+from sand.t909_g15 import enable_int64, install as install_g15
+from build_t909_angle_probes import table as g15_table
+import struct
 
 UNIFORM = re.compile(r"\buniform\s+(uint|int|uvec2)\s+([\w,]+)\s*;")
 BINDING = re.compile(r"layout\(std430,\s*binding\s*=\s*([0-3])\)")
@@ -174,13 +177,20 @@ def build(family, compiler, out, role_variant="baseline"):
     raw = parent.read_bytes().replace(b"\r\n", b"\n")
     source = raw.decode()
     composite = family == "r1"
+    g15 = role_variant=="g15-dm2"
+    if g15:
+        if composite:
+            raise ValueError("G15 requires DM2")
+        source = install_g15(source)
     ops, emit = split_inputs(source, composite_r1=composite)
     common, push = declarations(source, composite)
     passes = dispatches(family, schema.read_text(encoding="utf8"), ops)
     names = {op: name for name, op in ops.items()}
     names[WARM] = "WARM_AUDIT"
     jobs = [(op, port(emit((op,))[0], common, push), name) for op, name in sorted(names.items())]
-    if role_variant != "baseline":
+    if g15:
+        jobs = [(op,enable_int64(src),name) for op,src,name in jobs]
+    elif role_variant != "baseline":
         jobs = [(op, variant(name, src, family), name) for op, src, name in jobs]
     aliases = {}
     if role_variant == "t913-split-v2":
@@ -197,6 +207,10 @@ def build(family, compiler, out, role_variant="baseline"):
                 runtimeQualification="NOT_EXECUTED")
     if role_variant != "baseline":
         data.update(schema="PC_SAND_VULKAN_ROLES_T913_V1", roleVariant=role_variant)
+    if g15:
+        angles = b"".join(struct.pack("<ii",*row) for row in g15_table(75))
+        (out/"g15_angle_q20.i32le").write_bytes(angles)
+        data.update(schema="PC_SAND_VULKAN_ROLES_G15_DM2",angleTableSHA=sha(angles),extraWorkBytes=len(angles)+8192)
     if aliases:
         data.update(schema="PC_SAND_VULKAN_ROLES_T913_SPLIT_V2", sourceBindingAliases=aliases)
     data["roleSetSHA"] = sha(json.dumps(data, sort_keys=True, separators=(",", ":")).encode())
@@ -227,6 +241,10 @@ def build(family, compiler, out, role_variant="baseline"):
             header.write("};\n")
         header.write(f'inline constexpr unsigned kCommonBytes={data["commonBytes"]};\n')
         header.write(f'inline constexpr bool kSplitSourceSchedule={str(bool(aliases)).lower()};\n')
+        header.write(f'inline constexpr bool kG15Dm2={str(g15).lower()};\n')
+        header.write(f'inline constexpr unsigned kG15AngleBytes={len(angles) if g15 else 0};\n')
+        header.write(f'inline constexpr unsigned kG15WorkBytes={len(angles)+8192 if g15 else 0};\n')
+        header.write(f'inline constexpr char kG15AngleSHA[]="{sha(angles) if g15 else ""}";\n')
         header.write(f'inline constexpr char kRoleSetSHA[]="{data["roleSetSHA"]}";\n')
         header.write(f'inline constexpr char kRoleManifestSHA[]="{sha(manifest)}";\n')
         header.write(f'inline constexpr char kRoleVariant[]="{role_variant}";\n}}\n')
@@ -239,7 +257,7 @@ if __name__ == "__main__":
     parser.add_argument("family", choices=("dm2", "r1"))
     parser.add_argument("--compiler", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
-    parser.add_argument("--role-variant", default="baseline", choices=("baseline","t913-v1","t913-split-v2"))
+    parser.add_argument("--role-variant", default="baseline", choices=("baseline","t913-v1","t913-split-v2","g15-dm2"))
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     build(args.family, args.compiler.resolve(), args.out.resolve(), args.role_variant)

@@ -166,12 +166,14 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     pass.pSubpasses = &subpass;
     Check(wsi.CreateRenderPass(device, &pass, nullptr, &wsi.pass), "vkCreateRenderPass");
 
-    VkDescriptorSetLayoutBinding binding{0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT};
+    const bool g15=observation.g15Work && observation.g15Witness;
+    const VkDescriptorSetLayoutBinding binding[]={{0,VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,1,VK_SHADER_STAGE_FRAGMENT_BIT},
+                                                  {1,VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,1,VK_SHADER_STAGE_FRAGMENT_BIT}};
     VkDescriptorSetLayoutCreateInfo ds{VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO};
-    ds.bindingCount = 1;
-    ds.pBindings = &binding;
+    ds.bindingCount = g15 ? 2u : 1u;
+    ds.pBindings = binding;
     Check(vk.CreateDescriptorSetLayout(device, &ds, nullptr, &wsi.descriptors), "vkCreateDescriptorSetLayout.FRAGMENT");
-    VkDescriptorPoolSize poolSize{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1};
+    VkDescriptorPoolSize poolSize{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, ds.bindingCount};
     VkDescriptorPoolCreateInfo descPool{VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
     descPool.maxSets = 1;
     descPool.poolSizeCount = 1;
@@ -190,11 +192,18 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
     write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     write.pBufferInfo = &range;
     vk.UpdateDescriptorSets(device, 1, &write, 0, nullptr);
+    if (g15) {
+      const VkDescriptorBufferInfo witness{observation.g15Witness,0,8192};
+      auto face=write;
+      face.dstBinding=1;
+      face.pBufferInfo=&witness;
+      vk.UpdateDescriptorSets(device,1,&face,0,nullptr);
+    }
     VkPipelineLayoutCreateInfo layout{VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO};
     layout.setLayoutCount = 1;
     layout.pSetLayouts = &wsi.descriptors;
     const VkPushConstantRange extentPush{VK_SHADER_STAGE_FRAGMENT_BIT,0,52};
-    if (dryScene) {
+    if (dryScene && !g15) {
       layout.pushConstantRangeCount = 1;
       layout.pPushConstantRanges = &extentPush;
     }
@@ -207,7 +216,8 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       Check(vk.CreateShaderModule(device, &info, nullptr, &module), "vkCreateShaderModule.GRAPHICS");
     };
     shader(kBootViewVertex, wsi.vertex);
-    if (dryScene) {
+    if (g15) shader(kG15DmSceneFragment,wsi.fragment);
+    else if (dryScene) {
       if (fullM1) shader(kM1FullSceneFragment, wsi.fragment);
       else shader(kM1DrySceneFragment, wsi.fragment);
     } else if (m1PublicationBytes)
@@ -317,6 +327,18 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
                               VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT};
       vk.CmdPipelineBarrier(command, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
                             0, 1, &compute, 0, nullptr, 0, nullptr);
+      if (g15) {
+        const VkMemoryBarrier before{VK_STRUCTURE_TYPE_MEMORY_BARRIER,nullptr,
+            VK_ACCESS_SHADER_WRITE_BIT|VK_ACCESS_TRANSFER_WRITE_BIT,VK_ACCESS_TRANSFER_READ_BIT};
+        vk.CmdPipelineBarrier(command,VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT|VK_PIPELINE_STAGE_TRANSFER_BIT,
+                              VK_PIPELINE_STAGE_TRANSFER_BIT,0,1,&before,0,nullptr,0,nullptr);
+        const VkBufferCopy copy{observation.g15WitnessOffset,0,8192};
+        vk.CmdCopyBuffer(command,observation.g15Work,observation.g15Witness,1,&copy);
+        const VkMemoryBarrier after{VK_STRUCTURE_TYPE_MEMORY_BARRIER,nullptr,
+            VK_ACCESS_TRANSFER_WRITE_BIT,VK_ACCESS_SHADER_READ_BIT};
+        vk.CmdPipelineBarrier(command,VK_PIPELINE_STAGE_TRANSFER_BIT,VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                              0,1,&after,0,nullptr,0,nullptr);
+      }
       VkRenderPassBeginInfo draw{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
       draw.renderPass = wsi.pass;
       draw.framebuffer = wsi.framebuffers[frame.imageIndex];
@@ -324,7 +346,7 @@ Frame PresentBoot(g13vk::VulkanApi &vk, VkInstance instance, VkPhysicalDevice ph
       wsi.CmdBeginRenderPass(command, &draw, VK_SUBPASS_CONTENTS_INLINE);
       vk.CmdBindPipeline(command, VK_PIPELINE_BIND_POINT_GRAPHICS, wsi.pipeline);
       vk.CmdBindDescriptorSets(command, VK_PIPELINE_BIND_POINT_GRAPHICS, wsi.layout, 0, 1, &set, 0, nullptr);
-      if (dryScene) {
+      if (dryScene && !g15) {
         const bool unorm=found->format==VK_FORMAT_B8G8R8A8_UNORM || found->format==VK_FORMAT_R8G8B8A8_UNORM;
         struct FramePush {
           float width,height;

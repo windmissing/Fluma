@@ -28,7 +28,7 @@ constexpr VkDeviceSize bootReadbackBytes=auditBytes+seedBytes;
 constexpr const char *kSandFamily="DM2";
 constexpr size_t kSourceBoundaries[]{4,7,std::size(kSource)-1};
 constexpr const char *kSourceSpans[]{"PREPARE","SOURCE_WRITER","AUDIT_COMPARE_PACK_SEAL"};
-constexpr VkDeviceSize arenaBytes=12767232, workBytes=1311360, auditBytes=8;
+constexpr VkDeviceSize arenaBytes=12767232, workBytes=1311360+kG15WorkBytes, auditBytes=8;
 constexpr uint32_t coldOpcode=warmOpcode, goodSeal=0x641647;
 constexpr VkDeviceSize bootReadbackBytes=auditBytes;
 #endif
@@ -107,6 +107,7 @@ bool ReadRolePackage(const std::filesystem::path &directory,std::vector<std::vec
     if (!ReadRoleFile(directory,m.name,m.sha,0,m.bytes,nullptr)) return false;
 #endif
   if (!ReadRoleFile(directory,"roles.json",kRoleManifestSHA,0,0,nullptr)) return false;
+  if (kG15Dm2 && !ReadRoleFile(directory,"g15_angle_q20.i32le",kG15AngleSHA,0,0,nullptr)) return false;
   return true;
 }
 

@@ -31,6 +31,11 @@ def publish(exe, assets, destination):
             if Path(name).name!=name:
                 raise ValueError("NONLOCAL_MODULE_PATH")
             shutil.copyfile(assets/name,modules/name)
+        if "angleTableSHA" in manifest:
+            table=assets/"g15_angle_q20.i32le"
+            if digest(table)!=manifest["angleTableSHA"]:
+                raise ValueError("G15_ANGLE_TABLE")
+            shutil.copyfile(table,modules/table.name)
         result = subprocess.run([str(staged/exe.name),"--check-package",str(modules)],
                                 stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,encoding="utf8")
         (staged/"owner-receipt.jsonl").write_text(result.stdout,encoding="utf8")

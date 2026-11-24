@@ -43,6 +43,8 @@ struct PresentObservations {
   std::function<const std::array<M1Rect,3>*(uint32_t width,uint32_t height)> requestedRoi;
   std::function<std::array<int32_t,3>()> gravityIndicator; // sin/cos Q20 and state
   std::function<int32_t()> requestedBoxAngle;
+  VkBuffer g15Work=VK_NULL_HANDLE,g15Witness=VK_NULL_HANDLE;
+  VkDeviceSize g15WitnessOffset=0;
 };
 Frame PresentBoot(g13vk::VulkanApi &, VkInstance, VkPhysicalDevice, VkDevice, VkQueue,
                   uint32_t family, VkSurfaceKHR, VkBuffer control, VkBuffer staging,

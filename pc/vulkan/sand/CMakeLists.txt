@@ -28,6 +28,8 @@ add_custom_command(OUTPUT "${ROLE_HEADER}" "${ASSETS}/roles.json"
     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/sand_variant.txt" "${G13_GLSLANG}"
         "${CMAKE_CURRENT_SOURCE_DIR}/../build_sand_roles.py" "${CMAKE_CURRENT_SOURCE_DIR}/t913_roles.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/t913_split_roles.py" "${GPU}/integer_primitives.glsl"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../build_t909_angle_probes.py" "${CMAKE_CURRENT_SOURCE_DIR}/t909_g15.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/g15_dm2.glsl"
         "${GPU}/g11vis/scene.cpp" "${REPO}/docs/architecture-T552-g9-seed-manifest-v2.json"
         "${REPO}/docs/architecture-T660-g11-manifest-v2.json" "${REPO}/tools/g11/generate_contract.cjs"
         "${REPO}/test/t566_generate_composite.cjs" ${ROLE_INPUTS}
@@ -61,6 +63,22 @@ if(SAND_FAMILY STREQUAL "r1")
 endif()
 target_link_libraries(pc_sand_${SAND_FAMILY}_host PRIVATE pc_sand_${SAND_FAMILY} user32)
 target_compile_options(pc_sand_${SAND_FAMILY}_host PRIVATE /EHsc /utf-8 /W4)
+if(SAND_ROLE_VARIANT STREQUAL "g15-dm2")
+  set(VIEW "${CMAKE_CURRENT_BINARY_DIR}/view_assets")
+  add_custom_command(OUTPUT "${VIEW}/pc_view_spirv.h"
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${VIEW}"
+      COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/../build_view.py"
+              --compiler "${G13_GLSLANG}" --out "${VIEW}"
+      DEPENDS "${G13_GLSLANG}" "${CMAKE_CURRENT_SOURCE_DIR}/../build_view.py"
+              "${CMAKE_CURRENT_SOURCE_DIR}/../g15_dm_scene.frag" "${CMAKE_CURRENT_SOURCE_DIR}/../boot_view.vert"
+              "${CMAKE_CURRENT_SOURCE_DIR}/../boot_view.frag" "${CMAKE_CURRENT_SOURCE_DIR}/../m1_source_view.frag"
+              "${CMAKE_CURRENT_SOURCE_DIR}/../m1_dry_scene.frag" VERBATIM)
+  set_source_files_properties(../wsi.cpp PROPERTIES OBJECT_DEPENDS "${VIEW}/pc_view_spirv.h")
+  target_compile_definitions(pc_sand_${SAND_FAMILY}_host PRIVATE PC_SAND_G15_SCENE)
+  target_include_directories(pc_sand_${SAND_FAMILY}_host PRIVATE "${VIEW}" "${CMAKE_CURRENT_SOURCE_DIR}/.."
+      "${GPU}/g13vulkan_boot")
+  target_sources(pc_sand_${SAND_FAMILY}_host PRIVATE host_g15_present.cpp ../wsi.cpp "${VIEW}/pc_view_spirv.h")
+endif()
 if(SAND_FAMILY STREQUAL "dm2")
   add_executable(t909_angle_probe angle_probe.cpp host_device.cpp)
   target_link_libraries(t909_angle_probe PRIVATE pc_sand_dm2 user32)

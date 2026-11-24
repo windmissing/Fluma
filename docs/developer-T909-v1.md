@@ -79,3 +79,17 @@ Windows DM2 Release 已构建，SPIR-V 验证通过，T910 离线自检和截短
 使用 `.codex/local-test/t909-r5-dm2-release/t909_angle_probe.exe`（SHA-256 `083e47faaf5d332e140509e3a789fb62a5c2814b7ef2e0f9b0f9c27dc134f35f`）和 `.codex/local-test/t909-r5-angle/g15_corrector_v1.spv`（SHA-256 `7f0af4e5aeea143dc1fa1d066a575f8f811512c9241e642272835d3cb25248b9`）。同目录包含角表、旧面与来源模块、三列入口夹具。修正面及来源结果沿已登记 ABI。独立旧面模块的 SPIR-V 保持同字。
 
 Windows Release、SPIR-V、主机 ABI 负控和 T910 离线自检通过。预测计算为独立微步工件，尚未接入正式 DM2 的动员、动量/能量账、typed 提交和场景。T912 已交孤立算子 GPU 原件，G16 多盘仍等待小域接口回执。
+
+## G15 DM2 派生 profile
+
+`g15-dm2` 复用 DM2 的 12/2404 派发计划、Actual 和 Replay。入口 INPUT128 第 34/35 字冻结一秒倾斜段端点，主机入口从 0° 开始。GPU 用已接受 quanta 和 1/7680 s 子步索引计算 T843 五次取样，区间终点保持。SOURCE 沿父零物理时长。角表在 WORK 中，恢复及拒绝沿父状态和真实 deadline。
+
+- 以承托面法向和动员余量进入父来源前缀与零初始动量动员。等效床用于预测/修正通量，实际床仍进势能。相邻列共享有符号 q，供料不足先左后右裁剪，再沿父 Hamilton 逐来源搬移；双端容量维持原检查。
+- 用中点投影算壁反力和有效法向，沿父正负动量账、静置 tick 与精确能量区间。角变功单列，继续使用父非增能门。坡过陡和承托不足以原 support 类拒绝并写不同 operand。失败不提升 state bank 或 accepted 时间。
+- `--present` 在 typed 根后从真实 S/F/P 及同根 q 交 shader。面记录由 WORK 复制到按 commit 轮换的 GPU 槽，graphics fence/WSI 退役后才继续。shader 检查 q 的 nonce 与状态同根。首帧证据和独显开销待独立实测。
+
+用 `-DSAND_FAMILY=dm2 -DSAND_ROLE_VARIANT=g15-dm2` 生成 Windows Release，再用 `pack_sand_roles.py` 发布。用 `--g15-tilt-q8 11520` 或 `-11520`、`--steps`、`--raw-envelope` 和可选的 `--present` 采干域原字。安装夹具、基线窗口和坡面运动由 effector 实测。当前场景使用父 profile 的初态与原 SOURCE 输入，T906 15-B 指定砂丘的冷种子需要另接。未取得产品砂丘运动或 GPU 成本数据。
+
+## T496 OFF×2
+
+`pc/vulkan/run_t909_d1_off_pair.py EXE SOURCE CANDIDATE COMMIT OUT` 按原 52 动作运行恰好两次 D1 OFF。可加 `--plan` 核真实 PE/SPIR-V 指纹和完整 argv。两臂分别保存自然 wall-clock 原行，结束后用 T897 首差判据。两份新 PC 原件仍由 effector 获取。工具保留原 T865 四臂资格门。若新版仍有真实输入首差，再用这批原件接只读采样重放诊断，当前入口不注入受控时钟。

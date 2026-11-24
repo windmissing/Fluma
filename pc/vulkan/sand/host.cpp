@@ -20,6 +20,10 @@ namespace grs::pc::sand {
 PresentedMapping PresentR1(HostDevice &,const std::filesystem::path &,const VulkanOwner::AcceptedProof &,
                           const R1Scene &);
 #endif
+#ifdef PC_SAND_G15_SCENE
+bool PresentG15(HostDevice &,const VulkanOwner::AcceptedProof &,const VulkanOwner &,const Slice &,
+                const Slice &,const Slice &,const VulkanOwner::Readback &,VkDeviceSize,bool);
+#endif
 namespace {
 using namespace g11vis;
 #ifdef PC_SAND_G11_R1
@@ -44,6 +48,7 @@ struct Options {
   std::filesystem::path modules, source, archive, witness, rawEnvelope;
   uint32_t steps=0;
   int32_t angle=0;
+  int32_t g15End=0;
   bool full=false,present=false,sourceTimestamps=false,sourceDetail=false,sourcePrewarm=false;
 };
 
@@ -77,12 +82,16 @@ Options Args(int argc,wchar_t **argv) {
       else if (key==L"--raw-envelope") out.rawEnvelope=value;
       else if (key==L"--steps") {
         const auto count=num(value);
-        RequireHost(count>=0 && count<=120,"STEP_RANGE");
+        RequireHost(count>=0 && count<=(kG15Dm2?240:120),"STEP_RANGE");
         out.steps=uint32_t(count);
       } else if (key==L"--angle-index") {
         const auto angle=num(value);
         RequireHost(angle>=-7680 && angle<=7680,"ANGLE_OUT_OF_RANGE");
         out.angle=int32_t(angle);
+      } else if (key==L"--g15-tilt-q8") {
+        const auto angle=num(value);
+        RequireHost(kG15Dm2 && angle>=-11520 && angle<=11520,"G15_ANGLE_OUT_OF_RANGE");
+        out.g15End=int32_t(angle);
       } else RequireHost(false,"UNKNOWN_ARGUMENT");
     }
   }
@@ -91,12 +100,13 @@ Options Args(int argc,wchar_t **argv) {
              (out.witness.empty() || out.steps) && (!out.present || out.steps || !out.source.empty()),
              "R1_CAPABILITIES");
 #else
-  RequireHost(out.witness.empty() && !out.present &&
+  RequireHost(out.witness.empty() && (!out.present || (kG15Dm2 && (out.steps || !out.source.empty()))) &&
               (!out.full || (out.steps && !out.archive.empty())) &&
               (out.archive.empty() || out.steps || !out.source.empty()),"DM2_CAPABILITIES");
 #endif
   RequireHost(!(out.sourceTimestamps || out.sourceDetail || out.sourcePrewarm) || !out.source.empty(),"SOURCE_DIAGNOSTIC_NEEDS_SOURCE");
   RequireHost(out.rawEnvelope.empty() || out.steps || !out.source.empty(),"RAW_ENVELOPE_NEEDS_ROOT");
+  RequireHost(!kG15Dm2 || (!out.angle && !out.full && out.archive.empty()),"G15_NEEDS_V1_PROFILE_AND_RAW_ENVELOPE");
   return out;
 }
 
@@ -450,6 +460,18 @@ int Run(const Options &opt) {
   const auto parent=ParentAdapter::Research(kind,192,opt.full);
   RequireHost(parent.has_value(),"FROZEN_K192_PROFILE");
   const auto &l=parent->Layout();
+  auto pinnedConfig=std::get<PhysicalConfig>(parent->Configuration());
+#ifndef PC_SAND_G11_R1
+  if (kG15Dm2) {
+    pinnedConfig.shear=0;
+    const auto frozen=pinnedConfig.parameterSha;
+    std::array<uint32_t,10> profile{};
+    std::copy(frozen.begin(),frozen.end(),profile.begin());
+    profile[8]=0x35314744u;
+    profile[9]=0;
+    pinnedConfig.parameterSha=accept647::HashWords(profile.data(),profile.size());
+  }
+#endif
   HostDevice gpu;
   gpu.Open(opt.present);
   std::cout << "{\"stage\":\"ROLE_DEVICE\",\"family\":\"" << family << "\",\"vendor\":" << gpu.properties.vendorID
@@ -469,15 +491,27 @@ int Run(const Options &opt) {
                    scope.window,scope.config,scope.surface};
   permit.geometry=1;
   permit.candidateBank=2;
-  permit.parameterSha=parent->ParameterHash();
+  permit.parameterSha=pinnedConfig.parameterSha;
   permit.layoutSha=parent->PhysicalLayoutHash();
   permit.shaderSha=HexDigest(owner.RoleSetSHA());
   permit.kind=1;
   std::vector<uint32_t> seed;
   Digest seedSHA;
   RequireHost(parent->FillSeed(seed,scope,seedSHA),"SEED_K192");
+  if (kG15Dm2) {
+    seed[102]=0;
+    std::copy(permit.parameterSha.begin(),permit.parameterSha.end(),seed.begin()+42);
+    seedSHA=accept647::HashWords(seed.data(),seed.size());
+  }
   std::array<uint32_t,128> config{};
-  parent->RootConfig(config,ParentPermit(permit),seedSHA);
+  const auto rootConfig=[&] {
+    parent->RootConfig(config,ParentPermit(permit),seedSHA);
+    if (kG15Dm2) {
+      config[4]=0;
+      std::copy(permit.parameterSha.begin(),permit.parameterSha.end(),config.begin()+16);
+    }
+  };
+  rootConfig();
   const auto common=gpu.Allocate(kCommonBytes,VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT|VK_BUFFER_USAGE_TRANSFER_DST_BIT).slice;
   const auto tail=gpu.Allocate(1024,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true).Readback();
   StorageSlots storage{};
@@ -489,7 +523,7 @@ int Run(const Options &opt) {
   const auto witness=!opt.witness.empty() ?
       gpu.Allocate(kR1WitnessBytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true).Readback() : VulkanOwner::Readback{};
 #else
-  const auto totalWork=l.workBytes;
+  const auto totalWork=l.workBytes+kG15WorkBytes;
   const auto boot=gpu.Allocate(8,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true).Readback();
   const auto archive=!opt.archive.empty() ?
       gpu.Allocate(opt.full ? kDmColdFullBytes : kDmColdRootBytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true).Readback() :
@@ -501,11 +535,26 @@ int Run(const Options &opt) {
     storage[i]=gpu.Allocate(i<5 ? l.stateBytes : i==5 ? totalWork : l.arenaBytes,storageUsage).slice;
   const auto envelopeReadback=opt.rawEnvelope.empty() ? VulkanOwner::Readback{} :
       gpu.Allocate(5*l.stateBytes+totalWork+2*l.arenaBytes,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true).Readback();
+#ifdef PC_SAND_G15_SCENE
+  std::array<Slice,2> g15Witness{};
+  VulkanOwner::Readback g15Pixel{};
+  if (opt.present) {
+    for (auto &slot:g15Witness) slot=gpu.Allocate(8192,storageUsage).slice;
+    g15Pixel=gpu.Allocate(4,VK_BUFFER_USAGE_TRANSFER_DST_BIT,true).Readback();
+  }
+#endif
   std::array<uint32_t,3> banks{0,1,2};
   uint64_t visGeneration=0,visTicks=0;
   const auto uniform=Uniforms(l,permit,0,banks,visGeneration,visTicks);
   std::vector<uint32_t> work(totalWork/4);
   std::copy(config.begin(),config.end(),work.begin()+l.work[9].begin/4);
+  if (kG15Dm2) {
+    std::ifstream angles(opt.modules/"g15_angle_q20.i32le",std::ios::binary);
+    auto *data=work.data()+l.workBytes/4;
+    RequireHost(bool(angles.read(reinterpret_cast<char*>(data),kG15AngleBytes)) &&
+                angles.peek()==std::char_traits<char>::eof() &&
+                HexDigest(accept647::HashWords(data,kG15AngleBytes/4))==kG15AngleSHA,"G15_ANGLE_TABLE");
+  }
 #ifdef PC_SAND_G11_R1
   const auto visualControl=visual.visual[kSegControl];
   std::copy(visualConfig.begin(),visualConfig.end(),work.begin()+(visualControl+kControlVisualConfig.byteStart)/4);
@@ -586,7 +635,7 @@ int Run(const Options &opt) {
   std::vector<uint32_t>().swap(zeroArena);
   uploads.clear();
   Gate gate;
-  gate.Configure(std::get<PhysicalConfig>(parent->Configuration()),permit.identity);
+  gate.Configure(pinnedConfig,permit.identity);
   if (opt.sourcePrewarm) {
     const auto enter=HostDevice::Now();
     const auto warmed=owner.PrewarmSource(storage,common);
@@ -628,16 +677,20 @@ int Run(const Options &opt) {
                   "SOURCE_MODEL_ENVELOPE");
     } else gate.Pose(angle,now);
     RequireHost(int(gate.Freeze(source ? &command : nullptr,permit.nonce,now,input))==0,"FROZEN_INPUT");
+    if (kG15Dm2) {
+      input[34]=0;
+      input[35]=uint32_t(opt.g15End);
+    }
     const auto frozenNs=source ? HostDevice::Now() : 0;
     permit.inputSha=accept647::HashWords(input.data(),input.size());
-    parent->RootConfig(config,ParentPermit(permit),seedSHA);
+    rootConfig();
     const auto unif=Uniforms(l,permit,angle,banks,visGeneration,visTicks);
     std::memcpy(uniformWords.data(),unif.data(),unif.size());
     uploads={{common,uniformWords.data()},{Subspan(storage[5],l.work[5].begin,sizeof(input)),input.data()},
              {Subspan(storage[5],l.work[9].begin,sizeof(config)),config.data()}};
     accept647::ProgramFacts facts;
     facts.parameterRevision=parent->ParameterRevision();
-    facts.parameter=parent->ParameterHash();
+    facts.parameter=permit.parameterSha;
     facts.physicalLayout=parent->PhysicalLayoutHash();
     facts.physicalSpec=parent->PhysicalSpecHash();
     facts.physicalSeed=seedSHA;
@@ -768,6 +821,11 @@ int Run(const Options &opt) {
 #else
     (void)beforeBanks;
     sealEnvelope();
+#ifdef PC_SAND_G15_SCENE
+    if (opt.present)
+      RequireHost(PresentG15(gpu,*accepted,owner,storage[0],before[5],g15Witness[commit&1],g15Pixel,
+                             l.workBytes+kG15AngleBytes,last),"G15_SCENE_NOT_PRESENTED");
+#endif
     if (last && !opt.archive.empty()) {
       RequireHost(!std::filesystem::exists(opt.archive),"ARCHIVE_DESTINATION_EXISTS");
       auto temp=opt.archive;
@@ -801,7 +859,8 @@ int wmain(int argc,wchar_t **argv) {
   if (argc==2 && std::wstring_view(argv[1])==L"--help") {
     std::cout << "pc_sand_" << family << " --modules DIR [--source INPUT128.u32le [--source-timestamps|--source-timestamps-detail] [--source-prewarm]] [--steps N] [--angle-index N] "
               << (kind==grs::g11vis::ParentKind::DM ? "[--archive FILE [--full]]" : "[--witness FILE] [--present]")
-              << " [--raw-envelope DIRECTORY]\n  --check-package DIRECTORY\n";
+              << " [--raw-envelope DIRECTORY]" << (kG15Dm2?" [--g15-tilt-q8 ANGLE] [--present]":"")
+              << "\n  --check-package DIRECTORY\n";
     return 0;
   }
   try {
