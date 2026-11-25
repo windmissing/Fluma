@@ -1,0 +1,140 @@
+{
+ "schema": "T987_PAIRED_METERING_AND_ISOLATED_SOURCE_V1",
+ "environment": {
+  "gpu": "Intel(R) UHD Graphics 630",
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140 (1656924)",
+  "os": "Windows x64",
+  "date": "2026-11-25"
+ },
+ "g13_isolated_source": {
+  "package": ".codex/local-test/t986-g13-package",
+  "filesVerified": 45,
+  "peSHA": "25d28ab9c9cdeace550d9b4daa6b978c739c6fae8d1e9ae229e5ead4209a31bb",
+  "arms": {
+   "source-fast": {
+    "route": "T986_SOURCE_SINGLETONS_NO_OPT",
+    "slots": 16,
+    "recorded": 16,
+    "singletonSlots": "5=OP55(f1) 6=OP56(f1) 8=OP58(f1) 9=OP59(f1)",
+    "pipelineCreateMs": {
+     "common": 1.8,
+     "singletons": 1.8
+    },
+    "grantToAcceptMs": 121.884,
+    "reason": null,
+    "nativeError": 0,
+    "latchOK": true,
+    "originalOutcome": 1,
+    "firstErrorOp": 0,
+    "timely": true,
+    "coldSHA": "90aa1a9813db489a51e25ad5977f31a1b753f175ca79a376efc47bd73cf5b607",
+    "captured": true
+   },
+   "source-grouped": {
+    "route": "T963 grouped flags=0",
+    "slots": 16,
+    "recorded": 16,
+    "singletonSlots": "5/8=OP55_58_INSTALL 6/9=OP56_59_AUDIT",
+    "pipelineCreateS": {
+     "OP55_58_INSTALL": 287.3,
+     "OP56_59_AUDIT": 302.0
+    },
+    "grantToAcceptMs": 136.957,
+    "reason": null,
+    "nativeError": 0,
+    "latchOK": true,
+    "coldSHA": "6caac633b5b36958520c4b76ee150af6710e2bc4a87a508debb83754796d6b4c",
+    "captured": true
+   },
+   "source-singletons-opt": {
+    "route": "T986 singletons flags=0",
+    "slots": 16,
+    "recorded": 16,
+    "singletonSlots": "5=OP55(f0) 6=OP56(f0) 8=OP58(f0) 9=OP59(f0)",
+    "pipelineCreateMs": {
+     "all": 2.04
+    },
+    "grantToAcceptMs": 129.05,
+    "reason": null,
+    "nativeError": 0,
+    "latchOK": true,
+    "coldSHA": "3fb8b13fe58bc88b",
+    "captured": true
+   }
+  },
+  "sharedIdentity": {
+   "inputSHA": "790991b215a83e2a68e9f35f976eceacb8fed78ab8cd63094d8ec77a980c4a9a",
+   "configSHA": "35241d9f2d2baac8deaa84493787903c5ce7e064e5955971d16f7c5039255513",
+   "perArmCanonicalPermit": "expected, arm strategy embedded"
+  },
+  "keyFindings": {
+   "groupedComboRealCompile": "OP55_58_INSTALL 287.3s + OP56_59_AUDIT 302.0s — first-ever EXIT captured (T977 180s window missed); true slow compile, NOT hang",
+   "allThreeArmsTimely": "SOURCE grant->accept 121.9/137.0/129.1ms all within 250ms",
+   "op66": "double probes QUALIFIED on all 10 common+singleton pipelines",
+   "acceptedRoot": "null in all arms (SOURCE-only diagnostic identity preserved)"
+  }
+ },
+ "g9_paired_metering": {
+  "pe": "873f9c98b23320ba96491429d880b620d42deeefbb0649a31ab6e5a98b3a6117",
+  "fixture": "3580ccb1a4199f41708bd9a790f8997f77c4af87dac1743b08c636264e22f55a (T923 accepted FIXTURE128)",
+  "fixed": [
+   "--inventory-single-scan",
+   "--quantum-detail face",
+   "--quantum-timestamps",
+   "--source-prepare-retired",
+   "--steps 1"
+  ],
+  "blocks": {
+   "r1_invalid": {
+    "ABBA": "A1 SOURCE root VK_TIMEOUT, no QUANTUM",
+    "BAAB": "B3 QUANTUM vk=1 no timestamps",
+    "kept": "jsonl+manifest only, raw removed"
+   },
+   "r2_valid": {
+    "warmup": "1 unmetered A-mode trial absorbing cold start",
+    "ABBA": [
+     "A1 1266.092",
+     "B1 1096.556",
+     "B2 1052.804",
+     "A2 1046.695"
+    ],
+    "BAAB": [
+     "B3 1048.482",
+     "A3 1057.304",
+     "A4 1064.373",
+     "B4 1044.501"
+    ]
+   }
+  },
+  "sixSegmentMs": {
+   "A1": 549.825,
+   "B1": 455.74,
+   "B2": 440.126,
+   "A2": 452.012,
+   "B3": 432.648,
+   "A3": 463.232,
+   "A4": 462.546,
+   "B4": 425.88
+  },
+  "verdict": {
+   "blockDeltas": {
+    "ABBA B-A full": "-81.714ms (A1 position-inflated)",
+    "BAAB B-A full": "-14.347ms",
+    "ABBA B-A six": "-52.986ms",
+    "BAAB B-A six": "-33.625ms"
+   },
+   "direction": "both blocks same direction: candidate (face-exact-divide) faster",
+   "sixMean": "B 438.6 vs A(ex-A1) 459.3 → −20.7ms, exceeds same-mode drift (~10ms A2-A3/A3-A4)",
+   "fullRoot": "all 8 late 1044.6–1266.1ms vs 250ms → product on-time 0/8",
+   "caveat": "full-root delta (−14.3ms in clean BAAB) at iGPU drift edge; six-segment direction consistent",
+   "arenaHandling": "32 ARENA files replaced by SHA registry (arena-sha.json), T983 precedent"
+  },
+  "binding": {
+   "A": "opcode25 b4e8c61a / opcode27 3992c136 (baseline)",
+   "B": "opcode25 cac34472 / opcode27 d0d7adf7 (candidate)",
+   "rows": 2,
+   "all8trials": "SOURCE vk=0, same fence reset=4 gen=4"
+  }
+ }
+}
