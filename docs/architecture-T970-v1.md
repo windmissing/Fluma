@@ -1,0 +1,33 @@
+# T970 · Demo 空领取边界的同次取证合同
+
+2026-11-25 · architect · 仅离线。T967 的 eligible 空返回跨过两层判定，现有日志不能恢复原 `waiting_`、`claimed_` 或实际判断时钟。T971 可在原 ingress 锁内取同次快照，锁外关联原时钟、续授权和 ROOT。T972 可立即用 T969 和冻结原件独立断言，实际诊断运行另随 T968 之外的已有工件交接。 [T966 首归因](architecture-T966-v1.md) · [T967 工件](developer-T967-v1.md) · [T969 判据](test-report-T969-v1.md)
+
+## 已有源证据的判定界
+
+- 冻结的是 T966 `r4` 的 T960 合成输入轨，原日志 SHA256 `89c2ada92870a24869fd55c5f7cfe8834447af9ac4ea0d07020c9adad52a3879`。有 **354** 条记录带旧 `m1SourceBoundary`；30 条有 offer、324 条返回空。空结果没有 own QPC。以此前已接受 Q 的 fence 为下界、当前实际 Q 的 record begin 为上界，28 条的上下界都在两次持按间，296 条都在第二次松手后，零条跨过 Down/Up。故该档 **已记录的持按期空边界计数为 0**，尚无能证明持按中合规候选被漏领的空边界。旧 trace 缺完整尝试收据，无法把这个 0 外推到所有曾执行的程序边界。 [独立半开窗与空边界上下界复算](../test/artifacts/t970/bounds.json)
+- 首四秒有 12 条稳态有 offer 记录，另有 line 627 的首次 preview SOURCE 对应 offer 1。末笔 offer 252 的旧边界检查在 **+3.9861134 s**，实际 SOURCE record 开始在 **+3.9861833 s**，但实际 SOURCE fence 在 **+4.0137098 s**。所以首四秒可证领取并发根 **13 笔**、实收 fence **12 笔**。同时运行中 UI 的 `++offerSeq` 只分配在构造 offer 时，第二 hold 里第一个可证 ID 为 261，故首四秒已构造 ID 总数界为 **252–260**。这 13 个已知领取未覆盖其中 **239–247** 个 ID。此界仅对旧单窗口顺序分配成立。不可用这些 ID 补出 `OfferLatest` 通过量、合法脉冲时宽、被覆盖/过期/换代数，也不可用作漏领率。T966 的 183.5488 ms 与 5.873558 单位仍以原 fence 半开窗为准。 [复算脚本](../test/artifacts/t970/bounds.py) · [UI offer 构造位置](../pc/vulkan/main.cpp:753)
+- 对 T967 当前格式，分相可数 `eligible && serviceEnabled && offer==0` 的已记录调用上界 **E**；没有前快照及唯一对应的 take 证据时，**能证实的漏领下界为 0**。真实漏领最多只能说不超过该完整观测样本的 E，日志丢失或缺调用点时范围仅覆盖可见样本。完整 reservation trace 可按唯一 offer 和真实 `(session, previousSeq,currentSeq)` 重放 offer/claim/终态的已提供、已领、已实收时长，`CLAIMED` 或 Expired 等记录也可识别各该 offer 的命运。T967 的调用结果为零时无 offer ID，无法把任一终态分配给某个空调用。`checkedNs` 为两个不同的时间读取，console 行序来自不同线程的排队和排空。两者都不能用作同次关联键。 [T969 原档适配](../test/t969/demo.py:205) · [T967 边界记录](../entry/src/main/cpp/gpu_resident/g13vulkan_boot/m1_source.inc:1549)
+
+## 最小实现及因果域
+
+1. **Scheduler。** 保留 `M1_FRESH_OFFER_BOUNDARY` 的原键和类型，给每个被记录的边界单调 `boundaryId`，归入 `(run,geometry,boundaryId)`。现有码以 `activeRemaining==0`、idle、无在飞、无 publication lease、current 等判断调度点。按实际求值记录 `preRefresh`（没调用为 `null`）、`eligible`、`serviceEnabled` 和原 phase。reference 的禁用 paced 行可保自己的 eligible 观察字段，明确 `take=null`，它不计入漏领。`pending==0` 不是 SOURCE 的硬失格条件。`BEFORE_QUANTUM` 与 `PACED_QUANTUM_BOUNDARY` 两条必须覆盖。若出首粒或空盒数据沿同一输出用 `PREVIEW`/`FIRST_WAIT` 单列其本来入口和求值条件，或在收据把初始入口覆盖范围显式列出，禁止套用稳态分母。 [现相位和分频](../entry/src/main/cpp/gpu_resident/g13vulkan_boot/m1_source.inc:1596) · [SOURCE 计划资格](../entry/src/main/cpp/gpu_resident/m1/progress_clock_v2.h:64)
+2. **Ingress 同次锁。** `TakeLatest(now,afterTicks,session[,snapshot])` 在现有 `mutex_` 下可选填 POD。读 `waiting_`、`claimed_`、当前 ingress 授权及原入参，同时记录实际走的分支与实际返回的 `SourceOffer.seq`。复用原判断，不加第二次读、`Peek` 或新的锁。`now` 是进入原 `TakeLatest` 前已传入的纳秒值，诊断取样使用该值，保持现有过期和时钟顺序语义。向同一线程本地结果写 POD 后出锁，JSON、stdout 和 sink 排队均在锁外。`Pulse` 把 pulse 队列更新与 `OfferLatest` 投递分在不同锁区；owner 已看见 pulse 时可能合法看见空 waiting，也可能在 `now` 取样后、获取 ingress 锁前看到新 offer 的 `pulseNs > now`。后一种真实分支只能证明该次比较读出 `CLOCK_REVERSED`，尚不足以诊断系统时钟倒退。 [原 TakeLatest](../pc/vulkan/m1_ingress.h:123) · [原 Pulse 投递次序](../pc/vulkan/main.cpp:767)
+3. **外层结果。** `takeFresh` 先尝试 ingress，拿到 offer 后才第二次 `refresh()`，并检查 `offer.current.seq<=clock.sequence`；因此 `TAKEN` 后仍可 `PULSE_NOT_ACCEPTED`，原逻辑 Finish 为拒绝。`FRESH_OFFER` 只表示允许尝试 `ClaimM1Source`。`ClaimM1Source` 可能因真实 hold、权限或 transform 在领后变化，或 `clock.Claim` 因原资格而拒。沿原授权 callback 和原 GPU 提交/accept 粒度用唯一 offer 或 boundaryId 关联终态。诊断应沿现有判断字段报告具体 cause；确实没有分项时用原 `GRANT_UNAVAILABLE`，不能反推权因。所有新字段只记录，保名义 250 ms、pulse gap、许可、SOURCE rate、Q/WSI 及迟到禁止接受。 [外层二次刷新](../entry/src/main/cpp/gpu_resident/g13vulkan_boot/m1_source.inc:533) · [实际授权复验](../pc/vulkan/main.cpp:953)
+
+### 字段与原分支
+
+| 层 | 串接所需字段 |
+| --- | --- |
+| 原边界行 | `boundaryId`、`preRefresh`、原 `run/geometry/session/phase/rootIdle/inFlight/leased/current/eligible/serviceEnabled/activeRemaining/pending/offer/hold`。原 `qpc/checkedNs` 继续可用作展示和外层顺序的辅助。 |
+| 原边界行的 `take` | 未调用时 `null`。已调用时固定 `ingressSerial,afterIngressSerial,nowNs,afterTicks,requestedSession,scopeEpoch,scopeHold,waitingOffer,claimedOffer,waitingSession,waitingPrevCallbackQpc,waitingPulseNs,takeResult,returnedOffer`。`ingressSerial` 和 `afterIngressSerial` 分别为同一锁内判定前后的 reservation 事件序号水位，未变更时相等。无候选用 0 或空值，是否真实读取由 `take` 存在性区分。出现同水位的多次无变更 take 时以边界 ID 区分。权限变更移除实际 waiting 时沿原 `AUTHORITY_CHANGED` 终态关联。 |
+| 外层 `takeFresh` | `freshResult,refreshOK,clockSessionAfterRefresh,clockSequenceAfterRefresh,freshOffer`。`freshOffer` 保旧 `offer` 意义。可能有 `NOT_CALLED`、`NO_OFFER`、`PULSE_NOT_ACCEPTED`、`FRESH_OFFER`。第二次 refresh 跳过时 `refreshOK` 和该次刷新后的两时钟字段为 `null`。相关 `M1_RESERVATION_RETURN/TERMINAL` 用唯一 offer ID 和锁内 order/水位连接。SOURCE 跟原 nonce、sourceCommit、真实 fence、请求/实收/拒收 Q20。 |
+
+`takeResult` 保持原优先序。`CLAIMED_SLOT_BUSY` 在 `claimedOffer!=0` 时立即返回空。`WAITING_EMPTY` 在 claimed 为空且 waiting 为空时返回空。两者不消费 waiting。`OLD_BASELINE` 对应 waiting session 不同或 `waitingPrevCallbackQpc <= afterTicks`。`CLOCK_REVERSED` 对应 `nowNs < waitingPulseNs`。`STALE_ENDPOINT` 对应 `nowNs - waitingPulseNs > 33,333,333`，含等于门限的有效正控。后三种终结当前 waiting 为 Expired，再返回空。余下为 `TAKEN`，转 waiting 到 claimed，且 `returnedOffer==waitingOffer`。同一 `(run,geometry,boundaryId)` 的原子快照显示已启用、合规候选具备全部入口条件、无已领占位，却未经对应 take 返回该候选时，才有 ingress 层漏领的反例。禁用或不合规时 claim、相同 offer 重复 claim 或终态、或 SOURCE 无合法后链分别失败。时钟大整数以十进制字符串传，完整性收据要含运行/geometry 重建、诊断 scope 和 drop 计数。丢失或键重复的窗保留缺证机制。
+
+## 离线放行、开销和实测后决策
+
+- **T971 实施与编译。** 接上述只读 POD、锁外格式化、独立诊断构建。默认模式的 scheduler、GPU shader、SOURCE 命令、原时钟读取量和 T967 送验目录保留。优先复用现有 trace 传递和 T968 原 manifest；新增诊断单独钉 PE/manifest 和 schema。启用时每个 trace 边界最多常数次标量拷贝，热锁内不分配、不做 I/O、不为统计另查锁；必要时在已有快照之上加独立的有界环与显式 drop。作为预算例，固定 POD 每条约 128–192 B 以及 512 条缓冲约 64–96 KiB。稳态按 120 条/s 估计 POD 约 15–23 KiB/s、0.6–0.9 KiB/40 ms，这只是数量级，preview 频度和 JSON/管道开销另按原输出计。现有 T967 `publish` 本来也产生 trace 开销，须把新增量和原 trace 耗时分开。若缓冲用满、窗口线程拖延或日志缺段，在该窗禁算完整率。正常路径禁用时不复制 POD，不添锁与序列化。
+- **T972 独立离线校验。** 复用 T969 的原根计量，先运行 T960/T967 旧格式回归，再喂 T971 实际 schema 和 host 产物。用确定性交错做 take 先/offer 后及 pulse 已可见而 offer 尚未上锁、offer 先/take 后、S1 被 S2 替换后只领 S2、旧 session、等于 afterTicks 或 age 边界、now 早于新上锁 offer、waiting 有料但 claimed 槽占位、授权/变换在 take 后变更、refresh 失败/seq 不足、SOURCE 已领但根最终未接纳、禁用 reference、丢行/乱序/重复/错 run 或 boundaryId。检查一个已合法接受对照和供给/领取/接受时宽的独立对账。T969 `coverage()` 要读 ingress 取到的 ID 用于 claim 判据，读取 `freshOffer` 用于下一阶段，两个值有意允许不同。先用可复现 host 同次记录，无须等待 T968。
+- **实测后才决策。** 保留 T968 用的 T967 产品基线和原判据。拿到新 trace 工件后，UHD 630 对默认调度/原呈现调度、真实静按/合成配对分别量 `合法 offer pulse 宽度 → ingress taken → fresh/permit → SOURCE accepted → Q/WSI`。单列诊断关闭/开启同调度的 CPU 记录、输出体积、timer 间隙、trace drop、Q/s 和 SOURCE 实收时宽，比较相同场景成对运行；确认 trace 引入过载时先减日志热点。只有有候选且在入口条件下确证漏领，才追同边界代码；empty 主导则先查 UI 产出及提交顺序，expired 主导则查真实时钟/排队，taken 后失败则查时钟/授权/业务。若并发与资格均正确但数值仍过不了 T940，再考虑调度或性能改进。本卡不扩大配额、新增虚拟 pulse、替补旧额度或改变默认呈现节奏。
+
+本卡未启动实际 Demo 窗口、设备测试或 GPU 工作。唯一交付环境为 Intel UHD 630。GPU 驻留，XComponent+shader 唯一上屏，禁止 Canvas 回退。
