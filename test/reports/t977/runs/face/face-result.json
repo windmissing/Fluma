@@ -1,0 +1,57 @@
+{
+ "abba": {
+  "A1-off": "r1",
+  "B1-on": "r3",
+  "B2-on": "r1",
+  "A2-off": "r1"
+ },
+ "binding": {
+  "opcode25": "b4e8c61a -> cac34472 (exact-divide)",
+  "opcode27": "3992c136 -> d0d7adf7"
+ },
+ "flags": {
+  "faceExactDivide": "False/True correctly marked in envelope + binding rows + timestamps"
+ },
+ "equivalence": {
+  "selectedJ": 1,
+  "firstError": [
+   0,
+   0
+  ],
+  "EVENT/PATH": "byte-identical",
+  "diffWords": "identity/clock/seal only (same structured offsets as T954/T968)"
+ },
+ "gpuPoints": {
+  "count": 27,
+  "note": "15 coarse + 12 face-edge points (OP25/27 six edges x discovery/authority/replay)"
+ },
+ "sameFence": "Q root nonce/fence/gen == GPU timestamps row, 4/4 arms",
+ "timing": {
+  "wholeRootMs": {
+   "A1-off": 1071.1,
+   "B1-on": 1057.5,
+   "A2-off": 906.0,
+   "B2-on": 1000.9
+  },
+  "DISCOVERY_J1": {
+   "A1": 401.2,
+   "B1": 395.1,
+   "A2": 331.7,
+   "B2": 375.2
+  },
+  "AUTHORITATIVE": {
+   "A1": 362.0,
+   "B1": 368.6,
+   "A2": 323.3,
+   "B2": 358.7
+  },
+  "REPLAY": {
+   "A1": 415.6,
+   "B1": 399.4,
+   "A2": 348.9,
+   "B2": 373.7
+  },
+  "note": "single-run pairs: candidate gain not separable from iGPU jitter (~\u00b110%); paired repetition needed per T976 doc"
+ },
+ "verdict": "EQUIVALENCE PASS (business bytes equal, binding live, same fence); PERFORMANCE INCONCLUSIVE single-run (needs paired repeats)"
+}

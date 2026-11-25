@@ -1,0 +1,15 @@
+{
+ "verdict": "5/5 singletons PASS (pipeline EXIT vk=0)",
+ "keyFinding": "OP55/OP58/OP56/OP59 singletons complete in 85-107s \u2014 the T968 \"hang\" was compile-time exceeding the 120s observation window, not deadlock; singleton split (T973/T975 path) is the effective fix",
+ "noopt": "--disable-optimization arms complete in 0.4-0.5s (optimization pass is the 200x cost)",
+ "legacy": "OP55_58_INSTALL/OP56_59_AUDIT (combined roles) and OP_48/OP48_REMAINDER still timeout at 180s \u2014 combined/large modules genuinely hang or exceed 180s",
+ "timing": {
+  "OP55-opt": 85.4,
+  "OP58-opt": 80.9,
+  "OP56-opt": 94.5,
+  "OP59-opt": 106.6,
+  "DRIVE-opt": 105.9,
+  "noopt all": 0.5
+ },
+ "op66": "no OP66 rows observed in qualification entry (per T975 doc: OP66 evidence maps to role qualification; SOURCE line needs actual INPUT)"
+}

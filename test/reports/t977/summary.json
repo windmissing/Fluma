@@ -1,0 +1,31 @@
+{
+ "schema": "T977_T975_T976_EFFECTOR_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "note": "dida card T977 not found at task time; executed latest delivered T975/T976 effector scope, archived as t977",
+ "t975": {
+  "qualification": "5/5 singletons PASS (OP55/58/56/59 + DRIVE: pipeline EXIT vk=0)",
+  "keyCorrection": "T968 \"hang\" was compile time exceeding 120s window \u2014 singletons complete in 85-107s; singleton split (T973 path) verified effective",
+  "noopt": "0.4-0.5s all (optimization pass ~200x cost)",
+  "legacy": "combined roles + OP_48 family still timeout at 180s"
+ },
+ "t976_face": {
+  "equivalence": "PASS: selectedJ=1, firstError 0/0, EVENT/PATH identical, identity-only diffs; faceExactDivide flags live",
+  "binding": "opcode25 b4e8c61a->cac34472, opcode27 3992c136->d0d7adf7",
+  "gpuPoints": 27,
+  "sameFence": "4/4",
+  "performance": "single-run inconclusive (iGPU jitter covers candidate gain; paired repeats needed per doc)"
+ },
+ "t976_demoLocal": {
+  "verdict": "PASS: foreground-free SYNTHETIC_LOCAL path live \u2014 T968 blocker resolved",
+  "arms": {
+   "stationary": "2 rows, 4.007s hold, 13.8M Q admitted",
+   "move": "120 rows (118 MOVE), 15.07M Q",
+   "reference": "2 rows, 5.51M Q (scheduling difference visible)"
+  },
+  "fields": "inputDriver/fixtureHold/osCaptureOwned=false/foregroundMatched=false all recorded"
+ }
+}

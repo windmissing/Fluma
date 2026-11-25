@@ -1,0 +1,31 @@
+{
+ "verdict": "PASS: SYNTHETIC_LOCAL token path live \u2014 foreground-free synthetic input works (T968 blocker resolved by T976)",
+ "arms": {
+  "local-stationary": {
+   "syntheticRows": 2,
+   "down": "(312,215) pixel",
+   "holdNs": 4007000000.0,
+   "presents": 647,
+   "admittedQ": 13803016,
+   "stockQ": 13803016,
+   "activeSand": 0,
+   "fields": "inputDriver=SYNTHETIC_LOCAL, fixtureHold token 0x8000000000000001, osCaptureOwned=false, foregroundMatched=false, viewRevision, authorityEpoch, sample"
+  },
+  "local-move": {
+   "syntheticRows": 120,
+   "DOWN": 1,
+   "UP": 1,
+   "MOVE": 118,
+   "presents": 727,
+   "admittedQ": 15067760,
+   "activeSand": 102
+  },
+  "reference-local": {
+   "syntheticRows": 2,
+   "presents": 714,
+   "admittedQ": 5513872,
+   "note": "reference scheduling arm \u2014 different admission profile vs default (5.5M vs 13.8M)"
+  }
+ },
+ "keyFix": "M1_DEMO_SYNTHETIC_LOCAL_INPUT works without foreground (foregroundMatched=false recorded honestly); real-input path still gated per contract"
+}
