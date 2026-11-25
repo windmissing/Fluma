@@ -1,0 +1,117 @@
+{
+  "schema": "T978_G13_COARSE_PRIVATE_PREVIEW_RELEASE_V1",
+  "defaultGrid": 16,
+  "grids": [
+    16,
+    32
+  ],
+  "outputKind": "APPROXIMATE_PRIVATE_ONLY",
+  "windowsExecuted": false,
+  "files": [
+    {
+      "name": "hello_world_pc.exe",
+      "bytes": 6132224,
+      "sha256": "f1b7f190c904312a2556bb99ffd40f69d8de942f737325eeedbe8f47b4b1fde3"
+    },
+    {
+      "name": "g13_coarse_preview.frag.spv",
+      "bytes": 9244,
+      "sha256": "0b7071e2b59f760641d3e3378e90c280fc52fd47820c434cd646500cc29a6018"
+    },
+    {
+      "name": "boot_view.vert.spv",
+      "bytes": 1344,
+      "sha256": "080f718247dfd827121747cdcda61147eb07f3b0deae19075b4d88be1005071c"
+    },
+    {
+      "name": "PC_OP49_PRESSURE.spv",
+      "bytes": 125372,
+      "sha256": "ca603a59b5d09ad9ac27ab4720420335d6a13a73bf622b44e43148b67aea2ec2"
+    },
+    {
+      "name": "PC_OP11_SHA_SCALAR_RING.spv",
+      "bytes": 225072,
+      "sha256": "b34d442cd014c1f074a18c8f6f6f003229a79b5d1bd8721401dd099bacde3d06"
+    },
+    {
+      "name": "pc_view_assets.json",
+      "bytes": 2023,
+      "sha256": "9f2f6177d61848662def994ba2593876ffc20a971ec13880738fffa21ccae649"
+    },
+    {
+      "name": "pc_steady_assets.json",
+      "bytes": 34310,
+      "sha256": "0f5f91a0ac1458b3ebe3aa973767e60284bde4a52f7443f5b337de6457c4d8ba"
+    },
+    {
+      "name": "fixtures.json",
+      "bytes": 6285,
+      "sha256": "adce97027369e4ed01d8c126175c1309d7f43e30991d6023a6a31e039103111f"
+    },
+    {
+      "name": "fixtures/n16-circulation-config128.bin",
+      "bytes": 512,
+      "sha256": "f9eecf522d422cb472a1f8a7ff430cc6749270b5addb9678b0c7201087cbd70d"
+    },
+    {
+      "name": "fixtures/n16-circulation-state.bin",
+      "bytes": 136320,
+      "sha256": "4b6de2f1765e5d1370f6c59f08586ea62840da090a7e0ad187f507a67060418f"
+    },
+    {
+      "name": "fixtures/n16-projection-config128.bin",
+      "bytes": 512,
+      "sha256": "5377dac97c176800c7c85528485d4e4426bc1a86bbdf799168bc528086ba14f5"
+    },
+    {
+      "name": "fixtures/n16-projection-state.bin",
+      "bytes": 136320,
+      "sha256": "a886a84968baed7bca1e4929855564e19fdb89a4a13379444af697d0803cf468"
+    },
+    {
+      "name": "fixtures/n16-zero-config128.bin",
+      "bytes": 512,
+      "sha256": "84229acbeb4648e25ee4183a5b28751bc1fc6acc59c12b58bc821ed55b21d73a"
+    },
+    {
+      "name": "fixtures/n16-zero-state.bin",
+      "bytes": 136320,
+      "sha256": "29ab9929c052cb60160a6251b24d4acfdfe0719f80cf843aff9775af4e1f1c30"
+    },
+    {
+      "name": "fixtures/n32-circulation-config128.bin",
+      "bytes": 512,
+      "sha256": "a5bb090b85f5eba69e56f5b00c6a076e41939d7b70db3a5a0c1305f414f4fdb7"
+    },
+    {
+      "name": "fixtures/n32-circulation-state.bin",
+      "bytes": 148736,
+      "sha256": "38a1300d89ac8be388253087daa072dc87f3863f3bd45c57dbf548f7070a2618"
+    },
+    {
+      "name": "fixtures/n32-projection-config128.bin",
+      "bytes": 512,
+      "sha256": "4885159adb0aebca3544e12c570a4e40bd878bcb82a2b207ea47a3bfb4802355"
+    },
+    {
+      "name": "fixtures/n32-projection-state.bin",
+      "bytes": 148736,
+      "sha256": "77a63f723ac0bde025b2b9a3a5af884c7bc084ad380efb09c60e93a1831039eb"
+    },
+    {
+      "name": "fixtures/n32-zero-config128.bin",
+      "bytes": 512,
+      "sha256": "c6ef8362772e5752357b4797a896f04037bd1b92c47459f7b4d7a2b89a7bcf33"
+    },
+    {
+      "name": "fixtures/n32-zero-state.bin",
+      "bytes": 148736,
+      "sha256": "90407243fe735bf0703a309a701ae57042511e069b6ca0d9c99fd20937da4f87"
+    },
+    {
+      "name": "Start Preview.cmd",
+      "bytes": 1294,
+      "sha256": "d01c61f5be9fda42a5823e25eb1591ba5f80b8b22355d66c9e0ef2e028a4b82f"
+    }
+  ]
+}

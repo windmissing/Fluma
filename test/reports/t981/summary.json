@@ -1,0 +1,168 @@
+{
+ "schema": "T981_PREVIEW16_EVIDENCE_V1",
+ "environment": {
+  "gpu": "Intel(R) UHD Graphics 630",
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140 (1656924)",
+  "os": "Windows x64",
+  "date": "2026-11-25"
+ },
+ "g13": {
+  "package": ".codex/local-test/t978-g13-package",
+  "manifestSHA": "ea229bef0b82eecc91865bbf87c1f6e2564f476661dca41a62818cf012ee36c8",
+  "filesVerified": 21,
+  "arms": {
+   "circulation": {
+    "grid": 16,
+    "cells": 256,
+    "macFaces": 544,
+    "mgLevels": 3,
+    "fixtureNonzeroFaces": 480,
+    "peakSpeed": 0.0236333,
+    "oraclePeakSpeed": 0.02391815185546875,
+    "pressureMin": -0.247996,
+    "pressureMax": 0.247996,
+    "oraclePressureRange": [
+     -0.2479963447086091,
+     0.24799634470860912
+    ],
+    "packSHA": "bcd10fe97899f158e16efa8756736b643f4e6a6c631d5be8b8251e825d9412e4",
+    "stateSHA": "c70288d7e3813d780b3656fd41426e296d88b1a0ff768f594b39d827bbf7acdc",
+    "quantumSHA": "e11db8ccfbafdedbffb803d8dd1f6c2a1019f6e90f0374d5b1616bbb74bcfed7",
+    "status": "PREVIEW_LATE",
+    "acceptedRoot": null,
+    "rootSubmitToFenceMs": 908.15,
+    "deadlineMet": false,
+    "gpuSpansNs": {
+     "root": 907826000,
+     "actual": 521520000,
+     "replay": 358346000
+    }
+   },
+   "projection": {
+    "peakSpeed": 3.519e-08,
+    "pressureMin": -0.247996,
+    "pressureMax": 0.247996,
+    "packSHA": "90011f84ad6f083f6bc83ed897d21a40ec0a779ca525005b0d07af1d50d57545",
+    "quantumSHA": "416e97c9f5b855ebf1c0dbe4fe15a540d48a013948cb86f016faf82cf7d1a1cc",
+    "status": "PREVIEW_LATE",
+    "rootSubmitToFenceMs": 1016.61
+   },
+   "zero": {
+    "peakSpeed": 0,
+    "pressureMin": 0,
+    "pressureMax": 0,
+    "zeroControl": true,
+    "packSHA": "3315d38f4a113f8dae44959866655cae157ffbe17928eb1e553dac782338561d",
+    "quantumSHA": "bfe95872336ceba1b188e95045f23621f30c95025957706749151319686c2fe4",
+    "status": "PREVIEW_LATE",
+    "rootSubmitToFenceMs": 884.79
+   }
+  },
+  "checks": {
+   "velocityDirection": "bottom+ top- left- right+ matches oracle probe directions",
+   "pressureQuadrants": "product-form sign pattern; extremes ±0.248; Q(++)max +0.248, Q(+-)min -0.248 (>=0.05 criterion met)",
+   "projectionArm": "velocity suppressed to 3.5e-08 (6 orders), pressure sign preserved",
+   "zeroArm": "both fields identically zero, nonzero!=zeroControl consistent",
+   "packIdentity": "header magic/nonce/grid/config words match G13CoarsePackMatches, all 256 cells finite"
+  },
+  "window": {
+   "title": "G13 近似流场 · 16×16 · 超期诊断",
+   "clientSize": "784x461",
+   "swapFormat": 44,
+   "presentVkResult": 0,
+   "graphicsFenceResult": 0,
+   "pixelSHA": "a6e8f34f0acb4d133d4899edf1509ae531cf48fe92feeb8acad373f3da8d5ac2",
+   "screenColors": "cyan velocity arrows ~11277px left half; warm 12743/cold 17534 pressure px right half"
+  }
+ },
+ "g14": {
+  "package": ".codex/local-test/t984-g14-package",
+  "manifestSchema": "T984_G14_PREVIEW16_V1",
+  "filesVerified": 12,
+  "exeSHA": "c850b5da585b2cf9c797201d94e7babc5af22264400b55ad64fbef9434793732",
+  "device": {
+   "vendor": 32902,
+   "device": 16024,
+   "driver": 1656924,
+   "shaderFloat64": true
+  },
+  "oracleChecks": {
+   "waterAreaM2": {
+    "expect": 0.0053125,
+    "fixed": 0.005312500000000005,
+    "moving": 0.005312500000000005,
+    "mirror": 0.005312500000000005
+   },
+   "midlineCumulativeM2": {
+    "fixed": 0,
+    "moving": -0.00015625000000000006,
+    "mirror": 0.00015625000000000006,
+    "oracleMoving": -0.00015625
+   },
+   "sandSidePressureImpulseX": {
+    "moving": -0.001855468750001,
+    "mirror": 0.00185546875,
+    "fixed": 6.35e-21,
+    "oracleMoving": -0.00185546875
+   },
+   "sandSidePressureImpulseY": {
+    "moving": 0.003125000005,
+    "mirror": 0.003125,
+    "fixed": 0.003125,
+    "oracle": 0.003125
+   },
+   "viscousShearImpulseX": {
+    "moving": -0.0001046745044842,
+    "mirror": 0.0001046745044842,
+    "fixed": 0
+   },
+   "maxTransportResidualM2": {
+    "moving": 4.235164736271502e-22,
+    "mirror": 5.293955920339377e-22,
+    "fixed": 0,
+    "oracleMoving": 2.753e-21
+   },
+   "maxGeometryResidualM2": {
+    "moving": 1.257843926672636e-19,
+    "mirror": 9.105604182983729e-20,
+    "fixed": 0
+   }
+  },
+  "presents": {
+   "movingBurst": 30,
+   "fixedBurst": 30,
+   "mirrorBurst": 30,
+   "allVkResults": 0,
+   "fragmentSHA": "acb7248f31b5c5893c89e57fc59e869b7c46bac52e1c705db956fbcec8f1f3e2"
+  },
+  "visual": {
+   "movingBedMotionPx": {
+    "leftMean": "+12 down",
+    "rightMean": "-9 up",
+    "interpretation": "M+ right-up left-down rotation"
+   },
+   "mirrorBedMotionPx": {
+    "leftMean": "-5.9 up",
+    "rightMean": "+6.0 down",
+    "interpretation": "i->16-i mirror of moving"
+   },
+   "fixedBedMotionPx": {
+    "left": 0,
+    "right": 0,
+    "interpretation": "bed static"
+   },
+   "colors": {
+    "water": "(24,92,135)",
+    "bed": "(79,50,27)",
+    "velocityArrows": "(181,245,255)"
+   },
+   "frames": "PrintWindow PW_RENDERFULLCONTENT burst; moving 13 frames, fixed 9, mirror 9"
+  }
+ },
+ "notes": {
+  "lateness": "all G13 roots late (885-1017ms) vs 250ms grant deadline; previewPresented via PREVIEW_LATE path with acceptedRoot=null as designed",
+  "canvas": "no Canvas fallback; Vulkan WSI + shader path only",
+  "launcher": ".codex/local-test/t978-g13-package/Start Preview.cmd for G13; .codex/local-test/t984-g14-package/pc_g14_preview16.exe for G14"
+ }
+}
