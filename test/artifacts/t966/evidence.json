@@ -1,0 +1,1238 @@
+{
+  "g16": {
+    "manifest_sha256": "286f000b24dd2e56bea538c6daad9ce540e17ede09a9e43d0be9dfe47bbcb1f3",
+    "runs": {
+      "B13_FREE": {
+        "config_sha256": "a861c5a851801c0ec04c221d87ca44e43d673797b58ba5de431ac0c2b4758556",
+        "completion_sha256": "ed3a05451ff536b48702238ca3fa4df10735b3cb998e59fda847287bea54f488",
+        "seed_sha256": "d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168",
+        "run": 1724635475601300,
+        "nonce": 1724639629950200,
+        "fence_generation": 1,
+        "branch_inputs": [
+          0,
+          0
+        ],
+        "module_sha_completion_prefix": "b9cab892f95da3b5402696d26ec41d1fe8acd2e89f636ada",
+        "outcome_reason_stage_micro": [
+          2,
+          11,
+          9,
+          16
+        ],
+        "bank_words": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "segments": 19,
+        "iterations": 64,
+        "candidates": 27,
+        "identity_differences_dst_src_observed_expected": [
+          [
+            126,
+            102,
+            2,
+            3473441333
+          ],
+          [
+            127,
+            103,
+            3,
+            595154220
+          ]
+        ]
+      },
+      "B13_SUPPORT": {
+        "config_sha256": "62c9370513f5c585887f116371d7849b3759a215c4fb129d2c4321253575180a",
+        "completion_sha256": "0ae3160f3170807dcb35a5b08b66f8517a593b4ea2c0084c1971cc6eefc72d5d",
+        "seed_sha256": "d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168",
+        "run": 1724646847493000,
+        "nonce": 1724646953457300,
+        "fence_generation": 1,
+        "branch_inputs": [
+          1,
+          0
+        ],
+        "module_sha_completion_prefix": "b9cab892f95da3b5402696d26ec41d1fe8acd2e89f636ada",
+        "outcome_reason_stage_micro": [
+          2,
+          11,
+          9,
+          16
+        ],
+        "bank_words": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "segments": 19,
+        "iterations": 64,
+        "candidates": 27,
+        "identity_differences_dst_src_observed_expected": [
+          [
+            126,
+            102,
+            2,
+            3473441333
+          ],
+          [
+            127,
+            103,
+            3,
+            595154220
+          ]
+        ],
+        "stdout": {
+          "sha256": "309f7788e77314ec09f69ef2faca5f9070167f5e6408a0d62bfd545974062699",
+          "private_root": {
+            "stage": "G16_PRIVATE_ROOT",
+            "run": "1724646847493000",
+            "nonce": "1724646953457300",
+            "inputId": "12424726808078205429",
+            "fence": "2072641917848",
+            "fenceGeneration": "1",
+            "beginNs": "1724646953457300",
+            "exitNs": "1724646982342000",
+            "submit": 0,
+            "retire": 0,
+            "vkResult": 0,
+            "current": true,
+            "fresh": true,
+            "baseCommit": "0",
+            "privateCommit": "0",
+            "identityOK": false,
+            "firstReason": null,
+            "firstStage": null,
+            "B": null,
+            "N": 13,
+            "C": null,
+            "Ic": null,
+            "dispatches": 130,
+            "computeBarriers": 129,
+            "acceptedRoot": null
+          },
+          "late_tail": {
+            "stage": "G16_PRIVATE_LATE_TAIL",
+            "nonce": "1724646953457300",
+            "originalFence": "2072641917848",
+            "originalGeneration": "1",
+            "identityOK": false,
+            "firstReason": 11,
+            "firstStage": 9,
+            "segments": 19,
+            "iterations": 64,
+            "candidates": 27,
+            "acceptedRoot": null
+          },
+          "fixture": null
+        }
+      },
+      "THIRD": {
+        "config_sha256": "19e6df271c9d49d8870977a96a83b26a9cd21acb1e288aadb5a8ef1b1995ae3e",
+        "completion_sha256": "41e02b352265133ffc622f3f4c4ff3bdc485c1a271163fa8f12c7673677c06be",
+        "seed_sha256": "d74e416cebfbc9199c85a5c25f63ed52f315873ec2b5908a7f7ce94bbe1d3168",
+        "run": 1724647375939200,
+        "nonce": 1724650968855000,
+        "fence_generation": 1,
+        "branch_inputs": [
+          0,
+          1
+        ],
+        "module_sha_completion_prefix": "b9cab892f95da3b5402696d26ec41d1fe8acd2e89f636ada",
+        "outcome_reason_stage_micro": [
+          2,
+          11,
+          9,
+          15
+        ],
+        "bank_words": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "segments": 17,
+        "iterations": 32,
+        "candidates": 27,
+        "identity_differences_dst_src_observed_expected": [
+          [
+            126,
+            102,
+            1,
+            3473441333
+          ],
+          [
+            127,
+            103,
+            3,
+            595154220
+          ]
+        ],
+        "stdout": {
+          "sha256": "12b0769bdf10bd0523ea56c1b75a8e91cec5c625f534316b21d838b1cdf39191",
+          "private_root": {
+            "stage": "G16_PRIVATE_ROOT",
+            "run": "1724647375939200",
+            "nonce": "1724650968855000",
+            "inputId": "12424726808078205429",
+            "fence": "2192974797368",
+            "fenceGeneration": "1",
+            "beginNs": "1724650968855000",
+            "exitNs": "1724650988866600",
+            "submit": 0,
+            "retire": 0,
+            "vkResult": 0,
+            "current": true,
+            "fresh": true,
+            "baseCommit": "0",
+            "privateCommit": "0",
+            "identityOK": false,
+            "firstReason": null,
+            "firstStage": null,
+            "B": null,
+            "N": 13,
+            "C": null,
+            "Ic": null,
+            "dispatches": 130,
+            "computeBarriers": 129,
+            "acceptedRoot": null
+          },
+          "late_tail": {
+            "stage": "G16_PRIVATE_LATE_TAIL",
+            "nonce": "1724650968855000",
+            "originalFence": "2192974797368",
+            "originalGeneration": "1",
+            "identityOK": false,
+            "firstReason": 11,
+            "firstStage": 9,
+            "segments": 17,
+            "iterations": 32,
+            "candidates": 27,
+            "acceptedRoot": null
+          },
+          "fixture": {
+            "stage": "G16_THIRD_IMPACT_FIXTURE",
+            "passed": false,
+            "privateCommit": 0,
+            "acceptedRoot": null
+          }
+        }
+      },
+      "THIRD_MIRROR": {
+        "config_sha256": "e78166917b2e182af146b593d43fb3985b810a1333ec69d84e0bc64f8a20bdab",
+        "completion_sha256": "dd5d1e270ba4c468512275f282ff369cd99a3a29326d69718d5eb7ccdca1df05",
+        "seed_sha256": "15f7e67b36b19adb941d5cb1a1601e08d15f83ee420250a2d989a650a14aca96",
+        "run": 1724659793802800,
+        "nonce": 1724659898319900,
+        "fence_generation": 1,
+        "branch_inputs": [
+          0,
+          2
+        ],
+        "module_sha_completion_prefix": "b9cab892f95da3b5402696d26ec41d1fe8acd2e89f636ada",
+        "outcome_reason_stage_micro": [
+          2,
+          11,
+          9,
+          15
+        ],
+        "bank_words": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "segments": 17,
+        "iterations": 32,
+        "candidates": 27,
+        "identity_differences_dst_src_observed_expected": [
+          [
+            126,
+            102,
+            1,
+            3473441333
+          ],
+          [
+            127,
+            103,
+            3,
+            595154220
+          ]
+        ],
+        "stdout": {
+          "sha256": "7f7de85aaacc53d01f1f950694b28ffbf1a03e190ee01720c5ff09d14dae3bd6",
+          "private_root": {
+            "stage": "G16_PRIVATE_ROOT",
+            "run": "1724659793802800",
+            "nonce": "1724659898319900",
+            "inputId": "12424726808078205429",
+            "fence": "1514641088184",
+            "fenceGeneration": "1",
+            "beginNs": "1724659898319900",
+            "exitNs": "1724659919512200",
+            "submit": 0,
+            "retire": 0,
+            "vkResult": 0,
+            "current": true,
+            "fresh": true,
+            "baseCommit": "0",
+            "privateCommit": "0",
+            "identityOK": false,
+            "firstReason": null,
+            "firstStage": null,
+            "B": null,
+            "N": 13,
+            "C": null,
+            "Ic": null,
+            "dispatches": 130,
+            "computeBarriers": 129,
+            "acceptedRoot": null
+          },
+          "late_tail": {
+            "stage": "G16_PRIVATE_LATE_TAIL",
+            "nonce": "1724659898319900",
+            "originalFence": "1514641088184",
+            "originalGeneration": "1",
+            "identityOK": false,
+            "firstReason": 11,
+            "firstStage": 9,
+            "segments": 17,
+            "iterations": 32,
+            "candidates": 27,
+            "acceptedRoot": null
+          },
+          "fixture": {
+            "stage": "G16_THIRD_IMPACT_FIXTURE",
+            "passed": false,
+            "privateCommit": 0,
+            "acceptedRoot": null
+          }
+        }
+      }
+    }
+  },
+  "demo": {
+    "log_file": "test/artifacts/t966/demo-r4.jsonl.gz",
+    "log_sha256": "89c2ada92870a24869fd55c5f7cfe8834447af9ac4ea0d07020c9adad52a3879",
+    "lines": 5259,
+    "demo_manifest_sha256": "abaa125ca1d6364411daaa8eb96aa458efc46b9440e33a745615ce44b057636e",
+    "input": [
+      {
+        "hold": 1,
+        "down_qpc": "17256516708547",
+        "up_qpc": "17256557115267",
+        "duration_s": 4.040672,
+        "down_xy": [
+          320,
+          235
+        ],
+        "moves": 118
+      },
+      {
+        "hold": 122,
+        "down_qpc": "17256607453566",
+        "up_qpc": "17256657595184",
+        "duration_s": 5.0141618,
+        "down_xy": [
+          320,
+          235
+        ],
+        "moves": 147
+      }
+    ],
+    "windows": [
+      {
+        "from_to": [
+          0,
+          4
+        ],
+        "source_roots": 12,
+        "births": 52,
+        "admitted_q20": 6158872,
+        "admitted_units": 5.873558044433594,
+        "requested_units": 5.8735616,
+        "accepted_source_pulse_ns": 183548800,
+        "rejected_q20_in_accepted_sources": 0,
+        "accepted_quanta": 196,
+        "sim_seconds": 1.6333333333333333,
+        "accepted_present_rows": 93,
+        "submit_to_fence_ms_median": 16.568399999999997,
+        "first_quantum_in_window": {
+          "line": 627,
+          "t": 0.1354775,
+          "serial": 1,
+          "stock": 469755,
+          "active": 4,
+          "free": 188,
+          "dispatches": 35,
+          "source_commit": 1,
+          "submit_to_fence_ms": 37.0041
+        },
+        "last_quantum_in_window": {
+          "line": 935,
+          "t": 3.9852688,
+          "serial": 196,
+          "stock": 6158872,
+          "active": 14,
+          "free": 178,
+          "dispatches": 35,
+          "source_commit": 12,
+          "submit_to_fence_ms": 15.4023
+        }
+      },
+      {
+        "from_to": [
+          0,
+          4.040672
+        ],
+        "source_roots": 13,
+        "births": 57,
+        "admitted_q20": 6726176,
+        "admitted_units": 6.414581298828125,
+        "requested_units": 6.4145856,
+        "accepted_source_pulse_ns": 200455800,
+        "rejected_q20_in_accepted_sources": 0,
+        "accepted_quanta": 197,
+        "sim_seconds": 1.6416666666666666,
+        "accepted_present_rows": 94,
+        "submit_to_fence_ms_median": 16.5705,
+        "first_quantum_in_window": {
+          "line": 627,
+          "t": 0.1354775,
+          "serial": 1,
+          "stock": 469755,
+          "active": 4,
+          "free": 188,
+          "dispatches": 35,
+          "source_commit": 1,
+          "submit_to_fence_ms": 37.0041
+        },
+        "last_quantum_in_window": {
+          "line": 936,
+          "t": 4.0315137,
+          "serial": 197,
+          "stock": 6726176,
+          "active": 19,
+          "free": 173,
+          "dispatches": 35,
+          "source_commit": 13,
+          "submit_to_fence_ms": 17.5275
+        }
+      },
+      {
+        "from_to": [
+          9.0745019,
+          14.0886637
+        ],
+        "source_roots": 16,
+        "births": 63,
+        "admitted_q20": 7376250,
+        "admitted_units": 7.034540176391602,
+        "requested_units": 7.0345472,
+        "accepted_source_pulse_ns": 219829600,
+        "rejected_q20_in_accepted_sources": 0,
+        "accepted_quanta": 255,
+        "sim_seconds": 2.125,
+        "accepted_present_rows": 126,
+        "submit_to_fence_ms_median": 16.796599999999998,
+        "first_quantum_in_window": {
+          "line": 1293,
+          "t": 9.0850209,
+          "serial": 550,
+          "stock": 6726176,
+          "active": 0,
+          "free": 192,
+          "dispatches": 35,
+          "source_commit": 13,
+          "submit_to_fence_ms": 13.6951
+        },
+        "last_quantum_in_window": {
+          "line": 1693,
+          "t": 14.0625189,
+          "serial": 804,
+          "stock": 14102426,
+          "active": 16,
+          "free": 176,
+          "dispatches": 35,
+          "source_commit": 29,
+          "submit_to_fence_ms": 17.2089
+        }
+      },
+      {
+        "from_to": [
+          0,
+          60
+        ],
+        "source_roots": 29,
+        "births": 120,
+        "admitted_q20": 14102426,
+        "admitted_units": 13.449121475219727,
+        "requested_units": 13.4491328,
+        "accepted_source_pulse_ns": 420285400,
+        "rejected_q20_in_accepted_sources": 0,
+        "accepted_quanta": 4043,
+        "sim_seconds": 33.69166666666667,
+        "accepted_present_rows": 1428,
+        "submit_to_fence_ms_median": 13.026,
+        "first_quantum_in_window": {
+          "line": 627,
+          "t": 0.1354775,
+          "serial": 1,
+          "stock": 469755,
+          "active": 4,
+          "free": 188,
+          "dispatches": 35,
+          "source_commit": 1,
+          "submit_to_fence_ms": 37.0041
+        },
+        "last_quantum_in_window": {
+          "line": 4946,
+          "t": 59.9952489,
+          "serial": 4043,
+          "stock": 14102426,
+          "active": 0,
+          "free": 192,
+          "dispatches": 35,
+          "source_commit": 29,
+          "submit_to_fence_ms": 12.386299999999999
+        }
+      },
+      {
+        "from_to": [
+          60,
+          64
+        ],
+        "source_roots": 0,
+        "births": 0,
+        "admitted_q20": 0,
+        "admitted_units": 0.0,
+        "requested_units": 0,
+        "accepted_source_pulse_ns": 0,
+        "rejected_q20_in_accepted_sources": 0,
+        "accepted_quanta": 305,
+        "sim_seconds": 2.5416666666666665,
+        "accepted_present_rows": 102,
+        "submit_to_fence_ms_median": 12.5053,
+        "first_quantum_in_window": {
+          "line": 4947,
+          "t": 60.0084697,
+          "serial": 4044,
+          "stock": 14102426,
+          "active": 0,
+          "free": 192,
+          "dispatches": 35,
+          "source_commit": 29,
+          "submit_to_fence_ms": 12.9246
+        },
+        "last_quantum_in_window": {
+          "line": 5251,
+          "t": 63.9976415,
+          "serial": 4348,
+          "stock": 14102426,
+          "active": 0,
+          "free": 192,
+          "dispatches": 35,
+          "source_commit": 29,
+          "submit_to_fence_ms": 12.5173
+        }
+      },
+      {
+        "from_to": [
+          64,
+          74
+        ],
+        "source_roots": 0,
+        "births": 0,
+        "admitted_q20": 0,
+        "admitted_units": 0.0,
+        "requested_units": 0,
+        "accepted_source_pulse_ns": 0,
+        "rejected_q20_in_accepted_sources": 0,
+        "accepted_quanta": 8,
+        "sim_seconds": 0.06666666666666667,
+        "accepted_present_rows": 2,
+        "submit_to_fence_ms_median": 12.698049999999999,
+        "first_quantum_in_window": {
+          "line": 5252,
+          "t": 64.0106222,
+          "serial": 4349,
+          "stock": 14102426,
+          "active": 0,
+          "free": 192,
+          "dispatches": 35,
+          "source_commit": 29,
+          "submit_to_fence_ms": 12.200199999999999
+        },
+        "last_quantum_in_window": {
+          "line": 5259,
+          "t": 64.1027575,
+          "serial": 4356,
+          "stock": 14102426,
+          "active": 0,
+          "free": 192,
+          "dispatches": 35,
+          "source_commit": 29,
+          "submit_to_fence_ms": 13.132299999999999
+        }
+      }
+    ],
+    "all_sources": 29,
+    "all_quanta": 4356,
+    "all_presents": 1532,
+    "completion_phase_words_140_145_nonzero_roots": 0,
+    "first_no_active_after_first_up": {
+      "line": 1018,
+      "t": 5.3470997,
+      "serial": 277,
+      "stock": 6726176,
+      "active": 0,
+      "free": 192,
+      "dispatches": 35,
+      "source_commit": 13,
+      "submit_to_fence_ms": 14.450299999999999
+    },
+    "source_rejections": {
+      "SOURCE_HOLD_REVOKED": 1
+    },
+    "sources_by_nonce": {
+      "17256516999975": {
+        "line": 627,
+        "t": 0.0981307,
+        "hold": 1,
+        "pointer_seq": 2,
+        "commit": 1,
+        "births": 4,
+        "admitted_q20": 469755,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.4479936,
+        "pulse_delta_ns": 13999800,
+        "offer_seq": 1
+      },
+      "17256519051026": {
+        "line": 636,
+        "t": 0.2793887,
+        "hold": 1,
+        "pointer_seq": 8,
+        "commit": 2,
+        "births": 5,
+        "admitted_q20": 556329,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.5305568,
+        "pulse_delta_ns": 16579900,
+        "offer_seq": 14
+      },
+      "17256522539169": {
+        "line": 661,
+        "t": 0.6094664,
+        "hold": 1,
+        "pointer_seq": 18,
+        "commit": 3,
+        "births": 4,
+        "admitted_q20": 492881,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.470048,
+        "pulse_delta_ns": 14689000,
+        "offer_seq": 36
+      },
+      "17256523437152": {
+        "line": 668,
+        "t": 0.7004163,
+        "hold": 1,
+        "pointer_seq": 21,
+        "commit": 4,
+        "births": 5,
+        "admitted_q20": 561600,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.535584,
+        "pulse_delta_ns": 16737000,
+        "offer_seq": 42
+      },
+      "17256524387804": {
+        "line": 675,
+        "t": 0.7959182,
+        "hold": 1,
+        "pointer_seq": 24,
+        "commit": 5,
+        "births": 4,
+        "admitted_q20": 508108,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.4845696,
+        "pulse_delta_ns": 15142800,
+        "offer_seq": 48
+      },
+      "17256529507359": {
+        "line": 718,
+        "t": 1.3074535,
+        "hold": 1,
+        "pointer_seq": 40,
+        "commit": 6,
+        "births": 5,
+        "admitted_q20": 538062,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.513136,
+        "pulse_delta_ns": 16035500,
+        "offer_seq": 80
+      },
+      "17256535249985": {
+        "line": 767,
+        "t": 1.8821771,
+        "hold": 1,
+        "pointer_seq": 57,
+        "commit": 7,
+        "births": 4,
+        "admitted_q20": 522160,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.4979712,
+        "pulse_delta_ns": 15561600,
+        "offer_seq": 116
+      },
+      "17256538291222": {
+        "line": 792,
+        "t": 2.1868321,
+        "hold": 1,
+        "pointer_seq": 66,
+        "commit": 8,
+        "births": 4,
+        "admitted_q20": 521294,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.4971456,
+        "pulse_delta_ns": 15535800,
+        "offer_seq": 136
+      },
+      "17256539268311": {
+        "line": 799,
+        "t": 2.283889,
+        "hold": 1,
+        "pointer_seq": 69,
+        "commit": 9,
+        "births": 3,
+        "admitted_q20": 390181,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.3721056,
+        "pulse_delta_ns": 11628300,
+        "offer_seq": 142
+      },
+      "17256543711987": {
+        "line": 836,
+        "t": 2.7279773,
+        "hold": 1,
+        "pointer_seq": 82,
+        "commit": 10,
+        "births": 5,
+        "admitted_q20": 535277,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.51048,
+        "pulse_delta_ns": 15952500,
+        "offer_seq": 170
+      },
+      "17256546064808": {
+        "line": 855,
+        "t": 2.9634192,
+        "hold": 1,
+        "pointer_seq": 89,
+        "commit": 11,
+        "births": 4,
+        "admitted_q20": 516667,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.4927328,
+        "pulse_delta_ns": 15397900,
+        "offer_seq": 185
+      },
+      "17256549832772": {
+        "line": 887,
+        "t": 3.3396654,
+        "hold": 1,
+        "pointer_seq": 100,
+        "commit": 12,
+        "births": 5,
+        "admitted_q20": 546558,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.5212384,
+        "pulse_delta_ns": 16288700,
+        "offer_seq": 209
+      },
+      "17256556570008": {
+        "line": 936,
+        "t": 4.0137098,
+        "hold": 1,
+        "pointer_seq": 118,
+        "commit": 13,
+        "births": 5,
+        "admitted_q20": 567304,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.541024,
+        "pulse_delta_ns": 16907000,
+        "offer_seq": 252
+      },
+      "17256608380184": {
+        "line": 1304,
+        "t": 9.1971436,
+        "hold": 122,
+        "pointer_seq": 125,
+        "commit": 14,
+        "births": 4,
+        "admitted_q20": 511923,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.488208,
+        "pulse_delta_ns": 15256500,
+        "offer_seq": 261
+      },
+      "17256609280085": {
+        "line": 1310,
+        "t": 9.2844033,
+        "hold": 122,
+        "pointer_seq": 128,
+        "commit": 15,
+        "births": 4,
+        "admitted_q20": 523251,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.4990112,
+        "pulse_delta_ns": 15594100,
+        "offer_seq": 266
+      },
+      "17256610195548": {
+        "line": 1317,
+        "t": 9.3769344,
+        "hold": 122,
+        "pointer_seq": 130,
+        "commit": 16,
+        "births": 5,
+        "admitted_q20": 570804,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.5443616,
+        "pulse_delta_ns": 17011300,
+        "offer_seq": 271
+      },
+      "17256611145007": {
+        "line": 1324,
+        "t": 9.4720911,
+        "hold": 122,
+        "pointer_seq": 133,
+        "commit": 17,
+        "births": 5,
+        "admitted_q20": 560657,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.5346848,
+        "pulse_delta_ns": 16708900,
+        "offer_seq": 277
+      },
+      "17256625133416": {
+        "line": 1435,
+        "t": 10.8733563,
+        "hold": 122,
+        "pointer_seq": 172,
+        "commit": 18,
+        "births": 5,
+        "admitted_q20": 536656,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.5117952,
+        "pulse_delta_ns": 15993600,
+        "offer_seq": 365
+      },
+      "17256627674352": {
+        "line": 1454,
+        "t": 11.1260356,
+        "hold": 122,
+        "pointer_seq": 180,
+        "commit": 19,
+        "births": 4,
+        "admitted_q20": 523482,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.499232,
+        "pulse_delta_ns": 15601000,
+        "offer_seq": 381
+      },
+      "17256631536568": {
+        "line": 1486,
+        "t": 11.5130789,
+        "hold": 122,
+        "pointer_seq": 191,
+        "commit": 20,
+        "births": 5,
+        "admitted_q20": 524787,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.5004768,
+        "pulse_delta_ns": 15639900,
+        "offer_seq": 406
+      },
+      "17256635343308": {
+        "line": 1517,
+        "t": 11.8914454,
+        "hold": 122,
+        "pointer_seq": 202,
+        "commit": 21,
+        "births": 4,
+        "admitted_q20": 499263,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.4761344,
+        "pulse_delta_ns": 14879200,
+        "offer_seq": 426
+      },
+      "17256638348264": {
+        "line": 1542,
+        "t": 12.1919359,
+        "hold": 122,
+        "pointer_seq": 212,
+        "commit": 22,
+        "births": 4,
+        "admitted_q20": 513701,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.489904,
+        "pulse_delta_ns": 15309500,
+        "offer_seq": 446
+      },
+      "17256640706133": {
+        "line": 1561,
+        "t": 12.4275118,
+        "hold": 122,
+        "pointer_seq": 219,
+        "commit": 23,
+        "births": 4,
+        "admitted_q20": 521372,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.4972192,
+        "pulse_delta_ns": 15538100,
+        "offer_seq": 459
+      },
+      "17256642367218": {
+        "line": 1574,
+        "t": 12.593764,
+        "hold": 122,
+        "pointer_seq": 224,
+        "commit": 24,
+        "births": 4,
+        "admitted_q20": 465846,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.4442656,
+        "pulse_delta_ns": 13883300,
+        "offer_seq": 469
+      },
+      "17256646886652": {
+        "line": 1612,
+        "t": 13.0449027,
+        "hold": 122,
+        "pointer_seq": 237,
+        "commit": 25,
+        "births": 1,
+        "admitted_q20": 75302,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.0718144,
+        "pulse_delta_ns": 2244200,
+        "offer_seq": 497
+      },
+      "17256647833724": {
+        "line": 1619,
+        "t": 13.1398079,
+        "hold": 122,
+        "pointer_seq": 240,
+        "commit": 26,
+        "births": 1,
+        "admitted_q20": 26135,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.0249248,
+        "pulse_delta_ns": 778900,
+        "offer_seq": 503
+      },
+      "17256648787489": {
+        "line": 1626,
+        "t": 13.2351333,
+        "hold": 122,
+        "pointer_seq": 243,
+        "commit": 27,
+        "births": 1,
+        "admitted_q20": 26420,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.0251968,
+        "pulse_delta_ns": 787400,
+        "offer_seq": 508
+      },
+      "17256650430965": {
+        "line": 1638,
+        "t": 13.3998843,
+        "hold": 122,
+        "pointer_seq": 248,
+        "commit": 28,
+        "births": 4,
+        "admitted_q20": 521368,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.497216,
+        "pulse_delta_ns": 15538000,
+        "offer_seq": 518
+      },
+      "17256653462007": {
+        "line": 1663,
+        "t": 13.7028448,
+        "hold": 122,
+        "pointer_seq": 257,
+        "commit": 29,
+        "births": 8,
+        "admitted_q20": 975283,
+        "rejected_q20": 0,
+        "position": [
+          66.46519707804495,
+          26.199536286953062
+        ],
+        "requested_units": 0.9301024,
+        "pulse_delta_ns": 29065700,
+        "offer_seq": 537
+      }
+    },
+    "first_present": {
+      "frame": {
+        "kind": "M1_QUANTUM_WINDOW",
+        "acceptedRoot": "17256517691532",
+        "publicationSlot": 0,
+        "run": "17256418648297",
+        "config": "2",
+        "sourceCommit": "1",
+        "physicsCommit": "2",
+        "generation": "2",
+        "imageIndex": 0,
+        "width": 624,
+        "height": 431,
+        "format": 44,
+        "acquire": 0,
+        "submit": 0,
+        "fence": 0,
+        "present": 0,
+        "imagePresent": 0,
+        "pixel": 4279375391,
+        "presentEnterQpc": "17256518074568",
+        "presentExitQpc": "17256518074728"
+      },
+      "view": {
+        "serial": "593",
+        "transformRevision": "1",
+        "run": "17256418648297",
+        "geometry": "2",
+        "window": "72944440",
+        "swapchain": "2264697278440",
+        "client": [
+          624,
+          431
+        ],
+        "dpi": 96,
+        "viewport": [
+          0,
+          0,
+          624,
+          431
+        ],
+        "center": [
+          312,
+          215.5
+        ],
+        "scale": 3.448000192642212,
+        "rotation": [
+          1,
+          0
+        ],
+        "surfaceTransform": 1,
+        "mapped": true,
+        "boxAngleDrawn256": 0,
+        "requestSequence": "0",
+        "requestedAngle256": 0,
+        "nonce": "17256517691532",
+        "commit": "2",
+        "slot": 0,
+        "publicationGeneration": "2",
+        "graphicsFence": "2264696881352",
+        "presentExitQpc": "17256518074728"
+      }
+    },
+    "pixels": {
+      "b5-4s-hold.png": {
+        "sha256": "ac46e843db93a8645bdf4053147506e2952860c8e4e078893de3cb447b562ea7",
+        "extent": [
+          640,
+          470
+        ],
+        "sand_pixels": 38,
+        "bounds_xyxy": [
+          323,
+          328,
+          333,
+          354
+        ],
+        "row_counts": {
+          "328": 3,
+          "329": 3,
+          "330": 1,
+          "350": 3,
+          "351": 3,
+          "352": 3,
+          "353": 11,
+          "354": 11
+        }
+      },
+      "b5-60s-later.png": {
+        "sha256": "a0fc94bc651d491bed40c80c9c3c621f3af75b66f0d6bebd96ca3ef6f7902c68",
+        "extent": [
+          640,
+          470
+        ],
+        "sand_pixels": 107,
+        "bounds_xyxy": [
+          317,
+          348,
+          340,
+          354
+        ],
+        "row_counts": {
+          "348": 3,
+          "349": 11,
+          "350": 11,
+          "351": 17,
+          "352": 17,
+          "353": 24,
+          "354": 24
+        }
+      },
+      "b5-after-release.png": {
+        "sha256": "39e2102f972be9ed197753ddb1adce9250157dd8c7191e01b1e907403046f3f9",
+        "extent": [
+          640,
+          470
+        ],
+        "sand_pixels": 42,
+        "bounds_xyxy": [
+          320,
+          351,
+          336,
+          354
+        ],
+        "row_counts": {
+          "351": 3,
+          "352": 11,
+          "353": 11,
+          "354": 17
+        }
+      },
+      "b5-initial.png": {
+        "sha256": "669e9d5afdd81d374152c6257982873d4efd108add79cc14023043b1fad94b0e",
+        "extent": [
+          640,
+          470
+        ],
+        "sand_pixels": 0,
+        "bounds_xyxy": null,
+        "row_counts": {}
+      }
+    }
+  }
+}

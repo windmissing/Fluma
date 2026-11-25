@@ -1,0 +1,68 @@
+{
+  "schema": "T960_DEMO_INTEGRATED_V1",
+  "qualification": "SAME_PACKAGE_PC_PENDING",
+  "dispatchesPerQuantum": 35,
+  "argv": [
+    "hello_world_pc.exe",
+    "--m1-window",
+    "full_source.spv",
+    "quantum_candidate.spv",
+    "quantum_commit.spv",
+    "--m1-compact-demo",
+    "--m1-integrated",
+    "--m1-dual-source"
+  ],
+  "files": [
+    {
+      "name": "hello_world_pc.exe",
+      "bytes": 4680192,
+      "sha256": "a81619efcdd17a80c31d21e5a443400f3adf2af2848507c0b6bd46bd84b61c1a"
+    },
+    {
+      "name": "full_source.spv",
+      "bytes": 181216,
+      "sha256": "e9c7c123747c77350545b9d11abcfbd9b0b2e85948cde854f2592b97957f292c"
+    },
+    {
+      "name": "quantum_candidate.spv",
+      "bytes": 177220,
+      "sha256": "bf024ac5c580be0549aee02369a58bdb7b500ea3165b2588922936331edb285f"
+    },
+    {
+      "name": "quantum_commit.spv",
+      "bytes": 260360,
+      "sha256": "64ba25f41818b8c55fc117ce44fce52b5a55bdd0ebc5e3d458a9bb1380f43a01"
+    },
+    {
+      "name": "Start Demo.cmd",
+      "bytes": 1003,
+      "sha256": "02b2b53742e734a8f26cd2fe154be2cf0fe5d32a30f8b7585961a77b72bd28b3"
+    }
+  ],
+  "embeddedViewSPIRV": {
+    "vert": {
+      "sourceSHA": "36ed1d11cb0ae1de3938395cd11cad605dbee044d922efbcb322b471160ee494",
+      "moduleSHA": "080f718247dfd827121747cdcda61147eb07f3b0deae19075b4d88be1005071c",
+      "bytes": 1344
+    },
+    "m1_dry_scene.frag": {
+      "sourceSHA": "500baff379f5835200a9087c05d4835eefac5059894a2d347e8943d2c6767d31",
+      "moduleSHA": "a37928eac2d77a4b8a4490abb06782bc2dd30e675a333b63d45c0d48584dedb0",
+      "bytes": 16572
+    },
+    "m1_full_scene.frag": {
+      "sourceSHA": "500baff379f5835200a9087c05d4835eefac5059894a2d347e8943d2c6767d31",
+      "moduleSHA": "44f3cee74e74986f08618e5fc174e8eefe789d0a57d0ad84ebf957abd6751e6b",
+      "bytes": 20012,
+      "define": "M1_FULL_SCENE"
+    }
+  },
+  "controlledObservation": {
+    "launcherArg": "observe",
+    "argvSuffix": [
+      "--m1-observe-birth",
+      "8",
+      "<log-directory>/birth"
+    ]
+  }
+}
