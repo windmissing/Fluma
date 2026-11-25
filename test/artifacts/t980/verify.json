@@ -1,0 +1,80 @@
+[
+  {
+    "fixture": "n16-circulation",
+    "verify": {
+      "shape": 16,
+      "diagnostic": 0,
+      "production": 5,
+      "stateWords": 34080,
+      "workWords": 13392,
+      "packWords": 4160,
+      "mgLevels": 3,
+      "rhsWord": 6784
+    }
+  },
+  {
+    "fixture": "n16-projection",
+    "verify": {
+      "shape": 16,
+      "diagnostic": 0,
+      "production": 5,
+      "stateWords": 34080,
+      "workWords": 13392,
+      "packWords": 4160,
+      "mgLevels": 3,
+      "rhsWord": 6784
+    }
+  },
+  {
+    "fixture": "n16-zero",
+    "verify": {
+      "shape": 16,
+      "diagnostic": 0,
+      "production": 5,
+      "stateWords": 34080,
+      "workWords": 13392,
+      "packWords": 4160,
+      "mgLevels": 3,
+      "rhsWord": 6784
+    }
+  },
+  {
+    "fixture": "n32-circulation",
+    "verify": {
+      "shape": 32,
+      "diagnostic": 0,
+      "production": 4,
+      "stateWords": 37184,
+      "workWords": 40720,
+      "packWords": 16448,
+      "mgLevels": 4,
+      "rhsWord": 26560
+    }
+  },
+  {
+    "fixture": "n32-projection",
+    "verify": {
+      "shape": 32,
+      "diagnostic": 0,
+      "production": 4,
+      "stateWords": 37184,
+      "workWords": 40720,
+      "packWords": 16448,
+      "mgLevels": 4,
+      "rhsWord": 26560
+    }
+  },
+  {
+    "fixture": "n32-zero",
+    "verify": {
+      "shape": 32,
+      "diagnostic": 0,
+      "production": 4,
+      "stateWords": 37184,
+      "workWords": 40720,
+      "packWords": 16448,
+      "mgLevels": 4,
+      "rhsWord": 26560
+    }
+  }
+]

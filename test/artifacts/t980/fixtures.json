@@ -1,0 +1,246 @@
+{
+  "layoutSHA": "5e74048da7d40dae6c881a7ea8348fc28550a4b6cf6a9a7fa94595ad8fa9deaa",
+  "baseConfigSHA": "295c075ebaaab6d857088cf5ff36ebd636cfa3680851fd42068fd52cd24f8bd3",
+  "fixtures": [
+    {
+      "fixture": "n16-circulation",
+      "n": 16,
+      "scope": "F02 private approximation",
+      "configSHA": "f9eecf522d422cb472a1f8a7ff430cc6749270b5addb9678b0c7201087cbd70d",
+      "embeddedConfigSHA": "80dd593ea655c01561c71cff0eaf0e4961617ce42b3add5fd3c0a97fe72424e3",
+      "stateSHA": "4b6de2f1765e5d1370f6c59f08586ea62840da090a7e0ad187f507a67060418f",
+      "stateBytes": 136320,
+      "workBytes": 53568,
+      "packBytes": 16640,
+      "mg": [
+        [
+          16,
+          16
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "inputNonzeroFaces": 480,
+      "inputDivMax": 0.040662869811058044,
+      "oracleVelocityMax": 0.02391815185546875,
+      "oraclePressureRange": [
+        -0.2479963447086091,
+        0.24799634470860912
+      ],
+      "oracleProbe": {
+        "bottomU": 0.02391815185546875,
+        "topU": -0.02391815185546875,
+        "leftV": -0.02391815185546875,
+        "rightV": 0.02391815185546875
+      }
+    },
+    {
+      "fixture": "n16-projection",
+      "n": 16,
+      "scope": "F02 private approximation",
+      "configSHA": "5377dac97c176800c7c85528485d4e4426bc1a86bbdf799168bc528086ba14f5",
+      "embeddedConfigSHA": "c90e688b53241e2a07a59a821e73284c7a9d1cb2ad3d0c740e0e73e002ad58ee",
+      "stateSHA": "a886a84968baed7bca1e4929855564e19fdb89a4a13379444af697d0803cf468",
+      "stateBytes": 136320,
+      "workBytes": 53568,
+      "packBytes": 16640,
+      "mg": [
+        [
+          16,
+          16
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "inputNonzeroFaces": 480,
+      "inputDivMax": 0.040662869811058044,
+      "oracleVelocityMax": 0.0,
+      "oraclePressureRange": [
+        -0.2479963447086091,
+        0.24799634470860912
+      ],
+      "oracleProbe": {
+        "bottomU": 0.0,
+        "topU": 0.0,
+        "leftV": 0.0,
+        "rightV": 0.0
+      }
+    },
+    {
+      "fixture": "n16-zero",
+      "n": 16,
+      "scope": "F02 private approximation",
+      "configSHA": "84229acbeb4648e25ee4183a5b28751bc1fc6acc59c12b58bc821ed55b21d73a",
+      "embeddedConfigSHA": "b5d324060e679da0005c9d1c01dedbd88fd2f33637df540295482a57fd237ae4",
+      "stateSHA": "29ab9929c052cb60160a6251b24d4acfdfe0719f80cf843aff9775af4e1f1c30",
+      "stateBytes": 136320,
+      "workBytes": 53568,
+      "packBytes": 16640,
+      "mg": [
+        [
+          16,
+          16
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "inputNonzeroFaces": 0,
+      "inputDivMax": 0.0,
+      "oracleVelocityMax": 0.0,
+      "oraclePressureRange": [
+        0.0,
+        0.0
+      ],
+      "oracleProbe": {
+        "bottomU": 0.0,
+        "topU": 0.0,
+        "leftV": 0.0,
+        "rightV": 0.0
+      }
+    },
+    {
+      "fixture": "n32-circulation",
+      "n": 32,
+      "scope": "F02 private approximation",
+      "configSHA": "a5bb090b85f5eba69e56f5b00c6a076e41939d7b70db3a5a0c1305f414f4fdb7",
+      "embeddedConfigSHA": "d9799c9f776b830a9a11d82be0a5fde2e78781a0ce7bcf826cc58fc5a48fd18a",
+      "stateSHA": "38a1300d89ac8be388253087daa072dc87f3863f3bd45c57dbf548f7070a2618",
+      "stateBytes": 148736,
+      "workBytes": 162880,
+      "packBytes": 65792,
+      "mg": [
+        [
+          32,
+          32
+        ],
+        [
+          16,
+          16
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "inputNonzeroFaces": 1984,
+      "inputDivMax": 0.0410078689455986,
+      "oracleVelocityMax": 0.024385452270507812,
+      "oraclePressureRange": [
+        -0.2494982760809454,
+        0.2494982760809454
+      ],
+      "oracleProbe": {
+        "bottomU": 0.024385452270507812,
+        "topU": -0.024385452270507812,
+        "leftV": -0.024385452270507812,
+        "rightV": 0.024385452270507812
+      }
+    },
+    {
+      "fixture": "n32-projection",
+      "n": 32,
+      "scope": "F02 private approximation",
+      "configSHA": "4885159adb0aebca3544e12c570a4e40bd878bcb82a2b207ea47a3bfb4802355",
+      "embeddedConfigSHA": "214186405698548b597c04a96aed9631dea7bbbb5046896e902e9beb3fdfc0ae",
+      "stateSHA": "77a63f723ac0bde025b2b9a3a5af884c7bc084ad380efb09c60e93a1831039eb",
+      "stateBytes": 148736,
+      "workBytes": 162880,
+      "packBytes": 65792,
+      "mg": [
+        [
+          32,
+          32
+        ],
+        [
+          16,
+          16
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "inputNonzeroFaces": 1984,
+      "inputDivMax": 0.0410078689455986,
+      "oracleVelocityMax": 0.0,
+      "oraclePressureRange": [
+        -0.2494982760809454,
+        0.2494982760809454
+      ],
+      "oracleProbe": {
+        "bottomU": 0.0,
+        "topU": 0.0,
+        "leftV": 0.0,
+        "rightV": 0.0
+      }
+    },
+    {
+      "fixture": "n32-zero",
+      "n": 32,
+      "scope": "F02 private approximation",
+      "configSHA": "c6ef8362772e5752357b4797a896f04037bd1b92c47459f7b4d7a2b89a7bcf33",
+      "embeddedConfigSHA": "583f7f73e57b9c8d40803edd04b858054603bbf309ee77768ddcf2612c698def",
+      "stateSHA": "90407243fe735bf0703a309a701ae57042511e069b6ca0d9c99fd20937da4f87",
+      "stateBytes": 148736,
+      "workBytes": 162880,
+      "packBytes": 65792,
+      "mg": [
+        [
+          32,
+          32
+        ],
+        [
+          16,
+          16
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "inputNonzeroFaces": 0,
+      "inputDivMax": 0.0,
+      "oracleVelocityMax": 0.0,
+      "oraclePressureRange": [
+        0.0,
+        0.0
+      ],
+      "oracleProbe": {
+        "bottomU": 0.0,
+        "topU": 0.0,
+        "leftV": 0.0,
+        "rightV": 0.0
+      }
+    }
+  ]
+}
