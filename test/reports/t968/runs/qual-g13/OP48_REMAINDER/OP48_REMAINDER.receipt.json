@@ -1,0 +1,263 @@
+{
+  "attemptId": "95221975-e0ae-4253-a620-a1cddddba6cf",
+  "role": "OP48_REMAINDER",
+  "pid": 102196,
+  "reason": "CALL_UNRETURNED",
+  "lastPipeline": {
+    "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+    "call": "vkCreateComputePipelines",
+    "edge": "ENTER",
+    "role": "OP48_REMAINDER",
+    "moduleSHA": "64101778ebe0c4a6c66073bf1bb70859f4fcac6aa3bbafdb6ea755160fd9e82e",
+    "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+    "flags": 0,
+    "pipelineCache": null,
+    "pid": 102196,
+    "ownerTid": 6900,
+    "processStartTick": "134400419899317714",
+    "qpcFrequency": "10000000",
+    "qpc": "17282222033487",
+    "vkResult": null
+  },
+  "exeSHA": "39bc9c18dfd167d1f587595bd892d3ca2f86dbd864b225d1af37d3060bb56264",
+  "stdoutSHA": "35b5904531f8d4bb2917be7f4a9fdc6bb202781d77168d23fe653120081582ab",
+  "supervisorStopQpc": "17282822936320",
+  "qpcFrequency": "10000000",
+  "samples": [
+    {
+      "elapsed": 0.01661149994470179,
+      "qpc": "17282220447716",
+      "ownerTid": null,
+      "alive": true,
+      "processTimes": [
+        "134400419899317714",
+        "0",
+        "0",
+        "0"
+      ],
+      "ownerTimes": null
+    },
+    {
+      "elapsed": 5.054818699834868,
+      "qpc": "17282270829683",
+      "ownerTid": 6900,
+      "alive": true,
+      "processTimes": [
+        "134400419899317714",
+        "0",
+        "3750000",
+        "42500000"
+      ],
+      "ownerTimes": [
+        "134400419899641443",
+        "0",
+        "3593750",
+        "42343750"
+      ]
+    },
+    {
+      "elapsed": 10.084541499847546,
+      "qpc": "17282321127709",
+      "ownerTid": 6900,
+      "alive": true,
+      "processTimes": [
+        "134400419899317714",
+        "0",
+        "4531250",
+        "90781250"
+      ],
+      "ownerTimes": [
+        "134400419899641443",
+        "0",
+        "4375000",
+        "90625000"
+      ]
+    },
+    {
+      "elapsed": 15.115222299937159,
+      "qpc": "17282371433735",
+      "ownerTid": 6900,
+      "alive": true,
+      "processTimes": [
+        "134400419899317714",
+        "0",
+        "10468750",
+        "133593750"
+      ],
+      "ownerTimes": [
+        "134400419899641443",
+        "0",
+        "10312500",
+        "133437500"
+      ]
+    },
+    {
+      "elapsed": 20.14664849988185,
+      "qpc": "17282421747971",
+      "ownerTid": 6900,
+      "alive": true,
+      "processTimes": [
+        "134400419899317714",
+        "0",
+        "12500000",
+        "180781250"
+      ],
+      "ownerTimes": [
+        "134400419899641443",
+        "0",
+        "12343750",
+        "180625000"
+      ]
+    },
+    {
+      "elapsed": 25.177093799924478,
+      "qpc": "17282472052425",
+      "ownerTid": 6900,
+      "alive": true,
+      "processTimes": [
+        "134400419899317714",
+        "0",
+        "12656250",
+        "227187500"
+      ],
+      "ownerTimes": [
+        "134400419899641443",
+        "0",
+        "12500000",
+        "227031250"
+      ]
+    },
+    {
+      "elapsed": 30.209827600046992,
+      "qpc": "17282522379767",
+      "ownerTid": 6900,
+      "alive": true,
+      "processTimes": [
+        "134400419899317714",
+        "0",
+        "12812500",
+        "276093750"
+      ],
+      "ownerTimes": [
+        "134400419899641443",
+        "0",
+        "12656250",
+        "275937500"
+      ]
+    },
+    {
+      "elapsed": 35.24135879985988,
+      "qpc": "17282572695073",
+      "ownerTid": 6900,
+      "alive": true,
+      "processTimes": [
+        "134400419899317714",
+        "0",
+        "12968750",
+        "324843750"
+      ],
+      "ownerTimes": [
+        "134400419899641443",
+        "0",
+        "12812500",
+        "324687500"
+      ]
+    },
+    {
+      "elapsed": 40.27152960002422,
+      "qpc": "17282622996781",
+      "ownerTid": 6900,
+      "alive": true,
+      "processTimes": [
+        "134400419899317714",
+        "0",
+        "13125000",
+        "373750000"
+      ],
+      "ownerTimes": [
+        "134400419899641443",
+        "0",
+        "12968750",
+        "373593750"
+      ]
+    },
+    {
+      "elapsed": 45.5673634998966,
+      "qpc": "17282675955122",
+      "ownerTid": 6900,
+      "alive": true,
+      "processTimes": [
+        "134400419899317714",
+        "0",
+        "13906250",
+        "424375000"
+      ],
+      "ownerTimes": [
+        "134400419899641443",
+        "0",
+        "13750000",
+        "424218750"
+      ]
+    },
+    {
+      "elapsed": 50.60445380001329,
+      "qpc": "17282726326061",
+      "ownerTid": 6900,
+      "alive": true,
+      "processTimes": [
+        "134400419899317714",
+        "0",
+        "14531250",
+        "470937500"
+      ],
+      "ownerTimes": [
+        "134400419899641443",
+        "0",
+        "14375000",
+        "470781250"
+      ]
+    },
+    {
+      "elapsed": 55.63761910004541,
+      "qpc": "17282776657700",
+      "ownerTid": 6900,
+      "alive": true,
+      "processTimes": [
+        "134400419899317714",
+        "0",
+        "14531250",
+        "520468750"
+      ],
+      "ownerTimes": [
+        "134400419899641443",
+        "0",
+        "14375000",
+        "520312500"
+      ]
+    }
+  ],
+  "stackDumps": [
+    {
+      "targetSeconds": 20,
+      "beginQpc": "17282422754326",
+      "endQpc": "17282425726736",
+      "ownerTid": 6900,
+      "file": "OP48_REMAINDER-20s.dmp",
+      "bytes": 325334,
+      "sha256": "6565348b866e20495be524152c557ed95fab06dfbb10edad029b493657b381d3"
+    },
+    {
+      "targetSeconds": 45,
+      "beginQpc": "17282672315809",
+      "endQpc": "17282674950546",
+      "ownerTid": 6900,
+      "file": "OP48_REMAINDER-45s.dmp",
+      "bytes": 330598,
+      "sha256": "6fcc39e7b05c3da02ef68d323567d67ab3cc039a2d743db3befd0b4db0d23a24"
+    }
+  ],
+  "probe": null,
+  "forced": true,
+  "exitCode": 1,
+  "ownerRetired": false
+}

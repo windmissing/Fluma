@@ -1,0 +1,39 @@
+{
+ "schema": "T968_GOAL9_13_DEMO_G16_V1",
+ "gpu": {
+  "pci": "8086:3e98",
+  "driver": "31.0.101.2140",
+  "driverVersion": 1656924
+ },
+ "packages": {
+  "t963": "4 PE verified (dm2-control 8a73a08c/dm2-indirect c0498082/g15 fa3c4112/g13 39bc9c18)",
+  "t967-demo": "manifest c403c82b 5/5 + launcher 7 modes",
+  "t967-g16": "manifest 23630e48 7/7"
+ },
+ "goal9": {
+  "singleScan": "PASS: A2-off vs B2-on equivalence (selectedJ=1, firstError 0/0, control16=2404, EVENT/PATH identical, diff words identity-only); inventorySingleScan flag live in envelope+timestamps",
+  "binding": "T963_INVENTORY_BINDING 4 rows (opcode 13/32/33/42 module SHAs)",
+  "detail": "audit mode 29 points + named spans (Q1 DISCOVERY 422.8ms); operations mode captured",
+  "g15": "4/4 Q vk=2 iGPU window; invScan flag distinguishes"
+ },
+ "goal13": {
+  "qualification": "5/9: GUARD/COPY/COMPARE/VISCOSITY/PRESSURE pass; OP55_58_INSTALL+OP56_59_AUDIT hang (vkCreateComputePipelines ENTER, large GLSL 20.7/27.4KB igc compile); OP_48/REMAINDER persist",
+  "sealABBA": "scalar-ring b34d442c full chain live (module+pipeline+submit+wait vk=0); PREPARE/PUBLISH shared, 819 SHA-only substitution",
+  "f02": "nonzero/zero both late-root GRANT_DEADLINE + ORIGINAL_RETIRE vk=0 + 1.79MB cold archive; WORK/RHS extraction blocked at archive layout (T964 offline oracle covers numerics)",
+  "verdict": "PARTIAL"
+ },
+ "demo": {
+  "status": "BLOCKED environment: synthetic/real input requires GetForegroundWindow==hwnd - unreachable in unattended session",
+  "attempts": "python driver 25s (893 rows no synthetic); launcher 60s; PS background 30s (3916 rows no synthetic); three foreground escalation methods tried",
+  "fallback": "T966 frozen r4 (118 MOVE + two holds, 4356 Q) + T969 offline criteria remain authoritative",
+  "handoff": "needs interactive session or developer remote-input option"
+ },
+ "g16": {
+  "verdict": "PASS 5/5",
+  "third": "fixture exit 0 + T969 checker: disk 13 wall 3 impact 3.99997us q24 (8318720,8318977)",
+  "mirror": "fixture exit 0 + checker: wall 2 same impact - T965 fail-unresolved RESOLVED by Completion v2",
+  "free": "branch 1 certified free drift (consumed R=923228058) then branch 3 third",
+  "support_local": "96B support-v1 certificate, exit 0",
+  "noPromotion": "all acceptedRoot null, hot gen1/cold gen2"
+ }
+}

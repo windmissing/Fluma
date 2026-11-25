@@ -1,0 +1,79 @@
+{
+  "attemptId": "4e2d8cf2-e70f-4e31-94a7-bd7bc9f7b8f1",
+  "role": "OP48_VISCOSITY",
+  "pid": 79952,
+  "reason": "CHILD_EXIT",
+  "lastPipeline": {
+    "schema": "PC_G13_PIPELINE_PROGRESS_V1",
+    "call": "vkCreateComputePipelines",
+    "edge": "EXIT",
+    "role": "OP48_VISCOSITY",
+    "moduleSHA": "812db31f801cd56c68800e66252c45cb5a2edb50da78a656c778f7353c099d58",
+    "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+    "flags": 0,
+    "pipelineCache": null,
+    "pid": 79952,
+    "ownerTid": 100524,
+    "processStartTick": "134400419874249640",
+    "qpcFrequency": "10000000",
+    "qpc": "17282198180392",
+    "vkResult": 0
+  },
+  "exeSHA": "39bc9c18dfd167d1f587595bd892d3ca2f86dbd864b225d1af37d3060bb56264",
+  "stdoutSHA": "9242bfb2ec1b44bf7be694937d712343b9814a4494ea72e2868050263cfb944d",
+  "supervisorStopQpc": "17282199288552",
+  "qpcFrequency": "10000000",
+  "samples": [
+    {
+      "elapsed": 0.10663920012302697,
+      "qpc": "17282196263409",
+      "ownerTid": null,
+      "alive": true,
+      "processTimes": [
+        "134400419874249640",
+        "0",
+        "0",
+        "0"
+      ],
+      "ownerTimes": null
+    }
+  ],
+  "stackDumps": [],
+  "probe": {
+    "schema": "PC_G13_STEADY_OP66_V1",
+    "role": "OP48_VISCOSITY",
+    "moduleSHA": "812db31f801cd56c68800e66252c45cb5a2edb50da78a656c778f7353c099d58",
+    "pid": 79952,
+    "processStartTick": "134400419874249640",
+    "ownerTid": 100524,
+    "pipelineNs": "351100",
+    "queueSubmit": 0,
+    "wait": 0,
+    "probeWords": [
+      1065353217,
+      1065353216,
+      1,
+      4194304,
+      7,
+      0,
+      0,
+      1179661106,
+      1065353217,
+      1065353216,
+      1,
+      4194304,
+      7,
+      0,
+      0,
+      1179661106
+    ],
+    "mismatchMasks": [
+      0,
+      0
+    ],
+    "acceptedRoot": null
+  },
+  "forced": false,
+  "exitCode": 0,
+  "ownerRetired": true
+}

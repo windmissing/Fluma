@@ -1,0 +1,94 @@
+{
+ "bundle": "t967-g16-bundle manifest 23630e48 7/7 SHA verified (PE da0c28c0/fixture 9e7942e0/module e8caeec2/seeds T928)",
+ "completionVersion": 2,
+ "arms": {
+  "FREE": {
+   "exit": 3,
+   "reason": "11/9",
+   "B": 200,
+   "C": 27,
+   "Ic": 64,
+   "durMs": 46.8,
+   "fresh": true,
+   "certifiedTail": {
+    "attempts": 2,
+    "row0": "branch 1 FREE drift: consumed=R=923,228,058, remOut 982,026,376, coverage 52 walls+78 pairs, freeClear lower bounds recorded",
+    "row1": "branch 3 third impact disk 1 (subsequent microstep)"
+   },
+   "timeEvidence": {
+    "hotGen": 1,
+    "coldGen": 2,
+    "microsteps": 16,
+    "rescan": 2,
+    "acceptedRoot": null
+   }
+  },
+  "SUPPORT": {
+   "exit": 3,
+   "reason": "11/9",
+   "Ic": 64,
+   "durMs": 33.4,
+   "fresh": true,
+   "certifiedTail": "same structure as FREE (2 attempts: free then third)"
+  },
+  "THIRD": {
+   "exit": 0,
+   "fixturePASS": true,
+   "certifiedTail": {
+    "branch": 3,
+    "disk": 13,
+    "wallQ": "unsigned display 4294967295",
+    "TOI": 3,
+    "bracket": [
+     981991440,
+     914913211
+    ],
+    "coverage": "52 wall pairs + 78 disk pairs",
+    "remainingConsumed": 0
+   },
+   "t969checker": {
+    "exit": 0,
+    "disk": 13,
+    "wall": 3,
+    "impactUS": 3.9999690670811106,
+    "q24": [
+     8318720,
+     8318977
+    ],
+    "attempts": 1,
+    "priorContacts": [
+     0.0010097329,
+     0.0010335996
+    ]
+   }
+  },
+  "THIRD_MIRROR": {
+   "exit": 0,
+   "fixturePASS": true,
+   "certifiedTail": "branch 3 disk 13 TOI 2 (mirror wall) same bracket/coverage",
+   "t969checker": {
+    "exit": 0,
+    "disk": 13,
+    "wall": 2,
+    "impactUS": 3.9999690670811106,
+    "q24": [
+     8318720,
+     8318977
+    ]
+   }
+  },
+  "SUPPORT_LOCAL": {
+   "exit": 0,
+   "fixturePASS": true,
+   "supportV1": "96B local support certificate sealed",
+   "t969checker": "not applicable (--run targets THIRD archives only)"
+  }
+ },
+ "noPromotion": "all arms acceptedRoot=null; hot fence gen 1 vs cold gen 2 separately recorded",
+ "keyFacts": {
+  "THIRD_wall_mapping": "checker resolves unsigned display 4294967295 to wall 3 (THIRD) / wall 2 (MIRROR) \u2014 T965 fail-unresolved now PASSES with Completion v2 (T967 fix live)",
+  "impactTime": "3.999969 \u00b5s matches T958/T969 reference (~4\u00b5s third impact)",
+  "freeDrift": "FREE row0 consumed entire R (923,228,058 Q-time) \u2014 certified free-drift branch live"
+ },
+ "verdict": "PASS: 5/5 arms (THIRD/MIRROR fixture exit 0 + checker verified; FREE/SUPPORT free-drift+third certified; SUPPORT_LOCAL support certificate); T965 unresolved wall identity now resolved"
+}

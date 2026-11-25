@@ -1,0 +1,44 @@
+{
+ "abba": {
+  "arms": {
+   "A1-off": "SOURCE acc + Q vk=1 (fence=0 dispatches=0 \u2014 submit-stage rejection)",
+   "B1-on": "same pattern",
+   "B2-on": "SOURCE acc + Q vk=2 late (diag sealed)",
+   "A2-off": "SOURCE acc + Q vk=2 late (diag sealed)"
+  },
+  "pairing": "A2-off vs B2-on (both Q late vk=2 with diagnostic seal) used for equivalence",
+  "equivalence": {
+   "selectedJ": 1,
+   "firstError": [
+    0,
+    0
+   ],
+   "WORK_control16": 2404,
+   "identical": [
+    "EVENT",
+    "PATH",
+    "FIXTURE"
+   ],
+   "diffWords": "identity/clock/seal only (COMPLETION 88-95 seal, INPUT 4-9+16-21 clock, state 4-9+260-277 late-header, WORK 40 words @291236+ nonce region)",
+   "note": "inventory single-scan opcode 13/32/33/42 business-equivalent to original scan"
+  },
+  "inventorySingleScan": {
+   "envelope": true,
+   "timestampsRow": true
+  },
+  "binding": {
+   "T963_INVENTORY_BINDING 4 rows": "opcode 13 b95bc21a / 32 8eb51ac5 / 33 d7875f31 / 42 186a22ef (live module SHA report)"
+  },
+  "detail": {
+   "audit": "29 GPU points (15 coarse + 14 slot points 20/21/826/1199/2024/2397/2402), spans named per stage (UPLOAD/CLEAR/DISCOVERY_J1..J32/SELECTED/AUTHORITATIVE...) \u2014 Q1 discovery span 422.8ms",
+   "operations": "INIT_COPY/DM_REQUEST/flight/fold/OP25-31 rows captured in log"
+  },
+  "sameFence": "Q root nonce/fence/generation == GPU timestamps row (29/29 available vk=0)",
+  "cost": "spans per stage recorded (Q1 DISCOVERY 422.8ms, SELECTED 1.41ms, etc.)"
+ },
+ "g15": {
+  "arms": "neg/pos x off/on: 4/4 Q vk=2 (iGPU window, T959 pattern), firstErr (0,0) on sealed arms, invScan flag distinguishes correctly (pos-on True)",
+  "note": "G15 t963 PE keeps dry-front roles; business equivalence same structure"
+ },
+ "verdict": "PASS (diagnostic): single-scan business-equivalent, same-fence latch, inventory binding reported, audit/operations detail captured"
+}

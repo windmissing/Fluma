@@ -1,0 +1,26 @@
+{
+ "qualification": {
+  "OP52_62_GUARD": "CHILD pipeline EXIT vk=0 (f8687678 module live)",
+  "OP54_57_COPY": "CHILD pipeline EXIT vk=0 (6c6f5acc)",
+  "OP60_COMPARE": "CHILD pipeline EXIT vk=0 (f44390d7)",
+  "OP55_58_INSTALL": "CALL_UNRETURNED \u2014 vkCreateComputePipelines ENTER hang (20,709B GLSL, 2 runs 91s+121s; igc64 large-module compile hang family)",
+  "OP56_59_AUDIT": "CALL_UNRETURNED \u2014 same hang point (27,438B GLSL)",
+  "OP48_VISCOSITY": "CHILD_EXIT 0 True (qualify_role supervisor)",
+  "OP49_PRESSURE": "CHILD_EXIT 0 True",
+  "OP48_REMAINDER": "CALL_UNRETURNED (persists)",
+  "OP_48": "CALL_UNRETURNED (persists)"
+ },
+ "sealABBA": {
+  "armA": "OP11_T955_PREPARE/SHA(9f24f251)/PUBLISH x4 EXIT vk=0 each + VISCOSITY/PRESSURE x4",
+  "armB": "PREPARE/PUBLISH shared + OP11_SHA_SCALAR_RING (b34d442c per T963 doc) full chain: shaderModule+pipeline+submit+wait all vk=0 x7 rows",
+  "root": "GRANT_DEADLINE late-root both arms + T955_ORIGINAL_RETIRE vk=0",
+  "shared": "PREPARE/PUBLISH identical between arms, only 819 SHA module replaced \u2014 scalar-ring substitution live"
+ },
+ "f02": {
+  "f02-nonzero-j1": "GRANT_DEADLINE (iGPU late-root, T954/T955 pattern) + ORIGINAL_RETIRE vk=0 + cold archive 1,795,120B sealed",
+  "f02-zero": "same pattern",
+  "workRhsExtraction": "BLOCKED: archive segment layout (Completion+820 slots+7 buffers) requires BootLayout mapping; T964 offline oracle already covers F02-nonzero numerics (RMS 6.61e-11, residual 1.79e-6, negative controls)",
+  "f03": "not run this card (T954 already captured F03 late-root pattern)"
+ },
+ "verdict": "PARTIAL: 5/9 roles qualified (2 new five-split closures hang on large-module compile), scalar-ring SHA ABBA live-verified, F02 nonzero archived as late-root diagnostic"
+}
