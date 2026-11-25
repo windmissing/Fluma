@@ -1,0 +1,264 @@
+{
+  "profile": {
+    "schema": "G13_WIN32_PREVIEW8_PROFILE_V1",
+    "diagnosticOnly": true,
+    "Nx": 8,
+    "Ny": 8,
+    "Nc": 64,
+    "Nu": 72,
+    "Nv": 144,
+    "h": 0.125,
+    "reductionGroups": 3,
+    "MGcells": 80,
+    "MG": [
+      {
+        "Nx": 8,
+        "Ny": 8,
+        "packedCellStart": 0
+      },
+      {
+        "Nx": 4,
+        "Ny": 4,
+        "packedCellStart": 64
+      }
+    ],
+    "state": [
+      {
+        "name": "header",
+        "wordStart": 0,
+        "words": 256
+      },
+      {
+        "name": "u",
+        "wordStart": 256,
+        "words": 72
+      },
+      {
+        "name": "v",
+        "wordStart": 328,
+        "words": 72
+      },
+      {
+        "name": "piQ32",
+        "wordStart": 400,
+        "words": 128
+      },
+      {
+        "name": "tracers",
+        "wordStart": 528,
+        "words": 32768
+      }
+    ],
+    "work": [
+      {
+        "name": "ENTRY",
+        "wordStart": 0,
+        "words": 144
+      },
+      {
+        "name": "ADV",
+        "wordStart": 144,
+        "words": 144
+      },
+      {
+        "name": "KICK",
+        "wordStart": 288,
+        "words": 144
+      },
+      {
+        "name": "CORIO",
+        "wordStart": 432,
+        "words": 144
+      },
+      {
+        "name": "VISC_B",
+        "wordStart": 576,
+        "words": 144
+      },
+      {
+        "name": "VISC_XM1",
+        "wordStart": 720,
+        "words": 144
+      },
+      {
+        "name": "VISC_X",
+        "wordStart": 864,
+        "words": 144
+      },
+      {
+        "name": "VISC_XP1",
+        "wordStart": 1008,
+        "words": 144
+      },
+      {
+        "name": "ADV_L",
+        "wordStart": 1152,
+        "words": 144
+      },
+      {
+        "name": "FACE_AUDIT",
+        "wordStart": 1296,
+        "words": 144
+      },
+      {
+        "name": "pPingQ32",
+        "wordStart": 1440,
+        "words": 160
+      },
+      {
+        "name": "pPongQ32",
+        "wordStart": 1600,
+        "words": 160
+      },
+      {
+        "name": "bQ32",
+        "wordStart": 1760,
+        "words": 160
+      },
+      {
+        "name": "rQ32",
+        "wordStart": 1920,
+        "words": 160
+      },
+      {
+        "name": "DIV",
+        "wordStart": 2080,
+        "words": 64
+      },
+      {
+        "name": "PROJECTION_ERROR",
+        "wordStart": 2144,
+        "words": 64
+      },
+      {
+        "name": "CURL",
+        "wordStart": 2208,
+        "words": 64
+      },
+      {
+        "name": "SCALAR",
+        "wordStart": 2272,
+        "words": 64
+      },
+      {
+        "name": "partial16",
+        "wordStart": 2336,
+        "words": 48
+      },
+      {
+        "name": "coefficientsAndPersistentControl",
+        "wordStart": 2384,
+        "words": 4096
+      }
+    ],
+    "stateBytes": 133184,
+    "workBytes": 25920,
+    "renderPackBytes": 4352,
+    "pressureTraceSweeps": 44
+  },
+  "profileSHA": "5cc883a92e27a1934a35b3d3ea455329fa729b41a72ec07ce0a3d9121e20f511",
+  "fixtures": [
+    {
+      "fixture": "n8-circulation",
+      "n": 8,
+      "scope": "F02 private approximation",
+      "configSHA": "51f832d0058f021ce5711d7b3a810f6dd70e8fd77e346cd005f34beb5ce9899a",
+      "embeddedConfigSHA": "bc981e3f12424eed02f61862010f69d782e32e881ebaefabb4c7eb3e35143dc3",
+      "stateSHA": "628bf905dad53aa6317143acd163be0de6eda9debce56b0c4be945c0e07a645d",
+      "stateBytes": 133184,
+      "workBytes": 25920,
+      "packBytes": 4352,
+      "mg": [
+        [
+          8,
+          8
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "inputNonzeroFaces": 112,
+      "inputDivMax": 0.039304494857788086,
+      "oracleVelocityMax": 0.022097110748291016,
+      "oraclePressureRange": [
+        -0.24203716191188573,
+        0.24203716191188573
+      ],
+      "oracleProbe": {
+        "bottomU": 0.022097110748291016,
+        "topU": -0.022097110748291016,
+        "leftV": -0.022097110748291016,
+        "rightV": 0.022097110748291016
+      }
+    },
+    {
+      "fixture": "n8-projection",
+      "n": 8,
+      "scope": "F02 private approximation",
+      "configSHA": "efeb87cf726d2074ec60724b9280c2a3632b27fae355efa58f70c7ddf759a1f6",
+      "embeddedConfigSHA": "965902b3fb6060662c469a226640f1ce7e579dc6bab2395f36953c22b8d662b3",
+      "stateSHA": "06eb63433e1878d62627b55d997f3f8904481cf4af8d1fc473e8e69fea9b1eb1",
+      "stateBytes": 133184,
+      "workBytes": 25920,
+      "packBytes": 4352,
+      "mg": [
+        [
+          8,
+          8
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "inputNonzeroFaces": 112,
+      "inputDivMax": 0.039304494857788086,
+      "oracleVelocityMax": 0.0,
+      "oraclePressureRange": [
+        -0.24203716191188573,
+        0.24203716191188573
+      ],
+      "oracleProbe": {
+        "bottomU": 0.0,
+        "topU": 0.0,
+        "leftV": 0.0,
+        "rightV": 0.0
+      }
+    },
+    {
+      "fixture": "n8-zero",
+      "n": 8,
+      "scope": "F02 private approximation",
+      "configSHA": "6cef3e6c7bea5da267a73b156f1b8baff3bdd849fd26c87129073b6d8ce53e4d",
+      "embeddedConfigSHA": "0712791dc3805c4dc3f94edabae042f384554bd7cfd624579c290eb4e6caf568",
+      "stateSHA": "012af2cc5522d485aed50b8bca5eca36e3523e515a87cf5133f6347c604872bb",
+      "stateBytes": 133184,
+      "workBytes": 25920,
+      "packBytes": 4352,
+      "mg": [
+        [
+          8,
+          8
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "inputNonzeroFaces": 0,
+      "inputDivMax": 0.0,
+      "oracleVelocityMax": 0.0,
+      "oraclePressureRange": [
+        0.0,
+        0.0
+      ],
+      "oracleProbe": {
+        "bottomU": 0.0,
+        "topU": 0.0,
+        "leftV": 0.0,
+        "rightV": 0.0
+      }
+    }
+  ]
+}

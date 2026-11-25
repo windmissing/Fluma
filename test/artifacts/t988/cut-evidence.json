@@ -1,0 +1,52 @@
+{
+  "schema": "G14_T988_FROZEN_MAC_OFFLINE",
+  "sourceStateSHA": "c70288d7e3813d780b3656fd41426e296d88b1a0ff768f594b39d827bbf7acdc",
+  "moving": {
+    "interval": [
+      "1/8",
+      "2/15"
+    ],
+    "wetCells": 147,
+    "openFaces": 268,
+    "iterations": 89,
+    "preCorrectMaxM2": 1.3328793027681844e-06,
+    "correctedMaxM2": 4.798004012506197e-18,
+    "midlineM2": -5.787037037034049e-06
+  },
+  "mirror": {
+    "interval": [
+      "1/8",
+      "2/15"
+    ],
+    "wetCells": 147,
+    "openFaces": 268,
+    "iterations": 89,
+    "preCorrectMaxM2": 1.3328793027681844e-06,
+    "correctedMaxM2": 2.835231032696957e-18,
+    "midlineM2": 5.787037037036742e-06
+  },
+  "fixed": {
+    "interval": [
+      "1/8",
+      "2/15"
+    ],
+    "wetCells": 144,
+    "openFaces": 263,
+    "iterations": 79,
+    "preCorrectMaxM2": 1.2327284169562832e-07,
+    "correctedMaxM2": 5.6068851840945845e-18,
+    "midlineM2": 5.136639402721592e-18
+  },
+  "zeroSourceMoving": {
+    "interval": [
+      "1/8",
+      "2/15"
+    ],
+    "wetCells": 147,
+    "openFaces": 268,
+    "iterations": 90,
+    "preCorrectMaxM2": 1.3563368055555556e-06,
+    "correctedMaxM2": 2.3586479449243246e-18,
+    "midlineM2": -5.787037037034466e-06
+  }
+}
